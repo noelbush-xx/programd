@@ -12,6 +12,7 @@ package org.aitools.programd.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.Date;
 import java.util.NoSuchElementException;
@@ -273,7 +274,7 @@ public class PatternArbiter
                  */
 
                 // Check if pattern is past end.
-                if (patternChar == StringCharacterIterator.DONE)
+                if (patternChar == CharacterIterator.DONE)
                 {
                     // Flag pattern is past end.
                     patternIteratorState = PAST_END;
@@ -290,7 +291,7 @@ public class PatternArbiter
                 } 
 
                 // Check if literal is past end.
-                if (literalChar == StringCharacterIterator.DONE)
+                if (literalChar == CharacterIterator.DONE)
                 {
                     // Flag literal is past end.
                     literalIteratorState = PAST_END;
@@ -479,7 +480,7 @@ public class PatternArbiter
         int previousCharState = UNKNOWN;
 
         // Iterate over all characters.
-        for (char theChar = iterator.first(); theChar != StringCharacterIterator.DONE; theChar = iterator.next())
+        for (char theChar = iterator.first(); theChar != CharacterIterator.DONE; theChar = iterator.next())
         {
             /*
              * Determine character state and check character succession.
@@ -550,7 +551,7 @@ public class PatternArbiter
                          */
                         iterator.setIndex(currentIndex + 11);
                         theChar = iterator.next();
-                        while ((theChar != StringCharacterIterator.DONE)
+                        while ((theChar != CharacterIterator.DONE)
                                 && (theChar != QUOTE_MARK)
                                 && (Character.isLetterOrDigit(theChar) || (theChar == SPACE) || (theChar == UNDERSCORE)))
                         {
