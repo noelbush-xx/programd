@@ -26,15 +26,18 @@ setup_programd building
 setup_java
 
 # Set up other paths to other needed jars and check their existence.
-ANT_LIB=$LIBS/ant.jar:$LIBS/ant-launcher.jar
-if [ ! -r $ANT_LIB ]
+ANT_MAIN_LIB=$LIBS/ant.jar
+ANT_LAUNCHER_LIB=$LIBS/ant-launcher.jar
+if [ ! -r $ANT_MAIN_LIB || ! -r $ANT_LAUNCHER_LIB ]
 then
   echo
-  echo I can\'t find ant.jar.
-  echo This is necessary for the build process.
+  echo I can\'t find the Ant jars.
+  echo These are necessary for the build process.
   echo
   exit 1
 fi
+ANT_LIBS=$ANT_MAIN_LIB:$ANT_LAUNCHER_LIB
+
 
 JAVA_TOOLS=$JAVA_HOME/lib/tools.jar
 if [ ! -r $JAVA_TOOLS ]
@@ -47,6 +50,6 @@ then
 fi
 
 # Concatenate all paths into the classpath to be used.
-BUILD_CLASSPATH=$JAVA_TOOLS:$ANT_LIB:$SERVLET_LIB:$JS_LIB:$HTTP_SERVER_LIB
+BUILD_CLASSPATH=$JAVA_TOOLS:$ANT_LIBS:$SERVLET_LIB:$JS_LIB:$HTTP_SERVER_LIB
 
 $JVM_COMMAND -Dant.home=$BASE -classpath $BUILD_CLASSPATH org.apache.tools.ant.Main -buildfile $BASE/conf/build.xml $1 $2 $3 $4
