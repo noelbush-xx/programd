@@ -1,13 +1,10 @@
-/*    
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
- 
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
- USA.
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 package org.aitools.programd.util;
@@ -32,11 +29,12 @@ import org.aitools.programd.targeting.TargetMaster;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  Provides a simple shell for interacting with the bot
- *  at a command line (was originally in Graphmaster).
- *
- *  @author Jon Baer
- *  @author Noel Bush
+ * Provides a simple shell for interacting with the bot at a command line (was
+ * originally in Graphmaster).
+ * 
+ * @author Jon Baer
+ * @author Noel Bush
+ * @author Eion Robb
  */
 public class Shell
 {
@@ -124,8 +122,8 @@ public class Shell
     private String botName;
 
     /**
-     *  A <code>Shell</code> with default input and output streams
-     *  (<code>System.in</code> and <code>System.out</code>).
+     * A <code>Shell</code> with default input and output streams (
+     * <code>System.in</code> and <code>System.out</code>).
      */
     public Shell()
     {
@@ -134,11 +132,14 @@ public class Shell
     }
 
     /**
-     *  A <code>Shell</code> with custom input and output streams.
-     *
-     *  @param in       the input stream
-     *  @param display  the display output stream
-     *  @param prompt   the prompt output stream
+     * A <code>Shell</code> with custom input and output streams.
+     * 
+     * @param in
+     *            the input stream
+     * @param display
+     *            the display output stream
+     * @param prompt
+     *            the prompt output stream
      */
     public Shell(InputStream in, PrintStream display, PrintStream prompt)
     {
@@ -148,7 +149,7 @@ public class Shell
     }
 
     /**
-     *  Runs the shell.
+     * Runs the shell.
      */
     public void run()
     {
@@ -182,9 +183,10 @@ public class Shell
             if (theLine == null)
             {
                 /*
-                 A null line probably means that the shell is being mistakenly
-                 run in interactive mode when in fact there is no System.in
-                 available.  In this case, sleep for days :-) and wait to be interrupted.
+                 * A null line probably means that the shell is being mistakenly
+                 * run in interactive mode when in fact there is no System.in
+                 * available. In this case, sleep for days :-) and wait to be
+                 * interrupted.
                  */
                 while (true)
                 {
@@ -292,12 +294,12 @@ public class Shell
     }
 
     /**
-     *  <p>
-     *  Displays a line for an interactive console,
-     *  including the prompt.
-     *  </p>
-     *
-     *  @param preprompt    the text to show before the prompt
+     * <p>
+     * Displays a line for an interactive console, including the prompt.
+     * </p>
+     * 
+     * @param preprompt
+     *            the text to show before the prompt
      */
     private void promptConsole(String preprompt)
     {
@@ -305,14 +307,15 @@ public class Shell
     }
 
     /**
-     *  <p>
-     *  Displays a message (no prompt) in an interactive console.
-     *  </p>
-     *  <p>
-     *  Currently uses hard-coded {@link java.lang.System.in System.in}.
-     *  </p>
-     *    
-     *  @param message      the message to display
+     * <p>
+     * Displays a message (no prompt) in an interactive console.
+     * </p>
+     * <p>
+     * Currently uses hard-coded {@link java.lang.System.in System.in}.
+     * </p>
+     * 
+     * @param message
+     *            the message to display
      */
     private void showConsole(String message)
     {
@@ -320,11 +323,12 @@ public class Shell
     }
 
     /**
-     *  <p>
-     *  Displays a multi-line message (no prompt) in an interactive console.
-     *  </p>
-     *    
-     *  @param message      the message to display
+     * <p>
+     * Displays a multi-line message (no prompt) in an interactive console.
+     * </p>
+     * 
+     * @param message
+     *            the message to display
      */
     private void showConsole(String[] message)
     {
@@ -335,12 +339,14 @@ public class Shell
     }
 
     /**
-     *  <p>
-     *  Displays a message (after a prompt) in an interactive console.
-     *  </p>
-     *    
-     *  @param preprompt    the text to display before the prompt
-     *  @param message      the message to display
+     * <p>
+     * Displays a message (after a prompt) in an interactive console.
+     * </p>
+     * 
+     * @param preprompt
+     *            the text to display before the prompt
+     * @param message
+     *            the message to display
      */
     private void showConsole(String preprompt, String message)
     {
@@ -348,12 +354,14 @@ public class Shell
     }
 
     /**
-     *  <p>
-     *  Displays a multi-line message (after a prompt) in an interactive console.
-     *  </p>
-     *    
-     *  @param preprompt    the text to show before the prompt
-     *  @param message      the multi-line message to display
+     * <p>
+     * Displays a multi-line message (after a prompt) in an interactive console.
+     * </p>
+     * 
+     * @param preprompt
+     *            the text to show before the prompt
+     * @param message
+     *            the multi-line message to display
      */
     private void showConsole(String preprompt, String[] message)
     {
@@ -365,7 +373,7 @@ public class Shell
     }
 
     /**
-     *  Prints an exit message.
+     * Prints an exit message.
      */
     private void printExitMessage()
     {
@@ -373,7 +381,7 @@ public class Shell
     }
 
     /**
-     *  Prints help text.
+     * Prints help text.
      */
     public void help()
     {
@@ -381,7 +389,7 @@ public class Shell
     }
 
     /**
-     *  Loads a given file for a given bot.
+     * Loads a given file for a given bot.
      */
     public void load(String line, String botidToUse)
     {
@@ -411,7 +419,7 @@ public class Shell
     }
 
     /**
-     *  Unloads a given file for a given bot.
+     * Unloads a given file for a given bot.
      */
     private void unload(String line, String botidToUse)
     {
@@ -425,22 +433,28 @@ public class Shell
         {
             int categories = Graphmaster.getTotalCategories();
             String path;
-            try
+            Bot bot = Bots.getBot(this.botid);
+            path = new File(line.substring(space + 1)).getAbsolutePath();
+            Set keys = bot.getLoadedFilesMap().keySet();
+            Iterator iterator = keys.iterator();
+            File fileToUnload = new File(path);
+            while (iterator.hasNext())
             {
-                path = FileManager.getFile(line.substring(space + 1)).getCanonicalPath();
+                File iteratorFile = (File) iterator.next(); //paths stored in
+                                                            // hashmap as Files
+                if (iteratorFile.getAbsolutePath().equals(path))
+                {
+                    fileToUnload = iteratorFile;
+                }
             }
-            catch (IOException e)
-            {
-                showConsole("I/O exception trying to locate file.");
-                return;
-            }
-            Graphmaster.unload(path, Bots.getBot(botidToUse));
+            Graphmaster.unload(path, bot);
+            bot.getLoadedFilesMap().remove(fileToUnload);
             Log.userinfo(categories - Graphmaster.getTotalCategories() + " categories unloaded.", Log.LEARN);
         }
     }
 
     /**
-     *  Shows a list of active bots.
+     * Shows a list of active bots.
      */
     public void showBotList()
     {
@@ -448,7 +462,7 @@ public class Shell
     }
 
     /**
-     *  Switches conversation to a given botid.
+     * Switches conversation to a given botid.
      */
     private void talkto(String line)
     {
@@ -465,9 +479,9 @@ public class Shell
     }
 
     /**
-     *  Switches to a bot, given an id.
-     *
-     *  @param newBotID
+     * Switches to a bot, given an id.
+     * 
+     * @param newBotID
      */
     public void switchToBot(String newBotID)
     {
@@ -485,7 +499,7 @@ public class Shell
     }
 
     /**
-     *  Prints the name of the current bot.
+     * Prints the name of the current bot.
      */
     private void who()
     {
@@ -493,7 +507,7 @@ public class Shell
     }
 
     /**
-     *  Prints a list of files loaded by the current bot.
+     * Prints a list of files loaded by the current bot.
      */
     public void listBotFiles()
     {
@@ -519,7 +533,7 @@ public class Shell
     }
 
     /**
-     *  Rolls over the chat log file.
+     * Rolls over the chat log file.
      */
     public void rollChatLog(String botidToUse)
     {
@@ -529,7 +543,7 @@ public class Shell
     }
 
     /**
-     *  Rolls over the targets data file.
+     * Rolls over the targets data file.
      */
     public void rollTargets()
     {
@@ -537,7 +551,7 @@ public class Shell
     }
 
     /**
-     *  Lists the shell commandables that are loaded to the console.
+     * Lists the shell commandables that are loaded to the console.
      */
     private void listCommandables()
     {
@@ -572,12 +586,14 @@ public class Shell
     }
 
     /**
-     *  Sends a command to a shell commandable, if possible.
-     *
-     *  @param command  the command (including the shell commandable name)
-     *
-     *  @throws NoCommandException if no command is given
-     *  @throws NoSuchCommandableException if an invalid commandable is specified
+     * Sends a command to a shell commandable, if possible.
+     * 
+     * @param command
+     *            the command (including the shell commandable name)
+     * @throws NoCommandException
+     *             if no command is given
+     * @throws NoSuchCommandableException
+     *             if an invalid commandable is specified
      */
     private void sendCommand(String command) throws NoCommandException, NoSuchCommandableException
     {
@@ -622,7 +638,7 @@ public class Shell
     }
 
     /**
-     *  An exception thrown if no command is specified.
+     * An exception thrown if no command is specified.
      */
     private class NoCommandException extends Exception
     {
@@ -630,7 +646,7 @@ public class Shell
     }
 
     /**
-     *  An exception thrown if an invalid commandable is specified.
+     * An exception thrown if an invalid commandable is specified.
      */
     private class NoSuchCommandableException extends Exception
     {
