@@ -14,9 +14,6 @@ import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.graph.Nodemapper;
 import org.aitools.programd.parser.AIMLReaderListener;
-import org.aitools.programd.util.Globals;
-import org.aitools.programd.util.Trace;
-import org.aitools.programd.util.logging.Log;
 
 /**
  * A utility class used by the
@@ -32,22 +29,25 @@ import org.aitools.programd.util.logging.Log;
 public class AIMLLoader implements AIMLReaderListener
 {
     /** The interval at which loaded categories should be notified. */
-    private static int NOTIFY_INTERVAL = Globals.getCategoryLoadNotifyInterval();
-
-    /** Whether to show the console. */
-    protected static final boolean SHOW_CONSOLE = Globals.showConsole();
+    private int notifyInterval;
 
     /** The file name being loaded. */
-    private static String filename;
+    private String filename;
 
     /** The id of the bot for whom this file is being loaded. */
-    private static String botid;
+    private String botid;
 
     /** The bot for whom this file is being loaded. */
-    private static Bot bot;
+    private Bot bot;
+    
+    /** The Graphmaster in use. */
+    private Graphmaster graphmaster;
+    
+    /** The Bots object in use. */
+    private Bots bots;
 
     /** The merge policy. */
-    private static String policy;
+    private boolean policy;
 
     /** A space. */
     private static final String SPACE = " ";
@@ -70,15 +70,19 @@ public class AIMLLoader implements AIMLReaderListener
     /**
      * Initializes the <code>AIMLLoader</code>.
      */
-    public AIMLLoader(String filenameToUse, String botidToUse)
+    public AIMLLoader(Graphmaster graphmasterToUse, Bots botsToUse, String filenameToUse, String botidToUse)
     {
-        AIMLLoader.filename = filenameToUse;
-        AIMLLoader.botid = botidToUse;
-        if (botid != null)
+        this.graphmaster = graphmasterToUse;
+        this.bots = botsToUse;
+        
+        this.filename = filenameToUse;
+        this.botid = botidToUse;
+        if (this.botid != null)
         {
-            AIMLLoader.bot = Bots.getBot(botidToUse);
+            this.bot = this.bots.getBot(botidToUse);
         } 
-        AIMLLoader.policy = Globals.getMergePolicy();
+        this.policy = this.graphmaster.getCore().getSettings().mergePolicy();
+        //this.notifyInterval = this.graphmaster.getCore().getSettings().getCategoryLoadNotifyInterval();
     } 
 
     public void newCategory(String pattern, String that, String topic, String template)
@@ -103,39 +107,43 @@ public class AIMLLoader implements AIMLReaderListener
             template = Graphmaster.ASTERISK;
         } 
 
+        /*
         if (SHOW_CONSOLE)
         {
             if (Graphmaster.getTotalCategories() % NOTIFY_INTERVAL == 0 && Graphmaster.getTotalCategories() > 0)
             {
                 Trace.userinfo(Graphmaster.getTotalCategories() + " categories loaded so far.");
             } 
-        } 
+        }
+        */
 
         if (process)
         {
-            Nodemapper node = Graphmaster.add(pattern, that, topic, botid);
+            Nodemapper node = this.graphmaster.add(pattern, that, topic, this.botid);
             if (node.get(Graphmaster.TEMPLATE) == null)
             {
-                node.put(Graphmaster.FILENAME, filename);
-                bot.addToFilenameMap(filename, node);
+                node.put(Graphmaster.FILENAME, this.filename);
+                this.bot.addToFilenameMap(this.filename, node);
                 node.put(Graphmaster.TEMPLATE, template);
-                Graphmaster.incrementTotalCategories();
+                this.graphmaster.incrementTotalCategories();
             } 
             else
             {
-                if (!policy.equals("true"))
+                if (!this.policy)
                 {
-                    if (Globals.showConsole())
+                    /*
+                    if (Settings.showConsole())
                     {
                         Log.userinfo(new String[]
                             { "Duplicate category:", pattern + " : " + that + " : " + topic,
                                     " in \"" + filename + "\"", "conflicts with category already loaded from",
                                     (String) node.get(Graphmaster.FILENAME) } , Log.MERGE);
-                    } 
+                    }
+                    */
                 } 
                 else
                 {
-                    node.put(Graphmaster.FILENAME, filename);
+                    node.put(Graphmaster.FILENAME, this.filename);
                     node.put(Graphmaster.TEMPLATE, template);
                 } 
             } 
