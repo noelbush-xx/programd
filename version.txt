@@ -1,9 +1,19 @@
 #############
+# 4.1.1 ref #
+###############################################################################
+Another update of the reference version by Thomas Ringate and Pedro E. Colla.
+It features a rewrite of the template parser, support for stack variables, 
+re-added some lost features (scripting, substitutions). The way bot properties
+are andled also changed. For full details on the changes, see buglist.txt.
+For instructions on how to set up the server, see _readme.txt.
+- Kim, Tom and Pedro
+
+#############
 # 4.1.0 ref #
 ###############################################################################
 This is the 'reference' version Thomas Ringate and Pedro E. Colla have been
 working on. It is intermediate work in progress, with the goal to make Program
-D AIML 1.0 compliant. Currently, in version 4.0.1 ref, the support for AIML 1.0
+D AIML 1.0 compliant. Currently, in version 4.1.0 ref, the support for AIML 1.0
 is partial and achieved thru quick fixes. For the most part, AIML 0.9 is not
 yet supported.
 Don't use this release as a base for further development, there will yet be

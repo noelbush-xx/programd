@@ -1,72 +1,30 @@
 package org.alicebot.server.core;
 
-
 /**
+Alice Program D
+Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
 
-ALICEBOT.NET Artificial Intelligence Project
-This version is Copyright (C) 2000 Jon Baer.
-jonbaer@digitalanywhere.com
-All rights reserved.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+USA.
 
-1. Redistributions of source code must retain the above copyright
-notice, this list of conditions, and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions, and the disclaimer that follows 
-these conditions in the documentation and/or other materials 
-provided with the distribution.
-
-3. The name "ALICEBOT.NET" must not be used to endorse or promote products
-derived from this software without prior written permission.  For
-written permission, please contact license@alicebot.org.
-
-4. Products derived from this software may not be called "ALICEBOT.NET",
-nor may "ALICEBOT.NET" appear in their name, without prior written permission
-from the ALICEBOT.NET Project Management (jonbaer@alicebot.net).
-
-In addition, we request (but do not require) that you include in the 
-end-user documentation provided with the redistribution and/or in the 
-software itself an acknowledgement equivalent to the following:
-"This product includes software developed by the
-ALICEBOT.NET Project (http://www.alicebot.net)."
-Alternatively, the acknowledgment may be graphical using the logos 
-available at http://www.alicebot.org/images/logos.
-
-THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED.  IN NO EVENT SHALL THE ALICE SOFTWARE FOUNDATION OR
-ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
-
-This software consists of voluntary contributions made by many 
-individuals on behalf of the A.L.I.C.E. Nexus and ALICEBOT.NET Project
-and was originally created by Dr. Richard Wallace <drwallace@alicebot.net>.
-
-This version was created by Jon Baer <jonbaer@alicebot.net>.
-
-http://www.alicebot.org
-http://www.alicebot.net
-
-This version contains open-source technologies from:
-Netscape, Apache, HypersonicSQL, JDOM, Jetty, Chris Carlin, IBM
-
+@author  Richard Wallace
+@author  Jon Baer
+@author  Thomas Ringate/Pedro Colla
+@version 4.1.1
 */
 
 import java.util.*;
 import java.lang.*;
 import java.net.*;
 import java.io.*;
+
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -78,16 +36,19 @@ import org.alicebot.server.sql.pool.*;
 
 import org.alicebot.server.core.logging.*;
 import org.alicebot.server.core.node.*;
-import org.alicebot.server.core.parser.*;
+//--(old parser)-->import org.alicebot.server.core.parser.*;
+import org.alicebot.server.core.AIMLparser.*;
 import org.alicebot.server.core.responder.*;
-import org.alicebot.server.core.soundex.*;
+//--(old)--import org.alicebot.server.core.soundex.*;
+
 import org.alicebot.server.core.util.*;
 
 /**
  * The Classifier works with an associated database for performing property associations to an identifiable user.
  *
  * @author Richard Wallace, Jon Baer
- * @version 1.0
+ * @author Thomas Ringate/Pedro Colla
+ * @version 4.1.1
  */
 
 public class Classifier implements Serializable {
@@ -233,7 +194,34 @@ public class Classifier implements Serializable {
 		}
 		
 	}
-	
+
+        ////////////////////////// INITIAL TOPIC CLEAN UP /////////////////////
+        public static synchronized void cleanValue(String property,String value) {
+
+		value = value.trim();
+		// Check to see if we need to Normalize anything (probably need utility method for this)
+		if (property.indexOf("name") > 0 || property.indexOf("date") > 0) { 
+			value = Substituter.capitalizeWords(value); 
+		}
+		
+		value = URLEncoder.encode(value.trim());
+		try {
+			DbAccess dba = mgr.takeDbaRef();
+                        ResultSet rs = dba.executeQuery("select value from properties where bot = '" + Globals.getBotName() + "' and property = '" + property + "'");
+			int count = 0;
+			while (rs.next()) {
+				count++;
+			}
+			if (count > 0) {
+                                dba.executeUpdate("update properties set value = '" + value + "' where property = '" + property + "'");
+			}
+			rs.close();
+			mgr.returnDbaRef(dba);
+		}
+		catch (Exception e) {
+			org.alicebot.server.core.logging.Log.log("*** DATABASE ERROR: " + e + " ***", org.alicebot.server.core.logging.Log.ERROR);
+		}
+        }
 	////////////////////////// SET_VARIABLE ///////////////////////////////
 	
 	public static synchronized void setValue(String property, String ip, String value) {
@@ -339,32 +327,194 @@ public class Classifier implements Serializable {
 		}
 		return result;
 	}
-	
+
+        /*-----------------------------------------------------------------
+          Stack Variable Management Methods (4.1.1 b0 PEC 09-2001)
+          Patch to support the new group of index based AIML 1.0 tags
+          such as <index/>
+          The arrangement is crude at the very least.
+          Variables are stored into the DB as normal unit variables
+          where the name get appended with the index
+             (i.e. input[6] == input6)
+          All variables are generated at the first push operation into
+          the maximum depth allowed.
+        -----------------------------------------------------------------*/
+
+        /*
+          getValueIndex
+          Retrieve the value of an index variable provided the context used
+          to store it (ip), the variable name (varname) and the index.
+          Whenever the arguments doesn't support the validation the value
+          returned is empty.
+        */
+          public static String getValueIndex (String varname, int index, String ip) {
+
+            /*
+              Verify the arguments, mostly a performance step rather than
+              a consistency check.
+            */
+
+            if (varname.equals("")) {
+               return "";
+            }
+
+            if (index <= 0) {
+               return "";
+            }
+
+            if (index > Globals.MAX_INDEX_DEPTH) {
+               return "";
+            }
+
+            /*
+             Return the value if present
+            */
+
+            return getValue(varname+Integer.toString(index),ip);
+          }
+
+          /*
+            setValueIndex
+            Set the value of a particular instance of an index variable,
+            proper controls are made not to mess-up with the ordered
+            formation of a stack
+          */
+          public static String setValueIndex (String varname, int index, String ip, String varvalue) {
+
+            /*
+              Verify the arguments, mostly a performance step rather than
+              a consistency check.
+            */
+
+            if (varname.equals("")) {
+               return "";
+            }
+
+            if (index <= 0) {
+               return "";
+            }
+
+            if (index > Globals.MAX_INDEX_DEPTH) {
+               return "";
+            }
+
+            /*
+              Everything is ok, so go set it
+            */
+
+            setValue(varname+Integer.toString(index),ip,varvalue);
+            return varvalue;
+
+          }
+
+          /*
+            pushValueIndex
+            This method pushes a new value to the top of the stack of
+            indexes preserving the integrity of the chain.
+            The farthest value is just dropped when it exceeds the
+            horizon given by MAX_INDEX_DEPTH.
+            Proper shift of the stack [1..N-1] -> [2..N] is performed
+            as part of the operation.
+          */
+          public static String pushValueIndex (String varname, String ip, String varvalue) {
+
+            //System.out.println("*** INDEX ENTRY: var("+varname+") ip("+ip+") value("+varvalue+") ***");
+
+            /*
+              Verify the arguments, mostly a performance step rather than
+              a consistency check.
+            */
+
+            if (varname.equals("")) {
+               return "";
+            }
+
+            /*
+             if other than the first element of the stack move all
+             the elements one level deeper
+            */
+
+            int x = Globals.MAX_INDEX_DEPTH;
+            while (x > 1) {
+              setValueIndex(varname,x,ip,getValueIndex(varname,x-1,ip));
+              x--;
+            }
+
+            /*
+             Set the last value pushed at the first level
+            */
+            setValueIndex(varname,1,ip,varvalue);
+            return varvalue;
+
+          }
+
 	////////////////////////// DO RESPOND ///////////////////////////////
 	
 	public static String doRespond(String input, String ip, int depth) {
 		
 		String response="";
-		String nthat = getValue("that", ip);
+
+                String nthat  = getValue("that", ip);
 		String ntopic = getValue("topic", ip);
+
 		if (nthat.equals("")) nthat = "*";
 		if (ntopic.equals("")) ntopic = "*";
-		nthat = Substituter.deperiodize(nthat);
-		nthat = Substituter.normalize(nthat);
+
+                nthat  = Substituter.deperiodize(nthat);
+                nthat  = Substituter.normalize(nthat);
 		ntopic = Substituter.deperiodize(ntopic);
 		ntopic = Substituter.normalize(ntopic);
-		
-		try {
+
+                /*Fix 4.1.1 b5 PEC 09-2001
+                  The pattern matching is a controlled loop now.
+                  If a NullPointerException is produced (no response)
+                  and the topic is != "" (specific topic) the topic is
+                  forced to the default one and the pattern matching
+                  re-attempted.
+                  This is to prevent and endless loop when the topic
+                  is set to a bogus one.
+                */
+
+                boolean parseloop = true;
+                while (parseloop == true) {
+                  try {
+                        //System.out.println("*** DORESPOND: Input("+input+") that("+nthat+") topic("+ntopic+") ***");
 			Nodemapper rec = Graphmaster.match(input, nthat, ntopic);
 			response = (String)rec.get(Graphmaster.TEMPLATE);
 			response = response.trim();
+                        parseloop= false;
 			if (Globals.showConsole()) System.out.println(depth+". "+ Graphmaster.INPUT_PATTERN+" : "+ Graphmaster.THAT_PATTERN+" : "+ Graphmaster.TOPIC_PATTERN+" star="+ Graphmaster.INPUT_STAR+" ["+ (String)rec.get(Graphmaster.FILENAME)+"]");
-		}   catch (NullPointerException e) {
+                  }   catch (NullPointerException e) {
+
+                      /*4.1.1 b00 All sorts of nasty outcomes from this line...
 			response = "<srai>NOT FOUND</srai>";
-		}   catch (Exception e) {
+                      */
+
+                      /**
+                        If the current topic isn't the default ("") and
+                        the pattern matching yield an exception (no match)
+                        an attempt is made with the default topic.
+                        This will prevent a topic to be erroneously set
+                        and the flow of the dialog to be trapped there.
+                        4.1.1 b5 PEC 09-2001
+                      */
+                        String strTopic = getValue("topic",ip);
+                        strTopic = strTopic.trim();
+                        if (strTopic.equals(""))  {
+                           parseloop = false;
+                           System.out.println("*** PATTERN MATCH ERROR: Null Pointer Response("+response+") ***");
+                           response = "";
+                        } else {
+                           //System.out.println("*** SWITCH TOPIC BACK TO DEFAULT ***");
+                           setValue("topic",ip,"");
+                           ntopic = "*";
+                        }
+
+                  }   catch (Exception e) {
+                        parseloop = false;
 			System.out.println(e);
-		}
-		
+                  }
+                }
 		AIMLParser p = new AIMLParser(depth+1);
 		response = p.processResponse(ip, response);
 		response = Substituter.capitalize(response);
@@ -379,7 +529,7 @@ public class Classifier implements Serializable {
 */
 		return response;
 	} 
-	
+
 	////////////////////////// DO RESPONSE ///////////////////////////////
 	
 	public static synchronized String doResponse(String input, String ip, Responder robot) {
@@ -400,15 +550,20 @@ public class Classifier implements Serializable {
 			if (norm.length() > 0) {
 				setValue("beforethat", ip, getValue("justthat", ip)); 
 				setValue("justthat", ip, getValue("input", ip)); 
-				setValue("input", ip, sentence); 
+				setValue("input", ip, sentence);
+                                pushValueIndex("input",ip,sentence); //4.1.1 b1
 				reply = doRespond(norm, ip, 1);
-				robot.log(norm, reply, ip);
-//Add 4.0.3 b7 PEC 09-2001 Remove periods from stacked values
-                                reply = Substituter.deperiodize(reply);
-//End of Add                                
+                                if (!reply.trim().equals("")) {
+                                   robot.log(norm, reply, ip);
+                                }
+                                String botreply = Substituter.deperiodize(reply); //Add 4.0.3 b7 09-2001 PEC
 				setValue("justbeforethat", ip, getValue("that", ip));
-				setValue("that",ip, reply);
+                                setValue("that",ip, botreply);
+                                pushValueIndex("that",ip,botreply); //4.1.1 b1
 				if (i > 0) reply = " " + reply;
+
+                                reply    = Toolkit.filterLF(Toolkit.filterSpaces(reply));    //4.1.1 b15
+                                response = Toolkit.filterLF(Toolkit.filterSpaces(response)); //4.1.1 b15
 				response = robot.append(sentence, reply, response);
 			}
 		}

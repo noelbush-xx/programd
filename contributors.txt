@@ -1,3 +1,6 @@
+Ing. Pedro E. Colla develop ProgramD reference program AIML 1.0 complient
+Thomas Ringate develop ProgramD reference program AIML 1.0 complient
+Kim Sullivan cleaned AIML and code and wrote a new HTML responder
 Alain Agostini developed some AIML for Pickup.aiml
 Diana Andreacchio wrote a help document for Windows users that became part of this FAQ.
 An anonymous contributor provided AIML content no longer used.
@@ -28,9 +31,8 @@ Karolyn Schalk contributed content to Knowledge.aiml.
 Karlheinz Schuhmacher modified Substiter.replace() to prevent endless loops.
 Gregory Skourge made the package org.alicebot.
 Jack Spies contribued much to the Mac documentation.
-Kim Sullivan cleaned AIML and code and wrote a new HTML responder
 Anthony Taylor made Jacco's C/C++ a platform-independent program.
 Stan Wallace wrote some content for Knowledge.aiml.
 Additional graphics were created by Sage Greco, Darren Langley and Larry Hauser.
 
-We gratefully acknowledge these contributions and the people who made them.
+We gratefully acknowledge these contributions and the programmers who created them.

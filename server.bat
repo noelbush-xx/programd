@@ -1,9 +1,8 @@
 @echo off
-rem This is a shell script for starting Alicebot.Net Server. Currently,this
+rem This is a shell script for starting Alicebot Server. Currently,this
 rem script must be run from the server directory containing the
-rem SERVER.properties file.  See http://www.alicebot.net for more information.
+rem SERVER.properties file.  See http://www.alicebot.org for more information.
 
-@echo Starting Alicebot.Net 4.1.0 Reference Server ...
 @set ALICE_HOME=.
 @set XML_LIB=lib/xml.jar
 @set SQL_LIB=lib/sql.jar

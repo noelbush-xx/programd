@@ -1,0 +1,561 @@
+Build Release History
+---------------------
+
+Version 4.0.3
+=============
+
+Build #1
+--------
+
+X Changed "sentance" by "sentence" on substituter.java and soundex.java
+X Version and Build as constants in GraphMaster.java
+X Short Circuit the administrative web interface.
+
+
+Build #2
+--------
+
+X Remove "theLine" debug line.
+X change "localhost" legends by actual IP number.
+X Add support for the template side evaluation of <get/>   (!! NOT TESTED !!)
+X Add support for the template side evaluation of <bot/>
+X Add support for the template side evaluation of <set></set> (!! NOT TESTED !!)
+X Trap in targetting D
+  * Fixed Trap when <learn> point to a file that doesn't exists.
+  * Fixed Loop when <learn> point to a file with 0 length.
+X Short-Circuit non standard AIML tags
+  <os/>
+  <typeof_/>
+  <forget></forget>
+  <display></display>
+  <add_>
+  <decode></decode>
+  <encode></encode>
+  <log></log>
+  <timer></timer>
+  <nql></nql>
+  <event></event>
+  <face></face>
+  <listen></listen>
+  <log></log>
+  <alice_in>/<alice_out>
+  <random_/>
+
+
+Build #3
+--------
+X Fix on template evaluation of <set name="varname"></set>  [NOT TESTED!]
+X Content Trim on <set name="varname"></set>
+X Documentation Warning ---> std-bot.aiml must be loaded before any other
+  AIML file if bot properties other than <bot name="name"/> are used on
+  the pattern side [!].
+
+Build #4
+--------
+
+X Small, idiotic, overly irrelevant but persistent bug on a stray message
+  while loading and using <bot name="xxx"/> on pattern has finally been removed,
+  jeez... become personal at the end.
+X Classifier methods to increase/decrease variables short-circuited.
+X Implemented the non-brainer AIML 1.0 tags
+      <id/>
+      <size/>
+      <version/>
+      <date/>
+X Short circuited experimental replacement method on Substituter.
+
+
+Build #5
+--------
+
+X Implemented <input index="N"/> as a direct map to existing structures
+
+      <input/>           -----> <input index="1"/>
+      <input index="1"/> -----> <input/>
+      <input index="2"/> -----> <justthat/>
+      <input index="3"/> -----> <beforethat/>
+      <input index="N"/> -----> ""
+
+      [*] Please note at this stage only N=1,2,3 is supported with actual values
+          however the general format is tolerated (but returns blanks)
+
+X Implemented <star index="N"/> as a direct map to existing structures
+
+      <star/>            -----> <star index="1"/>
+      <star index="1"/>  -----> <star/>
+      <star index="N"/>  -----> ""
+
+      [*] Please note at this stage only N=1 is supported with actual values
+          however the general format is tolerated (but returns blanks)
+
+X Implemented <thatstar index="N"/> as a direct map to existing structures
+
+      <thatstar/>            -----> <thatstar index="1"/>
+      <thatstar index="1"/>  -----> <thatstar/>
+      <thatstar index="N"/>  -----> ""
+
+      [*] Please note at this stage only N=1 is supported with actual values
+          however the general format is tolerated (but returns blanks)
+
+X Implemented <topicstar index="N"/> as a direct map to existing structures
+
+      <topicstar/>            -----> <topicstar index="1"/>
+      <topicstar index="1"/>  -----> <topicstar/>
+      <topicstar index="N"/>  -----> ""
+
+      [*] Please note at this stage only N=1 is supported with actual values
+          however the general format is tolerated (but returns blanks)
+
+X Implemented <that index="N,M"/> as a direct map to existing structures
+
+      <that/>              -----> <that index="1,x"/>
+      <that index="1,x"/>  -----> <that/>
+      <that index="2,x"/>  -----> <justbeforethat/>
+      <that index="N,x"/>  -----> ""
+
+      [*] Please note at this stage only N=1/2 is supported with actual values
+          however the general format is tolerated (but returns blanks)
+
+X Automatic console feed for test cases (Mr. Gates solved it for us).
+
+
+Build #6
+--------
+
+X Extra LF on <think></think> (only a log affair).
+X Fix from Kim Sullivan on <if></if> (from diff on CVS).
+X set sequencing problem (work around found & tested, no code modified).
+X Re-introduced short-circuit of Web Admin done in Build #1 (CVS extract problem).
+X What is the limit of string variables? (Answered, no code modified).
+X <condition></condition>/<li></li> seems to be broken completely --> Ok.
+X Remove (short-circuit) support for non standard AIML tags
+
+   <login/>
+   <logout/>
+   <register/>
+X <that/> returns uppercase.
+
+
+Build #7
+--------
+
+X Deperiodize the bot answer before to store it on the THAT stack.
+
+
+Build #8
+--------
+
+X Re-applied Kim's change on <if> voiding the previous.
+X Fixed error when AIML file contains <aiml .. /> malformed tag.
+X Moved file exists/length >0 to a different place not to break remote load of AIML files
+  * Graphmaster load
+  * Targets load
+
+*** VERSION 4.1.0 ***
+
+Build #9
+--------
+X Nullified Kim's change on <if> of Build #8 since it replicates the one in b#6
+X Reset version into 4.1.0, build number keeps going as before.
+
+
+*** VERSION 4.1.1 ***
+
+Build #0
+--------
+
+X Parser rewritten (AIMLParser.java)
+
+    Modules Obsolete
+      org.alicebot.server.core.parser.AIMLParser.java
+      org.alicebot.server.core.processor.*
+
+    Modules Added
+      org.alicebot.server.core.AIMLparser.*
+      org.alicebot.server.core.AIMLprocessor.*
+      org.alicebot.server.util.LinkedList.java
+      org.alicebot.server.util.LinkedListItr.java
+      org.alicebot.server.util.LinkNode.java
+
+    Modules Modified
+      org.alicebot.server.core.Classifier.java
+      org.alicebot.server.core.Graphmaster.java
+
+
+  * Tree (trie) representation of template.
+  * XML processing thru ad-hoc object.
+    * CDATA support.
+    * Comments Support
+    * PI Support
+    * Create Template trie.
+    * Extended syntax validation.
+  * Plug into existing processor architecture (processor oriented to plug
+    in the future with TinyAlice), interface slightly changed to adapt
+    for new parser requirements. Few processors rewritten and/or adapted.
+  * Additional processors written to cover AIML 1.0 & AIML 0.9 functionality.
+  * Internal map of tags based on existing tags (virtual tags).
+  * No modifications on graphmaster at this stage; optimum would be
+    to parse tries during load and store pointers to tries rather than
+    actual raw templates, that will avoid parsing into the trie on every
+    resolution. But this is left for the integration with TinyAlice or
+    a future maintenance cycle.
+
+    Note: Modifications on the processors interface were performed to
+          accomodate the arguments required by the new parser.
+          Also all processors had been rewritten, however the basic
+          architecture is the same than before.
+
+  * Fully recursive (re-entrant and re-usable), nesting only limited by
+    stack and overall recursion capability.
+  * Tag processing Sequence insensitive (set flow/sequence problem).
+
+X Stack variables (?)
+  * Indefinite depth of <input/>, <that/>, <star/>, <thatstar/>, <topicstar/>
+  * Restricted implementation so far, problems found with the RDBMS
+    HyperSonic with either algorithm or performance. Fall Back into
+    support new tags but with previous structures
+
+         <input/>              ---> <input index="1"/>
+         <input index="1"/>    ---> (input variable)
+         <input index="2"/>    ---> (justthat variable)
+         <input index="3"/>    ---> (beforethat variable)
+         <input index="N"/>    ---> return ""
+
+         <that index="1,1"/>   ---> <that index="1"/> --> (that variable)
+         <that index="2,1"/>   ---> <that index="2"/> --> (justbeforethat var)
+         PLS NOTE THE TWO DIMENSIONAL ARRAY REQUIRED BY AIML 1.0 IS NOT YET
+         SUPPORTED
+
+         <star index="1"/> == <star/> == (star variable)
+         PLS NOTE ONLY ONE STAR IS SUPPORTED AT THIS TIME ALL OTHER VALUES
+         OF INDEX RETURNS ""
+
+         same as above for <topicstar/> and <thatstar/>
+
+X GET/SET Sequencing problems.
+
+X Support for AIML 0.9 tags vanished (AIML 0.9 compliant bot)
+
+X <if></if> full implementation ---> according with archcomm discussions
+
+  f1. <if name="xxx" value="yyy">
+        <then>
+          (tags if TRUE)
+        </then>
+        <else>
+          (tags if FALSE)
+        </else>
+      </if>
+
+  f2. <if name="xxx" value="yyy">
+          (tags if TRUE)
+      </if>
+
+  f3. <if name="xxx" value="yyy">
+        <then>
+          (tags if TRUE)
+        </then>
+      </if>
+
+  f4. <if name="xxx" value="yyy">
+        <else>
+          (tags if FALSE)
+        </else>
+      </if>
+
+X Performance issue on long <condition> (i.e. std-gender.aiml) hopefully will
+  go as the parser is replaced but needed to be addressed --> performance
+  metrics at about the level previously shown by ProgramD.
+
+
+Build #1
+--------
+
+X Server starting message (previously in SERVER.BAT).
+X <person> substitution   (warning! with existing Substituter substitutions)
+X <person2> substitution  (warning! with existing Substituter substitutions)
+X <gender> substitution   (warning! with existing Substituter substitutions)
+X <javascript> implemented (like <script> in ProgramD baseline).
+X <gossip src="X"></gossip> implemented
+X Stack variable <input index="N"/> implemented up to 5 levels of depth.
+X Stack variable <that index="N,M"/> implemented up to 5 levels of depth.
+       The 2nd index is actually ignored
+            <that/>   ==  <that index="1"/>
+            <that index="1,X"/> == <that index="1"/>
+            <that index="n,X"/> == <that index="n"/>
+
+
+Build #2
+--------
+
+X Comments added thru the code.
+X Proper tags for javadoc with @version & @author.
+X License text provided by Noel Bush on all modified code.
+X Inconsistency solution, multiple methods to solve formal, sentence, etc
+  in the Substituter.java and *Processor.java modules; now all methods
+  are in Substituter.
+X Code performance profile performed
+
+    81.92% of the total time expended into updating variables (general
+           purpose+input+that) on RDBMS (!!).
+
+    15.37% of the total time on Pattern Match + Template Evaluation.
+     0.89% Post processing normalization.
+     1.82% Logging & other miscellaneous.
+
+     ------
+    New Tag dispatcher  0.89%
+    New XML parser      0.74%
+     ------
+
+Build #3
+--------
+
+X Official Copyright notice added.
+
+
+Build #4
+--------
+
+X Pattern Matching algorithm modified.
+  The pattern matching algorithm look after the full path
+      input <that> {that} <topic> {topic}
+  If a match is performed with the input an specific match is attempted
+  with the {that} (which might match a "*") and then with the <topic>
+  which also could match a "*".
+
+  A subtle bug is introduced with this criteria, if the Graphmaster
+  held
+
+     WHAT IS UP <that> * <topic> *
+     *          <that> * <topic> SOMETOPIC
+
+  If the input was "WHAT IS UP" with the previous answer "PREVIOUS ANSWER"
+  and the topic set to "SOMETOPIC" the matching algorithm would fit
+  the first path factually ignoring the Topic. This is because "_" match
+  takes precedence over word match and it took precedence over "*"
+  precedence.
+
+  The fix introduced discard a solution as invalid if the topic
+  resulting from the match (in this case *) is different from the
+  current topic.
+
+  Watch out some quite vast differences in the behaviour of the pattern
+  matching!!!!
+
+
+Build #5
+--------
+
+X The bug fixed in Build #4 created a very bizarre situation when the
+  topic was set to a TOPIC which really doesn't exists or at least doesn't
+  have catch all categories on their own. The bot response were always
+  empty disregarding the input. And if the TOPIC doesn't exists it will
+  be that way forever until the bot is restarted (!!).
+  So now then the bot is unable to produce a pattern match AND the topic
+  is != from the default the TOPIC is forced back to be the default and
+  a new pattern match attempt is performed (with some luck ALL good written
+  AIML should have a catch all.
+
+  ** BEWARE ** --> This could create a loop (!)
+  If the input is nonsense -> std-pickup.aiml will set the TOPIC to that
+  non-sense and SRAI, if a match is not found it will be set to the default
+  topic will hit the catch all again and the TOPIC set again to nonsense
+  and.... a loop.
+
+X When the bot is started all TOPIC properties of all IP's are set to the
+  default one ("").
+
+
+Build #6
+--------
+
+X Normalize the arguments before <srai> on them.
+
+
+Build #7
+--------
+
+X Fixed <that index="N,M"/>.
+X Fixed wrong "deperiodize" on bot output (removal of ", and"), preserved
+  on stack of bot responses.
+X Fixed <sentence></sentence> now it uppercase only the first word.
+
+
+Build #8
+--------
+
+X Solved sequencing problem at load time that prevented the simultaneous
+  usage of the <learn></learn> and <load filename="XXX"/> forms.
+
+X The template processor has been modified to selectively allow tags to
+  operate at load time, run time or both; done for performance reasons
+  at this point since the template processor is involved in the manipulation
+  of the tags <learn> and <load> while others don't need to be evaluated
+  at load time but also to prepare the bot to implement configuration
+  tags (non-AIML tags).
+
+
+Build #9
+--------
+
+X Fixed broken control that prevents the first index of a <that/> tag to
+  go above "1" and thus prevented the access to deeper bot responses.
+
+Build #10
+---------
+
+X Implemented parser/processor for non-standard AIML tag
+    <property name="property" value="value"/>
+  This tag will only be used for bot configuration purposes and won't
+  be active outside the AIML load window.
+  This tag will allow to set the property values to be recovered with
+  <bot name="property"/>
+
+  ** PROPERTIES MUST BE DEFINED IN startup.aiml PRIOR TO ANY AIML FILE
+     IS LOADED ***
+
+X Modified the loader to handle the bot properties.
+
+X Modified the structure used to store bot properties, previously were
+  stored as patterns "BOT {property}" in the std-bot.aiml file, to resolve
+  a given property requested thru <bot name="property"/> an internal
+  <srai>BOT {property}</srai> were performed.
+  Now a separate and independent structure (a global hash table) stores
+  them.
+
+Build #11
+---------
+
+X Fixed a bug where AIML tags inside a <condition> were evaluated only
+  when enclosed in <li></li> and otherwise ignored.
+
+Build #12
+---------
+
+X Made the value comparisson of <if>, <condition> and <li> case insensitive.
+
+
+Build #14
+---------
+
+X Change the name of the bot from the directory where the AIML is into
+  the property name (<bot name="name"/>).
+
+X Remove the <br/> on console output (replace it by CRLF) if debug=false
+
+X See if SERVER.properties could have comments.
+
+X Modified legend on HTML template
+
+X Normalization of eol (LF vs. CRLF) on chat.log (blank lines with WordPad).
+
+
+Build #15
+---------
+
+X Blank lines removed from chat.log logging.
+
+PENDING
+=======
+
+--- Plan for Phase 1 (Version 4.1.0) ---
+
+    *** DONE ***
+
+--- Plan for Phase 2 (Version 4.1.1) ---
+
+    *** DONE ***
+
+--- Plan for Phase 3 (Version 4.1.2) ---
+
+? Make logs directory if not present
+? Make <learn> aware of directories.
+? Increment AIML validation controls on the XML Parser.
+  * Currently the XML Parser assumes to receive an already validated
+    AIML (open/close tags match, well formed XML, etc) and doesn't control
+    them. If used in the process to Load AIML those controls needs to be
+    added.
+? Replace AIML Loader parser
+  * Converge into a single parser object for the entire program.
+  * Enable the future replacement by a standard object.
+  * Remove serialization issues on current loader.
+  * Use the same AIML parser logic than the template side.
+? Clean-up of the code (to be done just right before final release).
+? Documentation.
+? print actual server port instead of "2001" hardcoded.
+? Re-Order the sequence in which tags are solved to optimize performance.
+? Further short-circuit of unused code (TBD)
+? <topicstar index="N"/>
+  Supported as a direct map of <topicstar/> so index > "1" returns empty
+? <thatstar index="N"/>
+  Supported as a direct map of <thatstar/> so index > "1" returns empty.
+? <that index="N"/>
+  Supported as a direct map of <that/> so index > "1" returns empty.
+? AIML Parsing processes.
+  The actual AIML loading process received only fixes and quick modifications
+  to address bugs but not a deep review. A new AIML parsing approach has been
+  used on the AIML parser but has not been transferred into the AIML loading
+  part. As a result ProgramD uses TWO different methods to manage AIML
+  which potentially could be inconsistent among themselves. However, at
+  present both are enforced to be consistent.
+? Multi Star on Pattern
+  Concurrent with AIML 1.0 the capability of the pattern to held more than
+  one star were introduced. To support it the following modifications
+  are required:
+    * Modifications in the match algorithm.
+    * Modifications in the <star/> tag implementation.
+    * Removal of any validations that might prevent this to operate.
+
+WAITING ARCHCOMM
+================
+
+? <javascript> ---> archcomm (document model)
+? <get name="varname"/> definitions on default value returned.
+? Issue on tags related to multipattern
+     <get thatstar index="N"/>
+     <get topicstar index="N"/>
+     <person index="N"/> == <person><star index="N"/></person>
+
+Errants
+-------
+? Clean Up SERVER.properties.
+? Database got DATABASE.properties nullified (crash?)
+? Showed the "LEARNED" message after two iterations with the bot and then
+  entered a loop (??) happened once ---> verify.
+
+Known Deviations/Major Pendings (To be defined if under scope)
+--------------------------------------------------------------
+
+X Template Management optimization
+  Currently templates are stored as a string of characters in the native
+  AIML form they are on the AIML files. That makes templates to be
+  evaluated each time they are executed both from the AIML parsing and
+  actual execution standpoint. This has at least two dis-advantages
+     * Performance, the AIML parsing is performed each time the template
+       is used no matter how many times it's used.
+     * Integrity, if the AIML on the template is bogus it's more likely
+       to be detected on execution time rather than in load time.
+  The solution for this is to parse the template at load time and to
+  store the trie representation of it (already parsed) into the Graphmaster.
+
+
+X RDBMS Optimization
+  Performance profile shows a bottleneck on the RDBMS being used, also
+  the storage of variables by IP make it useless as a userid since
+  most people works out of dynamic IP clients (dial-up, ADSL, Cable), also
+  when working behind a firewall/proxy more than one user could be
+  reflected with the same IP.
+  One possible solution is to held variables into a memory structure
+  instead of a RDBMS (i.e. double hashtable) and sync into the database
+  at startup, shutdown and periodically (1 min? 15 min?) --> To be explored.
+
+X User Variables (Predicates)
+  Currently user variables (predicates) are stored in the RDBMS using
+  the IP address as a key. Users entering the bot from a dynamic address
+  (dial-up, ADSL, Cable Modem) or behind a firewall or many users on the
+  same PC makes the bot unable to remember correctly the associated
+  variables.
+  A scheme based on a given UserId needs to be added for the bot to
+  consistently remember the user variables.
+

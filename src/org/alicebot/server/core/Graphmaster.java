@@ -1,66 +1,23 @@
 package org.alicebot.server.core;
 
 /**
+Alice Program D
+Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
 
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
-ALICEBOT.NET Artificial Intelligence Project
-This version is Copyright (C) 2000 Jon Baer.
-jonbaer@digitalanywhere.com
-All rights reserved.
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+USA.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
-1. Redistributions of source code must retain the above copyright
-notice, this list of conditions, and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions, and the disclaimer that follows 
-these conditions in the documentation and/or other materials 
-provided with the distribution.
-
-3. The name "ALICEBOT.NET" must not be used to endorse or promote products
-derived from this software without prior written permission.  For
-written permission, please contact license@alicebot.org.
-
-4. Products derived from this software may not be called "ALICEBOT.NET",
-nor may "ALICEBOT.NET" appear in their name, without prior written permission
-from the ALICEBOT.NET Project Management (jonbaer@alicebot.net).
-
-In addition, we request (but do not require) that you include in the 
-end-user documentation provided with the redistribution and/or in the 
-software itself an acknowledgement equivalent to the following:
-"This product includes software developed by the
-ALICEBOT.NET Project (http://www.alicebot.net)."
-Alternatively, the acknowledgment may be graphical using the logos 
-available at http://www.alicebot.org/images/logos.
-
-THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED.  IN NO EVENT SHALL THE ALICE SOFTWARE FOUNDATION OR
-ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
-
-This software consists of voluntary contributions made by many 
-individuals on behalf of the A.L.I.C.E. Nexus and ALICEBOT.NET Project
-and was originally created by Dr. Richard Wallace <drwallace@alicebot.net>.
-
-This version was created by Jon Baer <jonbaer@alicebot.net>.
-
-http://www.alicebot.org
-http://www.alicebot.net
-
-This version contains open-source technologies from:
-Netscape, Apache, HypersonicSQL, JDOM, Jetty, Chris Carlin, IBM
-
+@author  Richard Wallace
+@author  Jon Baer
+@author  Thomas Ringate/Pedro Colla
+@version 4.1.1
 */
 
 import java.util.*;
@@ -77,12 +34,14 @@ import org.alicebot.server.core.parser.*;
 import org.alicebot.server.core.responder.*;
 import org.alicebot.server.core.util.*;
 
+
 /**
  * The Graphmaster is the "brain" of ALICE.  
  * It holds all the patterns and subpatterns and its associated templates.
  *
  * @author Richard Wallace, Jon Baer
- * @version 1.0
+ * @author Thomas Ringate/Pedro Colla
+ * @version 4.1.1
  */
 
 public class Graphmaster extends Thread implements Serializable {
@@ -206,6 +165,9 @@ public class Graphmaster extends Thread implements Serializable {
 	
 	/** The mode to run the Graphmaster in. */
 	public static int MODE;
+
+        /** The current Topic of the conversation */  //4.1.1 b5 PEC 09-2001
+        public static String CURRENT_TOPIC = "";
 	
 	/** Server mode. */
 	public static final int SERVER = 1;
@@ -214,10 +176,17 @@ public class Graphmaster extends Thread implements Serializable {
 	public static final int CONSOLE = 2;
 
 //Add (4.0.3 b1) PEC 09-2001 Version & Build Global Values
+        /** Version of this package */
+        public static final String VERSION = "4.1.1";
 
-        public static final String VERSION = "4.1.0";
-        public static final String BUILD = "10";
+        /** Build Number of this package (internal regression test control) */
+        public static final String BUILD = "15";
 
+        /** CopyRight Notice */
+        public static final String COPYRIGHT = "AliceBot Server (c) 2001 A.L.I.C.E. A.I Foundation";
+
+        /** Load Time Marker */
+        public static boolean loadtime = true;
 //EAdd
 
 	public Graphmaster() {}
@@ -225,7 +194,8 @@ public class Graphmaster extends Thread implements Serializable {
 	public Graphmaster(int mode) {
 		this.MODE = mode;
 	}
-	
+
+        /** Add a new path topic-that-pattern to the Graphmaster */
 	public static Nodemapper
 		add(String pattern, String that, String topic) {
 		/////////////////////////////////////////////
@@ -235,11 +205,14 @@ public class Graphmaster extends Thread implements Serializable {
 			inPattern = inPattern + Character.getNumericValue(c[x]);
 		}
 		/////////////////////////////////////////////
+
 		String path = pattern+" <that> "+that+" <topic> "+topic;
+                //System.out.println("*** GRAPHMASTER ADD: Pattern("+path+") ***");
 		Nodemapper node = add(path, ROOT, 0);
 		return(node);
 	} 
-	
+
+        /** Add a child node to the Graphmaster */
 	public static Nodemapper
 		add(String sentence, Nodemapper parent, int depth) {
 		StringTokenizer st = new StringTokenizer(sentence);
@@ -264,7 +237,9 @@ public class Graphmaster extends Thread implements Serializable {
 			return add(st, d, count-1, depth+1, sentence);
 		} 
 	} 
-	
+
+        /** Perform the match between a normalized input for a particular
+            path topic-that */
 	public static Nodemapper match(String input, String that, String topic) {
 		/////////////////////////////////////////////
 		String inPattern = "";
@@ -274,7 +249,9 @@ public class Graphmaster extends Thread implements Serializable {
 		}
 		/////////////////////////////////////////////
 		String path = input+" <that> "+that+" <topic> "+topic;
+                CURRENT_TOPIC = topic.trim();
 		Nodemapper node;
+                //System.out.println("*** MATCH: Path("+path+") ***");
 		node = match(ROOT, ROOT, path, "", "");
 		path = INPUT_PATTERN + " : " + THAT_PATTERN + " : " + TOPIC_PATTERN + " : " + path;
 		Set S = (Set)node.get("<activations>");
@@ -285,7 +262,8 @@ public class Graphmaster extends Thread implements Serializable {
 		checkpoint();
 		return node;
 	}
-	
+
+        /** Perform the match for child nodes of the Graphmaster */
 	public static Nodemapper
 		match(Nodemapper node, Nodemapper parent,
 		String input, String star, String path) {
@@ -293,25 +271,43 @@ public class Graphmaster extends Thread implements Serializable {
 		int count = st.countTokens();
 		if (count == 0) {
 			if (node.containsKey("<template>")) {
+                           /**
+                             If the current topic is the default one or
+                             the matched topic is the current the result
+                             is accepted; rejected otherwise, this prevents
+                             hits on atomic categories without watching the
+                             proper THAT/TOPIC match.
+                           */
+                           if ( (CURRENT_TOPIC.equals("*")) || (path.trim().equals(CURRENT_TOPIC)) ) { //Fix 4.1.1 b4 
 				TOPIC_STAR=star.trim();
 				TOPIC_PATTERN=path.trim();
 				return node;
+                           } else {
+                             return null;
+                           }
 			} // if
 			else return null;
 		} // if
 		String word = st.nextToken(); String tail = "";
-		if (st.hasMoreTokens())
+                if (st.hasMoreTokens()) {
 			tail = input.substring(word.length()+1, input.length());
+                }
 		Nodemapper rec;
+                               
 		if (node.containsKey("_")) {
 			rec = match((Nodemapper)node.get("_"), node, tail, word, path+" _");
-			if (rec != null) return rec;
+                        if (rec != null) {
+                           return rec;
+                        }
 		} // if
+  
 		if (node.containsKey(word)) {
-			if (word.startsWith("<")) 
-				rec = match((Nodemapper)node.get(word), node, tail, "", "");
-			else
-				rec = match((Nodemapper)node.get(word), node, tail, star, path+" "+word);
+                        //System.out.println("*** MATCH (W): CONTAINS WORD("+word+") ***");
+                        if (word.startsWith("<")) {
+                           rec = match((Nodemapper)node.get(word), node, tail, "", "");
+                        } else {
+                           rec = match((Nodemapper)node.get(word), node, tail, star, path+" "+word);
+                        }
 			if (rec != null) {
 				if (word.compareTo("<that>")==0) {
 					INPUT_STAR = star.trim();
@@ -322,14 +318,18 @@ public class Graphmaster extends Thread implements Serializable {
 					THAT_PATTERN = path.trim();
 				}
 				return rec;
-			} 
-		} 
+			}
+		}
+
 		if (node.containsKey("*")) {
 			rec = match((Nodemapper)node.get("*"), node, tail, word, path+" *");
-			if (rec != null) return rec; 
-		} 
-		if (node.equals(parent.get("*")) || node.equals(parent.get("_"))) 
+                        if (rec != null) {
+                           return rec;
+                        }
+		}
+                if (node.equals(parent.get("*")) || node.equals(parent.get("_"))) {
 			return match(node, parent, tail, star+" "+word, path);
+                }
 		return null;
 	} 
 	
@@ -385,8 +385,13 @@ public class Graphmaster extends Thread implements Serializable {
 		Graphmaster.load(Globals.getTargetFile());
                 Globals._size    = String.valueOf(Graphmaster.TOTAL_CATEGORIES); //4.0.3 b4
 
-                System.out.println("Program D Server Version "+Globals.getversion()+" is running..."); //4.0.3 b4
-                System.out.println(Globals.getBotName() + " is thinking with " + Globals.getsize() + "."); //4.0.3 b4 
+                System.out.println(COPYRIGHT+" Version "+Globals.getversion()); //4.1.1 b3
+
+//4.1.1 b14     System.out.println(Globals.getBotName() + " is thinking with " + Globals.getsize() + "."); //4.0.3 b4 
+                System.out.println(Globals.getValue("name") + " is thinking with " + Globals.getsize() + "."); //4.0.3 b4 
+
+
+                loadtime = false; //4.1.1 b8 PEC 09-2001 Mark the end of the Load Time
 
                 /*Remove 4.0.3 b2 PEC 09-2001
 		System.out.println("Try http://localhost:2001 for server");
@@ -396,9 +401,13 @@ public class Graphmaster extends Thread implements Serializable {
                         System.out.println("Try http://" + InetAddress.getLocalHost().getHostAddress() +":2001"); //Change 4.0.3 b2
 		} catch (Exception e) {}
 
+                //Clean up all previous topics on startup (4.1.1 b4 PEC 09-2001)
+                Classifier.cleanValue("topic","");
+
 		// This is a simple Alice shell that is useful for debugging your AIML
 		
 		AIMLWatcher watcher = new AIMLWatcher();
+
 		watcher.start();
 
 		if (Globals.showShell()) {
@@ -447,8 +456,20 @@ public class Graphmaster extends Thread implements Serializable {
 						
 					}
 					
-					System.out.print(Globals.getBotName()+ "> " + response + "\n");  
-					
+                                        //4.1.1 b14 --> System.out.print(Globals.getBotName()+ "> " + response + "\n");
+
+                                        /**
+                                          Add a little filter to remove the annoying <br /> tag
+                                          from the console. A more elegant address for the issue should
+                                          be to handle the tag at the parser, but it's not AIML and
+                                          that would broke HTML responses so it's implemented as a
+                                          quick hack here. 4.1.1 b14 */
+                                        if (!Globals.showConsole()) {
+                                           response = Toolkit.fixBR(response);
+                                        }
+                                        System.out.print(Globals.getValue("name")+ "> " + response + "\n");  
+
+
 					// Synthesizer.speak(response);
 					
 					name = Substituter.formal(Classifier.getValue("name", "localhost"));
@@ -488,7 +509,7 @@ public class Graphmaster extends Thread implements Serializable {
 					while (y.hasNext()) {
 						String path = (String)y.next();
 						String pattern = path.substring(0, path.indexOf(":")-1);
-						pattern = pattern.trim();
+        					pattern = pattern.trim();
 						if (pattern.indexOf("*") >= 0) {
 							String input = path;
 							while (input.indexOf(":") >= 0) {
@@ -541,7 +562,11 @@ public class Graphmaster extends Thread implements Serializable {
 	public static void unload(String fname) {
 		// To do
 	}
-	
+
+        /**
+        This method loads the Graphmaster with the content of the supplied
+        file parsing the AIML content of it */
+
 	public static void load(String fname) {
 
 		if (fname.equals("*")) {

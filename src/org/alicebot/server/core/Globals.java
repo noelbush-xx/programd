@@ -1,65 +1,23 @@
 package org.alicebot.server.core;
 
 /**
+Alice Program D
+Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
 
-ALICEBOT.NET Artificial Intelligence Project
-This version is Copyright (C) 2000 Jon Baer.
-jonbaer@digitalanywhere.com
-All rights reserved.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+USA.
 
-1. Redistributions of source code must retain the above copyright
-notice, this list of conditions, and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions, and the disclaimer that follows
-these conditions in the documentation and/or other materials
-provided with the distribution.
-
-3. The name "ALICEBOT.NET" must not be used to endorse or promote products
-derived from this software without prior written permission.  For
-written permission, please contact license@alicebot.org.
-
-4. Products derived from this software may not be called "ALICEBOT.NET",
-nor may "ALICEBOT.NET" appear in their name, without prior written permission
-from the ALICEBOT.NET Project Management (jonbaer@alicebot.net).
-
-In addition, we request (but do not require) that you include in the
-end-user documentation provided with the redistribution and/or in the
-software itself an acknowledgement equivalent to the following:
-"This product includes software developed by the
-ALICEBOT.NET Project (http://www.alicebot.net)."
-Alternatively, the acknowledgment may be graphical using the logos
-available at http://www.alicebot.org/images/logos.
-
-THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED.  IN NO EVENT SHALL THE ALICE SOFTWARE FOUNDATION OR
-ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
-
-This software consists of voluntary contributions made by many
-individuals on behalf of the A.L.I.C.E. Nexus and ALICEBOT.NET Project
-and was originally created by Dr. Richard Wallace <drwallace@alicebot.net>.
-
-This version was created by Jon Baer <jonbaer@alicebot.net>.
-
-http://www.alicebot.org
-http://www.alicebot.net
-
-This version contains open-source technologies from:
-Netscape, Apache, HypersonicSQL, JDOM, Jetty, Chris Carlin, IBM
-
+@author  Richard Wallace
+@author  Jon Baer
+@author  Thomas Ringate/Pedro Colla
+@version 4.1.1
 */
 
 import java.io.*;
@@ -83,7 +41,8 @@ import org.alicebot.server.core.util.*;
  * Examples: BOT_es.properties, BOT_fr.properties, etc.
  *
  * @author Richard Wallace, Jon Baer
- * @version 1.0
+ * @author Thomas Ringate/Pedro Colla
+ * @version 4.1.1
  */
 
 public class Globals {
@@ -96,6 +55,12 @@ public class Globals {
         public static String _size;
         public static String _version;
 //EAdd
+
+//Add 4.1.1 bx PEC 09-2001
+        public static int  MAX_LLC         = 25;
+        public static int  MAX_INDEX_DEPTH = 5;
+//EAdd
+
 
 	public Globals() {
 	}
@@ -115,7 +80,7 @@ public class Globals {
 	/** Load it from file. */
 	public static void fromFile(String bot) {
 		_bot = bot;
-		//_globals = ResourceBundle.getBundle("bots." + getBotName() + ".BOT");
+                //?_globals = ResourceBundle.getBundle("bots." + getBotName() + ".BOT");
 		try {
 		_serverProps = new Properties();
 		_serverProps.load(new FileInputStream("SERVER.properties"));
@@ -137,9 +102,14 @@ public class Globals {
 		return Boolean.valueOf(_serverProps.getProperty("server.engine.console")).booleanValue();
 	}
 
+
 	public static boolean showShell() {
 		return Boolean.valueOf(_serverProps.getProperty("server.engine.shell")).booleanValue();
 	}
+
+        /**
+          Return the debug configuration (true/false)
+        */
 
 	public static String getMergePolicy() {
 		return _serverProps.getProperty("server.engine.merge");
@@ -183,10 +153,81 @@ public class Globals {
 	}
 
 	/**
+         * Set a property value for this bot. Could be only set thru a
+         * <property name="property" value="value"/> which is a non-AIML
+         * compliant tag and thus could only be used at configuration and
+         * load time.
+	 */
+
+        public static void setValue(String property, String propertyvalue) {
+            if (Globals.showConsole()) {
+               System.out.println("*** BOT PROPERTY(" + property + ") SET WITH VALUE("+propertyvalue+") ***");
+            }
+            try {
+
+              /*
+               Ensure the property name is meaningful and no case problems exists
+              */
+              property = property.trim();
+              property = property.toLowerCase();
+              if (property.equals("")) {
+                 return;
+              }
+              /*
+               Set the bot property with the value provided
+              */
+              BotProperty.set(property,propertyvalue);
+            } catch (Exception e) {
+              System.out.println("*** ERROR WHILE SETTING PROPERTY " + property + " ***");
+            }
+            return;
+        }
+
+	/**
 	 * Get a value for this bot.  This is usually called via AIML tags as such:
-	 * <bot_favoritecolor/>, <bot_description/>, etc.
+         * <bot name="property"/>
 	 */
 	public static String getValue(String property) {
+
+		String value = "";
+                /*
+                  Ensure the property is meaningful
+                */
+                property = property.trim();
+                property = property.toLowerCase();
+                if (property.equals("")) {
+                   return "";
+                }
+
+                /*
+                  Recover it from the bot properties structure
+                */
+		try {
+                    value = BotProperty.get(property);
+
+                    /*
+                      If the returned value is empty return {property} instead
+                    */
+                    if (value.equals("")) {
+                       value = "{"+property+"}";
+                    }
+                    return value;
+		} catch (Exception e) {
+                    System.out.println("*** NO BOT PROPERTY NAMED > " + property + " ***");
+		}
+
+                /*
+                 If the gathering of the bot property failed return {property}
+                */
+                value = "{"+property+"}";
+		return value;
+
+
+            /*Removed 4.1.1 b10 PEC 09-2001
+              this way to store properties in the Graphmaster is abandoned
+              now properties has to be set thru the <property/> tag
+              during configuration and will be stored on a hashtable
+
 		String value = "";
 		try {
 			value = Classifier.doRespond("BOT " + Substituter.normalize(property), "127.0.0.1", 1);
@@ -195,6 +236,7 @@ public class Globals {
 			System.out.println("*** NO BOT PROPERTY NAMED > " + property + " ***");
 		}
 		return value;
+            ---(end of removal)---*/
 	}
 
         /**

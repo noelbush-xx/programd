@@ -1,78 +1,50 @@
 package org.alicebot.server.core.util;
 
+
 /**
+Alice Program D
+Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
 
-ALICEBOT.NET Artificial Intelligence Project
-This version is Copyright (C) 2000 Jon Baer.
-jonbaer@digitalanywhere.com
-All rights reserved.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+USA.
 
-1. Redistributions of source code must retain the above copyright
-notice, this list of conditions, and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions, and the disclaimer that follows 
-these conditions in the documentation and/or other materials 
-provided with the distribution.
-
-3. The name "ALICEBOT.NET" must not be used to endorse or promote products
-derived from this software without prior written permission.  For
-written permission, please contact license@alicebot.org.
-
-4. Products derived from this software may not be called "ALICEBOT.NET",
-nor may "ALICEBOT.NET" appear in their name, without prior written permission
-from the ALICEBOT.NET Project Management (jonbaer@alicebot.net).
-
-In addition, we request (but do not require) that you include in the 
-end-user documentation provided with the redistribution and/or in the 
-software itself an acknowledgement equivalent to the following:
-"This product includes software developed by the
-ALICEBOT.NET Project (http://www.alicebot.net)."
-Alternatively, the acknowledgment may be graphical using the logos 
-available at http://www.alicebot.org/images/logos.
-
-THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED.  IN NO EVENT SHALL THE ALICE SOFTWARE FOUNDATION OR
-ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
-
-This software consists of voluntary contributions made by many 
-individuals on behalf of the A.L.I.C.E. Nexus and ALICEBOT.NET Project
-and was originally created by Dr. Richard Wallace <drwallace@alicebot.net>.
-
-This version was created by Jon Baer <jonbaer@alicebot.net>.
-
-http://www.alicebot.org
-http://www.alicebot.net
-
-This version contains open-source technologies from:
-Netscape, Apache, HypersonicSQL, JDOM, Jetty, Chris Carlin, IBM
-
+@author  Richard Wallace
+@author  Jon Baer
+@author  Thomas Ringate/Pedro Colla
+@version 4.1.1
 */
 
 
 // The Substituer class contains methods for the several type of
-// syntactic substitutions performed by Program B.  
+// syntactic substitutions performed by Program B.
+// It has been updated to be included in ProgramD version 4.1.1 b1
 
 import java.io.*;
 import java.util.*;
 
 import org.alicebot.server.core.*;
 
+/**
+  The substituter class contains methods for the several type of
+  syntactic substitutions performed by ProgramD.
+  @version 4.1.1
+  @author  Richard S. Wallace
+  @author  Jon Baer
+  @author  Thomas Ringate/Pedro Colla
+*/
 public class Substituter extends Object implements Serializable {
-	
+
+        /**
+         Transformation table Plain Text to HTML
+        */
+
 	static String http_reverse_subst[][] = {
 		{"%","%25"},
 		{"\"","%22"},
@@ -94,7 +66,10 @@ public class Substituter extends Object implements Serializable {
 		{"=","%3D"},
 		{">","%3E"},
 		{"?","%3F"}};
-	
+
+        /**
+         Transformation table HTML to Plain Text
+        */
 	
 	static String http_subst[][] = {
 		{"%0D"," "},
@@ -155,8 +130,6 @@ public class Substituter extends Object implements Serializable {
 		{"%DC","Ue"},
 		{"%FC","ue"},
 		{"%DF","ss"},
-		
-		
 		{"HTTP/1.0"," "},
 		{"HTTP/1.1"," "},
 		{"404"," "},
@@ -166,7 +139,11 @@ public class Substituter extends Object implements Serializable {
 		{"submit"," "},
 		{"=Reply"," "}
 	}; // http_subst
-	
+
+        /**
+         De-Periodize transformation table
+        */
+
 	static String period_subst[][] = {
 		{"{", " BEGINSCRIPT "},
 		{"}", " ENDSCRIPT "},
@@ -376,11 +353,12 @@ public class Substituter extends Object implements Serializable {
 	; // period_subst
 	
 	
-	// "normalization" in AIML means 
-	// eliminate punctuation, correct spelling mistakes,
-	// place exactly one space between words, expand all
-	// contractions and some abbreviations:
-	
+        /**
+         Normalization table, this is aimed to eliminate
+         punctuation, correct spelling mistakes, place exactly
+         one space between words, expand all common contractions
+         and also some abbreviations.
+        */
 	static String normal_subst[][] = {
 		{"=reply",""},
 		{"=REPLY",""},
@@ -578,112 +556,137 @@ public class Substituter extends Object implements Serializable {
 		{"U","UE"},*/
 		{"'"," "}
 	}; // normal_subst
-	
+
+
+        /**
+          person substitutions
+          That includes person_subst, person2_subst and gender_subst
+          A risk to reverse a substitution with another as the scan
+          thru the list progresses do exists.
+          So all tables has a transformation where the spaces are
+          distorted on purpose into #.
+          i.e.
+              " HE "  ---(transformed)---> " SHE "
+              but later
+              " SHE " ---(transformed)---> " HE "
+
+              so instead
+              " HE "  ---(transformed)---> "#SHE#"
+              the transformed token doesn't hit " SHE " later and
+              the transformation is not reversed.
+
+          After all transformations has been made a global change
+          from "#" into " " MUST be performed.
+        */
+
 	static String person2_subst[][] = {
-		{" I WAS "," HE WAS "},
-		{" I AM "," HE IS "},
-		{" I "," HE "},
-		{" ME "," HIM "},
-		{" MY "," HIS "},
-		{" MYSELF "," HIMSELF "},
-		{" MINE "," HIS "},
-		{" WITH YOU "," WITH ME "},
-		{" TO YOU "," TO ME "},
-		{" FOR YOU "," FOR ME "},
-		{" ARE YOU "," AM I "},
-		{" YOU "," I "},
-		{" YOUR "," MY "},
-		{" YOURS "," MINE "},
-		{" YOURSELF "," MYSELF "},
+                {" I WAS ","#HE#WAS#"},
+                {" I AM ","#HE#IS#"},
+                {" I ","#HE#"},
+                {" ME ","#HIM#"},
+                {" MY ","#HIS#"},
+                {" MYSELF ","#HIMSELF#"},
+                {" MINE ","#HIS#"},
+                {" WITH YOU ","#WITH#ME#"},
+                {" TO YOU ","#TO#ME#"},
+                {" FOR YOU ","#FOR#ME#"},
+                {" ARE YOU ","#AM#I#"},
+                {" YOU ","#I#"},
+                {" YOUR ","#MY#"},
+                {" YOURS ","#MINE#"},
+                {" YOURSELF ","#MYSELF#"},
 		//German Substitutions, note the comma I added at the end of the previous line when using cut and paste!
-		{" ICH WAR "," ER WAR "},
-		{" ICH BIN "," ER IST "},
-		{" ICH "," ER "},
-		{" MEIN "," SEIN "},
-		{" MEINS ", " SEINS "},
-		{" MIT DIR "," MIT MIR "},
-		{" DIR ", " MIR "},
-		{" FUER DICH "," FUER MICH"},
-		{" BIST DU "," BIN ICH "},
-		{" DU "," ICH "},
-		{" DEIN "," MEIN "},
-		{" DEINS "," MEINS "}
+                {" ICH WAR ","#ER#WAR#"},
+                {" ICH BIN ","#ER#IST#"},
+                {" ICH ","#ER#"},
+                {" MEIN ","#SEIN#"},
+                {" MEINS ", "#SEINS#"},
+                {" MIT DIR ","#MIT#MIR#"},
+                {" DIR ", "#MIR#"},
+                {" FUER DICH ","#FUER#MICH#"},
+                {" BIST DU ","#BIN#ICH#"},
+                {" DU ","#ICH#"},
+                {" DEIN ","#MEIN#"},
+                {" DEINS ","#MEINS#"}
 		//End of German Substitutions
 	}; // person2_subst
 	
 	static String gender_subst[][] = {
-		{" HE "," SHE "},
-		{" HIM "," HER "},
-		{" HIS "," HER "},
-		{" HIMSELF "," HERSELF "},
+                {" HE ","#SHE#"},
+                {" HIM ","#HER#"},
+                {" HIS ","#HER#"},
+                {" HIMSELF ","#HERSELF#"},
+                {" SHE ","#HE#"},
+                {" HER ","#HIS#"},
+                {" HERSELF ","#HIMSELF#"},
 		//German substitutions
-		{" ER "," SIE "},
-		{" IHM "," IHR "},
-		{" SEIN "," IHR "},
-		{" IHN ", " SIE "}
+                {" ER ","#SIE#"},
+                {" IHM ","#IHR#"},
+                {" SEIN ","#IHR#"},
+                {" IHN ", "#SIE#"}
 		//End of German Substitutions
 	}; // gender_subst
 	
 	static String person_subst[][] = {
 		//phase I;
-		{" WITH YOU "," WITH <name/> "},
-		{" TO YOU "," TO <name/> "},
-		{" OF YOU "," OF <name/> "},
-		{" FOR YOU "," FOR <name/> "},
-		{" GIVE YOU "," GIVE <name/> "},
-		{" GIVING YOU "," GIVING <name/> "},
-		{" GAVE YOU "," GAVE <name/> "},
-		{" MAKE YOU "," MAKE <name/> "},
-		{" MADE YOU "," MADE <name/> "},
-		{" TAKE YOU "," TAKE <name/> "},
-		{" SAVE YOU "," SAVE <name/> "},
-		{" TELL YOU "," TELL <name/> "},
-		{" TELLING YOU "," TELLING <name/> "},
-		{" TOLD YOU "," TOLD <name/> "},
-		{" ARE YOU "," IS <name/> "},
-		{" YOU ARE "," <name/> IS "},
-		{" YOU "," <name/> "},
-		{" YOUR "," <name/>S "},
-		{" YOURS "," <name/>SS "},
-		{" YOURSELF "," <name/>SSELF "},
-		{" I WAS "," YOU WERE "},
-		{" I AM "," YOU ARE "},
-		{" I "," YOU "},
-		{" ME "," YOU "},
-		{" MY "," YOUR "},
-		{" MYSELF "," YOURSELF "},
-		{" MINE "," YOURS "},
+                {" WITH YOU ","#WITH#<name/>#"},
+                {" TO YOU ","#TO#<name/>#"},
+                {" OF YOU ","#OF#<name/>#"},
+                {" FOR YOU ","#FOR#<name/>#"},
+                {" GIVE YOU ","#GIVE#<name/>#"},
+                {" GIVING YOU ","#GIVING#<name/>#"},
+                {" GAVE YOU ","#GAVE#<name/>#"},
+                {" MAKE YOU ","#MAKE#<name/>#"},
+                {" MADE YOU ","#MADE#<name/>#"},
+                {" TAKE YOU ","#TAKE#<name/>#"},
+                {" SAVE YOU ","#SAVE#<name/>#"},
+                {" TELL YOU ","#TELL#<name/>#"},
+                {" TELLING YOU ","#TELLING#<name/>#"},
+                {" TOLD YOU ","#TOLD#<name/>#"},
+                {" ARE YOU ","#IS#<name/>#"},
+                {" YOU ARE ","#<name/>#IS#"},
+                {" YOU ","#<name/>#"},
+                {" YOUR ","#<name/>S#"},
+                {" YOURS ","#<name/>SS#"},
+                {" YOURSELF ","#<name/>SSELF#"},
+                {" I WAS ","#YOU#WERE#"},
+                {" I AM ","#YOU#ARE#"},
+                {" I ","#YOU#"},
+                {" ME ","#YOU#"},
+                {" MY ","#YOUR#"},
+                {" MYSELF ","#YOURSELF#"},
+                {" MINE ","#YOURS#"},
 		// phase II:
-		{" TELL ME "," TELL YOU "},
-		{" TOLD ME "," TOLD YOU "},
-		{" TELLING ME "," TELLING YOU "},
-		{" GIVE ME "," GIVE YOU "},
-		{" MAKE ME "," MAKE YOU "},
-		{" TAKE ME "," TAKE YOU "},
+                {" TELL ME ","#TELL#YOU#"},
+                {" TOLD ME ","#TOLD#YOU#"},
+                {" TELLING ME ","#TELLING#YOU#"},
+                {" GIVE ME ","#GIVE#YOU#"},
+                {" MAKE ME ","#MAKE#YOU#"},
+                {" TAKE ME ","#TAKE#YOU#"},
 		
-		{" WITH <name/> "," WITH ME "},
-		{" IS <name/> "," AM I "},
-		{" TO <name/> "," TO ME "},
-		{" FOR <name/> "," FOR ME "},
-		{" OF <name/> "," OF ME "},
-		{" GIVE <name/> "," GIVE ME "},
-		{" GAVE <name/> "," GAVE ME "},
-		{" MAKE <name/> "," MAKE ME "},
-		{" TAKE <name/> "," TAKE ME "},
-		{" SAVE <name/> "," SAVE ME "},
-		{" MADE <name/> "," MADE ME "},
-		{" TELL <name/> "," TELL ME "},
-		{" TOLD <name/> "," TOLD ME "},
-		{" <name/> IS "," I AM "},
-		{" <name/> WAS "," I WAS "},
-		{" <name/> "," I "},
-		{" <name/>S "," MY "},
-		{" <name/>SS "," MINE "} ,
-		{" <name/>SSELF "," MYSELF "},
-		{" I ARE "," I AM "},
-		{" TO I "," TO ME "},
-		{" OF I "," OF ME "},
-		{" WITH I "," WITH ME "}
+                {" WITH <name/> ","#WITH#ME#"},
+                {" IS <name/> ","#AM#I#"},
+                {" TO <name/> ","#TO#ME#"},
+                {" FOR <name/> ","#FOR#ME#"},
+                {" OF <name/> ","#OF#ME#"},
+                {" GIVE <name/> ","#GIVE#ME#"},
+                {" GAVE <name/> ","#GAVE#ME#"},
+                {" MAKE <name/> ","#MAKE#ME#"},
+                {" TAKE <name/> ","#TAKE#ME#"},
+                {" SAVE <name/> ","#SAVE#ME#"},
+                {" MADE <name/> ","#MADE#ME#"},
+                {" TELL <name/> ","#TELL#ME#"},
+                {" TOLD <name/> ","#TOLD#ME#"},
+                {" <name/> IS ","#I#AM#"},
+                {" <name/> WAS ","#I#WAS#"},
+                {" <name/> ","#I#"},
+                {" <name/>S ","#MY#"},
+                {" <name/>SS ","#MINE#"} ,
+                {" <name/>SSELF ","#MYSELF#"},
+                {" I ARE ","#I#AM#"},
+                {" TO I ","#TO#ME#"},
+                {" OF I ","#OF#ME#"},
+                {" WITH I ","#WITH#ME#"}
 	}; // person_subst
 	
 	static String pretty_subst[][] = {
@@ -693,19 +696,19 @@ public class Substituter extends Object implements Serializable {
 	}; // pretty_subst
 	
 	
-	// This main method is here for testing
-	// purposes only:
-	
+        /**
+          Main method is for testing purposes only
+        */
 	public static void main (String argv[]) {
 		
 		// normalize puts the input into the "normal form"
 	}
+
+        /**
+         The replace() method is a straightforward
+         generalization of the String.replace() method
+         where the arguments are strings instead of characters.
 	
-	// The replace() method is a straightforward
-	// generalization of the String.replace() method
-	// where the arguments are strings instead of characters.
-	
-	/*
 	length = 5
 	startindex = 1
 	
@@ -748,10 +751,10 @@ public class Substituter extends Object implements Serializable {
 		return norm;
 	}
 	
-	// the overloaded replace() method
-	// replaces an entire array of substitutions
-	// in the input string
-	
+        /**the overloaded replace() method
+           replaces an entire array of substitutions
+           in the input string
+        */
 	public static String replace(String[][] subst, String input) {
 		input = input.trim();
 		input = " "+input+" ";
@@ -761,10 +764,10 @@ public class Substituter extends Object implements Serializable {
 		return input;
 	} // replace (2 args)
 	
-	// the "cleanup" in cleanup_http means converting
-	// GET method character substitutions back to
-	// a human-readable form
-	
+        /** the "cleanup" in cleanup_http means converting
+            GET method character substitutions back to
+            a human-readable form
+        */
 	public static String cleanup_http(String arg) {
 		//  System.out.println("BEFORE: "+arg);
 		arg = arg.replace('+',' ');
@@ -775,14 +778,19 @@ public class Substituter extends Object implements Serializable {
 		//  System.out.println("AFTER: "+arg);
 		return(arg);
 	} // cleanup_http
-	
+
+        /**
+          format_http is intended to perform reverse text to HTML
+          substitutions.
+        */
 	public static String format_http(String arg) {
 		arg = replace(http_reverse_subst, arg);
 		return(arg);
 	} // cleanup_http
-	
-	// Sometimes we don't want any HTML output in the
-	// chat robot reply:
+
+        /**
+         supress_html suppress HTML code from the string
+        */
 	public static String suppress_html(String line) {
 		line = replace("&nbsp;"," ",line);
 		line = replace("<BR>"," ",line);
@@ -822,8 +830,9 @@ public class Substituter extends Object implements Serializable {
 		return line;
 	}  // suppress_html
 	
-	// used in AIML patterns
-	//
+        /** normalize used to transform the input in a common
+            way to allow the pattern matching
+        */
 	public static String normalize(String input) {
 		if (input != null) {
 			input = input.toUpperCase();
@@ -833,50 +842,123 @@ public class Substituter extends Object implements Serializable {
 		}
 	} // normalize
 	
-	// Remove unsightly periods
-	// from abbreviations etc.
-	//
+        /**Remove unsightly periods
+           from abbreviations etc.
+        */
 	public static String deperiodize(String input) {
 		// two passes ensures most strange combinations detected:
 		input = replace(period_subst, input); 
 		return(input);
 	} // deperiodize
+
+/*Removed 4.1.1 b1 PEC 09-2001
 	
-	
-	// Convert from 1st person
-	// to 3rd person
-	//
 	public static String person(String input, String bot) {
-		/*
 		String botname = Globals.getBotName();
 		for (int i = 0; i < person_subst.length; i++) {
 		for (int j = 0; j < 2; j++) {
 		if (person_subst[i][j].indexOf("<name/>") >= 0) {
-		person_subst[i][j] = Substituter.replace("<name/>",botname,
-		person_subst[i][j]);
+                   person_subst[i][j] = Substituter.replace("<name/>",botname,
+                   person_subst[i][j]);
 		}
 		}
 		}
 		return(replace(person_subst, input));
-		*/
 		return Globals.getBotName();
 	} // person
-	
+
+End of Removal */
+
+//Add 4.1.1 b1 PEC 09-2001
+        /**
+         person
+         This function produces the person shift from 1st to 3rd.
+         The actual shift is controlled by the array named person_subst[][]
+         This variant might return AIML as part of the substitution and
+         it will be resolved by the PersonProcessor receiving it
+        */
+
+        public static String person(String input) {
+
+         /*
+           No point to continue if empty
+         */
+          if(input.equals("")) {
+            return "";
+          }
+         String response = replace(person_subst,input.toUpperCase()).toLowerCase();
+         response = replace("#"," ",response);
+         response = response.trim();
+         response = pretty(response);
+         return response;
+
+        }
+
+        /**
+         person2
+         This function produces the person2 shift
+         The actual shift is controlled by the array named person_subst2[][]
+         This variant might return AIML as part of the substitution and
+         it will be resolved by the Person2Processor receiving it
+        */
+
+        public static String person2(String input) {
+
+         /*
+           No point to continue if empty
+         */
+          if(input.equals("")) {
+            return "";
+          }
+         String response = replace(person2_subst,input.toUpperCase()).toLowerCase();
+         response = replace("#"," ",response);
+         response = response.trim();
+         response = pretty(response);
+         return response;
+
+        }
+
+        /**
+         gender
+         This function produces the gender shift
+         The actual shift is controlled by the array named gender_subst2[][]
+         This variant might return AIML as part of the substitution and
+         it will be resolved by the GenderProcessor receiving it
+        */
+	public static String gender(String input) {
+         /*
+           No point to continue if empty
+         */
+          if(input.equals("")) {
+            return "";
+          }
+
+         //System.out.println("*** GENDER SHIFT: FROM("+input+") ***");
+         String response = replace(gender_subst,input.toUpperCase()).toLowerCase();
+         //System.out.println("*** GENDER SHIFT: TO("+response+") ***");
+         response = replace("#"," ",response);
+         //System.out.println("*** GENDER SHIFT: TOB("+response+") ***");
+         response = response.trim();
+         response = pretty(response);
+         return response;
+	} // gender
+
+//End of Add
+
+
+/*Removed 4.1.1 b1 PEC 09-2001
+
 	// Convert to 2nd person
 	//
 	public static String person2(String input, String bot) {
 		//  return(replace(person2_subst, input));
 		return Globals.getBotName();
 	} // person2
-	
-	// Convert gender
-	//
-	public static String gender(String input) {
-		return(replace(gender_subst, input));
-	} // gender
-	
-	//
-	//
+
+End of Removal */
+
+        /** pretty "Pretty-fy" the output
+        */
 	public static String pretty(String reply) {
 		reply = reply.toLowerCase();
 		return(replace(pretty_subst, reply));
@@ -887,7 +969,7 @@ public class Substituter extends Object implements Serializable {
 		sentence = sentence.trim();
 		if (sentence.length() > 1) {
 			sentence = sentence.substring(0,1).toUpperCase() +
-				sentence.substring(1, sentence.length());
+                                   sentence.substring(1, sentence.length());
 		}
 		return sentence;
 	}
@@ -922,8 +1004,9 @@ public class Substituter extends Object implements Serializable {
 		out = out.trim();
 		return out;
 	}
-	
-	// by Andrew:
+
+        /** by Andrew:
+        */
 	public static String wrapText(String memo, int columns) {
 		
 		// the system newline character
