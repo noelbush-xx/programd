@@ -1,0 +1,8 @@
+aiml
+classes
+doc
+ffm
+logs/*
+.classpath
+.project
+secret.key
