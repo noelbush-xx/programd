@@ -20,8 +20,8 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Stack;
-
-import org.aitools.programd.util.logging.Log;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * FileManager provides a standard interface for getting File objects and paths.
@@ -36,7 +36,10 @@ public class FileManager
     static
     {
         workingDirectory.push(System.getProperty("user.dir"));
-    } 
+    }
+    
+    /** The error logger. */
+    private static Logger errorLogger = Logger.getLogger("programd.error");
 
     /**
      * Sets the root path.
@@ -227,8 +230,8 @@ public class FileManager
             {
                 throw new UserError("Could not create " + description + " directory.");
             } 
-        } 
-        Trace.devinfo("Created new " + description + " \"" + path + "\".");
+        }
+        Logger.getLogger("programd").log(Level.FINE, "Created new " + description + " \"" + path + "\".");
         return file;
     } 
 
@@ -255,7 +258,7 @@ public class FileManager
             } 
             catch (MalformedURLException e)
             {
-                Log.userinfo("Malformed URL: \"" + path + "\"", Log.ERROR);
+                errorLogger.log(Level.WARNING, "Malformed URL: \"" + path + "\"");
             } 
 
             try
@@ -265,7 +268,7 @@ public class FileManager
             } 
             catch (IOException e)
             {
-                Log.userinfo("I/O error trying to read \"" + path + "\"", Log.ERROR);
+                errorLogger.log(Level.WARNING, "I/O error trying to read \"" + path + "\"");
             } 
         } 
         // Handle paths which are apparently files.
@@ -278,7 +281,7 @@ public class FileManager
             } 
             catch (FileNotFoundException e)
             {
-                Log.userinfo(e.getMessage(), Log.ERROR);
+                errorLogger.log(Level.WARNING, e.getMessage());
                 return null;
             } 
 
@@ -298,7 +301,7 @@ public class FileManager
                 } 
                 catch (IOException e)
                 {
-                    Log.userinfo("I/O error trying to read \"" + path + "\"", Log.ERROR);
+                    errorLogger.log(Level.WARNING, "I/O error trying to read \"" + path + "\"");
                     return null;
                 } 
             } 
@@ -326,7 +329,7 @@ public class FileManager
         } 
         catch (IOException e)
         {
-            Log.userinfo("I/O error trying to read \"" + path + "\"", Log.ERROR);
+            errorLogger.log(Level.WARNING, "I/O error trying to read \"" + path + "\"");
             return null;
         } 
         return result.toString();
@@ -464,5 +467,44 @@ public class FileManager
     public static String getWorkingDirectory()
     {
         return workingDirectory.peek();
+    }
+
+    /**
+     * Loads a file into a String.
+     * 
+     * @param path
+     *            the path to the file
+     * @return the loaded template
+     */
+    public static String loadFileAsString(String path)
+    {
+        String templateLine;
+        StringBuffer result = new StringBuffer(1000);
+    
+        BufferedReader reader;
+        try
+        {
+            String encoding = XMLKit.getDeclaredXMLEncoding(new FileInputStream(path));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(path), encoding));
+        } 
+        catch (IOException e)
+        {
+            return null;
+        }
+    
+        try
+        {
+            while ((templateLine = reader.readLine()) != null)
+            {
+                result.append(templateLine);
+            } 
+            reader.close();
+        } 
+        catch (IOException e)
+        {
+            throw new UserError("I/O error reading \"" + path + "\".", e);
+        } 
+    
+        return result.toString();
     } 
 }

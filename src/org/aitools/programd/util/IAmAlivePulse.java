@@ -9,18 +9,23 @@
 
 package org.aitools.programd.util;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
- * Prints the message &quot;I am alive!&quot; to the console.
+ * Prints the message &quot;I am alive!&quot; to the console/log.
  * 
  * @author Noel Bush
  */
 public class IAmAlivePulse implements Pulse
 {
+    private Logger logger = Logger.getLogger("programd");
+    
     /**
      * Prints the message &quot;I am alive!&quot; to the console.
      */
     public void emit()
     {
-        Trace.userinfo("I am alive!");
+        this.logger.log(Level.INFO, "I am alive!");
     } 
 }
