@@ -14,7 +14,11 @@ package org.aitools.programd.graph;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+
+import org.aitools.programd.util.DeveloperError;
 
 /**
  *  <p>
@@ -30,6 +34,7 @@ import java.util.Set;
  *
  *  @author Richard Wallace
  *  @author	Noel Bush
+ *  @author Eion Robb
  */
 public class Nodemaster implements Nodemapper
 {
@@ -69,21 +74,49 @@ public class Nodemaster implements Nodemapper
         }
     }
 
-    public void remove(Object valueToRemove)
+    public void remove(Object valueToRemove) throws DeveloperError
     {
-        if (this.size > 2)
+        if (this.size > 1)
         {
-            this.Hidden.remove(valueToRemove);
-            this.size--;
-        }
-        else if (this.size == 2)
-        {
-            this.value = this.Hidden.remove(valueToRemove);
-            this.size = 1;
+            // Find the key for this value.
+            Object keyToRemove = null;
+            for (Iterator  iterator = this.Hidden.entrySet().iterator(); iterator.hasNext(); )
+            {
+                Map.Entry item = (Map.Entry)iterator.next();
+                if (item.getValue().equals(valueToRemove))
+                {
+                    // Found it.
+                    keyToRemove = item.getKey();
+                    break;
+                }
+            }
+            if (keyToRemove == null)
+            {
+                // We didn't find a key.
+                throw new DeveloperError("Key was not found for value when trying to remove " + valueToRemove);
+            }
+            if (this.size > 2)
+            {
+                // Remove the value from the HashMap (ignore the primary value/key pair).
+                this.Hidden.remove(keyToRemove);
+                this.size--;
+            }
+            else
+            {
+                // Remove this item from the HashMap.
+                this.Hidden.remove(keyToRemove);
+                // Set the last item in HashMap to be the primary value/key for this Nodemapper.
+                this.key = (String)this.Hidden.keySet().iterator().next();
+                this.value = this.Hidden.remove(this.key);
+                // Remove the empty HashMap to save space.
+                this.Hidden = null;                
+                this.size = 1;
+            }
         }
         else if (this.size == 1)
         {
             this.value = null;
+            this.key = null;
             this.size = 0;
         }
     }
