@@ -11,9 +11,10 @@ package org.aitools.programd.agent.responder;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +28,7 @@ import org.aitools.programd.util.Globals;
 import org.aitools.programd.util.SuffixFilenameFilter;
 import org.aitools.programd.util.Tag;
 import org.aitools.programd.util.UserError;
+import org.aitools.programd.util.XMLKit;
 
 /**
  * <p>
@@ -138,10 +140,11 @@ abstract public class AbstractMarkupResponder implements Responder
      */
     protected void parseTemplate(String path)
     {
-        FileReader reader = null;
+        BufferedReader reader;
         try
         {
-            reader = new FileReader(path);
+            String encoding = XMLKit.getDeclaredXMLEncoding(new FileInputStream(path));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(path), encoding));
             parse(reader);
             reader.close();
         } 
@@ -320,9 +323,9 @@ abstract public class AbstractMarkupResponder implements Responder
      * Parses a template into the header, reply part and footer Lists.
      * 
      * @param file
-     *            a FileReader for the chat template.
+     *            a Reader for the chat template.
      */
-    protected void parse(FileReader file) throws IOException
+    protected void parse(Reader file) throws IOException
     {
         int index;
         char aChar;
@@ -391,28 +394,26 @@ abstract public class AbstractMarkupResponder implements Responder
         String templateLine;
         LinkedList<String> template = new LinkedList<String>();
 
-        FileReader freader = null;
-
+        BufferedReader reader;
         try
         {
-            freader = new FileReader(path);
+            String encoding = XMLKit.getDeclaredXMLEncoding(new FileInputStream(path));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(path), encoding));
         } 
-        catch (FileNotFoundException e)
+        catch (IOException e)
         {
             return null;
         } 
-        BufferedReader breader = new BufferedReader(freader);
 
         template.clear();
 
         try
         {
-            while ((templateLine = breader.readLine()) != null)
+            while ((templateLine = reader.readLine()) != null)
             {
                 template.add(templateLine);
             } 
-            freader.close();
-            breader.close();
+            reader.close();
         } 
         catch (IOException e)
         {
