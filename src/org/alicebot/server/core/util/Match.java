@@ -23,8 +23,7 @@
 
 package org.alicebot.server.core.util;
 
-import java.util.Stack;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.alicebot.server.core.Graphmaster;
 import org.alicebot.server.core.node.Nodemapper;
@@ -40,13 +39,13 @@ public class Match
     // Instance variables.
 
     /** The portions of the input captured by wildcards. */
-    private Stack  inputStar = new Stack();
+    private ArrayList  inputStars = new ArrayList();
 
     /** The portions of the &lt;that/&gt; captured by wildcards. */
-    private Stack  thatStar  = new Stack();
+    private ArrayList  thatStars  = new ArrayList();
 
     /** The portions of the &lt;topic/&gt; <code>name</code> captured by wildcards. */
-    private Stack  topicStar = new Stack();
+    private ArrayList  topicStars = new ArrayList();
 
     /** The <code>pattern</code> part of the matched path. */
     private String pattern;
@@ -56,6 +55,9 @@ public class Match
 
     /** The <code>topic</code> part of the matched path. */
     private String topic;
+
+    /** The <code>botid</code> part of the matched path. */
+    private String botid;
 
     /** An empty string. */
     private static final String EMPTY_STRING = "";
@@ -83,7 +85,7 @@ public class Match
      */
     public void pushInputStar(String string)
     {
-        inputStar.push(string);
+        inputStars.add(0, string);
     }
 
 
@@ -94,7 +96,7 @@ public class Match
      */
     public void pushThatStar(String string)
     {
-        thatStar.push(string);
+        thatStars.add(0, string);
     }
 
 
@@ -105,7 +107,7 @@ public class Match
      */
     public void pushTopicStar(String string)
     {
-        topicStar.push(string);
+        topicStars.add(0, string);
     }
 
 
@@ -139,6 +141,17 @@ public class Match
     public void setTopic(String string)
     {
         this.topic = string;
+    }
+
+
+    /**
+     *  Sets the <code>botid</code> part of the matched path.
+     *
+     *  @param string   the <code>botid</code> part of the matched path
+     */
+    public void setBotID(String string)
+    {
+        this.botid = string;
     }
 
 
@@ -196,7 +209,7 @@ public class Match
     {
         return InputNormalizer.patternFit(pattern) + SPACED_PATH_SEPARATOR +
                InputNormalizer.patternFit(that) + SPACED_PATH_SEPARATOR +
-               InputNormalizer.patternFit(topic);
+               InputNormalizer.patternFit(topic) + SPACED_PATH_SEPARATOR + botid;
     }
 
 
@@ -235,52 +248,34 @@ public class Match
 
 
     /**
-     *  Gets the input stars out of the stack and returns them
-     *  as a Vector.
+     *  Returns the input stars.
      *
-     *  @return Vector of input stars
+     *  @return the input stars
      */
-    public Vector getInputStars()
+    public ArrayList getInputStars()
     {
-        Vector result = new Vector();
-        while(!this.inputStar.empty())
-        {
-            result.add((String)this.inputStar.pop());
-        }
-        return result;
+        return this.inputStars;
     }
 
 
     /**
-     *  Gets the &lt;that/&gt; stars out of the stack and returns them
-     *  as a Vector.
+     *  Returns the &lt;that/&gt; stars.
      *
-     *  @return Vector of &lt;that/&gt; stars
+     *  @return the &lt;that/&gt; stars
      */
-    public Vector getThatStars()
+    public ArrayList getThatStars()
     {
-        Vector result = new Vector();
-        while(!this.thatStar.empty())
-        {
-            result.add((String)this.thatStar.pop());
-        }
-        return result;
+        return this.thatStars;
     }
 
 
     /**
-     *  Get the &lt;topic/&gt; stars out of the stack and returns them
-     *  as a vector
+     *  Returns the &lt;topic/&gt; stars.
      *
-     *  @return Vector of &lt;topic/&gt; stars
+     *  @return the &lt;topic/&gt; stars
      */
-    public Vector getTopicStars()
+    public ArrayList getTopicStars()
     {
-        Vector result = new Vector();
-        while(!this.topicStar.empty())
-        {
-            result.add((String)this.topicStar.pop());
-        }
-        return result;
+        return this.topicStars;
     }
 }

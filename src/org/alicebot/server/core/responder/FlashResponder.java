@@ -62,8 +62,9 @@ public class FlashResponder extends AbstractMarkupResponder
     }
 
 
-    public FlashResponder(String templateName)
+    public FlashResponder(String botid, String templateName)
     {  
+        super(botid);
         if (templateName.equals(EMPTY_STRING))
         {
             parseTemplate(chatTemplatePath);

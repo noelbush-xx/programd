@@ -56,15 +56,20 @@ package org.alicebot.server.core.util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.Reader;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -109,6 +114,12 @@ public class Toolkit
     /** A space, for convenience. */
     private static final String SPACE = " ";
 
+    /** CDATA start marker. */
+    private static final String CDATA_START = "<![CDATA[";
+
+    /** CDATA end marker. */
+    private static final String CDATA_END   = "]]>";
+
     /** A tab, for convenience. */
     private static final String TAB = new Character('\u0009').toString();
 
@@ -149,12 +160,17 @@ public class Toolkit
     /** The actual Map used to store escaped-to-prohibited mappings. */
     private static HashMap xmlEscapes;
 
+    /** The current working directory (used by load). */
+    private static String WORKING_DIRECTORY = System.getProperty("user.dir");
+
 
     /**
      *  <p>
      *  Filters all whitespace: line separators
      *  and multiple consecutive spaces are replaced with a single
      *  space, and any leading or trailing whitespace characters are removed.
+     *  Any data enclosed in <code>&lt;![CDATA[</code> <code>]]&gt;</code> sections,
+     *  however, is left as-is (including the CDATA markers).
      *  </p>
      *
      *  @param input    the input to filter
@@ -165,9 +181,46 @@ public class Toolkit
      */
     public static String filterWhitespace(String input) throws StringIndexOutOfBoundsException
     {
-        return filterMultipleConsecutive(
-                Substituter.replace(TAB, SPACE,
-                    Substituter.replace(LINE_SEPARATOR, SPACE, filterXML(input))), SPACE).trim();
+        // Check if this contains a cdata start marker.
+        int cdataStart = input.indexOf(CDATA_START);
+
+        // In the most common case (not), filter the whole string in one pass.
+        if (cdataStart == -1)
+        {
+            return filterMultipleConsecutive(
+                    Substituter.replace(TAB, SPACE,
+                        Substituter.replace(LINE_SEPARATOR, SPACE, filterXML(input))), SPACE).trim();
+        }
+        // If there is a cdata start marker, this will be slower!
+        else
+        {
+            // Ensure that there is a cdata end marker.
+            int cdataEnd = input.indexOf(CDATA_END) + 2;
+            if (cdataEnd != -1)
+            {
+                // Two possibilities: the string ends with cdata, or doesn't.
+                if (cdataEnd < input.length())
+                {
+                    // Most likely (?) that it doesn't.
+                    return filterWhitespace(input.substring(0, cdataStart)) +
+                           input.substring(cdataStart, cdataEnd) +
+                           filterWhitespace(input.substring(cdataEnd));
+                }
+                // As above, in either case, don't filter the cdata part.
+                else
+                {
+                    return filterWhitespace(input.substring(0, cdataStart)) +
+                           input.substring(cdataStart, cdataEnd);
+                }
+            }
+            // If there was no cdata end marker, we have wasted our time.  Duplicate code from above.
+            else
+            {
+                return filterMultipleConsecutive(
+                        Substituter.replace(TAB, SPACE,
+                            Substituter.replace(LINE_SEPARATOR, SPACE, filterXML(input))), SPACE).trim();
+            }
+        }
     }
 
 
@@ -354,7 +407,7 @@ public class Toolkit
         if (xmlEscapes == null)
         {
             xmlEscapes = new HashMap(XML_ESCAPES.length);
-            for (int index = 0; index < XML_ESCAPES.length; index++)
+            for (int index = XML_ESCAPES.length; --index >= 0; )
             {
                 xmlEscapes.put(XML_ESCAPES[index][0], XML_ESCAPES[index][1]);
             }
@@ -393,7 +446,7 @@ public class Toolkit
         if (xmlProhibited == null)
         {
             xmlProhibited = new HashMap(XML_ESCAPES.length);
-            for (int index = 0; index < XML_ESCAPES.length; index++)
+            for (int index = XML_ESCAPES.length; --index >= 0; )
             {
                 xmlProhibited.put(XML_ESCAPES[index][1], XML_ESCAPES[index][0]);
             }
@@ -821,7 +874,7 @@ public class Toolkit
                 case XMLNode.EMPTY :
                     if (atStart)
                     {
-                        result.append(LINE_SEPARATOR + tab(level));
+                        result.append(tab(level));
                         atStart = false;
                     }
                     result.append(TAG_START + node.XMLData + node.XMLAttr + '/' + TAG_END);
@@ -878,10 +931,10 @@ public class Toolkit
      *
      *  @param length   the length of the tab
      */
-    private static String tab(int level)
+    public static String tab(int level)
     {
         char[] result = new char[level];
-        for (int index = 0; index < level; index++)
+        for (int index = level; --index >= 0; )
         {
             result[index] = '\t';
         }
@@ -889,6 +942,49 @@ public class Toolkit
     }
 
 
+    /**
+     *  Splits an input into words, breaking at spaces.
+     *  This method is obviously limited in that it is not
+     *  aware of other word boundaries.
+     *
+     *  @param input    the input to split
+     *
+     *  @return the input split into sentences
+     */
+    public static ArrayList wordSplit(String input)
+    {
+        ArrayList result = new ArrayList();
+
+        int inputLength = input.length();
+        if (inputLength == 0)
+        {
+            result.add(EMPTY_STRING);
+            return result;
+        }
+
+        int wordStart = 0;
+        
+        StringCharacterIterator iterator = new StringCharacterIterator(input);
+
+        for (char aChar = iterator.first();
+             aChar != StringCharacterIterator.DONE;
+             aChar = iterator.next())
+        {
+             if (aChar == ' ')
+             {
+                 int index = iterator.getIndex();
+                 result.add(input.substring(wordStart, index));
+                 wordStart = index + 1;
+             }
+        }
+        if (wordStart < input.length())
+        {
+            result.add(input.substring(wordStart));
+        }
+        return result;
+    }
+
+    
     /**
      *  <p>
      *  Scans the classpath for classes that implement a given interface.
@@ -916,7 +1012,7 @@ public class Toolkit
         }
         catch (ClassNotFoundException e)
         {
-            throw new DeveloperErrorException("Could not find class \"" + interfaceName + "\".");
+            throw new DeveloperError("Could not find class \"" + interfaceName + "\".");
         }
 
         StringTokenizer tokenizer = new StringTokenizer(System.getProperty("java.class.path", (EMPTY_STRING)),
@@ -987,7 +1083,7 @@ public class Toolkit
                     Log.devinfo(error, Log.STARTUP);
                     continue;
                 }
-                for (int index = 0; index < files.length; index++)
+                for (int index = files.length; --index >= 0; )
                 {
                     list.addElement(files[index]);
                 }
@@ -1107,6 +1203,10 @@ public class Toolkit
                 pattern = path.substring(separatorIndex + 1);
                 dirName = path.substring(0, separatorIndex + 1);
                 dir = new File(dirName);
+                if (!dir.isDirectory())
+                {
+                    dir = new File(workingDirectory + File.separator + dirName);
+                }
             }
             else
             {
@@ -1114,13 +1214,16 @@ public class Toolkit
                 dirName = workingDirectory;
                 dir = new File(dirName);
             }
+            if (!dir.isDirectory())
+            {
+                throw new UserError("\"" + dir.getPath() + "\" is not a valid directory path!");
+            }
             String[] list = dir.list(new WildCardFilter(pattern, '*'));
             if (list == null)
             {
                 return new String[0];
             }
-            Vector v = new Vector();
-            for (int i = 0; i < list.length; i++)
+            for (int i = list.length; --i >= 0; )
             {
                 list[i] = dirName + File.separator + list[i];
             }
@@ -1168,21 +1271,113 @@ public class Toolkit
                         }
                         catch (IOException e1)
                         {
-                            throw new UserErrorException("Could not create " + description + " \"" + file.getAbsolutePath() + "\".");
+                            throw new UserError("Could not create " + description + " \"" + file.getAbsolutePath() + "\".");
                         }
                     }
                     else
                     {
-                        throw new UserErrorException("Could not create directory \"" + directory.getAbsolutePath() + "\".");
+                        throw new UserError("Could not create directory \"" + directory.getAbsolutePath() + "\".");
                     }
                 }
                 else
                 {
-                    throw new UserErrorException("Could not create " + description + " directory.");
+                    throw new UserError("Could not create " + description + " directory.");
                 }
             }
             Trace.devinfo("Created new " + description + " \"" + path + "\".");
         }
+    }
+
+
+    /**
+     *  Returns the entire contents of a file as a String.
+     *
+     *  @param path     the path to the file (local file or URL)
+     *
+     *  @return the entire contents of a file as a String
+     */
+    public static String getFileContents(String path)
+    {
+        BufferedReader buffReader = null;
+
+        // Guess if this is a URL.
+        if (path.indexOf("://") != -1)
+        {
+            // Try to create this as a URL.
+            URL url = null;
+
+            try
+            {
+                url = new URL(path);
+            }
+            catch (MalformedURLException e)
+            {
+                Log.userinfo("Malformed URL: \"" + path + "\"", Log.ERROR);
+            }
+
+            try
+            {
+                String encoding = Toolkit.getDeclaredXMLEncoding(url.openStream());
+                buffReader = new BufferedReader(new InputStreamReader(url.openStream(), encoding));
+            }
+            catch (IOException e)
+            {
+                Log.userinfo("I/O error trying to read \"" + path + "\"", Log.ERROR);
+            }
+        }
+        // Handle paths which are apparently files.
+        else
+        {
+            File toRead = new File(path);
+
+            if (toRead.isAbsolute())
+            {
+                WORKING_DIRECTORY = toRead.getParent();
+            }
+
+            if (toRead.exists() && !toRead.isDirectory())
+            {
+                try
+                {
+                    String encoding = Toolkit.getDeclaredXMLEncoding(new FileInputStream(path));
+                    buffReader = new BufferedReader(
+                                    new InputStreamReader(
+                                        new FileInputStream(path), encoding));
+                }
+                catch (IOException e)
+                {
+                    Log.userinfo("I/O error trying to read \"" + path + "\"", Log.ERROR);
+                    return null;
+                }
+            }
+            else
+            {
+                if (!toRead.exists())
+                {
+                    throw new UserError("\"" + path + "\" does not exist!");
+                }
+                if (toRead.isDirectory())
+                {
+                    throw new UserError("\"" + path + "\" is a directory!");
+                }
+            }
+        }
+        StringBuffer result = new StringBuffer();
+        String line;
+        try
+        {
+            while ( (line = buffReader.readLine()) != null)
+            {
+                result.append(line);
+            }
+            buffReader.close();
+        }
+        catch (IOException e)
+        {
+            Log.userinfo("I/O error trying to read \"" + path + "\"", Log.ERROR);
+            return null;
+        }
+        return result.toString();
     }
 }
 

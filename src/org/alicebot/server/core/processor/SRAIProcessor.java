@@ -43,7 +43,7 @@ import org.alicebot.server.core.Graphmaster;
 import org.alicebot.server.core.Multiplexor;
 import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.core.util.Trace;
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
 
 
@@ -69,12 +69,8 @@ public class SRAIProcessor extends AIMLProcessor
      *
      *  @see AIMLProcessor#process
      */
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
-        if (level >= Graphmaster.MAX_DEPTH)
-        {
-            throw new AIMLProcessorException("Exceeded maximum depth setting for: \"" + parser.formatTag(level, userid, tag) + "\"");
-        }
         if (tag.XMLType == XMLNode.TAG)
         {
             // Check for infinite loops.
@@ -93,15 +89,14 @@ public class SRAIProcessor extends AIMLProcessor
 
                         if (sraiContent.equalsIgnoreCase(input))
                         {
-                            // If possible, substitute the infinite loop text.
                             if (!sraiContent.equalsIgnoreCase(Globals.getInfiniteLoopInput()))
                             {
                                 sraiChild.XMLData = Globals.getInfiniteLoopInput();
-                                Log.userinfo("Infinite loop detected. Substituting infinite loop input.", Log.ERROR);
+                                Log.userinfo("Infinite loop detected; substituting \"" + Globals.getInfiniteLoopInput() + "\".", Log.RUNTIME);
                             }
                             else
                             {
-                                Log.userinfo("Infinite loop detected. Cannot substitute infinite loop input.", Log.ERROR);
+                                Log.userinfo("Unrecoverable infinite loop.", Log.RUNTIME);
                                 return EMPTY_STRING;
                             }
                         }
@@ -113,8 +108,9 @@ public class SRAIProcessor extends AIMLProcessor
             {
                 Trace.userinfo("Symbolic Reduction:");
             }
-            return ActiveMultiplexor.getInstance().getInternalResponse(
-                parser.evaluate(level++, userid, tag.XMLChild), userid, parser);
+            return Multiplexor.getInternalResponse(parser.evaluate(level++, tag.XMLChild),
+                                                                       parser.getUserID(), parser.getBotID(),
+                                                                       parser);
         }
         else
         {

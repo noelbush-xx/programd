@@ -13,21 +13,23 @@
     USA.
 */
 
-package org.alicebot.server.core.parser;
+package org.alicebot.server.core.util;
 
 
 /**
- *  Thrown by {@link AIMLParser} when it
- *  is given invalid input.
+ *	Prints the message &quot;I am alive!&quot;
+ *  to the console.
  *
- *  @since 4.1.4
- *
- *  @author Noel Bush
+ *  @author	Noel Bush
  */
-public class AIMLParserException extends Exception
+public class IAmAlivePulse implements Pulse
 {
-    public AIMLParserException(String message)
+    /**
+     *	Prints the message &quot;I am alive!&quot;
+     *  to the console.
+     */
+    public void emit()
     {
-        super(message);
+        Trace.userinfo("I am alive!");
     }
 }

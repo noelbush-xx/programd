@@ -30,7 +30,7 @@ public class InputProcessor extends StartupElementProcessor
     public static final String label = "input";
 
 
-    public String process(int level, String botid, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
     {
         SubstitutionsProcessor.addSubstitutions(SubstitutionsProcessor.INPUT, tag, parser);
         return EMPTY_STRING;

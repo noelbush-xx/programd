@@ -15,9 +15,10 @@
 
 package org.alicebot.server.core.parser;
 
+import org.alicebot.server.core.Bot;
 import org.alicebot.server.core.Globals;
-import org.alicebot.server.core.processor.ProcessorRegistry;
 import org.alicebot.server.core.processor.loadtime.StartupElementProcessorRegistry;
+import org.alicebot.server.core.util.Trace;
 
 
 /**
@@ -25,11 +26,26 @@ import org.alicebot.server.core.processor.loadtime.StartupElementProcessorRegist
  */
 public class StartupFileParser extends GenericParser
 {
+    private Bot currentBot;
+
+
     /**
      *  Initializes a <code>StartupFileParser</code>.
      */
     public StartupFileParser()
     {
-        super.processorRegistry = Globals.getStartupElementProcessorRegistry();
+        super.processorRegistry = StartupElementProcessorRegistry.getSelf();
+    }
+
+
+    public void setCurrentBot(Bot bot)
+    {
+        currentBot = bot;
+    }
+
+
+    public Bot getCurrentBot()
+    {
+        return currentBot;
     }
 }

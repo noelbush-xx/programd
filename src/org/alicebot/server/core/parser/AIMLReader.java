@@ -69,7 +69,9 @@ import java.lang.reflect.Field;
 import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.core.processor.ProcessorException;
-import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.DeveloperError;
+import org.alicebot.server.core.util.NotAnAIMLPatternException;
+import org.alicebot.server.core.util.PatternArbiter;
 import org.alicebot.server.core.util.Trace;
 
 
@@ -181,7 +183,7 @@ public class AIMLReader extends GenericReader
      *  will raise an alert that the current category is aborted.
      */
     private static final String[] UNEXPECTED_OUTSIDE_TEMPLATE =
-                                    {CATEGORY_END, TEMPLATE_END, PATTERN_END,
+                                    {TEMPLATE_END, PATTERN_END,
                                      CATEGORY_START, TEMPLATE_START, PATTERN_START,
                                      THAT_END, THAT_START,
                                      TOPIC_END, TOPIC_START};
@@ -196,7 +198,9 @@ public class AIMLReader extends GenericReader
      */
     private static final String[] UNEXPECTED_GENERAL =
                                     {AIML_END, AIML_START, AIML_VERSION_START};
-    
+        
+    /** For convenience, a constant indicating both startup and error log destinations. */
+    private static final String[] STARTUP_AND_ERROR = new String[] {Log.STARTUP, Log.ERROR};
 
     /*
         Parser states.
@@ -317,7 +321,8 @@ public class AIMLReader extends GenericReader
      *  @param readerListener   will handle new categories
      *  @param warnNonAIML      whether to warn about non-AIML elements directly beneath &lt;aiml&gt;
      */
-    public AIMLReader(String fileName, BufferedReader buffReader, AIMLReaderListener readerListener, boolean warnNonAIML)
+    public AIMLReader(String fileName, BufferedReader buffReader,
+                      AIMLReaderListener readerListener, boolean warnNonAIML)
     {
         super(fileName, buffReader, readerListener);
         super.readerInstance = this;
@@ -337,25 +342,12 @@ public class AIMLReader extends GenericReader
         }
         catch (NoSuchFieldException e)
         {
-            throw new DeveloperErrorException("The developer has specified a field that does not exist in AIMLReader.");
+            throw new DeveloperError("The developer has specified a field that does not exist in AIMLReader.");
         }
         catch (SecurityException e)
         {
-            throw new DeveloperErrorException("Security manager prevents AIMLReader from functioning.");
+            throw new DeveloperError("Security manager prevents AIMLReader from functioning.");
         }
-    }
-
-
-    /**
-     *  Constructs a new <code>AIMLReader</code>, with <code>warnNonAIML</code>
-     *  set to correspond with a corresponding property value in {@link org.alicebot.server.core.Globals Globals}.
-     *
-     *  @see AIMLReader(String, BufferedReader, AIMLReaderListener, boolean)
-     */
-    public AIMLReader(String fileName, BufferedReader buffReader, AIMLReaderListener readerListener)
-    {
-        this(fileName, buffReader, readerListener,
-             Boolean.valueOf(Globals.getProperty("programd.console.warn-non-aiml", "true")).booleanValue());
     }
 
 
@@ -426,6 +418,7 @@ public class AIMLReader extends GenericReader
             default :
                 break;
         }
+        alertUnexpected();
     }
 
 
@@ -445,7 +438,7 @@ public class AIMLReader extends GenericReader
      *  </p>
      *  <p>
      *  If <code>action</code> is {@link #SET_PROPERTY} or {@link #DO_LEARN}, calls
-     *  {@link org.alicebot.server.core.parser.AIMLParser.processResponse AIMLParser.processResponse}
+     *  {@link org.alicebot.server.core.parser.TemplateParser.processResponse TemplateParser.processResponse}
      *  on the contents of {@link #bufferString} up to {@link #tagStart}.
      *  </p>
      *  <p>
@@ -474,26 +467,32 @@ public class AIMLReader extends GenericReader
                     // Check for required components in category.
                     if (pattern.length() == 0)
                     {
-                        Log.userinfo("Pattern missing from category ending at line " + lineNumber +
-                                     " in \"" + fileName + "\".", Log.ERROR);
-                        Log.userinfo("Aborting this category.", Log.ERROR);
+                        abortCategory("Pattern missing from category.");
                     }
                     else if (template.length() == 0)
                     {
-                        Log.userinfo("Template missing from category ending at line " + lineNumber +
-                                     " in \"" + fileName + "\".", Log.ERROR);
-                        Log.userinfo("Aborting this category.", Log.ERROR);
+                        abortCategory("Template missing from category.");
                     }
                     else
                     {
-                        // Deliver pattern, that and template to AIMLReaderListener.
-                        ((AIMLReaderListener)super.listener).newCategory(pattern.toUpperCase(),
-                                                                         that.toUpperCase(),
-                                                                         topic.toUpperCase(),
-                                                                         template);
+                        // Check that the pattern, that and topic are valid patterns.
+                        try
+                        {
+                            PatternArbiter.checkAIMLPattern(pattern, false);
+                            PatternArbiter.checkAIMLPattern(that, false);
+                            PatternArbiter.checkAIMLPattern(topic, false);   
+                     
+                            // Deliver pattern, that and template to AIMLReaderListener.
+                            ((AIMLReaderListener)super.listener).newCategory(pattern, that, topic, template);
+                        }
+                        catch (NotAnAIMLPatternException e)
+                        {
+                            abortCategory(e.getMessage());
+                        }
 
                         // Reset pattern, that and template to defaults (note that topic is not reset).
-                        pattern = that = template = ASTERISK;
+                        pattern = template = EMPTY_STRING;
+                        that = ASTERISK;
                         searchStart = 0;
 
                         // Index this event.
@@ -516,7 +515,7 @@ public class AIMLReader extends GenericReader
                 case PROCESS_STARTUP :
                     try
                     {
-                        new StartupFileParser().processResponse(LOCALHOST, bufferString.substring(0, tagStart));
+                        new StartupFileParser().processResponse(bufferString.substring(0, tagStart));
                     }
                     catch (ProcessorException e)
                     {
@@ -558,19 +557,19 @@ public class AIMLReader extends GenericReader
     {
         if (state != S_IN_TEMPLATE)
         {
-            for (int index = 0; index < UNEXPECTED_OUTSIDE_TEMPLATE.length; index++)
+            for (int index = UNEXPECTED_OUTSIDE_TEMPLATE.length; --index >= 0; )
             {
                 String unexpectedTag = UNEXPECTED_OUTSIDE_TEMPLATE[index];
                 int unexpectedLength = unexpectedTag.length();
                 if (bufferString.regionMatches(tagStart, unexpectedTag, 0, unexpectedLength))
                 {
-                    Log.userinfo("Unexpected " + unexpectedTag + " at line " + lineNumber +
-                                 " in \"" + fileName + "\".", Log.ERROR);
-                    Log.userinfo("Aborting this category.", Log.ERROR);
+                    Log.userinfo(
+                        new String[] {"Unexpected " + unexpectedTag + "; aborting category.",
+                                      "  (Line " + lineNumber + ", \"" + fileName + "\")"}, Log.ERROR);
                     return;
                 }
             }
-            for (int index = 0; index < UNEXPECTED_GENERAL.length; index++)
+            for (int index = UNEXPECTED_GENERAL.length; --index >= 0; )
             {
                 String unexpectedTag = UNEXPECTED_GENERAL[index];
                 int unexpectedLength = unexpectedTag.length();
@@ -582,9 +581,9 @@ public class AIMLReader extends GenericReader
                     }
                     else
                     {
-                        Log.userinfo("Unexpected " + unexpectedTag + " at line " + lineNumber +
-                                     " in \"" + fileName + "\".", Log.ERROR);
-                        Log.userinfo("Rest of file ignored.", Log.ERROR);
+                        Log.userinfo(
+                            new String[] {"Unexpected " + unexpectedTag + "; rest of file ignored.",
+                                          "  (Line " + lineNumber + ", \"" + fileName + "\")"}, Log.ERROR);
                     }
                     done = true;
                     return;
@@ -598,11 +597,26 @@ public class AIMLReader extends GenericReader
                     String unexpectedTag = bufferString.substring(tagStart + 1, nextSpace);
                     if (unexpectedTag.indexOf(COLON) == -1 && !unexpectedTag.equals(COMMENT_MARK))
                     {
-                        Log.userinfo("There is no \"" + unexpectedTag + "\" element in AIML. (line " + lineNumber +
-                                     " of \"" + fileName + "\")", Log.ERROR);
+                        Log.userinfo(
+                            new String[] {"There is no \"" + unexpectedTag + "\" element in AIML.",
+                                          "  (Line " + lineNumber + ", \"" + fileName + "\")"}, Log.ERROR);
                     }
                 }
             }
         }
+    }
+    
+    
+    /**
+     * 	Prints a standard set of error info when a category read is aborted for some reason.
+     *
+     *  @param reason	the reason the category was aborted
+     */
+    private void abortCategory(String reason)
+    {
+        Log.userinfo(new String[] {"Aborting category:",
+                                   reason,
+                                   "  (Category ends line " + lineNumber + ", \"" + fileName + "\")."},
+                     STARTUP_AND_ERROR);
     }
 }

@@ -99,7 +99,7 @@ public class XMLWriter
      *  @param message  the text of the log event
      *  @param spec     provides information about the XML resource to which to write
      */
-    public static synchronized void write(String message, XMLResourceSpec spec)
+    public static void write(String message, XMLResourceSpec spec)
     {
         RandomAccessFile file = null;
 
@@ -232,6 +232,11 @@ public class XMLWriter
      */
     public static void rollover(XMLResourceSpec spec)
     {
+        if (spec == null)
+        {
+            Trace.userinfo("No resource found to roll over.");
+            return;
+        }
         if (spec.description != null)
         {
             Trace.devinfo("Rolling over " + spec.description + ".");

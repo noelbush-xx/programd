@@ -17,7 +17,7 @@ package org.alicebot.server.core.processor;
 
 import java.util.Date;
 
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
 
 
@@ -34,7 +34,7 @@ public class DateProcessor extends AIMLProcessor
     public static final String label = "date";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.EMPTY)
         {

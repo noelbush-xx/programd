@@ -39,12 +39,14 @@
 
 package org.alicebot.server.core.responder;
 
+import org.alicebot.server.core.Globals;
 
 /**
  *  Logs output of all chat.
  *
  *  @author Jon Baer
  *  @author Thomas Ringate, Pedro Colla
+ *  @author Noel Bush
  */
 public class TextResponder implements Responder
 {
@@ -53,7 +55,15 @@ public class TextResponder implements Responder
     /** A space, for convenience. */
     protected static final String SPACE       = " ";
 
-
+    /** Whether to log the chat to the database. */
+    private static final boolean LOG_CHAT_TO_DATABASE =
+        Boolean.valueOf(Globals.getProperty("programd.logging.to-database.chat", "false")).booleanValue();
+    
+   /** Whether to log the chat to xml text files. */
+    private static final boolean LOG_CHAT_TO_XML =
+        Boolean.valueOf(Globals.getProperty("programd.logging.to-xml.chat", "true")).booleanValue();
+        
+        
     /**
      *  Creates a new <code>TextResponder</code>
      *  using encoding for {@link System#in}.
@@ -95,7 +105,14 @@ public class TextResponder implements Responder
 
     public void log(String input, String reply, String hostname, String userid, String botid)
     {
-        ResponderXMLLogger.log(input, reply, hostname, userid, botid);
+        if (LOG_CHAT_TO_DATABASE)
+        {
+            ResponderDatabaseLogger.log(input, reply, hostname, userid, botid);
+        }
+        if (LOG_CHAT_TO_XML)
+        {
+            ResponderXMLLogger.log(input, reply, hostname, userid, botid);
+        }
     }
     
 

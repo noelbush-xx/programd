@@ -38,6 +38,7 @@ package org.alicebot.server.core.responder;
  *  and logs input via a given channel (text, html, flash, etc.).
  *
  *  @author Jon Baer
+ *  @author Noel Bush
  */
 public interface Responder
 {

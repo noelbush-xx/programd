@@ -17,7 +17,7 @@ package org.alicebot.server.core;
 
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Vector;
+import java.util.HashMap;
 
 import org.alicebot.server.core.util.Trace;
 
@@ -28,7 +28,7 @@ import org.alicebot.server.core.util.Trace;
 public class BotProcesses
 {
     /** The registry of all bot processes. */
-    private static Vector registry = new Vector();
+    private static HashMap registry = new HashMap();
 
 
     /**
@@ -39,7 +39,7 @@ public class BotProcesses
      */
     public static void start(BotProcess process, String name)
     {
-        registry.add(process);
+        registry.put(name, process);
         Thread botProcess = new Thread(process, name);
 
         // Set the thread as a daemon, in case the server terminates abnormally.
@@ -57,7 +57,20 @@ public class BotProcesses
      */
     public static Iterator getRegistryIterator()
     {
-        return registry.iterator();
+        return registry.values().iterator();
+    }
+
+
+    /**
+     *  Returns a given process.
+     *
+     *  @param name the name of the process
+     *
+     *  @return the process assigned to the name
+     */
+    public static BotProcess get(String name)
+    {
+        return (BotProcess)registry.get(name);
     }
 
 
@@ -66,15 +79,15 @@ public class BotProcesses
      */
     public static void shutdownAll()
     {
-        Trace.devinfo("Shutting down all BotProcesses.");
-        Iterator iterator = registry.iterator();
+        Trace.userinfo("Shutting down all BotProcesses.");
+        Iterator iterator = registry.values().iterator();
         while (iterator.hasNext())
         {
             BotProcess process = (BotProcess)iterator.next();
-            Trace.devinfo("Shutting down " + process);
+            Trace.userinfo("Shutting down " + process);
             process.shutdown();
         }
-        Trace.devinfo("Finished shutting down BotProcesses.");
+        Trace.userinfo("Finished shutting down BotProcesses.");
     }
 
 

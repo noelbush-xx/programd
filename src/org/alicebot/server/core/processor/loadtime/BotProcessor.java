@@ -28,11 +28,14 @@
 
 package org.alicebot.server.core.processor.loadtime;
 
+import org.alicebot.server.core.Bot;
+import org.alicebot.server.core.Bots;
 import org.alicebot.server.core.Globals;
-import org.alicebot.server.core.util.Trace;
+import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.core.parser.StartupFileParser;
 import org.alicebot.server.core.parser.XMLNode;
 import org.alicebot.server.core.util.Toolkit;
+import org.alicebot.server.core.util.Trace;
 
 
 /**
@@ -44,7 +47,7 @@ public class BotProcessor extends StartupElementProcessor
     public static final String label = "bot";
 
 
-    public String process(int level, String botid, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
     {
         String botID = Toolkit.getAttributeValue(ID, tag.XMLAttr);
 
@@ -52,17 +55,17 @@ public class BotProcessor extends StartupElementProcessor
         {
             if (Boolean.valueOf(Toolkit.getAttributeValue(ENABLED, tag.XMLAttr)).booleanValue())
             {
-                if (Globals.getBotID() == null)
+                if (!Bots.knowsBot(botID))
                 {
-                    Globals.setBotID(botID);
-                    Trace.devinfo("Configuring bot \"" + botID + "\".");
-                    return parser.evaluate(level++, botid, tag.XMLChild);
+                    Bot bot = new Bot(botID);
+                    Log.userinfo("Configuring bot \"" + botID + "\".", Log.STARTUP);
+                    parser.setCurrentBot(bot);
+                    Bots.addBot(botID, bot);
+                    return parser.evaluate(level++, tag.XMLChild);
                 }
                 else
                 {
-                    Trace.userinfo("Sorry, this version of Program D only supports one bot.");
-                    Trace.userinfo("Cannot load \"" + botID + "\" right now.");
-                    Trace.userinfo("Just wait for a later version!");
+                    Log.userinfo("Bot \"" + botID + "\" has already been configured.", Log.STARTUP);
                     return EMPTY_STRING;
                 }
             }

@@ -29,7 +29,7 @@ package org.alicebot.server.core.processor;
 
 import java.util.StringTokenizer;
 
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
 
 
@@ -48,12 +48,11 @@ public class FormalProcessor extends AIMLProcessor
     // Convenience constants.
     private static final String SPACE = " ";
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
-            // We use a temporary variable here to avoid an unnecessary call to Substituter.formal().
-            String response = parser.evaluate(level++, userid, tag.XMLChild);
+            String response = parser.evaluate(level++, tag.XMLChild);
             if (response.equals(EMPTY_STRING))
             {
                 return response;

@@ -19,6 +19,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.alicebot.server.core.Bots;
 import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.PredicateMaster;
 import org.alicebot.server.core.logging.XMLLog;
@@ -89,7 +90,7 @@ public class ResponderXMLLogger
     public static void log(String input, String response, String hostname, String userid, String botid)
     {
         // Get the client name.
-        String clientName = PredicateMaster.get(Globals.getClientNamePredicate(), userid);
+        String clientName = PredicateMaster.get(Globals.getClientNamePredicate(), userid, botid);
 
         // Log the exchange.
         XMLLog.log(     INDENT + EXCHANGE_START + LINE_SEPARATOR +
@@ -102,6 +103,6 @@ public class ResponderXMLLogger
                         INDENT + INDENT + INPUT_START + Toolkit.escapeXMLChars(input) + INPUT_END + LINE_SEPARATOR +
                         INDENT + INDENT + RESPONSE_START + response + RESPONSE_END + LINE_SEPARATOR +
                         INDENT + EXCHANGE_END + LINE_SEPARATOR,
-                   XMLLog.CHAT);
+                   Bots.getBot(botid).getChatlogSpec());
     }
 }

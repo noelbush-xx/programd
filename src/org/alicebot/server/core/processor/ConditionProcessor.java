@@ -55,7 +55,7 @@ import java.util.ListIterator;
 
 import org.alicebot.server.core.PredicateMaster;
 import org.alicebot.server.core.util.Trace;
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
 import org.alicebot.server.core.util.NotAnAIMLPatternException;
 import org.alicebot.server.core.util.PatternArbiter;
@@ -93,7 +93,7 @@ public class ConditionProcessor extends AIMLProcessor
     private static final String LI = "li";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
@@ -115,8 +115,8 @@ public class ConditionProcessor extends AIMLProcessor
             if ( (tag.XMLAttr.indexOf(NAME_EQUALS, 0)  < 0) &&
                  (tag.XMLAttr.indexOf(VALUE_EQUALS, 0) < 0) )
             {
-                return processListItem(level, userid, parser, tag.XMLChild,
-                                              NAME_VALUE_LI, name, value);
+                return processListItem(level, parser, tag.XMLChild,
+                                       NAME_VALUE_LI, name, value);
             }
 
 
@@ -131,9 +131,10 @@ public class ConditionProcessor extends AIMLProcessor
             {
                 try
                 {
-                    if (PatternArbiter.matches(PredicateMaster.get(name, userid), value, true))
+                    if (PatternArbiter.matches(PredicateMaster.get(name, parser.getUserID(), parser.getBotID()),
+                                               value, true))
                     {
-                        return processListItem(level, userid, parser, tag.XMLChild,
+                        return processListItem(level, parser, tag.XMLChild,
                                                       DEFAULT_LI, EMPTY_STRING, EMPTY_STRING);
                     }
                 }
@@ -155,7 +156,7 @@ public class ConditionProcessor extends AIMLProcessor
             if ( (tag.XMLAttr.indexOf(NAME_EQUALS,0)  >= 0) &&
                  (tag.XMLAttr.indexOf(VALUE_EQUALS,0) <  0) )
             {
-                return processListItem(level, userid, parser, tag.XMLChild,
+                return processListItem(level, parser, tag.XMLChild,
                                        VALUE_ONLY_LI, name, EMPTY_STRING);
             }
 
@@ -173,8 +174,7 @@ public class ConditionProcessor extends AIMLProcessor
      *  Evaluates an &lt;li/&gt; element inside a &lt;condition/&gt;.
      *
      *  @param level        the level we're at in the XML trie
-     *  @param userid       the user identifier
-     *  @param parser       the AIMLParser object responsible for this
+     *  @param parser       the TemplateParser object responsible for this
      *  @param list         the XML trie
      *  @param listItemType one of {@link NAME_VALUE_LI}, {@link DEFAULT_LI} or {@link VALUE_ONLY_LI}
      *  @param name         the name attribute of the &lt;li/&gt; (if applicable)
@@ -182,7 +182,7 @@ public class ConditionProcessor extends AIMLProcessor
      *
      *  @return the result of processing this &lt;li/&gt;
      */
-    public String processListItem(int level, String userid, AIMLParser parser, LinkedList list, int listItemType, String name, String value)
+    public String processListItem(int level, TemplateParser parser, LinkedList list, int listItemType, String name, String value)
     {
         String response = EMPTY_STRING;
         ListIterator iterator;
@@ -208,7 +208,7 @@ public class ConditionProcessor extends AIMLProcessor
         */
         if (listItemType == VALUE_ONLY_LI)
         {
-            predicateValue = PredicateMaster.get(name, userid);
+            predicateValue = PredicateMaster.get(name, parser.getUserID(), parser.getBotID());
         }
 
         // Navigate through this entire level.
@@ -228,7 +228,7 @@ public class ConditionProcessor extends AIMLProcessor
                     case XMLNode.EMPTY :
                         try
                         {
-                            response = response + parser.processTag(level++, userid, node);
+                            response = response + parser.processTag(level++, node);
                         }
                         catch (ProcessorException e)
                         {
@@ -243,7 +243,7 @@ public class ConditionProcessor extends AIMLProcessor
                         {
                             try
                             {
-                                response = response + parser.processTag(level++, userid, node);
+                                response = response + parser.processTag(level++, node);
                             }
                             catch (ProcessorException e)
                             {
@@ -272,7 +272,7 @@ public class ConditionProcessor extends AIMLProcessor
                                 if ( (node.XMLAttr.indexOf(NAME_EQUALS, 0)  < 0) &&
                                      (node.XMLAttr.indexOf(VALUE_EQUALS, 0) < 0) )
                                 {
-                                    response = response + parser.evaluate(level++, userid, node.XMLChild);
+                                    response = response + parser.evaluate(level++, node.XMLChild);
                                     break;
                                 }
 
@@ -293,10 +293,10 @@ public class ConditionProcessor extends AIMLProcessor
                                 */
                                 try
                                 {
-                                    if (PatternArbiter.matches(PredicateMaster.get(liname, userid), livalue, true))
+                                    if (PatternArbiter.matches(PredicateMaster.get(liname, parser.getUserID(), parser.getBotID()),
+                                                               livalue, true))
                                     {
-                                        response = response + parser.evaluate(level++, userid, node.XMLChild);
-                                        return response;
+                                        return response + parser.evaluate(level++, node.XMLChild);
                                     }
                                 }
                                 catch (NotAnAIMLPatternException e)
@@ -307,7 +307,7 @@ public class ConditionProcessor extends AIMLProcessor
 
                             // Evaluate listitems that are designated &quot;defaultListItem&quot; types.
                             case DEFAULT_LI :
-                                response = response + parser.evaluate(level++, userid, node.XMLChild);
+                                response = response + parser.evaluate(level++, node.XMLChild);
                                 break;
 
                             // Evaluate valueOnlyListItems.
@@ -324,7 +324,7 @@ public class ConditionProcessor extends AIMLProcessor
                                     {
                                         if (PatternArbiter.matches(predicateValue, livalue, true))
                                         {
-                                            response = response + parser.evaluate(level++, userid, node.XMLChild);
+                                            response = response + parser.evaluate(level++, node.XMLChild);
                                             return response;
                                         }
                                     }
@@ -339,7 +339,7 @@ public class ConditionProcessor extends AIMLProcessor
                                 */
                                 else
                                 {
-                                    response = response + parser.evaluate(level++, userid, node.XMLChild);
+                                    response = response + parser.evaluate(level++, node.XMLChild);
                                     return response;
                                 }
                                 break;

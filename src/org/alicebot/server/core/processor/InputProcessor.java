@@ -23,7 +23,7 @@
 
 package org.alicebot.server.core.processor;
 
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
 
 
@@ -46,11 +46,11 @@ public class InputProcessor extends IndexedPredicateProcessor
      *  Generalizes the processing of an <code>input</code>
      *  element to a job for {@link IndexedPredicateProcessor}.
      */
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.EMPTY)
         {
-            return super.process(level, userid, tag, parser, label, 2);
+            return super.process(level, tag, parser, label, 2);
         }
         else
         {

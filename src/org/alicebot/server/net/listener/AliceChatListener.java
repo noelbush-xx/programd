@@ -15,22 +15,71 @@
 
 package org.alicebot.server.net.listener;
 
-import java.util.Properties;
+import java.util.HashMap;
 
+import org.alicebot.server.core.Bot;
 import org.alicebot.server.core.BotProcess;
+import org.alicebot.server.core.util.Trace;
+import org.alicebot.server.core.util.UserError;
 
 /**
- *  Specifies the interface that should be used by all listeners.
+ *  An abstract listener.
  */
-public interface AliceChatListener extends BotProcess
+public abstract class AliceChatListener implements BotProcess
 {
+    /** The bot for which this listener works. */
+    protected Bot bot;
+    
+    /** The id of the bot for which this listener works. */
+    protected String botID;
+    
+    /** The name of the listener. */
+    private String name;
+    
+    /** The parameters that can be set for this listener. */
+    protected HashMap parameters = new HashMap();
+    
+    
     /**
-     *  Given a properties set, initializes the listener if possible.
+     *  Creates a new listener with name <code>name</code>.
      *
-     *  @param properties   the properties set that may (or may not!)
-     *                      contain necessary configuration values
-     *
-     *  @return <code>true</code> if the initialization was successful, <code>false</code> if not
+     *  @param bot			the bot for which this listener works
+     *  @param name			the name to give the listener
+     *  @param parameters	the parameters for the listener and their default values
      */
-    public boolean initialize(Properties properties);
+    public AliceChatListener(Bot bot, String name, String[][] parameters)
+    {
+        this.bot = bot;
+        this.botID = bot.getID();
+        this.name = name;
+
+        for (int index = parameters.length; --index >= 0; )
+        {
+            this.parameters.put(parameters[index][0], parameters[index][1]);
+        }
+    }
+    
+    
+    /**
+     *  Sets a parameter for the listener.
+     *
+     *  @param parameterName	the name of the parameter
+     *  @param parameterValue	the value to set for the parameter
+     */
+    public void setParameter(String parameterName, String parameterValue)
+    {
+        if (!this.parameters.containsKey(parameterName))
+        {
+            throw new UserError("Invalid parameter \"" + parameterName + "\" for listener \"" + this.name + "\"");
+        }
+        this.parameters.put(parameterName, parameterValue);
+    }
+    
+    
+    /**
+     *  Checks that the parameters that have been set for the listener are okay.
+     *
+     *  @return	<code>true</code> if parameters are okay, <code>false</code> if not
+     */
+    abstract public boolean checkParameters();
 }

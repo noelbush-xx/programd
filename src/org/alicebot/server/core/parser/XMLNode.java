@@ -22,6 +22,7 @@
 package org.alicebot.server.core.parser;
 
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 
 /**
@@ -84,5 +85,29 @@ public class XMLNode
         this.XMLData  = EMPTY_STRING;
         this.XMLAttr  = EMPTY_STRING;
         this.XMLChild = null;
+     }
+     
+     
+     /**
+      *  Produces a simple string representation of this node.
+      *  Any two nodes with unique contents will produce unique
+      *  string representations.  Two nodes with the same content
+      *  will produce identical string representations.
+      *
+      *  @return a string representation of this node
+      */
+     public String toString()
+     {
+         StringBuffer result = new StringBuffer(this.XMLData);
+         result.append(this.XMLAttr);
+         if (this.XMLChild != null)
+         {
+             ListIterator iterator = this.XMLChild.listIterator();
+             while (iterator.hasNext())
+             {
+                 result.append(iterator.next().toString());
+             }
+         }
+         return result.toString();
      }
 }

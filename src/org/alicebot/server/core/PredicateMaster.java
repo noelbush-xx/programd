@@ -15,6 +15,7 @@
 
 package org.alicebot.server.core;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
@@ -22,9 +23,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
-import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.logging.Log;
+import org.alicebot.server.core.util.DeveloperError;
 import org.alicebot.server.core.util.Trace;
 
 
@@ -46,20 +47,14 @@ import org.alicebot.server.core.util.Trace;
  */
 public class PredicateMaster 
 {
-    /** Maximum length of indexed predicates. */
+    /** Maximum index of indexed predicates. */
     private static final int MAX_INDEX = 5;
 
-    /** Contains information about some predicates set at load time. */
-    private static final HashMap predicatesInfo = new HashMap();
-
-    /** Holds cached predicates, keyed by userid. */
-    private static final Map cache = Collections.synchronizedMap(new HashMap());
-
     /** The maximum size of the cache. */
-    private static final int cacheMax = Globals.predicateValueCacheMax();
+    private static final int CACHE_MAX = Globals.predicateValueCacheMax();
 
     /** The preferred minimum value for the cache (starts at half of {@link #cacheMax}, may be adjusted). */
-    private static int cacheMin = Math.max(cacheMax / 2, 1);
+    private static int cacheMin = Math.max(CACHE_MAX / 2, 1);
 
     /** A counter for tracking the number of predicate value cache operations. */
     protected static int cacheSize = 0;
@@ -70,8 +65,8 @@ public class PredicateMaster
     /** Private instance of self. */
     private static final PredicateMaster myself = new PredicateMaster();
 
-    /** Whether the PredicateMaster is available. */
-    private static boolean available = true;
+    /** The predicate empty default. */
+    protected static final String PREDICATE_EMPTY_DEFAULT = Globals.getPredicateEmptyDefault();
 
     /** An empty string. */
     private static final String EMPTY_STRING = "";
@@ -103,15 +98,14 @@ public class PredicateMaster
      *  @param name     the predicate name
      *  @param value    the predicate value
      *  @param userid   the userid
+     *  @param botid
      *
      *  @return the <code>name</code> or the <code>value</code>, depending on the predicate type
      */
-    public static synchronized String set(String name, String value, String userid)
+    public static String set(String name, String value, String userid, String botid)
     {
-        waitUntilAvailable();
-
         // Get existing or new predicates map for userid.
-        Map userPredicates = predicatesFor(userid);
+        Map userPredicates = Bots.getBot(botid).predicatesFor(userid);
 
         // Put the new value into the predicate.
         userPredicates.put(name, value);
@@ -123,7 +117,7 @@ public class PredicateMaster
         checkCache();
 
         // Return the name or value.
-        return nameOrValue(name, value);
+        return nameOrValue(name, value, botid);
     }
 
 
@@ -137,18 +131,17 @@ public class PredicateMaster
      *  @param index    the index
      *  @param value    the predicate value
      *  @param userid   the userid
+     *  @param botid
      *
      *  @return the <code>name</code> or the <code>value</code>, depending on the predicate type
      */
-    public static synchronized String set(String name, int index, String value, String userid)
+    public synchronized static String set(String name, int index, String value, String userid, String botid)
     {
-        waitUntilAvailable();
-
         // Get existing or new predicates map for userid.
-        Map userPredicates = predicatesFor(userid);
+        Map userPredicates = Bots.getBot(botid).predicatesFor(userid);
 
         // Get, load or create the list of values.
-        Vector values = getLoadOrCreateValueVector(name, userPredicates, userid);;
+        ArrayList values = getLoadOrCreateValueList(name, userPredicates, userid, botid);
 
         // Try to set the predicate value at the index (minus one -- no 0 in AIML index).
         try
@@ -168,7 +161,7 @@ public class PredicateMaster
         checkCache();
 
         // Return the name or value.
-        return nameOrValue(name, value);
+        return nameOrValue(name, value, botid);
     }
 
 
@@ -181,18 +174,17 @@ public class PredicateMaster
      *  @param name     the predicate name
      *  @param value    the predicate value
      *  @param userid   the userid
+     *  @param botid
      *
      *  @return the <code>name</code> or the <code>value</code>, depending on the predicate type
      */
-    public static synchronized String push(String name, String value, String userid)
+    public synchronized static String push(String name, String value, String userid, String botid)
     {
-        waitUntilAvailable();
-
         // Get existing or new predicates map for userid.
-        Map userPredicates = predicatesFor(userid);
+        Map userPredicates = Bots.getBot(botid).predicatesFor(userid);
 
         // Get, load or create the list of values.
-        Vector values = getLoadOrCreateValueVector(name, userPredicates, userid);
+        ArrayList values = getLoadOrCreateValueList(name, userPredicates, userid, botid);
 
         // Push the new value onto the indexed predicate list.
         pushOnto(values, value);
@@ -204,7 +196,7 @@ public class PredicateMaster
         checkCache();
 
         // Return the name or value.
-        return nameOrValue(name, value);
+        return nameOrValue(name, value, botid);
     }
 
 
@@ -214,18 +206,17 @@ public class PredicateMaster
      *
      *  @param name     the predicate name
      *  @param userid   the userid
+     *  @param botid
      *
      *  @return the <code>value</code> associated with the given <code>name</code>,
      *          for the given <code>userid</code>
      */
-    public static synchronized String get(String name, String userid)
+    public synchronized static String get(String name, String userid, String botid)
     {
-        waitUntilAvailable();
-
         String value;
 
         // Get existing or new predicates map for userid.
-        Map userPredicates = predicatesFor(userid);
+        Map userPredicates = Bots.getBot(botid).predicatesFor(userid);
 
         // Try to get the predicate value from the cache.
         Object valueObject = userPredicates.get(name);
@@ -235,12 +226,12 @@ public class PredicateMaster
         {
             try
             {
-                value = ActiveMultiplexor.getInstance().loadPredicate(name, userid);
+                value = ActiveMultiplexor.getInstance().loadPredicate(name, userid, botid);
             }
             catch (NoSuchPredicateException e0)
             {
                 // If not found, set and cache the best available default.
-                value = bestAvailableDefault(name);
+                value = bestAvailableDefault(name, botid);
             }
 
             // Check that the result is not null.
@@ -252,7 +243,7 @@ public class PredicateMaster
             else
             {
                 // This should never, ever happen!
-                throw new DeveloperErrorException("Null string found in user predicates cache!");
+                throw new DeveloperError("Null string found in user predicates cache!");
             }
 
         }
@@ -263,16 +254,16 @@ public class PredicateMaster
             // This is an unindexed predicate.
             value = (String)valueObject;
         }
-        else if (valueObject instanceof Vector)
+        else if (valueObject instanceof ArrayList)
         {
             // This is an indexed predicate.
-            Vector values = (Vector)valueObject;
-            value = (String)values.firstElement();
+            ArrayList values = (ArrayList)valueObject;
+            value = (String)values.get(0);
         }
         else
         {
             // This should never, ever happen!
-            throw new DeveloperErrorException("Something other than a String or a Vector found in user predicates cache!");
+            throw new DeveloperError("Something other than a String or a ArrayList found in user predicates cache!");
         }
 
         // Check the cache.
@@ -292,37 +283,36 @@ public class PredicateMaster
      *  @param name     the predicate name
      *  @param index    the index
      *  @param userid   the userid
+     *  @param botid
      *
      *  @return the <code>value</code> associated with the given <code>name</code>
      *          at the given <code>index</code>, for the given <code>userid</code>
      */
-    public static synchronized String get(String name, int index, String userid)
+    public synchronized static String get(String name, int index, String userid, String botid)
     {
-        waitUntilAvailable();
-
         // Get existing or new predicates map for userid.
-        Map userPredicates = predicatesFor(userid);
+        Map userPredicates = Bots.getBot(botid).predicatesFor(userid);
 
         String value = null;
 
         // Get the list of values.
-        Vector values = null;
+        ArrayList values = null;
 
         try
         {
-            values = getValueVector(name, userPredicates);
+            values = getValueList(name, userPredicates);
         }
         catch (NoSuchPredicateException e0)
         {
             // No values cached; try loading.
             try
             {
-                values = loadValueVector(name, userPredicates, userid);
+                values = loadValueList(name, userPredicates, userid, botid);
             }
             catch (NoSuchPredicateException e1)
             {
                 // Still no list, so set and cache default.
-                value = bestAvailableDefault(name);
+                value = bestAvailableDefault(name, botid);
                 userPredicates.put(name, value);
             }
         }
@@ -335,10 +325,10 @@ public class PredicateMaster
                 // Get the value at index (minus one -- no zero index in AIML).
                 value = (String)values.get(index - 1);
             }
-            catch (ArrayIndexOutOfBoundsException e)
+            catch (IndexOutOfBoundsException e)
             {
                 // Return the best available default.
-                value = bestAvailableDefault(name);
+                value = bestAvailableDefault(name, botid);
             }
         }
 
@@ -351,25 +341,6 @@ public class PredicateMaster
 
 
     /**
-     *  Waits until {@link #available} is <code>true</code>
-     *  (or the thread is interrupted).
-     */
-    private static void waitUntilAvailable()
-    {
-        while (!available)
-        {
-            try
-            {
-                myself.wait(5000);
-            }
-            catch (InterruptedException e)
-            {
-            }
-        }
-    }
-
-
-    /**
      *  Pushes a value onto the front of a list, and pops off
      *  any values at the end of the list so that the list size
      *  is no more than {@link #MAX_INDEX}.
@@ -377,7 +348,7 @@ public class PredicateMaster
      *  @param values   the list onto which to push
      *  @param value    the value to push onto the list
      */
-    private static synchronized void pushOnto(Vector values, Object value)
+    private static void pushOnto(ArrayList values, Object value)
     {
         values.add(0, value);
         while (values.size() > MAX_INDEX)
@@ -388,7 +359,7 @@ public class PredicateMaster
 
 
     /**
-     *  Returns, from the cache, a Vector of values assigned to a <code>name</code>
+     *  Returns, from the cache, an ArrayList of values assigned to a <code>name</code>
      *  for a predicate for a <code>userid</code>.  If the <code>name</code>
      *  exists in a predicate for the <code>userid</code> but it is not
      *  indexed, it is converted into an indexed value.  If it does not
@@ -402,9 +373,9 @@ public class PredicateMaster
      *
      *  @throws NoSuchPredicateException if no values are assigned to the <code>name</code>
      */
-    private static synchronized Vector getValueVector(String name, Map userPredicates) throws NoSuchPredicateException
+    private static ArrayList getValueList(String name, Map userPredicates) throws NoSuchPredicateException
     {
-        Vector values;
+        ArrayList values;
 
         if (userPredicates.size() > 0 && userPredicates.containsKey(name))
         {
@@ -415,30 +386,30 @@ public class PredicateMaster
                 // The predicate is not currently an indexed predicate.
                 if (valueObject != null)
                 {
-                    values = createValueVector(name, userPredicates);
+                    values = createValueList(name, userPredicates);
                     values.add((String)valueObject);
                 }
                 else
                 {
                     // This should never, ever happen!
-                    throw new DeveloperErrorException("Null String found as value in predicates!");
+                    throw new DeveloperError("Null String found as value in predicates!");
                 }
             }
-            else if (valueObject instanceof Vector)
+            else if (valueObject instanceof ArrayList)
             {
                 if (valueObject != null)
                 {
-                    values = (Vector)valueObject;
+                    values = (ArrayList)valueObject;
                 }
                 else
                 {
                     // This should never, ever happen!
-                    throw new DeveloperErrorException("Null Vector found as value in predicates!");
+                    throw new DeveloperError("Null ArrayList found as value in predicates!");
                 }
             }
             else
             {
-                throw new DeveloperErrorException("Something other than a String or Vector found in predicates!");
+                throw new DeveloperError("Something other than a String or ArrayList found in predicates!");
             }
         }
         // If the predicate is not found, throw an exception.
@@ -459,20 +430,21 @@ public class PredicateMaster
      *  @param name             the predicate <code>name</code>
      *  @param userPredicates   the user predicates (must not be null!)
      *  @param userid           the userid
+     *  @param botid
      *
-     *  @return a Vector of values assigned to a <code>name</code>
+     *  @return an ArrayList of values assigned to a <code>name</code>
      *          for a predicate for a <code>userid</code>
      *
      *  @throws NoSuchPredicateException if no values are assigned to the <code>name</code>
      *  @throws NullPointerException if <code>userPredicates</code> is null
      */
-    private static synchronized Vector loadValueVector(String name, Map userPredicates, String userid)
+    private static ArrayList loadValueList(String name, Map userPredicates, String userid, String botid)
         throws NoSuchPredicateException, NullPointerException
     {
         // Prevent this from being called with a null predicates map.
         if (userPredicates == null)
         {
-            throw new NullPointerException("Cannot call loadValueVector with null userPredicates!");
+            throw new NullPointerException("Cannot call loadValueList with null userPredicates!");
         }
 
         // Try to load the predicate as an indexed predicate.
@@ -480,15 +452,15 @@ public class PredicateMaster
         String value;
         try
         {
-            value = ActiveMultiplexor.getInstance().loadPredicate(name + '.' + index, userid);
+            value = ActiveMultiplexor.getInstance().loadPredicate(name + '.' + index, userid, botid);
         }
         catch (NoSuchPredicateException e0)
         {
             throw new NoSuchPredicateException(name);
         }
 
-        // If this succeeded, create the new values vector in the predicates.
-        Vector values = createValueVector(name, userPredicates);
+        // If this succeeded, create the new values list in the predicates.
+        ArrayList values = createValueList(name, userPredicates);
 
         // Add the first value that was found.
         values.add(value);
@@ -500,7 +472,7 @@ public class PredicateMaster
             while (index <= MAX_INDEX)
             {
                 index++;
-                values.add(ActiveMultiplexor.getInstance().loadPredicate(name + '.' + index, userid));
+                values.add(ActiveMultiplexor.getInstance().loadPredicate(name + '.' + index, userid, botid));
             }
         }
         catch (NoSuchPredicateException e1)
@@ -521,10 +493,10 @@ public class PredicateMaster
      *
      *  @return the new list
      */
-    private static synchronized Vector createValueVector(String name, Map userPredicates)
+    private static ArrayList createValueList(String name, Map userPredicates)
     {
         // Create the new list.
-        Vector values = new Vector();
+        ArrayList values = new ArrayList();
         userPredicates.put(name, values);
         return values;
     }
@@ -541,25 +513,25 @@ public class PredicateMaster
      *
      *  @return a value list in <code>userPredicates</code> for <code>name</code> for <code>userid</code>
      */
-    private static synchronized Vector getLoadOrCreateValueVector(String name, Map userPredicates, String userid)
+    private static ArrayList getLoadOrCreateValueList(String name, Map userPredicates, String userid, String botid)
     {
-        Vector values;
+        ArrayList values;
 
         try
         {
-            values = getValueVector(name, userPredicates);
+            values = getValueList(name, userPredicates);
         }
         catch (NoSuchPredicateException e0)
         {
             // No list found in cache; try load.
             try
             {
-                values = loadValueVector(name, userPredicates, userid);
+                values = loadValueList(name, userPredicates, userid, botid);
             }
             catch (NoSuchPredicateException e1)
             {
                 // Still no list, so create new one.
-                values = createValueVector(name, userPredicates);
+                values = createValueList(name, userPredicates);
             }
         }
         return values;
@@ -571,9 +543,12 @@ public class PredicateMaster
      *  for a predicate <code>name</code>
      *
      *  @param name the predicate name
+     *  @param botid
      */
-    private static String bestAvailableDefault(String name)
+    private static String bestAvailableDefault(String name, String botid)
     {
+        HashMap predicatesInfo = Bots.getBot(botid).getPredicatesInfo();
+
         // There may be an individual default defined.
         if (predicatesInfo.containsKey(name))
         {
@@ -584,7 +559,7 @@ public class PredicateMaster
             }
         }
         // If not, return the global empty default.
-        return Globals.getPredicateEmptyDefault();
+        return PREDICATE_EMPTY_DEFAULT;
     }
 
 
@@ -593,10 +568,13 @@ public class PredicateMaster
      *  on whether or not it is &quot;return-name-when-set&quot;.
      *
      *  @param name     the predicate name
-     *  @param value    the predicate valud
+     *  @param value    the predicate value
+     *  @param botid
      */
-    private static String nameOrValue(String name, String value)
+    private static String nameOrValue(String name, String value, String botid)
     {
+        HashMap predicatesInfo = Bots.getBot(botid).getPredicatesInfo();
+
         // Check if any info is known about this predicate.
         if (predicatesInfo.containsKey(name))
         {
@@ -611,61 +589,6 @@ public class PredicateMaster
 
 
     /**
-     *  Returns the map of predicates for a userid if it is cached,
-     *  or a new map if it is not cached.
-     *
-     *  @param userid
-     */
-    private static synchronized Map predicatesFor(String userid)
-    {
-        Map userPredicates;
-
-        // Find out if any predicates for this userid are cached.
-        if (!cache.containsKey(userid))
-        {
-            // Create them if not.
-            userPredicates = Collections.synchronizedMap(new HashMap());
-            cache.put(userid, userPredicates);
-        }
-        else
-        {
-            userPredicates = (Map)cache.get(userid);
-            if (userPredicates == null)
-            {
-                // This should never happen!
-                throw new DeveloperErrorException("userPredicates is null.");
-            }
-        }
-        return userPredicates;
-    }
-
-
-    /**
-     *  Registers some information about a predicate in advance.
-     *  Not required; just used when it is necessary to specify a
-     *  default value for a predicate and/or specify its type
-     *  as return-name-when-set.
-     *
-     *  @param name                 the name of the predicate
-     *  @param defaultValue         the default value (if any) for the predicate
-     *  @param returnNameWhenSet    whether the predicate should return its name when set
-     *  @param botid                the bot id for whom to register the predicate this way (not yet used)
-     */
-    public static void registerPredicate(String name, String defaultValue, boolean returnNameWhenSet, String botid)
-    {
-        available = false;
-
-        PredicateInfo predicate = new PredicateInfo();
-        predicate.name = name;
-        predicate.defaultValue = defaultValue;
-        predicate.returnNameWhenSet = returnNameWhenSet;
-        predicatesInfo.put(name, predicate);
-
-        available = true;
-    }
-
-
-    /**
      *  Attempts to dump a given number of predicate values
      *  from the cache, starting with the oldest userid first.
      *
@@ -673,83 +596,99 @@ public class PredicateMaster
      *
      *  @return the number that were actually dumped
      */
-    private static synchronized int save(int dumpCount)
+    private static int save(int dumpCount)
     {
-        available = false;
+        int saveCount = 0;
 
-        if (!cache.isEmpty())
+        Iterator botsIterator = Bots.keysIterator();
+
+        while (botsIterator.hasNext() && saveCount < dumpCount)
         {
-            Iterator userids = cache.keySet().iterator();
+            String botid = (String)botsIterator.next();
+            Bot bot = Bots.getBot(botid);
+            Map cache = bot.getPredicateCache();
 
-            while (userids.hasNext())
+            if (!cache.isEmpty())
             {
-                // Get a userid.
-                String userid = (String)userids.next();
-
-                // Get the cached predicates for this user.
-                Map userPredicates = (Map)cache.get(userid);
-                // Iterate over all cached predicates and save them.
-                Iterator predicates = userPredicates.keySet().iterator();
-
-                while (predicates.hasNext())
+                Iterator userids = cache.keySet().iterator();
+                while (userids.hasNext() && saveCount < dumpCount)
                 {
-                    // Get a predicate name.
-                    String name = (String)predicates.next();
-
-                    Object valueObject = userPredicates.get(name);
-
-                    // Save single-valued predicates.
-                    if (valueObject instanceof String)
+                    // Get a userid.
+                    String userid = null;
+                    try
                     {
-                        String value = (String)userPredicates.get(name);
-
-                        // Do not save default values.
-                        if (!value.equals(bestAvailableDefault(name)))
-                        {
-                            ActiveMultiplexor.getInstance().savePredicate(name, value, userid);
-                        }
+                        userid = (String)userids.next();
                     }
-                    // Save indexed predicates.
-                    else if (valueObject instanceof Vector)
+                    catch (ConcurrentModificationException e)
                     {
-                        // Try to get this as an indexed predicate.
-                        Vector values = (Vector)userPredicates.get(name);
+                        Log.log("Some problem with PredicateMaster design: ConcurrentModificationException in save() [1].", Log.RUNTIME);
+                    }
 
-                        int valueCount = values.size();
+                    // Get the cached predicates for this user.
+                    Map userPredicates = (Map)cache.get(userid);
 
-                        for (int index = 1; index <= valueCount; index++)
+                    // Iterate over all cached predicates and save them.
+                    Iterator predicates = userPredicates.keySet().iterator();
+
+                    while (predicates.hasNext())
+                    {
+                        // Get a predicate name.
+                        String name = (String)predicates.next();
+
+                        Object valueObject = userPredicates.get(name);
+
+                        // Save single-valued predicates.
+                        if (valueObject instanceof String)
                         {
+                            String value = (String)userPredicates.get(name);
+
                             // Do not save default values.
-                            String value = (String)values.get(index - 1);
-                            if (!value.equals(bestAvailableDefault(name)))
+                            if (!value.equals(bestAvailableDefault(name, botid)))
                             {
-                                ActiveMultiplexor.getInstance().savePredicate(name + '.' + index, value, userid);
+                                ActiveMultiplexor.getInstance().savePredicate(name, value, userid, botid);
+                                saveCount++;
                             }
                         }
+                        // Save indexed predicates.
+                        else if (valueObject instanceof ArrayList)
+                        {
+                            // Try to get this as an indexed predicate.
+                            ArrayList values = (ArrayList)userPredicates.get(name);
+
+                            int valueCount = values.size();
+
+                            for (int index = valueCount; --index > 0; )
+                            {
+                                // Do not save default values.
+                                String value = (String)values.get(index - 1);
+                                if (!value.equals(bestAvailableDefault(name, botid)))
+                                {
+                                    ActiveMultiplexor.getInstance().savePredicate(name + '.' + index, value, userid, botid);
+                                    saveCount++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // This should never, ever happen.
+                            throw new DeveloperError("Something other than a String or ArrayList found in predicates!");
+                        }
                     }
-                    else
+
+                    // Remove the userid from the cache.
+                    try
                     {
-                        // This should never, ever happen.
-                        throw new DeveloperErrorException("Something other than a String or Vector found in predicates!");
+                        userids.remove();
+                    }
+                    catch (ConcurrentModificationException e)
+                    {
+                        Log.log("Some problem with PredicateMaster design: ConcurrentModificationException in save() [2].", Log.RUNTIME);
                     }
                 }
-                // Decrement cacheSize by how many predicates were saved for the user.
-                cacheSize -= userPredicates.size();
-
-                // Remove the userid from the cache.
-                predicates.remove();
             }
         }
 
-        // Give the listeners the updated set of userids.
-        Iterator listenerIterator = listeners.iterator();
-        while (listenerIterator.hasNext())
-        {
-            PredicateMasterListener listener = (PredicateMasterListener)listenerIterator.next();
-            listener.updateUserids(Collections.unmodifiableSet(cache.keySet()));
-        }
-
-        available = true;
+        cacheSize -= saveCount;
 
         // Return the cacheSize now.
         return cacheSize;
@@ -759,15 +698,10 @@ public class PredicateMaster
     /**
      *  Dumps the entire cache.
      */
-    static synchronized void saveAll()
+    static void saveAll()
     {
-        available = false;
-
-        Trace.userinfo("Saving all cached predicates (userids: " + cache.size() + ").");
-        save(cache.size());
-        Trace.userinfo("Finished saving cached predicates.");
-
-        available = true;
+		Trace.userinfo("Saving all cached predicates (" + cacheSize + ")");
+        save(cacheSize);
     }
 
 
@@ -777,8 +711,8 @@ public class PredicateMaster
      */
     private static void checkCache()
     {
-        // See if we have exceeded or reached the cacheMax.
-        if (cacheSize >= cacheMax)
+        // See if we have exceeded or reached the CACHE_MAX.
+        if (cacheSize >= CACHE_MAX)
         {
             // Remove at least enough so that cacheMin is reached.
             int resultSize = save((cacheSize - cacheMin));
@@ -789,16 +723,5 @@ public class PredicateMaster
                 cacheMin = (resultSize + cacheMin) / 2;
             }
         }
-    }
-
-
-    /**
-     *  Registers a PredicateMasterListener to receive events.
-     *
-     *  @param listener     the listener
-     */
-    public static void registerListener(PredicateMasterListener listener)
-    {
-        listeners.add(listener);
     }
 }

@@ -28,12 +28,18 @@
 
 package org.alicebot.server.core.processor.loadtime;
 
+import java.io.File;
+
+import org.alicebot.server.core.Bot;
 import org.alicebot.server.core.Globals;
+import org.alicebot.server.core.Graphmaster;
 import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.core.parser.StartupFileParser;
 import org.alicebot.server.core.parser.XMLNode;
+import org.alicebot.server.core.processor.ProcessorException;
 import org.alicebot.server.core.util.InputNormalizer;
 import org.alicebot.server.core.util.Toolkit;
+import org.alicebot.server.core.util.UserError;
 
 
 /**
@@ -73,9 +79,29 @@ public class SubstitutionsProcessor extends StartupElementProcessor
     static final int PERSON2 = 3;
 
 
-    public String process(int level, String botid, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
     {
-        return parser.evaluate(level++, botid, tag.XMLChild);
+        // Does it have an href attribute?
+        String href = getHref(tag);
+
+        if (href.length() > 0)
+        {
+            try
+            {
+                return parser.
+                		processResponse(
+                			Toolkit.getFileContents(
+                				Graphmaster.getWorkingDirectory() + File.separator + href));
+            }
+            catch (ProcessorException e)
+            {
+                throw new UserError(e);
+            }
+        }
+        else
+        {
+            return parser.evaluate(level++, tag.XMLChild);
+        }
     }
 
 
@@ -91,7 +117,10 @@ public class SubstitutionsProcessor extends StartupElementProcessor
     static void addSubstitutions(int type, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
     {
         int substituteCount = parser.nodeCount(SUBSTITUTE, tag.XMLChild, true);
-        for (int index = 1; index <= substituteCount; index++)
+
+        Bot bot = parser.getCurrentBot();
+
+        for (int index = substituteCount; index > 0; index--)
         {
             XMLNode node = parser.getNode(SUBSTITUTE, tag.XMLChild, index);
             if (node.XMLType == XMLNode.EMPTY)
@@ -103,16 +132,16 @@ public class SubstitutionsProcessor extends StartupElementProcessor
                     switch (type)
                     {
                         case INPUT :
-                            InputNormalizer.addSubstitution(find, replace);
+                            bot.addInputSubstitution(find, replace);
                             break;
                         case GENDER :
-                            org.alicebot.server.core.processor.GenderProcessor.addSubstitution(find, replace);
+                            bot.addGenderSubstitution(find, replace);
                             break;
                         case PERSON :
-                            org.alicebot.server.core.processor.PersonProcessor.addSubstitution(find, replace);
+                            bot.addPersonSubstitution(find, replace);
                             break;
                         case PERSON2 :
-                            org.alicebot.server.core.processor.Person2Processor.addSubstitution(find, replace);
+                            bot.addPerson2Substitution(find, replace);
                             break;
                     }
                 }

@@ -22,6 +22,7 @@
 
 package org.alicebot.server.core;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.sql.ResultSet;
@@ -31,7 +32,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.util.UserErrorException;
+import org.alicebot.server.core.util.DeveloperError;
+import org.alicebot.server.core.util.UserError;
 import org.alicebot.server.core.util.Toolkit;
 import org.alicebot.server.sql.pool.DbAccess;
 import org.alicebot.server.sql.pool.DbAccessRefsPoolMgr;
@@ -52,54 +54,56 @@ import org.alicebot.server.sql.pool.DbAccessRefsPoolMgr;
  *  @author Noel Bush
  *  @version 4.1.3
  */
-public class DBMultiplexor extends AbstractClassifier implements PredicateMasterListener
+public class DBMultiplexor extends Multiplexor
 {
     /** A manager for database access. */
     private static DbAccessRefsPoolMgr dbManager;
 
-    /** The bot name (this will go away for multi-bot support) */
-    private static final String botName = Globals.getBotName();
+    private static HashMap userCacheForBots = new HashMap();
 
-    /** Holds userid/password combinations after they have been verified for the first time. */
-    private static HashMap userCache = new HashMap();
+    /** The string &quot;UTF-8&quot; (for character encoding conversion). */
+    private static final String ENC_UTF8 = "UTF-8";
 
 
     /**
      *  Loads the database properties from the server configuration.
      */
-    public synchronized void initialize()
+    public void initialize()
     {
         super.initialize();
-        // Exception handling needs to be better here!
-        try
-        {
-            Log.devinfo("DBMultiplexor: Opening database pool.", new String[] {Log.DATABASE, Log.STARTUP});
-            dbManager = new DbAccessRefsPoolMgr(Globals.getProperty("programd.database.driver", ""),
-                                                Globals.getProperty("programd.database.url", ""),
-                                                Globals.getProperty("programd.database.user", ""),
-                                                Globals.getProperty("programd.database.password", ""));
-            Log.devinfo("DBMultiplexor: Populating database pool.", new String[] {Log.DATABASE, Log.STARTUP});
-            dbManager.populate(Integer.parseInt(Globals.getProperty("programd.database.connections", "")));
-        }
-        catch (Exception e)
-        {
-            throw new UserErrorException("Error trying to connect to your database.  Check that it is available.", e);
-        }
-        PredicateMaster.registerListener(this);
+
+        Log.devinfo("Opening database pool.", new String[] {Log.DATABASE, Log.STARTUP});
+
+        dbManager = new DbAccessRefsPoolMgr(Globals.getProperty("programd.database.driver", ""),
+                                            Globals.getProperty("programd.database.url", ""),
+                                            Globals.getProperty("programd.database.user", ""),
+                                            Globals.getProperty("programd.database.password", ""));
+
+        Log.devinfo("Populating database pool.", new String[] {Log.DATABASE, Log.STARTUP});
+
+        dbManager.populate(Integer.parseInt(Globals.getProperty("programd.database.connections", "")));
     }
 
 
     /**
      *  Saves a predicate in a database.
      */
-    public void savePredicate(String name, String value, String userid)
+    public void savePredicate(String name, String value, String userid, String botid)
     {
         /*
             URLEncoder conveniently escapes things that
             would otherwise be problematic.
         */
-        String encodedValue = URLEncoder.encode(value.trim());
-
+        String encodedValue;
+        try
+        {
+            encodedValue = URLEncoder.encode(value.trim(), ENC_UTF8);
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            throw new DeveloperError("This platform does not support UTF-8!");
+        }
+        
         DbAccess dbaRef = null;
         try
         {
@@ -107,12 +111,14 @@ public class DBMultiplexor extends AbstractClassifier implements PredicateMaster
         }
         catch (Exception e)
         {
-            throw new UserErrorException("Could not get database reference when setting predicate name \"" +
-                        name + "\" to value \"" + value + "\" for \"" + userid + "\".", e);
+            throw new UserError("Could not get database reference when setting predicate name \"" +
+                        name + "\" to value \"" + value + "\" for \"" + userid + "\" as known to \"" + botid + "\".", e);
         }
         try
         {
-            ResultSet records = dbaRef.executeQuery("select value from predicates where userid = '" + userid + "' and name = '" + name + "'");
+            ResultSet records =
+                dbaRef.executeQuery("select value from predicates where botid = '" + botid +
+                                    "' and userid = '" + userid + "' and name = '" + name + "'");
             int count = 0;
             while (records.next())
             {
@@ -120,18 +126,21 @@ public class DBMultiplexor extends AbstractClassifier implements PredicateMaster
             }
             if (count > 0)
             {
-                dbaRef.executeUpdate("update predicates set value = '" + encodedValue + "' where userid= '" + userid + "' and name = '" + name + "'");
+                dbaRef.executeUpdate("update predicates set value = '" + encodedValue +
+                                     "' where botid = '" + botid + "' and userid= '" + userid +
+                                     "' and name = '" + name + "'");
             }
             else
             {
-                dbaRef.executeUpdate("insert into predicates values ('" + userid +"' , '" + name + "','" + encodedValue + "')");
+                dbaRef.executeUpdate("insert into predicates (userid, botid, name, value) values ('" + userid +
+                                     "', '" + botid +"' , '" + name + "','" + encodedValue + "')");
             }
             records.close();
             dbManager.returnDbaRef(dbaRef);
         }
         catch (SQLException e)
         {
-            Log.log("Database error: " + e, Log.ERROR);
+            Log.userinfo("Database error: " + e, new String[]{Log.DATABASE, Log.ERROR});
         }
     }
 
@@ -139,7 +148,7 @@ public class DBMultiplexor extends AbstractClassifier implements PredicateMaster
     /**
      *  Loads the value of a predicate from a database.
      */
-    public String loadPredicate(String name, String userid) throws NoSuchPredicateException
+    public String loadPredicate(String name, String userid, String botid) throws NoSuchPredicateException
     {
         String result = null;
         DbAccess dbaRef = null;
@@ -149,12 +158,14 @@ public class DBMultiplexor extends AbstractClassifier implements PredicateMaster
         }
         catch (Exception e)
         {
-            throw new UserErrorException("Could not get database reference when getting value for predicate name \"" +
-                        name + "\" for \"" + userid + "\".", e);
+            throw new UserError("Could not get database reference when getting value for predicate name \"" +
+                        name + "\" for \"" + userid + "\" as known to \"" + botid + "\".", e);
         }
         try
         {
-            ResultSet records = dbaRef.executeQuery("select value from predicates where userid = '" + userid + "' and name = '" + name + "'");
+            ResultSet records =
+                dbaRef.executeQuery("select value from predicates where botid = '" + botid +
+                                    "' and userid = '" + userid + "' and name = '" + name + "'");
             int returnCount = 0;
             while (records.next())
             {
@@ -174,7 +185,14 @@ public class DBMultiplexor extends AbstractClassifier implements PredicateMaster
             throw new NoSuchPredicateException(name);
         }
         // If found, return it (don't forget to decode!).
-        return URLDecoder.decode(result);
+        try
+        {
+            return URLDecoder.decode(result, ENC_UTF8);
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            throw new DeveloperError("This platform does not support UTF-8!");
+        }
     }
 
 
@@ -184,11 +202,12 @@ public class DBMultiplexor extends AbstractClassifier implements PredicateMaster
      *
      *  @see {@link Multiplexor#createUser}
      */
-    public synchronized boolean createUser(String userid, String password, String secretKey)
+    public boolean createUser(String userid, String password, String secretKey, String botid)
     {
         if (!secretKey.equals(SECRET_KEY))
         {
             Log.userinfo("ACCESS VIOLATION: Tried to create a user with invalid secret key.", Log.ERROR);
+            return false;
         }
         userid = userid.trim().toLowerCase();
         password = password.trim().toLowerCase();
@@ -199,12 +218,12 @@ public class DBMultiplexor extends AbstractClassifier implements PredicateMaster
         }
         catch (Exception e)
         {
-            throw new UserErrorException("Could not get database reference when creating user \"" +
+            throw new UserError("Could not get database reference when creating user \"" +
                         userid + "\" with password \"" + password + "\" and secret key \"" + secretKey + "\".", e);
         }
         try
         {
-            ResultSet rs = dba.executeQuery("select * from users where userid = '" + userid + "'");
+            ResultSet rs = dba.executeQuery("select * from users where userid = '" + userid + "' and botid = '" + botid + "'");
             int returnCount = 0;
             while (rs.next())
             {
@@ -216,25 +235,31 @@ public class DBMultiplexor extends AbstractClassifier implements PredicateMaster
                     return false;
                 }
             }
-            dba.executeUpdate("insert into users values ('" + userid +"' , '" + password + "')");
+            dba.executeUpdate("insert into users (userid, password, botid) values ('" + userid +"' , '" + password + "' , '" + botid + "')");
             rs.close();
         }
         catch (SQLException e)
         {
-            throw new UserErrorException("Error working with database.", e);
+            throw new UserError("Error working with database.", e);
         }
         dbManager.returnDbaRef(dba);
         return true;
     }
 
 
-    public synchronized boolean checkUser(String userid, String password, String secretKey)
+    public boolean checkUser(String userid, String password, String secretKey, String botid)
     {
         if (!secretKey.equals(SECRET_KEY))
         {
             Log.userinfo("ACCESS VIOLATION: Tried to create a user with invalid secret key.", Log.ERROR);
+            return false;
         }
         // Look first to see if the user is already in the cache.
+        if (!userCacheForBots.containsKey(botid))
+        {
+            userCacheForBots.put(botid, new HashMap());
+        }
+        HashMap userCache = (HashMap)userCacheForBots.get(botid);
         if (userCache.containsKey(userid))
         {
             // If so, check against stored password.
@@ -250,7 +275,7 @@ public class DBMultiplexor extends AbstractClassifier implements PredicateMaster
         // Otherwise, look in the database, and put in the cache if valid.
         else
         {
-            if (checkUserInDB(userid, password))
+            if (checkUserInDB(userid, password, botid))
             {
                 userCache.put(userid, password);
                 return true;
@@ -268,11 +293,10 @@ public class DBMultiplexor extends AbstractClassifier implements PredicateMaster
      *
      *  @param userid       the userid to check
      *  @param password     the password to check
-     *  @param secretKey    the secret key that should authenticate this request
      *
      *  @return whether the userid and password combination is valid
      */
-    private synchronized boolean checkUserInDB(String userid, String password)
+    private boolean checkUserInDB(String userid, String password, String botid)
     {
         String passwordInDatabase = null;
 
@@ -285,12 +309,13 @@ public class DBMultiplexor extends AbstractClassifier implements PredicateMaster
         }
         catch (Exception e)
         {
-            throw new UserErrorException("Could not get database reference when checking user \"" +
+            throw new UserError("Could not get database reference when checking user \"" +
                         userid + "\" with password \"" + password + "\".", e);
         }
         try
         {
-            ResultSet rs = dbaRef.executeQuery("select * from users where userid = '" + userid + "'");
+            ResultSet rs =
+                dbaRef.executeQuery("select * from users where userid = '" + userid + "' and botid = '" + botid + "'");
             int returnCount = 0;
             while (rs.next())
             {
@@ -307,7 +332,7 @@ public class DBMultiplexor extends AbstractClassifier implements PredicateMaster
                 }
                 if (returnCount > 1)
                 {
-                    throw new UserErrorException("Duplicate user name: \"" + userid + "\"");
+                    throw new UserError("Duplicate user name: \"" + userid + "\"");
                 }
             }
             rs.close();
@@ -315,7 +340,7 @@ public class DBMultiplexor extends AbstractClassifier implements PredicateMaster
         }
         catch (SQLException e)
         {
-            throw new UserErrorException("Database error.", e);
+            throw new UserError("Database error.", e);
         }
         if (passwordInDatabase == null)
         {
@@ -330,11 +355,12 @@ public class DBMultiplexor extends AbstractClassifier implements PredicateMaster
 
 
 
-    public synchronized boolean changePassword(String userid, String password, String secretKey)
+    public boolean changePassword(String userid, String password, String secretKey, String botid)
     {
         if (!secretKey.equals(SECRET_KEY))
         {
             Log.userinfo("ACCESS VIOLATION: Tried to create a user with invalid secret key.", Log.ERROR);
+            return false;
         }
         userid = userid.trim().toLowerCase();
         password = password.trim().toLowerCase();
@@ -345,12 +371,13 @@ public class DBMultiplexor extends AbstractClassifier implements PredicateMaster
         }
         catch (Exception e)
         {
-            throw new UserErrorException("Could not get database reference when changing password to \"" +
-                        password + "\" for \"" + userid + "\".", e);
+            throw new UserError("Could not get database reference when changing password to \"" +
+                        password + "\" for \"" + userid + "\" as known to \"" + botid + "\".", e);
         }
         try
         {
-            ResultSet rs = dbaRef.executeQuery("select * from users where userid = '" + userid + "'");
+            ResultSet rs =
+                dbaRef.executeQuery("select * from users where userid = '" + userid + "' and botid = '" + botid + "'");
             int returnCount = 0;
             while (rs.next())
             {
@@ -362,38 +389,23 @@ public class DBMultiplexor extends AbstractClassifier implements PredicateMaster
                 dbManager.returnDbaRef(dbaRef);
                 return(false);
             }
-            dbaRef.executeUpdate("update users set password = '" + password +"' where userid = '" + userid + "'");
+            dbaRef.executeUpdate("update users set password = '" + password +
+                                 "' where userid = '" + userid + "' and botid = '" + botid + "'");
             rs.close();
             dbManager.returnDbaRef(dbaRef);
         }
         catch (SQLException e)
         {
-            throw new UserErrorException("Database error.", e);
+            throw new UserError("Database error.", e);
         }
-        userCache.remove(userid);
-        userCache.put(userid, password);
+        userCacheForBots.remove(userid);
+        userCacheForBots.put(userid, password);
         return true;
     }
 
 
-    /**
-     *  Removes any userids from the cache that are no longer
-     *  in the PredicateMaster's cache (essentially causes the
-     *  <code>DBMultiplexor</code> to rely on the PredicateMaster's
-     *  cache maintenance to maintain its own.
-     *
-     *  @param userids  the set of userids
-     */
-    public synchronized void updateUserids(Set userids)
+    public int useridCount(String botid)
     {
-        Iterator myUserids = userCache.keySet().iterator();
-        while (myUserids.hasNext())
-        {
-            String userid = (String)myUserids.next();
-            if (!userids.contains(userid))
-            {
-                myUserids.remove();
-            }
-        }
+        return ((HashMap)userCacheForBots.get(botid)).size();
     }
 } 

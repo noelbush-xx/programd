@@ -28,12 +28,18 @@
 
 package org.alicebot.server.core.processor.loadtime;
 
+import java.io.File;
+
+import org.alicebot.server.core.Bot;
 import org.alicebot.server.core.Globals;
+import org.alicebot.server.core.Graphmaster;
 import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.core.parser.StartupFileParser;
 import org.alicebot.server.core.parser.XMLNode;
+import org.alicebot.server.core.processor.ProcessorException;
 import org.alicebot.server.core.util.InputNormalizer;
 import org.alicebot.server.core.util.Toolkit;
+import org.alicebot.server.core.util.UserError;
 
 
 /**
@@ -52,30 +58,52 @@ public class SentenceSplittersProcessor extends StartupElementProcessor
     private static final String SPLITTER = "splitter";
 
 
-    public String process(int level, String botid, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
     {
-        int splitterCount = parser.nodeCount(SPLITTER, tag.XMLChild, true);
-        for (int index = 1; index <= splitterCount; index++)
+        // Does it have an href attribute?
+        String href = getHref(tag);
+
+        if (href.length() > 0)
         {
-            XMLNode node = parser.getNode(SPLITTER, tag.XMLChild, index);
-            if (node.XMLType == XMLNode.EMPTY)
+            try
             {
-                String splitter = Toolkit.getAttributeValue(VALUE, node.XMLAttr);
-                if (splitter != null)
+                return parser.
+                		processResponse(
+                			Toolkit.getFileContents(
+                				Graphmaster.getWorkingDirectory() + File.separator + href));
+            }
+            catch (ProcessorException e)
+            {
+                throw new UserError(e);
+            }
+        }
+        else
+        {
+            Bot bot = parser.getCurrentBot();
+
+            int splitterCount = parser.nodeCount(SPLITTER, tag.XMLChild, true);
+            for (int index = splitterCount; --index > 0; )
+            {
+                XMLNode node = parser.getNode(SPLITTER, tag.XMLChild, index);
+                if (node.XMLType == XMLNode.EMPTY)
                 {
-                    InputNormalizer.addSentenceSplitter(splitter);
+                    String splitter = Toolkit.getAttributeValue(VALUE, node.XMLAttr);
+                    if (splitter != null)
+                    {
+                        bot.addSentenceSplitter(splitter);
+                    }
+                }
+                else
+                {
+                    throw new InvalidStartupElementException("<splitter/> cannot have content!");
                 }
             }
-            else
+            if (Globals.showConsole())
             {
-                throw new InvalidStartupElementException("<splitter/> cannot have content!");
+                Log.userinfo("Loaded " + splitterCount + " " + tag.XMLData + ".", Log.STARTUP);
             }
+            return EMPTY_STRING;
         }
-        if (Globals.showConsole())
-        {
-            Log.userinfo("Loaded " + splitterCount + " " + tag.XMLData + ".", Log.STARTUP);
-        }
-        return EMPTY_STRING;
     }
 }
 

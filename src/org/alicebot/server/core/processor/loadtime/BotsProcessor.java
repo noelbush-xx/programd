@@ -28,9 +28,9 @@ public class BotsProcessor extends StartupElementProcessor
     public static final String label = "bots";
 
 
-    public String process(int level, String botid, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
     {
-        return parser.evaluate(level++, botid, tag.XMLChild);
+        return parser.evaluate(level++, tag.XMLChild);
     }
 }
 

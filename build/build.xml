@@ -1,20 +1,18 @@
 <project default="package" basedir=".">
-    
-    <!-- =================================================================== -->
-    <!-- Initialization target                                               -->
-    <!-- =================================================================== -->
+
+    <!--Initialization Target-->
     <target name="init">
         <tstamp/>
         <property name="Name" value="Alicebot Program D"/>
         <property name="name" value="aliceserver"/>
-        <property name="version" value="4.1.4 reference"/>
-        <property name="year" value="2001"/>
+        <property name="version" value="4.1.5"/>
+        <property name="year" value="2002"/>
         
         <echo message="Building ${Name} ${version}...."/>
         
-        <property name="build.compiler" value="classic"/>
+        <property name="build.compiler" value="modern"/>
         <property name="debug" value="off"/>
-        <property name="optimize" value="off"/>
+        <property name="optimize" value="on"/>
         <property name="deprecation" value="on"/>
         
         <property name="src.dir" value="../src"/>
@@ -34,9 +32,7 @@
         
     </target>
     
-    <!-- =================================================================== -->
-    <!-- Help on usage                                                       -->
-    <!-- =================================================================== -->
+    <!--Help on usage-->
     <target name="usage">
         <echo message=""/>
         <echo message=""/>
@@ -56,16 +52,12 @@
         <echo message=""/>
     </target>
     
-    <!-- =================================================================== -->
-    <!-- Prepares the build directory                                        -->
-    <!-- =================================================================== -->
+    <!--Prepare the build directory.-->
     <target name="prepare" depends="init">
         <mkdir dir="${build.dir}"/>
     </target>
     
-    <!-- =================================================================== -->
-    <!-- Prepares the source code                                            -->
-    <!-- =================================================================== -->
+    <!--Prepare the source code.-->
     <target name="prepare-src" depends="prepare">
         
         <mkdir dir="${build.dest}"/>
@@ -77,12 +69,9 @@
                 <include name="**/*.xml"/>
             </fileset>
         </copy>
-        
     </target>
     
-    <!-- =================================================================== -->
-    <!-- Compiles the source directory                                       -->
-    <!-- =================================================================== -->
+    <!--Compile the source directory.-->
     <target name="compile" depends="prepare-src">
         <javac srcdir="${build.src}"
             destdir="${build.dest}"
@@ -91,9 +80,7 @@
             optimize="${optimize}"/>
     </target>
     
-    <!-- =================================================================== -->
-    <!-- Creates the class package                                           -->
-    <!-- =================================================================== -->
+    <!--Create the class package.-->
     <target name="package" depends="compile">
         <!--<fixcrlf srcdir="." includes="**/*.bat" cr="add"/>-->
         <!--<fixcrlf srcdir="." includes="**/*.sh" cr="remove"/>-->
@@ -103,9 +90,7 @@
         </jar>
     </target>
     
-    <!-- =================================================================== -->
-    <!-- Creates the API documentation                                       -->
-    <!-- =================================================================== -->
+    <!--Create the API documentation.-->
     <target name="javadoc" depends="prepare-src">
         <mkdir dir="${build.javadocs}"/>
         <javadoc packagenames="${packages}"
@@ -122,9 +107,7 @@
             />
     </target>
     
-    <!-- =================================================================== -->
-    <!-- Clean targets                                                       -->
-    <!-- =================================================================== -->
+    <!--Clean target.-->
     <target name="clean" depends="init">
         <delete dir="${build.dir}"/>
     </target>
@@ -138,4 +121,3 @@
     
 </project>
 
-<!-- End of file -->

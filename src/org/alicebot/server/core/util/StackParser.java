@@ -119,7 +119,7 @@ public class StackParser
 	 * @param throwable source of backtrace
 	 * @return String containing backtrace
 	 */
-	private static String getStackString(Throwable throwable)
+	public static String getStackString(Throwable throwable)
     {
 		StringWriter writer = new StringWriter();
 		throwable.printStackTrace(new PrintWriter(writer));

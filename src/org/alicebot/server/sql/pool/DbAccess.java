@@ -8,8 +8,8 @@ import java.sql.Statement;
 
 import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.util.DeveloperErrorException;
-import org.alicebot.server.core.util.UserErrorException;
+import org.alicebot.server.core.util.DeveloperError;
+import org.alicebot.server.core.util.UserError;
 
 
 /**
@@ -102,7 +102,7 @@ public class DbAccess
             }
             catch (ClassNotFoundException e)
             {
-                throw new UserErrorException("Could not find your database driver.");
+                throw new UserError("Could not find your database driver.");
             }
             try
             {
@@ -117,7 +117,7 @@ public class DbAccess
             }
             catch (SQLException e)
             {
-                throw new UserErrorException("Could not connect to \"" + url + "\".  Please check that the parameters specified in your server properties file are correct.", e);
+                throw new UserError("Could not connect to \"" + url + "\".  Please check that the parameters specified in your server properties file are correct.", e);
             }
             // Create the statement to be used in queries or updates.
             try
@@ -126,7 +126,7 @@ public class DbAccess
             }
             catch (SQLException e)
             {
-                throw new UserErrorException("Could not create a SQL statement using your database.");
+                throw new UserError("Could not create a SQL statement using your database.");
             }
         }
     }
@@ -139,12 +139,14 @@ public class DbAccess
      *  @param query    the query to execute
      *
      *  @return the {@link java.sql.ResultSet ResultSet} from executing a given query
+     *
+     *  @throws SQLException if there was a problem.
      */
-    public ResultSet executeQuery(String query)
+    public ResultSet executeQuery(String query) throws SQLException
     {
         if (statement == null)
         {
-            throw new DeveloperErrorException("Tried to execute query before creating Statement object!");
+            throw new DeveloperError("Tried to execute query before creating Statement object!");
         }
         try
         {
@@ -152,7 +154,9 @@ public class DbAccess
         }
         catch (SQLException e)
         {
-            throw new UserErrorException("Could not execute a query on your database.");
+            Log.userinfo("Problem executing a query on your database.  Check structure and availability.",
+            new String[] {Log.ERROR, Log.DATABASE});
+            throw e;
         }
     }
 
@@ -169,7 +173,7 @@ public class DbAccess
     {
         if (statement == null)
         {
-            throw new DeveloperErrorException("Tried to execute query before creating Statement object!");
+            throw new DeveloperError("Tried to execute query before creating Statement object!");
         }
         try
         {
@@ -177,7 +181,7 @@ public class DbAccess
         }
         catch (SQLException e)
         {
-            throw new UserErrorException("Could not execute an update on your database.", e);
+            throw new UserError("Problem executing an update on your database.  Check structure and availability.", e);
         }
     }
 

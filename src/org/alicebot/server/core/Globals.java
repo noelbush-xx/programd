@@ -22,7 +22,7 @@
     - made constants private (enforce use of get/set methods!)
     - removed unused globals constant
     - constant name changes:
-        _serverProps --> serverProperties
+        _serverProps --> properties
         _botName --> botName
         categoryCount --> categoryCount
         version --> version
@@ -50,6 +50,7 @@
 package org.alicebot.server.core;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -58,7 +59,7 @@ import java.util.Properties;
 import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.core.processor.AIMLProcessorRegistry;
 import org.alicebot.server.core.processor.loadtime.StartupElementProcessorRegistry;
-import org.alicebot.server.core.util.UserErrorException;
+import org.alicebot.server.core.util.UserError;
 import org.alicebot.server.core.util.InputNormalizer;
 
 
@@ -79,22 +80,13 @@ public class Globals
     private static boolean isLoaded = false;
 
     /** The server properties. */
-    private static Properties serverProperties;
+    private static Properties properties;
 
     /** The predicate in which to find the name of the bot. */
     private static String botNamePredicate;
 
-    /** The bot id. */
-    private static String botID;
-
-    /** The name of the bot. */
-    private static String botName;
-
     /** The predicate in which to find the name of the client. */
     private static String clientNamePredicate;
-
-    /** The version of the software. */
-    private static String version;
 
     /** The default value to return if a predicate is not defined. */
     private static String predicateEmptyDefault;
@@ -102,8 +94,14 @@ public class Globals
     /** The input to match if an infinite loop exception is thrown. */
     private static String infiniteLoopInput;
 
-    /** Whether use of the <system> tag is allowed. */
+    /** Whether use of the &lt;system&gt; tag is allowed. */
     private static boolean osAccessAllowed;
+
+    /** The directory in which to execute &lt;system&gt; commands. */
+    private static String systemDirectory;
+
+    /** The prefix for &lt;system&gt; commands. */
+    private static String systemPrefix;
 
     /** Whether use of the <javascript> tag is allowed. */
     private static boolean jsAccessAllowed;
@@ -147,92 +145,115 @@ public class Globals
     /** Whether to use the AIML Watcher. */
     private static boolean useWatcher;
 
+    /** Whether to use the heart. */
+    private static boolean haveAHeart;
+
     /** Number of responses to wait before invoking targeting. */
     private static int targetSkip;
 
     /** Whether to use targeting. */
     private static boolean useTargeting;
 
+    /** The version of the software. */
+    private static String version = Graphmaster.VERSION;
+
     /** The host name. */
     private static String hostName;
+    static
+    {
+        // Try to set the hostname.
+        try
+        {
+            hostName = InetAddress.getLocalHost().getHostName();
+        }
+        catch (UnknownHostException e)
+        {
+            hostName = "unknown-host";
+        }
+    }
 
     /** The port on which the http server is listening. */
     private static int httpPort;
 
     /** The fully-qualified name of the JavaScript interpreter. */
     private static String javaScriptInterpreter;
+    
+    /** The response time-out. */
+    private static int responseTimeout;
 
     /** An empty string, for convenience. */
     private static final String EMPTY_STRING = "";
 
-    /** The AIML processor registry. */
-    private static AIMLProcessorRegistry aimlProcessorRegistry;
-
-    /** The startup element processor registry. */
-    private static StartupElementProcessorRegistry startupElementProcessorRegistry;
-
 
     /**
-     *  Creates a new <code>Globals</code> object.
+     *  Prevents creation of a <code>Globals</code> object.
      */
-    public Globals()
+    private Globals()
     {
     }
 
 
     /**
-     *  @return the AIMLProcessorRegistry
+     *  Loads properties from a path.
+     *
+     *  @param path
      */
-    public static AIMLProcessorRegistry getAIMLProcessorRegistry()
+    public static void load(String path)
     {
-        return aimlProcessorRegistry;
-    }
-
-
-    /**
-     *  @return the StartupElementProcessorRegistry
-     */
-    public static StartupElementProcessorRegistry getStartupElementProcessorRegistry()
-    {
-        return startupElementProcessorRegistry;
+        properties = new Properties();
+        try
+        {
+            properties.load(new FileInputStream(path));
+        }
+        catch (IOException e)
+        {
+            // Error loading properties
+            System.err.println("Could not find \"" + path + "\"!");
+            System.exit(1);
+        }
+        loadProperties();
     }
 
 
     /**
      *  Loads some global values from a properties object.
-     *
-     *  @param properties   the properties object
      */
-    public static void load(Properties properties)
+    public static void loadProperties()
     {
-        // Globals is the only home for this properties; we don't pass it around.
-        serverProperties = properties;
+        if (properties == null)
+        {
+            System.err.println("Server properties not loaded!");
+            System.exit(1);
+        }
 
         // Whether to use the watcher; default false.
-        useWatcher = Boolean.valueOf(serverProperties.getProperty("programd.watcher", "false")).booleanValue();
+        useWatcher = Boolean.valueOf(properties.getProperty("programd.watcher", "false")).booleanValue();
+
+        // Whether to enable the heart; default false.
+        haveAHeart = Boolean.valueOf(properties.getProperty("programd.heart.enabled", "false")).booleanValue();
 
         // Whether to use the shell; default true.
-        useShell = Boolean.valueOf(serverProperties.getProperty("programd.shell", "true")).booleanValue();
+        useShell = Boolean.valueOf(properties.getProperty("programd.shell", "true")).booleanValue();
 
         // Whether to show the console; default true.
-        showConsole = Boolean.valueOf(serverProperties.getProperty("programd.console", "true")).booleanValue();
+        showConsole = Boolean.valueOf(properties.getProperty("programd.console", "true")).booleanValue();
 
         // Whether to show the match trace; default true.
-        showMatchTrace = showConsole ? Boolean.valueOf(serverProperties.getProperty("programd.console.match-trace", "true")).booleanValue() : false;
+        showMatchTrace = showConsole ? Boolean.valueOf(properties.getProperty("programd.console.match-trace", "true")).booleanValue() : false;
 
         // Whether to use targeting; default true.
-        useTargeting = Boolean.valueOf(serverProperties.getProperty("programd.targeting", "true")).booleanValue();
+        useTargeting = Boolean.valueOf(properties.getProperty("programd.targeting", "true")).booleanValue();
 
         // AIML targets file path; default ./targets/targets.aiml.
-        targetsAIMLPath = serverProperties.getProperty("programd.targeting.aiml.path", "./targets/targets.aiml");
+        targetsAIMLPath = properties.getProperty("programd.targeting.aiml.path", "./targets/targets.aiml");
 
         // AIML targets file path; default ./targets/targets.aiml.
-        targetsDataPath = serverProperties.getProperty("programd.targeting.data.path", "./targets/targets.xml");
+        targetsDataPath = properties.getProperty("programd.targeting.data.path", "./targets/targets.xml");
 
         // Target skip
         try
         {
-            targetSkip = Integer.parseInt(serverProperties.getProperty("programd.targeting.targetskip", "1"));
+            targetSkip = Integer.parseInt(properties.getProperty("programd.targeting.targetskip", "1"));
         }
         catch (NumberFormatException e)
         {
@@ -243,41 +264,45 @@ public class Globals
         targetSkip = targetSkip < 1 ? 1 : targetSkip;
 
         // The merge policy: default generic "true".
-        mergePolicy = serverProperties.getProperty("programd.merge", "true");
+        mergePolicy = properties.getProperty("programd.merge", "true");
 
         // The bot predicate in which to find the bot's name; default is "name".
-        botNamePredicate = serverProperties.getProperty("programd.console.bot-name-predicate", "name");
+        botNamePredicate = properties.getProperty("programd.console.bot-name-predicate", "name");
 
         // The predicate in which to find the client's name; default is "name".
-        clientNamePredicate = serverProperties.getProperty("programd.console.client-name-predicate", "name");
+        clientNamePredicate = properties.getProperty("programd.console.client-name-predicate", "name");
 
         // Default for predicates with no defined values; default is empty string.
-        predicateEmptyDefault = serverProperties.getProperty("programd.emptydefault", "");
+        predicateEmptyDefault = properties.getProperty("programd.emptydefault", "");
 
         // Input to match if an infinite loop is found; default is &quot;INFINITE LOOP&quot;.
         infiniteLoopInput =
             InputNormalizer.patternFitIgnoreCase(
-                serverProperties.getProperty("programd.infinite-loop-input", "INFINITE LOOP"));
+                properties.getProperty("programd.infinite-loop-input", "INFINITE LOOP"));
 
-        // Whether to allow use of <system> tag; default false.
-        osAccessAllowed = Boolean.valueOf(serverProperties.getProperty("programd.os-access-allowed", "false")).booleanValue();
+        // Whether to allow use of &lt;system&gt; tag; default false.
+        osAccessAllowed = Boolean.valueOf(properties.getProperty("programd.os-access-allowed", "false")).booleanValue();
 
-        // Whether to allow use of <javascript> tag; default false.
-        jsAccessAllowed = Boolean.valueOf(serverProperties.getProperty("programd.javascript-allowed", "false")).booleanValue();
+        // Whether to allow use of &lt;javascript&gt; tag; default false.
+        jsAccessAllowed = Boolean.valueOf(properties.getProperty("programd.javascript-allowed", "false")).booleanValue();
+
+        systemDirectory = properties.getProperty("programd.interpreter.system.directory", "./");
+
+        systemPrefix = properties.getProperty("programd.interpreter.system.prefix", "");
 
         // Whether to support deprecated tags; default false.
-        supportDeprecatedTags = Boolean.valueOf(serverProperties.getProperty("programd.deprecated-tags-support", "false")).booleanValue();
+        supportDeprecatedTags = Boolean.valueOf(properties.getProperty("programd.deprecated-tags-support", "false")).booleanValue();
 
         // Whether to warn about deprecated tags; default false.
-        warnAboutDeprecatedTags = supportDeprecatedTags ? Boolean.valueOf(serverProperties.getProperty("programd.deprecated-tags-warn", "false")).booleanValue() : false;
+        warnAboutDeprecatedTags = supportDeprecatedTags ? Boolean.valueOf(properties.getProperty("programd.deprecated-tags-warn", "false")).booleanValue() : false;
 
         // Whether to require namespace qualifiers on non-AIML tags; default false.
-        nonAIMLRequireNamespaceQualification = Boolean.valueOf(serverProperties.getProperty("programd.non-aiml-require-namespace-qualifiers", "false")).booleanValue();
+        nonAIMLRequireNamespaceQualification = Boolean.valueOf(properties.getProperty("programd.non-aiml-require-namespace-qualifiers", "false")).booleanValue();
 
         // How many predicate values to cache; default 5000.
         try
         {
-            predicateValueCacheMax = Integer.parseInt(serverProperties.getProperty("programd.predicate-cache.max", "5000"));
+            predicateValueCacheMax = Integer.parseInt(properties.getProperty("programd.predicate-cache.max", "5000"));
         }
         catch (NumberFormatException e)
         {
@@ -287,14 +312,14 @@ public class Globals
 
 
         // The fully-qualified name of the JavaScript interpreter.
-        javaScriptInterpreter = serverProperties.getProperty("programd.interpreter.javascript", "");
+        javaScriptInterpreter = properties.getProperty("programd.interpreter.javascript", "");
 
         
         // Get the category load notify interval.
         try
         {
             categoryLoadNotifyInterval =
-                Integer.parseInt(serverProperties.getProperty("programd.console.category-load-notify-interval", "1000"));
+                Integer.parseInt(properties.getProperty("programd.console.category-load-notify-interval", "1000"));
         }
         catch (NumberFormatException e)
         {
@@ -302,35 +327,29 @@ public class Globals
         }
         categoryLoadNotifyInterval = categoryLoadNotifyInterval > 0 ? categoryLoadNotifyInterval : 1000;
 
+        try
+        {
+            responseTimeout =
+                Integer.parseInt(properties.getProperty("programd.response-timeout", "1000"));
+        }
+        catch (NumberFormatException e)
+        {
+            responseTimeout = 1000;
+        }
+        responseTimeout = responseTimeout > 0 ? responseTimeout : 1000;
+
         // Make sure the startup file actually exists.
         try
         {
             startupFilePath =
-                new File(serverProperties.getProperty("programd.startup",
+                new File(properties.getProperty("programd.startup",
                                                       "startup.xml")).getCanonicalPath();
         }
         catch (IOException e)
         {
             String error = "Startup file does not exist (check server properties).";
             Log.log(error, Log.STARTUP);
-            throw new UserErrorException(error);
-        }
-
-        // Version comes from Graphmaster.
-        version = Graphmaster.VERSION;
-
-        // Initialize the processor registries.
-        aimlProcessorRegistry = new AIMLProcessorRegistry();
-        startupElementProcessorRegistry = new StartupElementProcessorRegistry();
-
-        // Try to set the hostname.
-        try
-        {
-            hostName = InetAddress.getLocalHost().getHostName();
-        }
-        catch (UnknownHostException e)
-        {
-            hostName = "unknown-host";
+            throw new UserError(error);
         }
         isLoaded = true;
     }
@@ -359,48 +378,6 @@ public class Globals
 
 
     /**
-     *  Returns the bot's name (temporary).
-     *
-     *  @return the bot's name (temporary)
-     */
-    public static String getBotName()
-    {
-        return botName;
-    }
-
-
-    /**
-     *  Sets the bot's name (temporary).
-     */
-    public static void setBotName()
-    {
-        botName = BotProperty.getPredicateValue(botNamePredicate);
-    }
-
-
-    /**
-     *  Returns the bot's id (temporary).
-     *
-     *  @return the bot's id (temporary)
-     */
-    public static String getBotID()
-    {
-        return botID;
-    }
-
-
-    /**
-     *  Sets the bot's id (temporary).
-     *
-     *  @param id   the id to set
-     */
-    public static void setBotID(String id)
-    {
-        botID = id;
-    }
-
-
-    /**
      *  Returns the startup file path.
      *
      *  @return the startup file path
@@ -419,6 +396,17 @@ public class Globals
     public static String getClientNamePredicate()
     {
         return clientNamePredicate;
+    }
+
+
+    /**
+     *  Returns the predicate name with which the bot's name is associated.
+     *
+     *  @return the predicate name with which the bot's name is associated
+     */
+    public static String getBotNamePredicate()
+    {
+        return botNamePredicate;
     }
 
 
@@ -474,6 +462,17 @@ public class Globals
     public static boolean isWatcherActive()
     {
         return useWatcher;
+    }
+
+
+    /**
+     *  Returns whether to use the Heart.
+     *
+     *  @return whether to use the Heart
+     */
+    public static boolean useHeart()
+    {
+        return haveAHeart;
     }
 
 
@@ -575,6 +574,17 @@ public class Globals
 
 
     /**
+     *  Returns the response timeout.
+     *
+     *  @return response timeout
+     */
+    public static int getResponseTimeout()
+    {
+        return responseTimeout;
+    }
+
+
+    /**
      *  Returns the host name.
      *
      *  @return the host name
@@ -663,6 +673,28 @@ public class Globals
 
 
     /**
+     *  Returns the directory in which to run system commands.
+     *
+     *  @return the directory in which to run system commands
+     */
+    public static String getSystemDirectory()
+    {
+        return systemDirectory;
+    }
+
+
+    /**
+     *  Returns the prefix for system commands.
+     *
+     *  @return the prefix for system commands
+     */
+    public static String getSystemPrefix()
+    {
+        return systemPrefix;
+    }
+
+
+    /**
      *  Returns the value of a property string.
      *
      *  @param propertyName the name of the property whose value is wanted
@@ -671,11 +703,7 @@ public class Globals
      */
     public static String getProperty(String propertyName)
     {
-        if (serverProperties == null)
-        {
-            return null;
-        }
-        return serverProperties.getProperty(propertyName);
+        return properties.getProperty(propertyName);
     }
 
 
@@ -689,10 +717,12 @@ public class Globals
      */
     public static String getProperty(String propertyName, String defaultValue)
     {
-        if (serverProperties == null)
-        {
-            return defaultValue;
-        }
-        return serverProperties.getProperty(propertyName, defaultValue);
+        return properties.getProperty(propertyName, defaultValue);
+    }
+
+
+    public static Properties getProperties()
+    {
+        return properties;
     }
 }

@@ -37,7 +37,8 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Properties;
 
-import org.alicebot.server.core.ActiveMultiplexor;
+import org.alicebot.server.core.Bot;
+import org.alicebot.server.core.Multiplexor;
 import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.core.responder.TextResponder;
 import org.alicebot.server.core.util.Toolkit;
@@ -48,73 +49,101 @@ import org.alicebot.server.core.util.Trace;
  *  by Chris Carlin (http://EBJava.sourceforge.net/)
  *  modified to work with an Alicebot server.
  *
- *  @author Chris Carling
+ *  @author Chris Carlin
  *  @author Jon Baer
  *  @author Noel Bush
  *
  *  @see <a href="http://EBJava.sourceforge.net/">http://EBJava.sourceforge.net/</a>
  *  @version 1.0
  */
-public class AliceICQ implements AliceChatListener
+public class AliceICQ extends AliceChatListener
 {
+    /** Please document. */
     private static final int SERVERPORT = 4000;
+
+    /** Please document. */
     private static final String  SERVER = "icq.mirabilis.com";
+    
+    /** Please document. */
+    private static final String _ICQ = "_ICQ";
+
+    /** Please document. */
     private String pass;
-    private int    uin;
+
+    /** Please document. */
+    private int uin;
+
+    /** Please document. */
     protected DatagramSocket socket;
+
+    /** Please document. */
     private DatagramPacket packet;
+
+    /** Please document. */
     private byte[] buffer;
+
+    /** Please document. */
     private short seqNo = 1;
+
+    /** Please document. */
     private static final short  VERSION = (short)2;
+
+    /** Please document. */
     private static InetAddress serverAddy;
+
+    /** Please document. */
     private boolean online = false;
+
+    /** Please document. */
     private int clientport;
+    
+    /** Please document. */
+	private static final String MSG = "AliceICQ: ";
+
+    /** Please document. */
+    public static final String label = "AliceICQ";
 
     
-    public boolean initialize(Properties properties)
+    /**
+     *  Creates a new AliceICQ chat listener for a given bot.
+     *
+     *  @param bot	the bot for whom to listen
+     */
+    public AliceICQ(Bot bot)
     {
-        // Check if enabled.
-        if (Boolean.valueOf(properties.getProperty("programd.listeners.icq.enabled", "false")).booleanValue())
-        {
-            // Get parameters.
-            try
-            {
-                uin = Integer.parseInt(properties.getProperty("programd.listeners.icq.number", ""));
-            }
-            catch (NumberFormatException e)
-            {
-                Log.userinfo("AliceICQ: Invalid user number (try a number!); aborting.", Log.LISTENERS);
-                return false;
-            }
-            pass = properties.getProperty("programd.listeners.icq.password", "");
+        super(bot, "AliceICQ", new String[][] { {"number", ""},
+                                                {"password", ""} });
+    }
+    
 
-            // Check parameters.
-            if (uin <= 0)
-            {
-                Log.userinfo("AliceICQ: Invalid user number; aborting.", Log.LISTENERS);
-            }
-            if (pass.length() == 0)
-            {
-                Log.userinfo("AliceICQ: Invalid empty password; aborting.", Log.LISTENERS);
-                return false;
-            }
-            clientport = 0;
-            return true;
-        }
-        else
+    public boolean checkParameters()
+    {
+        // Get parameters.
+        try
         {
+            uin = Integer.parseInt((String)parameters.get("number"));
+        }
+        catch (NumberFormatException e)
+        {
+            logMessage("Invalid user number (try a number!); aborting.");
             return false;
         }
+        pass = (String)parameters.get("password");
+
+        // Check parameters.
+        if (uin <= 0)
+        {
+            logMessage("Invalid user number; aborting.");
+        }
+        if (pass.length() == 0)
+        {
+            logMessage("Invalid empty password; aborting.");
+            return false;
+        }
+        clientport = 0;
+        return true;
     }
 
-
-    /**
-     *  Creates a new AliceICQ chat listener.
-     */
-    public AliceICQ()
-    {
-    }
-    
 
     /**
      *  Please document this.
@@ -125,7 +154,7 @@ public class AliceICQ implements AliceChatListener
         {
             socket = new DatagramSocket();
             serverAddy = InetAddress.getByName(SERVER);
-            Log.userinfo("AliceICQ: logging in to " + serverAddy, Log.LISTENERS);
+            logMessage("logging in to " + serverAddy);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             
             stream.write(header((short)0x3E8));
@@ -155,7 +184,7 @@ public class AliceICQ implements AliceChatListener
                 }
                 else
                 {
-                    Log.userinfo("AliceICQ: No acknowledgement from server; aborting.", Log.LISTENERS); 
+                    logMessage("No acknowledgement from server; aborting."); 
                     return;
                 }
             }
@@ -169,17 +198,18 @@ public class AliceICQ implements AliceChatListener
             {
                 if (buffer[2] != (byte)0x0A || buffer[3] != (byte)0x00)
                 {
-                    Log.userinfo("AliceICQ: No Login Reply: "+(byte)buffer[2]+" "+ (byte)buffer[3], Log.LISTENERS); 
+                    logMessage("No Login Reply: "+(byte)buffer[2]+" "+ (byte)buffer[3]); 
                     return;
                 }
             }
             online = true;
-            Log.userinfo("AliceICQ: Successfully logged on.", Log.LISTENERS);
+            logMessage("Successfully logged on.");
             
             toICQ(new byte[] {(byte)0x4c,(byte)0x4});
 
             AliceICQKeepAlive keepAlive = new AliceICQKeepAlive(this);
             keepAlive.setDaemon(true);
+            logMessage("Starting for \"" + botID + "\".");
             keepAlive.start();
             socket.setSoTimeout(2000); 
             while(true)
@@ -189,12 +219,12 @@ public class AliceICQ implements AliceChatListener
                     buffer = new byte[512];
                     packet = new DatagramPacket(buffer,buffer.length);
                     socket.receive(packet);
-                    buffer=packet.getData();
+                    buffer = packet.getData();
                    
                     if ((buffer[0] == (byte)0x2 && buffer[1] == (byte)0x0) && !(buffer[2] == (byte)0xA && buffer[3] == (byte)0x0)) 
                     {
                         fromICQ(buffer);
-                        ack(buffer[4],buffer[5]);
+                        ack(buffer[4], buffer[5]);
                         Log.devinfo("AliceICQ: ICQ Command in: " +
                             Integer.toHexString((int)buffer[2]) + " " + Integer.toHexString((int)buffer[3]), Log.LISTENERS);
                     }
@@ -206,14 +236,14 @@ public class AliceICQ implements AliceChatListener
         }
         catch (UnknownHostException e)
         {
-            Log.userinfo("AliceICQ: Unknown host!", Log.LISTENERS);
+            logMessage("Unknown host!");
         }
         catch (SocketException e)
         {
-            Log.devinfo("AliceICQ: Socket exception!", Log.LISTENERS);}
+            logMessage("Socket exception!");}
         catch (IOException e)
         {
-            Log.devinfo("AliceICQ: IO Exception!", Log.LISTENERS);
+            logMessage("IO Exception!");
         }
         signoff();
     }
@@ -237,7 +267,7 @@ public class AliceICQ implements AliceChatListener
         stream.write(toBytes(seqNo));
         stream.write(toBytes(uin));
         seqNo = (short)((seqNo + 1) & 0xFFFF);
-        Log.devinfo("AliceICQ: ICQ Command out: " +
+        Log.devinfo(MSG + "ICQ Command out: " +
             Integer.toHexString((int)buffer[0]) + " " + Integer.toHexString((int)buffer[1]), Log.LISTENERS);
         Trace.devinfo("Buffer length: " + buffer.length);
         if (buffer.length > 2)
@@ -259,8 +289,8 @@ public class AliceICQ implements AliceChatListener
         if (buffer[2] == (byte)0x6E && buffer[3] == (byte)0x00)
         {
             from = ((buffer[6])&0xFF) +((buffer[7]<<8)&0xFF00) +((buffer[8]<<16)&0xFF0000) +((buffer[9]<<24)&0xFF000000);
-            String ip  = ((int)(buffer[10])&0xFF)+"."+((int)(buffer[11])&0xFF)+"."+((int)(buffer[12])&0xFF)+"."+((int)(buffer[13])&0xFF);
-            int port= ((buffer[14])&0xFF) + ((buffer[15]<<8)&0xFF00) + ((buffer[16]<<16)&0xFF0000) + ((buffer[17]<<24)&0xFF000000);
+            // String ip  = ((int)(buffer[10])&0xFF)+"."+((int)(buffer[11])&0xFF)+"."+((int)(buffer[12])&0xFF)+"."+((int)(buffer[13])&0xFF);
+            // int port = ((buffer[14])&0xFF) + ((buffer[15]<<8)&0xFF00) + ((buffer[16]<<16)&0xFF0000) + ((buffer[17]<<24)&0xFF000000);
             // ebnet.updateStat(Integer.toString(uin),"IC",true);
                 return;
         }
@@ -278,7 +308,7 @@ public class AliceICQ implements AliceChatListener
             }
             catch (IOException e)
             {
-                Log.userinfo("AliceICQ IO Exception: " + e.getMessage(), Log.LISTENERS);
+                logMessage("IO Exception: " + e.getMessage());
             }
             return;
         }
@@ -287,10 +317,7 @@ public class AliceICQ implements AliceChatListener
             from = ((buffer[6])&0xFF) +((buffer[7]<<8)&0xFF00) +((buffer[8]<<16)&0xFF0000) +((buffer[9]<<24)&0xFF000000);
             short length = (short)(((buffer[18])&0xFF)+((buffer[19]<<8)&0xFF00));
             message = new String(buffer, 20, length - 1);
-            Log.userinfo("AliceICQ: Message from " + from + ": ", Log.LISTENERS);
-            Log.userinfo("AliceICQ: [" + from + "]" + message, Log.LISTENERS);
-            // message = ebnet.snLookup(Integer.toString(uin),3) + "\0" + message;
-            // ebnet.send("MESG",message.getBytes());
+            logMessage("Message from [" + from + "]: " + message);
             return;
         }
         else if (buffer[2] == (byte)0x04 && buffer[3] == (byte)0x01)
@@ -298,15 +325,15 @@ public class AliceICQ implements AliceChatListener
             from = ((buffer[6])&0xFF) +((buffer[7]<<8)&0xFF00) +((buffer[8]<<16)&0xFF0000) +((buffer[9]<<24)&0xFF000000);
             short length = (short)(((buffer[12])&0xFF)+((buffer[13]<<8)&0xFF00));
             message = new String(buffer, 14, length - 1);
-            Log.userinfo("AliceICQ: Message from " + from + ": ", Log.LISTENERS);
-            Log.userinfo("AliceICQ: [" + from + "] " + message, Log.LISTENERS);
+            logMessage("Message from [" + from + "]: " + message);
             if (message != null)
             {
-                String botResponse = ActiveMultiplexor.getInstance().getResponse(message, from + "_ICQ", new TextResponder());
+                String botResponse = Multiplexor.
+                                            getResponse(message,
+                                                        from + _ICQ,
+                                                        botID, new TextResponder());
                 sendMesg(from, botResponse);
             }
-            // message = ebnet.snLookup(Integer.toString(uin),3) + "\0" + message;
-            // ebnet.send("MESG",message.getBytes());
             return;
         }
         else
@@ -316,6 +343,13 @@ public class AliceICQ implements AliceChatListener
     }
 
 
+	/**
+	 *  Converts a <code>short</code> to a <code>byte[]</code>.
+	 *
+	 * 	@param x	the short to convert
+	 *
+	 * 	@return the short as a byte[]
+	 */
     public static byte[] toBytes(short x)
     {
         byte[] b = new byte[2];
@@ -325,6 +359,13 @@ public class AliceICQ implements AliceChatListener
     }
     
 
+	/**
+	 *  Converts an <code>int</code> to a <code>byte[]</code>.
+	 *
+	 * 	@param x	the int to convert
+	 *
+	 * 	@return the int as a byte[]
+	 */
     public static byte[] toBytes(int x)
     {
         byte[] b = new byte[4];
@@ -350,7 +391,7 @@ public class AliceICQ implements AliceChatListener
 
     public void ack(byte a,byte b) throws IOException
     {
-        Log.devinfo("AliceICQ: Acknowledgement from server!", Log.LISTENERS);
+        Log.devinfo(MSG + "Acknowledgement from server!", Log.LISTENERS);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         stream.write(toBytes(VERSION));
         stream.write(toBytes((short)0xA));
@@ -369,7 +410,7 @@ public class AliceICQ implements AliceChatListener
 
     public void sendMesg(int to, String mesg)
     {
-        Log.userinfo("AliceICQ response to [" + to + "]: " + mesg, Log.LISTENERS);
+        logMessage("Response to [" + to + "]: " + mesg);
         try
         {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -385,7 +426,7 @@ public class AliceICQ implements AliceChatListener
         }
         catch (IOException e)
         {
-            Log.userinfo("AliceICQ: IO exception!", Log.LISTENERS);
+            logMessage("IO exception!");
         }
     }
 
@@ -393,7 +434,7 @@ public class AliceICQ implements AliceChatListener
     public void signoff()
     {
         online = false;
-        Log.userinfo("AliceICQ signing off.", Log.LISTENERS);
+        logMessage("Signing off.");
         try
         {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -407,12 +448,23 @@ public class AliceICQ implements AliceChatListener
         }
         catch (IOException e)
         {
-            Log.userinfo("AliceICQ: IO exception while trying to sign off!", Log.LISTENERS);
+            logMessage("IO exception while trying to sign off!");
         }
         // ebnet.icoff();
         socket.close();
-        Log.userinfo("AliceICQ signed off.", Log.LISTENERS);
+        logMessage("Signed off.");
     }
+    
+    
+    /**
+     *  Standard method for logging and notifying of a message.
+     *
+     *  @param message	the message
+     */
+    private void logMessage(String message)
+    {
+        Log.userinfo(MSG + message, Log.LISTENERS);
+    }   
 }
 
 
@@ -427,7 +479,6 @@ class AliceICQKeepAlive extends Thread
 
     public void run()
     {
-        Log.userinfo("AliceICQ started.", Log.LISTENERS);
         while (true)
         {
             try

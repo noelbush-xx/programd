@@ -24,7 +24,7 @@
 package org.alicebot.server.core.processor;
 
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
 
 /**
@@ -41,12 +41,12 @@ public class GossipProcessor extends AIMLProcessor
     public static final String label = "gossip";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
             // Get the gossip.
-            String response = parser.evaluate(level++, userid, tag.XMLChild);
+            String response = parser.evaluate(level++, tag.XMLChild);
 
             // Put the gossip in the log.
             Log.log(response, Log.GOSSIP);

@@ -25,6 +25,11 @@
     - added remove() method signature
 */
 
+/*
+	4.1.5 - Noel Bush
+	- added support for height (per Richard Wallace's suggestion)
+*/
+
 package org.alicebot.server.core.node;
 
 import java.util.Set;
@@ -32,6 +37,9 @@ import java.util.Set;
 
 /**
  *  A <code>Nodemapper</code> maps the branches in a {@link Graphmaster Graphmaster} structure.
+ *
+ *  @author	Richard Wallace
+ *  @author Noel Bush
  */
 public interface Nodemapper
 {
@@ -55,12 +63,11 @@ public interface Nodemapper
 
 
     /**
-     *  Removes the node mapped to this <code>key</code>
-     *  from the <code>Nodemapper</code>.
+     *  Removes a node from the <code>Nodemapper</code>.
      *
-     *  @param key  key whose node should be removed
+     *  @param value    the value to remove
      */
-    public void remove(String key);
+    public void remove(Object value);
 
     
     /**
@@ -79,4 +86,48 @@ public interface Nodemapper
      *  @return boolean indicating whether the <code>Nodemapper</code> contains the key
      */
     public boolean containsKey(String key);
+
+
+    /**
+     *  Returns the size of the <code>Nodemapper</code>
+     *
+     *  @return the size of the <code>Nodemapper</code>
+     */
+    public int size();
+
+
+    /**
+     *  Sets the parent of the <code>Nodemapper</code>
+     *
+     *  @param parent   the parent of the <code>Nodemapper</code>
+     */
+    public void setParent(Nodemapper parent);
+
+
+    /**
+     *  Returns the parent of the <code>Nodemapper</code>
+     *
+     *  @return the parent of the <code>Nodemapper</code>
+     */
+    public Nodemapper getParent();
+    
+    
+    /**
+     *  Returns the height of the <code>Nodemapper</code>.
+     *  The height is the minimum number of words needed
+     *  to reach a leaf node from here.
+     *
+     *  @return the height of the <code>Nodemapper</code>
+     */
+    public int getHeight();
+    
+    
+    /**
+     *  Sets the height of this <code>Nodemapper</code>
+     *  to &quot;top&quot;, i.e. <code>0</code> (zero), causing
+     *  each ancestor <code>n</code> to have a minimum height
+     *  of <code>n</code>, unless the ancestor is the root node.
+     *  Not sure if this is correct.
+     */
+    public void setTop();
 }

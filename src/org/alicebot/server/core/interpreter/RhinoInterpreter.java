@@ -24,7 +24,7 @@ public class RhinoInterpreter implements Interpreter
     /** An empty string. */
     private static final String EMPTY_STRING = "";
 
-    public String evaluate(String userid, String expression)
+    public String evaluate(String expression)
     {
         Log.log("evaluate: \"" + expression + "\"", Log.INTERPRETER);
         Context context = Context.enter();
@@ -37,7 +37,8 @@ public class RhinoInterpreter implements Interpreter
         }
         catch (Exception e)
         {
-            Log.userinfo("JavaScript exception (see interpreter log).", new String[] {Log.ERROR, Log.INTERPRETER});
+            Log.userinfo("JavaScript exception (see interpreter log).", Log.ERROR);
+            Log.log(e, Log.INTERPRETER);
             StringTokenizer lines = new StringTokenizer(expression, System.getProperty("line.separator"));
             while (lines.hasMoreTokens())
             {

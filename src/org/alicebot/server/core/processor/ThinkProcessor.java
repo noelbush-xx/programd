@@ -28,7 +28,7 @@
 
 package org.alicebot.server.core.processor;
 
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
 
 /**
@@ -44,11 +44,11 @@ public class ThinkProcessor extends AIMLProcessor
     public static final String label = "think";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
-            parser.evaluate(level++, userid, tag.XMLChild);
+            parser.evaluate(level++, tag.XMLChild);
             return EMPTY_STRING;
         }
         else

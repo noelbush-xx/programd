@@ -1,0 +1,1261 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>Getting Started With Program D</title>
+<style type="text/css">
+*
+{
+font-family: sans-serif;
+font-size: 10pt;
+color: black;
+background-color: transparent;
+}
+p
+{
+margin-left: 6pt;
+margin-right: 10pt;
+}
+h1
+{
+font-size: 18pt;
+font-weight: bold;
+margin-left: 0pt;
+}
+h2, h2 *
+{
+background-color: #cccccc;
+font-size: 16pt;
+font-weight: bold;
+margin-top: 12pt;
+margin-bottom: 3pt;
+margin-left: 0pt;
+}
+h3, h3 *
+{
+font-size: 14pt;
+font-weight: bold;
+margin-bottom: 0pt;
+margin-left: 1pt;
+}
+h4, h4 *
+{
+font-size: 12pt;
+font-weight: bold;
+margin-top: 8pt;
+margin-bottom: 0pt;
+margin-left: 2pt;
+}
+p
+{
+margin-top: 0pt;
+margin-bottom: 8pt;
+}
+p.docinfo
+{
+font-style: italic;
+margin-top: 0pt;
+}
+em
+{
+color: #dd4444;
+font-weight: bold;
+font-style: italic;
+}
+span.literal
+{
+font-family: monospace;
+font-weight: bold;
+font-style: normal;
+color: #000055;
+}
+span.user-value
+{
+font-family: monospace;
+font-weight: bold;
+font-style: italic;
+color: #005500;
+}
+p.example
+{
+font-family: monospace;
+font-weight: bold;
+font-style: normal;
+color: #000055;
+margin-left: 10pt;
+margin-right: 10pt;
+}
+p.example-head
+{
+font-family: monospace;
+font-weight: bold;
+font-style: normal;
+color: #000055;
+margin-left: 10pt;
+margin-right: 100pt;
+margin-top: 16pt;
+margin-bottom: 4pt;
+border: solid windowtext 0.5pt;
+padding: 1.0pt 4.0pt 1.0pt 4.0pt;
+}
+p.blockquote
+{
+font-style: italic;
+margin-left: 14pt;
+margin-right: 14pt;
+margin-bottom: 8pt;
+}
+p.faq, p.faq *
+{
+font-weight: bold;
+margin-bottom: 0pt;
+}
+a:link
+{
+color: #114466;
+background-color: transparent;
+}
+a:visited
+{
+color: #441166;
+background-color: transparent;
+}
+a:hover
+{
+color: #664411;
+background-color: #ffbb44;
+}
+a.nohover:hover
+{
+color: #664411;
+background-color: transparent;
+}
+a:active
+{
+color: #664411;
+background-color: transparent;
+}
+div.box
+{
+border: solid windowtext 1.0pt;
+padding: 1.0pt 4.0pt 1.0pt 4.0pt;
+margin-left: 10pt;
+margin-right: 100pt;
+margin-top: 10pt;
+margin-bottom: 10pt;
+}
+</style>
+</head>
+<body>
+<h1>Getting Started With Program D</h1>
+<p class="docinfo">
+author: <a href="http://alicebot.org/bios/noelbush.html">Noel Bush</a><br />
+revised from a document by <a href="http://alicebot.org/bios/kimsullivan.html">Kim Sullivan</a>, with contributions from Zayn Blore and Dennis Daniels.<br />
+Last updated: 30 April 2002
+</p>
+<p class="docinfo">
+Please check <a href="http://alicebot.org/documentation/">http://alicebot.org/documentation</a> for more Alicebot/AIML documentation, including updates to this document.
+</p>
+<ul>
+  <li>
+  <a href="#preparation">0. Preparation</a>
+  </li>
+  <li>
+  <a href="#installation">1. Installation</a>
+  </li>
+  <li>
+  <a href="#configuration">2. Configuration</a>
+  </li>
+  <li>
+  <a href="#startup">3. First Startup</a>
+  </li>
+  <li>
+  <a href="#misc-faq">4. Miscellaneous Common Problems and Questions</a>
+  </li>
+</ul>
+<h2><a id="preparation">0. Preparation</a></h2>
+<h3>0.0. Download Program D</h3>
+<p>
+Go to <a href="http://alicebot.org/downloads/foundation.php">http://alicebot.org/downloads/foundation.php</a> and get the latest Program D distribution. If you've never downloaded Program D before, you'll need to register with your email address. You'll receive a confirmation email with a password allowing you access to the download page.
+</p>
+<p>
+As it says on the download page, you don't necessarily need the distribution that includes source code--you can get a pre-compiled version that will work on any platform for which there's a compatible Java 2 JRE or SDK. So unless you want to modify and rebuild the project, we suggest downloading <span class="literal">d-bin-current.tar.gz</span> or <span class="literal">d-bin-current.zip</span>.
+</p>
+<h3>0.1. Get the Java Runtime (or SDK)</h3>
+<p>
+You need to download and install a Java 2 version 1.4 compatible JVM. Examples are the Sun JRE (Java Runtime Edition) or SDK (Software Development Kit). The JRE is much smaller than the SDK (~9MB as compared with ~40!!!). You only need the SDK if you want to rebuild the program, or want to develop Java programs of your own. You can download the necessary software and find installation instructions at <a href="http://java.sun.com/j2se/1.4/download.html" target="_blank">http://java.sun.com/j2se/1.4/download.html</a>.
+</p>
+<h3>0.2. Get Some AIML</h3>
+<p>
+This step is optional but highly recommended. If you don't use some pre-existing AIML, you'll have to write your own before your bot knows anything. Also at <a href="http://alicebot.org/downloads/foundation.php">http://alicebot.org/downloads/foundation.php</a>, you'll find several choices of freely-available AIML. Pick one and download it.
+</p>
+<h2><a id="installation">1. Installation</a></h2>
+<h3>1.0. Java</h3>
+<p>
+We won't cover installation instructions for the JRE/Java SDK here. We'll just assume that you've followed the instructions. In the following, we'll refer to the directory where you installed Java as <span class="user-value">JAVA_HOME</span>. (If you use Windows, this might be something like <span class="literal">C:\j2sdk1.4.0</span>. If you're using Linux, this might be <span class="literal">/usr/java/j2sdk1.4.0</span>.
+</p>
+<p>
+You should at least be able to type &quot;<span class="literal">java -version</span>&quot; at a command line (syntax may vary) and get a response something like:
+</p>
+<p class="example">
+java version "1.4.0"<br/>
+Java(TM) 2 Runtime Environment, Standard Edition (build 1.4.0-b92)<br/>
+Java HotSpot(TM) Client VM (build 1.4.0-b92, mixed mode)
+</p>
+<p>
+If you get some kind of error like &quot;command not found&quot;, check that your system path settings are correct. Or, just try &quot;<span class="user-value">JAVA_HOME</span><span class="literal">/java -version</span>&quot; (Linux) or &quot;<span class="user-value">JAVA_HOME</span><span class="literal">\java.exe -version</span>&quot; (Windows), substituting your actual <span class="user-value">JAVA_HOME</span> path.
+</p>
+<h3>1.1. Program D</h3>
+<p>
+If you're upgrading from a previous version, please check the <a href="release-notes.html">release notes</a>, since some configuration files may have changed.
+</p>
+<p>
+Unzip/untar the Program D download in a convenient location. On Linux, we suggest <span class="literal">/usr/alice</span>; on Windows, the root directory (<span class="literal">C:\</span>, perhaps) is as good as anything. The unzipping/untarring process will create a directory called <span class="literal">ProgramD</span> that will contain all the program files.
+</p>
+<p>
+Linux users may type:
+</p>
+<p class="example">
+tar xvzf d-bin-current.tar.gz
+</p>
+<p>
+Windows users could try a free unzip utility such as <a href="http://www.7-zip.org">7-Zip</a>.
+</p>
+<p>
+We'll refer to the root directory created by the unzip/untar (such as <span class="literal">/usr/alice/ProgramD</span>) as <span class="user-value">PROGRAMD</span>.
+</p>
+<h3>1.2. AIML</h3>
+<p>
+If you downloaded some AIML files, now is a good time to put them somewhere. We suggest creating a subdirectory called &quot;<span class="literal">aiml</span>&quot; in your <span class="user-value">PROGRAMD</span> directory, and then arranging your AIML files there in a way that makes sense to you. You'll need to unzip/untar as above.
+</p>
+<p>
+Earlier convention called this the &quot;bots&quot; directory and put AIML files for different bots in different subdirectories, but we think that practice obscures the fact that a &quot;bot&quot; is really defined by more than just the AIML it uses, as well as the fact that multiple bots can share AIML. If it helps you to stay organized, you can create subdirectories (for instance, to manage copies of different releases of AIML files that you create or download), but this isn't required.
+</p>
+<h2><a id="configuration">2. Configuration</a></h2>
+<p>
+There's a lot to configure with Program D. What's needed for you really depends on how you want to use the program. If you don't care about running a web server, you don't need to bother with the &quot;<a href="#config-http-server"><b>HTTP Server</b></a>&quot; section. If you don't care about using Program D with chat interfaces like AOL Instant Messenger or IRC, you won't be interested in the information about &quot;<a href="#config-listeners"><b>Chat Listeners</b></a>&quot;. If you don't care about high-volume applications, or don't really want to do database-based log analysis, you can skip the &quot;<a href="#config-database"><b>Database</b></a>&quot; section.
+</p>
+<h3><a id="config-bots">2.0. Bots</a></h3>
+<p>
+Program D lets you configure an unlimited number of bots that can run at the same time. The bots are configured in the <span class="user-value">PROGRAMD</span>/<span class="literal">conf/startup.xml</span> file.
+</p>
+<p>
+Open the <span class="literal">startup.xml</span> file. Notice that the root element is called <span class="literal">&lt;programd-startup&gt;</span>, and that it contains exactly one child element called <span class="literal">&lt;bots&gt;</span>. (It is possible to put other elements here like <span class="literal">&lt;substitutions&gt;</span> and so on, but in the example configuration we keep those in separate files.)
+</p>
+<p>
+Inside <span class="literal">&lt;bots&gt;</span>, we place one or more <span class="literal">&lt;bot&gt;</span> elements. These <span class="literal">&lt;bot&gt;</span> elements are not the same as the AIML tag of the same name.
+</p>
+<p>
+Each <span class="literal">&lt;bot&gt;</span> element has two important attributes: <span class="literal">id</span> and <span class="literal">enabled</span>. The first one assigns an identifier, which should be unique, for the bot. The identifier will be used internally by the engine and will be written to some log resources. The <span class="literal">enabled</span> attribute should have either of the values &quot;<span class="literal">true</span>&quot; or &quot;<span class="literal">false</span>&quot;. If the value is &quot;<span class="literal">true</span>&quot;, then Program D will try to load that bot when the server starts up. Switching <span class="literal">enabled</span> to &quot;<span class="literal">false</span>&quot; is an easy way to quickly turn off a bot configuration that you don't want to use (although a restart is required).
+</p>
+<p>
+Within the <span class="literal">&lt;bot&gt;</span> element we define <b>bot properties</b>, <b>listeners</b>, <b>default predicates</b>, <b>substitutions</b>, <b>sentence-splitters</b> and <b>learn directives</b>.
+</p>
+<h4><a id="config-bot-properties">2.0.0. Bot Properties</a></h4>
+<p>
+<b>Bot properties</b> are predicates that cannot be changed during the runtime life of the bot, but which <i>can</i> be included in AIML patterns for matching. A common property to define for a bot is &quot;<span class="literal">name</span>&quot;. Bot properties are defined in individual <span class="literal">&lt;property&gt;</span> elements inside a bot's <span class="literal">&lt;properties&gt;</span> element, as in the example:
+</p>
+<p class="example">
+&lt;property name=&quot;master&quot; value=&quot;A.L.I.C.E. AI Foundation&quot;/&gt;
+</p>
+<p>
+This associates the bot property name &quot;<span class="literal">master</span>&quot; with the value &quot;<span class="literal">A.L.I.C.E. AI Foundation</span>&quot;. All your base are belong to us.
+</p>
+<p>
+(You can also define bot properties in a separate file, and point to that file using an &quot;<span class="literal">href</span>&quot; attribute on the <span class="literal">&lt;properties&gt;</span> element. See other elements inside <span class="literal">&lt;bot&gt;</span> in the example <span class="literal">startup.xml</span> to understand how this is done.)
+</p>
+<p>
+Properties don't mean anything unless your AIML uses them. You can display the value of a bot property inside an AIML template by using the form <span class="literal">&lt;bot name=&quot;</span><span class="user-value">property-name</span><span class="literal">&quot;/&gt;</span>.
+</p>
+<h4>(2.0.1. Listeners)</h4>
+<p>
+Listeners are discussed in more detail <a href="#config-listeners">below</a>.
+</p>
+<h4><a id="config-predicates">2.0.2. Default Predicates</a></h4>
+<p>
+<b>Default predicates</b> can be thought of as your bot's &quot;assumptions&quot; about new users. While AIML allows you to use <span class="literal">&lt;set name=&quot;</span><span class="user-value">predicate-name</span><span class="literal">&quot;&gt;</span><span class="user-value">...something...</span><span class="literal">&lt;/set&gt;</span> and <span class="literal">&lt;get name=&quot;</span><span class="user-value">predicate-name</span><span class="literal">&quot;/&gt;</span> forms without any sort of &quot;declaration&quot;, Program D does allow you to set default values to associate with any predicate names you wish, so that you have more control over what is returned by <span class="literal">&lt;get name=&quot;</span><span class="user-value">predicate-name</span><span class="literal">&quot;/&gt;</span> if a corresponding <span class="literal">&lt;set&gt;</span> has not yet happened for a given user.
+</p>
+<p>
+The <span class="literal">&lt;predicates&gt;</span> section, if it exists, may directly include one or more <span class="literal">&lt;predicate&gt;</span> children, or it may use an &quot;<span class="literal">href</span>&quot; attribute, as in the example, that points to another file where the predicates are defined.
+</p>
+<p>
+You can also use <span class="literal">&lt;predicate&gt;</span> elements to mark a predicate as <a href="http://alicebot.org/TR/2001/WD-aiml/#section-aiml-predicate-behaviors" target="_blank">return-name-when-set</a>. For instance, this predicate definition is included in a sample file:
+</p>
+<p class="example">
+&lt;predicate name=&quot;he&quot; default=&quot;somebody&quot; set-return=&quot;name&quot;/>
+</p>
+<p>
+This means that when <span class="literal">&lt;set name=&quot;he&quot;&gt;</span><span class="user-value">...</span><span class="literal">&lt;/set&gt;</span> is included in a template, the name of the predicate, &quot;<span class="literal">he</span>&quot;, will be displayed, rather than whatever value is associated with the name by the <span class="literal">&lt;set&gt;</span>.
+</p>
+<h4><a id="config-substitutions">2.0.3. Substitutions</a></h4>
+<p>
+<b>Substitutions</b> have several different purposes, depending on their type. <b>Input</b> substitutions contribute to the process of <a href="http://alicebot.org/TR/2001/WD-aiml/#section-input-normalization" target="_blank">input normalization</a>. <b>Person</b> substitutions provide macros for transformations by the <a href="http://alicebot.org/TR/2001/WD-aiml/#section-person" target="_blank">&lt;person&gt;</a> tag; likewise <b>person2</b> and <b>gender</b> apply to the <a href="http://alicebot.org/TR/2001/WD-aiml/#section-person2" target="_blank">&lt;person2&gt;</a> and <a href="http://alicebot.org/TR/2001/WD-aiml/#section-gender" target="_blank">&lt;gender&gt;</a> tags, respectively.
+</p>
+<p>
+Each individual substitution specification, regardless of whether it is inside an <span class="literal">&lt;input&gt;</span>, <span class="literal">&lt;gender&gt;</span>, <span class="literal">&lt;person&gt;</span> or <span class="literal">&lt;person2&gt;</span>, takes the same form as this example from <span class="literal">conf/substitutions.xml</span>:
+</p>
+<p class="example">
+&lt;substitute find=&quot; becasue &quot; replace=&quot; because &quot;/>
+</p>
+<p>
+This means that, when this substitution is applied, each instance of the separate word &quot;becasue&quot; will be replaced with &quot;because&quot;. (This is an example of typo correction in Program D.)
+</p>
+<p>
+Note the spaces that pad the values of the &quot;<span class="literal">find</span>&quot; and &quot;<span class="literal">replace</span>&quot; attributes. These spaces are, approximately, indications that we want to match only on &quot;word boundaries&quot;. Omitting one or both padding spaces in the &quot;<span class="literal">find</span>&quot; string would mean that its contents should be matched even if they occur as part of a word. This is generally not desirable.
+</p>
+<h4><a id="config-sentence-splitters">2.0.4. Sentence-Splitters</a></h4>
+<p>
+<b>Sentence-splitters</b>, as described in the <a href="http://alicebot.org/TR/2001/WD-aiml/#section-sentence-splitting-normalizations" target="_blank">AIML spec</a>, are:</p>
+<p class="blockquote">
+...heuristics applied to an input that attempt to break it into "sentences". The notion of "sentence", however, is ill-defined for many languages, so the heuristics for division into sentences are left up to the developer. 
+</p>
+<p>
+Since sentence-splitters are applied to the input <i>after</i> substitution normalizations, they can be more general rules. The entire collection of example sentence-splitters shipped with Program D is:
+</p>
+<p class="example">
+&lt;sentence-splitters&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;splitter value=&quot;.&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;splitter value=&quot;!&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;splitter value=&quot;?&quot;/&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;splitter value=&quot;;&quot;/&gt;<br/>
+&lt;/sentence-splitters&gt;
+</p>
+<p>
+As with some other examples, these are defined in a separate file that is pointed to by the &quot;<span class="literal">href</span>&quot; attribute on the <span class="literal">&lt;sentence-splitters&gt;</span> element.
+</p>
+<h4><a id="config-learn-directives">2.0.5. Learn Directives</a></h4>
+<p>
+<b>Learn directives</b> function identically to the <a href="http://alicebot.org/TR/2001/WD-aiml/#section-learn" target="_blank">&lt;learn&gt;</a> element in AIML.
+</p>
+<p>
+You can use simple &quot;glob&quot;-like wildcard patterns for specifying files to load. For example, the shipped <span class="literal">startup.xml</span> file has this single learn directive:
+</p>
+<p class="example">
+&lt;learn&gt;../aiml/standard/*.aiml&lt;/learn&gt;
+</p>
+<p>
+The path specification is relative to the current file, so this indicates that within a directory reached by going one level up (to the main <span class="user-value">PROGRAMD</span> directory), and then into a directory called &quot;<span class="literal">aiml</span>&quot;, and from there into a subdirectory called &quot;<span class="literal">standard</span>&quot;, the program should load all files that end in &quot;<span class="literal">.aiml</span>&quot;. Note that files containing AIML are <i>not</i> required to have this or any particular suffix; also, if you direct the program to learn files that do not contain any AIML, you will receive a warning but nothing will be loaded from that file.
+</p>
+<h3><a id="config-http-server">2.1. HTTP Server</a></h3>
+<p>
+If you want to be able to talk to your bot through a web interface, you'll be interested to know that Program D is designed to be able to work as a &quot;servlet&quot;--that's an application that runs on a server but interacts with users via the web. As an example we use Program D with Jetty, an open source HTTP server and servlet container. Future versions of Program D will hopefully be easier to integrate with other servlet containers, but for now in discussion about configuration we'll stick with customizing the Jetty setup.
+</p>
+<p>
+The main file you'll be interested in is <span class="user-value">PROGRAMD</span><span class="literal">/conf/jetty.xml</span>. This is the file that is read by the Jetty server when it is invoked by Program D.
+</p>
+<p>
+The parameter that will probably be of most interest here is the port number. This is specified in the place that looks like:
+</p>
+<p class="example">
+&lt;Set name=&quot;Port&quot;&gt;2001&lt;/Set&gt;
+</p>
+<p>
+Most web sites use the port numbered <span class="literal">80</span>, which is the port assumed by a web browser when you type a URL without a port specification, so you might never have even known that there was such a thing as a port in a URL! Having different ports allows different server programs running on the same machine to answer requests without bothering each other.
+</p>
+<p>
+For testing purposes, it is probably fine to use the default value of <span class="literal">2001</span>, or whatever you prefer (although on some operating systems you can't use a number lower than <span class="literal">1024</span> without special privileges). But for serious applications you'll want to deal with this differently, since many firewalls don't allow people to access arbitrary ports. The easiest solution to the port problem is to use a proxy server (or the proxy feature of a good web server like <a href="http://httpd.apache.org" target="_blank">Apache</a>) to allow external users to access your bot using a regular web address that doesn't specify a port (i.e., through port <span class="literal">80</span>).
+</p>
+<p>
+You probably won't care to change the rest of the Jetty configuration file, unless you intend to use Jetty to serve content or run other applications besides Program D (not recommended, given the current Program D distribution format).
+</p>
+<h3><a id="config-listeners">2.2. Chat Listeners</a></h3>
+<p>
+In current Program D nomenclature, a &quot;listener&quot; is a program that knows how to speak a particular protocol and interpret messages for the bot. For instance, the <span class="literal">AliceIRCListener</span> understands the popular IRC protocol and allows you to connect your bot to any IRC server.
+</p>
+<p>
+You can enable one or more listeners for each bot. Each listener has its own unique configuration parameters, which are specific to the requirements of the protocol for which it's designed. You'll find examples of each currently-available listener in the <span class="user-value">PROGRAMD</span>/<span class="literal">conf/startup.xml</span> file.
+</p>
+<p>
+Listeners for a given bot are specified within the <span class="literal">&lt;listeners&gt;</span> element, in individual <span class="literal">&lt;listener&gt;</span> elements. Each <span class="literal">&lt;listener&gt;</span> element must have two attributes: &quot;<span class="literal">type</span>&quot;, and &quot;<span class="literal">enabled</span>&quot;. The value for &quot;<span class="literal">type</span>&quot; must correspond with a value assigned by the developer to a listener that is somewhere in the Java classpath for Program D. The example <span class="literal">startup.xml</span> includes an example of each type currently known. The value of &quot;<span class="literal">enabled</span>&quot; must be &quot;<span class="literal">true</span>&quot; or &quot;<span class="literal">false</span>&quot;, allowing the listener to be switched on or off with ease.
+</p>
+<p>
+The parameters for a listener are specifed in individual <span class="literal">&lt;parameter&gt;</span> elements within the <span class="literal">&lt;listener&gt;</span>. For example:
+</p>
+<p class="example">
+&lt;parameter name=&quot;host&quot; value=&quot;ar.chatjunkies.org&quot;/&gt;<br/>
+&lt;parameter name=&quot;port&quot; value=&quot;6667&quot;/&gt;<br/>
+&lt;parameter name=&quot;nick&quot; value=&quot;programd&quot;/&gt;<br/>
+&lt;parameter name=&quot;channel&quot; value=&quot;#bots&quot;/&gt;
+</p>
+<p>
+These are the parameters set for the example use of the <span class="literal">AliceIRCListener</span>, whose type string is &quot;<span class="literal">AliceIRC</span>&quot;.
+</p>
+<p>
+When you enable a chat listener, you will see its output mixed in with the console output. You can also interact with some listeners if they implement the &quot;commandable&quot; interface (see <a href="#commandables">below</a>).
+</p>
+<h3><a id="config-database">2.3. Database</a></h3>
+<p>
+You are not required to install, configure or use a database in order to use Program D. The default configuration is entirely based on text files in order to make setup quick, painless, and no more resource-intensive than necessary.
+</p>
+<p>
+However, for heavy-volume situations, and/or for cases where you want to collect dialogue in a form that can perhaps be more easily mined, you may wish to use a database.
+</p>
+<p>
+We have done the most extensive testing with <a href="http://www.mysql.com" target="_blank">MySQL</a>; however, other users have connected Program D with various other DBMSes. The major point is that you must have a JDBC driver for the database you wish to use. We include the MySQL JDBC driver with the Program D distribution for convenience.
+</p>
+<p>
+If you do want to use a database, you need to configure it properly in the <span class="literal">server.properties</span> file. The relevant part of the file is this:
+</p>
+<p class="example">
+# -----------------------------------------------------------------------------<br/>
+# DATABASE CONFIGURATION<br/>
+# * This is only meaningful if you are using a database-enabled Multiplexor<br/>
+# * and/or the database-based chat logging.<br/>
+# -----------------------------------------------------------------------------<br/>
+<br/>
+# Typical mySQL configuration<br/>
+programd.database.url=jdbc:mysql:///alicebot<br/>
+programd.database.driver=org.gjt.mm.mysql.Driver<br/>
+<br/>
+# The maximum number of simultaneous connections to the database<br/>
+programd.database.connections=25<br/>
+<br/>
+# The username to access the database<br/>
+programd.database.user=alicebot<br/>
+<br/>
+# The password for the database<br/>
+programd.database.password=yourpassword
+</p>
+<p>
+You should set these values to match your database installation. Remember that the driver class must be available from the Java classpath.
+</p>
+<h4>2.3.0. DBMultiplexor</h4>
+<p>
+If you want to store predicates in the database, you must enable the <span class="literal">DBMultiplexor</span>. This can be done by switching the <span class="literal">#</span> comment mark in <span class="literal">server.properties</span> so that this:
+</p>
+<p class="example">
+# Multiplexor to use
+#programd.multiplexor=org.alicebot.server.core.DBMultiplexor
+programd.multiplexor=org.alicebot.server.core.FlatFileMultiplexor
+</p>
+<p>
+becomes this:
+</p>
+<p class="example">
+# Multiplexor to use
+programd.multiplexor=org.alicebot.server.core.DBMultiplexor
+#programd.multiplexor=org.alicebot.server.core.FlatFileMultiplexor
+</p>
+<p>
+If <span class="literal">DBMultiplexor</span> is enabled, Program D will expect to find two tables called <span class="literal">users</span> and <span class="literal">predicates</span> in the configured database. The SQL commands for creating these tables are in <span class="user-value">PROGRAMD</span>/<span class="literal">database/db-multiplexor.script</span>.
+</p>
+<h4>2.3.1. Database-based Chat Logging</h4>
+<p>
+Database-based chat logging stores each exchange with the bot in a database. This is useful for monitoring conversations, data mining, etc. To enable this feature, you must set:
+</p>
+<p class="example">
+programd.logging.to-database.chat=true
+</p>
+<p>
+(in <span class="literal">server.properties</span>). If this is enabled, Program D will expect to find a table called <span class="literal">chatlog</span> in the database. The command for creating this table is in <span class="user-value">PROGRAMD</span>/<span class="literal">database/db-chatlog.script</span>. Note that if you are logging chats to a database, you might want to disable the redundant logging to XML files. You can do this by setting:
+</p>
+<p class="example">
+programd.logging.to-xml.chat=false
+</p>
+<h3>2.4. Shell and Console</h3>
+<p>
+In its usual configuration, Program D displays information about what it is doing while it starts, runs, and shuts down. We call this the &quot;console&quot;. Also, you can interact with Program D via a simple shell, if desired. Sometimes it is simpler to use this shell than to open a web browser or IM program. Both the console and shell can be configured to suit your needs. Configuration for both is done in the <span class="literal">server.properties</span> file. Following are notes about some specific configuration properties.
+</p>
+<p class="example-head">
+programd.console=true
+</p>
+<p>
+This tells the program to print information to the console. If you set this to <span class="literal">false</span>, almost nothing (except the copyleft notice) will be displayed when the program is run.
+</p>
+<p class="example-head">
+programd.console.developer=false<br/>
+programd.console.developer.method-names-always=false
+</p>
+<p>
+Unless you are interested in debugging the code, you should leave these set to <span class="literal">false</span>.
+</p>
+<p class="example-head">
+programd.console.match-trace=false
+</p>
+<p>
+Setting this property to <span class="literal">true</span> can help you understand what is happening when matching occurs. See <a href="#understanding-match-trace">Understanding the Match Trace</a> (below) for more details on what information is produced.
+</p>
+<p class="example-head">
+programd.console.message-flags=false
+</p>
+<p>
+Some people may find it useful to set this to <span class="literal">true</span>. Doing so will prefix each line of the console output with a flag indicating what type of message is on the line. The flags are:
+</p>
+<ul>
+  <li>
+  <p>
+  <span class="literal">[u]</span>: An informational user message.
+  </p>
+  </li>
+  <li>
+  <p>
+  <span class="literal">[U]</span>: A message regarding a user error.
+  </p>
+  </li>
+  <li>
+  <p>
+  <span class="literal">[d]</span>: An informational message for a developer.
+  </p>
+  </li>
+  <li>
+  <p>
+  <span class="literal">[D]</span>: A message regarding a developer error.
+  </p>
+  </li>
+  <li>
+  <p>
+  <span class="literal">[s]</span>: Text from the interactive shell.
+  </p>
+  </li>
+  <li>
+  <p>
+  <span class="literal">[!]</span>: A message that cannot be supressed.
+  </p>
+  </li>
+</ul>
+<p class="example-head">
+programd.console.bot-name-predicate=name<br/>
+programd.console.client-name-predicate=name
+</p>
+<p>
+If you want to store the bots' and/or users' names in properties/predicates with names other than &quot;<span class="literal">name</span>&quot;, then here's where you can change that. This property exists for the purpose of tuning the chat log functionality.
+</p>
+<p class="example-head">
+programd.console.warn-non-aiml=true
+</p>
+<p>
+It's a good idea to leave this on; it will warn you when you use non-AIML elements outside of a template.
+</p>
+<p class="example-head">
+programd.console.category-load-notify-interval=6000
+</p>
+<p>
+If you're using a very slow computer, you can adjust this so that it produces comforting messages while categories are loading. Most computers will load the AIML so quickly that this is just something to let you save screen real estate.
+</p>
+<p class="example-head">
+programd.console.timestamp-format=H:mm:ss
+</p>
+<p>
+You can choose how the timestamp looks in the console output. If you want the date, no problem. Want 12-hour US-style time, no problem. Just see <a href="http://java.sun.com/j2se/1.4/docs/api/java/text/SimpleDateFormat.html" target="_blank">http://java.sun.com/j2se/1.4/docs/api/java/text/SimpleDateFormat.html</a> for the formatting codes to use.
+</p>
+<p class="example-head">
+programd.shell=true
+</p>
+<p>
+In some situations you may wish to disable the interactive shell. Set this parameter to <span class="literal">false</span> to do so.
+</p>
+<h3><a id="aiml-watcher">2.5. AIMLWatcher</a></h3>
+<p>
+The AIML Watcher is a nifty feature that watches to see if you change your AIML files. This allows you to update AIML without restarting the bot.
+</p>
+<p>
+As a security feature, the AIML Watcher only watches files that were loaded by a <b>learn</b> directive. If you put a new file into a directory with other AIML files, that file will <i>not</i> be automatically loaded (but you can load it with the <span class="literal">/load</span> shell command if you have access to the console and have not disabled the shell).
+</p>
+<p>
+You can enable the AIML Watcher by setting:
+</p>
+<p class="example">
+programd.watcher=true
+</p>
+<p>
+And you can set the frequency with which the AIML Watcher checks your files for modification by changing:
+</p>
+<p class="example">
+programd.watcher.timer=2000
+</p>
+<p>
+(The units are milliseconds. Don't be unreasonable in setting this too low.)
+</p>
+<h4>2.6. Other server.properties Configuration Items</h4>
+<p>
+The <span class="literal">server.properties</span> file is documented inline, so here we don't exhaustively enumerate every property. Nonetheless, following are descriptions of some other interesting parameters.
+</p>
+<p class="example-head">
+programd.startup=conf/startup.xml
+</p>
+<p>
+This parameter tells Program D where to find the <span class="literal">startup.xml</span> file. Note that the path is relative to the <b>working directory <i>when Program D starts</i></b>. This may not necessarily be the same as your <span class="user-value">PROGRAMD</span> directory. You should control this by adjusting your startup script/batchfile as desired.
+</p>
+<p class="example-head">
+programd.emptydefault=undefined
+</p>
+<p>
+Any predicates not given default values in a bot-specific <span class="literal">&lt;predicate&gt;</span> element will have this value as their default value. Note that if you use AIML <span class="literal">&lt;condition&gt;</span> elements to match a predicate value against a particular emptydefault value, you introduce a <span class="literal">server.properties</span> dependency.
+</p>
+<p class="example-head">
+programd.response-timeout=1000
+</p>
+<p>
+If your AIML contains infinite loops, or otherwise results in long processing times, this will cancel the operation by checking (constantly throughout the matching process) to see if the timeout you specify (in milliseconds) has passed. If it has, a &quot;no match&quot; event will occur. 1000 milliseconds (one second) is an extremely generous and safe value. It is possible that actual problem match/response loops will run a little longer than this value, but not much longer.
+</p>
+<p class="example-head">
+programd.infinite-loop-input=INFINITE LOOP
+</p>
+<p>
+Program D tries to detect some simple kinds of infinite loops. If it finds one, it substitutes whatever input you specify here in place of the original input that caused the loop. If the original input was the same as this value, then a &quot;no match&quot; event occurs.
+</p>
+<p class="example-head">
+programd.os-access-allowed=false
+</p>
+<p>
+If you plan to let your bot use AIML from strangers, consider leaving this off. The <span class="literal">&lt;system&gt;</span> tag is very powerful, but also dangerous.  Malicious AIML could potentially wreak havoc with your filesystem using this tag. Disabling it will cause all <span class="literal">&lt;system&gt;</span> elements to return nothing, and a message will appear in the console and logs.
+</p>
+<p class="example-head">
+programd.javascript-allowed=false
+</p>
+<p>
+Allowing server-side JavaScript has similar security implications, although you are a little more protected. Still, because the Rhino JavaScript engine included as an example with Program D will permit use of any Java public methods, someone could potentially access your database, filesystem, etc. using this mechanism. Consider leaving it disabled if you are going to use unknown AIML.
+</p>
+<p class="example-head">
+programd.connect-string=CONNECT
+</p>
+<p>
+When a new connection is detected, this string will be sent to the bot as though the user had typed it. If you create a category whose pattern matches this, you can make the bot say something special when the user first connects.
+</p>
+<p class="example-head">
+programd.inactivity-string=INACTIVITY
+</p>
+<p>
+Certain responders or listeners may characterize some user activity, such as a blank input or a long delay without input, as &quot;inactivity&quot;. You can set this string to tell them what input to send the bot in such cases.
+</p>
+<p class="example-head">
+programd.deprecated-tags-support=true
+</p>
+<p>
+The so-called &quot;AIML 0.9&quot; tag set includes some forms that are now deprecated. If you choose to support these, be forewarned that the template parser will be somewhat slower since parsing of deprecated tags is done using a less efficient parser.
+</p>
+<p class="example-head">
+programd.deprecated-tags-warn=true
+</p>
+<p>
+You can choose to enabled support of deprecated tags, but still receive warnings, to assist you in getting rid of them.
+</p>
+<p class="example-head">
+programd.heart.enabled=false<br/>
+programd.heart.pulserate=5
+</p>
+<p>
+If you enable the &quot;heart&quot;, you can set the bot's pulse rate to something reasonable that will let you know that the bot is still alive. Right now this consists of the message &quot;<span class="literal">I'm alive!</span>&quot; being printed to the console, which is not particularly useful unless you're experiencing serious problems with deadlock in the bot server (in which case you should immediately file a <a href="http://alicebot.org/bugzilla" target="_blank">bug report</a>!!!). Future enhancements to this may include the facility to write health monitoring information to a file/database.
+</p>
+<p class="example-head">
+programd.predicate-cache.max=500
+</p>
+<p>
+Predicates are not immediately saved to the flat file or database, in the interest of improving performance. However, there is a tradeoff between performance and reliability: if your bot server goes down for any reason, any unsaved predicates will be lost.
+</p>
+<p>
+But consider that the <span class="literal">&lt;that&gt;</span> and <span class="literal">&lt;input</span> predicates, which are indexed up to five (5) values each, are updated each time a user has an exchange with the bot. Writing these to disk or database on each turn can become very expensive. If you are willing to risk the possibility of losing context, you can set this value to a reasonable number. &quot;Reasonable&quot; will depend on your average client load and average number of custom predicates. You can also set this number to <span class="literal">1</span> if you want the bot to save every predicate every time it's updated, but be forewarned of the potential performance hit.
+</p>
+<p class="example-head">
+programd.interpreter.system.prefix=cmd /c
+</p>
+If <span class="literal">&lt;system&gt;</span> elements don't seem to be working right, you may need to adjust this. Linux users, for instance, can just comment it out.
+<h2><a id="startup">3. First Startup</a></h2>
+<h3>3.0. Starting Program D</h3>
+<p>
+To start Program D, run <span class="literal">server.sh</span> (*nix) or <span class="literal">run.bat</span> (Windows). The <span class="literal">run.bat</span> file is provided for Windows users so that common problems with the DOS environment can be handled before launching the <span class="literal">server.bat</span> file (which is started by <span class="literal">run.bat</span>.
+</p>
+<p>
+If you're using Windows and you launch the batch file by double-clicking it, but there are some configuration problems, the console window might disappear before you have time to read the messages. You are advised in this case to open a command prompt and run the batch file from there (cd to the right directory, type &quot;<span class="literal">run</span>&quot;).
+</p>
+<p>
+If you're using Linux, you may need to make the <span class="literal">server.sh</span> file executable by issuing the command:
+</p>
+<p class="example">
+chmod +x server.sh
+</p>
+<p>
+Starting the server script should look something like this:
+</p>
+<p class="example">
+[noel@vasya ProgramD]$ ./server.sh<br/>
+Starting Alicebot Program D.<br/>
+[12:10:21] Starting Alicebot Program D version 4.1.5<br/>
+[12:10:21] Using Java VM 1.4.0-b92 from Sun Microsystems Inc.<br/>
+[12:10:22] On Linux version 2.4.2-2 (i386)<br/>
+[12:10:22] Predicates with no values defined will return: &quot;undefined&quot;.<br/>
+[12:10:22] Initializing Multiplexor.<br/>
+[12:10:22] Loading Graphmaster.<br/>
+[12:10:22] Starting up with &quot;/home/noel/eclipse/workspace/ProgramD/conf/startup.xml&quot;.<br/>
+[12:10:22] Configuring bot &quot;TestBot-1&quot;.<br/>
+[12:10:22] Loaded 287 input substitutions.<br/>
+[12:10:22] Loaded 19 gender substitutions.<br/>
+[12:10:23] Loaded 9 person substitutions.<br/>
+[12:10:23] Loaded 60 person2 substitutions.<br/>
+[12:10:23] Loaded 4 sentence-splitters.<br/>
+[12:10:24] 6000 categories loaded so far.<br/>
+[12:10:25] 12000 categories loaded so far.<br/>
+[12:10:27] 18000 categories loaded so far.<br/>
+[12:10:28] 1 bots thinking with 23879 categories.<br/>
+[12:10:28] Alicebot Program D (c) 1995-2002 A.L.I.C.E. AI Foundation<br/>
+[12:10:28] All Rights Reserved.<br/>
+[12:10:28] This program is free software; you can redistribute it and/or<br/>
+[12:10:28] modify it under the terms of the GNU General Public License<br/>
+[12:10:28] as published by the Free Software Foundation; either version 2<br/>
+[12:10:28] of the License, or (at your option) any later version.<br/>
+[12:10:28] Alicebot Program D version 4.1.5 Build [00]<br/>
+[12:10:28] 23879 categories loaded in 6.133 seconds.<br/>
+[12:10:28] The AIML Watcher is not active.<br/>
+[12:10:28] HTTP server listening at http://vasya:2001<br/>
+[12:10:29] Interactive shell: type &quot;/exit&quot; to shut down; &quot;/help&quot; for help.<br/>
+[12:10:29] user&gt; CONNECT : Hello there user and thanks for connecting : * : TestBot-1<br/>
+[12:10:29] Match: CONNECT : * : * :  TestBot-1<br/>
+[12:10:29] Filename: &quot;/home/noel/eclipse/workspace/ProgramD/conf/../aiml/standard//std-connect.aiml&quot;<br/>
+[12:10:29] Response 1 in 117 ms. (Average: 117.0 ms.)<br/>
+[12:10:29] Testy 1&gt; Hello there user and thanks for connecting!<br/>
+[12:10:29] [Testy 1] user&gt;
+</p>
+<p>
+If there are any errors while starting up, an explanation will be printed and the server will shut down. If you encounter a confusing error message, please <a href="http://alicebot.org/bugzilla" target="_blank">file a bug report</a>!!!
+</p>
+<h3>3.1. Understanding the Console</h3>
+<p>
+While the bot is running, information will be printed to the console to tell you what's going on.
+</p>
+<h4><a id="understanding-match-trace">3.1.0. Understanding the Match Trace</a></h4>
+<p>
+If you enable the match trace in <span class="literal">server.properties</span> you can understand the details of what is going on inside the bot engine. Here is an example of match trace output, and a detailed line-by-line explanation of what it means:
+</p>
+<p class="example">
+[10:22:55] [Testy 1] Client&gt; Who is the smartest bot in the world?<br/>
+[10:23:13] Client&gt; Who is the smartest bot in the world? : Does that mean no : * : TestBot-1<br/>
+[10:23:13] Match: _ IN THE WORLD : * : * :  TestBot-1<br/>
+[10:23:13] Filename: &quot;/home/noel/eclipse/workspace/ProgramD/conf/../aiml/standard//std-suffixes.aiml&quot;<br/>
+[10:23:13] Symbolic Reduction:<br/>
+[10:23:13] Client&gt; Who is the smartest bot : Does that mean no : * : TestBot-1<br/>
+[10:23:13] Match: WHO IS THE SMARTEST * : * : * :  TestBot-1<br/>
+[10:23:13] Filename: &quot;/home/noel/eclipse/workspace/ProgramD/conf/../aiml/standard//std-robot.aiml&quot;<br/>
+[10:23:13] Response 4 in 7 ms. (Average: 48.0 ms.)<br/>
+[10:23:13] Testy 1&gt; Testy 1 is the most intelligent robot in the world. The whole world?
+</p>
+<p>
+Line by line, this excerpt from the console output shows:
+</p>
+<ul>
+  <li>
+  <p>
+  I said, &quot;<span class="literal">Who is the smartest bot in the world?</span>&quot; to the bot whose name is <span class="literal">Testy 1</span>.
+  </p>
+  </li>
+  <li>
+  <p>
+  The complete set of values for the input path generated by my input was:
+  </p>
+  <ul>
+	<li>
+	<p>
+	<b>input:</b> <span class="literal">Who is the smartest bot in the world?</span>
+	</p>
+	</li>
+	<li>
+	<p>
+	<b>that:</b> <span class="literal">Does that mean no</span>
+	</p>
+	</li>
+	<li>
+	<p>
+	<b>topic:</b> (nothing)
+	</p>
+	</li>
+	<li>
+	<p>
+	<b>botid:</b> <span class="literal">TestBot-1</span>
+	</p>
+	</li>
+  </ul>
+  </li>
+  <li>
+  <p>
+  The first category matched by my input had the following characteristics:
+  </p>
+  <ul>
+	<li>
+	<p>
+	<b>pattern:</b> <span class="literal">_ IN THE WORLD</span>
+	</p>
+	</li>
+	<li>
+	<p>
+	<b>that:</b> <span class="literal">*</span>
+	</p>
+	</li>
+	<li>
+	<p>
+	<b>topic:</b> <span class="literal">*</span>
+	</p>
+	</li>
+  </ul>
+  <p>
+  (And it belonged to the bot with id &quot;<span class="literal">TestBot-1</span>&quot;. Program D includes the bot id as the last part of the match path. This is not a requirement of the AIML pattern-matching process, just a particular way of implementing multi-bot functionality. Remember that pattern matching proceeds word by word, not category by category; see <a href="http://alicebot.org/documentation/matching.html" target="_blank">AIML Pattern Matching Simplified</a> for more information.)
+  </p>
+</li>
+<li>
+<p>
+This category was originally loaded from the file <span class="literal">/home/noel/eclipse/workspace/ProgramD/conf/../aiml/standard//std-suffixes.aiml</span>. (Note that the pathname is not fully &quot;canonicalized&quot;.)
+</p>
+</li>
+<li>
+<p>
+This template triggered a <a href="http://alicebot.org/documentation/srai.html" target="_blank">symbolic reduction</a>.
+</p>
+</li>
+<li>
+<p>
+The reduced input path had these values:
+</p>
+<ul>
+  <li>
+  <p>
+  <b>input:</b> <span class="literal">Who is the smartest bot</span>
+  </p>
+  </li>
+  <li>
+  <p>
+  <b>that:</b> <span class="literal">Does that mean no</span>
+  </p>
+  </li>
+  <li>
+  <p>
+  <b>topic:</b> (nothing)
+  </p>
+  </li>
+  <li>
+  <p>
+  <b>botid:</b> <span class="literal">TestBot-1</span>
+  </p>
+  </li>
+  </ul>
+</li>
+<li>
+<p>
+This (reduced) input matched the category with these values:
+</p>
+<ul>
+	<li>
+	<p>
+	<b>pattern:</b> <span class="literal">WHO IS THE SMARTEST *</span>
+	</p>
+	</li>
+	<li>
+	<p>
+	<b>that:</b> <span class="literal">*</span>
+	</p>
+	</li>
+	<li>
+	<p>
+	<b>topic:</b> <span class="literal">*</span>
+	</p>
+	</li>
+  </ul>
+</li>
+<li>
+<p>
+This category was originally loaded from the file <span class="literal">/home/noel/eclipse/workspace/ProgramD/conf/../aiml/standard//std-robot.aiml</span>.
+</p>
+</li>
+<li>
+<p>
+This was response number <span class="literal">4</span> since the bot was started, and it was produced in <span class="literal">7</span> milliseconds. The average response time for this bot during its run so far is <span class="literal">48.0</span> milliseconds.
+</p>
+</li>
+<li>
+<p>
+The complete response produced was: &quot;<span class="literal">Testy 1 is the most intelligent robot in the world. The whole world?</span>&quot;.
+</p>
+</li>
+</ul>
+<h4><a id="shutdown-info">3.1.1. Shutdown Messages</a></h4>
+<p>
+Before the bot server can shut down, it must stop the http server and must save any predicates left in the cache. It also must stop all listeners. There are several different <a href="#shutting-down">ways to shut down</a>, but all of them should cause Program D to print information that looks like this:
+</p>
+<p class="example">
+[12:26:14] AliceServer is shutting down.<br/>
+[12:26:14] Shutting down all BotProcesses.<br/>
+[12:26:14] Shutting down org.alicebot.server.net.JettyWrapper@861f24<br/>
+[12:26:18] Finished shutting down BotProcesses.<br/>
+[12:26:18] Saving all cached predicates (3)<br/>
+[12:26:18] Shutdown complete.
+</p>
+<p>
+&quot;Bot Processes&quot; are such things as the http server and listeners. Sometimes one or more of these may take a long time to shut down. Unless you are in a great hurry, you should allow this process to complete properly. The saving of cached predicates should be very fast.
+</p>
+<h3><a id="using-shell">3.2. Using the Shell</a></h3>
+<p>
+The simplest use of the shell is to talk to your bot(s). However, there is a growing list of other capabilities available to you. All shell commands in Program D are preceded by a <span class="literal">/</span> (slash) character. If you type &quot;<span class="literal">/help</span>&quot; at a shell prompt, you can see the list of available commands:
+</p>
+<p class="example">
+[12:31:21] [Testy 1] user> /help<br/>
+[12:31:23] All shell commands are preceded by a forward slash (/).<br/>
+[12:31:23] The commands available are:<br/>
+[12:31:23] /help             - prints this help<br/>
+[12:31:23] /exit             - shuts down the bot server<br/>
+[12:31:23] /load filename    - loads/reloads given filename for active bot<br/>
+[12:31:23] /unload filename  - unloads given filename for active bot<br/>
+[12:31:23] /bots             - lists loaded bots<br/>
+[12:31:23] /talkto botid     - switches conversation to given bot<br/>
+[12:31:23] /who              - prints the id of the current bot<br/>
+[12:31:23] /files            - lists the files loaded by the current bot<br/>
+[12:31:23] /roll chatlog     - rolls over chat log<br/>
+[12:31:23] /roll targets     - rolls over saved targeting data<br/>
+[12:31:23] /commandables     - lists available &quot;shell commandables&quot; (such as listeners)
+</p>
+<h4>3.2.0. Loading AIML</h4>
+<p>
+The <span class="literal">/load</span> command lets you load new AIML files, or reload files (useful if you have disabled the <a href="#aiml-watcher">AIML Watcher</a>.) The following command, for example, will load the file <span class="literal">aiml/new-file.aiml</span>:
+</p>
+<p class="example">
+[12:31:23] [Testy 1] user> /load aiml/new-file.aiml
+</p>
+<p>
+The path must be relative to the working directory for Program D. If the file cannot be found, you will get a message like:
+</p>
+<p class="example">
+[12:33:58] Couldn't find &quot;/home/noel/cvs/aiml-sets/new-file.aiml&quot;.<br/>
+[12:33:58] 0 categories loaded from &quot;/home/noel/cvs/aiml-sets/new-file.aiml&quot;.
+</p>
+<h4>3.2.1. Unloading AIML</h4>
+<p>
+The <span class="literal">/unload</span> command lets you unload an AIML file that is currently in memory. You must unload using the pathname that was originally used to load it, which can be a little tricky to get right. Please note that this feature is still experimental and may not always behave as expected.
+</p>
+<h4>3.2.2. Listing Loaded Bots</h4>
+<p>
+You can see which bots are currently loaded with the <span class="literal">/bots</span> command:
+</p>
+<p class="example">
+[12:46:09] [Testy 2] user&gt; /bots<br/>
+[12:46:12] Active bots: TestBot-2 TestBot-1
+</p>
+<h4>3.2.3. Talking to a Different Bot</h4>
+<p>
+You can switch the bot with whom you are conversing by using the <span class="literal">/talkto</span> command. You must use a valid bot id as the argument. (The bot id is not necessarily the same as the value associated with its &quot;name&quot; property. To see bot ids, look at your <span class="literal">startup.xml</span> file or use the <span class="literal">/bots</span> command.
+</p>
+<p>
+Each time you switch bots, the connect string will be sent to the bot:
+</p>
+<p class="example">
+[12:46:12] [Testy 2] user> /talkto TestBot-1<br/>
+[12:48:28] Switched to bot &quot;TestBot-1&quot; (name: &quot;Testy 1&quot;).<br/>
+[12:48:28] user&gt; CONNECT : Hello there user and thanks for connecting : * : TestBot-1<br/>
+[12:48:28] Match: CONNECT : * : * :  TestBot-1<br/>
+[12:48:28] Filename: &quot;/home/noel/eclipse/workspace/ProgramD/conf/../aiml/standard//std-connect.aiml&quot;<br/>
+[12:48:28] Response 2 in 5 ms. (Average: 52.5 ms.)<br/>
+[12:48:28] Testy 1&gt; Hello there user and thanks for connecting!
+</p>
+<p>
+Trying to talk to a botid that doesn't exist will result in an error message:
+</p>
+<p class="example">
+[12:48:28] [Testy 1] user&gt; /talkto non-existent-bot<br/>
+[12:49:56] That bot id is not known. Check your startup files.
+</p>
+<h4>3.2.4. Recalling Who You're Talking To</h4>
+<p>
+Just in case you aren't sure which bot you're speaking with, you can use the <span class="literal">/who</span> command:
+</p>
+<p class="example">
+[12:49:56] [Testy 1] user&gt; /who<br/>
+[12:51:37] You are talking to &quot;TestBot-1&quot;.
+</p>
+<p>
+Notice how in this example the botid is different from the value associated with its &quot;name&quot; predicate, which is what is displayed in the square brackets at each input prompt.
+</p>
+<h4>3.2.5. Listing Loaded Files</h4>
+<p>
+The <span class="literal">/files</span> command lists all files that are loaded by the active bot.
+</p>
+<p class="example">
+[12:51:37] [Testy 1] user&gt; /files<br/>
+[12:53:37] 40 files loaded by &quot;TestBot-1&quot;:<br/>
+[12:53:37] /home/noel/eclipse/workspace/ProgramD/conf/../aiml/standard/std-srai.aiml<br/>
+[12:53:37] /home/noel/eclipse/workspace/ProgramD/conf/../aiml/standard/std-numbers.aiml<br/>
+[12:53:37] /home/noel/eclipse/workspace/ProgramD/conf/../aiml/standard/std-botmaster.aiml<br/>
+...
+</p>
+<h4>3.2.6. Rolling the XML Chatlog</h4>
+<p>
+If you are using the XML chat log feature, you may find that the file gets too big for you to handle (this is especially a problem with XSLT-based display of the logs). You can use the <span class="literal">/roll chatlog</span> command to &quot;roll over&quot; the log file so that the current log file is renamed, and a new one is created. The new one will contain a link to the previous one, so over time you can have a chain of log files.
+</p>
+<p class="example">
+[13:01:34] [Testy 1] user&gt; /roll chatlog<br/>
+[13:01:37] Rolling over chat log for &quot;TestBot-1&quot;.<br/>
+[13:01:37] Finished rolling over chat log.
+</p>
+<p>
+(This rollover can also be controlled to some degree by adjusting the <span class="literal">programd.logging.xml.rollover</span> property in <span class="literal">server.properties</span>.
+</p>
+<h4>3.2.7. Rolling the Targets File</h4>
+<p>
+Targets are currently written to an XML file; this can also become enormous. You can roll over this file with the <span class="literal">/roll targets</span> command:
+</p>
+<p class="example">
+[20:06:54] [Testy 2] user&gt; /roll targets<br/>
+[20:07:28] Rolling over targeting data.<br/>
+[20:07:28] Targeting data deleted (old file rolled over).
+</p>
+<h4>3.2.8. Using Commandables</h4>
+<p>
+A <b>commandable</b> is a module that can be dropped in to Program D and commanded from the shell. As of this writing, the only module that implements the commandable interface is <span class="literal">AliceIRC</span>. You can see a list of available commandables with the <span class="literal">/commandables</span> command:
+</p>
+<p class="example">
+[20:13:48] Available shell commandables:<br/>
+[20:13:48] /irc - Alice IRC chat listener<br/>
+[20:13:48] Commands after the shell commandable will be sent to the commandable.<br/>
+[20:13:48] Example: &quot;/irc /JOIN #foo&quot; tells the AliceIRC listener to join channel &quot;#foo&quot;.
+</p>
+<p>
+As the program tells you, you send commands to the commandable by typing its name followed by a command. For example:
+</p>
+<p class="example">
+[20:18:15] [Testy 2] user&lt; /irc /names<br/>
+[20:18:17] [Testy 2] user&gt;<br/>
+[20:18:18] AliceIRC: [server] Users on #bots: programd dos-bot FakeUser search @ChanServ<br/>
+[20:18:18] AliceIRC: [server] (366) End of /NAMES list.
+</p>
+<p>
+IRC historically has a command-driven interface, so providing a commandable interface for it was easy. IM clients or other modules may need more work.
+</p>
+<h3>3.3. Connecting via the Web Interface</h3>
+<p>
+Once your bot is started, you can interact with it through a web browser. If you have not changed the port number (see <a href="#config-http-server">HTTP Server</a> above, then you should get a response when you go to this address:
+</p>
+<p class="example">
+http://localhost:2001
+</p>
+<p>
+Note that &quot;localhost&quot; is the name by which your computer knows itself--not only in Program D, but in any program that uses TCP/IP (the set of protocols that makes the Internet work). You cannot go to another computer and connect to yours using the name &quot;<span class="literal">localhost</span>&quot;. You will need to know the IP address or name of the computer where the bot is running, in order to connect from another machine. On Windows 95 and 98, you can find this out by running the command:
+</p>
+<p class="example">
+winipcfg
+</p>
+<p>
+On Windows NT, 2000 and XP, use:
+</p>
+<p class="example">
+ipconfig
+</p>
+<p>
+On *nix, use:
+</p>
+<p class="example">
+host
+</p>
+<p>
+Try using the hostname first (it's usually easier to remember); if that causes problems, use the IP address. Also note that if you are behind a firewall, or otherwise part of a network over which you do not have complete control, your bot may be inaccessible to users from other machines even if they know your IP address or hostname. In such cases, contact your system administrator or Internet service provider.
+</p>
+<p>
+Once you do succeed to connect with the bot, you should see something like this:
+</p>
+<div class="box">
+<table border="0" cellspacing="5" cellpadding="0" width="500">
+  <tr>
+	<td width="30%" valign="top">
+	  <p>
+	  You said:
+	  </p>
+	</td>
+	<td width="70%" valign="top">
+	  <p>
+	  CONNECT
+	  </p>
+	</td>
+  </tr>
+  <tr>
+	<td width="30%" valign="top">
+	  <p>
+	  Testy 1 said:
+	  </p>
+	</td>
+	<td width="70%" valign="top">
+	  <p>
+	  Hello there user and thanks for connecting!
+	  </p>
+	</td>
+  </tr>
+  <tr>
+	<td width="100%" colspan="2" valign="top">
+	  <input type="text" size="50" name="text" />
+	  <input type="submit" value="Say" />
+	</td>
+  </tr>
+  <tr>
+	<td width="100%" colspan="2" valign="top">
+	  <p>
+	  You are speaking with Testy 1 from vasya.
+	  </p>
+	  <p>
+	  Testy 1's botmaster is A.L.I.C.E. AI Foundation.
+	  </p>
+	  
+	  <p>
+	  You can:
+	  </p>
+	  <ul>
+		<li>
+		<p>
+		<a href="?login=yes">log in</a>.
+		</p>
+		
+		</li>
+		<li>
+		<p>
+		<a href="?register=yes">register a new username and password</a>.
+		</p>
+		</li>
+	  </ul>
+	</td>
+</tr>
+</table>
+</div>
+<p>
+If you have configured more than one bot, you can request the one you want by appending a <span class="literal">botid</span> parameter to your request. For example:
+</p>
+<p class="example">
+http://vasya:2001?botid=TestBot-2
+</p>
+<p>
+would request the bot with id (not necessarily name!) <span class="literal">TestBot-2</span> from the machine <span class="literal">vasya</span>.
+</p>
+<p>
+You can also create different HTML templates for chat with your bot, by following the example provided in <span class="user-value">PROGRAMD</span><span class="literal">/templates/html/chat.html</span>. If you then want to request one of these alternate templates you can add a <span class="literal">template</span> parameter to the URL request. The value of this parameter should be the name of the file, minus whatever extension. So if you create a template file named <span class="literal">fancy.html</span> and store it in the <span class="literal">templates/html</span> directory, then you can use a request like this:
+</p>
+<p class="example">
+http://localhost:2001?botid=TestBot-1&amp;template=fancy
+</p>
+<h3>3.4. Connecting via a Chat Interface</h3>
+<p>
+If you have correctly configured one or more listeners (see <a href="#config-listeners">Configuring Listeners</a> above, then you should be able to start the appropriate chat client and communicate with your bot. Note that as of this writing the ICQ listener has some problems (see release notes).
+</p>
+<h3>3.5. Shutting Down</h3>
+<p>
+If you start Program D with the shell enabled, you can shut down the bot from the console by typing <span class="literal">/exit</span> command:
+</p>
+<p class="example">
+[20:45:12] [Testy 1] user&gt; /exit<br/>
+[20:45:13] Exiting at user request.<br/>
+[20:45:13] AliceServer is shutting down.<br/>
+[20:45:13] Shutting down all BotProcesses.<br/>
+[20:45:13] Shutting down org.alicebot.server.net.JettyWrapper@20d62b<br/>
+[20:45:17] Finished shutting down BotProcesses.<br/>
+[20:45:17] Saving all cached predicates (19)<br/>
+[20:45:17] Shutdown complete
+</p>
+<p>
+If the shell is disabled, you can shut down the bot by pressing the interrupt key sequence for your operating system; this is often <span class="literal">Ctrl-C</span>. Or, on *nix systems, you can send the main JVM process a <span class="literal">SIGINT</span> signal with the <span class="literal">kill</span> command.
+</p>
+<h2><a id="misc-faq">4. Miscellaneous Common Problems &amp; Questions</a></h2>
+<ul>
+  <li>
+  <a href="#faq-out-of-environment-space">4.0. I get a message saying &quot;out of environmental space&quot;</a>
+  </li>
+  <li>
+  <a href="#faq-admin-console">4.1. Why doesn't the admin console (at port 2002) work?</a>
+  </li>
+  <li>
+  <a href="#faq-changing-the-HTML-template">4.2. How do I change the HTML template?</a>
+  </li>
+  <li>
+  <a href="#faq-long-pathname-directory">4.3. Installing to long-path name directory can cause late-load failure. </a>
+  (Windows)
+  </li>
+  <li>
+  <a href="#faq-bad-command-or-filename">4.4. Error Message: &quot;Bad command or filename&quot; or &quot;The system cannot find the path specified.&quot;</a>
+  (Windows)
+  </li>
+  <li>
+  <a href="#faq-page-cannot-be-found">4.5. Error Message: &quot;page cannot be found&quot; (Internet Explorer)</a>
+  </li>
+</ul>
+<ul>
+  <li>
+  <p class="faq"><a id="faq-out-of-environment-space">4.0. I get a message saying &quot;out of environment space&quot; (Windows)</a></p>
+  <p>
+  You shouldn't get this message when running <span class="literal">run.bat</span>. If you do, edit it and increase the number after both of the the <span class="literal">/E:</span> parameters.  
+  </p>
+  </li>
+  <li>
+  <p class="faq"><a id="faq-admin-console">4.1. Why doesn't the admin console (at port 2002) work?</a></p>
+  <p>
+  It isn't implemented. Stay tuned to the
+  <a href="http://alicebot.org/mailing-lists.html#general">Alicebot and AIML mailing list</a>
+  for news.
+  </p>
+  </li>
+  <li>
+  <p class="faq"><a id="faq-changing-the-HTML-template">4.2. How do I change the HTML template?</a></p>
+  <p>
+  The file <span class="literal">templates/html/chat.html</span> is used for constructing a web page with the bot's response. It is a plain HTML file, with a few important tags (these may change in the future):
+  </p>
+  <ul>
+	<li>
+	<span class="literal">
+	&lt;reply&gt;&lt;/reply&gt;
+	</span>
+	<p>
+	These tags separate the 'header' of the bot response from the 'main' part and the 'footer'. What comes before is the header, what is inside is the main part and what comes after is the footer. The main part is repeated for every sentence in the client input. These must be included, even though the 'main' part may be empty.
+	</p>
+	</li>
+	<li>
+	<span class="literal">
+	&lt;userinput/&gt;
+	</span>
+	<p>
+	The user input. This may be either the whole input (in the 'header') or one sentence of it (in the 'main' part).
+	</p>
+	</li>
+	<li>
+	<span class="literal">
+	&lt;response/&gt;
+	</span>
+	<p>
+	The bot output. This may be either whole ('footer') or one sentence ('main').
+	</p>
+	</li>
+	<li>
+	<span class="literal">
+	&lt;bot name=&quot;xxx&quot;/&gt;
+	</span>
+	<p>
+	Includes the value of the bot predicate 'xxx' in the page (such as the name).
+	</p>
+	</li>
+  </ul>
+</li>
+<li>
+<p class="faq"><a id="faq-long-pathname-directory">4.3. Installing to long-path name directory can cause late-load failure (Windows)</a></p>
+<p>
+If you unzip the server build to a path with a directory with longer than 8 characters, and you change to that directory via its DOS 8.3 path name, you'll get a run-time failure that looks like this:
+</p>
+<p class="example">
+D:\dev\ALICE2~1\server&gt;server<br />
+[loading notices deleted]<br />
+java.io.FileNotFoundException: D:\dev\ALICE2~1\server\users\USERS.properties is	alias of D:\dev\alice200105\server\users\USERS.properties
+</p>
+<p>
+The workaround is to shorten the pathname.
+</p>
+</li>
+<li>
+<p class="faq"><a id="faq-bad-command-or-filename">4.4. Error message: &quot;Bad command or filename&quot; or &quot;The system cannot find the path specified.&quot; (Windows)</a></p>
+<p>
+Check again if you have a Java Runtime Environment (JRE) installed properly. Try typing <span class="literal">java</span> at the command prompt. You should get some information on how to use this command. If you get an error message, you need to install the JRE. You can get it e.g. from <a href="http://java.sun.com/j2se/1.4/jre/" target="_blank">Sun's website</a>.
+</p>
+<p>
+Make sure you run the server with the <span class="literal">run.bat</span> file.
+</p>
+<p>
+If all else fails, remove the line saying <span class="literal">@echo off</span> from <span class="literal">server.bat</span> and run <span class="literal">run.bat</span>. Post the results to the <a href="http://alicebot.org/mailing-lists.html#general">Alicebot and AIML mailing list</a>, possibly stating what computer you have (OS, memory) and what version of Program D you are running (this can be found in the file <span class="literal">release-notes.html</span>).
+</p>
+</li>
+<li>
+<p class="faq"><a id="faq-page-cannot-be-found">4.5. Error Message: &quot;page cannot be found&quot; error (Internet Explorer)</a></p>
+<p>
+One rather wacky aspect of IE is that if you enter a localhost address with a port number, you must precede it with <span class="literal">http://</span> or IE will mysteriously transform it into <span class="literal">&quot;local:####&quot;</span> (where <span class="literal">&quot;####&quot;</span> is the port number you typed) and you won't see what you want. So be sure you type out: <span class="literal">&quot;http://localhost:2001&quot;</span>. Make a bookmark.
+</p>
+</li>
+</ul>
+<p>
+<a href="http://validator.w3.org/check/referer" class="nohover"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" border="0" /></a>
+</p>
+</body>
+</html>

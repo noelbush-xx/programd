@@ -33,7 +33,7 @@ public interface AIMLReaderListener extends GenericReaderListener
     /**
      *  Adds a new category to the
      *  {@link Graphmaster}.  Usually called by an
-     *  AIML parser such as {@link org.alicebot.core.parser.AIMLParser AIMLParser}.
+     *  AIML parser such as {@link org.alicebot.core.parser.TemplateParser TemplateParser}.
      *
      *  @param pattern  the <code>pattern</code> portion of a Graphmaster path
      *  @param that     the <code>that</code> portion of a Graphmaster path

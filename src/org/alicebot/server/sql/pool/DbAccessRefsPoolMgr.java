@@ -3,9 +3,9 @@ package org.alicebot.server.sql.pool;
 import java.sql.SQLException;
 
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.DeveloperError;
 import org.alicebot.server.core.util.Trace;
-import org.alicebot.server.core.util.UserErrorException;
+import org.alicebot.server.core.util.UserError;
 
     
 /**
@@ -65,7 +65,7 @@ public class DbAccessRefsPoolMgr extends ObjectPool
      */
     public void populate(int connectionCount)
     {
-        for (int index = 0; index < connectionCount; index++)
+        for (int index = connectionCount; --index >= 0; )
         {
             super.checkIn(create());
         }     

@@ -20,6 +20,7 @@ import org.alicebot.server.core.parser.StartupFileParser;
 import org.alicebot.server.core.parser.XMLNode;
 import org.alicebot.server.core.processor.Processor;
 import org.alicebot.server.core.processor.ProcessorException;
+import org.alicebot.server.core.util.Toolkit;
 
 
 /**
@@ -31,11 +32,14 @@ import org.alicebot.server.core.processor.ProcessorException;
  */
 abstract public class StartupElementProcessor extends Processor
 {
-    public String process(int level, String id, XMLNode tag, GenericParser parser) throws ProcessorException
+    /** The string &quot;href&quot;. */
+    protected static final String HREF = "href";
+
+    public String process(int level, XMLNode tag, GenericParser parser) throws ProcessorException
     {
         try
         {
-            return process(level, id, tag, (StartupFileParser)parser);
+            return process(level, tag, (StartupFileParser)parser);
         }
         catch (ClassCastException e)
         {
@@ -43,5 +47,16 @@ abstract public class StartupElementProcessor extends Processor
         }
     }
 
-    abstract public String process(int level, String botid, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException;
+    abstract public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException;
+
+
+    /**
+     *  Returns the contents of the href attribute (if present).
+     *
+     *  @return the contents of the href attribute (if present)
+     */
+    protected String getHref(XMLNode tag)
+    {
+        return Toolkit.getAttributeValue(HREF, tag.XMLAttr);
+    }
 }

@@ -40,7 +40,7 @@ public class PredicateProcessor extends StartupElementProcessor
     private static final String VALUE = "value";
 
 
-    public String process(int level, String botid, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
     {
         if (tag.XMLType == XMLNode.EMPTY)
         {
@@ -68,7 +68,7 @@ public class PredicateProcessor extends StartupElementProcessor
             {
                 throw new InvalidStartupElementException("Invalid value for set-return attribute on <predicate/>.");
             }
-            PredicateMaster.registerPredicate(name, defaultValue, returnNameWhenSet, botid);
+            parser.getCurrentBot().addPredicateInfo(name, defaultValue, returnNameWhenSet);
             return EMPTY_STRING;
         }
         else

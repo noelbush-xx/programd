@@ -30,7 +30,7 @@
 package org.alicebot.server.core.processor;
 
 import org.alicebot.server.core.Graphmaster;
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
 
 
@@ -53,11 +53,11 @@ public class LearnProcessor extends AIMLProcessor
      *  described by the results of processing the content
      *  of the element.
      */
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
-            Graphmaster.load(parser.evaluate(level++, userid, tag.XMLChild).trim());
+            Graphmaster.load(parser.evaluate(level++, tag.XMLChild), parser.getBotID());
             return EMPTY_STRING;
         }
         else

@@ -15,7 +15,17 @@
 
 package org.alicebot.server.core.targeting;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
+
+import org.alicebot.server.core.Graphmaster;
+import org.alicebot.server.core.util.DeveloperError;
+import org.alicebot.server.core.util.InputNormalizer;
+import org.alicebot.server.core.util.StringTriple;
+import org.alicebot.server.core.util.StringTripleMatrix;
+import org.alicebot.server.core.util.Trace;
 
 
 /**
@@ -25,40 +35,17 @@ public class Target
 {
     // Instance variables
 
-    /** The <code>pattern</code> part of the matched path. */
-    private String matchPattern;
+    private Category match;
 
-    /** The <code>that</code> part of the matched path. */
-    private String matchThat;
+    private TargetInputs inputs;
 
-    /** The <code>topic</code> part of the matched path. */
-    private String matchTopic;
+    private TargetExtensions extensions = new TargetExtensions();
 
-    /** The <code>template</code> associated with the matched path. */
-    private String matchTemplate;
+    private LinkedList replies = new LinkedList();
 
-    /** The input text(s) that were matched. */
-    private ArrayList inputTexts = new ArrayList();
+    private Category newCategory = new Category();
 
-    /** The value(s) of the <code>that</code> predicate when the input was received. */
-    private ArrayList inputThats = new ArrayList();
-
-    /** The value(s) of the <code>topic</code> predicate when the input was received. */
-    private ArrayList inputTopics = new ArrayList();
-
-    /** An extension <code>pattern</code>. */
-    private String extensionPattern;
-
-    /** An extension <code>that</code>. */
-    private String extensionThat;
-
-    /** An extension <code>topic</code>. */
-    private String extensionTopic;
-
-    /** An extension <code>template</code>. */
-    private String extensionTemplate;
-
-    /** The activations count (starts at 1). */
+    /** The activations count. */
     private int activations = 1;
 
 
@@ -72,24 +59,14 @@ public class Target
      *  @param inputText            the input text that was matched
      *  @param inputThat            the value of the <code>that</code> predicate when the input was received
      *  @param inputTopic           the value of the <code>topic</code> predicate when the input was received
-     *  @param extensionPattern     a target <code>pattern</code>
-     *  @param extensionThat        a target <code>that</code>
-     *  @param extensionTopic       a target <code>topic</code>
+     *  @param reply             the reply that the bot provided
      */
     public Target(String matchPattern, String matchThat, String matchTopic, String matchTemplate,
-                  String inputText, String inputThat, String inputTopic,
-                  String extensionPattern, String extensionThat, String extensionTopic)
+                  String inputText, String inputThat, String inputTopic, String reply)
     {
-        this.matchPattern = matchPattern;
-        this.matchThat = matchThat;
-        this.matchTopic = matchTopic;
-        this.matchTemplate = matchTemplate;
-        this.inputTexts.add(inputText);
-        this.inputThats.add(inputThat);
-        this.inputTopics.add(inputTopic);
-        this.extensionPattern = extensionPattern;
-        this.extensionThat = extensionThat;
-        this.extensionTopic = extensionTopic;
+        match = new Category(matchPattern, matchThat, matchTopic, matchTemplate);
+        inputs = new TargetInputs(inputText, inputThat, inputTopic);
+        replies.add(reply);
     }
 
 
@@ -100,7 +77,7 @@ public class Target
      */
     public int hashCode()
     {
-        return (this.matchPattern + this.matchThat + this.matchTopic).hashCode();
+        return (match.getPattern() + match.getThat() + match.getTopic()).hashCode();
     }
 
 
@@ -121,13 +98,63 @@ public class Target
     
 
     /**
-     *  Returns the match <code>that</code>.
+     *  Merges input and extension values from one target to this one.
+     *
+     *  @param target   the target whose inputs will be added
+     */
+    public void merge(Target target)
+    {
+        if (hashCode() != target.hashCode())
+        {
+            throw new DeveloperError("Targets with non-matching <match> segments cannot be merged!");
+        }
+
+        // Only add unique inputs.
+        Iterator inputIterator = target.getInputs().iterator();
+        Iterator replyIterator = target.getReplies().iterator();
+        Iterator extensionIterator = target.getExtensions().iterator();
+        while (inputIterator.hasNext())
+        {
+            StringTriple nextInput = (StringTriple)inputIterator.next();
+            StringTriple nextExtension = null;
+            try
+            {
+                nextExtension = (StringTriple)extensionIterator.next();
+            }
+            catch (NoSuchElementException e)
+            {
+                // It's okay if the target being merged does not have an exception.
+            }
+
+            String nextReply = (String)replyIterator.next();
+
+            if (!inputs.contains(nextInput))
+            {
+                inputs.add(nextInput);
+                replies.add(nextReply);
+                if (nextExtension != null)
+                {
+                    extensions.add(nextExtension);
+                }
+            }
+        }
+
+        if (!(inputs.size() == replies.size()))
+        {
+            throw new DeveloperError("Merge operation failed to maintain stable activation count.");
+        }
+        activations = inputs.size();
+    }
+
+
+    /**
+     *  Returns the match <code>pattern</code>.
      *
      *  @return the match <code>pattern</code>
      */
     public String getMatchPattern()
     {
-        return this.matchPattern;
+        return match.getPattern();
     }
 
 
@@ -138,7 +165,7 @@ public class Target
      */
     public String getMatchThat()
     {
-        return this.matchThat;
+        return match.getThat();
     }
 
 
@@ -149,7 +176,7 @@ public class Target
      */
     public String getMatchTopic()
     {
-        return this.matchTopic;
+        return match.getTopic();
     }
 
 
@@ -160,7 +187,18 @@ public class Target
      */
     public String getMatchTemplate()
     {
-        return this.matchTemplate;
+        return match.getTemplate();
+    }
+
+
+    /**
+     *  Returns the inputs.
+     *
+     *  @return the inputs
+     */
+    public StringTripleMatrix getInputs()
+    {
+        return inputs;
     }
 
 
@@ -169,9 +207,9 @@ public class Target
      *
      *  @return the input texts
      */
-    public ArrayList getInputTexts()
+    public LinkedList getInputTexts()
     {
-        return this.inputTexts;
+        return inputs.getTexts();
     }
 
 
@@ -180,9 +218,9 @@ public class Target
      *
      *  @return the input <code>that</code>s
      */
-    public ArrayList getInputThats()
+    public LinkedList getInputThats()
     {
-        return this.inputThats;
+        return inputs.getThats();
     }
 
 
@@ -191,9 +229,9 @@ public class Target
      *
      *  @return the input <code>topic</code>s
      */
-    public ArrayList getInputTopics()
+    public LinkedList getInputTopics()
     {
-        return this.inputTopics;
+        return inputs.getTopics();
     }
 
 
@@ -204,7 +242,7 @@ public class Target
      */
     public String getFirstInputText()
     {
-        return (String)this.inputTexts.get(0);
+        return (String)inputs.getTexts().getFirst();
     }
 
 
@@ -215,7 +253,7 @@ public class Target
      */
     public String getFirstInputThat()
     {
-        return (String)this.inputThats.get(0);
+        return (String)inputs.getThats().getFirst();
     }
 
 
@@ -226,7 +264,7 @@ public class Target
      */
     public String getFirstInputTopic()
     {
-        return (String)this.inputTopics.get(0);
+        return (String)inputs.getTopics().getFirst();
     }
 
 
@@ -237,7 +275,7 @@ public class Target
      */
     public String getLastInputText()
     {
-        return (String)this.inputTexts.get(this.inputTexts.size() - 1);
+        return (String)inputs.getTexts().getLast();
     }
 
 
@@ -248,7 +286,7 @@ public class Target
      */
     public String getLastInputThat()
     {
-        return (String)this.inputThats.get(this.inputTexts.size() - 1);
+        return (String)inputs.getThats().getLast();
     }
 
 
@@ -259,149 +297,332 @@ public class Target
      */
     public String getLastInputTopic()
     {
-        return (String)this.inputTopics.get(this.inputTexts.size() - 1);
+        return (String)inputs.getTopics().getLast();
     }
 
 
     /**
-     *  Adds input values.
+     *  Returns the <code>n</code>th input text.
      *
-     *  @param inputText        the input text that was matched
-     *  @param inputThat        the value of the <code>that</code> predicate when the input was received
-     *  @param inputTopic       the value of the <code>topic</code> predicate when the input was received
-     */
-    public void addInputs(String inputText, String inputThat, String inputTopic)
-    {
-        this.inputTexts.add(inputText);
-        this.inputThats.add(inputThat);
-        this.inputTopics.add(inputTopic);
-        this.activations++;
-    }
-
-
-    /**
-     *  Adds the inputs from one target to this one.
+     *  @param n    the index of the desired input text
      *
-     *  @param target   the target whose inputs will be added
+     *  @return the <code>n</code>th input text
      */
-    public void addInputs(Target target)
+    public String getNthInputText(int n)
     {
-        // Be sure this target isn't identical to the argument!
-        if (hashCode() == target.hashCode())
-        {
-            return;
-        }
-        this.inputTexts.addAll(target.getInputTexts());
-        this.inputThats.addAll(target.getInputThats());
-        this.inputTopics.addAll(target.getInputTopics());
-
-        this.activations += target.getActivations();
+        return (String)inputs.getTexts().get(n);
     }
 
 
     /**
-     *  Returns the extension <code>pattern</code>.
+     *  Returns the <code>n</code>th input <code>that</code>.
      *
-     *  @return the extension <code>pattern</code>
-     */
-    public String getExtensionPattern()
-    {
-        return this.extensionPattern;
-    }
-
-
-    /**
-     *  Returns the extension <code>that</code>.
+     *  @param n    the index of the desired input that
      *
-     *  @return the extension <code>that</code>
+     *  @return the <code>n</code>th input <code>that</code>
      */
-    public String getExtensionThat()
+    public String getNthInputThat(int n)
     {
-        return this.extensionThat;
+        return (String)inputs.getThats().get(n);
     }
 
 
     /**
-     *  Returns the extension <code>topic</code>.
+     *  Returns the <code>n</code>th input <code>topic</code>.
      *
-     *  @return the extension <code>topic</code>
-     */
-    public String getExtensionTopic()
-    {
-        return this.extensionTopic;
-    }
-
-
-    /**
-     *  Returns the extension <code>template</code>.
+     *  @param n    the index of the desired input topic
      *
-     *  @return the extension <code>template</code>
+     *  @return the <code>n</code>th input <code>topic</code>
      */
-    public String getExtensionTemplate()
+    public String getNthInputTopic(int n)
     {
-        return this.extensionTemplate;
+        return (String)inputs.getTopics().get(n);
     }
 
-
+    
     /**
-     *  Sets the extension <code>pattern</code>.
+     *  Returns the extensions.
      *
-     *  @param pattern  the extension <code>pattern</code>
+     *  @return the extensions
      */
-    public void setExtensionPattern(String pattern)
+    public StringTripleMatrix getExtensions()
     {
-        this.extensionPattern = pattern;
+        return extensions;
     }
 
 
     /**
-     *  Sets the extension <code>that</code>.
+     *  Returns the extension <code>pattern</code>s.
      *
-     *  @param that the extension <code>that</code>
+     *  @return the extension <code>pattern</code>s
      */
-    public void setExtensionThat(String that)
+    public LinkedList getExtensionPatterns()
     {
-        this.extensionThat = that;
+        return extensions.getPatterns();
     }
 
 
     /**
-     *  Sets the extension <code>topic</code>.
+     *  Returns the extension <code>that</code>s.
      *
-     *  @param topic    the extension <code>topic</code>
+     *  @return the extension <code>that</code>s
      */
-    public void setExtensionTopic(String topic)
+    public LinkedList getExtensionThats()
     {
-        this.extensionTopic = topic;
+        return extensions.getThats();
     }
 
 
     /**
-     *  Sets the extension <code>template</code>.
+     *  Returns the extension <code>topic</code>s.
      *
-     *  @param template the extension <code>template</code>
+     *  @return the extension <code>topic</code>s
      */
-    public void setExtensionTemplate(String template)
+    public LinkedList getExtensionTopics()
     {
-        this.extensionTemplate = template;
+        return extensions.getTopics();
     }
 
 
     /**
-     *  Increments the activation count by 1.
+     *  Returns the first extension <code>pattern</code>.
+     *
+     *  @return the first extension <code>pattern</code>
      */
-    public void incrementActivations()
+    public String getFirstExtensionPattern()
     {
-        this.activations++;
+        return (String)extensions.getPatterns().getFirst();
     }
 
 
     /**
-     *  Increments the activation count by <code>increment</code>.
+     *  Returns the first extension <code>that</code>.
+     *
+     *  @return the first extension <code>that</code>
      */
-    public void incrementActivations(int increment)
+    public String getFirstExtensionThat()
     {
-        this.activations += increment;
+        return (String)extensions.getThats().getFirst();
+    }
+
+
+    /**
+     *  Returns the first extension <code>topic</code>.
+     *
+     *  @return the first extension <code>topic</code>
+     */
+    public String getFirstExtensionTopic()
+    {
+        return (String)extensions.getTopics().getFirst();
+    }
+
+
+    /**
+     *  Returns the last extension <code>pattern</code>.
+     *
+     *  @return the last extension <code>pattern</code>
+     */
+    public String getLastExtensionPattern()
+    {
+        return (String)extensions.getPatterns().getLast();
+    }
+
+
+    /**
+     *  Returns the last extension <code>that</code>.
+     *
+     *  @return the last extension <code>that</code>
+     */
+    public String getLastExtensionThat()
+    {
+        return (String)extensions.getThats().getLast();
+    }
+
+
+    /**
+     *  Returns the last extension <code>topic</code>.
+     *
+     *  @return the last extension <code>topic</code>
+     */
+    public String getLastExtensionTopic()
+    {
+        return (String)extensions.getTopics().getLast();
+    }
+
+
+    /**
+     *  Returns the <code>n</code>th extension pattern.
+     *
+     *  @param n    the index of the desired extension pattern
+     *
+     *  @return the <code>n</code>th extension pattern
+     */
+    public String getNthExtensionPattern(int n)
+    {
+        extend(n);
+        return (String)extensions.getPatterns().get(n);
+    }
+
+
+    /**
+     *  Returns the <code>n</code>th extension <code>that</code>.
+     *
+     *  @param n    the index of the desired extension that
+     *
+     *  @return the <code>n</code>th extension <code>that</code>
+     */
+    public String getNthExtensionThat(int n)
+    {
+        extend(n);
+        return (String)extensions.getThats().get(n);
+    }
+
+
+    /**
+     *  Returns the <code>n</code>th extension <code>topic</code>.
+     *
+     *  @param n    the index of the desired extension topic
+     *
+     *  @return the <code>n</code>th extension <code>topic</code>
+     */
+    public String getNthExtensionTopic(int n)
+    {
+        extend(n);
+        return (String)extensions.getTopics().get(n);
+    }
+
+    
+    /**
+     *  Returns the <code>reply</code>s.
+     *
+     *  @return the <code>reply</code>s
+     */
+    public LinkedList getReplies()
+    {
+        return replies;
+    }
+
+
+    /**
+     *  Returns the first <code>reply</code>.
+     *
+     *  @return the first <code>reply</code>
+     */
+    public String getFirstReply()
+    {
+        return (String)replies.getFirst();
+    }
+
+
+    /**
+     *  Returns the last <code>reply</code>.
+     *
+     *  @return the last <code>reply</code>
+     */
+    public String getLastReply()
+    {
+        return (String)replies.getLast();
+    }
+
+
+    /**
+     *  Returns the <code>n</code>th reply
+     *
+     *  @param n    the index of the desired reply
+     *
+     *  @return the <code>n</code>th reply
+     */
+    public String getNthReply(int n)
+    {
+        return (String)replies.get(n);
+    }
+
+
+    /**
+     *  Returns the new <code>pattern</code>.
+     *
+     *  @return the new <code>pattern</code>
+     */
+    public String getNewPattern()
+    {
+        return newCategory.getPattern();
+    }
+
+
+    /**
+     *  Returns the new <code>that</code>.
+     *
+     *  @return the new <code>that</code>
+     */
+    public String getNewThat()
+    {
+        return newCategory.getThat();
+    }
+
+
+    /**
+     *  Returns the new <code>topic</code>.
+     *
+     *  @return the new <code>topic</code>
+     */
+    public String getNewTopic()
+    {
+        return newCategory.getTopic();
+    }
+
+
+    /**
+     *  Returns the new <code>template</code>.
+     *
+     *  @return the new <code>template</code>
+     */
+    public String getNewTemplate()
+    {
+        return newCategory.getTemplate();
+    }
+
+
+    /**
+     *  Sets the new <code>pattern</code>.
+     *
+     *  @param pattern  the new <code>pattern</code>
+     */
+    public void setNewPattern(String pattern)
+    {
+        newCategory.setPattern(pattern);
+    }
+
+
+    /**
+     *  Sets the new <code>that</code>.
+     *
+     *  @param that the new <code>that</code>
+     */
+    public void setNewThat(String that)
+    {
+        newCategory.setThat(that);
+    }
+
+
+    /**
+     *  Sets the new <code>topic</code>.
+     *
+     *  @param topic    the new <code>topic</code>
+     */
+    public void setNewTopic(String topic)
+    {
+        newCategory.setTopic(topic);
+    }
+
+
+    /**
+     *  Sets the new <code>template</code>.
+     *
+     *  @param template the new <code>template</code>
+     */
+    public void setNewTemplate(String template)
+    {
+        newCategory.setTemplate(template);
     }
 
 
@@ -412,6 +633,155 @@ public class Target
      */
     public int getActivations()
     {
-        return this.activations;
+        return activations;
+    }
+
+
+    /**
+     *  Generates extension patterns for all inputs.
+     */
+    public void extend()
+    {
+        for (int index = activations; --index >= 0; )
+        {
+            extend(index);
+        }
+    }
+
+
+    /**
+     *  Generates extension patterns for the target,
+     *  at a given input index.
+     *
+     *  @param index
+     */
+    private void extend(int index)
+    {
+        extensions.ensureSize(index + 1);
+
+        String inputText = getNthInputText(index);
+        String inputThat = getNthInputThat(index);
+        String inputTopic = getNthInputTopic(index);
+
+        String extensionPattern;
+        String extensionThat;
+        String extensionTopic;
+
+        try
+        {
+            // Try to extend the match-pattern using the input-text.
+            extensionPattern = InputNormalizer.patternFit(extend(match.getPattern(), inputText));
+
+            /*
+                If successful (no exception),
+                set target -that and -topic to match -that and -topic.
+            */
+            extensionThat = InputNormalizer.patternFit(match.getThat());
+            extensionTopic = InputNormalizer.patternFit(match.getTopic());
+        }
+        catch (CannotExtendException e0)
+        {
+            // Couldn't extend the match-pattern, so set target-pattern to match-pattern.
+            extensionPattern = InputNormalizer.patternFit(match.getPattern());
+            try
+            {
+                // Try to extend the match-that using the input-that.
+                extensionThat = InputNormalizer.patternFit(extend(match.getThat(), inputThat));
+
+                /*
+                    If successful (no exception),
+                    set target-topic to match-topic.
+                */
+                extensionTopic = InputNormalizer.patternFit(match.getTopic());
+            }
+            catch (CannotExtendException e1)
+            {
+                // Couldn't extend the match-that, so set target-that to match-that.
+                extensionThat = InputNormalizer.patternFit(match.getThat());
+                try
+                {
+                    // Try to extend the match-topic using the input-topic.
+                    extensionTopic = InputNormalizer.patternFit(extend(match.getTopic(), inputTopic));
+                }
+                catch (CannotExtendException e2)
+                {
+                    // Couldn't even extend topic, so return, doing nothing.
+                    return;
+                }
+            }
+        }
+        extensions.getFirsts().set(index, extensionPattern);
+        extensions.getSeconds().set(index, extensionThat);
+        extensions.getThirds().set(index, extensionTopic);
+    }
+
+
+    /**
+     *  Creates a new target pattern, by extending a pattern using an input.
+     *
+     *  @param pattern  the pattern part of the target
+     *  @param input    the input part of the target
+     *
+     *  @return a new target
+     *
+     *  @throws CannotExtendException if the pattern-token length
+     *                                is greater than or equal to the input-token length
+     */
+    private static String extend(String pattern, String input) throws CannotExtendException
+    {
+        // If the pattern does not contain wildcards, it cannot be extended.
+        if ((pattern.indexOf('*') == -1) && (pattern.indexOf('_') == -1))
+        {
+            throw new CannotExtendException();
+        }
+
+        // Tokenize the pattern and input.
+        StringTokenizer patternTokenizer = new StringTokenizer(pattern);
+        StringTokenizer inputTokenizer = new StringTokenizer(input);
+
+        // Count the pattern and input tokens.
+        int patternTokenCount = patternTokenizer.countTokens();
+        int inputTokenCount = inputTokenizer.countTokens();
+        
+        if (patternTokenCount > inputTokenCount)
+        {
+            patternTokenCount = inputTokenCount;
+        }
+
+        // Result will be constructed in this buffer.
+        StringBuffer result = new StringBuffer();
+
+        boolean hitWildcard = false;
+
+        // Until hitting a wildcard in the pattern (or the end of the input), append words from the input.
+        for (int index = 0; (index < patternTokenCount && !hitWildcard); index++)
+        {
+            String patternToken = patternTokenizer.nextToken();
+            if (patternToken.equals(Graphmaster.ASTERISK) || patternToken.equals(Graphmaster.UNDERSCORE))
+            {
+                hitWildcard = true;
+            }
+            result.append(inputTokenizer.nextToken());
+            result.append(' ');
+        }
+
+        // Append a * wildcard if the end of the input was not reached.
+        if (inputTokenizer.hasMoreTokens())
+        {
+            result.append(Graphmaster.ASTERISK);
+        }
+
+        // Return the result.
+        return result.toString();
+    }
+}
+
+/**
+ *  An exception thrown by {@link #extend(String, String)}.
+ */
+class CannotExtendException extends Exception
+{
+    public CannotExtendException()
+    {
     }
 }

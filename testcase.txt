@@ -55,21 +55,21 @@ testinput
 testinput1
 testinput2
 testinput3
-testgender he
-testgender she
-testgender to him
-testgender for him
-testgender with him
-testgender on him
-testgender in him
-testgender to her
-testgender for her
-testgender with her
-testgender on her
-testgender in her
-testgender his
-testgender her
-testgender him
+testgender he said
+testgender she was
+testgender give to him
+testgender or for him
+testgender together with him
+testgender something on him
+testgender in him is light
+testgender send to her
+testgender gift for her
+testgender someone with her
+testgender curse on her
+testgender monster in her
+testgender his wishes
+testgender her demands
+testgender of him
 testthatstar
 testthatstar1
 testmultithatstar
@@ -81,35 +81,36 @@ test35
 testoldtopic
 test36
 testextremesrai
-testperson i was
-testperson he was
-testperson she was
-testperson i am
-testperson i
-testperson me
-testperson my
-testperson myself
-testperson mine
-testperson2 with you
-testperson2 with me
-testperson2 to you
-testperson2 to me
-testperson2 of you
-testperson2 of me
-testperson2 for you
-testperson2 for me
-testperson2 give you
-testperson2 give me
-testperson2 giving you
-testperson2 giving me
-testperson2 gave you
-testperson2 gave me
-testperson2 make you
-testperson2 make me
-testperson2 made you
-testperson2 made me
+testperson i was there
+testperson he was away
+testperson she was kind
+testperson i am sleepy
+testperson i will
+testperson for me
+testperson my bot
+testperson beside myself
+testperson is mine
+testperson2 along with you
+testperson2 something is with me
+testperson2 send to you
+testperson2 present to me
+testperson2 picture of you
+testperson2 reminder of me
+testperson2 best wishes for you
+testperson2 for me this is
+testperson2 give you something
+testperson2 give me that
+testperson2 giving you a hand
+testperson2 giving me a lift
+testperson2 gave you a fork
+testperson2 gave me an idea
+testperson2 make you happy
+testperson2 make me sad
+testperson2 made you aware
+testperson2 made me cognizant
 testcasereturnnamewhenset
 testcaseinfiniteloop
 testcaseinfiniteloop2
 testcaseinfiniteloop3
-exit
+testcasemultipleadjacentsrais
+/exit

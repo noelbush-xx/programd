@@ -23,8 +23,8 @@ import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.core.util.Trace;
 import org.alicebot.server.core.processor.Processor;
 import org.alicebot.server.core.processor.ProcessorException;
-import org.alicebot.server.core.processor.ProcessorRegistry;
-import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.ClassRegistry;
+import org.alicebot.server.core.util.DeveloperError;
 import org.alicebot.server.core.util.Toolkit;
 
 
@@ -36,7 +36,7 @@ import org.alicebot.server.core.util.Toolkit;
 abstract public class GenericParser
 {
     /** Each subclass should set this. */
-    protected static ProcessorRegistry processorRegistry;
+    protected ClassRegistry processorRegistry;
 
     // Convenience constants.
     
@@ -73,14 +73,13 @@ abstract public class GenericParser
      *  This is the general access method for external classes.
      *  </p>
      *
-     *  @param id           an identifier (e.g., user, bot, ...)
      *  @param content      the XML content
      *
      *  @return the result of processing the XML content for the given <code>id</code>
      *
      *  @throws ProcessorException if the content cannot be processed
      */
-    public String processResponse(String id, String content) throws ProcessorException
+    public String processResponse(String content) throws ProcessorException
     {
         // Create a new XML parser and load it with the template.
         XMLParser parser = new XMLParser();
@@ -95,14 +94,14 @@ abstract public class GenericParser
             {
                 Log.userinfo(lines.nextToken(), Log.ERROR);
             }
-            throw new ProcessorException("Invalid content (see log file).");;
+            throw new ProcessorException("Invalid content (see log file).");
         }
 
         /*
             Evaluate the template starting from its first token.
             The evaluate method will recurse to explore the full trie.
         */
-        String response = evaluate(0, id, list);
+        String response = evaluate(0, list);
 
         // Perhaps unnecessary: a controlled cleanup
         list.clear();
@@ -115,14 +114,13 @@ abstract public class GenericParser
      *  Processes a given XML node for a given identifier.
      *
      *  @param level    the current level in the XML trie
-     *  @param id       an identifier (e.g., user, bot, ...)
      *  @param tag      the tag being evaluated
      *
      *  @return the result of processing the tag
      *
      *  @throws ProcessorException if the content cannot be processed
      */
-    public String processTag(int level, String id, XMLNode tag) throws ProcessorException
+    public String processTag(int level, XMLNode tag) throws ProcessorException
     {
         // Is it a valid tag?
         if (tag == null)
@@ -139,7 +137,7 @@ abstract public class GenericParser
         }
         else
         {
-            throw new DeveloperErrorException("processorRegistry has not been initialized!");
+            throw new DeveloperError("processorRegistry has not been initialized!");
         }
 
         // Create a new instance of the processor.
@@ -152,15 +150,15 @@ abstract public class GenericParser
             }
             catch (InstantiationException e)
             {
-                throw new DeveloperErrorException(e);
+                throw new DeveloperError(e);
             }
             catch (IllegalAccessException e)
             {
-                throw new DeveloperErrorException(e);
+                throw new DeveloperError(e);
             }
             catch (RuntimeException e)
             {
-                throw new DeveloperErrorException(e);
+                throw new DeveloperError(e);
             }
         }
         else
@@ -171,11 +169,11 @@ abstract public class GenericParser
         // Return the results of processing the tag.
         if (processor != null)
         {
-            return Toolkit.filterWhitespace(processor.process(level++, id, tag, this));
+            return Toolkit.filterWhitespace(processor.process(level++, tag, this));
         }
         else
         {
-            throw new DeveloperErrorException("Corrupt processor set.");
+            throw new DeveloperError("Corrupt processor set.");
         }
     }
 
@@ -192,13 +190,12 @@ abstract public class GenericParser
      *  result of processing it.
      *  </p>
      *
-     *  @param level    ?
-     *  @param id       an identifier (e.g., user, bot, ...)
+     *  @param level    the current level in the XML trie
      *  @param list     the XML trie to parse
      *
      *  @return the result of processing the tag
      */
-    public String evaluate(int level, String id, LinkedList list)
+    public String evaluate(int level, LinkedList list)
     {
         String response = EMPTY_STRING;
         ListIterator iterator;
@@ -226,11 +223,11 @@ abstract public class GenericParser
                     case XMLNode.EMPTY :
                         try
                         {
-                            response = response + processTag(level, id, node);
+                            response = response + processTag(level, node);
                         }
                         catch (ProcessorException e)
                         {
-                            throw new DeveloperErrorException(e);
+                            throw new DeveloperError(e.getMessage(), e);
                         }
                         break;
 
@@ -260,12 +257,11 @@ abstract public class GenericParser
      *  </p>
      *
      *  @param level    index of the current level in the XML trie (just passed through)
-     *  @param id       an identifier (e.g., user, bot, ...)
      *  @param tag      the tag to format
      *
      *  @return the formatted result
      */
-    public String formatTag(int level, String id, XMLNode tag)
+    public String formatTag(int level, XMLNode tag)
     {
         // A given level always starts with an empty answer.
         String response = EMPTY_STRING;
@@ -292,7 +288,7 @@ abstract public class GenericParser
                 // If there are any children, resolve them recursively.
                 if (tag.XMLChild != null)
                 {
-                    response = response + evaluate(level++, id, tag.XMLChild);
+                    response = response + evaluate(level++, tag.XMLChild);
                 }
 
                 // Format the response tag.
@@ -342,7 +338,6 @@ abstract public class GenericParser
      */
     public int nodeCount(String tagname, LinkedList list, boolean allnodes)
     {
-        String response = EMPTY_STRING;
         ListIterator iterator;
         XMLNode node;
         int numbernodes = 0;
@@ -404,7 +399,6 @@ abstract public class GenericParser
      */
     public XMLNode getNode(String tagname, LinkedList list, int ordernode)
     {
-        String response = EMPTY_STRING;
         ListIterator iterator;
         XMLNode node;
 
@@ -464,7 +458,6 @@ abstract public class GenericParser
      *  </p>
      *
      *  @param level        the current level in the XML trie
-     *  @param id           an identifier (e.g., user, bot, ...)
      *  @param rootTag      the name of the root tag
      *  @param rootType     the type of the root tag
      *  @param rootAttr     an optional attribute on the root tag (use &quot;&quot; if no attribute)
@@ -473,7 +466,7 @@ abstract public class GenericParser
      *
      *  @return the result of processing this structure
      */
-    public String shortcutTag(int level, String id, String rootTag, int rootType,
+    public String shortcutTag(int level, String rootTag, int rootType,
                               String rootAttr, String childTag, int childType)
     {
         String response = EMPTY_STRING;
@@ -549,7 +542,7 @@ abstract public class GenericParser
         iterator.add(node);
 
         // Now evaluate this XML trie, just as if it came from the original AIML.
-        response = response + evaluate(level++, id, list);
+        response = response + evaluate(level++, list);
 
         // De-reference the heavy temporary objects created (to expedite garbage collection).
         nodeChild = null;

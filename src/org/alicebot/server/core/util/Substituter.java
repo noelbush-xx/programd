@@ -61,6 +61,11 @@
     results were getting inappropriately trimmed.
 */
 
+/*
+	4.1.5
+	Jonathan Roewen supplied a fix to applySubstitutions
+*/
+
 package org.alicebot.server.core.util;
 
 import java.util.HashMap;
@@ -82,6 +87,9 @@ public class Substituter
 
     /** A space. */
     private static final String SPACE = " ";
+
+    /** An empty string. */
+    private static final String EMPTY_STRING = "";
 
 
     /**
@@ -187,8 +195,9 @@ public class Substituter
             {
                 // Is the find string in the untouched input?
                 String untouchedTest = (String)untouchedIterator.next();
-                int startIndex = untouchedTest.toUpperCase().indexOf(find);
-                if (startIndex > 0 && startIndex < untouchedTest.length())
+                int startIndex = untouchedTest.toUpperCase().indexOf(find.toUpperCase());
+
+                if (startIndex >= 0 && startIndex < untouchedTest.length())
                 {
                     // If so, replace the current untouched input with the substring up to startIndex,
                     untouchedIterator.set(untouchedTest.substring(0, startIndex));
@@ -198,9 +207,13 @@ public class Substituter
                     replacements.add(untouchedIterator.nextIndex() - 1, replacement);
 
                     // and put the remainder of the untouched input into the untouched list.
-                    if (startIndex + replacement.length() + 1 < untouchedTest.length())
+                    if (startIndex + replacement.length() < untouchedTest.length())
                     {
                         untouchedIterator.add(untouchedTest.substring(startIndex + find.length()));
+                    }
+                    else
+                    {
+                        untouchedIterator.add(EMPTY_STRING);
                     }
                 }
             }
@@ -215,7 +228,6 @@ public class Substituter
         while (untouchedIterator.hasNext())
         {
             result.append(untouchedIterator.next());
-
             // It can be that there is one less replacement than untouched pieces.
             if (replaceIterator.hasNext())
             {
@@ -225,7 +237,7 @@ public class Substituter
 
         // Remove the padding spaces before returning!
         int resultLength = result.length();
-        if (resultLength > 2)
+        if (resultLength >= 2)
         {
             int resultStart = 0;
             if (result.charAt(0) == ' ')
@@ -236,7 +248,14 @@ public class Substituter
             {
                 resultLength--;
             }
-            return result.substring(resultStart, resultLength);
+            if (resultStart == resultLength)
+            {
+                return EMPTY_STRING;
+            }
+            else
+            {
+                return result.substring(resultStart, resultLength);
+            }
         }
         else
         {

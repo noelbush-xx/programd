@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.DeveloperError;
 import org.alicebot.server.core.util.Trace;
 
 import org.mortbay.http.HttpServer;
@@ -55,6 +55,8 @@ public class JettyWrapper implements AliceCompatibleHttpServer
 
         jetty.configure(configFilePath);
 
+        jetty.setStatsOn(true);
+
         // Get the port number and set it in Globals for future reference.
         int port = 0;
         Iterator listeners = jetty.getListeners().iterator();
@@ -78,7 +80,7 @@ public class JettyWrapper implements AliceCompatibleHttpServer
         }
         catch (MultiException e)
         {
-            throw new DeveloperErrorException(e.getMessage());
+            throw new DeveloperError(e.getMessage());
         }
     }
 
@@ -93,5 +95,11 @@ public class JettyWrapper implements AliceCompatibleHttpServer
         {
             Log.devinfo("Jetty was interrupted while stopping.", Log.ERROR);
         }
+    }
+
+
+    public Server getServer()
+    {
+        return jetty;
     }
 }

@@ -21,6 +21,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.AdjustmentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Random;
@@ -33,7 +35,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -45,6 +49,7 @@ import org.alicebot.server.core.targeting.Target;
 import org.alicebot.server.core.targeting.TargetingTool;
 import org.alicebot.server.core.util.InputNormalizer;
 import org.alicebot.server.core.util.Toolkit;
+import org.alicebot.server.core.util.Trace;
 
 
 /**
@@ -56,18 +61,24 @@ import org.alicebot.server.core.util.Toolkit;
 public class TargetPanel extends JPanel
 {
     private Target selectedTarget = null;
+
+    JLabel activationsField;
     JLabel countField;
 
     public static Random RNG = new Random();
     TargetingGUI guiparent;
+
     InputBar inputBar;
-    TargetBar targetBar;
-    ActionButtonsBar actionButtonsBar;
+    JScrollBar inputScroller;
     MatchedBar matchedBar;
-    TemplatePanel templatePanel;
+    TargetBar targetBar;
+
+    AIMLTextPane templatePane;
+    AIMLTextPane replyPane;
+
+    ActionButtonsBar actionButtonsBar;
 
     private boolean hasTarget;
-
 
     public TargetPanel (TargetingGUI guiparent)
     {
@@ -79,15 +90,15 @@ public class TargetPanel extends JPanel
         PatternsPanel patternsPanel = new PatternsPanel();
         patternsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        templatePanel = new TemplatePanel();
-        templatePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        TemplateAndReplyPanel templateAndReplyPanel = new TemplateAndReplyPanel();
+        templateAndReplyPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         actionButtonsBar = new ActionButtonsBar();
         actionButtonsBar.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         this.add(patternsPanel);
         this.add(Box.createRigidArea(new Dimension(0, 10)));
-        this.add(templatePanel);
+        this.add(templateAndReplyPanel);
         this.add(Box.createRigidArea(new Dimension(0, 10)));
         this.add(actionButtonsBar);
     }
@@ -98,17 +109,34 @@ public class TargetPanel extends JPanel
         public PatternsPanel()
         {
             this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            this.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+
+            activationsField = new JLabel();
+            activationsField.setFont(new Font("Fixedsys", Font.PLAIN, 12));
+            activationsField.setForeground(Color.black);
+            activationsField.setHorizontalAlignment(SwingConstants.LEFT);
+            activationsField.setAlignmentX(Component.LEFT_ALIGNMENT);
+            activationsField.setMinimumSize(new Dimension(200, 20));
+            activationsField.setPreferredSize(new Dimension(200, 20));
+            activationsField.setMaximumSize(new Dimension(200, 20));
+
+            inputScroller = new JScrollBar(JScrollBar.HORIZONTAL, 0, 0, 0, 0);
+            inputScroller.setAlignmentX(Component.LEFT_ALIGNMENT);
+            inputScroller.setBackground(Color.gray);
+            inputScroller.addAdjustmentListener(new NextInput());
 
             inputBar = new InputBar();
-            inputBar.setAlignmentY(Component.LEFT_ALIGNMENT);
+            inputBar.setAlignmentX(Component.LEFT_ALIGNMENT);
 
             matchedBar = new MatchedBar();
-            matchedBar.setAlignmentY(Component.LEFT_ALIGNMENT);
+            matchedBar.setAlignmentX(Component.LEFT_ALIGNMENT);
 
             targetBar = new TargetBar();
-            targetBar.setAlignmentY(Component.LEFT_ALIGNMENT);
+            targetBar.setAlignmentX(Component.LEFT_ALIGNMENT);
 
             this.add(Box.createRigidArea(new Dimension(0, 5)));
+            this.add(activationsField);
+            this.add(inputScroller);
             this.add(inputBar);
             this.add(Box.createRigidArea(new Dimension(0, 5)));
             this.add(matchedBar);
@@ -118,11 +146,9 @@ public class TargetPanel extends JPanel
     }
 
 
-    public class TemplatePanel extends JPanel
+    public class TemplateAndReplyPanel extends JPanel
     {
-        JTextArea textArea;
-
-        public TemplatePanel()
+        public TemplateAndReplyPanel()
         {
             this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
             this.setPreferredSize(new Dimension(300, 300));
@@ -130,24 +156,52 @@ public class TargetPanel extends JPanel
             TemplateButtons templateButtons = new TemplateButtons();
             templateButtons.setAlignmentY(Component.TOP_ALIGNMENT);
 
+            templatePane = new AIMLTextPane("<template>");
+            replyPane = new AIMLTextPane("reply");
+
+            JTabbedPane tabbedPane = new JTabbedPane();
+            tabbedPane.setAlignmentY(Component.TOP_ALIGNMENT);
+            tabbedPane.setFont(new Font("Fixedsys", Font.PLAIN, 12));
+            tabbedPane.setTabPlacement(SwingConstants.BOTTOM);
+            tabbedPane.add("reply", replyPane);
+            tabbedPane.add("template", templatePane);
+
+            this.add(templateButtons);
+            this.add(Box.createRigidArea(new Dimension(10, 0)));
+            this.add(tabbedPane);
+        }
+    }
+
+
+    class AIMLTextPane extends JPanel
+    {
+        JTextArea textArea;
+
+        public AIMLTextPane(String label)
+        {
+            this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+
             textArea = new JTextArea();
-            textArea.setFont(new Font("Courier New", Font.PLAIN, 14));
+            textArea.setFont(new Font("Courier New", Font.PLAIN, 12));
             textArea.setLineWrap(true);
             textArea.setWrapStyleWord(true);
             textArea.setTabSize(4);
 
             JScrollPane scrollPane = new JScrollPane(textArea);
-            scrollPane.setBorder(BorderFactory.createTitledBorder("<template>"));
-            scrollPane.setAlignmentY(Component.TOP_ALIGNMENT);
+            scrollPane.setAlignmentY(Component.CENTER_ALIGNMENT);
+            scrollPane.setBorder(BorderFactory.createTitledBorder(label));
 
-            this.add(templateButtons);
-            this.add(Box.createRigidArea(new Dimension(10, 0)));
             this.add(scrollPane);
         }
+
+
         public void setText(String text)
         {
             textArea.setText(Toolkit.formatAIML(text));
+            textArea.setCaretPosition(0);
         }
+
+
         public String getText()
         {
             return textArea.getText();
@@ -231,11 +285,11 @@ public class TargetPanel extends JPanel
         public void setFields(String pattern, String that, String topic)
         {
             patternField.setText(pattern);
-            patternField.setSelectionStart(0);
+            patternField.setCaretPosition(0);
             thatField.setText(that);
-            thatField.setSelectionStart(0);
+            thatField.setCaretPosition(0);
             topicField.setText(topic);
-            topicField.setSelectionStart(0);
+            topicField.setCaretPosition(0);
         }
 
 
@@ -252,7 +306,7 @@ public class TargetPanel extends JPanel
             label.setForeground(Color.black);
             label.setAlignmentY(Component.CENTER_ALIGNMENT);
 
-            patternField = new FieldlikeTextArea();
+            patternField = new JTextArea();
             patternField.setLineWrap(true);
             patternField.setWrapStyleWord(true);
             patternField.setFont(new Font("Courier New", Font.PLAIN, 12));
@@ -265,7 +319,7 @@ public class TargetPanel extends JPanel
             patternScroll.setMaximumSize(new Dimension(Short.MAX_VALUE, height));
             patternScroll.setAlignmentY(Component.CENTER_ALIGNMENT);
 
-            thatField = new FieldlikeTextArea();
+            thatField = new JTextArea();
             thatField.setFont(new Font("Courier New", Font.PLAIN, 12));
             thatField.setLineWrap(true);
             thatField.setWrapStyleWord(true);
@@ -278,7 +332,7 @@ public class TargetPanel extends JPanel
             thatScroll.setBorder(BorderFactory.createTitledBorder(thatLabel));
             thatScroll.setAlignmentY(Component.CENTER_ALIGNMENT);
 
-            topicField = new FieldlikeTextArea();
+            topicField = new JTextArea();
             topicField.setFont(new Font("Courier New", Font.PLAIN, 12));
             topicField.setLineWrap(true);
             topicField.setWrapStyleWord(true);
@@ -295,15 +349,6 @@ public class TargetPanel extends JPanel
             this.add(patternScroll);
             this.add(thatScroll);
             this.add(topicScroll);
-        }
-
-
-        public class FieldlikeTextArea extends JTextArea
-        {
-            // Overrides JTextArea's prevention of tabs.
-            protected void processKeyEvent(KeyEvent e)
-            {
-            }
         }
 
 
@@ -400,23 +445,36 @@ public class TargetPanel extends JPanel
             patternField.setToolTipText("Suggestion for a new <pattern>");
             thatField.setToolTipText("Suggestion for a new <that>");
             topicField.setToolTipText("Suggestion for a new <topic>");
+            setEditable(true);
         }
     }
-
-
     public void setTarget(Target target)
     {
+        selectedTarget = target;
+
+        int activations = target.getActivations();
+        activationsField.setText(activations + " activations");
+
         inputBar.setFields(target.getFirstInputText(),
                            target.getFirstInputThat(),
                            target.getFirstInputTopic());
+
+        inputScroller.setMinimum(1);
+        inputScroller.setMaximum(activations);
+        inputScroller.setValue(1);
+        showInput(1);
+
         matchedBar.setFields(target.getMatchPattern(),
                              target.getMatchThat(),
                              target.getMatchTopic());
-        targetBar.setFields(target.getExtensionPattern(),
-                            target.getExtensionThat(),
-                            target.getExtensionTopic());
-        templatePanel.setText(target.getMatchTemplate());
-        selectedTarget = target;
+
+        targetBar.setFields(target.getFirstExtensionPattern(),
+                            target.getFirstExtensionThat(),
+                            target.getFirstExtensionTopic());
+
+        replyPane.setText(target.getFirstReply());
+
+        templatePane.setText(target.getMatchTemplate());
     }
 
 
@@ -439,13 +497,54 @@ public class TargetPanel extends JPanel
         }
         else
         {
-            inputBar.setFields("*","*","*");
-            matchedBar.setFields("*","*","*");
-            targetBar.setFields("*","*","*");
-            guiparent.setStatus("No more targets!");
+            inputBar.setFields("","","");
+
+            inputScroller.setMinimum(0);
+            inputScroller.setMaximum(0);
+            inputScroller.setValue(0);
+
+            matchedBar.setFields("","","");
+
+            targetBar.setFields("","","");
+            //targetBar.setEditable(false);
+
+            templatePane.setText("");
+
+            guiparent.setStatus("No more targets meet your selection criteria.");
             hasTarget = false;
         }
         updateCountDisplay();
+    }
+
+
+    class NextInput implements AdjustmentListener
+    {
+        public void adjustmentValueChanged(AdjustmentEvent ae)
+        {
+            showInput((int)inputScroller.getValue());
+        }
+    }
+
+
+    private void showInput(int number)
+    {
+        if (number > 0 && selectedTarget != null)
+        {
+            inputBar.setFields(selectedTarget.getNthInputText(number - 1),
+                               selectedTarget.getNthInputThat(number - 1),
+                               selectedTarget.getNthInputTopic(number - 1));
+            targetBar.setFields(selectedTarget.getNthExtensionPattern(number - 1),
+                                selectedTarget.getNthExtensionThat(number - 1),
+                                selectedTarget.getNthExtensionTopic(number - 1));
+            replyPane.setText(selectedTarget.getNthReply(number - 1));
+        }
+    }
+
+
+    public void scrollToInput(int number)
+    {
+        inputScroller.setValue(number);
+        showInput(number);
     }
 
 
@@ -494,18 +593,18 @@ public class TargetPanel extends JPanel
 
     public void saveTarget()
     {
-        String template = templatePanel.getText().trim();
+        String template = templatePane.getText().trim();
         if (template.length() == 0)
         {
-            templatePanel.setText("Template is empty!");
+            templatePane.setText("Template is empty!");
             return;
         }
         if (selectedTarget != null)
         {
-            selectedTarget.setExtensionPattern(InputNormalizer.patternFit(targetBar.patternField.getText()));
-            selectedTarget.setExtensionThat(InputNormalizer.patternFit(targetBar.thatField.getText()));
-            selectedTarget.setExtensionTopic(InputNormalizer.patternFit(targetBar.topicField.getText()));
-            selectedTarget.setExtensionTemplate(template);
+            selectedTarget.setNewPattern(InputNormalizer.patternFit(targetBar.patternField.getText()));
+            selectedTarget.setNewThat(InputNormalizer.patternFit(targetBar.thatField.getText()));
+            selectedTarget.setNewTopic(InputNormalizer.patternFit(targetBar.topicField.getText()));
+            selectedTarget.setNewTemplate(template);
             TargetingTool.saveCategory(selectedTarget);
             nextTarget();
         }
@@ -528,27 +627,24 @@ public class TargetPanel extends JPanel
                                          {
                                             public void actionPerformed(ActionEvent ae)
                                             {
-                                                String text = templatePanel.getText();
-                                                text = text + "<random>\n    <li>" + text + "</li>\n    <li></li>\n    <li></li>\n</random>";
-                                                templatePanel.setText(text);
+                                                templatePane.setText(
+                                                    "<random><li>" + templatePane.getText() + "</li><li></random>");
                                             }
                                          });
             think.addActionListener(new ActionListener ()
                                         {
                                             public void actionPerformed(ActionEvent ae)
                                             {
-                                                String text = templatePanel.getText();
-                                                text = "<think>\n" + "    " + text + "\n</think>";
-                                                templatePanel.setText(text);
+                                                templatePane.setText(
+                                                    "<think>" + templatePane.getText() + "</think>");
                                             }
                                         });
             sr.addActionListener(new ActionListener ()
                                      {
                                          public void actionPerformed(ActionEvent ae)
                                          {
-                                             String text = templatePanel.getText();
-                                             text = text + "<sr/>";
-                                             templatePanel.setText(text);
+                                             templatePane.setText(
+                                                templatePane.getText() + "<sr/>");
                                          }
                                      });
             reduce.addActionListener(new ActionListener ()
@@ -572,25 +668,23 @@ public class TargetPanel extends JPanel
                                                  {
                                                      newpat = "<sr/>";
                                                  }
-                                                 String text = templatePanel.getText();
-                                                 text = text + newpat;
-                                                 templatePanel.setText(text);
+                                                 templatePane.setText(
+                                                     templatePane.getText() + newpat);
                                              }
                                          });
             srai.addActionListener(new ActionListener ()
                                        {
                                             public void actionPerformed(ActionEvent ae)
                                             {
-                                                String text = templatePanel.getText();
-                                                text = "<srai>" + text + "</srai>";
-                                                templatePanel.setText(text);
+                                                templatePane.setText(
+                                                    "<srai>" + templatePane.getText() + "</srai>");
                                             }
                                        });
             clear.addActionListener(new ActionListener ()
                                         {
                                             public void actionPerformed(ActionEvent ae)
                                             {
-                                                templatePanel.setText("");
+                                                templatePane.setText("");
                                             }
                                         });
 
@@ -640,7 +734,6 @@ public class TargetPanel extends JPanel
             clear.setAlignmentY(Component.CENTER_ALIGNMENT);
             clear.setToolTipText("Clears the current template contents.");
 
-            this.add(Box.createRigidArea(new Dimension(0, 10)));
             this.add(think);
             this.add(random);
             this.add(sr);

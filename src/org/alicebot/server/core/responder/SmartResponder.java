@@ -35,12 +35,14 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.alicebot.server.core.ActiveMultiplexor;
+import org.alicebot.server.core.Bots;
+import org.alicebot.server.core.Globals;
+import org.alicebot.server.core.Graphmaster;
 import org.alicebot.server.core.Multiplexor;
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.DeveloperError;
 import org.alicebot.server.core.util.Trace;
-import org.alicebot.server.core.util.UserErrorException;
+import org.alicebot.server.core.util.UserError;
 
 
 /**
@@ -94,6 +96,9 @@ public class SmartResponder
     /** The user id. */
     private String userid;
 
+    /** The bot id. */
+    private String botid;
+
     /** The template name. */
     private String templateName;
     
@@ -110,16 +115,19 @@ public class SmartResponder
     private static final String EMPTY_STRING          = "";
 
     /** The connect string. */
-    private static final String CONNECT               = "CONNECT";
+    private static final String CONNECT               = Globals.getProperty("programd.connect-string", "CONNECT");
 
     /** The inactivity string. */
-    private static final String INACTIVITY            = "INACTIVITY";
+    private static final String INACTIVITY            = Globals.getProperty("programd.inactivity-string", "INACTIVITY");
 
     /** The name of the text parameter in a request (&quot;text&quot;). */
     private static final String TEXT_PARAM            = "text";
 
     /** The name of the userid parameter in a request (&quot;userid&quot;). */
     private static final String USERID_PARAM          = "userid";
+
+    /** The name of the botid parameter in a request (&quot;botid&quot;). */
+    private static final String BOTID_PARAM          = "botid";
 
     /** The string &quot;text/plain&quot. */
     private static final String TEXT_PLAIN            = "text/plain";
@@ -167,6 +175,7 @@ public class SmartResponder
 
         this.userRequest = request.getParameter(TEXT_PARAM);
         this.userid = request.getParameter(USERID_PARAM);
+        this.botid = request.getParameter(BOTID_PARAM);
 
         // If no text parameter then we assume a connection.
         if (this.userRequest == null)
@@ -187,7 +196,7 @@ public class SmartResponder
             }
             catch (UnsupportedEncodingException e)
             {
-                throw new DeveloperErrorException("Encodings are not properly supported!");
+                throw new DeveloperError("Encodings are not properly supported!");
             }
         }
 
@@ -196,6 +205,12 @@ public class SmartResponder
         if (this.userid == null)
         {
             this.userid = request.getRemoteHost();
+        }
+
+        // Check for no bot id.
+        if (this.botid == null)
+        {
+            this.botid = Bots.getFirstBot().getID();
         }
 
         // Look for a named template.
@@ -217,14 +232,15 @@ public class SmartResponder
         }
         catch (IOException e)
         {
-            throw new DeveloperErrorException("Error getting service response output stream.", e);
+            throw new DeveloperError("Error getting service response output stream.", e);
         }
             
         switch (getServiceType())
         {
             case ServiceType.PLAIN_TEXT :
                 this.serviceResponse.setContentType(TEXT_PLAIN);
-                this.botResponse = ActiveMultiplexor.getInstance().getResponse(this.userRequest, this.userid,  new TextResponder());
+                this.botResponse =
+                    Multiplexor.getResponse(this.userRequest, this.userid, this.botid, new TextResponder());
                 break;
                 
             case ServiceType.HTML :
@@ -234,31 +250,41 @@ public class SmartResponder
                 HTMLResponder responder;
                 try
                 {
-                    responder = new HTMLResponder(this.templateName);
+                    responder = new HTMLResponder(this.botid, this.templateName);
                 }
                 catch (IOException e)
                 {
-                    throw new DeveloperErrorException("Error initializing HTMLResponder.");
+                    throw new DeveloperError("Error initializing HTMLResponder.");
                 }
 
                 this.botResponse = responder.authenticate(this.serviceRequest, this.serviceResponse, this.userid);
                 // Null response from authenticate means user is authenticated.
                 if (this.botResponse == null)
                 {
-                    this.botResponse = ActiveMultiplexor.getInstance().getResponse(this.userRequest,
-                                            (String)this.serviceRequest.getSession(true).getAttribute(HTMLResponder.USER_COOKIE_NAME),
+                    this.botResponse =
+                            Multiplexor.
+                                getResponse(this.userRequest,
+                                            (String)this.serviceRequest.getSession(true).
+                                            getAttribute(HTMLResponder.USER_COOKIE_NAME),
+                                            this.botid,
                                             responder);
                 }
                 break;
                 
             case ServiceType.FLASH :
                 this.serviceResponse.setContentType(TEXT_PLAIN);
-                this.botResponse = ActiveMultiplexor.getInstance().getResponse(this.userRequest, this.userid,  new FlashResponder(this.templateName));
+                this.botResponse =
+                        Multiplexor.
+                            getResponse(this.userRequest, this.userid, this.botid,
+                                        new FlashResponder(this.botid, this.templateName));
                 break;
 
             default :
                 this.serviceResponse.setContentType(TEXT_PLAIN);
-                this.botResponse = ActiveMultiplexor.getInstance().getResponse(this.userRequest, this.userid,  new TextResponder());
+                this.botResponse =
+                    Multiplexor.
+                         getResponse(this.userRequest, this.userid, this.botid,
+                                        new TextResponder());
                 break;
         }
         try
@@ -267,11 +293,11 @@ public class SmartResponder
         }
         catch (UnsupportedEncodingException e0)
         {
-            throw new UserErrorException("UTF-8 encoding is not supported on your platform!", e0);
+            throw new UserError("UTF-8 encoding is not supported on your platform!", e0);
         }
         catch (IOException e1)
         {
-            throw new DeveloperErrorException("Error writing to service output stream.", e1);
+            throw new DeveloperError("Error writing to service output stream.", e1);
         }
         try
         {
@@ -279,7 +305,7 @@ public class SmartResponder
         }
         catch (IOException e)
         {
-            throw new DeveloperErrorException("Error flushing service output stream.", e);
+            throw new DeveloperError("Error flushing service output stream.", e);
         }
         try
         {
@@ -287,7 +313,7 @@ public class SmartResponder
         }
         catch (IOException e)
         {
-            throw new DeveloperErrorException("Error closing service output stream.", e);
+            throw new DeveloperError("Error closing service output stream.", e);
         }
     }
     
@@ -301,7 +327,7 @@ public class SmartResponder
         {
             return ServiceType.FLASH;
         }
-        for (int index = 0; index < HTML_USER_AGENT_COUNT; index++)
+        for (int index = HTML_USER_AGENT_COUNT; --index >= 0; )
         {
             if (this.serviceRequest.getHeader(USER_AGENT).indexOf(HTML_USER_AGENTS[index]) != -1)
             {

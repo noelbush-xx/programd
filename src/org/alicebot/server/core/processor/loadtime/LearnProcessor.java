@@ -31,11 +31,11 @@ public class LearnProcessor extends StartupElementProcessor
     public static final String label = "learn";
 
 
-    public String process(int level, String botid, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
-            Graphmaster.load(parser.evaluate(level++, botid, tag.XMLChild).trim());
+            Graphmaster.load(parser.evaluate(level++, tag.XMLChild), parser.getCurrentBot().getID());
             return EMPTY_STRING;
         }
         else

@@ -28,6 +28,7 @@ import java.net.UnknownHostException;
 import java.util.Properties;
 
 import org.alicebot.server.core.ActiveMultiplexor;
+import org.alicebot.server.core.Bot;
 import org.alicebot.server.core.Multiplexor;
 import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.core.util.Trace;
@@ -49,88 +50,126 @@ import org.alicebot.server.core.util.Toolkit;
  *  @see <a href="http://www.chrisknight.com/sirc/">http://www.chrisknight.com/sirc/</a>
  */
 
-public class AliceIRC implements AliceChatListener, ShellCommandable
+public class AliceIRC extends AliceChatListener implements ShellCommandable
 {
-    // ------------------------------------------------------------------------
-    
+    /** Please document. */
     private static final String VERSION = "0.86.0b";
+
+    /** Please document. */
     private static final String VERDATE = "1999.04.07";
     
-    // ------------------------------------------------------------------------
-    
+    /** Please document. */
     private static final boolean DEBUG = false;
     
-    // ------------------------------------------------------------------------
-    
+    /** Please document. */
     private static final int    MAXARGC        = 16;
     
+    /** Please document. */
     private static final String SERVERPREFIX   = "[server]";
+
+    /** Please document. */
     private static final String SIRCMESSAGE    = "[irc]";
+
+    /** Please document. */
     private static final String DEBUGPREFIX    = "[debug]";
+
+    /** Please document. */
     private static final String NONE           = "";
     
+    /** Please document. */
     private static final byte   NOTCONNECTED   = 0;
+
+    /** Please document. */
     private static final byte   CONNECTING     = 1;
+
+    /** Please document. */
     private static final byte   CONNECTED      = 2;
+
+    /** Please document. */
     private static final byte   DISCONNECTING  = 3;
     
-    // ------------------------------------------------------------------------
-    
+    /** Please document. */
     private byte clientStatus = NOTCONNECTED;
     
+    /** Please document. */
     private Socket socket;
+
+    /** Please document. */
     private BufferedReader reader;
+
+    /** Please document. */
     private PrintWriter writer;
     
-    private String host, nick, channel;
+    /** Please document. */
+    private String host;
+    
+    /** Please document. */
+    private String nick;
+    
+    /** Please document. */
+    private String channel;
+
+    /** Please document. */
     private int port;
     
-    
-    public boolean initialize(Properties properties)
-    {
-        // Check if enabled.
-        if (Boolean.valueOf(properties.getProperty("programd.listeners.irc.enabled", "false")).booleanValue())
-        {
-            // Get parameters.
-            host = properties.getProperty("programd.listeners.irc.host", "");
-            try
-            {
-                port = Integer.parseInt(properties.getProperty("programd.listeners.irc.port", ""));
-            }
-            catch (NumberFormatException e)
-            {
-                Log.userinfo("AliceIRC: Invalid port specification (try a number!); aborting.", Log.LISTENERS);
-                return false;
-            }
-            nick = properties.getProperty("programd.listeners.irc.nick", "");
-            channel = properties.getProperty("programd.listeners.irc.channel", "");
+    /** Please document. */
+	private static final String MSG = "AliceIRC: ";	
 
-            // Check parameters.
-            if (host.length() == 0)
-            {
-                Log.userinfo("AliceIRC: no host specified; aborting.", Log.LISTENERS);
-                return false;
-            }
-            if (port <= 0)
-            {
-                Log.userinfo("AliceIRC: invalid port; aborting.", Log.LISTENERS);
-            }
-            if (nick.length() == 0)
-            {
-                Log.userinfo("AliceIRC: no nick specified; aborting.", Log.LISTENERS);
-                return false;
-            }
-            if (channel.length() == 0)
-            {
-                Log.userinfo("AliceIRC: no channel specified; aborting.", Log.LISTENERS);
-                return false;
-            }
-            return true;
-        }
-        else
+    /** Please document. */
+    public static final String label = "AliceIRC";
+    
+    
+    /**
+     *  Creates a new AliceIRC chat listener for a given bot.
+     *
+     *  @param bot	the bot for whom to listen
+     */
+    public AliceIRC(Bot bot)
+    {
+        super(bot, "AliceIRC", new String[][] { {"host", ""},
+                                                {"port", "6667"},
+                                                {"nick", ""},
+                                                {"channel", ""} });
+    }
+
+    
+    public boolean checkParameters()
+    {
+        // Get parameters.
+        host = (String)parameters.get("host");
+        try
         {
+            port = Integer.parseInt((String)parameters.get("port"));
+        }
+        catch (NumberFormatException e)
+        {
+            logMessage("Invalid port specification (try a number!); aborting.");
             return false;
         }
+        nick = (String)parameters.get("nick");
+        channel = (String)parameters.get("channel");
+
+        // Check parameters.
+        if (host.length() == 0)
+        {
+            logMessage("No host specified; aborting.");
+            return false;
+        }
+        if (port <= 0)
+        {
+            logMessage("Invalid port; aborting.");
+        }
+        if (nick.length() == 0)
+        {
+            logMessage("No nick specified; aborting.");
+            return false;
+        }
+        if (channel.length() == 0)
+        {
+            logMessage("No channel specified; aborting.");
+            return false;
+        }
+        return true;
     }
 
 
@@ -141,18 +180,11 @@ public class AliceIRC implements AliceChatListener, ShellCommandable
 
 
     /**
-     *  Creates a new AliceIRC chat listener.
-     */
-    public AliceIRC()
-    {
-    }
-
-    
-    /**
      *  Connects to the given host and begins listening.
      */
     public void run()
     {
+        logMessage("Starting for \"" + botID + "\".");
         processMessageCommandClient("CONNECT", this.host + " " + this.port);
         processMessage("/NICK " + this.nick);
         processMessage("/JOIN " + this.channel);
@@ -183,7 +215,7 @@ public class AliceIRC implements AliceChatListener, ShellCommandable
         int slash = command.indexOf('/');
         if (slash != 0)
         {
-            Log.userinfo("AliceIRC: invalid command.", Log.LISTENERS);
+            logMessage("Invalid command.");
             return;
         }
         int space = command.indexOf(' ');
@@ -219,26 +251,26 @@ public class AliceIRC implements AliceChatListener, ShellCommandable
         if (clientStatus == NOTCONNECTED)
         {
             clientStatus = CONNECTING;
-            Log.userinfo("AliceIRC contacting " + this.host + ":" + this.port, Log.LISTENERS);
+            logMessage("Contacting " + this.host + ":" + this.port);
             
             try
             {
                 socket = new Socket(this.host, this.port);
-                Log.userinfo("AliceIRC connected to " + this.host + ":" + this.port, Log.LISTENERS);
+                logMessage("Connected to " + this.host + ":" + this.port);
                 
             }
             catch (UnknownHostException e0)
             {
-                Log.userinfo("AliceIRC cannot connect; unknown server.", Log.LISTENERS);
+                logMessage("Cannot connect; unknown server.");
                 clientStatus = NOTCONNECTED;
             }
             catch (IOException e1)
             {
-                Log.userinfo("AliceIRC cannot connect; the server is down or not responding.", Log.LISTENERS);
+                logMessage("Cannot connect; the server is down or not responding.");
                 clientStatus = NOTCONNECTED;
             }
-            
-            if (clientStatus == CONNECTING)    // If we didn'y have any problems connecting
+            // If we didn't have any problems connecting
+            if (clientStatus == CONNECTING)
             {
                 try
                 {
@@ -248,7 +280,7 @@ public class AliceIRC implements AliceChatListener, ShellCommandable
                 }
                 catch (IOException e0)
                 {
-                    Log.userinfo("AliceIRC cannot connect: I/O error.", Log.LISTENERS);
+                    logMessage("Cannot connect: I/O error.");
                     clientStatus = DISCONNECTING;
                     
                     try
@@ -272,19 +304,19 @@ public class AliceIRC implements AliceChatListener, ShellCommandable
             switch(clientStatus)
             {
                 case CONNECTED :
-                    Log.userinfo("AliceIRC cannot connect; already connected.", Log.LISTENERS);
+                    logMessage("Cannot connect again; already connected.");
                     break;
                     
                 case CONNECTING :
-                    Log.userinfo("AliceIRC cannot connect; already connecting.", Log.LISTENERS);
+                    logMessage("Cannot connect again; already in the process of connecting.");
                     break;
                     
                 case DISCONNECTING :
-                    Log.userinfo("AliceIRC cannot connect; still trying to disconnect.", Log.LISTENERS);
+                    logMessage("Cannot connect now; still trying to disconnect.");
                     break;
                     
                 default :
-                    Log.userinfo("AliceIRC got unknown clientStatusCode: " + clientStatus, Log.LISTENERS);
+                    logMessage("Got unknown clientStatusCode: " + clientStatus);
                     break;
             }
         }
@@ -305,13 +337,13 @@ public class AliceIRC implements AliceChatListener, ShellCommandable
             }
             catch (IOException e)
             {
-                Log.userinfo("AliceIRC: IO exception trying to disconnect.", Log.LISTENERS);
+                logMessage("IO exception trying to disconnect.");
             }
             finally
             {
                 reader = null;
                 writer = null;
-                Log.userinfo("AliceIRC connection closed.", Log.LISTENERS);
+                logMessage("Connection closed.");
                 clientStatus = NOTCONNECTED;
             }
         }
@@ -320,19 +352,19 @@ public class AliceIRC implements AliceChatListener, ShellCommandable
             switch(clientStatus)
             {
                 case NOTCONNECTED :
-                    Log.userinfo("AliceIRC cannot close connection; not connected.", Log.LISTENERS);
+                    logMessage("Cannot close connection; not connected.");
                     break;
                     
                 case CONNECTING :
-                    Log.userinfo("AliceIRC cannot close connection; currently trying to connect.", Log.LISTENERS);    
+                    logMessage("Cannot close connection; currently trying to connect.");    
                     break;
                     
                 case DISCONNECTING :
-                    Log.userinfo("AliceIRC cannot close connection; currently trying to close it.", Log.LISTENERS);
+                    logMessage("Cannot close connection; currently trying to close it.");
                     break;
                     
                 default :
-                    Log.userinfo("AliceIRC got unknown clientStatusCode: " + clientStatus, Log.LISTENERS);
+                    logMessage("Got unknown clientStatusCode: " + clientStatus);
                     break;
             }
         }
@@ -382,12 +414,15 @@ public class AliceIRC implements AliceChatListener, ShellCommandable
                     if (channel.length() > 0)
                     {
                         sendMessage(NONE, "[" + nick + "] " + message);
-                        Log.userinfo("AliceIRC got a message from: " + nick + "> " + message, Log.LISTENERS);
+                        logMessage("Got a message from [" + nick + "]: " + message);
                         sendServerMessage("/MSG " + " " + channel + " :" + message);
                         
+                        // WARNING: Currently uses response from ANY bot!!!!!!
                         String[] botResponse =
-                            Toolkit.breakLines(
-                                ActiveMultiplexor.getInstance().getResponse(message, nick+"_IRC", new TextResponder()));
+                            Toolkit.breakLines(Multiplexor.
+                                                    getResponse(message,
+                                                                nick + "_IRC",
+                                                                botID, new TextResponder()));
                         if (botResponse.length > 0)
                         {
                             for (int line = 0; line < botResponse.length; line++)
@@ -703,18 +738,6 @@ public class AliceIRC implements AliceChatListener, ShellCommandable
             sendMessage(NONE, NONE);
             processed = true;
         }
-        else if (command.equalsIgnoreCase("VERSION"))  
-        {
-            /*
-            String[] versions = // messagerelay.getClassVersions();
-            sendMessage(NONE, NONE);
-            sendMessage(SIRCMESSAGE, "sIRC Version: " + versions[0]);
-            sendMessage(SIRCMESSAGE, "UserInterface: " + versions[1]);
-            sendMessage(SIRCMESSAGE, "AliceIRC: " + versions[2]);
-            sendMessage(NONE, NONE);
-            processed = true;
-            */
-        }
         
         return processed;
     }
@@ -895,7 +918,7 @@ public class AliceIRC implements AliceChatListener, ShellCommandable
                 int firstindex = params.indexOf(' ');
                 sendMessage(SERVERPREFIX, targetnick + " has invited you to " + helpExtractIRCString(params.substring((firstindex+1))) + ".");
             }
-            else if (command.equals("JOIN"))   // - - - - - - - - - - - - - - - - -
+            else if (command.equals("JOIN"))
             {
                 String channelx = helpExtractIRCString(params);
                 
@@ -987,10 +1010,13 @@ public class AliceIRC implements AliceChatListener, ShellCommandable
                 if (target.equals(this.nick))
                 {
                     sendMessage(NONE, "*" + targetnick + "* " + gitter);
-                    Log.userinfo("AliceIRC: Request: " +targetnick + "> " + gitter, Log.LISTENERS);
+                    logMessage("Request: [" + targetnick + "]: " + gitter);
+
                     String[] botResponse =
-                        Toolkit.breakLines(
-                            ActiveMultiplexor.getInstance().getResponse(gitter, targetnick+"_IRC", new TextResponder()));
+                        Toolkit.breakLines(Multiplexor.
+                                                getResponse(gitter,
+                                                            targetnick + "_IRC",
+                                                            botID, new TextResponder()));
                     if (botResponse.length > 0)
                     {
                         for (int line = 0; line < botResponse.length; line++)
@@ -1060,11 +1086,22 @@ public class AliceIRC implements AliceChatListener, ShellCommandable
     
     
     /**
+     *  Standard method for logging and notifying of a message.
+     *
+     *  @param message	the message
+     */
+    private void logMessage(String message)
+    {
+        Log.userinfo(MSG + message, Log.LISTENERS);
+    }
+    
+    
+    /**
      *  Please document this.
      */
     private void sendMessage(String type, String message)
     {
-        Log.userinfo("AliceIRC: " + type + " " + message, Log.LISTENERS);
+        Log.userinfo(MSG + type + " " + message, Log.LISTENERS);
     }
     
     
@@ -1076,10 +1113,6 @@ public class AliceIRC implements AliceChatListener, ShellCommandable
         if (clientStatus == CONNECTED)
         {
             writer.println(message);
-            if(DEBUG)
-            {
-                Trace.devinfo("AliceIRC: " + message);
-            }
         }
     }
     

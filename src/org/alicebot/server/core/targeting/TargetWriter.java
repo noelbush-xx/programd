@@ -84,7 +84,7 @@ public class TargetWriter extends Targeting
             // Store the target in the given file.
             XMLWriter.write(    INDENT + TARGET_START + LINE_SEPARATOR +
                                 INDENT + INDENT + INPUT_START + LINE_SEPARATOR +
-                                INDENT + INDENT + INDENT + PATTERN_START + target.getLastInputText() + PATTERN_END + LINE_SEPARATOR +
+                                INDENT + INDENT + INDENT + TEXT_START + target.getLastInputText() + TEXT_END + LINE_SEPARATOR +
                                 INDENT + INDENT + INDENT + THAT_START + target.getLastInputThat() + THAT_END + LINE_SEPARATOR +
                                 INDENT + INDENT + INDENT + TOPIC_START + target.getLastInputTopic() + TOPIC_END + LINE_SEPARATOR +
                                 INDENT + INDENT + INPUT_END + LINE_SEPARATOR +
@@ -94,11 +94,7 @@ public class TargetWriter extends Targeting
                                 INDENT + INDENT + INDENT + TOPIC_START + target.getMatchTopic() + TOPIC_END + LINE_SEPARATOR +
                                 INDENT + INDENT + INDENT + TEMPLATE_START + target.getMatchTemplate() + TEMPLATE_END + LINE_SEPARATOR +
                                 INDENT + INDENT + MATCH_END + LINE_SEPARATOR +
-                                INDENT + INDENT + EXTENSION_START + LINE_SEPARATOR +
-                                INDENT + INDENT + INDENT + PATTERN_START + target.getExtensionPattern() + PATTERN_END + LINE_SEPARATOR +
-                                INDENT + INDENT + INDENT + THAT_START + target.getExtensionThat() + THAT_END + LINE_SEPARATOR +
-                                INDENT + INDENT + INDENT + TOPIC_START + target.getExtensionTopic() + TOPIC_END + LINE_SEPARATOR +
-                                INDENT + INDENT + EXTENSION_END + LINE_SEPARATOR +
+                                INDENT + INDENT + REPLY_START + target.getLastReply() + REPLY_END + LINE_SEPARATOR +
                                 INDENT + TARGET_END + LINE_SEPARATOR,
                             spec);
         }

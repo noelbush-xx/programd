@@ -44,6 +44,7 @@ import org.alicebot.server.core.ActiveMultiplexor;
 import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.Multiplexor;
 import org.alicebot.server.core.logging.Log;
+import org.alicebot.server.core.util.DeveloperError;
 import org.alicebot.server.core.util.SuffixFilenameFilter;
 import org.alicebot.server.core.util.Trace;
 
@@ -64,7 +65,7 @@ public class HTMLResponder extends AbstractMarkupResponder
 
     /** A filename filter for finding html templates. */
     private static final SuffixFilenameFilter htmlFilenameFilter =
-        new SuffixFilenameFilter(new String[] {".html", ".htm", ".data"});
+        new SuffixFilenameFilter(new String[] {".html", ".htm", ".data", ".php"});
 
     /** Map of template names to filenames. */
     private static HashMap templates;
@@ -185,8 +186,9 @@ public class HTMLResponder extends AbstractMarkupResponder
     private static String password;
 
 
-    public HTMLResponder(String templateName) throws IOException
+    public HTMLResponder(String botid, String templateName) throws IOException
     {
+        super(botid);
         if (templateName.equals(EMPTY_STRING))
         {
             parseTemplate(chatTemplatePath);
@@ -264,30 +266,34 @@ public class HTMLResponder extends AbstractMarkupResponder
      */
     public static String loginRequest(String user, String password)
     {
-        StringBuffer output = new StringBuffer();
-        ListIterator li = loginTemplate.listIterator(0);
-        while(li.hasNext())
+        if (loginTemplate != null)
         {
-            String item = (String)li.next();
-            StringBuffer sb = new StringBuffer(item);
-            int index=0;
-            if ((index = item.indexOf("name=\"user\"")) != -1)
+            StringBuffer output = new StringBuffer();
+            ListIterator li = loginTemplate.listIterator(0);
+            while(li.hasNext())
             {
-                if ((index = item.indexOf("value=\"\"")) != -1)
+                String item = (String)li.next();
+                StringBuffer sb = new StringBuffer(item);
+                int index=0;
+                if ((index = item.indexOf("name=\"user\"")) != -1)
                 {
-                    sb.replace(index+6, index+7, "\"" + user + "\"");
+                    if ((index = item.indexOf("value=\"\"")) != -1)
+                    {
+                        sb.replace(index+6, index+7, "\"" + user + "\"");
+                    }
                 }
-            }
-            if ((index=item.indexOf("name=\"password\"")) != -1)
-            {
-                if ((index = item.indexOf("value=\"\"")) != -1)
+                if ((index=item.indexOf("name=\"password\"")) != -1)
                 {
-                    sb.replace(index + 6, index+7, "\"" + password + "\"");
+                    if ((index = item.indexOf("value=\"\"")) != -1)
+                    {
+                        sb.replace(index + 6, index+7, "\"" + password + "\"");
+                    }
                 }
+                output.append(sb.toString());
             }
-            output.append(sb.toString());
+            return output.toString();
         }
-        return output.toString();
+        return EMPTY_STRING;
     }
 
     
@@ -297,12 +303,16 @@ public class HTMLResponder extends AbstractMarkupResponder
     public static String registerRequest()
     {
         StringBuffer output = new StringBuffer("");
-        ListIterator li = registerTemplate.listIterator(0);
-        while(li.hasNext())
+        if (registerTemplate != null)
         {
-            output.append((String)li.next());
+            ListIterator li = registerTemplate.listIterator(0);
+            while(li.hasNext())
+            {
+                output.append((String)li.next());
+            }
+            return output.toString();
         }
-        return output.toString();
+        return EMPTY_STRING;
     }
 
 
@@ -311,13 +321,17 @@ public class HTMLResponder extends AbstractMarkupResponder
      */
     public static String changePasswordRequest()
     {
-        StringBuffer output = new StringBuffer("");
-        ListIterator li = changePasswordTemplate.listIterator(0);
-        while(li.hasNext())
+        if (changePasswordTemplate != null)
         {
-            output.append((String)li.next());
+            StringBuffer output = new StringBuffer("");
+            ListIterator li = changePasswordTemplate.listIterator(0);
+            while(li.hasNext())
+            {
+                output.append((String)li.next());
+            }
+            return output.toString();
         }
-        return output.toString();
+        return EMPTY_STRING;
     }
 
 
@@ -366,9 +380,6 @@ public class HTMLResponder extends AbstractMarkupResponder
 
         // The cookie array
         Cookie[] cookies = request.getCookies();
-
-        // The http session ID
-        String sessionID;
 
         // The http session
         HttpSession session;
@@ -437,7 +448,7 @@ public class HTMLResponder extends AbstractMarkupResponder
         else if (userCookieSet)
         {
             // If user is known by ActiveMultiplexor
-            if (ActiveMultiplexor.getInstance().checkUser(this.user, this.password, SECRET_KEY))
+            if (ActiveMultiplexor.getInstance().checkUser(this.user, this.password, SECRET_KEY, botid))
             {
                 // Return the all-clear
                 state = state | GO_USER;
@@ -550,7 +561,7 @@ public class HTMLResponder extends AbstractMarkupResponder
             if((state & LOGIN) == LOGIN)
             {
                 // Check user/password combo
-                if (ActiveMultiplexor.getInstance().checkUser(userParam, passwordParam, SECRET_KEY))
+                if (ActiveMultiplexor.getInstance().checkUser(userParam, passwordParam, SECRET_KEY, botid))
                 {
                     Cookie ucookie = new Cookie(USER_COOKIE_NAME, userParam);
                     Cookie pcookie = new Cookie(PASSWORD_COOKIE_NAME, passwordParam);
@@ -571,7 +582,7 @@ public class HTMLResponder extends AbstractMarkupResponder
             else if ((state & CHANGE_PASSWORD) == CHANGE_PASSWORD)
             {
                 // Check user/password combo
-                if (ActiveMultiplexor.getInstance().checkUser(this.user, oldPasswordParam, SECRET_KEY))
+                if (ActiveMultiplexor.getInstance().checkUser(this.user, oldPasswordParam, SECRET_KEY, botid))
                 {
                     Cookie pcookie = new Cookie(PASSWORD_COOKIE_NAME, passwordParam);
                     pcookie.setMaxAge(1000000);
@@ -586,9 +597,9 @@ public class HTMLResponder extends AbstractMarkupResponder
             // Try registration
             else if ((state & REGISTER) == REGISTER)
             {
-                if(ActiveMultiplexor.getInstance().createUser(userParam, passwordParam, SECRET_KEY))
+                if(ActiveMultiplexor.getInstance().createUser(userParam, passwordParam, SECRET_KEY, botid))
                 {
-                    sessionID = session.getId();
+                    // sessionID = session.getId();
                     state = state | PROCESS_OK;
                 }
                 else
@@ -693,9 +704,9 @@ public class HTMLResponder extends AbstractMarkupResponder
 
         int digit;
 
-        for (int index=0; index<5; index++)
+        for (int index = 6; --index > 0; )
         {
-            digit = (int)(Math.random()*(double)5.0);
+            digit = (int)(Math.random() * (double)5.0);
             newusername.append(digit);
             newpassword.append(digit);
         }
@@ -713,6 +724,6 @@ public class HTMLResponder extends AbstractMarkupResponder
         response.addCookie(pcookie);
 
         // Create the new user (and ensure that it worked).
-        return ActiveMultiplexor.getInstance().createUser(this.user, this.password, SECRET_KEY);
+        return ActiveMultiplexor.getInstance().createUser(this.user, this.password, SECRET_KEY, botid);
     }
 }

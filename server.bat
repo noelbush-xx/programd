@@ -31,7 +31,7 @@ rem Set SQL_LIB to the location of your database driver.
 set SQL_LIB=lib/mysql_comp.jar
 
 rem These are for Jetty; you will want to change these if you are using a different http server.
-set HTTP_SERVER_LIBS=lib/org.mortbay.jetty.jar;lib/javax.xml.jaxp.jar;lib/org.apache.crimson.jar
+set HTTP_SERVER_LIBS=lib/org.mortbay.jetty.jar
 
 set PROGRAMD_CLASSPATH=%SERVLET_LIB%;%ALICE_LIB%;%JS_LIB%;%SQL_LIB%;%HTTP_SERVER_LIBS%
-java.exe -classpath %PROGRAMD_CLASSPATH% -Xms64m -Xmx64m org.alicebot.server.net.AliceServer %1
+java.exe -classpath %PROGRAMD_CLASSPATH% org.alicebot.server.net.AliceServer %1

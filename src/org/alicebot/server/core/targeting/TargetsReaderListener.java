@@ -45,18 +45,14 @@ public class TargetsReaderListener implements GenericReaderListener
      *  @param inputText        the input text that was matched
      *  @param inputThat        the value of the <code>that</code> predicate when the input was received
      *  @param inputTopic       the value of the <code>topic</code> predicate when the input was received
-     *  @param extensionPattern the extension <code>pattern</code> for the target
-     *  @param extensionThat    the extension <code>that</code> for the target
-     *  @param extensionTopic   the extension <code>topic</code> for the target
+     *  @param reply            the reply from the bot
      */
     public void loadTarget(String matchPattern, String matchThat, String matchTopic, String matchTemplate,
-                           String inputText, String inputThat, String inputTopic,
-                           String extensionPattern, String extensionThat, String extensionTopic)
+                           String inputText, String inputThat, String inputTopic, String reply)
     {
         // Add new target to TargetingTool.
         TargetingTool.add(new Target(matchPattern, matchThat, matchTopic, matchTemplate,
-                                    inputText, inputThat, inputTopic,
-                                    extensionPattern, extensionThat, extensionTopic),
+                                    inputText, inputThat, inputTopic, reply),
                           this.set);
     }
 

@@ -34,7 +34,7 @@
 
 package org.alicebot.server.core.processor.loadtime;
 
-import org.alicebot.server.core.BotProperty;
+import org.alicebot.server.core.Bot;
 import org.alicebot.server.core.parser.StartupFileParser;
 import org.alicebot.server.core.parser.XMLNode;
 import org.alicebot.server.core.util.Toolkit;
@@ -57,7 +57,7 @@ public class PropertyProcessor extends StartupElementProcessor
     public static final String label = "property";
 
 
-    public String process(int level, String botid, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
     {
         if (tag.XMLType == tag.EMPTY)
         {
@@ -65,7 +65,7 @@ public class PropertyProcessor extends StartupElementProcessor
             if (!name.equals(EMPTY_STRING))
             {
                 String value = Toolkit.getAttributeValue(VALUE, tag.XMLAttr);
-                BotProperty.setPredicateValue(name, value);
+                parser.getCurrentBot().setPropertyValue(name, value);
             }
         }
         else

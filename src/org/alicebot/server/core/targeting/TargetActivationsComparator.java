@@ -13,24 +13,30 @@
     USA.
 */
 
-package org.alicebot.server.core;
+package org.alicebot.server.core.targeting;
 
-import java.util.Set;
+import java.util.Comparator;
 
 
 /**
- *  Listens for events on the PredicateMaster and updates
- *  its data accordingly.
+ *  Compares two <code>Target</code>s based on
+ *  their activation counts are unique.
+ *
+ *  @see {@link Target#hashCode}
  *
  *  @author Noel Bush
- *  @since 4.1.4
+ *  @since  4.1.5
  */
-public interface PredicateMasterListener
+public class TargetActivationsComparator implements Comparator
 {
-    /**
-     *  Receives a set of userids and updates internal data accordingly.
-     *
-     *  @param userids  the set of userids
-     */
-    public void updateUserids(Set userids);
+    public int compare(Object o1, Object o2)
+    {
+        return ((Target)o1).getActivations() - ((Target)o2).getActivations();
+    }
+
+
+    public boolean equals(Object obj)
+    {
+        return obj instanceof TargetActivationsComparator;
+    }
 }

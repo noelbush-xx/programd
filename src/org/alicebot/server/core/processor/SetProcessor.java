@@ -40,7 +40,7 @@
 package org.alicebot.server.core.processor;
 
 import org.alicebot.server.core.PredicateMaster;
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
 import org.alicebot.server.core.util.Toolkit;
 
@@ -63,7 +63,7 @@ public class SetProcessor extends AIMLProcessor
     public static final String label = "set";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
@@ -76,7 +76,8 @@ public class SetProcessor extends AIMLProcessor
             }
 
             // Return the result of setting this predicate value (should check its type, but not yet implemented).
-            return PredicateMaster.set(name, parser.evaluate(level++, userid, tag.XMLChild), userid);
+            return PredicateMaster.set(name, parser.evaluate(level++, tag.XMLChild),
+                                                             parser.getUserID(), parser.getBotID());
         }
         else
         {

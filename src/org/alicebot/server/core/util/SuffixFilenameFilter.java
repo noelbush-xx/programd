@@ -50,7 +50,7 @@ public class SuffixFilenameFilter implements FilenameFilter
         {
             return false;
         }
-        for (int index = 0; index < SUFFIXES.length; index++)
+        for (int index = SUFFIXES.length; --index >= 0; )
         {
             if (name.endsWith(SUFFIXES[index]))
             {

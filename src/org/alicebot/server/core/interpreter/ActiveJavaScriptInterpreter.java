@@ -17,7 +17,7 @@ package org.alicebot.server.core.interpreter;
 
 import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.Interpreter;
-import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.DeveloperError;
 
 
 /**
@@ -53,7 +53,7 @@ abstract public class ActiveJavaScriptInterpreter implements Interpreter
         }
         catch (Exception e)
         {
-            throw new DeveloperErrorException(e);
+            throw new DeveloperError(e);
         }
     }
 

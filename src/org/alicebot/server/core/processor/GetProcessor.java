@@ -33,9 +33,10 @@
 package org.alicebot.server.core.processor;
 
 import org.alicebot.server.core.PredicateMaster;
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
 import org.alicebot.server.core.util.Toolkit;
+import org.alicebot.server.core.util.Trace;
 
 
 /**
@@ -52,16 +53,17 @@ public class GetProcessor extends AIMLProcessor
     public static final String label = "get";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.EMPTY)
         {
             String name = Toolkit.getAttributeValue(NAME, tag.XMLAttr);
+
             if (name.equals(EMPTY_STRING))
             {
                 throw new AIMLProcessorException("<get/> must have a non-empty name attribute.");
             }
-            return PredicateMaster.get(name, userid);
+            return PredicateMaster.get(name, parser.getUserID(), parser.getBotID());
         }
         else
         {

@@ -15,6 +15,8 @@
 
 package org.alicebot.server.core.util;
 
+import org.alicebot.server.core.Globals;
+
 
 /**
  *  This is a simple data type for describing some characteristics
@@ -22,7 +24,7 @@ package org.alicebot.server.core.util;
  *
  *  @author Noel Bush
  */
-public class XMLResourceSpec
+public class XMLResourceSpec implements Cloneable
 {
     /** The description of the resource. */
     public String description;
@@ -58,23 +60,44 @@ public class XMLResourceSpec
     /** Whether the resource should always be rolled over at restart. */
     public boolean rolloverAtRestart = false;
 
+    /** Base URL for resources (stylesheets, etc.). */
+    private static final String RESOURCE_BASE =
+    	Globals.getProperty("programd.logging.xml.resource-base", "../resources/");
+
     /** A DTD for HTML entities. */
     public static final String HTML_ENTITIES_DTD = "<!DOCTYPE ALLOW_HTML_ENTITIES [" +
                                                    " <!ENTITY % HTMLlat1 PUBLIC" +
                                                    " \"-//W3C//ENTITIES Latin1//EN//HTML\"" +
-                                                   "   \"../resources/DTD/xhtml-lat1.ent\">" +
+                                                   "   \"" + RESOURCE_BASE + "DTD/xhtml-lat1.ent\">" +
                                                    " %HTMLlat1;" +
                                                    " <!ENTITY % HTMLsymbol PUBLIC" +
                                                    "   \"-//W3C//ENTITIES Symbols//EN//HTML\"" +
-                                                   "   \"../resources/DTD/xhtml-symbol.ent\">" +
+                                                   "   \"" + RESOURCE_BASE + "DTD/xhtml-symbol.ent\">" +
                                                    " %HTMLsymbol;" +
                                                    " <!ENTITY % HTMLspecial PUBLIC" +
                                                    "   \"-//W3C//ENTITIES Special//EN//HTML\"" +
-                                                   "   \"../resources/DTD/xhtml-special.ent\">" +
+                                                   "   \"" + RESOURCE_BASE + "DTD/xhtml-special.ent\">" +
                                                    " %HTMLspecial;" +
                                                    " ]>";
 
     public XMLResourceSpec()
     {
+    }
+    
+    
+    public Object clone()
+    {
+        XMLResourceSpec myClone = new XMLResourceSpec();
+        myClone.description = this.description == null ? null : new String(this.description);
+        myClone.path = this.path == null ? null : new String(this.path);
+        myClone.root = this.root == null ? null : new String(this.root);
+        myClone.stylesheet = this.stylesheet == null ? null : new String(this.stylesheet);
+        myClone.encoding = this.encoding == null ? null : new String(this.encoding);
+        myClone.dtd = this.dtd == null ? null : new String(this.dtd);
+        myClone.backlink = this.backlink == null ? null : new String(this.backlink);
+        myClone.starttime = this.starttime == null ? null : new String(this.starttime);
+        myClone.rolloverAtMax = this.rolloverAtMax;
+        myClone.rolloverAtRestart = this.rolloverAtRestart;
+        return myClone;
     }
 }

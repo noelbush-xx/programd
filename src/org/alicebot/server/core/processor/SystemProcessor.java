@@ -43,8 +43,10 @@ import java.util.StringTokenizer;
 
 import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
+import org.alicebot.server.core.util.Toolkit;
+import org.alicebot.server.core.util.Trace;
 
 
 /**
@@ -67,12 +69,39 @@ public class SystemProcessor extends AIMLProcessor
 {
     public static final String label = "system";
 
-    private static final String directoryPath = Globals.getProperty("programd.interpreter.system.directory");
+    /** Known names of Unix operating systems, which tend to require the array form of Runtime.exec(). */
+    private static final String[] arrayFormOSnames = { "mac os x",
+                                                       "linux",
+                                                       "solaris",
+                                                       "sunos",
+                                                       "mpe",
+                                                       "hp-ux",
+                                                       "pa_risc",
+                                                       "aix",
+                                                       "freebsd",
+                                                       "irix",
+                                                       "unix" }; 
 
-    private static final String prefix = Globals.getProperty("programd.interpreter.system.prefix");
 
+    /** Whether to use the array form of Runtime.exec(). */
+    private static boolean useArrayExecForm;
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
+    /**
+     *  Tries to guess whether to use the array form of Runtime.exec().
+     */
+    static
+    {
+        String os = System.getProperty("os.name").toLowerCase();
+        for (int index = arrayFormOSnames.length; --index >= 0; )
+        {
+            if (os.indexOf(arrayFormOSnames[index]) != -1)
+            {
+                useArrayExecForm = true;
+            }
+        }
+    }
+
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         // Don't use the system tag if not permitted.
         if (!Globals.osAccessAllowed())
@@ -81,14 +110,18 @@ public class SystemProcessor extends AIMLProcessor
             return EMPTY_STRING;
         }
 
+        String directoryPath = Globals.getSystemDirectory();
+        String prefix = Globals.getSystemPrefix();
+
         if (tag.XMLType == XMLNode.TAG)
         {
-            String response = parser.evaluate(level++, "localhost", tag.XMLChild);
+            String response = parser.evaluate(level++, tag.XMLChild);
             if (prefix != null)
             {
                 response = prefix + response;
             }
             String output = EMPTY_STRING;
+            response = response.trim();
             Log.log("<system> call:", Log.SYSTEM);
             Log.log(response, Log.SYSTEM);
             try
@@ -109,10 +142,29 @@ public class SystemProcessor extends AIMLProcessor
                     Log.userinfo("No programd.interpreter.system.directory defined!", Log.SYSTEM);
                     return EMPTY_STRING;
                 }
-                Process child = Runtime.getRuntime().exec(response, null, directory);
+                Process child;
+                if (useArrayExecForm)
+                {
+                    child = Runtime.getRuntime().exec((String[])Toolkit.wordSplit(response).toArray(new String[]{}),
+                                                      null, directory);
+                }
+                else
+                {
+                    child = Runtime.getRuntime().exec(response, null, directory);
+                }
                 if (child == null)
                 {
                     Log.userinfo("Could not get separate process for <system> command.", Log.SYSTEM);
+                    return EMPTY_STRING;
+                }
+
+                try
+                {
+                    child.waitFor();
+                }
+                catch (InterruptedException e)
+                {
+                    Log.userinfo("System process interruped; could not complete.", Log.SYSTEM);
                     return EMPTY_STRING;
                 }
 
@@ -121,7 +173,7 @@ public class SystemProcessor extends AIMLProcessor
                 String line;
                 while ((line = br.readLine()) != null)
                 {
-                    output = output + line + "<br />\n";
+                    output = output + line + "\n";
                 }
 
                 Log.log("output:", Log.SYSTEM);
@@ -129,6 +181,7 @@ public class SystemProcessor extends AIMLProcessor
 
                 response = output;
                 in.close();
+                Log.userinfo("System process exit value: " + child.exitValue(), Log.SYSTEM);
             }
             catch (IOException e)
             {
@@ -140,7 +193,7 @@ public class SystemProcessor extends AIMLProcessor
                 }
             }
 
-            return response;
+            return response.trim();
         }
         else
         {

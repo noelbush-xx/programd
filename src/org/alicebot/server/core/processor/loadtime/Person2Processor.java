@@ -30,7 +30,7 @@ public class Person2Processor extends StartupElementProcessor
     public static final String label = "person2";
 
 
-    public String process(int level, String botid, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
     {
         SubstitutionsProcessor.addSubstitutions(SubstitutionsProcessor.PERSON2, tag, parser);
         return EMPTY_STRING;

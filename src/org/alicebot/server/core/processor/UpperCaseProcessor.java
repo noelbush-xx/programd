@@ -28,7 +28,7 @@
 
 package org.alicebot.server.core.processor;
 
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
 
 
@@ -45,11 +45,11 @@ public class UpperCaseProcessor extends AIMLProcessor
     public static final String label = "uppercase";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
-            return parser.evaluate(level++, userid, tag.XMLChild).toUpperCase();
+            return parser.evaluate(level++, tag.XMLChild).toUpperCase();
         }
         else
         {

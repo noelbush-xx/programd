@@ -37,12 +37,12 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 import org.alicebot.server.core.Globals;
-import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.DeveloperError;
 import org.alicebot.server.core.util.MessagePrinter;
 import org.alicebot.server.core.util.StackParser;
 import org.alicebot.server.core.util.Toolkit;
 import org.alicebot.server.core.util.Trace;
-import org.alicebot.server.core.util.UserErrorException;
+import org.alicebot.server.core.util.UserError;
 
 
 /**
@@ -90,8 +90,8 @@ public class Log
     /** Targeting log path. */
     public static final String TARGETING   = Globals.getProperty("programd.logging.targeting.path", "./logs/targeting.log");
 
-    /** The object used to write to a file. */
-    private static FileWriter fileWriter;
+    /** General runtime information log path. */
+    public static final String RUNTIME     = Globals.getProperty("programd.logging.runtime.path", "./logs/runtime.log");
 
     /** The phrase &quot;log file&quot;. */
     private static final String LOGFILE = "log file";
@@ -113,15 +113,24 @@ public class Log
         Toolkit.checkOrCreate(type, LOGFILE);
         
         // Get a FileWriter to the file.
+        FileWriter fileWriter;
         try
         {
             fileWriter = new FileWriter(type, true);
         }
         catch (IOException e)
         {
-            throw new UserErrorException("Could not create log file \"" + type + "\".");
+            throw new UserError("Could not create log file \"" + type + "\".");
         }
         MessagePrinter.println(message, type, fileWriter, MessagePrinter.LOG);
+        try
+        {
+            fileWriter.close();
+        }
+        catch (IOException e)
+        {
+            throw new DeveloperError("Could not close FileWriter!");
+        }
     }
 
     
@@ -135,19 +144,20 @@ public class Log
                     <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
                     <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>, <code>TARGETING</code>)
      */
-    public static void log(Exception exception, String type)
+    public static void log(Throwable exception, String type)
     {
         // Check if the file exists.
         Toolkit.checkOrCreate(type, LOGFILE);
         
         // Get a FileWriter to the file.
+        FileWriter fileWriter;
         try
         {
             fileWriter = new FileWriter(type, true);
         }
         catch (IOException e)
         {
-            throw new UserErrorException("Could not create log file \"" + type + "\".");
+            throw new UserError("Could not create log file \"" + type + "\".");
         }
 
         String message = exception.getMessage();
@@ -159,6 +169,14 @@ public class Log
         while (lines.hasMoreElements())
         {
             MessagePrinter.println(lines.nextToken(), type, fileWriter, MessagePrinter.LOG);
+        }
+        try
+        {
+            fileWriter.close();
+        }
+        catch (IOException e)
+        {
+            throw new DeveloperError("Could not close FileWriter!");
         }
     }
 
@@ -209,10 +227,11 @@ public class Log
      */
     public static void userinfo(String message, String[] types)
     {
+        Trace.userinfo(message);
         int lastType = types.length;
         for (int index = 0; index < lastType; index++)
         {
-            userinfo(message, types[index]);
+            log(message, types[index]);
         }
     }
 
@@ -246,10 +265,11 @@ public class Log
      */
     public static void userinfo(String[] message, String[] types)
     {
+        Trace.userinfo(message);
         int lastType = types.length;
         for (int index = 0; index < lastType; index++)
         {
-            userinfo(message, types[index]);
+            log(message, types[index]);
         }
     }
 
@@ -300,10 +320,11 @@ public class Log
      */
     public static void userfail(String message, String[] types)
     {
+        Trace.userfail(message);
         int lastType = types.length;
         for (int index = 0; index < lastType; index++)
         {
-            userfail(message, types[index]);
+            log(message, types[index]);
         }
     }
 
@@ -316,10 +337,11 @@ public class Log
      */
     public static void userfail(String[] message, String[] types)
     {
+        userfail(message, types[0]);
         int lastType = types.length - 1;
         for (int index = 0; index < lastType; index++)
         {
-            userfail(message, types[index]);
+            log(message, types[index]);
         }
     }
 
@@ -334,7 +356,7 @@ public class Log
                     <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
                     <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>)
     */
-    public static void userfail(String message, Exception exception, String type)
+    public static void userfail(String message, Throwable exception, String type)
     {
         Trace.userfail(message);
         log(message, type);
@@ -346,9 +368,9 @@ public class Log
     /**
      *  Notifies of user error exceptions.
      */
-    public static void userfail(UserErrorException e)
+    public static void userfail(UserError e)
     {
-        Exception embedded = e.getException();
+        Throwable embedded = e.getException();
         if (embedded == null)
         {
             userfail(e.getMessage(), Log.ERROR);
@@ -385,10 +407,11 @@ public class Log
      */
     public static void devinfo(String message, String[] types)
     {
+        Trace.devinfo(message);
         int lastType = types.length;
         for (int index = 0; index < lastType; index++)
         {
-            devinfo(message, types[index]);
+            log(message, types[index]);
         }
     }
 
@@ -421,7 +444,7 @@ public class Log
                     <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
                     <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>)
     */
-    public static void devfail(String message, Exception exception, String type)
+    public static void devfail(String message, Throwable exception, String type)
     {
         Trace.devfail(message);
         log(message, type);
@@ -438,10 +461,11 @@ public class Log
      */
     public static void devfail(String message, String[] types)
     {
+        Trace.devfail(message);
         int lastType = types.length;
         for (int index = 0; index < lastType; index++)
         {
-            devfail(message, types[index]);
+            log(message, types[index]);
         }
     }
 
@@ -449,9 +473,9 @@ public class Log
     /**
      *  Notifies of developer error exceptions.
      */
-    public static void devfail(DeveloperErrorException e)
+    public static void devfail(DeveloperError e)
     {
-        Exception embedded = e.getException();
+        Throwable embedded = e.getEmbedded();
         if (embedded == null)
         {
             devfail(e.getMessage(), Log.ERROR);

@@ -19,10 +19,10 @@
     - general grammar fixes
     - complete javadoc (except implemented method)
     - removed useless imports
-    - removed this class's getArg method and used identical method in AIMLParser
+    - removed this class's getArg method and used identical method in TemplateParser
     - allowed configuration of category load notify interval via Globals
     - inlined processing of load tags, instead of calling little method in Toolkit
-    - removed useless slowdown call to AIMLParser.processResponse for each template!
+    - removed useless slowdown call to TemplateParser.processResponse for each template!
 */
 
 /*
@@ -34,7 +34,8 @@ package org.alicebot.server.core.loader;
 
 import java.util.StringTokenizer;
 
-import org.alicebot.server.core.BotProperty;
+import org.alicebot.server.core.Bot;
+import org.alicebot.server.core.Bots;
 import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.Graphmaster;
 import org.alicebot.server.core.logging.Log;
@@ -62,8 +63,17 @@ public class AIMLLoader implements AIMLReaderListener
     /** The interval at which loaded categories should be notified. */
     private static int NOTIFY_INTERVAL = Globals.getCategoryLoadNotifyInterval();
 
+    /** Whether to show the console. */
+    protected static final boolean SHOW_CONSOLE = Globals.showConsole();
+
     /** The file name being loaded. */
     private static String filename; 
+
+    /** The id of the bot for whom this file is being loaded. */
+    private static String botid;
+
+    /** The bot for whom this file is being loaded. */
+    private static Bot bot;
 
     /** The merge policy. */
     private static String policy;
@@ -90,9 +100,14 @@ public class AIMLLoader implements AIMLReaderListener
     /**
      *  Initializes the <code>AIMLLoader</code>.
      */
-    public AIMLLoader(String filename)
+    public AIMLLoader(String filename, String botid)
     {
         this.filename = filename;
+        this.botid = botid;
+        if (botid != null)
+        {
+            this.bot = Bots.getBot(botid);
+        }
         this.policy = Globals.getMergePolicy();
     }
 
@@ -120,7 +135,7 @@ public class AIMLLoader implements AIMLReaderListener
         }
         
 
-        if (Globals.showConsole())
+        if (SHOW_CONSOLE)
         {
             if (Graphmaster.getTotalCategories() % NOTIFY_INTERVAL == 0 && Graphmaster.getTotalCategories() > 0)
             {
@@ -128,46 +143,13 @@ public class AIMLLoader implements AIMLReaderListener
             }
         }
         
-        // Replace old forms of bot name in pattern.
-        while (pattern.indexOf(AIMLTag.NAME_VALUE) >= 0)
-        {
-            pattern = Substituter.replace(AIMLTag.NAME_VALUE, Globals.getBotName(), pattern);
-        }
-        while (pattern.indexOf(AIMLTag.BOT_NAME) >= 0)
-        {
-            pattern = Substituter.replace(AIMLTag.BOT_NAME, Globals.getBotName(), pattern);
-        }
-
-        // Replace values of bot predicates in pattern.
-        while (pattern.indexOf(AIMLTag.BOT_NEW_OPEN) >= 0)
-        {
-            String bPredicate = "";
-            String bReplace = "";
-            StringTokenizer patternTokens = new StringTokenizer(pattern, SPACE);
-            while (patternTokens.hasMoreTokens())
-            {
-                String token = patternTokens.nextToken();
-                if (token.endsWith(AIMLTag.BOT_OPEN_NOSPACE))
-                {
-                    bPredicate = (new StringTokenizer(patternTokens.nextToken(), SLASH)).nextToken();
-                    bReplace = AIMLTag.BOT_NEW_OPEN + bPredicate + ATOMIC_CLOSE;
-                }
-            }
-            String bargValue = Toolkit.getAttributeValue(NAME, bPredicate);
-            String solvedtag = Globals.getBotName();
-            if (!bargValue.endsWith(NAME))
-            {
-                solvedtag = BotProperty.getPredicateValue(bargValue);
-            }
-            pattern = Substituter.replace(bReplace,solvedtag,pattern);
-        }
-
         if (process)
         {
-            Nodemapper node = Graphmaster.add(pattern, that, topic);
+            Nodemapper node = Graphmaster.add(pattern, that, topic, botid);
             if (node.get(Graphmaster.TEMPLATE) == null)
             {
                 node.put(Graphmaster.FILENAME, filename);
+                bot.addToFilenameMap(filename, node);
                 node.put(Graphmaster.TEMPLATE, template);
                 Graphmaster.incrementTotalCategories();
             }

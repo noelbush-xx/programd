@@ -29,8 +29,8 @@
 
 package org.alicebot.server.core.processor;
 
-import org.alicebot.server.core.BotProperty;
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.Bots;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
 import org.alicebot.server.core.util.Toolkit;
 
@@ -53,7 +53,7 @@ public class BotProcessor extends AIMLProcessor
      *
      *  @see    AIMLProcessor#process
      */
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.EMPTY)
         {
@@ -62,7 +62,7 @@ public class BotProcessor extends AIMLProcessor
             {
                 return name;
             }
-            return BotProperty.getPredicateValue(name);
+            return Bots.getBot(parser.getBotID()).getPropertyValue(name);
         }
         else
         {

@@ -24,9 +24,32 @@ package org.alicebot.server.core.util;
  */
 public class NotAnAIMLPatternException extends Exception
 {
-    public NotAnAIMLPatternException(String message)
+    /** The pattern which this exception concerns. */
+    private String pattern;
+    
+    /** First part of a message. */
+    private static final String MSG_PART_ONE = "Not an AIML pattern: \"";
+    
+    /** Second part of a message. */
+    private static final String MSG_PART_TWO = "\" - ";
+    
+    
+    /**
+     *  Records the pattern and error message for this exception.
+     *
+     *  @param message	the explanation why this pattern is invalid
+     *  @param pattern	the pattern itself
+     */
+    public NotAnAIMLPatternException(String message, String pattern)
     {
         super(message);
+        this.pattern = pattern;
+    }
+    
+    
+    public String getMessage()
+    {
+        return MSG_PART_ONE + pattern + MSG_PART_TWO + super.getMessage();
     }
 }
 

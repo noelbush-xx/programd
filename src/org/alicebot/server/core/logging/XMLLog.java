@@ -38,19 +38,25 @@ public class XMLLog
 
     /** Keeps a count of entries made in a log file. */
     private static HashMap entryCounts = new HashMap();
+    
+    /** Base URL for resources (stylesheets, etc.). */
+    private static final String RESOURCE_BASE =
+    	Globals.getProperty("programd.logging.xml.resource-base", "../resources/");
 
-    /** Chat log spec. */
-    public static final XMLResourceSpec CHAT   = new XMLResourceSpec();
+    /** Generic chat log spec. */
+    private static final XMLResourceSpec GENERIC_CHAT   = new XMLResourceSpec();
     static
     {
-        CHAT.description       = "Chat Log";
-        CHAT.path              = Globals.getProperty("programd.logging.xml.chat.log-path", "./logs/chat.xml");
-        CHAT.rolloverAtMax     = true;
-        CHAT.rolloverAtRestart = true;
-        CHAT.root              = "exchanges";
-        CHAT.stylesheet = Globals.getProperty("programd.logging.xml.chat.stylesheet-path", "../resources/logs/view-chat.xsl");
-        CHAT.encoding   = Globals.getProperty("programd.logging.xml.chat.encoding", "UTF-8");
-        CHAT.dtd        = XMLResourceSpec.HTML_ENTITIES_DTD;
+        GENERIC_CHAT.description       = "Chat Log";        
+        GENERIC_CHAT.rolloverAtMax     = true;
+        GENERIC_CHAT.rolloverAtRestart =
+        	Boolean.valueOf(Globals.getProperty("programd.logging.xml.chat.rollover-at-restart", "true")).booleanValue();
+        GENERIC_CHAT.root              = "exchanges";
+        GENERIC_CHAT.stylesheet = Globals.getProperty("programd.logging.xml.chat.stylesheet-path",
+        											  RESOURCE_BASE + "logs/view-chat.xsl");
+        GENERIC_CHAT.encoding   = Globals.getProperty("programd.logging.xml.chat.encoding",
+        											  ENC_UTF8);
+        GENERIC_CHAT.dtd        = XMLResourceSpec.HTML_ENTITIES_DTD;
     }
 
     /** Limits the number of responses written to a log file before it is rolled over. */
@@ -66,6 +72,17 @@ public class XMLLog
             ROLLOVER = 2000;
         }
     }
+    
+    
+    /**
+     *  Returns a generic chat log spec that can be customized.
+     *
+     *  @return a generic chat log spec that can be customized
+     */
+    public static XMLResourceSpec getChatlogSpecClone()
+    {
+        return (XMLResourceSpec)GENERIC_CHAT.clone();
+    }
 
 
     /**
@@ -80,7 +97,7 @@ public class XMLLog
      *  @param message  the text of the log event
      *  @param spec     the log spec
      */
-    public static synchronized void log(String message, XMLResourceSpec spec)
+    public static void log(String message, XMLResourceSpec spec)
     {
         int entryCount;
 

@@ -27,12 +27,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.alicebot.server.core.BotProperty;
+import org.alicebot.server.core.Bot;
+import org.alicebot.server.core.Bots;
 import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.core.util.SuffixFilenameFilter;
 import org.alicebot.server.core.util.Tag;
-import org.alicebot.server.core.util.UserErrorException;
+import org.alicebot.server.core.util.UserError;
 
 
 /**
@@ -69,10 +70,9 @@ abstract public class AbstractMarkupResponder implements Responder
     /** The host name to use. */
     protected String hostName;
 
-    // Class variables.
+    protected String botid;
 
-    /** The bot name (will be changed when multiple bots are supported). */
-    protected static final String botName = Globals.getBotName();
+    protected Bot bot;
 
 
     // Convenience constants.
@@ -117,6 +117,14 @@ abstract public class AbstractMarkupResponder implements Responder
     protected static String[] tags = {EMPTY_STRING, REPLY_START, REPLY_END, HOSTNAME, HNAME, USERINPUT,
                                       ALICE_IN, RESPONSE, ALICE_OUT, BOT_NAME_EQUALS, BOT_};
 
+    /** Whether to log the chat to the database. */
+    private static final boolean LOG_CHAT_TO_DATABASE =
+        Boolean.valueOf(Globals.getProperty("programd.logging.to-database.chat", "false")).booleanValue();
+    
+   /** Whether to log the chat to xml text files. */
+    private static final boolean LOG_CHAT_TO_XML =
+        Boolean.valueOf(Globals.getProperty("programd.logging.to-xml.chat", "true")).booleanValue();
+    
     /** The string &quot;_&quot;. */
     protected static final String UNDERSCORE          = "_";
 
@@ -139,8 +147,10 @@ abstract public class AbstractMarkupResponder implements Responder
     /**
      *  Initializes an AbstractMarkupResponder.
      */
-    public AbstractMarkupResponder()
+    public AbstractMarkupResponder(String botid)
     {
+        this.botid = botid;
+        this.bot = Bots.getBot(botid);
     }
 
 
@@ -160,7 +170,7 @@ abstract public class AbstractMarkupResponder implements Responder
         }
         catch (IOException e)
         {
-            throw new UserErrorException("I/O error trying to read \"" + path + "\".", e);
+            throw new UserError("I/O error trying to read \"" + path + "\".", e);
         }
     }
 
@@ -206,7 +216,7 @@ abstract public class AbstractMarkupResponder implements Responder
                     // This is clunky but fast.
                     if (quote > 10)
                     {
-                        response.append(BotProperty.getPredicateValue(tagName.substring(10, quote)));
+                        response.append(bot.getPropertyValue(tagName.substring(10, quote)));
                     }
                 }
                 // (Deprecated forms)
@@ -227,7 +237,7 @@ abstract public class AbstractMarkupResponder implements Responder
                     while (tokenizer.hasMoreTokens())
                     {
                         tokenizer.nextToken();
-                        response.append(BotProperty.getPredicateValue(tokenizer.nextToken().toLowerCase()));
+                        response.append(bot.getPropertyValue(tokenizer.nextToken().toLowerCase()));
                     }
                 }
             }
@@ -240,7 +250,6 @@ abstract public class AbstractMarkupResponder implements Responder
     {
         int replyPartSize = replyPart.size();
 
-        boolean withinReply = false;
 
         // Parse character-by-character through the reply part template.
         for (int index = 0; index < replyPartSize; index++)
@@ -267,6 +276,10 @@ abstract public class AbstractMarkupResponder implements Responder
                 // The whole bot response.
                 else if (tagName.equals(RESPONSE))
                 {
+                    if (response.length() > 0)
+                    {
+                        response.append(' ');
+                    }
                     response.append(reply);
                 }
                 // Some bot predicate.
@@ -276,7 +289,7 @@ abstract public class AbstractMarkupResponder implements Responder
                     // This is clunky but fast.
                     if (quote > 10)
                     {
-                        response.append(BotProperty.getPredicateValue(tagName.substring(10, quote)));
+                        response.append(bot.getPropertyValue(tagName.substring(10, quote)));
                     }
                 }
                 // (Deprecated forms)
@@ -288,6 +301,10 @@ abstract public class AbstractMarkupResponder implements Responder
                 // The bot response.
                 else if (tagName.equals(ALICE_OUT))
                 {
+                    if (response.length() > 0)
+                    {
+                        response.append(' ');
+                    }
                     response.append(reply);
                 }
                 // Some bot predicate.
@@ -297,10 +314,14 @@ abstract public class AbstractMarkupResponder implements Responder
                     while (tokenizer.hasMoreTokens())
                     {
                         tokenizer.nextToken();
-                        response.append(BotProperty.getPredicateValue(tokenizer.nextToken().toLowerCase()));
+                        response.append(bot.getPropertyValue(tokenizer.nextToken().toLowerCase()));
                     }
                 }
             }
+        }
+        if (appendTo.length() > 0)
+        {
+            return appendTo + ' ' + reply;
         }
         return appendTo + reply;
     }
@@ -308,14 +329,23 @@ abstract public class AbstractMarkupResponder implements Responder
 
     public void log(String input, String reply, String hostname, String userid, String botid)
     {
-        ResponderXMLLogger.log(input, reply, hostname, userid, botid);
+        if (LOG_CHAT_TO_DATABASE)
+        {
+            ResponderDatabaseLogger.log(input, reply, hostname, userid, botid);
+        }
+        if (LOG_CHAT_TO_XML)
+        {
+            ResponderXMLLogger.log(input, reply, hostname, userid, botid);
+        }
     }
     
 
     public String postprocess(String reply)
     {
+        int footerSize = footer.size();
+
         // Parse character by character through the footer part template.
-        for (int index = 0; index < footer.size(); index++)
+        for (int index = 0; index < footerSize; index++)
         {
             Object thisNode = footer.get(index);
 
@@ -334,6 +364,10 @@ abstract public class AbstractMarkupResponder implements Responder
                 // Bot response.
                 if (tagName.equals(RESPONSE))
                 {
+                    if (response.length() > 0)
+                    {
+                        response.append(' ');
+                    }
                     response.append(reply);
                 }
                 // Some bot predicate.
@@ -343,7 +377,7 @@ abstract public class AbstractMarkupResponder implements Responder
                     // This is clunky but fast.
                     if (quote > 10)
                     {
-                        response.append(BotProperty.getPredicateValue(tagName.substring(10, quote)));
+                        response.append(bot.getPropertyValue(tagName.substring(10, quote)));
                     }
                 }
                 // Host name.
@@ -355,6 +389,10 @@ abstract public class AbstractMarkupResponder implements Responder
                 // Bot response.
                 else if (tagName.equals(ALICE_OUT))
                 {
+                    if (response.length() > 0)
+                    {
+                        response.append(' ');
+                    }
                     response.append(reply);
                 }
 
@@ -365,7 +403,7 @@ abstract public class AbstractMarkupResponder implements Responder
                     while (tokenizer.hasMoreTokens())
                     {
                         tokenizer.nextToken();
-                        response.append(BotProperty.getPredicateValue(tokenizer.nextToken().toLowerCase()));
+                        response.append(bot.getPropertyValue(tokenizer.nextToken().toLowerCase()));
                     }
                 }
                 // Host name.
@@ -405,7 +443,7 @@ abstract public class AbstractMarkupResponder implements Responder
                 String tagString = tag.toString();
 
                 int tagsIndex;
-                for (tagsIndex = (tags.length - 1); tagsIndex > 0; tagsIndex--)
+                for (tagsIndex = tags.length; --tagsIndex >= 0; )
                 {                    
                     if (tagString.startsWith(tags[tagsIndex]))
                     {
@@ -462,7 +500,7 @@ abstract public class AbstractMarkupResponder implements Responder
         }
         catch (FileNotFoundException e)
         {
-            throw new UserErrorException("Could not find \"" + path + "\".", e);
+            return null;
         }
         BufferedReader breader = new BufferedReader(freader);
 
@@ -479,7 +517,7 @@ abstract public class AbstractMarkupResponder implements Responder
         }
         catch (IOException e)
         {
-            throw new UserErrorException("I/O error reading \"" + path + "\".", e);
+            throw new UserError("I/O error reading \"" + path + "\".", e);
         }
 
         return template;
@@ -506,7 +544,7 @@ abstract public class AbstractMarkupResponder implements Responder
             int templateCount = templateFilenames.length;
             if (templateCount > 0)
             {
-                for (int index = 0; index < templateCount; index++)
+                for (int index = templateCount; --index >= 0; )
                 {
                     String templateFilename = templateFilenames[index];
                     result.put(templateFilename.substring(0, templateFilename.lastIndexOf(PERIOD)),

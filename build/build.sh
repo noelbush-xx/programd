@@ -1,7 +1,7 @@
 #!/bin/sh
 # ==========================================================================
 # Alice Program D
-# Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+# Copyright (C) 1995-2002, A.L.I.C.E. AI Foundation
 # 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -14,15 +14,14 @@
 # USA.
 # ==========================================================================
 
+JAVA_HOME=/usr/java/j2sdk1.4.0
 JAVA_TOOLS=$JAVA_HOME/lib/tools.jar
-XML_LIB=../lib/xml.jar
 SERVLET_LIB=../lib/servlet.jar
-ALICE_LIB=../lib/aliceserver.jar
 JS_LIB=../lib/js.jar
 ANT_LIB=../lib/ant.jar
-HTTP_SERVER_LIBS=../lib/org.mortbay.jetty.jar:../lib/com.sun.net.ssl.jar:../lib/javax.servlet.jar:../lib/javax.xml.jaxp.jar:../lib/org.apache.crimson.jar
+HTTP_SERVER_LIBS=../lib/org.mortbay.jetty.jar:../lib/javax.servlet.jar
 
-BUILD_CLASSPATH=$JAVA_TOOLS:$ANT_LIB:$XML_LIB:$SQL_LIB:$SERVLET_LIB:$ALICE_LIB:$JS_LIB:$HTTP_SERVER_LIBS
+BUILD_CLASSPATH=$JAVA_TOOLS:$ANT_LIB:$SERVLET_LIB:$JS_LIB:$HTTP_SERVER_LIBS
 
 ANT_HOME=./
 

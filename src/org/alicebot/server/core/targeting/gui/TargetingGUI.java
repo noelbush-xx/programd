@@ -38,7 +38,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 
 import org.alicebot.server.core.targeting.TargetingTool;
 import org.alicebot.server.core.util.Trace;
@@ -52,13 +54,21 @@ import org.alicebot.server.core.util.Trace;
  */
 public class TargetingGUI extends JPanel
 {
-    private static final Dimension minDimension = new Dimension(700, 500);
-    private static final Dimension prefDimension = new Dimension(700, 500);
+    static final int MIN_WIDTH = 600;
+    static final int MIN_HEIGHT = 400;
+    static final int PREF_WIDTH = 700;
+    static final int PREF_HEIGHT = 500;
+
+    static final Dimension minDimension = new Dimension(MIN_WIDTH, MIN_HEIGHT);
+    static final Dimension prefDimension = new Dimension(PREF_WIDTH, PREF_HEIGHT);
 
     private static TargetingTool targetingTool;
 
     private JFrame frame;
+    private JTabbedPane tabbedPane;
     public TargetPanel targetPanel;
+    public InputPanel inputPanel;
+    public CategoryPanel categoryPanel;
     private static JMenuBar menuBar;
     public JLabel statusBar;
 
@@ -97,20 +107,47 @@ public class TargetingGUI extends JPanel
         targetPanel = new TargetPanel(this);
         targetPanel.setMinimumSize(minDimension);
         targetPanel.setPreferredSize(prefDimension);
-        targetPanel.setAlignmentY(Component.LEFT_ALIGNMENT);
+        targetPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        // Create and configure the inputPanel.
+        inputPanel = new InputPanel(this);
+        inputPanel.setMinimumSize(minDimension);
+        inputPanel.setPreferredSize(prefDimension);
+        inputPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // Create and configure the categoryPanel.
+        categoryPanel = new CategoryPanel(this);
+        categoryPanel.setMinimumSize(minDimension);
+        categoryPanel.setPreferredSize(prefDimension);
+        categoryPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Create the status bar.
         statusBar = new JLabel();
-        statusBar.setAlignmentY(Component.LEFT_ALIGNMENT);
+        statusBar.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        statusBar.setHorizontalAlignment(SwingConstants.RIGHT);
         statusBar.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         statusBar.setForeground(Color.black);
-        statusBar.setMinimumSize(new Dimension(100, 14));
-        statusBar.setPreferredSize(new Dimension(100, 14));
+        statusBar.setMinimumSize(new Dimension(MIN_WIDTH, 14));
+        statusBar.setPreferredSize(new Dimension(PREF_WIDTH, 14));
         statusBar.setMaximumSize(new Dimension(Short.MAX_VALUE, 14));
 
-        add(targetPanel);
+        // Create and configure the tabbed pane.
+        tabbedPane = new JTabbedPane();
+        tabbedPane.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        tabbedPane.setMinimumSize(new Dimension(MIN_WIDTH, PREF_HEIGHT));
+        tabbedPane.setPreferredSize(new Dimension(PREF_WIDTH, PREF_HEIGHT));
+        tabbedPane.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+        tabbedPane.setFont(new Font("Fixedsys", Font.PLAIN, 12));
+        tabbedPane.setTabPlacement(SwingConstants.BOTTOM);
+
+        // Add the panels to the tabbed pane.
+        tabbedPane.add("Targets", targetPanel);
+        tabbedPane.add("Inputs", inputPanel);
+        tabbedPane.add("Categories", categoryPanel);
+
+        // Add the tabbed pane and the status bar to the main panel.
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        add(tabbedPane);
         add(statusBar);
 
         // Create the File menu.
@@ -119,27 +156,27 @@ public class TargetingGUI extends JPanel
         fileMenu.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
-        JMenuItem changeDataURL = new JMenuItem("Change targets data URL...");
-        changeDataURL.setFont(new Font("Fixedsys", Font.PLAIN, 12));
-        changeDataURL.setMnemonic(KeyEvent.VK_U);
-        changeDataURL.addActionListener(new ActionListener()
-                                            {
-                                                public void actionPerformed(ActionEvent ae)
-                                                {
-                                                    showChangeDataURLBox();
-                                                }
-                                            });
+        JMenuItem loadDataURL = new JMenuItem("Load targets data from URL...");
+        loadDataURL.setFont(new Font("Fixedsys", Font.PLAIN, 12));
+        loadDataURL.setMnemonic(KeyEvent.VK_U);
+        loadDataURL.addActionListener(new ActionListener()
+                                          {
+                                              public void actionPerformed(ActionEvent ae)
+                                              {
+                                                  loadDataURLBox();
+                                              }
+                                          });
 
-        JMenuItem changeDataFilePath = new JMenuItem("Change targets file path...");
-        changeDataFilePath.setFont(new Font("Fixedsys", Font.PLAIN, 12));
-        changeDataFilePath.setMnemonic(KeyEvent.VK_P);
-        changeDataFilePath.addActionListener(new ActionListener()
-                                                 {
-                                                     public void actionPerformed(ActionEvent ae)
-                                                     {
-                                                         showChangeDataFilePathChooser();
-                                                     }
-                                                 });
+        JMenuItem loadDataFilePath = new JMenuItem("Load targets data from file path...");
+        loadDataFilePath.setFont(new Font("Fixedsys", Font.PLAIN, 12));
+        loadDataFilePath.setMnemonic(KeyEvent.VK_P);
+        loadDataFilePath.addActionListener(new ActionListener()
+                                               {
+                                                   public void actionPerformed(ActionEvent ae)
+                                                   {
+                                                       loadDataFilePathChooser();
+                                                   }
+                                               });
        
         JMenuItem reload = new JMenuItem("Reload target data");
         reload.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -162,12 +199,60 @@ public class TargetingGUI extends JPanel
                                             shutdown();
                                         }
                                    });
-        fileMenu.add(changeDataURL);
-        fileMenu.add(changeDataFilePath);
+        fileMenu.add(loadDataURL);
+        fileMenu.add(loadDataFilePath);
         fileMenu.addSeparator();
         fileMenu.add(reload);
         fileMenu.addSeparator();
         fileMenu.add(exit);
+
+        // Create the Edit menu.
+        JMenu editMenu = new JMenu("Edit");
+        editMenu.setFont(new Font("Fixedsys", Font.PLAIN, 12));
+        editMenu.setMnemonic(KeyEvent.VK_E);
+
+        // Create the View menu.
+        JMenu viewMenu = new JMenu("View");
+        viewMenu.setFont(new Font("Fixedsys", Font.PLAIN, 12));
+        viewMenu.setMnemonic(KeyEvent.VK_V);
+
+        JMenuItem viewTargets = new JMenuItem("Targets");
+        viewTargets.setFont(new Font("Fixedsys", Font.PLAIN, 12));
+        viewTargets.setMnemonic(KeyEvent.VK_T);
+        viewTargets.addActionListener(new ActionListener()
+                                          {
+                                              public void actionPerformed(ActionEvent ae)
+                                              {
+                                                  viewTargets();
+                                              }
+                                          });
+
+        JMenuItem viewInputs = new JMenuItem("Inputs");
+        viewInputs.setFont(new Font("Fixedsys", Font.PLAIN, 12));
+        viewInputs.setMnemonic(KeyEvent.VK_I);
+        viewInputs.addActionListener(new ActionListener()
+                                         {
+                                             public void actionPerformed(ActionEvent ae)
+                                             {
+                                                 viewInputs();
+                                             }
+                                         });
+        
+        JMenuItem viewCategories = new JMenuItem("Inputs");
+        viewCategories.setFont(new Font("Fixedsys", Font.PLAIN, 12));
+        viewCategories.setMnemonic(KeyEvent.VK_C);
+        viewCategories.addActionListener(new ActionListener()
+                                             {
+                                                 public void actionPerformed(ActionEvent ae)
+                                                 {
+                                                     viewCategories();
+                                                 }
+                                             });
+        
+        viewMenu.add(viewTargets);
+        viewMenu.add(viewInputs);
+        viewMenu.add(viewCategories);
+
 
         // Create the Options menu.
         JMenu optionsMenu = new JMenu("Options");
@@ -265,6 +350,8 @@ public class TargetingGUI extends JPanel
 
         // Add menus to the menu bar.
         menuBar.add(fileMenu);
+        menuBar.add(editMenu);
+        menuBar.add(viewMenu);
         menuBar.add(optionsMenu);
         menuBar.add(actionsMenu);
         menuBar.add(helpMenu);
@@ -319,7 +406,7 @@ public class TargetingGUI extends JPanel
     {
         int currentFrequency = targetingTool.getReloadFrequency();
         Object response =
-            JOptionPane.showInputDialog(null, "Please input a value in milliseconds.", "Set Reload Frequency",
+            JOptionPane.showInputDialog(null, "Please input a value in seconds.", "Set Reload Frequency",
                                         JOptionPane.PLAIN_MESSAGE, null, null, new Integer(currentFrequency));
         if (response == null)
         {
@@ -343,7 +430,7 @@ public class TargetingGUI extends JPanel
     }
 
 
-    private void showChangeDataURLBox()
+    private void loadDataURLBox()
     {
         String currentPath = targetingTool.getTargetsDataPath();
         Object response =
@@ -364,7 +451,7 @@ public class TargetingGUI extends JPanel
     }
 
 
-    private void showChangeDataFilePathChooser()
+    private void loadDataFilePathChooser()
     {
         String currentPath = targetingTool.getTargetsDataPath();
 
@@ -406,6 +493,7 @@ public class TargetingGUI extends JPanel
     public void setStatus(String status)
     {
         statusBar.setText(status);
+        Trace.devinfo(status);
     }
 
 
@@ -413,6 +501,24 @@ public class TargetingGUI extends JPanel
     {
         frame.setTitle("AIML Targeting Tool, Program D version " + targetingTool.VERSION +
             " - " + targetingTool.getTargetsDataPath());
+    }
+
+
+    public void viewTargets()
+    {
+        tabbedPane.setSelectedIndex(0);
+    }
+
+
+    public void viewInputs()
+    {
+        tabbedPane.setSelectedIndex(1);
+    }
+
+
+    public void viewCategories()
+    {
+        tabbedPane.setSelectedIndex(2);
     }
 }
 

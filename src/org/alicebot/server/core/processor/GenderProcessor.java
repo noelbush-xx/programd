@@ -24,8 +24,9 @@ package org.alicebot.server.core.processor;
 
 import java.util.HashMap;
 
+import org.alicebot.server.core.Bots;
 import org.alicebot.server.core.Globals;
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
 import org.alicebot.server.core.util.Substituter;
 
@@ -53,14 +54,14 @@ public class GenderProcessor extends AIMLProcessor
     private static HashMap substitutionMap = new HashMap();
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
             // This looks ugly, but completely avoids a temporary variable.
             try
             {
-                return parser.processResponse(userid, applySubstitutions(parser.evaluate(level++,userid,tag.XMLChild)));
+                return parser.processResponse(applySubstitutions(parser.evaluate(level++, tag.XMLChild), parser.getBotID()));
             }
             catch (ProcessorException e)
             {
@@ -71,12 +72,12 @@ public class GenderProcessor extends AIMLProcessor
         {
             if (!Globals.supportDeprecatedTags())
             {
-                return parser.shortcutTag(level, userid, label,
-                                          tag.TAG, EMPTY_STRING, "star", tag.EMPTY);
+                return parser.shortcutTag(level, label,
+                                          tag.TAG, EMPTY_STRING, StarProcessor.label, tag.EMPTY);
             }
             else
             {
-                return parser.shortcutTag(level, userid, BotProcessor.label,
+                return parser.shortcutTag(level, BotProcessor.label,
                                                tag.EMPTY, "name=\"gender\"", EMPTY_STRING, tag.EMPTY);
             }
         }
@@ -95,9 +96,9 @@ public class GenderProcessor extends AIMLProcessor
      *
      *  @return the input with substitutions performed
      */
-    public static String applySubstitutions(String input)
+    public static String applySubstitutions(String input, String botid)
     {
-        return Substituter.applySubstitutions(substitutionMap, input);
+        return Substituter.applySubstitutions(Bots.getBot(botid).getGenderSubstitutionsMap(), input);
     }
     
 

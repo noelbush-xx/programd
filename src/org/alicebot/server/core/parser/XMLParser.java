@@ -403,7 +403,6 @@ public class XMLParser
         */
         XMLNode node;
         XMLNode child;
-        ListIterator trieIterator = trie.listIterator(0);
 
         while (xmlIterator.hasNext())
         {
@@ -477,7 +476,6 @@ public class XMLParser
         LinkedList linearList = new LinkedList();
         LinkedList trie = new LinkedList();
 
-        XMLNode node;
         ListIterator listIterator;
 
         /*

@@ -25,7 +25,7 @@
 package org.alicebot.server.core;
 
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.DeveloperError;
 
 
 /**
@@ -50,7 +50,7 @@ public class ActiveMultiplexor
     private static Multiplexor multiplexor;
 
     /** The private field that (partially) ensures <code>ActiveMultiplexor</code> is a singleton. */
-    private static final ActiveMultiplexor myself = new ActiveMultiplexor(Globals.getProperty("programd.multiplexor", "org.alicebot.server.core.Classifier"));
+    private static final ActiveMultiplexor myself = new ActiveMultiplexor(Globals.getProperty("programd.multiplexor", "org.alicebot.server.core.FlatFileMultiplexor"));
 
 
     /**
@@ -67,7 +67,7 @@ public class ActiveMultiplexor
         }
         catch (Exception e)
         {
-            throw new DeveloperErrorException(e);
+            throw new DeveloperError(e);
         }
     }
 

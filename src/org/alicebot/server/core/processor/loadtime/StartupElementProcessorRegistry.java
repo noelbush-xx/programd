@@ -15,7 +15,8 @@
 
 package org.alicebot.server.core.processor.loadtime;
 
-import org.alicebot.server.core.processor.ProcessorRegistry;
+import org.alicebot.server.core.Graphmaster;
+import org.alicebot.server.core.util.ClassRegistry;
 
 
 /**
@@ -24,34 +25,43 @@ import org.alicebot.server.core.processor.ProcessorRegistry;
  *  @since  4.1.3
  *  @author Noel Bush
  */
-public class StartupElementProcessorRegistry extends ProcessorRegistry
+public class StartupElementProcessorRegistry extends ClassRegistry
 {
     /** The version of Program D for which this registry is intended. */
-    private static final String version = "4.1.3";
+    private static final String VERSION = Graphmaster.VERSION;
 
     /** The list of processors (fully-qualified class names). */
-    private static final String[] processorList = {"org.alicebot.server.core.processor.loadtime.LearnProcessor",
-                                                   "org.alicebot.server.core.processor.loadtime.BotProcessor",
-                                                   "org.alicebot.server.core.processor.loadtime.BotsProcessor",
-                                                   "org.alicebot.server.core.processor.loadtime.PredicateProcessor",
-                                                   "org.alicebot.server.core.processor.loadtime.PredicatesProcessor",
-                                                   "org.alicebot.server.core.processor.loadtime.GenderProcessor",
-                                                   "org.alicebot.server.core.processor.loadtime.InputProcessor",
-                                                   "org.alicebot.server.core.processor.loadtime.PersonProcessor",
-                                                   "org.alicebot.server.core.processor.loadtime.Person2Processor",
-                                                   "org.alicebot.server.core.processor.loadtime.PropertyProcessor",
-                                                   "org.alicebot.server.core.processor.loadtime.SentenceSplittersProcessor",
-                                                   "org.alicebot.server.core.processor.loadtime.SubstitutionsProcessor"};
+    private static final String[] PROCESSOR_LIST = {"org.alicebot.server.core.processor.loadtime.BotProcessor",
+                                                    "org.alicebot.server.core.processor.loadtime.BotsProcessor",
+                                                    "org.alicebot.server.core.processor.loadtime.GenderProcessor",
+                                                    "org.alicebot.server.core.processor.loadtime.InputProcessor",
+                                                    "org.alicebot.server.core.processor.loadtime.LearnProcessor",
+                                                    "org.alicebot.server.core.processor.loadtime.ListenerProcessor",
+                                                    "org.alicebot.server.core.processor.loadtime.ListenersProcessor",
+                                                    "org.alicebot.server.core.processor.loadtime.PersonProcessor",
+                                                    "org.alicebot.server.core.processor.loadtime.Person2Processor",
+                                                    "org.alicebot.server.core.processor.loadtime.PredicateProcessor",
+                                                    "org.alicebot.server.core.processor.loadtime.PredicatesProcessor",
+                                                    "org.alicebot.server.core.processor.loadtime.PropertiesProcessor",
+                                                    "org.alicebot.server.core.processor.loadtime.PropertyProcessor",
+                                                    "org.alicebot.server.core.processor.loadtime.SentenceSplittersProcessor",
+                                                    "org.alicebot.server.core.processor.loadtime.SubstitutionsProcessor"};
 
-    /** The fully-qualified name of {@link AIMLProcessor}. */
-    private static final String processorBaseClassName = "org.alicebot.server.core.processor.loadtime.StartupElementProcessor";
+    /** The fully-qualified name of {@link StartupElementProcessor}. */
+    private static final String PROCESSOR_BASE_CLASS_NAME = "org.alicebot.server.core.processor.loadtime.StartupElementProcessor";
 
-    /** The name of the field in an {@link AIMLProcessor} that contains the label. */
-    public static final String labelFieldName = "label";
+    /** The private member that initializes this class. */
+    private static final StartupElementProcessorRegistry self = new StartupElementProcessorRegistry();
 
 
-    public StartupElementProcessorRegistry()
+    private StartupElementProcessorRegistry()
     {
-        super(version, processorList, processorBaseClassName, labelFieldName);
+        super(VERSION, PROCESSOR_LIST, PROCESSOR_BASE_CLASS_NAME);
+    }
+    
+    
+    public static StartupElementProcessorRegistry getSelf()
+    {
+        return self;
     }
 }

@@ -33,8 +33,10 @@ package org.alicebot.server.core.util;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.ListIterator;
 
 
 /**
@@ -48,31 +50,10 @@ import java.util.Iterator;
  */
 public class InputNormalizer
 {
-    /** The map of substitutions to be performed on an input. */
-    private static HashMap substitutionMap = new HashMap();
-
-    /** The list of strings on which to split sentences. */
-    private static ArrayList sentenceSplitters = new ArrayList();
-
-
     // Convenience constants.
 
     /** An empty string. */
     private static final String EMPTY_STRING = "";
-
-
-    /**
-     *  Applies substitutions as defined in the {@link #substitutionMap}.
-     *  Comparisons are case-insensitive.
-     *
-     *  @param  input   the input on which to perform substitutions
-     *
-     *  @return the input with substitutions performed
-     */
-    public static String applySubstitutions(String input)
-    {
-        return Substituter.applySubstitutions(substitutionMap, input);
-    }
 
 
     /**
@@ -83,39 +64,83 @@ public class InputNormalizer
      *
      *  @return the input split into sentences
      */
-    public static ArrayList sentenceSplit(String input)
+    public static ArrayList sentenceSplit(ArrayList sentenceSplitters, String input)
     {
         ArrayList result = new ArrayList();
-        if (input.length() == 0)
+
+        int inputLength = input.length();
+        if (inputLength == 0)
         {
             result.add(EMPTY_STRING);
             return result;
         }
 
+        // This will hold the indices of all splitters in the input.
+        ArrayList splitterIndices = new ArrayList();
+
+        // This will iterate over the splitters.
         Iterator splitters = sentenceSplitters.iterator();
 
-        int start = 0;
-
+        // Iterate over all the splitters.
         while (splitters.hasNext())
         {
+            // Get the next splitter.
             String splitter = (String)splitters.next();
-            int splitterIndex = input.indexOf(splitter, start);
-            while (splitterIndex != -1)
+
+            // Look for it in the input.
+            int index = input.indexOf(splitter);
+
+            // As long as it exists,
+            while (index != -1)
             {
-                if (splitterIndex > start)
-                {
-                    result.add(input.substring(start, splitterIndex + 1).trim());
-                }
-                start = splitterIndex + 1;
-                splitterIndex = input.indexOf(splitter, start);
+                // add its index to the list of indices.
+                splitterIndices.add(new Integer(index));
+
+                // and look for it again starting just after the discovered index.
+                index = input.indexOf(splitter, index + 1);
             }
+        }
+        if (splitterIndices.size() == 0)
+        {
+            result.add(input);
+            return result;
+        }
+
+        // Sort the list of indices.
+        Collections.sort(splitterIndices);
+
+        // Iterate through the indices and remove (all previous of) consecutive values.
+        ListIterator indices = splitterIndices.listIterator();
+        int previousIndex = ((Integer)indices.next()).intValue();
+        while (indices.hasNext())
+        {
+            int nextIndex = ((Integer)indices.next()).intValue();
+            if (nextIndex == previousIndex + 1)
+            {
+                indices.previous();
+                indices.previous();
+                indices.remove();
+            }
+            previousIndex = nextIndex;
+        }
+
+        // Now iterate through the remaining indices and split sentences.
+        indices = splitterIndices.listIterator();
+        int startIndex = 0;
+        int endIndex = inputLength - 1;
+        while (indices.hasNext())
+        {
+            endIndex = ((Integer)indices.next()).intValue();
+            result.add(input.substring(startIndex, endIndex + 1).trim());
+            startIndex = endIndex + 1;
         }
 
         // Add whatever remains.
-        if (start < input.length())
+        if (startIndex < inputLength - 1)
         {
-            result.add(input.substring(start));
+            result.add(input.substring(startIndex).trim());
         }
+
         return result;
     }
 
@@ -208,37 +233,5 @@ public class InputNormalizer
         }
         return Toolkit.filterWhitespace(result.toString());
 
-    }
-
-
-    /**
-     *  Adds a substitution to the substitutions map.  The
-     *  <code>find</code> parameter is stored in uppercase,
-     *  to do case-insensitive comparisons.  The <code>replace</code>
-     *  parameter is stored as is.
-     *
-     *  @param find     the string to find in the input
-     *  @param replace  the string with which to replace the found string
-     */
-    public static void addSubstitution(String find, String replace)
-    {
-        if (find != null && replace != null)
-        {
-            substitutionMap.put(find.toUpperCase(), replace);
-        }
-    }
-
-
-    /**
-     *  Adds a sentence splitter to the sentence splitters list.
-     *
-     *  @param splitter the string on which to divide sentences
-     */
-    public static void addSentenceSplitter(String splitter)
-    {
-        if (splitter != null)
-        {
-            sentenceSplitters.add(splitter);
-        }
     }
 }

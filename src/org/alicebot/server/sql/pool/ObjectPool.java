@@ -55,7 +55,7 @@ public abstract class ObjectPool
      *
      *  @param object   the object to check in and unlock.
      */
-    protected synchronized void checkIn(Object object)
+    protected void checkIn(Object object)
     {
         if(object != null)
         {
@@ -71,7 +71,7 @@ public abstract class ObjectPool
      *
      *  @return the next available object in the pool
      */
-    protected synchronized Object checkOut()
+    protected Object checkOut()
     {
         long now = System.currentTimeMillis();        
         lastCheckOut = now;
@@ -111,7 +111,7 @@ public abstract class ObjectPool
      *  Cleans up the pool by checking
      *  for expired objects.
      */
-    protected synchronized void cleanUp()
+    protected void cleanUp()
     {
         Object object;
 

@@ -17,37 +17,16 @@ package org.alicebot.server.core.util;
 
 
 /**
- *  A runtime exception that indicates developer error.
+ *	A <code>Pulse</code> does something (anything) at a
+ *  regular interval to indicate that the bot is alive.
  *
- *  @author Noel Bush
+ *  @author	Noel Bush
  */
-public class DeveloperErrorException extends RuntimeException
+public interface Pulse
 {
-    private Exception exception;
-
-    public DeveloperErrorException(String message)
-    {
-        super(message);
-    }
-
-
-    public DeveloperErrorException(Exception e)
-    {
-        super("Developer did not describe exception.");
-        this.exception = e;
-    }
-
-
-    public DeveloperErrorException(String message, Exception e)
-    {
-        super(message);
-        this.exception = e;
-    }
-
-
-    public Exception getException()
-    {
-        return this.exception;
-    }
+    /**
+     *  Emit can do anything you want it to.  It will
+     *  be called at a regular interval.
+     */
+    public void emit();
 }
-

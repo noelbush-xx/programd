@@ -31,7 +31,8 @@ package org.alicebot.server.core.processor;
 
 import java.util.HashMap;
 
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.Bots;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
 import org.alicebot.server.core.util.Substituter;
 
@@ -59,14 +60,14 @@ public class Person2Processor extends AIMLProcessor
     private static HashMap substitutionMap = new HashMap();
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
             try
             {
                 // Return the processed contents of the element, properly substituted.
-                return parser.processResponse(userid, applySubstitutions(parser.evaluate(level++, userid, tag.XMLChild)));
+                return parser.processResponse(applySubstitutions(parser.evaluate(level++, tag.XMLChild), parser.getBotID()));
             }
             catch (ProcessorException e)
             {
@@ -75,8 +76,8 @@ public class Person2Processor extends AIMLProcessor
         }
         else
         {
-            return parser.shortcutTag(level, userid, label,
-                                      tag.TAG, EMPTY_STRING, "star", tag.EMPTY);
+            return parser.shortcutTag(level, label,
+                                      tag.TAG, EMPTY_STRING, StarProcessor.label, tag.EMPTY);
         }
     }
 
@@ -89,9 +90,9 @@ public class Person2Processor extends AIMLProcessor
      *
      *  @return the input with substitutions performed
      */
-    public static String applySubstitutions(String input)
+    public static String applySubstitutions(String input, String botid)
     {
-        return Substituter.applySubstitutions(substitutionMap, input);
+        return Substituter.applySubstitutions(Bots.getBot(botid).getPerson2SubstitutionsMap(), input);
     }
     
 

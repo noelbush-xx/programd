@@ -27,7 +27,7 @@
 
 package org.alicebot.server.core.processor;
 
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.GenericParser;
 import org.alicebot.server.core.parser.XMLNode;
 
@@ -43,17 +43,17 @@ import org.alicebot.server.core.parser.XMLNode;
  */
 abstract public class AIMLProcessor extends Processor
 {
-    public String process(int level, String id, XMLNode tag, GenericParser parser) throws ProcessorException
+    public String process(int level, XMLNode tag, GenericParser parser) throws ProcessorException
     {
         try
         {
-            return process(level, id, tag, (AIMLParser)parser);
+            return process(level, tag, (TemplateParser)parser);
         }
         catch (ClassCastException e)
         {
-            throw new ProcessorException("Tried to pass a non-AIMLParser to an AIMLProcessor.");
+            throw new ProcessorException("Tried to pass a non-TemplateParser to an AIMLProcessor.");
         }
     }
 
-    abstract public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException;
+    abstract public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException;
 }

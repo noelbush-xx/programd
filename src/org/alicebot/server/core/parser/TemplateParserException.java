@@ -13,41 +13,21 @@
     USA.
 */
 
-package org.alicebot.server.core.util;
+package org.alicebot.server.core.parser;
 
 
 /**
- *  A runtime exception that indicates user error.
+ *  Thrown by {@link TemplateParser} when it
+ *  is given invalid input.
+ *
+ *  @since 4.1.4
  *
  *  @author Noel Bush
  */
-public class UserErrorException extends RuntimeException
+public class TemplateParserException extends Exception
 {
-    private Exception exception;
-
-    public UserErrorException(String message)
+    public TemplateParserException(String message)
     {
         super(message);
-    }
-
-
-    public UserErrorException(Exception e)
-    {
-        super("Developer did not describe exception.");
-        this.exception = e;
-    }
-
-
-    public UserErrorException(String message, Exception e)
-    {
-        super(message);
-        this.exception = e;
-    }
-
-
-    public Exception getException()
-    {
-        return this.exception;
     }
 }
-

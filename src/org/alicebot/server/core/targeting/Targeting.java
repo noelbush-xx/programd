@@ -44,6 +44,12 @@ abstract public class Targeting
     /** The end of an input element. */
     public static final String INPUT_END          = "</input>";
 
+    /** The start of a text element. */
+    public static final String TEXT_START         = "<text>";
+
+    /** The end of a text element. */
+    public static final String TEXT_END           = "</text>";
+
     /** The start of a match element. */
     public static final String MATCH_START        = "<match>";
 
@@ -68,12 +74,6 @@ abstract public class Targeting
     /** The end of a topic element. */
     public static final String TOPIC_END          = "</topic>";
 
-    /** The start of an extension element. */
-    public static final String EXTENSION_START    = "<extension>";
-
-    /** The end of an extension element. */
-    public static final String EXTENSION_END      = "</extension>";
-
     /** The beginning of a topic start marker with a name attribute. */
     public static final String TOPIC_NAME_BEGIN   = "<topic name=\"";
 
@@ -91,6 +91,12 @@ abstract public class Targeting
 
     /** The end of a template element. */
     public static final String TEMPLATE_END       = "</template>";
+
+    /** The start of a reply element. */
+    public static final String REPLY_START        = "<reply>";
+
+    /** The end of a reply element. */
+    public static final String REPLY_END          = "</reply>";
 
     /** An indent. */
     public static final String INDENT             = "    ";

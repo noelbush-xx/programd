@@ -36,8 +36,9 @@ import java.util.Hashtable;
 import java.util.Properties;
 
 import org.alicebot.server.core.logging.Log;
+import org.alicebot.server.core.util.DeveloperError;
+import org.alicebot.server.core.util.Toolkit;
 import org.alicebot.server.core.util.Trace;
-import org.alicebot.server.core.util.UserErrorException;
 
 
 /**
@@ -54,26 +55,26 @@ import org.alicebot.server.core.util.UserErrorException;
  *  @author Noel Bush
  *  @version 4.1.3
  */
-public class FlatFileMultiplexor extends AbstractClassifier
+public class FlatFileMultiplexor extends Multiplexor
 {
     /** The container for all predicate sets. */
     private static Hashtable predicateSets;
 
     /** The name of the subdirectory for the predicate files. */
-    private static String FFM_DIR_NAME;
-
-    /** The subdirectory for the predicate files. */
-    private static File FFM_DIR;
+    private static final String FFM_DIR_NAME = "ffm";
 
     /** The suffix for a predicates storage file. */
     private static final String PREDICATES_SUFFIX = ".predicates";
 
+    /** The string &quot;FlatFileMultiplexor predicates file&quot;. */
+    private static final String FFM_FILE_LABEL = "FlatFileMultiplexor predicates file";
+
 
     /**
      *  Always returns true (FlatFileMultiplexor currently
      *  does not support authentication).
      */
-    public boolean checkUser(String userid, String password, String secretKey)
+    public boolean checkUser(String userid, String password, String secretKey, String botid)
     {
         return true;
     }
@@ -83,7 +84,7 @@ public class FlatFileMultiplexor extends AbstractClassifier
      *  Always returns true (FlatFileMultiplexor currently
      *  does not support authentication).
      */
-    public boolean createUser(String userid, String password, String secretKey)
+    public boolean createUser(String userid, String password, String secretKey, String botid)
     {
         return true;
     }
@@ -93,7 +94,7 @@ public class FlatFileMultiplexor extends AbstractClassifier
      *  Always returns true (FlatFileMultiplexor currently
      *  does not support authentication).
      */
-    public boolean changePassword(String userid, String password, String secretKey)
+    public boolean changePassword(String userid, String password, String secretKey, String botid)
     {
         return true;
     }
@@ -102,7 +103,7 @@ public class FlatFileMultiplexor extends AbstractClassifier
     /**
      *  Saves a predicate to disk.
      */
-    public void savePredicate(String name, String value, String userid)
+    public void savePredicate(String name, String value, String userid, String botid)
     {
         // Test whether predicateSets is intialized.
         if (predicateSets == null)
@@ -110,38 +111,20 @@ public class FlatFileMultiplexor extends AbstractClassifier
             predicateSets = new Hashtable();
         }
 
-        Properties predicates = null;
-
-        // Do we have predicates for this user in memory?
-        if (predicateSets.containsKey(userid))
-        {
-            predicates = (Properties)predicateSets.get(userid);
-        }
-        else
-        {
-            predicates = loadPredicates(userid);
-            predicateSets.put(userid, predicates);
-        }
+        Properties predicates = loadPredicates(userid, botid);
 
         // Store the predicate value.
         predicates.setProperty(name, value);
 
         // Write predicates to disk immediately.
-        try
-        {
-            predicates.store(new FileOutputStream(FFM_DIR_NAME + File.separator + userid + PREDICATES_SUFFIX), null);
-        }
-        catch (IOException e)
-        {
-            throw new UserErrorException("Error trying to save predicates.", e);
-        }
+        savePredicates(predicates, userid, botid);
     }
 
 
     /**
      *  Loads the value of a predicate from disk.
      */
-    public String loadPredicate(String name, String userid) throws NoSuchPredicateException
+    public String loadPredicate(String name, String userid, String botid) throws NoSuchPredicateException
     {
          // Test whether predicateSets is intialized.
         if (predicateSets == null)
@@ -149,23 +132,11 @@ public class FlatFileMultiplexor extends AbstractClassifier
             predicateSets = new Hashtable();
         }
 
-        Properties predicates;
-
-        // Do we have predicates for this user in memory?
-        if (predicateSets.containsKey(userid))
-        {
-            predicates = (Properties)predicateSets.get(userid);
-        }
-        else
-        {
-            predicates = loadPredicates(userid);
-            predicateSets.put(userid, predicates);
-        }
+        Properties predicates = loadPredicates(userid, botid);
 
         // Try to get the predicate value.
         String result = predicates.getProperty(name);
 
-        // Cache the result, if found.
         if (result == null)
         {
             throw new NoSuchPredicateException(name);
@@ -180,28 +151,14 @@ public class FlatFileMultiplexor extends AbstractClassifier
      *
      *  @param userid
      */
-    private static Properties loadPredicates(String userid)
+    private static Properties loadPredicates(String userid, String botid)
     {
-        // Check that FFM_DIR_NAME and FFM_DIR are initialized.
-        if (FFM_DIR_NAME == null)
-        {
-            FFM_DIR_NAME = "ffm/" + Globals.getBotID();
-            FFM_DIR = new File(FFM_DIR_NAME);
-            try
-            {
-                if (FFM_DIR.mkdirs())
-                {
-                    Log.userinfo("Created \"" + FFM_DIR_NAME + "\".", Log.STARTUP);
-                }
-            }
-            catch (SecurityException e)
-            {
-                throw new UserErrorException("Permission denied to create \"" + FFM_DIR_NAME + "\".", e);
-            }
-        }
-
         Properties predicates = new Properties();
-        File predicateFile = new File(FFM_DIR_NAME + File.separator + userid + PREDICATES_SUFFIX);
+
+        String fileName = FFM_DIR_NAME + File.separator + botid + File.separator + userid + PREDICATES_SUFFIX;
+        Toolkit.checkOrCreate(fileName, FFM_FILE_LABEL);
+
+        File predicateFile = new File(fileName);
         if (predicateFile.canRead())
         {
             try
@@ -210,9 +167,39 @@ public class FlatFileMultiplexor extends AbstractClassifier
             }
             catch (IOException e)
             {
-                throw new UserErrorException("Error trying to load predicates.", e);
+                throw new DeveloperError("Error trying to load predicates.", e);
             }
         }
         return predicates;
+    }
+
+
+    /**
+     *  Saves the predicates file for a given userid.
+     *  Ensures that the directory exists.
+     *
+     *  @param userid
+     */
+    private static void savePredicates(Properties predicates, String userid, String botid)
+    {
+        String fileName = FFM_DIR_NAME + File.separator + botid + File.separator + userid + PREDICATES_SUFFIX;
+        Toolkit.checkOrCreate(fileName, FFM_FILE_LABEL);
+
+        try
+        {
+            predicates.store(new FileOutputStream(fileName), null);
+        }
+        catch (IOException e)
+        {
+            System.err.println(System.getProperty("user.dir"));
+            System.err.println(e.getMessage());
+            throw new DeveloperError("Error trying to save predicates.", e);
+        }
+    }
+
+
+    public int useridCount(String botid)
+    {
+        return 0;
     }
 } 

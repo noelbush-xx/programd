@@ -44,7 +44,6 @@
 package org.alicebot.server.net;
 
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
@@ -56,223 +55,203 @@ import org.alicebot.server.core.Graphmaster;
 import org.alicebot.server.core.Multiplexor;
 import org.alicebot.server.core.loader.AIMLWatcher;
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.DeveloperError;
+import org.alicebot.server.core.util.Heart;
 import org.alicebot.server.core.util.Shell;
 import org.alicebot.server.core.util.Trace;
 import org.alicebot.server.core.util.Toolkit;
-import org.alicebot.server.core.util.UserErrorException;
+import org.alicebot.server.core.util.UserError;
 import org.alicebot.server.net.listener.AliceChatListener;
 
 /**
  *  A server-based Alicebot.
  *
  *  @author Jon Baer
+ *  @author Noel Bush
  */
-public class AliceServer implements Runnable
+public class AliceServer
 {
-    /** The path to the server properties file. */
-    private static String serverPropertiesPath;
+    private Shell shell;
+    private String propertiesPath;
     
-    /** The server properties. */
-    private static Properties serverProperties;
-
-    /** The current bot. */
-    private static String bot;
-
-    /** The fully-qualified class name of the http server to use. */
-    private static String HTTP_SERVER_CLASS_NAME;
-
-    /** The parameter for configuring the http server. Presently only one is supported. Optional. */
-    private static String HTTP_SERVER_CONFIG_PARAMETER;
-
-
-    /**
-     *  Loads the bot configuration and initializes the
-     *  {@link org.alicebot.server.core.Globals Globals}.
-     */
-    public AliceServer()
+    
+    private AliceServer(String propertiesPath)
     {
-        HTTP_SERVER_CLASS_NAME =
-            serverProperties.getProperty("programd.httpserver.classname");
-        HTTP_SERVER_CONFIG_PARAMETER =
-            serverProperties.getProperty("programd.httpserver.config");
-
-        // Fail if http server class name is not specified.
-        if (HTTP_SERVER_CLASS_NAME == null)
-        {
-            throw new UserErrorException("You must specify an http server to run AliceServer. Failing.");
-        }
-
-        Globals.load(serverProperties);
-    }
+        this.propertiesPath = propertiesPath;
+     }
     
+    
+    public AliceServer(String propertiesPath, Shell shell)
+    {
+        this.propertiesPath = propertiesPath;
+        this.shell = shell;
+    }
+
 
     /**
      *  Tries to register any listeners in the classpath,
      *  starts the http server, and then starts a Graphmaster.
      */
-    public void run()
+    public void startup()
     {
-        Log.userinfo("Starting Alicebot Program D version " + Globals.getVersion(),
-                     Log.STARTUP);
-        Log.userinfo("Using Java VM " + System.getProperty("java.vm.version") +
-                     " from " + System.getProperty("java.vendor"), Log.STARTUP);
-        Log.userinfo("On " + System.getProperty("os.name") + " version " +
-                     System.getProperty("os.version") + " (" +
-                     System.getProperty("os.arch") + ")", Log.STARTUP);
-
-         // Set & Print EmptyDefault if console enabled
-        if (Globals.showConsole())
+        if (propertiesPath == null)
         {
-            Log.userinfo("Predicates with no values defined will return: \"" +
-                         Globals.getPredicateEmptyDefault() + "\".", Log.STARTUP);
+            throw new DeveloperError("Did not specify a server properties path.");
         }
         
-        // Start the http server.
-        startHttpServer();
-
-        // Initialize the ActiveMultiplexor.getInstance().
-        Log.userinfo("Initializing Multiplexor.", Log.STARTUP);
-        ActiveMultiplexor.getInstance().initialize();
-
-        Log.userinfo("Starting Graphmaster.", Log.STARTUP);
-
-        String serverAddress = serverAddress = "http://" + Globals.getHostName() + ":" + Globals.getHttpPort();
-
-        // Index the start time before loading.
-        long time = new Date().getTime();
-
-        // Load the startup file (and whatever it specifies).
-        Graphmaster.load(Globals.getStartupFilePath());
-
-        // Also load the targets file.
-        Graphmaster.load(Globals.getTargetsAIMLPath());
-
-        // Tell the Graphmaster that it is ready; let it report.
-        Graphmaster.ready();
-
-        // Calculate the time used to load all categories.
-        time = new Date().getTime() - time;
-
-        if (Globals.showConsole())
+        if (!Globals.isLoaded())
         {
-            // Give load time statistics.
-            Log.userinfo(Graphmaster.getTotalCategories() + " categories loaded in " + (float)time / 1000.00 + " seconds.", Log.STARTUP);
+            Globals.load(propertiesPath);
+            this.shell = new Shell();
+        }
+        String className = Globals.getProperty("programd.httpserver.classname");
+        String configParameter = Globals.getProperty("programd.httpserver.config");
 
-            // Describe whether AIMLWatcher is running.
-            if (Globals.isWatcherActive())
+        // Fail if http server class name is not specified.
+        if (className == null)
+        {
+            throw new UserError("You must specify an http server to run AliceServer. Failing.");
+        }
+        
+        try
+        {
+            if (Globals.showConsole())
             {
-                AIMLWatcher.start();
-                Log.userinfo("The AIML Watcher is active.", Log.STARTUP);
+                Log.userinfo("Starting Alicebot Program D version " + Globals.getVersion(),
+                             Log.STARTUP);
+                Log.userinfo("Using Java VM " + System.getProperty("java.vm.version") +
+                             " from " + System.getProperty("java.vendor"), Log.STARTUP);
+                Log.userinfo("On " + System.getProperty("os.name") + " version " +
+                             System.getProperty("os.version") + " (" +
+                             System.getProperty("os.arch") + ")", Log.STARTUP);
+
+                Log.userinfo("Predicates with no values defined will return: \"" +
+                             Globals.getPredicateEmptyDefault() + "\".", Log.STARTUP);
+            }
+            
+            // Start the http server.
+            startHttpServer(className, configParameter);
+
+            // Initialize the ActiveMultiplexor.getInstance().
+            if (Globals.showConsole())
+            {
+                Log.userinfo("Initializing Multiplexor.", Log.STARTUP);
+            }
+            ActiveMultiplexor.getInstance().initialize();
+
+            String serverAddress = serverAddress = "http://" + Globals.getHostName() + ":" + Globals.getHttpPort();
+
+            // Index the start time before loading.
+            long time = new Date().getTime();
+
+
+            if (Globals.showConsole())
+            {
+                Log.userinfo("Loading Graphmaster.", Log.STARTUP);
+            }
+
+            // Load the startup file (and whatever it specifies).
+            Graphmaster.load(Globals.getStartupFilePath(), null);
+
+            // Calculate the time used to load all categories.
+            time = new Date().getTime() - time;
+
+            // Tell the Graphmaster that it is ready; let it report.
+            Graphmaster.markReady();
+
+            if (Globals.showConsole())
+            {
+                // Give load time statistics.
+                Log.userinfo(Graphmaster.getTotalCategories() + " categories loaded in " + (float)time / 1000.00 + " seconds.", Log.STARTUP);
+
+                // Describe whether AIMLWatcher is running.
+                if (Globals.isWatcherActive())
+                {
+                    AIMLWatcher.start();
+                    Log.userinfo("The AIML Watcher is active.", Log.STARTUP);
+                }
+                else
+                {
+                    Log.userinfo("The AIML Watcher is not active." , Log.STARTUP);
+                }
+
+                // Give server info.
+                Log.userinfo("HTTP server listening at " + serverAddress, Log.STARTUP);
+            }
+
+            // If configured, start up a browser with the address.
+            String browserCommand = Globals.getProperty("programd.browser-launch");
+            if (browserCommand != null && !serverAddress.equals("unknown address"))
+            {
+                try
+                {
+                    Runtime.getRuntime().exec(browserCommand + " " + serverAddress);
+                }
+                catch (IOException e)
+                {
+                    Trace.userinfo("Could not launch your web browser. Sorry.");
+                }
+            }
+
+            // Request garbage collection.
+            System.gc();
+            
+            // Start the heart, if enabled.
+            if (Globals.useHeart())
+            {
+                Heart.start();
+                Trace.userinfo("Heart started.");
+            }
+
+            // If shell is enabled, start it.
+            if (Globals.useShell())
+            {
+                shell.run();
+                Trace.devinfo("Shell exited.");
             }
             else
             {
-                Log.userinfo("The AIML Watcher is not active." , Log.STARTUP);
-            }
-
-            // Give server info.
-            Log.userinfo("HTTP server listening at " + serverAddress, Log.STARTUP);
-        }
-
-        // If configured, start up a browser with the address.
-        String browserCommand = Globals.getProperty("programd.browser-launch");
-        if (browserCommand != null && !serverAddress.equals("unknown address"))
-        {
-            try
-            {
-                Runtime.getRuntime().exec(browserCommand + " " + serverAddress);
-            }
-            catch (IOException e)
-            {
-                Trace.userinfo("Could not launch your web browser. Sorry.");
-            }
-        }
-
-        // Start the chat listeners (if enabled).
-        if (serverProperties.getProperty("programd.listeners.scan", "false").equals("true"))
-        {
-            initializeChatListeners();
-        }
-
-        // If shell is enabled, start it.
-        if (Globals.useShell())
-        {
-            Shell.run();
-            Trace.devinfo("Shell exited.");
-        }
-        else
-        {
-            Log.userinfo("Interactive shell disabled.  Awaiting interrupt to shut down.", Log.STARTUP);
-            while (true)
-            {
-                try
+                if (Globals.showConsole())
                 {
-                    Thread.sleep(86400000);
+                    Log.userinfo("Interactive shell disabled.  Awaiting interrupt to shut down.", Log.STARTUP);
                 }
-                catch (InterruptedException e)
+                while (true)
                 {
-                    // That's it!
+                    try
+                    {
+                        Thread.sleep(86400000);
+                    }
+                    catch (InterruptedException e)
+                    {
+                        // That's it!
+                    }
                 }
             }
+        }
+        catch (DeveloperError e)
+        {
+            Log.devfail(e);
+            Log.userfail("Exiting abnormally due to developer error.", Log.ERROR);
+            System.exit(1);
+        }
+        catch (UserError e)
+        {
+            Log.userfail(e);
+            Log.userfail("Exiting abnormally due to user error.", Log.ERROR);
+            System.exit(1);
+        }
+        catch (RuntimeException e)
+        {
+            Log.userfail("Exiting abnormally due to unforeseen runtime exception.", e, Log.ERROR);
+            System.exit(1);
+        }
+        catch (Exception e)
+        {
+            Log.userfail("Exiting abnormally due to unforeseen exception.", e, Log.ERROR);
+            System.exit(1);
         }
     }
 
-
-    /**
-     *  This kludgy method would be better replaced by
-     *  a registration scheme, since it just searches the
-     *  classpath for implementations of the
-     *  {@link org.alicebot.server.listener.AliceChatListener AliceChatListener}
-     *  interface, which is a rather slow method.
-    */
-    private static void initializeChatListeners()
-    {
-        // Scan the classpath for implementations of AliceChatListener.
-        Log.userinfo("Scanning for AliceChatListeners.", Log.STARTUP);
-
-        Class[] listeners =
-            Toolkit.getImplementorsOf("org.alicebot.server.net.listener.AliceChatListener", true);
-
-        // If some listeners were found, try to initialize them.
-        if (listeners != null)
-        {
-            for (int index = 0; index < listeners.length; index++)
-            {
-                AliceChatListener listenerInstance;
-                String listenerName;
-                try
-                {
-                    listenerInstance = (AliceChatListener)listeners[index].newInstance();
-                    listenerName = listeners[index].getName();
-                    listenerName = listenerName.substring(listenerName.lastIndexOf('.') + 1);
-                }
-                catch (InstantiationException e)
-                {
-                    // Couldn't instantiate listener.
-                    throw new DeveloperErrorException("Could not instantiate listener \"" + listeners[index].getName() + "\"");
-                }
-                catch (IllegalAccessException e)
-                {
-                    // Couldn't instantiate listener.
-                    throw new DeveloperErrorException("Cannot access AliceChatListener base class.");
-                }
-                // Just double-checking the Toolkit method.
-                catch (ClassCastException e)
-                {
-                    throw new DeveloperErrorException("\"" + listeners[index] + "\" is not an AliceChatListener.");
-                }
-
-                // Try to initialize the listener with the server properties.
-                if (listenerInstance.initialize(serverProperties))
-                {
-                    // Add it to the BotProcesses and start it.
-                    Trace.userinfo("Starting " + listenerName + "...");
-                    BotProcesses.start(listenerInstance, listenerName);
-                }
-            }
-        }
-    }
-    
 
     /**
      *  Tries to instantiate
@@ -280,18 +259,17 @@ public class AliceServer implements Runnable
      *  We wish to be compatible with any server, not
      *  just the choix du jour.
      */
-    private static void startHttpServer()
+    private static void startHttpServer(String className, String configParameter)
     {
         // First, see if the http server class can be found.
         Class serverClass;
         try
         {
-            serverClass = Class.forName(HTTP_SERVER_CLASS_NAME);
+            serverClass = Class.forName(className);
         }
         catch (ClassNotFoundException e)
         {
-            throw new UserErrorException("Could not find http server \"" +
-                           HTTP_SERVER_CLASS_NAME + "\".");
+            throw new UserError("Could not find http server \"" + className + "\".");
         }
 
         // Now, try to get an instance of the server.
@@ -309,18 +287,16 @@ public class AliceServer implements Runnable
         }
         catch (InstantiationException e)
         {
-            throw new UserErrorException("Couldn't instantiate http server \"" +
-                           HTTP_SERVER_CLASS_NAME + "\".");
+            throw new UserError("Couldn't instantiate http server \"" + className + "\".");
         }
         catch (IllegalAccessException e)
         {
-            throw new DeveloperErrorException("The constructor for \"" +
-                           HTTP_SERVER_CLASS_NAME +
+            throw new DeveloperError("The constructor for \"" + className +
                            "\" or the class itself is not available.");
         }
         catch (ClassCastException e)
         {
-            throw new DeveloperErrorException("\"" + HTTP_SERVER_CLASS_NAME +
+            throw new DeveloperError("\"" + className +
                            "\" is not an implementation of AliceCompatibleHttpServer.");
         }
 
@@ -329,15 +305,15 @@ public class AliceServer implements Runnable
             the http server is an implementation of AliceCompatibleHttpServer,
             configure it.
         */
-        if (HTTP_SERVER_CONFIG_PARAMETER != null)
+        if (configParameter != null)
         {
             try
             {
-                server.configure(HTTP_SERVER_CONFIG_PARAMETER);
+                server.configure(configParameter);
             }
             catch (IOException e)
             {
-                throw new UserErrorException("Could not find \"" + HTTP_SERVER_CONFIG_PARAMETER + "\".");
+                throw new UserError("Could not find \"" + configParameter + "\".");
             }
         }
 
@@ -348,6 +324,8 @@ public class AliceServer implements Runnable
     
     public static void main(String[] args)
     {
+        String serverPropertiesPath;
+
         if (args.length > 0)
         {
             serverPropertiesPath = args[0];
@@ -356,18 +334,8 @@ public class AliceServer implements Runnable
         {
             serverPropertiesPath = "server.properties";
         }
-
-        serverProperties = new Properties();
-        try
-        {
-            serverProperties.load(new FileInputStream(serverPropertiesPath));
-        }
-        catch (IOException e)
-        {
-            // Error loading properties
-            System.err.println("Could not find \"" + serverPropertiesPath + "\"!");
-            System.exit(1);
-        }
+        
+        AliceServer server = new AliceServer(serverPropertiesPath);
 
         Runtime.getRuntime().addShutdownHook(
             new Thread("Shutdown Thread")
@@ -377,32 +345,8 @@ public class AliceServer implements Runnable
                     shutdown();
                 }
             });
-        try
-        {
-            new Thread(new AliceServer(), "AliceServer").start();
-        }
-        catch (DeveloperErrorException e)
-        {
-            Log.devfail(e);
-            Log.userfail("Exiting abnormally due to developer error.", Log.ERROR);
-            System.exit(1);
-        }
-        catch (UserErrorException e)
-        {
-            Log.userfail(e);
-            Log.userfail("Exiting abnormally due to user error.", Log.ERROR);
-            System.exit(1);
-        }
-        catch (RuntimeException e)
-        {
-            Log.userfail("Exiting abnormally due to unforeseen runtime exception.", e, Log.ERROR);
-            System.exit(1);
-        }
-        catch (Exception e)
-        {
-            Log.userfail("Exiting abnormally due to unforeseen exception.", e, Log.ERROR);
-            System.exit(1);
-        }
+
+        server.startup();
     }
     
 
@@ -410,13 +354,11 @@ public class AliceServer implements Runnable
      *  Performs all necessary shutdown tasks.
      *  Shuts down the Graphmaster and all BotProcesses.
      */
-    private static void shutdown()
+    public static void shutdown()
     {
         Trace.userinfo("AliceServer is shutting down.");
-        Trace.devinfo("Shutting down bot processes.");
         BotProcesses.shutdownAll();
-        Trace.devinfo("Shutting down Graphmaster.");
         Graphmaster.shutdown();
-        Trace.devinfo("Shutdown complete.");
+        Trace.userinfo("Shutdown complete.");
     }
 }

@@ -61,7 +61,6 @@ abstract public class Processor
      *  Processes an element.
      *
      *  @param level    the starting level in the XML trie
-     *  @param id       an identifier (e.g., user, bot, ...)
      *  @param tag      the element to process
      *  @param parser   the parser calling the processor
      *
@@ -69,5 +68,5 @@ abstract public class Processor
      *
      *  @throws ProcessorException if the <code>tag</code> or its contents are invalid
      */
-    abstract public String process(int level, String id, XMLNode tag, GenericParser parser) throws ProcessorException;
+    abstract public String process(int level, XMLNode tag, GenericParser parser) throws ProcessorException;
 }

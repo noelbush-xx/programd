@@ -41,7 +41,7 @@ package org.alicebot.server.core.processor;
 import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.interpreter.ActiveJavaScriptInterpreter;
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
 
 
@@ -63,7 +63,7 @@ public class JavaScriptProcessor extends AIMLProcessor
      *  Returns the result of processing the contents of the <code>javascript</code>
      *  element by the JavaScript interpreter.
      */
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         // Don't use the system tag if not permitted.
         if (!Globals.jsAccessAllowed())
@@ -74,7 +74,7 @@ public class JavaScriptProcessor extends AIMLProcessor
         if (tag.XMLType == XMLNode.TAG)
         {
             Log.devinfo("Calling JavaScript interpreter " + Globals.javaScriptInterpreter(), Log.INTERPRETER);
-            return ActiveJavaScriptInterpreter.getInstance().evaluate(userid, parser.evaluate(level++, userid, tag.XMLChild));
+            return ActiveJavaScriptInterpreter.getInstance().evaluate(parser.evaluate(level++, tag.XMLChild));
         }
         else
         {

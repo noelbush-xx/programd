@@ -144,7 +144,6 @@ public class MessagePrinter
         {
             out.write(typeFlag + timestamp(destination) + message + LINE_SEPARATOR);    
             out.flush();
-            out.close();
        }
         catch (IOException e)
         {

@@ -18,12 +18,14 @@ package org.alicebot.server.core.parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.DeveloperError;
 import org.alicebot.server.core.util.Trace;
 import org.alicebot.server.core.util.Toolkit;
+import org.alicebot.server.core.util.UserError;
 
 
 /**
@@ -118,6 +120,15 @@ abstract public class GenericReader
     /** A custom Throwable thrown by the various <code>transition</code> methods if they succeed. */
     protected TransitionMade TRANSITION_MADE;
 
+    /** Indicates whether or not to count bytes. */
+    private boolean countBytes;
+
+    /** Used to count bytes read. */
+    protected long                   byteCount;
+
+    /** Used to calculate bytes read. */
+    protected String                 encoding;
+
 
     /**
      *  Constructs a new <code>GenericReader</code>, given a
@@ -130,12 +141,44 @@ abstract public class GenericReader
      *  
      *  @param fileName         name of the targets data file to be read
      *  @param buffReader       a BufferedReader already open to the file (could be remote)
+     *  @param encoding         the encoding with which the file is being read
+     *  @param countBytes       whether or not to count bytes read (slows down the process)
+     *  @param listener         will handle new items
+     */
+    public GenericReader(String fileName, BufferedReader buffReader, String encoding,
+                         boolean countBytes, GenericReaderListener listener)
+    {
+        this.fileName        = fileName;
+        this.buffReader      = buffReader;
+        this.encoding        = encoding;
+        this.countBytes      = countBytes;
+        this.listener        = listener;
+        this.TRANSITION_MADE = new TransitionMade();
+
+        // Do any initialization.
+        initialize();
+    }
+
+
+    /**
+     *  Constructs a new <code>GenericReader</code>, given a
+     *  {@link java.io.BufferedReader BufferedReader} handle to some input stream
+     *  (<code>buffReader</code>), a filename to use in printing error messages
+     *  (<code>fileName</code>), and a {@link TargetsReaderListener} that will
+     *  handle creation of new categories as they are discovered.
+     *  In this version, byte counting is disabled.
+     *
+     *  @see Targets
+     *  
+     *  @param fileName         name of the targets data file to be read
+     *  @param buffReader       a BufferedReader already open to the file (could be remote)
      *  @param listener         will handle new items
      */
     public GenericReader(String fileName, BufferedReader buffReader, GenericReaderListener listener)
     {
         this.fileName        = fileName;
         this.buffReader      = buffReader;
+        this.countBytes      = false;
         this.listener        = listener;
         this.TRANSITION_MADE = new TransitionMade();
 
@@ -181,12 +224,24 @@ abstract public class GenericReader
                         // If buffReader.readLine() is null, an exception will be thrown.
                         line = new StringBuffer(buffReader.readLine());
 
+                        // Update the byteCount.
+                        if (countBytes)
+                        {
+                            try
+                            {
+                                byteCount += line.toString().getBytes(encoding).length;
+                            }
+                            catch (UnsupportedEncodingException e)
+                            {
+                                throw new UserError("Encoding \"" + encoding + "\" is not supported by your platform!");
+                            }
+                        }
+
                         // Increment the line number.
                         lineNumber++;
 
                         // Append line (with line separator), search again.
                         buffer.append(line.toString() + LINE_SEPARATOR);
-                        //buffer.append(line.toString());
                     }
                     // An I/O exception means we've got to abort this file.
                     catch(IOException e)
@@ -318,7 +373,7 @@ abstract public class GenericReader
             }
             catch (Exception e)
             {
-                throw new DeveloperErrorException(e);
+                throw new DeveloperError(e);
             }
             throw(TRANSITION_MADE);
         }
@@ -367,7 +422,7 @@ abstract public class GenericReader
                     }
                     catch (Exception e)
                     {
-                        throw new DeveloperErrorException(e);
+                        throw new DeveloperError(e);
                     }
                     throw(TRANSITION_MADE);
                 }

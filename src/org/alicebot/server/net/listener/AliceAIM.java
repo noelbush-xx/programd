@@ -23,6 +23,12 @@
     - reworked to fit changes to AliceChatListener
 */
 
+/*
+ 	4.1.5 - Noel Bush
+ 	- more changes w/r/t AliceChatListener
+ 	- tuned up
+*/
+
 package org.alicebot.server.net.listener;
 
 import java.io.BufferedOutputStream;
@@ -32,15 +38,14 @@ import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.IOException;
 import java.io.OutputStream;
-
 import java.net.Socket;
-
+import java.text.StringCharacterIterator;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.alicebot.server.core.ActiveMultiplexor;
+import org.alicebot.server.core.Bot;
 import org.alicebot.server.core.Multiplexor;
-
 import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.core.responder.AIMResponder;
 import org.alicebot.server.core.responder.Responder;
@@ -56,68 +61,252 @@ import org.alicebot.server.core.util.Toolkit;
  *  @author Sandy McArthur
  *  @version 1.0
  */
-public class AliceAIM implements AliceChatListener
+public class AliceAIM extends AliceChatListener
 {
-    private static final int MAX_SEQ = 65535;
-    private static final String HOST    =  "toc.oscar.aol.com";
-    private static final int PORT       = 21;
-    private String name, pass, bgcolor, fontface, fontsize, fontcolor, owner, buddies, message;
+    // Instance variables.
+    
+    /** Please describe. */
+	private String name;
+
+    /** Please describe. */
+	private String pass;
+
+    /** Please describe. */
+	private String bgcolor;
+	
+    /** Please describe. */
+	private String fontface;
+	
+    /** Please describe. */
+	private String fontsize;
+	
+    /** Please describe. */
+	private String fontcolor;
+
+    /** Please describe. */
+	private String owner;
+
+    /** Please describe. */
+	private String buddies;
+	
+    /** Please describe. */
+	private String message;
+	
+    /** Please describe. */
     private int seqNo;
+
+    /** Please describe. */
     private Socket connection;
+
+    /** Please describe. */
     private DataInputStream in;
+
+    /** Please describe. */
     private DataOutputStream out;
+
+    /** Please describe. */
     private boolean online;
     
-    private final String ROAST = "Tic/Toc";
+    // Convenience constants.
 
-    public boolean initialize(Properties properties)
+    /** Please describe. */
+    private static final int MAX_SEQ           = 65535;
+
+    /** Please describe. */
+    private static final String HOST           =  "toc.oscar.aol.com";
+
+    /** Please describe. */
+    private static final int PORT              = 21;
+
+    /** The string &quot;Tic/Toc&quot;. */
+    private static final String ROAST          = "Tic/Toc";
+    
+    /** The string &quot;0&quot;. */
+    private static final String ZERO           = "0";
+
+    /** The string &quot;0x&quot;. */
+    private static final String ZERO_X         = "0x";
+
+    /** The string &quot;1&quot;. */
+    private static final String ONE            = "1";
+
+    /** The string &quot;2&quot;. */
+    private static final String TWO            = "2";
+
+    /** The string &quot;2.5&quot;. */
+    private static final String TWO_POINT_FIVE = "2.5";
+
+    /** The string &quot;3&quot;. */
+    private static final String THREE          = "3";
+
+    /** The string &quot;4&quot;. */
+    private static final String FOUR           = "4";
+
+    /** The string &quot;5&quot;. */
+    private static final String FIVE           = "5";
+
+    /** The string &quot;6&quot;. */
+    private static final String SIX            = "6";
+
+    /** The string &quot;7&quot;. */
+    private static final String SEVEN          = "7";
+
+    /** The string &quot;8&quot;. */
+    private static final String EIGHT          = "8";
+
+    /** The string &quot;9&quot;. */
+    private static final String NINE           = "9";
+    
+    /** The string &quot;ERROR&quot;. */
+    private static final String ERROR         = "ERROR";
+    
+    /** The string &quot;IM_IN&quot;. */
+    private static final String IM_IN         = "IM_IN";
+    
+    /** The string &quot; Message from [&quot;. */
+    private static final String MSG_FROM      = "Message from [";
+    
+    /** The string &quot;]: &quot;. */
+    private static final String RB_COLON      = "]: ";
+    
+    /** The string &quot;$SENDIM&quot;. */
+    private static final String SENDIM        = "$SENDIM";
+    
+    /** The string &quot;_AIM&quot;. */
+    private static final String _AIM          = "_AIM";
+    
+    /** The string &quot;CHAT_IN&quot;. */
+    private static final String CHAT_IN       = "CHAT_IN";
+    
+    /** The string &quot;901&quot;. */
+    private static final String _901          = "901";
+    
+    /** The string &quot;903&quot;. */
+    private static final String _903          = "903";
+    
+    /** The string &quot;960&quot;. */
+    private static final String _960          = "960";
+    
+    /** The string &quot;961&quot;. */
+    private static final String _961          = "961";
+    
+    /** The string &quot;962&quot;. */
+    private static final String _962          = "962";
+    
+    /** The string &quot;Signon err&quot;. */
+    private static final String SIGNON_ERR    = "Signon err";
+    
+    /** The string &quot;toc_send_im &quot;. */
+    private static final String TOC_SEND_IM   = "toc_send_im ";
+    
+    /** The string &quot;toc_chat_send &quot;. */
+    private static final String TOC_CHAT_SEND = "toc_chat_send ";
+    
+    /** The string &quot;toc_add_buddy &quot;. */
+    private static final String TOC_ADD_BUDDY = "toc_add_buddy ";
+    
+    /** <code>&lt;BODY BGCOLOR=&quot;</code> */
+    private static final String MSG_FMT_0     = "<BODY BGCOLOR=\"";
+    
+    /** <code>&lt;&quot;&gt;&lt;FONT SIZE=&quot;</code> */
+    private static final String MSG_FMT_1     = "\"><FONT SIZE=\"";
+    
+    /** <code> FACE=&quot;</code> */
+    private static final String MSG_FMT_2     = " FACE=\"";
+    
+    /** <code>&quot; COLOR=&quot;</code> */
+    private static final String MSG_FMT_3     = " COLOR=\"";
+    
+    /** <code>&quot;&gt;</code> */
+    private static final String MSG_FMT_4     = "\">";
+    
+    /** <code>&lt;/FONT&gt;</code> */
+    private static final String MSG_FMT_5     = "</FONT>";
+    
+    /** A space and a quote. */
+    private static final String SPACE_QUOTE   = " \"";
+
+    /** A space. */
+    private static final String SPACE         = " ";
+    
+    /** A backslash. */
+    private static final String BACKSLASH     = "\\";
+    
+    /** &quot;\0&quot; */
+    private static final String NULL          = "\0";
+    
+    /** &quot;\&quot;\0&quot; */
+    private static final String QUOTE_NULL    = "\"\0";
+    
+    /** An empty string. */
+    private static final String EMPTY_STRING  = "";
+    
+    /** The label (as required by the registration scheme). */
+    public static final String label = "AliceAIM";
+    
+    /** The message label. */
+    private static final String MSG = "AliceAIM: ";
+
+
+	/**
+	 *  Constructs a new <code>AliceAIM</code> listener
+	 *  and sets up parameters.
+	 *
+	 *  @see {@link AliceChatListener}
+	 */
+    public AliceAIM(Bot bot)
     {
-        // Check if enabled.
-        if (Boolean.valueOf(properties.getProperty("programd.listeners.aim.enabled", "false")).booleanValue())
-        {
-            // Get parameters.
-            owner     = properties.getProperty("programd.listeners.aim.owner", "");
-            name      = properties.getProperty("programd.listeners.aim.screenname", "");
-            pass      = properties.getProperty("programd.listeners.aim.password", "");
-            bgcolor   = properties.getProperty("programd.listeners.aim.bgcolor", "White");
-            fontface  = properties.getProperty("programd.listeners.aim.fontface", "Verdana,Arial");
-            fontsize  = properties.getProperty("programd.listeners.aim.fontsize", "2");
-            fontcolor = properties.getProperty("programd.listeners.aim.fontcolor", "Black");
-            buddies   = properties.getProperty("programd.listeners.aim.buddies", "");
+        super(bot, "AliceAIM", new String[][] { {"owner", ""},
+                                                {"screenname", ""},
+                                                {"password", ""},
+                                                {"bgcolor", "White"},
+                                                {"fontface", "Verdana,Arial"},
+                                                {"fontsize", "2"},
+                                                {"fontcolor", "Black"},
+                                                {"buddies", ""} });
+    }
+    
+    
+    public boolean checkParameters()
+    {
+        // Get parameters.
+        owner     = (String)parameters.get("owner");
+        name      = (String)parameters.get("screenname");
+        pass      = (String)parameters.get("password");
+        bgcolor   = (String)parameters.get("bgcolor");
+        fontface  = (String)parameters.get("fontface");
+        fontsize  = (String)parameters.get("fontsize");
+        fontcolor = (String)parameters.get("fontcolor");
+        buddies   = (String)parameters.get("buddies");
 
-            // Check parameters.
-            if (owner.length() == 0)
-            {
-                Log.userinfo("AliceAIM: no owner specified; aborting.", Log.LISTENERS);
-                return false;
-            }
-            if (name.length() == 0)
-            {
-                Log.userinfo("AliceAIM: no screen name specified; aborting.", Log.LISTENERS);
-                return false;
-            }
-            if (pass.length() == 0)
-            {
-                Log.userinfo("AliceAIM: no password specified; aborting.", Log.LISTENERS);
-                return false;
-            }
-            return true;
-        }
-        else
+        // Check parameters.
+        if (owner.length() == 0)
         {
+            logMessage("No owner specified; aborting.");
             return false;
         }
+        if (name.length() == 0)
+        {
+            logMessage("No screen name specified; aborting.");
+            return false;
+        }
+        if (pass.length() == 0)
+        {
+            logMessage("No password specified; aborting.");
+            return false;
+        }
+        return true;
     }
 
-    public AliceAIM()
-    {
-    }
 
+	/**
+	 *  Signs on the listener and starts waiting for messages.
+	 */
     public void run()
     {
         int length;
-        seqNo = (int)Math.floor(Math.random() * 65535.0);
-        Log.userinfo("AliceAIM starting.", Log.LISTENERS);
+        seqNo = (int)Math.floor(Math.random() * MAX_SEQ);
+        logMessage("Starting for \"" + botID + "\".");
         try
         {
             connection = new Socket(HOST, PORT);
@@ -127,7 +316,7 @@ public class AliceAIM implements AliceChatListener
         }
         catch (Exception e)
         {
-            signoff("1");
+            signoff(ONE);
             return;
         }
         try
@@ -139,7 +328,7 @@ public class AliceAIM implements AliceChatListener
             out.writeByte(42);
             out.writeByte(1);
             out.writeShort(seqNo);
-            seqNo = (seqNo +  1) & 65535;
+            seqNo = (seqNo +  1) & MAX_SEQ;
             out.writeShort(name.length()+8);
             out.writeInt(1);
             out.writeShort(1);
@@ -147,16 +336,17 @@ public class AliceAIM implements AliceChatListener
             out.writeBytes(name);
             out.flush();
             
-            frameSend("toc_signon login.oscar.aol.com 5190 "+name+" "+ imRoast(pass)+" english alicebot\0");
+            frameSend("toc_signon login.oscar.aol.com 5190 " + name + " " +
+            	imRoast(pass) + " english alicebot\0");
             
             in.skip(4);
             length = in.readShort();
             signon = new byte[length];
             in.readFully(signon);
-            if (String.valueOf(signon).startsWith("ERROR")) {
-                // ebnet.send("ERRR",(new String("Signon err:dunno")).getBytes());
-                Log.userinfo("AliceAIM: Signon error.", Log.LISTENERS);
-                signoff("2");
+            if (String.valueOf(signon).startsWith(ERROR))
+            {
+                logMessage("Signon error.");
+                signoff(TWO);
                 return;
             }
             in.skip(4);
@@ -169,23 +359,24 @@ public class AliceAIM implements AliceChatListener
             
             frameSend("toc_init_done\0");
             
-            // // ebnet.imon();
-            Log.userinfo("AliceAIM: Logon complete.", Log.LISTENERS);
+            logMessage("Logon complete.");
             connection.setSoTimeout(3000);
         }
         catch (InterruptedIOException e) 
         {
             online = false;
-            signoff("2.5");
+            signoff(TWO_POINT_FIVE);
         }
         catch (IOException e)
         {
             online = false;
-            signoff("3");
+            signoff(THREE);
         }
         byte[] data;
-        while (true) {
-            try {
+        while (true)
+        {
+            try
+            {
                 in.skip(4);
                 length = in.readShort();
                 data = new byte[length];
@@ -194,21 +385,21 @@ public class AliceAIM implements AliceChatListener
             }
             catch (InterruptedIOException e)
             {
-                Log.devinfo("AliceAIM error: " + e, Log.LISTENERS);
+                Log.devinfo(MSG + "Error*: " + e, Log.LISTENERS);
             }
             catch (IOException e)
             {
-                Log.devinfo("AliceAIM error: " + e, Log.LISTENERS);
+                Log.devinfo(MSG + "Error**: " + e, Log.LISTENERS);
                 break;
             }
         }
-        signoff("4");
+        signoff(FOUR);
     }
 
     
     public void shutdown()
     {
-        signoff("4");
+        signoff(FOUR);
     }
 
     
@@ -217,35 +408,43 @@ public class AliceAIM implements AliceChatListener
         out.writeByte(42);
         out.writeByte(2);
         out.writeShort(seqNo);
-        seqNo = (seqNo + 1) & 65535;
+        seqNo = (seqNo + 1) & MAX_SEQ;
         out.writeShort(toBeSent.length());
         out.writeBytes(toBeSent);
         out.flush();
     }
     
+    
+    /**
+     *  Processes data received from AIM.
+     *
+     *  @param buffer	the data received from AIM
+     */
     public void fromAIM(byte[] buffer)
     {
         String inString = new String(buffer);
         
-        Log.devinfo("AliceAIM got: " + inString, Log.LISTENERS);
+        Log.devinfo(MSG + "Got: " + inString, Log.LISTENERS);
         
-        StringTokenizer inToken = new StringTokenizer(inString,":");
+        StringTokenizer inToken = new StringTokenizer(inString, ":");
         String command = inToken.nextToken();
-        if (command.equals("IM_IN")) {        
+        if (command.equals(IM_IN))
+        {        
             String from = imNormalize(inToken.nextToken());
-            String auto = inToken.nextToken();
-            String mesg = inToken.nextToken();
-            while (inToken.hasMoreTokens()) {
-                mesg = mesg +":"+ inToken.nextToken();
+            /*String auto = */ inToken.nextToken();
+            StringBuffer mesg = new StringBuffer(inToken.nextToken());
+            while (inToken.hasMoreTokens())
+            {
+                mesg.append(':');
+                mesg.append(inToken.nextToken());
             }
-            String request = stripHTML(mesg);
-            Log.userinfo("AliceAIM: message from [" + from + "]: " + request, Log.LISTENERS);
-            // mesg = ebnet.snLookup(from,2)+"\0"+mesg;
-            // ebnet.send("MESG",mesg.getBytes());
-            if (request.startsWith("$SENDIM") && this.owner.equals(from))
+            String request = Toolkit.removeMarkup(mesg.toString());
+            logMessage(MSG_FROM + from + RB_COLON + request);
+
+            if (request.startsWith(SENDIM) && this.owner.equals(from))
             {
                 StringTokenizer st = new StringTokenizer(request);
-                String imcommand = st.nextToken();
+                /* String imcommand = */ st.nextToken();
                 String imcommandTo = st.nextToken();
                 String imcommandText = st.nextToken();
                 sendMesg(imcommandTo, imcommandText);
@@ -253,8 +452,10 @@ public class AliceAIM implements AliceChatListener
             else
             {
                 String[] botResponse =
-                    Toolkit.breakLines(
-                        ActiveMultiplexor.getInstance().getResponse(request, from + "_AIM", new AIMResponder()));
+                    Toolkit.breakLines(Multiplexor.
+                                            getResponse(request,
+                                                        from + _AIM,
+                                                        botID, new AIMResponder()));
                 if (botResponse.length > 0)
                 {
                     for (int line = 0; line < botResponse.length; line++)
@@ -265,20 +466,23 @@ public class AliceAIM implements AliceChatListener
             }
             return;
         }      
-        if (command.equals("CHAT_IN"))
+        if (command.equals(CHAT_IN))
         {
             String room_id = imNormalize(inToken.nextToken());
             String from = imNormalize(inToken.nextToken());
-            String mesg = inToken.nextToken();
+            StringBuffer mesg = new StringBuffer(inToken.nextToken());
             while (inToken.hasMoreTokens()) {
-                mesg = mesg +":"+ inToken.nextToken();
+                mesg.append(':');
+                mesg.append(inToken.nextToken());
             }
-            String request = stripHTML(mesg);
+            String request = Toolkit.removeMarkup(mesg.toString());
             if (request.indexOf(this.name) > 0)
             {
                 String[] botResponse =
-                    Toolkit.breakLines(
-                        ActiveMultiplexor.getInstance().getResponse(request, from + "_AIM", new AIMResponder()));
+                    Toolkit.breakLines(Multiplexor.
+                                            getResponse(request,
+                                                        from + _AIM,
+                                                        botID, new AIMResponder()));
                 if (botResponse.length > 0)
                 {
                     for (int line = 0; line < botResponse.length; line++)
@@ -289,72 +493,123 @@ public class AliceAIM implements AliceChatListener
             }
             return;
         }
-        if (command.equals("UPDATE_BUDDY"))
-        {
-            String name = imNormalize(inToken.nextToken());
-            boolean stat = false;
-            if (inToken.nextToken().equals("T"))
-            {
-                stat = true;
-            }
-            // // ebnet.updateStat(name,"IM",stat);
-            return;
-        }
-        if (command.equals("ERROR"))
+        if (command.equals(ERROR))
         {
             String error = inToken.nextToken();
-            Log.userinfo("AliceAIM: error: " + error, Log.LISTENERS);
-            if (error.equals("901"))
+            logMessage("Error: " + error);
+            if (error.equals(_901))
             {
-                // ebnet.send("ERRR",(" not currently available").getBytes());
+                logMessage("Not currently available.");
                 return;
             }
-            if (error.equals("903"))
+            if (error.equals(_903))
             {
-                // ebnet.send("ERRR",("Message dropped, sending too fast").getBytes());
+                logMessage("Message dropped; sending too fast.");
                 return;
             }
-            if (error.equals("960"))
+            if (error.equals(_960))
             {
-                // ebnet.send("ERRR",("Sending messages too fast to "+inToken.nextToken()).getBytes());
+                logMessage("Sending messages too fast to " + inToken.nextToken());
                 return;
             }
-            if (error.equals("961"))
+            if (error.equals(_961))
             {
-                // ebnet.send("ERRR",(inToken.nextToken() +" sent you too big a message").getBytes());
+                logMessage(inToken.nextToken() + " sent you too big a message.");
                 return;
             }
-            if (error.equals("962"))
+            if (error.equals(_962))
             {
-                // ebnet.send("ERRR",(inToken.nextToken() +" sent you a message too fast").getBytes());
+                logMessage(inToken.nextToken() + " sent you a message too fast.");
                 return;
             }
-            if (error.equals("Signon err"))
+            if (error.equals(SIGNON_ERR))
             {
-                // ebnet.send("ERRR",("AIM Signon failure: "+inToken.nextToken()).getBytes());
-                signoff("5");
+                logMessage("AIM signon failure: " + inToken.nextToken());
+                signoff(FIVE);
             }
             return;
         }
     }
     
-    public void sendMesg(String to, String text)
+    
+    /**
+     *  Sends a message to a designated recipient.
+     *
+     *  @param to		the recipient
+     *  @param message	the message to send
+     */
+    public void sendMesg(String to, String message)
     {
-        text = "<BODY BGCOLOR=\"" + bgcolor + "\"><FONT SIZE=" + fontsize + " FACE=\"" + fontface + "\" COLOR=\"" + fontcolor + "\">" + text + "</FONT>";
+        String text = new StringBuffer(MSG_FMT_0)
+        				.append(bgcolor)
+        			    .append(MSG_FMT_1)
+        				.append(fontsize) 
+					    .append(MSG_FMT_2)
+        				.append(fontface)
+					    .append(MSG_FMT_3)
+        				.append(fontcolor) 
+					    .append(MSG_FMT_4)
+        				.append(message)
+					    .append(MSG_FMT_5).toString();
+
+        String work = new StringBuffer(TOC_SEND_IM)
+    						.append(to)
+    						.append(SPACE_QUOTE)
+    						.append(imEscape(text)).toString();
+        
+        logMessage(message);
         try
         {
-            Thread.sleep(7200);
+            frameSend(work);
         }
-        catch (Exception e)
+        catch (IOException e)
         {
-            Log.userinfo("AliceAIM listener exception: " + e.toString(), Log.LISTENERS);
+            signoff(NINE);
         }
-        String work = "toc_send_im ";
-        work = work.concat(to);
-        work = work.concat(" \"");
-        for (int i=0;i<text.length();i++)
+    }        
+    
+    
+    /**
+     *  Sends a message to a chat room.
+     *
+     *  @param roomID	the room identifier
+     *  @param message	the message to send
+     */
+    public void sendChatRoomMesg(String roomID, String message)
+    {
+        String work = new StringBuffer(TOC_CHAT_SEND)
+        				.append(roomID)
+        				.append(SPACE_QUOTE)
+        				.append(imEscape(message)).toString();
+
+        logMessage(message);
+        try
         {
-            switch (text.charAt(i))
+            frameSend(work);
+        }
+        catch (IOException e)
+        {
+            signoff(NINE);
+        }
+    }
+    
+
+    /**
+     *  Escapes a string according to the requirements of AIM.
+     *
+     *  @param string	the string to escape
+     *
+     *  @return the escaped string
+     */
+    private StringBuffer imEscape(String text)
+    {
+        StringBuffer work = new StringBuffer();
+        StringCharacterIterator iterator = new StringCharacterIterator(text);
+        for (char aChar = iterator.first();
+             aChar != StringCharacterIterator.DONE;
+             aChar = iterator.next())
+        {
+            switch (aChar)
             {
                 case '$':
                 case '{':
@@ -365,71 +620,37 @@ public class AliceAIM implements AliceChatListener
                 case ')':
                 case '\"':
                 case '\\':
-                    work = work.concat("\\"+text.charAt(i));
+                    work.append(BACKSLASH);
                     break;
                 default:
-                    work = work.concat(""+text.charAt(i));
                     break;
-            }
+        	}
+        	work.append(aChar);
         }
-        work = work.concat("\"\0");
-        Log.userinfo("AliceAIM: " + work, Log.LISTENERS);
-        try
-        {
-            frameSend(work);
-        }
-        catch (IOException e)
-        {
-            signoff("9");
-        }
+        work.append(QUOTE_NULL);
+        return work;
     }
     
 
-    public void sendChatRoomMesg(String room_id, String text)
-    {
-        String work = "toc_chat_send ";
-        work = work.concat(room_id);
-        work = work.concat(" \"");
-        for (int i=0;i<text.length();i++) {
-            switch (text.charAt(i)) {
-            case '$':
-            case '{':
-            case '}':
-            case '[':
-            case ']':
-            case '(':
-            case ')':
-            case '\"':
-            case '\\':
-                work = work.concat("\\"+text.charAt(i));
-                break;
-            default:
-                work = work.concat(""+text.charAt(i));
-                break;
-            }
-        }
-        work = work.concat("\"\0");
-        Log.userinfo("AliceAIM: " + work, Log.LISTENERS);
-        try
-        {
-            frameSend(work);
-        }
-        catch (IOException e)
-        {
-            signoff("9");
-        }
-    }
-    
-
+	/**
+	 *  Sends an AIM message.  Cannot send a message longer than 2030 bytes.
+	 *
+	 *  @param buffer	the message
+	 */
     public void toAIM(byte[] buffer)
     {
-        // we cant send responses > 2048 bytes
-        if (buffer.length < 2030) return; 
-        try {
+        // we can't send responses > 2048 bytes
+        if (buffer.length < 2030)
+        {
+            logMessage("Got a message longer than 2030 bytes.");
+            return;
+        }
+        try
+        {
             out.writeByte(42);
             out.writeByte(2);
             out.writeShort(seqNo);
-            seqNo = (seqNo + 1) & 65535;
+            seqNo = (seqNo + 1) & MAX_SEQ;
             out.writeShort(buffer.length + 1);
             out.write(buffer);
             out.writeByte('\0');
@@ -437,132 +658,112 @@ public class AliceAIM implements AliceChatListener
         }
         catch (IOException e)
         {
-            Log.userinfo("AliceAIM exception: " + e, Log.LISTENERS);
-            signoff("6");
+            logMessage("Exception: " + e);
+            signoff(SIX);
         }
     }
     
 
+	/**
+	 *  Please document.
+	 */
     public void sendBuddies()
     {
-        String toBeSent = "toc_add_buddy";
-        // for (int i=0;i<// ebnet.buddyStruct.size();i++) {
-        //    if (((String[]) // ebnet.buddyStruct.elementAt(i))[2] != null) toBeSent = toBeSent + " " + ((String[]) // ebnet.buddyStruct.elementAt(i))[2];
-        // } 
-        Log.userinfo("AliceAIM: " + toBeSent, Log.LISTENERS);
+        String toBeSent = TOC_ADD_BUDDY;
+
+        Log.devinfo(MSG + toBeSent, Log.LISTENERS);
         try
         {
-            frameSend(toBeSent+" " + this.name + "\0");
+            frameSend(toBeSent + ' ' + this.name + NULL);
             StringTokenizer st = new StringTokenizer(this.buddies, ",");
             while (st.hasMoreTokens())
             {
-                frameSend(toBeSent+" " + st.nextToken() + "\0");
+                frameSend(toBeSent + ' ' + st.nextToken() + NULL);
             }
-            /*
-            out.writeByte(42);
-            out.writeByte(2);
-            out.writeShort(seqNo);
-            seqNo = (seqNo + 1) & 65535;
-            out.writeShort(toBeSent.length() + 1);
-            out.writeBytes(toBeSent);
-            out.writeByte('\0');
-            out.flush();
-            */
         }
         catch (IOException e)
         {
-            Log.userinfo("AliceAIM exception: " + e, Log.LISTENERS);
-            signoff("7");
+            logMessage("Exception: " + e);
+            signoff(SEVEN);
         }
     }
     
 
+	/**
+	 *  Please document.
+	 *
+	 *  @param place
+	 */
     public void signoff(String place)
     {
         online = false;
-        Log.userinfo("AliceAIM: Trying to close IM (" + place + ").....", Log.LISTENERS);
-        // ebnet.imoff();
-        try {
+        logMessage("Trying to close IM (" + place + ").....");
+
+        try
+        {
             out.close();
             in.close();
             connection.close();
         }
         catch (IOException e)
         {
-            Log.userinfo("AliceAIM exception: " + e, Log.LISTENERS);
+            logMessage("Exception: " + e);
         }
-        Log.userinfo("AliceAIM: done", Log.LISTENERS);
+        logMessage("Done.");
     }
     
+    
+    /**
+     *  Encodes a password according to AIM's stupid requirement.
+     *
+     *  @param pass	the password to encode
+     */
     public static String imRoast(String pass)
     {
-        String roast = "Tic/Toc";
-        String out = "";
-        String in = pass;
-        String out2 = "0x";
-        for (int i = 0; i < in.length(); i++)
+        String append = null;
+        StringBuffer result = new StringBuffer(ZERO_X);
+        
+        int passLength = pass.length();
+        
+        for (int index = 0; index < passLength; index++)
         {
-            out = java.lang.Long.toHexString(in.charAt(i) ^ roast.charAt(i % 7));
-            if (out.length() < 2)
+            append = Long.toHexString(pass.charAt(index) ^ ROAST.charAt(index % 7));
+            if (append.length() < 2)
             {
-                out2 = out2 + "0";
+                result.append(ZERO);
             }
-            out2 = out2 + out;
+            result.append(append);
         }
-        return out2;
+        return result.toString();
     }
     
 
+	/**
+	 *  Removes spaces from a string.
+	 *
+	 *  @param in	the string from which to remove spaces
+	 *
+	 *  @return the string without spaces
+	 */
     public static String imNormalize(String in)
     {
-        String out = "";
-        in = in.toLowerCase();
-        char[] arr = in.toCharArray();
-        for (int i=0;i<arr.length;i++)
+        StringBuffer out = new StringBuffer(in);
+        int space;
+        while ( ((space = out.toString().indexOf(SPACE)) >= 0) && out.length() > 0)
         {
-            if (arr[i] != ' ')
-            {
-                out = out + "" + arr[i];
-            }
+            out.delete(space, space + 1);
         }
-        return out;
+        return out.toString();
     }
     
-
-    public static String stripHTML(String line)
+    
+    /**
+     *  Standard method for logging and notifying of a message.
+     *
+     *  @param message	the message
+     */
+    private void logMessage(String message)
     {
-        StringBuffer sb = new StringBuffer(line);
-        String out = "";
-        
-        for (int i=0; i < sb.length()-1; i++) {
-            if (sb.charAt(i) == '<') {
-                // Most tags
-                if (sb.charAt(i+1) == '/'
-                    || (sb.charAt(i+1) >= 'a' && sb.charAt(i+1) <= 'z')
-                    || (sb.charAt(i+1) >= 'A' && sb.charAt(i+1) <= 'Z')) {
-                    for (int j=i+1; j < sb.length(); j++) {
-                        if (sb.charAt(j) == '>') {
-                            sb = sb.replace(i,j+1,"");
-                            i--;
-                            break;
-                        }
-                    }
-                } else if (sb.charAt(i+1) == '!') { // Comments
-                    for (int j=i+1; j < sb.length(); j++) {
-                        if (sb.charAt(j) == '>'
-                            && sb.charAt(j-1) == '-'
-                            && sb.charAt(j-2) == '-') {
-                            sb = sb.replace(i,j+1,"");
-                            i--;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        out = sb.toString();
-        return out;
-        
-    }
-    
+        Log.userinfo(MSG + message, Log.LISTENERS);
+    }   
 }

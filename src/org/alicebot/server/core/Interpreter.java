@@ -31,9 +31,8 @@ abstract public interface Interpreter
      *  Evaluates a given JavaScript expression
      *  for a given userid.
      *
-     *  @param userid       the userid
      *  @param expression   the expression to evaluate
      */
-    public String evaluate(String userid, String expression);
+    public String evaluate(String expression);
 }
 

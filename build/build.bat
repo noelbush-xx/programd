@@ -27,10 +27,15 @@ if not "%JAVA_HOME%"=="" goto java_home
 rem Try to guess the location (the default install dirs for the JDK)
 if exist c:\jdk1.3\bin\javac.exe set JAVA_HOME=c:\jdk1.3
 if exist c:\jdk1.3.1_0\bin\javac.exe set JAVA_HOME=c:\jdk1.3.1_0
+if exist c:\jdk1.4.0\bin\javac.exe set JAVA_HOME=c:\jdk1.4.0
+if exist c:\j2sdk1.4.0\bin\javac.exe set JAVA_HOME=c:\j2sdk1.4.0
+if exist c:\jdk1.4.1\bin\javac.exe set JAVA_HOME=c:\jdk1.4.1
+if exist c:\j2se1.4.1\bin\javac.exe set JAVA_HOME=c:\j2se1.4.1
 if not "%JAVA_HOME%"=="" goto java_home
 
 echo For the Ant buildsystem to work, you must set the JAVA_HOME environment
 echo variable. You can edit build.bat file to set it.
+pause
 goto end
 
 :java_home

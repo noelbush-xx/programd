@@ -28,13 +28,16 @@
 package org.alicebot.server.core.processor;
 
 import java.util.ArrayList;
-import java.util.Vector;
 
+import org.alicebot.server.core.Bot;
+import org.alicebot.server.core.Bots;
 import org.alicebot.server.core.PredicateMaster;
-import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.TemplateParser;
 import org.alicebot.server.core.parser.XMLNode;
+import org.alicebot.server.core.util.DeveloperError;
 import org.alicebot.server.core.util.InputNormalizer;
 import org.alicebot.server.core.util.Toolkit;
+import org.alicebot.server.core.util.Trace;
 
 
 /**
@@ -45,17 +48,8 @@ import org.alicebot.server.core.util.Toolkit;
  *  @author     Thomas Ringate, Pedro Colla
  *  @author     Noel Bush
  */
-public class IndexedPredicateProcessor extends AIMLProcessor
+abstract public class IndexedPredicateProcessor extends AIMLProcessor
 {
-    /**
-     *  This method shouldn't be called, since no predicate is specified.
-     */
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
-    {
-        return EMPTY_STRING;
-    }
-
-
     /**
      *  Processes an indexed predicate with <code>dimensions</code> dimensions
      *  (must be either <code>1</code> or <code>2</code>)
@@ -66,7 +60,7 @@ public class IndexedPredicateProcessor extends AIMLProcessor
      *  @param name         predicate name
      *  @param dimensions   the number of dimensions (<code>1</code> or <code>2</code>)
      */
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser,
+    public String process(int level, XMLNode tag, TemplateParser parser,
                               String name, int dimensions)
     {
         // Only 1 or 2 dimensions allowed.
@@ -76,7 +70,7 @@ public class IndexedPredicateProcessor extends AIMLProcessor
         }
 
         // Get a valid 2-dimensional index.
-        int indexes[] = AIMLParser.getValid2dIndex(tag);
+        int indexes[] = TemplateParser.getValid2dIndex(tag);
 
         if (indexes[0] <= 0)
         {
@@ -84,17 +78,18 @@ public class IndexedPredicateProcessor extends AIMLProcessor
         }
 
         // Get entire predicate value at this index (may contain multiple "sentences").
-        String response = PredicateMaster.get(name, indexes[0], userid);
+        String value = PredicateMaster.get(name, indexes[0], parser.getUserID(), parser.getBotID());
 
         // Split predicate into sentences.
-        ArrayList sentenceList = InputNormalizer.sentenceSplit(response);
+        Bot bot = Bots.getBot(parser.getBotID());
+        ArrayList sentenceList = bot.sentenceSplit(value);
 
         int sentenceCount = sentenceList.size();
 
-        // If there's only one sentence, just return the whole predicate.
+        // If there's only one sentence, just return the whole predicate value.
         if (sentenceCount == 0)
         {
-            return response;
+            return value;
         }
 
         // Return "" for a sentence whose index is greater than sentence count.
@@ -109,7 +104,7 @@ public class IndexedPredicateProcessor extends AIMLProcessor
 
     /**
      *  Processes an indexed predicate whose values are stored in
-     *  the supplied <code>predicates</code> Vector.  Currently supports
+     *  the supplied <code>predicates</code> ArrayList.  Currently supports
      *  <i>only</i> a 1-dimensional index (for handling
      *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-star">star</a></code>,
      *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-thatstar">thatstar</a></code>,
@@ -120,13 +115,13 @@ public class IndexedPredicateProcessor extends AIMLProcessor
      *  @param predicates   predicate values
      *  @param dimensions   the number of dimensions (<code>1</code> only)
      */
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser,
-                              Vector predicates, int dimensions)
+    public String process(int level, XMLNode tag, TemplateParser parser,
+                              ArrayList predicates, int dimensions)
     {
         // Only 1 dimension is supported.
         if (dimensions != 1)
         {
-            return EMPTY_STRING;
+            throw new DeveloperError("Wrong number of dimensions: " + dimensions + " != 1");
         }
 
         // No need to go further if no predicate values are available.
@@ -136,7 +131,7 @@ public class IndexedPredicateProcessor extends AIMLProcessor
         }
 
         // Get a valid 1-dimensional index.
-        int index = AIMLParser.getValid1dIndex(tag);
+        int index = TemplateParser.getValid1dIndex(tag);
 
         // Vectors are indexed starting with 0, so shift -1.
         index--;

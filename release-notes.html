@@ -1,0 +1,573 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>Program D Release Notes</title>
+<style type="text/css">
+*
+{
+font-family: sans-serif;
+font-size: 10pt;
+color: black;
+background-color: transparent;
+}
+h1, h1 *
+{
+font-size: 18pt;
+}
+h2, h2 *
+{
+background: #dddddd;
+font-size: 16pt;
+margin-top: 12pt;
+margin-bottom: 3pt;
+}
+h3, h3 *
+{
+font-size: 13pt;
+margin-bottom: 0pt;
+}
+h4, h4 *
+{
+font-size: 12pt;
+margin-top: 8pt;
+margin-bottom: 3pt;
+}
+p
+{
+margin-top: 0pt;
+margin-bottom: 8pt;
+}
+p.docinfo
+{
+font-style: italic;
+margin-top: 0pt;
+}
+em
+{
+color: #dd4444;
+font-weight: bold;
+font-style: italic;
+}
+span.literal
+{
+font-family: monospace;
+font-weight: bold;
+font-style: normal;
+}
+p.additional-notes
+{
+font-size: 9pt;
+color: #555555;
+font-style: italic;
+margin-bottom: 8pt;
+}
+a:link
+{
+color: #114466;
+background-color: transparent;
+}
+a:visited
+{
+color: #441166;
+background-color: transparent;
+}
+a:hover
+{
+color: #664411;
+background-color: #ffbb44;
+}
+a.nohover:hover
+{
+color: #664411;
+background-color: transparent;
+}
+a:active
+{
+color: #664411;
+background-color: transparent;
+}
+</style>
+</head>
+<body>
+<h1>Program D Release Notes</h1>
+<p class="docinfo">
+maintainer: <a href="http://alicebot.org/bios/noelbush.html" target="_blank">Noel Bush</a><br/>
+authors: <a href="http://alicebot.org/bios/noelbush.html" target="_blank">Noel Bush</a>, <a href="http://alicebot.org/bios/kimsullivan.html" target="_blank">Kim Sullivan</a>, Thomas Ringate, Pedro E. Colla<br/>
+Last updated: 30 April 2002
+</p>
+<p class="docinfo">
+The latest version of this document, including whatever apologies, retractions of libel, revisionist self-justification, etc. can always be found at <a href="http://alicebot.org/resources/programd/release-notes.html">http://alicebot.org/resources/programd/release-notes.html</a>. Probably.
+</p>
+<p>
+Versions documented here:
+</p>
+<ul>
+  <li>
+  <a href="#v4.1.5">4.1.5</a>
+  </li>
+  <li>
+  <a href="#v4.1.4">4.1.4</a>
+  </li>
+  <li>
+  <a href="#v4.1.3">4.1.3</a>
+  </li>
+  <li>
+  <a href="#v4.1.2">4.1.2</a>
+  </li>
+  <li>
+  <a href="#v4.1.1">4.1.1</a>
+  </li>
+  <li>
+  <a href="#v4.1.0">4.1.0</a>
+  </li>
+  <li>
+  <a href="#v4.0.2">4.0.2</a>
+  </li>
+  <li>
+  <a href="#v4.0.1">4.0.1</a>
+  </li>
+</ul>
+<h2><a id="v4.1.5">4.1.5</a></h2>
+<p>
+The saga continues. Thanks for contributions, tips, assistance with this release to Anne Kootstra, Jonathan Roewen, Sven Seelig, Denis Sheynihovich, Kim Sullivan, Andrew Teal and Richard Wallace.<br/>
+- Noel
+</p>
+<ul>
+  <li>
+  <a href="#v4.1.5.whatsnew">What's New</a>
+  </li>
+  <li>
+  <a href="#v4.1.5.requirements">Important Notes on System Requirements</a>
+  </li>
+  <li>
+  <a href="#v4.1.5.openissues">Significant Open Issues</a>
+  </li>
+</ul>
+<h3><a id="v4.1.5.whatsnew">What's New</a></h3>
+<p>
+This release of Program D is significant for stability and important functionality improvements.  Here is a list of highlights:
+</p>
+<ul>
+  <li>
+  <h4>Multiple Bot Support</h4>
+  <p>
+  Program D now supports an unlimited number of bots running from the same process.  You configure the bots in the <span class="literal">startup.xml</span> file. Different bots may share one or more AIML files, and memory usage is optimized to minimize duplication. Bots can be enabled or disabled easily by toggling an attribute in the <span class="literal">startup.xml</span> file.
+  </p>
+  <p class="additional-notes">
+  The example <span class="literal">startup.xml</span> file has been moved to the <span class="literal">conf</span> directory, and is documented inline with XML comments.
+  </p>
+  </li>
+  <li>
+  <h4>Separable/Shareable Substitution, Splitter, Predicate  Definitions</h4>
+  <p>
+  The <span class="literal">&lt;substitutions&gt;/*</span> elements (<span class="literal">&lt;input&gt;</span>, <span class="literal">&lt;gender&gt;</span>, <span class="literal">&lt;person&gt;</span>, <span class="literal">&lt;person2&gt;</span>) as well as the <span class="literal">&lt;predicates&gt;</span>, <span class="literal">&lt;properties&gt;</span>, and <span class="literal">&lt;sentence-splitters&gt;</span> elements of the <span class="literal">startup.xml</span> file can each be assigned an <span class="literal">href</span> attribute pointing to a local file that contains the actual definitions. This allows multiple bots to share such definitions, or portions thereof, without needless duplication.
+  </p>
+  <p class="additional-notes">
+  The example <span class="literal">startup.xml</span> file illustrates this configuration.
+  </p>
+  </li>
+  <li>
+  <h4>Better Configuration of Listeners</h4>
+  <p>
+  Alice Chat Listeners are now configured in the <span class="literal">startup.xml</span> file, and each bot can be assigned its own listener.
+  </p>
+  <p class="additional-notes">
+  Because of recent changes to the ICQ protocol, the <span class="literal">AliceICQ</span> listener still does not function correctly (it connects and receives messages, but sent messages are never received).  However, it is included in hope that a resourceful individual will be able to get it up to speed and contribute back to the community.
+  </p>
+  </li>
+  <li>
+  <h4>Database-based Logging Option</h4>
+  <p>
+  You can now choose to have all chats logged to a database.  This facilitates a form of log viewing that is much more efficient and easier to work with than the XML approach in previous releases.  A companion bundle of PHP files for viewing the log database will be released separately.
+  </p>
+  <p class="additional-notes">
+  You can enable database-based logging by setting <span class="literal">programd.logging.to-database.chat=true</span> in <span class="literal">server.properties</span>. You must first create the chatlog table as per the <span class="literal">database/logtables.script</span> file. You also must configure your database settings properly in <span class="literal">server.properties</span>.
+  </p>
+  </li>
+  <li>
+  <h4>AIML Syntax Checking</h4>
+  <p>
+  Program D now does a better job checking some aspects of your AIML syntax when files are loaded. You will be alerted to malformed categories, invalid pattern expressions, and non-AIML elements in certain locations.
+  </p>
+  </li>
+  <li>
+  <h4>Simple GUI Console</h4>
+  <p>
+  A very primitive GUI-based console is available for bot interaction.  (This was actually available in a previous release but not documented.)  The console window will be a valuable tool for people building bots in non-English languages, because it can (or should) display all characters, not only ASCII/ISO-8859-1, correctly.  The GUI provides menu commands for a couple of common shell commands, but otherwise no additional functionality.
+  </p>
+  <p class="additional-notes">
+  The console can be invoked with <span class="literal">console.bat</span> (Windows) or <span class="literal">console.sh</span> (*nix).
+  </p>
+  </li>
+  <li>
+  <h4>Artificial &quot;Heart&quot;</h4>
+  <p>
+  The bot now has a &quot;heart&quot;, of sorts, that can issue regular pulses to let you know it's alive. At present the only implemented pulse is a text message to the console, but an interface has been provided so that you can easily add modules that update a database, send email, etc.
+  </p>
+  </li>
+  <li>
+  <h4>Response Timeout Control</h4>
+  <p>
+  You can set a maximum time allowed for trying to get a response. For some types of infinite loops, an arbitrary timeout is the only way to escape.  This also provides a parameter for tuning scaleability of the server.
+  </p>
+  <p class="additional-notes">
+  Set the response timeout by editing/adding the <span class="literal">programd.response-timeout</span> property in <span class="literal">server.properties</span>.
+  </p>
+  </li>
+  <li>
+  <h4>Graphmaster &quot;Node Height&quot; Optimization</h4>
+  <p>
+  An optimization to the Graphmaster algorithm <a href="http://list.alicebot.org/pipermail/alicebot-developer/2002-March/000723.html">suggested by Richard Wallace on the alicebot-developer list</a> has been implemented. This optimization is intended to reduce match times for patterns that include multiple consecutive wildcards.
+  </p>
+  </li>
+  <li>
+  <h4>Connect and Inactivity Strings</h4>
+  <p>
+  Now you can customize the strings used as custom inputs to the bot to signal a new connection or inactivity. Also, the connect string is sent to the console user session on starting up (or switching to a new bot) so that you don't have to type it.
+  </p>
+  <p class="additional-notes">
+  Customize these parameters in the <span class="literal">server.properties</span> file.
+  </p>
+  </li>
+  <li>
+  <h4>Targeting Tool</h4>
+  <p>
+  The targeting tool is still very much a prototype, just a cleaned-up version of what was released in Program dB, but probably many miles/kilometers away from what it ought to be. However, in this version you can actually type in the target panel, which I'd managed to mess up previously.
+  </p>
+  </li>
+  <li>
+  <h4>Bug Fixes</h4>
+  <p>
+  4.1.5 is the last release that predates the Foundation's new <a href="http://alicebot.org/bugzilla">bug-tracking system</a>. Subsequent releases will make use of this system to enumerate bugs and their status. The following bug descriptions are more anecdotal than we'd like to provide in the future.
+  </p>
+  <ul>
+	<li>
+	<p>
+	A serious set of <em>thread synchronization</em> problems has been addressed and seems to have eliminated most or all deadlock and race conditions that were causing <em>sporadic, enormous delays</em> in some previous builds.
+	</p>
+	</li>
+	<li>
+	<p>
+	Some major problems with the <em>substituter</em> have been corrected.
+	</p>
+	</li>
+	<li>
+	<p>
+	The problems with <em>progressively deteriorating response times</em> seem to have been solved.  Even under heavy load, a reasonably-equipped machine should see average response times in the &lt;40ms range, very often down to 1-2ms. We intend to publish some performance test results soon.
+	</p>
+	</li>
+	<li>
+	<p>
+	The <em>pathname handling for learn operations</em> has been improved to work more &quot;intuitively&quot;--i.e., paths that are expressed relative to the files in which they are listed should work.
+	</p>
+	</li>
+	<li>
+	The <em>AliceIRC listener</em> correctly prepends a &quot;#&quot; to channel names when joining.
+	</li>
+  </ul>
+</li>
+</ul>
+<h3><a id="v4.1.5.requirements">Important Notes on System Requirements</a></h3>
+<p>
+Program D 4.1.5 requires a JVM or JRE that is compatible with the <a href="http://java.sun.com/j2se/1.4/download.html" target="_blank">Java 2 Platform version 1.4</a>.  If you do not intend to modify the source code, you can download just the JRE (Java Runtime Edition), which is significantly smaller than the SDK (about 9MB as compared with ~40!).
+</p>
+<p>
+The current reason for the Java upgrade requirement is an internationalization-related issue that may not pertain to all users. If the upgrade is onerous for you, post to the <a href="http://list.alicebot.org/mailman/listinfo/alicebot-developer">alicebot-developer</a> mailing list for assistance with learning the necessary steps to build a version that will be compatible with JDK 1.3.
+</p>
+<h3><a id="v4.1.5.openissues">Significant Open Issues</a></h3>
+<ul>
+  <li>
+  <p>
+  Many people have expressed the desirability of more cleanly separating Program D from Jetty in order to allow use of better-quality servlet containers (such as Tomcat, WebLogic, JRun, etc.).  This isn't done yet but appears to be a trivial task. However, presently the significant integration of the bot server with a web server other than Jetty is more hypothetical than actual.
+  </p>
+  </li>
+  <li>
+  <p>
+  The question of merge policies still hasn't been satisfactorily addressed.
+  </p>
+  </li>
+  <li>
+  <p>
+  The program can still be flummoxed by malformed AIML. The decision to require Java SDK 1.4 opens the way to using standard XML technologies now included with Java (previous linkages caused problems with the GNU GPL), but research is needed to measure the tradeoffs between improving this aspect and possible performance degradation.
+  </p>
+  </li>
+  <li>
+  <p>
+  Finally, the program is now at the stage where it could use a real overhaul in architecture. Several discussions are going on semi-independently about this subject.
+  </p>
+  </li>
+</ul>
+<h2><a id="v4.1.4">4.1.4</a></h2>
+<p>Bug fixes and miscellany by Noel Bush.</p>
+<h3>Functional fixes</h3>
+<ul>
+  <li>&quot;secret.key&quot; problem with DBMultiplexor fixed</li>
+  <li>Important fix to sentence-splitting: problem with method was causing multiple consecutive punctuation marks to generate multiple &quot;sentences&quot;, so an input like &quot;hi!!!!!!!!!!&quot; would get a long, long response.</li>
+  <li>Fixed error in which values saved to database weren't being properly escaped.</li>
+  <li>&quot;targets directory not found&quot; problem fixed.</li>
+  <li>Problem in which some targets were not saved fixed.</li>
+  <li>Target extension algorithm fixed.</li>
+</ul>
+<h3>Functional improvements</h3>
+<ul>
+  <li>Implemented support of default predicate values, and return-name-when-set predicates.</li>
+  <li>Configurable caching system now caches predicates in memory, writes out to disk or database only when necessary.</li>
+  <li>IRC, ICQ and AIM listeners now work.</li>
+  <li>
+  Interactive shell has been extended to permit:
+  <ul>
+	<li>commanding listeners (currently AliceIRC is enabled this way by means of illustration)</li>
+	<li>delete existing target data</li>
+	<li>load new AIML files</li>
+  </ul>
+  </li>
+  <li>direct checking of some types of infinite loops</li>
+  <li>XML chat log now has a &quot;rollover&quot; capability -- will not write more than a fixed number of entries to file before rolling it over.</li>
+  <li>XML chat log viewing stylesheet looks in local directory for entity declaration resources, rather than to the W3C</li>
+</ul>
+<h3>Code improvements, changes</h3>
+<ul>
+  <li>Somewhat better management of threads; inclusion of a shutdown hook from main Aliceserver in order to do cleanup before dying.</li>
+  <li>Introduction of PredicateMaster -- removal of &quot;StaticSelf&quot; mess from Multiplexor, and somewhat more clarity about what a Multiplexor is all about.</li>
+  <li>Moved Trace and MessagePrinter to util; devinfo and devfail methods will now print the name of the method that called them (not quite perfect but useful).</li>
+  <li>AIMLReader works just a bit faster now, by recreating the StringBuffer after each new category is created.</li>
+  <li>Dependence on third-party &quot;LinkedList&quot; and &quot;LinkedListItr&quot; has been eliminated.</li>
+  <li>Now use &quot;XMLResourceSpec&quot; instead of my embarassing String array for calling  XMLWriter.</li>
+  <li>introduction of UserErrorException and DeveloperErrorException for the promotion of responsible coding ;-)</li>
+</ul>
+<h3>Other notable changes</h3>
+<ul>
+  <li>JavaScript interpreter is no longer hard-linked -- could easily be replaced by a wrapper for another one.</li>
+  <li>Hypersonic SQL code has been removed entirely.</li>
+  <li>This marks the end of the effort to decouple Program D from GPL-incompatible code. We recognize that a tightly-linked combination of ALICE code with GPL-incompatible code is a contradiction of the terms of the GPL, and have striven to re-align the codebase with the spirit and terms of the GPL.</li>
+</ul>
+<h2><a id="v4.1.3">4.1.3</a></h2>
+<p>Major cleanup and optimization work by Noel Bush. User authentication implementation sponsored by Artificial Solutions AB.</p>
+<h3>Functional improvements</h3>
+<ul>
+<li>User authentication for HTTP introduced</li>
+<li>Re-integration of targeting and minimal targeting tool (from Program dB)</li>
+<li>Ability to use Program D <i>without</i>a database</li>
+<li>much closer to AIML 1.0.x compliance, and additions to test cases to verify same</li>
+<li>Ability to specify substitutions (including those for person, person2 and gender) externally</li>
+<li>XML logging of chat conversations</li>
+<li>Ability to use different templates for Responders</li>
+<li>better handling of character encodings for AIML files, HTML templates and http servlet</li>
+<li>Proper support of patterns in condition/li value attributes</li>
+<li>Big speed improvement for AIML loading, and for matching</li>
+<li>Logging format regularized (and used more than before)</li>
+<li>Much more configurable (see server properties)</li>
+<li>Ability to prohibit use of &lt;system&gt; and/or &lt;javascript&gt; tags</li>
+<li>Ability to deny support of deprecated AIML 0.9 tags</li>
+<li>Potential to use http server of choice</li>
+</ul>
+<h3>Code improvements, changes</h3>
+<ul>
+<li>
+  Source code cleanup (all but a few files)
+  <ul>
+	<li>formatting standardized, grammar fixed</li>
+	<li>imports made explicit and cryptic variables renamed</li>
+	<li>complete javadoc on nearly all classes &amp; variables</li>
+  </ul>
+  </li>
+<li>some design improvements (more use of interfaces, less duplicated code)</li>
+<li>less fixed dependence on non-GPL code (Jetty is removed to a jar file, no longer mixed in with org.alicebot code)</li>
+<li>some improvements to AIMLReader -- still not a &quot;real&quot; XML parser, but it's faster than anything else -- now there's less duplicated code</li>
+<li>similar comment for AIMLParser -- it also has &quot;pluggable&quot; processors</li>
+</ul>
+<h2><a id="v4.1.2">4.1.2</a></h2>
+<p>
+Finally it's here -- the final reference version of Program D! Big thanks to Tom and Pedro, who have taken upon themselves the difficult task of bringing the reference implementation as close to the AIML 1.0 specification as possible. Their work has finished now -- the server is fully under the GPL, and you can safely use version 4.1.2 as a reference base for further development. If it's good, your work may even be incorporated into the next release!<br/>
+-Kim, Tom and Pedro
+</p>
+<ul>
+<li>Targetting has been temporarily disabled </li>
+<li>
+  Code changes/fixes
+  <ul>
+	<li>Cleaned up the logs directory</li>
+	<li>Removed unused classes from server.* scripts</li>
+	<li>AIMLWatcher now optional</li>
+	<li>Multiple wildcards support in pattern matching</li>
+	<li>Fixed topic bug from 4.1.1</li>
+  </ul>
+</li>
+<li>
+  Tag changes/fixes
+  <ul>
+	<li>&lt;topicstar&gt; &lt;thatstar&gt; and &lt;star&gt; support multiple wildcards too</li>
+	<li>&lt;get&gt; can now optionaly return a default value in case the variable is not set</li>
+	<li>removed &lt;if&gt; tag</li>
+	<li>removed 'src' attribute from &lt;gossip&gt; tag</li>
+  </ul>
+</li>
+<li>server.engine.emtpydefault=&quot;&quot; specifies the 'default' default return value for undefined bot properties and variables</li>
+<li>
+bot loading/startup has been modified &amp; moved to a simple xml file:
+  <ul>
+	<li>
+	recognized tags for startup.xml:
+	<ul>
+	  <li>&lt;xml&gt;&lt;/xml&gt;</li>
+	  <li>&lt;learn&gt;&lt;/learn&gt;</li>
+	  <li>&lt;property/&gt;</li>
+	</ul>
+	</li>
+  <li>ONLY ONE TAG per line please</li>
+  </ul>
+</li>
+<li>Logging of empty user inputs added</li>
+</ul>
+<h2><a id="v4.1.1">4.1.1</a></h2>
+<p>
+Another update of the reference version by Thomas Ringate and Pedro E. Colla. It features a rewrite of the template parser, support for stack variables, re-added some lost features (scripting, substitutions). The way bot properties are handled also changed. For instructions on how to set up the server, see _readme.txt.<br/>
+- Kim, Tom and Pedro
+</p>
+<ul>
+<li>
+  Code changes/fixes
+  <ul>
+	<li>Parser rewritten (AIMLParser.java), now fully recursive</li>
+	<li>License text provided by Noel Bush on all modified code.</li>
+	<li>Official Copyright notice added.</li>
+	<li>Server starting message (previously in SERVER.BAT).</li>
+  </ul>
+</li>
+<li>
+  Tag changes/fixes
+  <ul>
+	<li>&lt;if&gt;&lt;/if&gt; full implementation ---&gt; according with archcomm discussions</li>
+	<li>&lt;person&gt; &lt;person2&gt; &lt;gender&gt; substitutions</li>
+	<li>&lt;javascript&gt; implemented (like &lt;script&gt; in ProgramD baseline).</li>
+	<li>Normalize the arguments before &lt;srai&gt; on them.</li>
+	<li>Solved sequencing problem at load time that prevented the simultaneous usage of the &lt;learn&gt;&lt;/learn&gt; and &lt;load filename=&quot;XXX&quot;/&gt; forms.</li>
+	<li>Some template tags are processed at load time, rather than just at processing time</li>
+	<li>Bot properties are now defined as &lt;property name=&quot;property&quot; value=&quot;value&quot;/&gt;, the previous mechanism of &lt;pattern&gt;BOT propertyname&lt;/pattern&gt; categories has been removed</li>
+	<li>Fixed a bug where AIML tags inside a &lt;condition&gt; were evaluated only when enclosed in &lt;li&gt;&lt;/li&gt; and otherwise ignored.</li>
+	<li>Made the value comparisson of &lt;if&gt;, &lt;condition&gt; and &lt;li&gt; case insensitive.</li>
+  </ul>
+</li>
+<li>
+  Variable handling
+  <ul>
+	<li>
+	Stack variables
+	<ul>
+	  <li>&lt;input index=&quot;N&quot;/&gt; implemented up to 5 levels of depth.</li>
+	  <li>&lt;that index=&quot;N,M&quot;/&gt; implemented up to 5 levels of depth. The 2nd index M is ignored.</li>
+	</ul>
+	</li>
+	<li>When the bot is started all TOPIC properties of all IP's are set to the
+	default one (&quot;&quot;).</li>
+  </ul>
+</li>
+<li>Change the name of the bot from the directory where the AIML is into the property name (&lt;bot name=&quot;name&quot;/&gt;).</li>
+<li>Modified legend on HTML template</li>
+<li>
+  Logging &amp; output
+  <ul>
+	<li>Remove the &lt;br/&gt; on console output (replace it by CRLF) if debug=false</li>
+	<li>Normalization of eol (LF vs. CRLF) on chat.log (blank lines with WordPad).</li>
+	<li>Blank lines removed from chat.log logging.</li>
+  </ul>
+</li>
+</ul>
+<h2><a id="v4.1.0">4.1.0</a></h2>
+<p>
+This is the 'reference' version Thomas Ringate and Pedro E. Colla have been working on. It is intermediate work in progress, with the goal to make Program D AIML 1.0 compliant. Currently, in version 4.1.0 ref, the support for AIML 1.0 is partial and achieved thru quick fixes. For the most part, AIML 0.9 is yet supported.
+</p>
+<p>
+Don't use this release as a base for further development, there will yet be major changes in the code. The next release 4.1.1 will hopefully adress the above issues within the next 2 weeks.<br/>
+-Kim, Tom and Pedro
+</p>
+<ul>
+<li>change &quot;localhost&quot; legends to actual IP number.</li>
+<li>IO checking added when files are non-existent or empty</li>
+<li>std-bot.aiml must be loaded before any other AIML file if bot properties other than &lt;bot name=&quot;name&quot;/&gt; are used on the pattern side.</li>
+<li>Fixed &lt;if&gt; handling (all parameters and &lt;else/&gt; should work correctly)</li>
+<li>Fixed &lt;condition&gt; - now supports all three forms</li>
+<li>&lt;sentence&gt; now spelled correctly, as well as other occurences of this typo</li>
+<li>&lt;that/&gt; returns uppercase.</li>
+<li>Fixed error when AIML file contains XML empty &lt;aiml .. /&gt; tag.</li>
+<li>
+  Added AIML 1.0 compliant variable tags
+  <ul>
+	<li>&lt;get/&gt;</li>
+	<li>&lt;bot/&gt;</li>
+	<li>&lt;set&gt;&lt;/set&gt;</li>
+  </ul>
+</li>
+<li>
+  Implemented the non-brainer AIML 1.0 tags
+  <ul>
+	<li>&lt;id/&gt;</li>
+	<li>&lt;size/&gt;</li>
+	<li>&lt;version/&gt;</li>
+	<li>&lt;date/&gt;</li>
+  </ul>
+</li>
+<li>
+  Added partial support for indexed variables (return blanks when index out of bounds). The index may be ommited, in which case it defaults to &quot;1&quot;.
+  <ul>
+	<li>&lt;input index=&quot;N&quot;/&gt; N=1,2,3</li>
+	<li>&lt;star index=&quot;N&quot;/&gt; N=1</li>
+	<li>&lt;thatstar index=&quot;N&quot;/&gt; N=1</li>
+	<li>&lt;topicstar index=&quot;N&quot;/&gt; N=1</li>
+	<li>&lt;that index=&quot;N,M&quot;/&gt; N=1,2 M is ignored</li>
+  </ul>
+</li>
+<li>
+  Commented out non standard AIML tags
+  <ul>
+	<li>&lt;os/&gt;</li>
+	<li>&lt;typeof_/&gt;</li>
+	<li>&lt;display&gt;&lt;/display&gt;</li>
+	<li>&lt;add_xxx&gt;</li>
+	<li>&lt;decode&gt;&lt;/decode&gt;</li>
+	<li>&lt;encode&gt;&lt;/encode&gt;</li>
+	<li>&lt;log&gt;&lt;/log&gt;</li>
+	<li>&lt;timer&gt;&lt;/timer&gt;</li>
+	<li>&lt;nql&gt;&lt;/nql&gt;</li>
+	<li>&lt;event&gt;&lt;/event&gt;</li>
+	<li>&lt;face&gt;&lt;/face&gt;</li>
+	<li>&lt;log&gt;&lt;/log&gt;</li>
+	<li>&lt;random_xxx/&gt;</li>
+	<li>&lt;login/&gt;</li>
+	<li>&lt;logout/&gt;</li>
+	<li>&lt;register/&gt;</li>
+  </ul>
+</li>
+</ul>
+<h2><a id="v4.0.2">4.0.2</a></h2>
+<p>
+Now comes WITHOUT any AIML, you must install an aiml set manually and configure it in the SERVER.properties file (pointers are in the bots/readme.txt file), otherwise you will get a 'FileNotFoundException'. You can get some AIML files (as well as the latest server release) here:<br/>
+http://www.alicebot.org<br/>
+ftp://ftp.alicebot.org/pub/builds<br/>
+-Kim
+</p>
+<ul>
+  <li>Finally, the release system in the CVS works (yipee!) -&gt; even small updates are easy to release -&gt; possibly regular updates</li>
+  <li>Fixed buggy CVS entries that prevented .bat files from running smoothly</li>
+  <li>Code cleanup (Mark Anacker)</li>
+  <li>now the server.engine.startup property works</li>
+  <li>Note - the server is not yet 1.0 compliant so the newest AIML files may not work, try using the 1.0.0 release</li>
+</ul>
+<h2><a id="v4.0.1">4.0.1</a></h2>
+<p>
+First release out of the CVS, included Jon Baer's AIML set.<br/>
+-Kim
+</p>
+<ul>
+  <li>New run.bat to simplify startup</li>
+  <li>Cleanup of source, unused libraries and miscellaneous files</li>
+  <li>compiles 'out of the box'</li>
+  <li>speech support moved to another branch (development stopped)</li>
+</ul>
+<p>
+<a href="http://validator.w3.org/check/referer" class="nohover"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" border="0" /></a>
+</p>
+</body>
+</html>

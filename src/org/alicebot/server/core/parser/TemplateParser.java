@@ -57,51 +57,60 @@
 
 package org.alicebot.server.core.parser;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.alicebot.server.core.Globals;
+import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.core.processor.AIMLProcessorException;
 import org.alicebot.server.core.processor.AIMLProcessorRegistry;
 import org.alicebot.server.core.processor.ProcessorException;
-import org.alicebot.server.core.processor.ProcessorRegistry;
+import org.alicebot.server.core.util.Trace;
 
 
 /**
- *  <code>AIMLParser</code> is still a primitive class, implementing not a
+ *  <code>TemplateParser</code> is still a primitive class, implementing not a
  *  &quot;real&quot; XML parser, but just enough (hopefully) to get the job done.
  */
-public class AIMLParser extends GenericParser
+public class TemplateParser extends GenericParser
 {
     /** The values captured from the input by wildcards in the <code>pattern</code>. */
-    private Vector inputStars = new Vector();
+    private ArrayList inputStars = new ArrayList();
 
     /** The values captured from the input path by wildcards in the <code>that</code>. */
-    private Vector thatStars = new Vector();
+    private ArrayList thatStars = new ArrayList();
 
     /** The values captured from the input path by wildcards in the <code>topic</code>. */
-    private Vector topicStars = new Vector();
+    private ArrayList topicStars = new ArrayList();
 
     /** The input that matched the <code>pattern</code> associated with this template (helps to avoid endless loops). */
-    private Vector inputs = new Vector();
+    private ArrayList inputs = new ArrayList();
+    
+    /** The userid for which this parser is used. */
+    private String userid;
+
+    /** The botid on whose behalf this parser is working. */
+    private String botid;
 
 
     /**
-     *  Initializes an <code>AIMLParser</code>.
+     *  Initializes an <code>TemplateParser</code>.
      *  The <code>input</code> is a required parameter!
      *
      *  @param input    the input that matched the <code>pattern</code>
      *                  associated with this template (helps to avoid endless loops)
      *
-     *  @throws AIMLParserException if the <code>input</code> is null
+     *  @throws TemplateParserException if the <code>input</code> is null
      */
-    public AIMLParser(String input) throws AIMLParserException
+    public TemplateParser(String input, String userid, String botid) throws TemplateParserException
     {
         if (input == null)
         {
-            throw new AIMLParserException("No input supplied for AIMLParser!");
+            throw new TemplateParserException("No input supplied for TemplateParser!");
         }
         this.inputs.add(input);
-        super.processorRegistry = Globals.getAIMLProcessorRegistry();
+        this.userid = userid;
+        this.botid = botid;
+        super.processorRegistry = AIMLProcessorRegistry.getSelf();
     }
 
 
@@ -109,18 +118,17 @@ public class AIMLParser extends GenericParser
      *  Processes the AIML within and including a given AIML element.
      *
      *  @param level    the current level in the XML trie
-     *  @param userid   the user identifier
      *  @param tag      the tag being evaluated
      *
      *  @return the result of processing the tag
      *
      *  @throws AIMLProcessorException if the AIML cannot be processed
      */
-    public String processTag(int level, String userid, XMLNode tag) throws ProcessorException
+    public String processTag(int level, XMLNode tag) throws ProcessorException
     {
         try
         {
-            return super.processTag(level, userid, tag);
+            return super.processTag(level, tag);
         }
         // A ProcessorException at this point can mean several things.
         catch (ProcessorException e0)
@@ -147,13 +155,18 @@ public class AIMLParser extends GenericParser
                 }
             }
             // But if namespace qualification is not required, don't care.
-            return formatTag(level, userid, tag);
+            return formatTag(level, tag);
+        }
+        catch (StackOverflowError e)
+        {
+            Log.userinfo("Stack overflow error processing " + tag.XMLData + " tag.", Log.ERROR);
+            return EMPTY_STRING;
         }
     }
 
 
     /**
-     *  Adds an input to the inputs vector (for avoiding infinite loops).
+     *  Adds an input to the inputs list (for avoiding infinite loops).
      *
      *  @param input    the input to add
      */
@@ -168,7 +181,7 @@ public class AIMLParser extends GenericParser
      *
      *  @return the input that matched the <code>pattern</code> associated with this template
      */
-    public Vector getInputs()
+    public ArrayList getInputs()
     {
         return this.inputs;
     }
@@ -179,7 +192,7 @@ public class AIMLParser extends GenericParser
      *
      *  @return the values captured from the input path by wildcards in the <code>pattern</code>
      */
-    public Vector getInputStars()
+    public ArrayList getInputStars()
     {
         return this.inputStars;
     }
@@ -190,7 +203,7 @@ public class AIMLParser extends GenericParser
      *
      *  @return the values captured from the input path by wildcards in the <code>that</code>
      */
-    public Vector getThatStars()
+    public ArrayList getThatStars()
     {
         return this.thatStars;
     }
@@ -201,31 +214,31 @@ public class AIMLParser extends GenericParser
      *
      *  @return the values captured from the input path by wildcards in the <code>topic name</code>
      */
-    public Vector getTopicStars()
+    public ArrayList getTopicStars()
     {
         return this.topicStars;
     }
 
 
     /**
-     *  Sets the <code>inputStars</code> Vector.
+     *  Sets the <code>inputStars</code> list.
      *
      *  @param  values captured from the input path by wildcards in the <code>pattern</code>
      */
-    public void setInputStars(Vector vector)
+    public void setInputStars(ArrayList stars)
     {
-        this.inputStars = vector;
+        this.inputStars = stars;
     }
 
 
     /**
-     *  Sets the <code>thatStars</code> Vector.
+     *  Sets the <code>thatStars</code> list.
      *
      *  @param  values captured from the input path by wildcards in the <code>that</code>
      */
-    public void setThatStars(Vector vector)
+    public void setThatStars(ArrayList stars)
     {
-        this.thatStars = vector;
+        this.thatStars = stars;
     }
 
 
@@ -234,8 +247,30 @@ public class AIMLParser extends GenericParser
      *
      *  @param  values captured from the input path by wildcards in the <code>topic name</code>
      */
-    public void setTopicStars(Vector vector)
+    public void setTopicStars(ArrayList stars)
     {
-        this.topicStars = vector;
+        this.topicStars = stars;
+    }
+
+
+    /**
+     *  Returns the userid.
+     *
+     *  @return the userid
+     */
+    public String getUserID()
+    {
+        return this.userid;
+    }
+
+
+    /**
+     *  Returns the botid.
+     *
+     *  @return the botid
+     */
+    public String getBotID()
+    {
+        return this.botid;
     }
 }

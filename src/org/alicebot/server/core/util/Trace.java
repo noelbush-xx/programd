@@ -29,6 +29,7 @@ package org.alicebot.server.core.util;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.Reader;
 import java.util.StringTokenizer;
 
@@ -114,6 +115,21 @@ public class Trace
     public static final String COLON_SPACE     = ": ";
 
 
+    /** Output stream -- defaults to System.out. */
+    private static PrintStream outStream = System.out;
+
+
+    /**
+     *  Changes the output stream.
+     *
+     *  @param stream
+     */
+    public static void setOut(PrintStream out)
+    {
+        outStream = out;
+    }
+
+
     /**
      *  Notifies of user failures from which recovery is impossible.
      *
@@ -144,7 +160,7 @@ public class Trace
      *
      *  @param exception
      */
-    public static void userfail(Exception e)
+    public static void userfail(Throwable e)
     {
         if (EMIT_USER_ERRORS)
         {
@@ -223,7 +239,7 @@ public class Trace
      *  @param message
      *  @param exception
      */
-    public static void devfail(String message, Exception e)
+    public static void devfail(String message, Throwable e)
     {
         if (EMIT_DEVELOPER_ERRORS)
         {
@@ -242,7 +258,7 @@ public class Trace
      *
      *  @param exception
      */
-    public static void devfail(Exception e)
+    public static void devfail(Throwable e)
     {
         if (EMIT_DEVELOPER_ERRORS)
         {
@@ -274,7 +290,7 @@ public class Trace
      *
      *  @param exception
      */
-    public static void devinfo(Exception e)
+    public static void devinfo(Throwable e)
     {
         if (EMIT_DEVELOPER_ERRORS)
         {
@@ -313,7 +329,7 @@ public class Trace
      */
     private static void emit(String message, String flag)
     {
-        MessagePrinter.println(message, flag, System.err, MessagePrinter.CONSOLE);
+        MessagePrinter.println(message, flag, outStream, MessagePrinter.CONSOLE);
     }
 
 
@@ -327,7 +343,7 @@ public class Trace
     {
         for (int line = 0; line < message.length; line++)
         {
-            MessagePrinter.println(message[line], flag, System.err, MessagePrinter.CONSOLE);
+            MessagePrinter.println(message[line], flag, outStream, MessagePrinter.CONSOLE);
         }
     }
 
@@ -342,7 +358,7 @@ public class Trace
     {
         for (int line = 0; line < message.length; line++)
         {
-            MessagePrinter.println(prefix + message[line], flag, System.err, MessagePrinter.CONSOLE);
+            MessagePrinter.println(prefix + message[line], flag, outStream, MessagePrinter.CONSOLE);
         }
     }
 
@@ -353,7 +369,7 @@ public class Trace
      *  @param message  the message to emit
      *  @param flag     the flag
      */
-    private static void emit(Exception exception, String flag)
+    private static void emit(Throwable exception, String flag)
     {
         String message = exception.getMessage();
         if (message != null)

@@ -44,6 +44,18 @@ public class PatternArbiter
 
     /** A space. */
     private static final char SPACE                    = ' ';
+    
+    /** A tag start. */
+    private static final char TAG_START                = '<';
+    
+    /** A quote mark. */
+    private static final char QUOTE_MARK               = '"';
+    
+    /** Start of a bot property element. */
+    private static final String BOT_NAME_EQUALS        = "<bot name=\"";
+    
+    /** End of an atomic [bot property] element. */
+    private static final String ATOMIC_ELEMENT_END     = "\"/>";
 
 
     // Character states. See comments in matches().
@@ -127,14 +139,14 @@ public class PatternArbiter
         if (ignoreCase)
         {
             // Iterate over uppercased versions of literal and pattern.
-            patternIterator = new StringCharacterIterator(pattern.toUpperCase());
-            literalIterator = new StringCharacterIterator(literal.toUpperCase());
+            patternIterator = new StringCharacterIterator(pattern.toUpperCase().trim());
+            literalIterator = new StringCharacterIterator(literal.toUpperCase().trim());
         }
         else
         {
             // Iterate over original literal and pattern.
-            patternIterator = new StringCharacterIterator(pattern);
-            literalIterator = new StringCharacterIterator(literal);
+            patternIterator = new StringCharacterIterator(pattern.trim());
+            literalIterator = new StringCharacterIterator(literal.trim());
         }
 
         // Get first characters from both iterators.
@@ -142,7 +154,6 @@ public class PatternArbiter
         char literalChar = literalIterator.first();
 
         // Start with unknown character states.
-        int previousPatternCharState = UNKNOWN;
         int patternCharState = UNKNOWN;
         int literalCharState = UNKNOWN;
 
@@ -265,9 +276,6 @@ public class PatternArbiter
                     // Flag pattern character is a letterdigit.
                     patternCharState = IS_LETTERDIGIT;
                 }
-
-                // Remember pattern character state for next time.
-                previousPatternCharState = patternCharState;
             }
 
             // Matching phase 2.
@@ -521,7 +529,7 @@ public class PatternArbiter
                     else
                     {
                         // Throw an explanatory exception.
-                        throw new NotAnAIMLPatternException("\"" + pattern + "\" is not a valid AIML pattern; the only allowed whitespace is a space (\u0020).");
+                        throw new NotAnAIMLPatternException("The only allowed whitespace is a space (\u0020).", pattern);
                     }
                 }
 
@@ -542,8 +550,48 @@ public class PatternArbiter
                              ((previousCharState & IS_WILDCARD) == IS_WILDCARD) )
                         {
                             // Throw an explanatory exception.
-                            throw new NotAnAIMLPatternException("\"" + pattern + "\" is not a valid AIML pattern; a wildcard cannot be preceded by a wildcard, a letter or a digit.");
+                            throw new NotAnAIMLPatternException("A wildcard cannot be preceded by a wildcard, a letter or a digit.", pattern);
                         }
+                    }
+                }
+                
+                // Check if pattern character is a tag start.
+                if (theChar == TAG_START)
+                {
+                    /*
+                    	Check if <bot name=" appears now.  This is (currently)
+                    	the only allowed element inside pattern.
+                    */
+                    int currentIndex = iterator.getIndex();
+                    
+                    if (pattern.regionMatches(false, currentIndex, BOT_NAME_EQUALS, 0, 11))
+                    {
+                        /*
+                        	Now iterate through the chars until reaching a quote mark,
+                        	checking that each char is valid for a property name.
+                        */
+                        iterator.setIndex(currentIndex + 11);
+                        theChar = iterator.next();
+                        while ( (theChar != StringCharacterIterator.DONE) &&
+                                (theChar != QUOTE_MARK) &&
+                                ( Character.isLetterOrDigit(theChar) ||
+                                  (theChar == SPACE) || (theChar == UNDERSCORE) ) )
+                        {
+                            theChar = iterator.next();
+                        }
+                        
+                        // Finally, check that the attribute is ended correctly.
+                        currentIndex = iterator.getIndex();
+                        if (!pattern.regionMatches(false, currentIndex, ATOMIC_ELEMENT_END, 0, 3))
+                        {
+                            throw new NotAnAIMLPatternException("Invalid or malformed <bot/> element.", pattern);
+                        }
+                        // If we got this far, update the index.
+                        iterator.setIndex(currentIndex + 3);
+                    }
+                    else
+                    {
+                        throw new NotAnAIMLPatternException("Invalid or malformed inner element.", pattern);
                     }
                 }
             }
@@ -551,14 +599,14 @@ public class PatternArbiter
             {
                 // Flag pattern character is a letterdigit.
                 charState = IS_LETTERDIGIT;
-
+                
                 // Check case if ignoreCase is false.
                 if (!ignoreCase)
                 {
                     if (Character.toUpperCase(theChar) != theChar)
                     {
                         // Throw an explanatory exception.
-                        throw new NotAnAIMLPatternException("\"" + pattern + "\" is not a valid AIML pattern; characters with case mappings must be uppercase.");
+                        throw new NotAnAIMLPatternException("Characters with case mappings must be uppercase.", pattern);
                     }
                 }
 
@@ -572,7 +620,7 @@ public class PatternArbiter
                     if ((previousCharState & IS_WILDCARD) == IS_WILDCARD)
                     {
                         // Throw an explanatory exception.
-                        throw new NotAnAIMLPatternException("\"" + pattern + "\" is not a valid AIML pattern; a letter or digit may not be preceded by a wildcard.");
+                        throw new NotAnAIMLPatternException("A letter or digit may not be preceded by a wildcard.", pattern);
                     }
                 }
             }

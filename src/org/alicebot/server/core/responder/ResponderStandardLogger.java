@@ -29,9 +29,6 @@ import org.alicebot.server.core.util.Toolkit;
  */
 public class ResponderStandardLogger
 {
-    /** The bot name (will be changed when multiple bots are supported). */
-    protected static final String botName = Globals.getBotName();
-
     /** The &quot;prompt&quot; to use when displaying/logging output. */
     protected static final String PROMPT       = "> ";
 
@@ -41,7 +38,7 @@ public class ResponderStandardLogger
         // Break lines at tags.
         String[] lines = Toolkit.breakLines(input);
 
-        String clientName = PredicateMaster.get(Globals.getClientNamePredicate(), userid);
+        String clientName = PredicateMaster.get(Globals.getClientNamePredicate(), userid, botid);
 
         // Log the input.
         for (int index = 0; index < lines.length; index++)

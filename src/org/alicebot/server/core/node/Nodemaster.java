@@ -25,11 +25,18 @@
     - changed TreeMap to HashMap, because order does not matter!
 */
 
+/*
+	4.1.5 - Noel Bush
+	- added support for height (per Richard Wallace's suggestion
+*/
+
 package org.alicebot.server.core.node;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.alicebot.server.core.util.Trace;
 
 
 /**
@@ -43,6 +50,9 @@ import java.util.Set;
  *  {@link Nodemapper Nodemappers} have only one branch, as is
  *  often the case in a real-world @{link Graphmaster Graphmaster}.
  *  </p>
+ *
+ *  @author Richard Wallace
+ *  @author	Noel Bush
  */
 public class Nodemaster implements Nodemapper
 {
@@ -50,7 +60,13 @@ public class Nodemaster implements Nodemapper
     protected String key;
     protected Object value;
     protected HashMap Hidden;
+    
+    /** The minimum number of words needed to reach a leaf node from here. Defaults to <code>Integer.MAX_VALUE</code> (zero). */
+    protected int height = Integer.MAX_VALUE;
 
+    protected Nodemapper parent;
+    
+    
     public Object put(String key, Object value)
     {
         if (size == 0)
@@ -74,26 +90,33 @@ public class Nodemaster implements Nodemapper
     }
 
 
-    public void remove(String key)
+    public void remove(Object value)
     {
-        if (size == 1)
+        if (size > 2)
+        {
+            Hidden.remove(value);
+            size--;
+        }
+        else if (size == 2)
+        {
+            this.value = Hidden.remove(value);
+            size = 1;
+        }
+        else if (size == 1)
         {
             this.value = null;
             size = 0;
-            return;
-        }
-        else
-        {
-            Hidden.remove(key.toUpperCase());
-            size--;
-            return;
         }
     }
 
 
     public Object get(String key)
     {
-        if (size <= 1)
+        if (size == 0)
+        {
+            return null;
+        }
+        else if (size == 1)
         {
             if (key.equalsIgnoreCase(this.key))
             {
@@ -131,13 +154,68 @@ public class Nodemaster implements Nodemapper
 
     public boolean containsKey(String key)
     {
-        if (size <= 1)
+        if (size == 0)
+        {
+            return false;
+        }
+        else if (size <= 1)
         {
             return (key.equalsIgnoreCase(this.key));
         }
         else
         {
             return Hidden.containsKey(key.toUpperCase());
+        }
+    }
+
+
+    public int size()
+    {
+        return this.size;
+    }
+
+
+    public void setParent(Nodemapper parent)
+    {
+        this.parent = parent;
+    }
+
+
+    public Nodemapper getParent()
+    {
+        return this.parent;
+    }
+    
+    
+    public int getHeight()
+    {
+        return this.height;
+    }
+    
+    
+    public void setTop()
+    {
+        this.fillInHeight(0);
+    }
+    
+    
+    /**
+     *  Sets the <code>height</code> of this
+     *  <code>Nodemaster</code> to <code>height</code>,
+     *  and calls <code>fillInHeight()</code> on
+     *  its parent (if not null) with a height <code>height + 1</code>.
+     *
+     *  @param height	the height for this node
+     */
+    private void fillInHeight(int height)
+    {
+        if (this.height > height)
+        {
+            this.height = height;
+        }
+        if (this.parent != null)
+        {
+            ((Nodemaster)this.parent).fillInHeight(height + 1);
         }
     }
 }
