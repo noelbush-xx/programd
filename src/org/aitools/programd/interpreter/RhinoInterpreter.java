@@ -26,11 +26,11 @@ public class RhinoInterpreter implements Interpreter
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     
     /** The logger. */
-    private static final Logger LOGGER = Logger.getLogger("programd.interpreter");
+    private static final Logger logger = Logger.getLogger("programd.interpreter");
 
     public String evaluate(String expression)
     {
-        LOGGER.log(Level.FINE, "evaluate: \"" + expression + "\"");
+        logger.log(Level.FINE, "evaluate: \"" + expression + "\"");
         Context context = Context.enter();
         Scriptable scope = context.initStandardObjects(null);
 
@@ -42,7 +42,7 @@ public class RhinoInterpreter implements Interpreter
         catch (Exception e)
         {
             Logger.getLogger("programd.error").log(Level.WARNING, "JavaScript exception (see interpreter log).");
-            LOGGER.log(Level.WARNING, "Got exception:" + LINE_SEPARATOR + e + LINE_SEPARATOR + "when processing:" + LINE_SEPARATOR + expression);
+            logger.log(Level.WARNING, "Got exception:" + LINE_SEPARATOR + e + LINE_SEPARATOR + "when processing:" + LINE_SEPARATOR + expression);
         } 
         Context.exit();
         if (result != null)
@@ -50,7 +50,7 @@ public class RhinoInterpreter implements Interpreter
             return result.toString();
         } 
         // (otherwise...)
-        LOGGER.log(Level.INFO, "JavaScript returned null!");
+        logger.log(Level.INFO, "JavaScript returned null!");
         return EMPTY_STRING;
     } 
 }
