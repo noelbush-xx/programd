@@ -16,42 +16,40 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.Globals;
-import org.aitools.programd.util.logging.Log;
 
 /**
  * Watches a set of AIML files. Any file changes will be loaded automatically.
  * 
  * @author Jon Baer
  * @author Noel Bush
- * @version 4.1.3
+ * @version 4.2
  */
 public class AIMLWatcher
 {
-    /** Private instance of itself. */
-    protected static AIMLWatcher myself = new AIMLWatcher();
-
     /** The Timer that handles watching AIML files. */
     private Timer timer;
 
+    private Graphmaster graphmaster;
+
     /** Used for storing information about file changes. */
     protected HashMap<String, HashMap<File, Long>> watchMaps = new HashMap<String, HashMap<File, Long>>();
+    
+    private static final Logger logger = Logger.getLogger("programd.learn");
 
-    /**
-     * Prevents anyone but itself from constructing an AIMLWatcher.
-     */
-    private AIMLWatcher()
+    public AIMLWatcher(Graphmaster graphmasterToUse)
     {
-        // Nothing to do.
-    } 
+        this.graphmaster = graphmasterToUse;
+    }
 
-    public static void start()
+    public void start()
     {
-        myself.startTimer();
-    } 
+        this.startTimer();
+    }
 
     /**
      * Initializes the AIMLWatcher timer as a daemon. Waits 10 seconds before
@@ -62,10 +60,9 @@ public class AIMLWatcher
         if (this.timer == null)
         {
             this.timer = new Timer(true);
-            this.timer
-                    .schedule(new CheckAIMLTask(), 0, Integer.parseInt(Globals.getProperty("programd.watcher.timer")));
-        } 
-    } 
+            this.timer.schedule(new CheckAIMLTask(this.watchMaps), 0, this.graphmaster.getCore().getSettings().getWatcherTimer());
+        }
+    }
 
     /**
      * Prohibits cloning this class.
@@ -73,7 +70,7 @@ public class AIMLWatcher
     protected Object clone() throws CloneNotSupportedException
     {
         throw new CloneNotSupportedException();
-    } 
+    }
 
     /**
      * Reloads AIML from a given file.
@@ -89,14 +86,14 @@ public class AIMLWatcher
         try
         {
             path = file.getCanonicalPath();
-        } 
+        }
         catch (IOException e)
         {
             return;
-        } 
-        Log.userinfo("Reloading \"" + path + "\".", Log.LEARN);
-        Graphmaster.load(path, botid);
-    } 
+        }
+        logger.log(Level.INFO, "Reloading \"" + path + "\".");
+        this.graphmaster.load(path, botid);
+    }
 
     /**
      * Adds a file to the watchlist.
@@ -105,31 +102,39 @@ public class AIMLWatcher
      *            the path to the file
      * @param botid
      */
-    public static void addWatchFile(String path, String botid)
+    public void addWatchFile(String path, String botid)
     {
         File theFile = FileManager.getFile(path);
         if (theFile.canRead())
         {
-            if (!myself.watchMaps.containsKey(botid))
+            if (!this.watchMaps.containsKey(botid))
             {
-                myself.watchMaps.put(botid, new HashMap<File, Long>());
-            } 
-            myself.watchMaps.get(botid).put(theFile, new Long(theFile.lastModified()));
-        } 
-    } 
+                this.watchMaps.put(botid, new HashMap<File, Long>());
+            }
+            this.watchMaps.get(botid).put(theFile, new Long(theFile.lastModified()));
+        }
+    }
 
     /**
      * A {@link java.util.TimerTask TimerTask} for checking changed AIML files.
      */
     private class CheckAIMLTask extends TimerTask
     {
+        HashMap<String, HashMap<File, Long>> watcherWatchMaps;
+
+        public CheckAIMLTask(HashMap<String, HashMap<File, Long>> watchMapsToUse)
+        {
+            super();
+            this.watcherWatchMaps = watchMapsToUse;
+        }
+
         public void run()
         {
-            Iterator mapsIterator = myself.watchMaps.keySet().iterator();
+            Iterator mapsIterator = this.watcherWatchMaps.keySet().iterator();
             while (mapsIterator.hasNext())
             {
                 String botid = (String) mapsIterator.next();
-                HashMap<File, Long> watchMap = myself.watchMaps.get(botid);
+                HashMap<File, Long> watchMap = this.watcherWatchMaps.get(botid);
                 Iterator iterator = watchMap.keySet().iterator();
 
                 while (iterator.hasNext())
@@ -138,18 +143,18 @@ public class AIMLWatcher
                     try
                     {
                         theFile = (File) iterator.next();
-                    } 
+                    }
                     catch (ConcurrentModificationException e)
                     {
                         // Try again next time.
                         return;
-                    } 
+                    }
                     Long previousTime = watchMap.get(theFile);
                     if (previousTime == null)
                     {
                         watchMap.put(theFile, new Long(theFile.lastModified()));
                         reload(theFile, botid);
-                    } 
+                    }
                     else
                     {
                         long lastModified = theFile.lastModified();
@@ -157,13 +162,13 @@ public class AIMLWatcher
                         {
                             watchMap.put(theFile, new Long(lastModified));
                             reload(theFile, botid);
-                        } 
-                    } 
-                } 
-            } 
+                        }
+                    }
+                }
+            }
             // This, unfortunately, seems to be the only way to prevent a memory
             // leak.
             System.gc();
-        } 
-    } 
+        }
+    }
 }
