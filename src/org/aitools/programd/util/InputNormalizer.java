@@ -9,6 +9,7 @@
 
 package org.aitools.programd.util;
 
+import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -148,7 +149,7 @@ public class InputNormalizer
         StringBuffer result = new StringBuffer(input.length());
 
         // Iterate over the input.
-        for (char aChar = iterator.first(); aChar != StringCharacterIterator.DONE; aChar = iterator.next())
+        for (char aChar = iterator.first(); aChar != CharacterIterator.DONE; aChar = iterator.next())
         {
             // Replace non-letters/digits with a space.
             if (!Character.isLetterOrDigit(aChar) && aChar != '*' && aChar != '_')
@@ -190,7 +191,7 @@ public class InputNormalizer
         StringBuffer result = new StringBuffer(input.length());
 
         // Iterate over the input.
-        for (char aChar = iterator.first(); aChar != StringCharacterIterator.DONE; aChar = iterator.next())
+        for (char aChar = iterator.first(); aChar != CharacterIterator.DONE; aChar = iterator.next())
         {
             // Replace non-letters/digits with a space.
             if (!Character.isLetterOrDigit(aChar))

@@ -9,6 +9,7 @@
 
 package org.aitools.programd.util;
 
+import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 
@@ -220,7 +221,7 @@ public class StringKit
 
         StringCharacterIterator iterator = new StringCharacterIterator(input);
 
-        for (char aChar = iterator.first(); aChar != StringCharacterIterator.DONE; aChar = iterator.next())
+        for (char aChar = iterator.first(); aChar != CharacterIterator.DONE; aChar = iterator.next())
         {
             if (aChar == ' ')
             {
