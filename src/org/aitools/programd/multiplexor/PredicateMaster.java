@@ -382,7 +382,26 @@ public class PredicateMaster
     {
         if (userPredicates.size() > 0 && userPredicates.containsKey(name))
         {
-            return getValueListFromValueObject(name, userPredicates, userPredicates.get(name));
+            Object valueObject = userPredicates.get(name);
+            if (valueObject != null)
+            {
+                if (valueObject instanceof String)
+                {
+                    ArrayList<String> values = createValueList(name, userPredicates);
+                    values.add((String) valueObject);
+                    return values;
+                }
+                else if (valueObject instanceof ArrayList)
+                {
+                    // I would like to figure out how to avoid the type safety
+                    // warning here, but I don't understand generics enough yet.
+                    return (ArrayList<String>) valueObject;
+                }
+                // This should never happen!
+                throw new DeveloperError("Something other than a String or ArrayList found in predicates!");
+            }
+            // This should never, ever happen!
+            throw new DeveloperError("Null String found as value in predicates!");
         }
         // If the predicate is not found, throw an exception.
         throw new NoSuchPredicateException(name);
@@ -390,37 +409,6 @@ public class PredicateMaster
      }
     
     
-    private static ArrayList<String> getValueListFromValueObject(String name, Map<String, Object> userPredicates, String valueObject)
-    {
-        // The predicate is not currently an indexed predicate.
-        if (valueObject != null)
-        {
-            ArrayList<String> values = createValueList(name, userPredicates);
-            values.add(valueObject);
-            return values;
-        } 
-        // This should never, ever happen!
-        throw new DeveloperError("Null String found as value in predicates!");
-    }
-    
-    
-    private static ArrayList<String> getValueListFromValueObject(String name, Map<String, Object> userPredicates, ArrayList<String> valueObject)
-    {
-        if (valueObject != null)
-        {
-            return valueObject;
-        } 
-        // This should never, ever happen!
-        throw new DeveloperError("Null ArrayList found as value in predicates!");
-    }
-
-    
-    private static ArrayList<String> getValueListFromValueObject(String name, Map<String, Object> userPredicates, Object valueObject)
-    {
-        throw new DeveloperError("Something other than a String or ArrayList found in predicates!");
-    } 
-
-
     /**
      * Tries to load a predicate with <code>name</code> for
      * <code>userid</code> from the ActiveMultiplexor into the
