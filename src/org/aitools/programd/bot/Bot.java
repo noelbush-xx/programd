@@ -173,6 +173,16 @@ public class Bot
         this.properties.put(name, value);
     }
 
+    public Map getProperties()
+    {
+        return this.properties;
+    }
+
+    public void setProperties(HashMap map)
+    {
+        this.properties = map;
+    }
+
     /**
      * Registers some information about a predicate in advance. Not required;
      * just used when it is necessary to specify a default value for a predicate
