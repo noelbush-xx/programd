@@ -19,14 +19,14 @@ import org.aitools.programd.util.DeveloperError;
 
 /**
  * <p>
- * This non-trivial implementation of {@link Nodemapper Nodemapper}uses a
- * {@link java.util.TreeMap TreeMap}internally, but only allocates it when the
+ * This non-trivial implementation of {@link Nodemapper Nodemapper} uses a
+ * {@link java.util.TreeMap TreeMap} internally, but only allocates it when the
  * number of keys is two or more.
  * </p>
  * <p>
  * The <code>Nodemaster</code> saves space when many of the
- * {@link Nodemapper Nodemappers}have only one branch, as is often the case in
- * a real-world {@link Graphmaster Graphmaster}.
+ * {@link Nodemapper Nodemappers} have only one branch, as is often the case in
+ * a real-world {@link Graphmaster Graphmaster} .
  * </p>
  * 
  * @author Richard Wallace
@@ -59,20 +59,20 @@ public class Nodemaster implements Nodemapper
             this.value = valueToPut;
             this.size = 1;
             return this.value;
-        }
+        } 
         else if (this.size == 1)
         {
             this.Hidden = new HashMap();
             this.Hidden.put(this.key, this.value);
             this.size = 2;
             return this.Hidden.put(keyToPut.toUpperCase().intern(), valueToPut);
-        }
+        } 
         else
         {
             this.size++;
             return this.Hidden.put(keyToPut.toUpperCase().intern(), valueToPut);
-        }
-    }
+        } 
+    } 
 
     public void remove(Object valueToRemove) throws DeveloperError
     {
@@ -88,20 +88,20 @@ public class Nodemaster implements Nodemapper
                     // Found it.
                     keyToRemove = item.getKey();
                     break;
-                }
-            }
+                } 
+            } 
             if (keyToRemove == null)
             {
                 // We didn't find a key.
                 throw new DeveloperError("Key was not found for value when trying to remove " + valueToRemove);
-            }
+            } 
             if (this.size > 2)
             {
                 // Remove the value from the HashMap (ignore the primary
                 // value/key pair).
                 this.Hidden.remove(keyToRemove);
                 this.size--;
-            }
+            } 
             else
             {
                 // Remove this item from the HashMap.
@@ -113,36 +113,36 @@ public class Nodemaster implements Nodemapper
                 // Remove the empty HashMap to save space.
                 this.Hidden = null;
                 this.size = 1;
-            }
-        }
+            } 
+        } 
         else if (this.size == 1)
         {
             this.value = null;
             this.key = null;
             this.size = 0;
-        }
-    }
+        } 
+    } 
 
     public Object get(String keyToGet)
     {
         if (this.size == 0)
         {
             return null;
-        }
+        } 
         else if (this.size == 1)
         {
             if (keyToGet.equalsIgnoreCase(this.key))
             {
                 return this.value;
-            }
+            } 
             //          (otherwise...)
             return null;
-        }
+        } 
         else
         {
             return this.Hidden.get(keyToGet.toUpperCase());
-        }
-    }
+        } 
+    } 
 
     public Set keySet()
     {
@@ -152,53 +152,53 @@ public class Nodemaster implements Nodemapper
             if (this.key != null)
             {
                 result.add(this.key);
-            }
+            } 
             return result;
-        }
+        } 
         // (otherwise...)
         return this.Hidden.keySet();
-    }
+    } 
 
     public boolean containsKey(String keyToCheck)
     {
         if (this.size == 0)
         {
             return false;
-        }
+        } 
         else if (this.size <= 1)
         {
             return (keyToCheck.equalsIgnoreCase(this.key));
-        }
+        } 
         else
         {
             return this.Hidden.containsKey(keyToCheck.toUpperCase());
-        }
-    }
+        } 
+    } 
 
     public int size()
     {
         return this.size;
-    }
+    } 
 
     public void setParent(Nodemapper parentToSet)
     {
         this.parent = parentToSet;
-    }
+    } 
 
     public Nodemapper getParent()
     {
         return this.parent;
-    }
+    } 
 
     public int getHeight()
     {
         return this.height;
-    }
+    } 
 
     public void setTop()
     {
         this.fillInHeight(0);
-    }
+    } 
 
     /**
      * Sets the <code>height</code> of this <code>Nodemaster</code> to
@@ -213,10 +213,10 @@ public class Nodemaster implements Nodemapper
         if (this.height > heightToFillIn)
         {
             this.height = heightToFillIn;
-        }
+        } 
         if (this.parent != null)
         {
             ((Nodemaster) this.parent).fillInHeight(heightToFillIn + 1);
-        }
-    }
+        } 
+    } 
 }

@@ -24,7 +24,7 @@ abstract public class ParentAwareActionListener implements ActionListener
     public ParentAwareActionListener(Object parentToUse)
     {
         this.parent = parentToUse;
-    }
+    } 
 
     abstract public void actionPerformed(ActionEvent ae);
 }

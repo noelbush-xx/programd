@@ -93,7 +93,7 @@ public class TargetingTool extends Targeting implements Runnable
     /** Targets which have been discarded. */
     private static HashMap discardedTargets = new HashMap();
 
-    /** The index of the next live target to serve (via {@link #nextTarget}). */
+    /** The index of the next live target to serve (via {@link #nextTarget} ). */
     private static int nextTargetToServe = 0;
 
     /** The properties object. */
@@ -149,23 +149,23 @@ public class TargetingTool extends Targeting implements Runnable
 
             gui.setStatus("Loading discarded targets cache....");
             load(DISCARDED_CACHE_PATH, discardedTargets);
-        }
+        } 
         catch (Exception e)
         {
             Log.userfail(e.getMessage(), new String[]
-                { Log.ERROR, Log.TARGETING });
+                { Log.ERROR, Log.TARGETING } );
             System.exit(1);
-        }
+        } 
 
         // Get the timer frequency.
         try
         {
             timerFrequency = Integer.parseInt(Globals.getProperty("programd.targeting.tool.reload-timer", "0")) * 1000;
-        }
+        } 
         catch (NumberFormatException e)
         {
             // Leave it at 0.
-        }
+        } 
 
         /*
          * Call "reload" to load in targets from the actual target data file,
@@ -175,18 +175,18 @@ public class TargetingTool extends Targeting implements Runnable
         try
         {
             reload(targetsDataPath);
-        }
+        } 
         catch (IOException e)
         {
             Log.userfail(e.getMessage(), new String[]
-                { Log.ERROR, Log.TARGETING });
-        }
+                { Log.ERROR, Log.TARGETING } );
+        } 
 
         // Open the first target (if any).
         gui.targetPanel.nextTarget();
 
         gui.setStatus("Ready.");
-    }
+    } 
 
     /**
      * Reloads targets from the targets data path into the live targets cache.
@@ -194,7 +194,7 @@ public class TargetingTool extends Targeting implements Runnable
     public void reload() throws IOException, MalformedURLException
     {
         reload(targetsDataPath);
-    }
+    } 
 
     /**
      * Loads targets from a given path and merges them with the contents of a
@@ -234,7 +234,7 @@ public class TargetingTool extends Targeting implements Runnable
         TargetWriter.rewriteTargets(discardedTargets, discardedCache);
 
         gui.setStatus("Ready.");
-    }
+    } 
 
     /**
      * Loads targets from a given data path into the live targets.
@@ -249,7 +249,7 @@ public class TargetingTool extends Targeting implements Runnable
     private static void load(String path) throws IOException, MalformedURLException
     {
         load(path, liveTargets);
-    }
+    } 
 
     /**
      * Loads targets from a given data path into memory.
@@ -281,7 +281,7 @@ public class TargetingTool extends Targeting implements Runnable
             encoding = XMLKit.getDeclaredXMLEncoding(url.openStream());
             buffReader = new BufferedReader(new InputStreamReader(url.openStream(), encoding));
             length = url.openConnection().getContentLength();
-        }
+        } 
 
         // Handle paths which are apparently files.
         else
@@ -292,12 +292,12 @@ public class TargetingTool extends Targeting implements Runnable
                 // Try to create the file with empty content.
                 FileManager.checkOrCreate(path, "targets data file");
                 TargetWriter.rewriteTargets(new HashMap(), toRead);
-            }
+            } 
 
             encoding = XMLKit.getDeclaredXMLEncoding(FileManager.getFileInputStream(path));
             buffReader = new BufferedReader(new InputStreamReader(FileManager.getFileInputStream(path), encoding));
             length = toRead.length();
-        }
+        } 
         if (buffReader != null)
         {
             TargetsReader reader = new TargetsReader(path, buffReader, new TargetsReaderListener(set), encoding,
@@ -308,12 +308,12 @@ public class TargetingTool extends Targeting implements Runnable
             reader.closeMonitor();
 
             buffReader.close();
-        }
+        } 
         else
         {
             throw new IOException("I/O error trying to read \"" + path + "\".");
-        }
-    }
+        } 
+    } 
 
     /**
      * Starts the Targeting GUI (and the timer, if configured).
@@ -321,7 +321,7 @@ public class TargetingTool extends Targeting implements Runnable
     public void run()
     {
         restartTimer(timerFrequency);
-    }
+    } 
 
     /**
      * Starts the target data checking task with a given frequency.
@@ -336,19 +336,19 @@ public class TargetingTool extends Targeting implements Runnable
             try
             {
                 timer.cancel();
-            }
+            } 
             catch (IllegalStateException e)
             {
                 // Timer was already cancelled.
-            }
-        }
+            } 
+        } 
         if (frequency > 0)
         {
             timer = new Timer();
             timerFrequency = frequency * 1000;
             timer.schedule(new CheckTargetDataTask(), timerFrequency, timerFrequency);
-        }
-    }
+        } 
+    } 
 
     /**
      * Returns the current timer frequency, in seconds.
@@ -358,10 +358,10 @@ public class TargetingTool extends Targeting implements Runnable
     public int getReloadFrequency()
     {
         return timerFrequency / 1000;
-    }
+    } 
 
     /**
-     * A {@link java.util.TimerTask TimerTask}for checking the targets data
+     * A {@link java.util.TimerTask TimerTask} for checking the targets data
      * file for changes.
      */
     private class CheckTargetDataTask extends TimerTask
@@ -371,22 +371,22 @@ public class TargetingTool extends Targeting implements Runnable
             try
             {
                 reload(targetsDataPath);
-            }
+            } 
             catch (ConcurrentModificationException e0)
             {
                 // Try again later.
-            }
+            } 
             catch (Exception e1)
             {
                 gui.showError(e1.getMessage());
                 Log.userinfo(e1.getMessage(), new String[]
-                    { Log.ERROR, Log.TARGETING });
-            }
-        }
-    }
+                    { Log.ERROR, Log.TARGETING } );
+            } 
+        } 
+    } 
 
     /**
-     * Adds a target to the specified set. If the set is {@link #liveTargets},
+     * Adds a target to the specified set. If the set is {@link #liveTargets} ,
      * then if the target is already in the live targets set, the new target is
      * merged with the already-known target.
      * 
@@ -406,24 +406,24 @@ public class TargetingTool extends Targeting implements Runnable
                 if (alreadyKnown != null)
                 {
                     alreadyKnown.merge(target);
-                }
+                } 
                 else
                 {
                     liveTargets.put(new Integer(target.hashCode()), target);
-                }
-            }
-        }
+                } 
+            } 
+        } 
         else if (set == savedTargets)
         {
             save(target);
-        }
+        } 
         else if (set == discardedTargets)
         {
             discard(target);
-        }
+        } 
 
         updatePanels();
-    }
+    } 
 
     /**
      * Indicates whether the <code>TargetingTool</code> has previously
@@ -435,7 +435,7 @@ public class TargetingTool extends Targeting implements Runnable
     private static boolean discardedOrSaved(Integer hashCode)
     {
         return (savedTargets.containsKey(hashCode) || discardedTargets.containsKey(hashCode));
-    }
+    } 
 
     /**
      * Indicates whether the <code>TargetingTool</code> has previously
@@ -448,7 +448,7 @@ public class TargetingTool extends Targeting implements Runnable
     {
         Integer hashCode = new Integer(target.hashCode());
         return discardedOrSaved(hashCode);
-    }
+    } 
 
     /**
      * Saves a new category to the targets AIML file.
@@ -466,28 +466,28 @@ public class TargetingTool extends Targeting implements Runnable
         if (topic == null)
         {
             hasTopic = false;
-        }
+        } 
         else if (topic.trim().length() == 0 || topic.equals(Graphmaster.ASTERISK))
         {
             hasTopic = false;
-        }
+        } 
         else
         {
             hasTopic = true;
-        }
+        } 
 
         if (that == null)
         {
             hasThat = false;
-        }
+        } 
         else if (that.trim().length() == 0 || that.equals(Graphmaster.ASTERISK))
         {
             hasThat = false;
-        }
+        } 
         else
         {
             hasThat = true;
-        }
+        } 
 
         if (!hasTopic)
         {
@@ -496,11 +496,11 @@ public class TargetingTool extends Targeting implements Runnable
             if (hasThat)
             {
                 XMLWriter.write(INDENT + INDENT + THAT_START + that + THAT_END + LINE_SEPARATOR, AIML_RESOURCE);
-            }
+            } 
             XMLWriter.write(INDENT + INDENT + TEMPLATE_START + LINE_SEPARATOR + INDENT + INDENT + INDENT
                     + target.getNewTemplate() + LINE_SEPARATOR + INDENT + INDENT + TEMPLATE_END + LINE_SEPARATOR
                     + INDENT + CATEGORY_END + LINE_SEPARATOR, AIML_RESOURCE);
-        }
+        } 
         else
         {
             XMLWriter.write(INDENT + TOPIC_NAME_BEGIN + topic + TOPIC_NAME_END + LINE_SEPARATOR + INDENT + INDENT
@@ -510,16 +510,16 @@ public class TargetingTool extends Targeting implements Runnable
             {
                 XMLWriter
                         .write(INDENT + INDENT + INDENT + THAT_START + that + THAT_END + LINE_SEPARATOR, AIML_RESOURCE);
-            }
+            } 
             XMLWriter.write(INDENT + INDENT + INDENT + TEMPLATE_START + LINE_SEPARATOR + INDENT + INDENT + INDENT
                     + INDENT + target.getNewTemplate() + LINE_SEPARATOR + INDENT + INDENT + INDENT + TEMPLATE_END
                     + LINE_SEPARATOR + INDENT + INDENT + CATEGORY_END + LINE_SEPARATOR + INDENT + TOPIC_END
                     + LINE_SEPARATOR, AIML_RESOURCE);
-        }
+        } 
 
         // Move the target from targets to savedTargets.
         save(target);
-    }
+    } 
 
     /**
      * Returns a new target from the live targets.
@@ -542,7 +542,7 @@ public class TargetingTool extends Targeting implements Runnable
             if (nextTargetToServe == targetsCount)
             {
                 nextTargetToServe = 0;
-            }
+            } 
 
             // Remember the first one checked.
             int firstChecked = nextTargetToServe;
@@ -576,8 +576,8 @@ public class TargetingTool extends Targeting implements Runnable
 
                         // Return this as the next target.
                         return toCheck;
-                    }
-                }
+                    } 
+                } 
 
                 // If no return yet, see if it meets the criteria specified by
                 // the calling arguments.
@@ -600,9 +600,9 @@ public class TargetingTool extends Targeting implements Runnable
                             nextTargetToServe++;
 
                             return toCheck;
-                        }
-                    }
-                }
+                        } 
+                    } 
+                } 
                 // Otherwise, if we are to include incomplete topics,
                 else if (includeIncompleteTopics)
                 {
@@ -621,9 +621,9 @@ public class TargetingTool extends Targeting implements Runnable
                             nextTargetToServe++;
 
                             return toCheck;
-                        }
-                    }
-                }
+                        } 
+                    } 
+                } 
 
                 // In any case where there has not yet been a return, increment
                 // the marker.
@@ -634,17 +634,17 @@ public class TargetingTool extends Targeting implements Runnable
                 if (nextTargetToServe == targetsCount)
                 {
                     nextTargetToServe = 0;
-                }
-            }
+                } 
+            } 
             // Keep doing this until we cycle back to the first one checked.
             while (nextTargetToServe != firstChecked);
 
             // Return whatever result was found (may be null).
             return toReturn;
-        }
+        } 
         // Otherwise, return null in the case that no next target was found.
         return null;
-    }
+    } 
 
     /**
      * Saves a target from the live targets (does not create a new category.
@@ -657,7 +657,7 @@ public class TargetingTool extends Targeting implements Runnable
         Integer hashCode = new Integer(target.hashCode());
         liveTargets.remove(hashCode);
         savedTargets.put(hashCode, target);
-    }
+    } 
 
     /**
      * Discards all targets from the live targets.
@@ -666,7 +666,7 @@ public class TargetingTool extends Targeting implements Runnable
     {
         discardedTargets.putAll(liveTargets);
         liveTargets.clear();
-    }
+    } 
 
     /**
      * Discards a target from the live targets.
@@ -679,7 +679,7 @@ public class TargetingTool extends Targeting implements Runnable
         Integer hashCode = new Integer(target.hashCode());
         liveTargets.remove(hashCode);
         discardedTargets.put(hashCode, target);
-    }
+    } 
 
     /**
      * Returns the live target set, sorted by the activations count.
@@ -692,7 +692,7 @@ public class TargetingTool extends Targeting implements Runnable
         Collections.sort(sort, new TargetActivationsComparator());
         Collections.reverse(sort);
         return sort;
-    }
+    } 
 
     /**
      * Returns the number of live targets.
@@ -702,7 +702,7 @@ public class TargetingTool extends Targeting implements Runnable
     public static int countLive()
     {
         return liveTargets.size();
-    }
+    } 
 
     /**
      * Returns the number of saved targets.
@@ -712,7 +712,7 @@ public class TargetingTool extends Targeting implements Runnable
     public static int countSaved()
     {
         return savedTargets.size();
-    }
+    } 
 
     /**
      * Returns the number of discarded targets.
@@ -722,7 +722,7 @@ public class TargetingTool extends Targeting implements Runnable
     public static int countDiscarded()
     {
         return discardedTargets.size();
-    }
+    } 
 
     /**
      * Performs any steps necessary before shutdown of the tool.
@@ -732,7 +732,7 @@ public class TargetingTool extends Targeting implements Runnable
         if (timer != null)
         {
             timer.cancel();
-        }
+        } 
 
         // Rewrite the caches.
         TargetWriter.rewriteTargets(liveTargets, liveCache);
@@ -751,9 +751,9 @@ public class TargetingTool extends Targeting implements Runnable
          * new Boolean(includeIncompleteTopics).toString()); try {
          * properties.store(new FileOutputStream(propertiesPath), "Targeting
          * Tool Properties"); } catch (IOException e) { gui.showError("I/O error
-         * while trying to save properties."); }
+         * while trying to save properties."); } 
          */
-    }
+    } 
 
     /**
      * Returns the current targets data path.
@@ -763,7 +763,7 @@ public class TargetingTool extends Targeting implements Runnable
     public String getTargetsDataPath()
     {
         return targetsDataPath;
-    }
+    } 
 
     /**
      * Changes the targets data path and loads data from the new file.
@@ -784,15 +784,15 @@ public class TargetingTool extends Targeting implements Runnable
         {
             reload(path);
             restartTimer(timerFrequency);
-        }
+        } 
         catch (Exception e)
         {
             gui.showError(e.getMessage());
             Log.userinfo(e.getMessage(), new String[]
-                { Log.ERROR, Log.TARGETING });
+                { Log.ERROR, Log.TARGETING } );
             timer.cancel();
-        }
-    }
+        } 
+    } 
 
     /**
      * Returns whether incomplete-that targets should be included.
@@ -802,7 +802,7 @@ public class TargetingTool extends Targeting implements Runnable
     public boolean includeIncompleteThats()
     {
         return includeIncompleteThats;
-    }
+    } 
 
     /**
      * Returns whether incomplete-topic targets should be included.
@@ -812,7 +812,7 @@ public class TargetingTool extends Targeting implements Runnable
     public boolean includeIncompleteTopics()
     {
         return includeIncompleteTopics;
-    }
+    } 
 
     /**
      * Specifies whether incomplete-that targets should be included.
@@ -823,7 +823,7 @@ public class TargetingTool extends Targeting implements Runnable
     public void includeIncompleteThats(boolean b)
     {
         includeIncompleteThats = b;
-    }
+    } 
 
     /**
      * Specifies whether incomplete-topic targets should be included.
@@ -834,7 +834,7 @@ public class TargetingTool extends Targeting implements Runnable
     public void includeIncompleteTopics(boolean b)
     {
         includeIncompleteTopics = b;
-    }
+    } 
 
     /**
      * Updates the panels in the GUI.
@@ -844,7 +844,7 @@ public class TargetingTool extends Targeting implements Runnable
         gui.targetPanel.updateCountDisplay();
         gui.inputPanel.updateFromTargets();
         gui.categoryPanel.updateFromTargets();
-    }
+    } 
 
     /**
      * Starts up a new Targets, managed by a Thread.
@@ -854,11 +854,11 @@ public class TargetingTool extends Targeting implements Runnable
         if (args.length == 0)
         {
             propertiesPath = "targeter.properties";
-        }
+        } 
         else
         {
             propertiesPath = args[0];
-        }
+        } 
 
         // Initialize properties.
         // Load Globals.
@@ -882,9 +882,9 @@ public class TargetingTool extends Targeting implements Runnable
             public void run()
             {
                 shutdown();
-            }
-        });
+            } 
+        } );
 
         new Thread(new TargetingTool()).start();
-    }
+    } 
 }

@@ -21,22 +21,22 @@ public class UserError extends Error
     public UserError(String message)
     {
         super(message);
-    }
+    } 
 
     public UserError(Exception e)
     {
         super("Developer did not describe exception.");
         this.exception = e;
-    }
+    } 
 
     public UserError(String message, Exception e)
     {
         super(message);
         this.exception = e;
-    }
+    } 
 
     public Exception getException()
     {
         return this.exception;
-    }
+    } 
 }

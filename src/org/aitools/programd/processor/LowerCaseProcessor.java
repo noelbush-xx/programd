@@ -29,8 +29,8 @@ public class LowerCaseProcessor extends AIMLProcessor
         if (tag.XMLType == XMLNode.TAG)
         {
             return parser.evaluate(level++, tag.XMLChild).toLowerCase();
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<lowercase></lowercase> must have content!");
-    }
+    } 
 }

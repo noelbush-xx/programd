@@ -28,37 +28,37 @@ public class StringTriple
         this.first = firstString;
         this.second = secondString;
         this.third = thirdString;
-    }
+    } 
 
     public String getFirst()
     {
         return this.first;
-    }
+    } 
 
     public String getSecond()
     {
         return this.second;
-    }
+    } 
 
     public String getThird()
     {
         return this.third;
-    }
+    } 
 
     public void setFirst(String text)
     {
         this.first = text;
-    }
+    } 
 
     public void setSecond(String text)
     {
         this.second = text;
-    }
+    } 
 
     public void setThird(String text)
     {
         this.third = text;
-    }
+    } 
 
     public boolean equals(Object object)
     {
@@ -66,12 +66,12 @@ public class StringTriple
         try
         {
             tuple = (StringTriple) object;
-        }
+        } 
         catch (ClassCastException e)
         {
             return false;
-        }
+        } 
         return (tuple.getFirst().equals(this.first)) & (tuple.getSecond().equals(this.second))
                 & (tuple.getThird().equals(this.third));
-    }
+    } 
 }

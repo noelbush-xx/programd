@@ -91,9 +91,9 @@ public class ICQListener extends Listener
     {
         super(botToListen, "ICQListener", new String[][]
             {
-                { "number", "" },
-                { "password", "" } });
-    }
+                { "number", "" } ,
+                { "password", "" } } );
+    } 
 
     public boolean checkParameters()
     {
@@ -101,27 +101,27 @@ public class ICQListener extends Listener
         try
         {
             this.uin = Integer.parseInt((String) this.parameters.get("number"));
-        }
+        } 
         catch (NumberFormatException e)
         {
             logMessage("Invalid user number (try a number!); aborting.");
             return false;
-        }
+        } 
         this.pass = (String) this.parameters.get("password");
 
         // Check parameters.
         if (this.uin <= 0)
         {
             logMessage("Invalid user number; aborting.");
-        }
+        } 
         if (this.pass.length() == 0)
         {
             logMessage("Invalid empty password; aborting.");
             return false;
-        }
+        } 
         this.clientport = 0;
         return true;
-    }
+    } 
 
     /**
      * Please document this.
@@ -159,32 +159,32 @@ public class ICQListener extends Listener
                 if (this.buffer[2] == (byte) 0x5A && this.buffer[3] == (byte) 0x00)
                 {
                     ack(this.buffer[4], this.buffer[5]);
-                }
+                } 
                 else
                 {
                     logMessage("No acknowledgement from server; aborting.");
                     return;
-                }
-            }
+                } 
+            } 
             this.socket.receive(this.packet);
             this.buffer = this.packet.getData();
             if (this.buffer[2] == (byte) 0x5A && this.buffer[3] == (byte) 0x00)
             {
                 ack(this.buffer[4], this.buffer[5]);
-            }
+            } 
             else
             {
                 if (this.buffer[2] != (byte) 0x0A || this.buffer[3] != (byte) 0x00)
                 {
                     logMessage("No Login Reply: " + this.buffer[2] + " " + this.buffer[3]);
                     return;
-                }
-            }
+                } 
+            } 
             this.online = true;
             logMessage("Successfully logged on.");
 
             toICQ(new byte[]
-                { (byte) 0x4c, (byte) 0x4 });
+                { (byte) 0x4c, (byte) 0x4 } );
 
             ProgramDICQKeepAlive keepAlive = new ProgramDICQKeepAlive(this);
             keepAlive.setDaemon(true);
@@ -207,33 +207,33 @@ public class ICQListener extends Listener
                         ack(this.buffer[4], this.buffer[5]);
                         Log.devinfo("ICQListener: ICQ Command in: " + Integer.toHexString(this.buffer[2]) + " "
                                 + Integer.toHexString(this.buffer[3]), Log.LISTENERS);
-                    }
-                }
+                    } 
+                } 
                 catch (InterruptedIOException e)
                 {
                     // Please document this.
-                }
-            }
-        }
+                } 
+            } 
+        } 
         catch (UnknownHostException e)
         {
             logMessage("Unknown host!");
-        }
+        } 
         catch (SocketException e)
         {
             logMessage("Socket exception!");
-        }
+        } 
         catch (IOException e)
         {
             logMessage("IO Exception!");
-        }
+        } 
         signoff();
-    }
+    } 
 
     public void shutdown()
     {
         signoff();
-    }
+    } 
 
     /**
      * Please document this.
@@ -253,9 +253,9 @@ public class ICQListener extends Listener
         if (msgBuffer.length > 2)
         {
             stream.write(msgBuffer, 2, msgBuffer.length - 2);
-        }
+        } 
         this.socket.send(new DatagramPacket(stream.toByteArray(), stream.size(), serverAddy, SERVERPORT));
-    }
+    } 
 
     /**
      * Please document this.
@@ -275,27 +275,27 @@ public class ICQListener extends Listener
             // ((buffer[16]<<16)&0xFF0000) + ((buffer[17]<<24)&0xFF000000);
             // ebnet.updateStat(Integer.toString(uin),"IC",true);
             return;
-        }
+        } 
         else if (msgBuffer[2] == (byte) 0x78 && msgBuffer[3] == (byte) 0x00)
         {
             from = ((msgBuffer[6]) & 0xFF) + ((msgBuffer[7] << 8) & 0xFF00) + ((msgBuffer[8] << 16) & 0xFF0000)
                     + ((msgBuffer[9] << 24) & 0xFF000000);
             // ebnet.updateStat(Integer.toString(uin),"IC",false);
             return;
-        }
+        } 
         else if (msgBuffer[2] == (byte) 0xE6 && msgBuffer[3] == (byte) 0x00)
         {
             try
             {
                 toICQ(new byte[]
-                    { (byte) 0x42, (byte) 0x4 });
-            }
+                    { (byte) 0x42, (byte) 0x4 } );
+            } 
             catch (IOException e)
             {
                 logMessage("IO Exception: " + e.getMessage());
-            }
+            } 
             return;
-        }
+        } 
         else if (msgBuffer[2] == (byte) 0xDC && msgBuffer[3] == (byte) 0x00)
         {
             from = ((msgBuffer[6]) & 0xFF) + ((msgBuffer[7] << 8) & 0xFF00) + ((msgBuffer[8] << 16) & 0xFF0000)
@@ -304,7 +304,7 @@ public class ICQListener extends Listener
             message = new String(msgBuffer, 20, length - 1);
             logMessage("Message from [" + from + "]: " + message);
             return;
-        }
+        } 
         else if (msgBuffer[2] == (byte) 0x04 && msgBuffer[3] == (byte) 0x01)
         {
             from = ((msgBuffer[6]) & 0xFF) + ((msgBuffer[7] << 8) & 0xFF00) + ((msgBuffer[8] << 16) & 0xFF0000)
@@ -316,14 +316,14 @@ public class ICQListener extends Listener
             {
                 String botResponse = Multiplexor.getResponse(message, from + _ICQ, this.botID, new TextResponder());
                 sendMesg(from, botResponse);
-            }
+            } 
             return;
-        }
+        } 
         else
         {
             return;
-        }
-    }
+        } 
+    } 
 
     /**
      * Converts a <code>short</code> to a <code>byte[]</code>.
@@ -338,7 +338,7 @@ public class ICQListener extends Listener
         b[0] = (byte) (x & 255);
         b[1] = (byte) ((x >> 8) & 255);
         return b;
-    }
+    } 
 
     /**
      * Converts an <code>int</code> to a <code>byte[]</code>.
@@ -355,7 +355,7 @@ public class ICQListener extends Listener
         b[2] = (byte) ((x >> 16) & 255);
         b[3] = (byte) ((x >> 24) & 255);
         return b;
-    }
+    } 
 
     public byte[] header(short command) throws IOException
     {
@@ -366,7 +366,7 @@ public class ICQListener extends Listener
         stream.write(toBytes(this.uin));
         this.seqNo = (short) ((this.seqNo + 1) & 0xFFFF);
         return stream.toByteArray();
-    }
+    } 
 
     public void ack(byte a, byte b) throws IOException
     {
@@ -378,12 +378,12 @@ public class ICQListener extends Listener
         stream.write(b);
         stream.write(toBytes(this.uin));
         this.socket.send(new DatagramPacket(stream.toByteArray(), stream.size(), serverAddy, SERVERPORT));
-    }
+    } 
 
     public void send(byte[] msgBuffer) throws IOException
     {
         this.socket.send(new DatagramPacket(msgBuffer, msgBuffer.length, serverAddy, SERVERPORT));
-    }
+    } 
 
     public void sendMesg(int to, String mesg)
     {
@@ -400,12 +400,12 @@ public class ICQListener extends Listener
             stream.write(mesg.getBytes());
             stream.write((byte) '\0');
             toICQ(stream.toByteArray());
-        }
+        } 
         catch (IOException e)
         {
             logMessage("IO exception!");
-        }
-    }
+        } 
+    } 
 
     public void signoff()
     {
@@ -421,15 +421,15 @@ public class ICQListener extends Listener
             this.socket.send(new DatagramPacket(stream.toByteArray(), stream.size(), serverAddy, SERVERPORT));
             stream.close();
             //tcpSocket.close();
-        }
+        } 
         catch (IOException e)
         {
             logMessage("IO exception while trying to sign off!");
-        }
+        } 
         // ebnet.icoff();
         this.socket.close();
         logMessage("Signed off.");
-    }
+    } 
 
     /**
      * Standard method for logging and notifying of a message.
@@ -440,8 +440,8 @@ public class ICQListener extends Listener
     private void logMessage(String message)
     {
         Log.userinfo(MSG + message, Log.LISTENERS);
-    }
-}
+    } 
+} 
 
 class ProgramDICQKeepAlive extends Thread
 {
@@ -450,7 +450,7 @@ class ProgramDICQKeepAlive extends Thread
     public ProgramDICQKeepAlive(ICQListener parentListener)
     {
         this.parent = parentListener;
-    }
+    } 
 
     public void run()
     {
@@ -460,15 +460,15 @@ class ProgramDICQKeepAlive extends Thread
             {
                 this.parent.send(this.parent.header((short) 0x42E));
                 sleep(120000);
-            }
+            } 
             catch (IOException e)
             {
                 // Please document this.
-            }
+            } 
             catch (InterruptedException e)
             {
                 // Please document this.
-            }
-        }
-    }
+            } 
+        } 
+    } 
 }

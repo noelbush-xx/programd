@@ -21,8 +21,8 @@ import org.aitools.programd.util.XMLKit;
 import org.aitools.programd.util.logging.Log;
 
 /**
- * Provides generic reading functionality for such classes as {@link AIMLReader}
- * and {@link org.aitools.programd.targeting.gui.TargetsReader}.
+ * Provides generic reading functionality for such classes as {@link AIMLReader} 
+ * and {@link org.aitools.programd.targeting.gui.TargetsReader} .
  * 
  * @author Noel Bush
  */
@@ -128,10 +128,10 @@ abstract public class GenericReader
 
     /**
      * Constructs a new <code>GenericReader</code>, given a
-     * {@link java.io.BufferedReader BufferedReader}handle to some input stream (
+     * {@link java.io.BufferedReader BufferedReader} handle to some input stream (
      * <code>buffReader</code>), a filename to use in printing error messages (
      * <code>fileName</code>), and a
-     * {@link org.aitools.programd.agent.listener.Listener}that will handle
+     * {@link org.aitools.programd.agent.listener.Listener} that will handle
      * creation of new categories as they are discovered.
      * 
      * @param fileNameToUse
@@ -157,11 +157,11 @@ abstract public class GenericReader
 
         // Do any initialization.
         initialize();
-    }
+    } 
 
     /**
      * Constructs a new <code>GenericReader</code>, given a
-     * {@link java.io.BufferedReader BufferedReader}handle to some input stream (
+     * {@link java.io.BufferedReader BufferedReader} handle to some input stream (
      * <code>buffReader</code>), a filename to use in printing error messages (
      * <code>fileName</code>), and a ReaderListener that will handle creation
      * of new categories as they are discovered. In this version, byte counting
@@ -184,7 +184,7 @@ abstract public class GenericReader
 
         // Do any initialization.
         initialize();
-    }
+    } 
 
     abstract protected void initialize();
 
@@ -231,86 +231,86 @@ abstract public class GenericReader
                             try
                             {
                                 this.byteCount += line.toString().getBytes(this.encoding).length;
-                            }
+                            } 
                             catch (UnsupportedEncodingException e)
                             {
                                 throw new UserError("Encoding \"" + this.encoding
                                         + "\" is not supported by your platform!");
-                            }
-                        }
+                            } 
+                        } 
 
                         // Increment the line number.
                         this.lineNumber++;
 
                         // Append line (with line separator), search again.
                         this.buffer.append(line.toString() + LINE_SEPARATOR);
-                    }
+                    } 
                     // An I/O exception means we've got to abort this file.
                     catch (IOException e)
                     {
                         Trace.userinfo(QUOTE_MARK + this.fileName + "\" could not be read.");
                         return;
-                    }
+                    } 
                     // A null pointer exception means the end of the file has
                     // been reached.
                     catch (NullPointerException e)
                     {
                         // End of file.
                         this.searching = false;
-                    }
-                }
+                    } 
+                } 
                 else
                 {
                     // Found a tag start marker, so leave.
                     this.searching = false;
-                }
-            }
+                } 
+            } 
             // Check if we are at end of file.
             if (this.tagStart < 0)
             {
                 // If so, we are finished. Let the parsing loop take us out.
                 this.done = true;
                 continue parsing;
-            }
+            } 
 
             // Try states, expecting a custom exception to be thrown as soon as
             // a transition is made.
             try
             {
                 tryStates();
-            }
+            } 
             // A successful transition will throw this exception, and continue
             // at the parsing loop.
             catch (TransitionMade e)
             {
                 continue parsing;
-            }
+            } 
 
             // Advance searchStart to the character following the start of this
             // unusable tag.
             this.searchStart = this.tagStart + 1;
-        }
-    }
+        } 
+    } 
 
     abstract protected void tryStates() throws TransitionMade;
 
     /**
      * <p>
-     * Checks whether {@link #bufferString}contains <code>tag</code> at
-     * {@link #tagStart},
+     * Checks whether {@link #bufferString} contains <code>tag</code> at
+     * {@link #tagStart} ,
      * </p>
      * <p>
-     * If so, sets {@link #tagLength}to the length of <code>tag</code>, sets
-     * {@link #state}to <code>toState</code> and returns <code>true</code>.
+     * If so, sets {@link #tagLength} to the length of <code>tag</code>, sets
+     * {@link #state} to <code>toState</code> and returns <code>true</code>.
      * </p>
      * <p>
      * If not, returns <code>false</code>.
      * </p>
      * 
      * @param tag
-     *            the tag to look for in {@link #buffer}
+     *            the tag to look for in {@link #buffer} 
      * @param toState
-     *            the parser {@link #state}to assign if successful
+     *            the parser {@link #state} to assign if successful
      * @return whether the tag was found
      */
     protected boolean succeed(String tag, int toState)
@@ -323,19 +323,19 @@ abstract public class GenericReader
             this.searchStart = 0;
             this.buffer.delete(0, this.tagStart + this.tagLength);
             return true;
-        }
+        } 
         // (otherwise...)
         return false;
-    }
+    } 
 
     /**
-     * If {@link #bufferString}contains <code>tag</code> at {@link #tagStart}
-     * and sets {@link #state}to <code>toState</code>.
+     * If {@link #bufferString} contains <code>tag</code> at {@link #tagStart} 
+     * and sets {@link #state} to <code>toState</code>.
      * 
      * @param tag
-     *            the tag to look for in {@link #buffer}
+     *            the tag to look for in {@link #buffer} 
      * @param toState
-     *            the parser {@link #state}to assign if successful
+     *            the parser {@link #state} to assign if successful
      * @throws TransitionMade
      *             if the transition is successfully made
      */
@@ -344,22 +344,22 @@ abstract public class GenericReader
         if (succeed(tag, toState))
         {
             throw (this.TRANSITION_MADE);
-        }
-    }
+        } 
+    } 
 
     /**
-     * If {@link #bufferString}contains <code>tag</code> at {@link #tagStart},
-     * sets {@link #state}to <code>toState</code>, captures the substring of
-     * {@link #bufferString}from <code>0</code> to {@link #tagStart},
+     * If {@link #bufferString} contains <code>tag</code> at {@link #tagStart} ,
+     * sets {@link #state} to <code>toState</code>, captures the substring of
+     * {@link #bufferString} from <code>0</code> to {@link #tagStart} ,
      * filtering whitespace and setting <code>component</code> to the result.
      * 
      * @param tag
-     *            the tag to look for in {@link #buffer}
+     *            the tag to look for in {@link #buffer} 
      * @param toState
-     *            the parser {@link #state}to assign if successful
+     *            the parser {@link #state} to assign if successful
      * @param component
      *            the component to set to the whitespace-filtered substring of
-     *            {@link #buffer}from <code>0</code> to {@link #tagStart}
+     *            {@link #buffer} from <code>0</code> to {@link #tagStart} 
      * @throws TransitionMade
      *             if the transition is successfully made
      */
@@ -371,31 +371,31 @@ abstract public class GenericReader
             {
                 component.set(this.readerInstance, XMLKit.filterWhitespace(this.bufferString
                         .substring(0, this.tagStart)));
-            }
+            } 
             catch (Exception e)
             {
                 throw new DeveloperError(e);
-            }
+            } 
             throw (this.TRANSITION_MADE);
-        }
-    }
+        } 
+    } 
 
     /**
      * <p>
-     * If {@link #bufferString}contains <code>tag</code> at {@link #tagStart},
-     * sets {@link #state}to <code>toState</code>, captures the substring of
-     * {@link #bufferString}from <code>0</code> to {@link #tagStart},
+     * If {@link #bufferString} contains <code>tag</code> at {@link #tagStart} ,
+     * sets {@link #state} to <code>toState</code>, captures the substring of
+     * {@link #bufferString} from <code>0</code> to {@link #tagStart} ,
      * filtering whitespace and setting <code>component</code> to the result,
      * then deleting the tag from the buffer.
      * </p>
      * 
      * @param tag
-     *            the tag to look for in {@link #buffer}
+     *            the tag to look for in {@link #buffer} 
      * @param toState
-     *            the parser {@link #state}to assign if successful
+     *            the parser {@link #state} to assign if successful
      * @param component
      *            the component to set to the whitespace-filtered substring of
-     *            {@link #buffer}from <code>0</code> to {@link #tagStart}
+     *            {@link #buffer} from <code>0</code> to {@link #tagStart} 
      * @param attributeName
      *            the name of the attribute holding the desired content
      * @throws TransitionMade
@@ -411,7 +411,7 @@ abstract public class GenericReader
                 Log.userinfo(tag + " is missing closing \"" + MARKER_END + "\" at " + this.lineNumber + " in \""
                         + this.fileName + "\".", Log.ERROR);
                 Log.userinfo("Will not process this element.", Log.ERROR);
-            }
+            } 
             else
             {
                 String attributeValue = XMLKit.getAttributeValue(attributeName, this.bufferString.substring(
@@ -421,16 +421,16 @@ abstract public class GenericReader
                     try
                     {
                         component.set(this.readerInstance, attributeValue);
-                    }
+                    } 
                     catch (Exception e)
                     {
                         throw new DeveloperError(e);
-                    }
+                    } 
                     throw (this.TRANSITION_MADE);
-                }
-            }
-        }
-    }
+                } 
+            } 
+        } 
+    } 
 
     /**
      * Thrown by the various <code>transition</code> methods when a transition
@@ -439,5 +439,5 @@ abstract public class GenericReader
     public class TransitionMade extends Throwable
     {
         // No body.
-    }
+    } 
 }

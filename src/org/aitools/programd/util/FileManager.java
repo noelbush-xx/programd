@@ -36,7 +36,7 @@ public class FileManager
     static
     {
         workingDirectory.push(System.getProperty("user.dir"));
-    }
+    } 
 
     /**
      * Sets the root path.
@@ -47,7 +47,7 @@ public class FileManager
     public static void setRootPath(String path)
     {
         rootPath = path;
-    }
+    } 
 
     /**
      * Gets a file from a given path. First tries to use the path as-is if it's
@@ -64,9 +64,9 @@ public class FileManager
         if (file.exists())
         {
             return file;
-        }
+        } 
         return new File(rootPath + path);
-    }
+    } 
 
     /**
      * Gets a file from a given path. First tries to use the path as-is if it's
@@ -90,10 +90,10 @@ public class FileManager
             if (!file.exists())
             {
                 throw new FileNotFoundException("Couldn't find \"" + path + "\".");
-            }
-        }
+            } 
+        } 
         return file;
-    }
+    } 
 
     /**
      * Opens and returns a FileInputStream for a given path. If the specified
@@ -108,7 +108,7 @@ public class FileManager
     {
         File file = getExistingFile(path);
         return new FileInputStream(file);
-    }
+    } 
 
     /**
      * Opens and returns a FileOutputStream for a given path. If the specified
@@ -123,7 +123,7 @@ public class FileManager
     {
         File file = getExistingFile(path);
         return new FileOutputStream(file);
-    }
+    } 
 
     /**
      * Gets a FileWriter from a given path. First tries to use the path as-is if
@@ -144,7 +144,7 @@ public class FileManager
     {
         File file = getFile(path);
         return new FileWriter(file, append);
-    }
+    } 
 
     /**
      * Returns the absolute path. First checks whether the path as-is is
@@ -163,14 +163,14 @@ public class FileManager
         if (file.isAbsolute())
         {
             return file.getAbsolutePath();
-        }
+        } 
         file = new File(rootPath + path);
         if (!file.exists())
         {
             throw new FileNotFoundException("Could not find \"" + path + "\".");
-        }
+        } 
         return file.getAbsolutePath();
-    }
+    } 
 
     /**
      * Checks whether a file given by a path exists, and if not, creates it,
@@ -191,16 +191,16 @@ public class FileManager
         if (file.exists())
         {
             return file;
-        }
+        } 
         if (description == null)
         {
             description = "file";
-        }
+        } 
 
         try
         {
             file.createNewFile();
-        }
+        } 
         catch (IOException e0)
         {
             // This may mean that some necessary directories don't exist.
@@ -212,25 +212,25 @@ public class FileManager
                     try
                     {
                         file.createNewFile();
-                    }
+                    } 
                     catch (IOException e1)
                     {
                         throw new UserError("Could not create " + description + " \"" + file.getAbsolutePath() + "\".");
-                    }
-                }
+                    } 
+                } 
                 else
                 {
                     throw new UserError("Could not create directory \"" + directory.getAbsolutePath() + "\".");
-                }
-            }
+                } 
+            } 
             else
             {
                 throw new UserError("Could not create " + description + " directory.");
-            }
-        }
+            } 
+        } 
         Trace.devinfo("Created new " + description + " \"" + path + "\".");
         return file;
-    }
+    } 
 
     /**
      * Returns the entire contents of a file as a String.
@@ -252,22 +252,22 @@ public class FileManager
             try
             {
                 url = new URL(path);
-            }
+            } 
             catch (MalformedURLException e)
             {
                 Log.userinfo("Malformed URL: \"" + path + "\"", Log.ERROR);
-            }
+            } 
 
             try
             {
                 String encoding = XMLKit.getDeclaredXMLEncoding(url.openStream());
                 buffReader = new BufferedReader(new InputStreamReader(url.openStream(), encoding));
-            }
+            } 
             catch (IOException e)
             {
                 Log.userinfo("I/O error trying to read \"" + path + "\"", Log.ERROR);
-            }
-        }
+            } 
+        } 
         // Handle paths which are apparently files.
         else
         {
@@ -275,17 +275,17 @@ public class FileManager
             try
             {
                 toRead = getExistingFile(path);
-            }
+            } 
             catch (FileNotFoundException e)
             {
                 Log.userinfo(e.getMessage(), Log.ERROR);
                 return null;
-            }
+            } 
 
             if (toRead.isAbsolute())
             {
                 workingDirectory.push(toRead.getParent());
-            }
+            } 
 
             if (toRead.exists() && !toRead.isDirectory())
             {
@@ -295,25 +295,25 @@ public class FileManager
                 {
                     String encoding = XMLKit.getDeclaredXMLEncoding(new FileInputStream(path));
                     buffReader = new BufferedReader(new InputStreamReader(new FileInputStream(path), encoding));
-                }
+                } 
                 catch (IOException e)
                 {
                     Log.userinfo("I/O error trying to read \"" + path + "\"", Log.ERROR);
                     return null;
-                }
-            }
+                } 
+            } 
             else
             {
                 if (!toRead.exists())
                 {
                     throw new UserError("\"" + path + "\" does not exist!");
-                }
+                } 
                 if (toRead.isDirectory())
                 {
                     throw new UserError("\"" + path + "\" is a directory!");
-                }
-            }
-        }
+                } 
+            } 
+        } 
         StringBuffer result = new StringBuffer();
         String line;
         try
@@ -321,16 +321,16 @@ public class FileManager
             while ((line = buffReader.readLine()) != null)
             {
                 result.append(line);
-            }
+            } 
             buffReader.close();
-        }
+        } 
         catch (IOException e)
         {
             Log.userinfo("I/O error trying to read \"" + path + "\"", Log.ERROR);
             return null;
-        }
+        } 
         return result.toString();
-    }
+    } 
 
     /**
      * Expands a localized file name that may contain wildcards to an array of
@@ -346,7 +346,7 @@ public class FileManager
     public static String[] glob(String path) throws FileNotFoundException
     {
         return glob(path, (String) workingDirectory.peek());
-    }
+    } 
 
     /**
      * <p>
@@ -376,8 +376,8 @@ public class FileManager
         if (wildCardIndex < 0)
         {
             return new String[]
-                { path };
-        }
+                { path } ;
+        } 
         // (otherwise...)
         int separatorIndex = path.lastIndexOf(File.separatorChar);
         // In case someone used a file separator char that doesn't belong to
@@ -392,13 +392,13 @@ public class FileManager
                 {
                     // This is really going the extra mile....
                     separatorIndex = path.lastIndexOf(':');
-                }
-            }
-        }
+                } 
+            } 
+        } 
         if (separatorIndex > wildCardIndex)
         {
             throw new FileNotFoundException("Cannot expand " + path);
-        }
+        } 
         String pattern;
         String dirName;
         File dir;
@@ -410,29 +410,29 @@ public class FileManager
             if (!dir.isDirectory())
             {
                 dir = new File(workingDirectory + File.separator + dirName);
-            }
-        }
+            } 
+        } 
         else
         {
             pattern = path;
             dirName = workingDirectoryToUse;
             dir = new File(dirName);
-        }
+        } 
         if (!dir.isDirectory())
         {
             throw new UserError("\"" + dirName + "\" is not a valid directory path!");
-        }
+        } 
         String[] list = dir.list(new WildCardFilter(pattern, '*'));
         if (list == null)
         {
             return new String[0];
-        }
+        } 
         for (int i = list.length; --i >= 0;)
         {
             list[i] = dirName + File.separator + list[i];
-        }
+        } 
         return list;
-    }
+    } 
 
     /**
      * Pushes a new working directory onto the stack.
@@ -443,7 +443,7 @@ public class FileManager
     public static void pushWorkingDirectory(String path)
     {
         workingDirectory.push(path);
-    }
+    } 
 
     /**
      * Pops a working directory off the stack.
@@ -453,8 +453,8 @@ public class FileManager
         if (workingDirectory.size() > 1)
         {
             workingDirectory.pop();
-        }
-    }
+        } 
+    } 
 
     /**
      * Returns the working directory.
@@ -464,5 +464,5 @@ public class FileManager
     public static String getWorkingDirectory()
     {
         return (String) workingDirectory.peek();
-    }
+    } 
 }

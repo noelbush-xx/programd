@@ -47,11 +47,11 @@ abstract public class ClassRegistry extends Hashtable
         try
         {
             baseClass = Class.forName(baseClassName);
-        }
+        } 
         catch (ClassNotFoundException e)
         {
             throw new UserError("Could not find base class \"" + baseClassName + "\"!", e);
-        }
+        } 
 
         // Load in the classesToRegister.
         Class classToRegister;
@@ -62,18 +62,18 @@ abstract public class ClassRegistry extends Hashtable
             try
             {
                 classToRegister = Class.forName(classesToRegister[index]);
-            }
+            } 
             catch (ClassNotFoundException e)
             {
                 throw new UserError("\"" + classesToRegister[index]
                         + "\" is missing from your classpath.  Cannot initialize registry.", e);
-            }
+            } 
             // Ensure that the class is actually an extension of the processor.
             if (!baseClass.isAssignableFrom(classToRegister))
             {
                 throw new DeveloperError("Developer has incorrectly specified \"" + classesToRegister[index]
                         + "\" as a registrable class.");
-            }
+            } 
 
             // Get the label field.
             Field labelField = null;
@@ -82,38 +82,38 @@ abstract public class ClassRegistry extends Hashtable
                 try
                 {
                     labelField = classToRegister.getDeclaredField(LABEL);
-                }
+                } 
                 catch (NoSuchFieldException e)
                 {
                     throw new DeveloperError("Unlikely error: \"" + classesToRegister[index]
                             + "\" is missing label field!");
-                }
-            }
+                } 
+            } 
             else
             {
                 throw new DeveloperError("Failed to get processor \"" + classesToRegister[index] + "\"");
-            }
+            } 
 
             // Get the value in the label field.
             String label = null;
             try
             {
                 label = (String) labelField.get(null);
-            }
+            } 
             catch (IllegalAccessException e)
             {
                 throw new DeveloperError("Label field for \"" + classesToRegister[index] + "\" is not accessible!");
-            }
+            } 
 
             // (Finally!) register this class.
             if (label != null)
             {
                 this.put(label, classToRegister);
-            }
+            } 
             else
             {
                 throw new DeveloperError("Tried to register class with null label!");
-            }
-        }
-    }
+            } 
+        } 
+    } 
 }

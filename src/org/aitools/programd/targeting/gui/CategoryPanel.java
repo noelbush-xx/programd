@@ -27,8 +27,8 @@ public class CategoryPanel extends TargetAwareTabulator
     public CategoryPanel(TargetingGUI gui)
     {
         super(new String[]
-            { "activations", "<pattern>", "<that>", "<topic>" }, gui);
-    }
+            { "activations", "<pattern>", "<that>", "<topic>" } , gui);
+    } 
 
     public void updateFromTargets()
     {
@@ -41,13 +41,13 @@ public class CategoryPanel extends TargetAwareTabulator
             Target target = (Target) targetIterator.next();
             rows.add(new Object[]
                 { new Integer(target.getActivations()), target.getMatchPattern(), target.getMatchThat(),
-                        target.getMatchTopic(), target, new Integer(1) });
-        }
-        Object[][] newData = new Object[][] {};
+                        target.getMatchTopic(), target, new Integer(1) } );
+        } 
+        Object[][] newData = new Object[][] {} ;
     newData = (Object[][]) rows.toArray(newData);
     if (newData.length > 0)
     {
         reloadData(newData);
-    }
-}
+    } 
+} 
 }

@@ -36,8 +36,8 @@ public class LearnProcessor extends AIMLProcessor
         {
             Graphmaster.load(parser.evaluate(level++, tag.XMLChild), parser.getBotID());
             return EMPTY_STRING;
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<learn></learn> must have content!");
-    }
+    } 
 }

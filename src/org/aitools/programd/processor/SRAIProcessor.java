@@ -63,25 +63,25 @@ public class SRAIProcessor extends AIMLProcessor
                                 sraiChild.XMLData = Globals.getInfiniteLoopInput();
                                 Log.userinfo("Infinite loop detected; substituting \"" + Globals.getInfiniteLoopInput()
                                         + "\".", Log.RUNTIME);
-                            }
+                            } 
                             else
                             {
                                 Log.userinfo("Unrecoverable infinite loop.", Log.RUNTIME);
                                 return EMPTY_STRING;
-                            }
-                        }
-                    }
+                            } 
+                        } 
+                    } 
                     parser.addInput(sraiContent);
-                }
-            }
+                } 
+            } 
             if (Globals.showMatchTrace())
             {
                 Trace.userinfo("Symbolic Reduction:");
-            }
+            } 
             return Multiplexor.getInternalResponse(parser.evaluate(level++, tag.XMLChild), parser.getUserID(), parser
                     .getBotID(), parser);
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<srai></srai> must have content!");
-    }
+    } 
 }

@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * This is a trivial extension of {@link LinkedHashMap}that is limited to a
+ * This is a trivial extension of {@link LinkedHashMap} that is limited to a
  * given number of entries.
  * 
  * @author Noel Bush
@@ -33,10 +33,10 @@ public class LRUCache extends LinkedHashMap
     {
         super();
         LRUCache.maxEntries = maxEntriesToUse;
-    }
+    } 
 
     protected boolean removeEldestEntry(Map.Entry eldest)
     {
         return size() > maxEntries;
-    }
+    } 
 }

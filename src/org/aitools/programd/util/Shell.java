@@ -102,7 +102,7 @@ public class Shell
                 "/who              - prints the id of the current bot",
                 "/files            - lists the files loaded by the current bot",
                 "/roll chatlog     - rolls over chat log", "/roll targets     - rolls over saved targeting data",
-                "/commandables     - lists available \"shell commandables\" (such as listeners)" };
+                "/commandables     - lists available \"shell commandables\" (such as listeners)" } ;
 
     // Instance variables.
 
@@ -129,7 +129,7 @@ public class Shell
     {
         this.consoleIn = new BufferedReader(new InputStreamReader(System.in));
         this.consoleDisplay = this.consolePrompt = System.out;
-    }
+    } 
 
     /**
      * A <code>Shell</code> with custom input and output streams.
@@ -146,7 +146,7 @@ public class Shell
         this.consoleIn = new BufferedReader(new InputStreamReader(in));
         this.consoleDisplay = display;
         this.consolePrompt = prompt;
-    }
+    } 
 
     /**
      * Runs the shell.
@@ -159,7 +159,7 @@ public class Shell
         {
             showConsole("No bot to talk to!");
             return;
-        }
+        } 
         this.botid = bot.getID();
         this.botName = bot.getPropertyValue(BOT_NAME_PREDICATE);
 
@@ -174,12 +174,12 @@ public class Shell
             try
             {
                 theLine = this.consoleIn.readLine();
-            }
+            } 
             catch (IOException e)
             {
                 Log.userinfo("Cannot read from console!", Log.ERROR);
                 return;
-            }
+            } 
             if (theLine == null)
             {
                 /*
@@ -193,14 +193,14 @@ public class Shell
                     try
                     {
                         Thread.sleep(86400000);
-                    }
+                    } 
                     catch (InterruptedException e)
                     {
                         break;
-                    }
-                }
+                    } 
+                } 
                 break;
-            }
+            } 
             // (otherwise...)
             MessagePrinter.gotLine();
 
@@ -212,86 +212,86 @@ public class Shell
                 {
                     printExitMessage();
                     return;
-                }
+                } 
                 // Help command
                 else if (theLine.toLowerCase().equals(HELP))
                 {
                     help();
-                }
+                } 
                 // Load into Graphmaster command
                 else if (theLine.toLowerCase().startsWith(LOAD))
                 {
                     load(theLine, this.botid);
-                }
+                } 
                 // Unload from Graphmaster command
                 else if (theLine.toLowerCase().startsWith(UNLOAD))
                 {
                     unload(theLine, this.botid);
-                }
+                } 
                 // Bot list command
                 else if (theLine.toLowerCase().equals(BOTLIST))
                 {
                     showBotList();
-                }
+                } 
                 // Talk to bot command
                 else if (theLine.toLowerCase().startsWith(TALKTO))
                 {
                     talkto(theLine);
-                }
+                } 
                 // Who's the bot command
                 else if (theLine.toLowerCase().equals(WHO))
                 {
                     who();
-                }
+                } 
                 // List bot files command
                 else if (theLine.toLowerCase().equals(BOT_FILES))
                 {
                     listBotFiles();
-                }
+                } 
                 // Roll chatlog command
                 else if (theLine.toLowerCase().startsWith(ROLL_CHATLOG))
                 {
                     rollChatLog(this.botid);
-                }
+                } 
                 // Roll targets command
                 else if (theLine.toLowerCase().equals(ROLL_TARGETS))
                 {
                     rollTargets();
-                }
+                } 
                 // List commandables command
                 else if (theLine.toLowerCase().equals(COMMANDABLES))
                 {
                     listCommandables();
-                }
+                } 
                 else
                 {
                     try
                     {
                         sendCommand(theLine);
-                    }
+                    } 
                     catch (NoCommandException e0)
                     {
                         showConsole("Please specify a command following the commandable.");
-                    }
+                    } 
                     catch (NoSuchCommandableException e1)
                     {
                         showConsole("No such commandable is loaded.  Type \"" + COMMANDABLES
                                 + "\" for a list of loaded commandables.");
-                    }
-                }
-            }
+                    } 
+                } 
+            } 
             else if (theLine.length() > 0)
             {
                 showConsole(this.botName, XMLKit.breakLinesAtTags(Multiplexor.getResponse(theLine, HOSTNAME,
                         this.botid, new TextResponder())));
-            }
-        }
-    }
+            } 
+        } 
+    } 
 
     public String getCurrentBotID()
     {
         return this.botid;
-    }
+    } 
 
     /**
      * <p>
@@ -304,7 +304,7 @@ public class Shell
     private void promptConsole(String preprompt)
     {
         MessagePrinter.print(preprompt + PROMPT, SHELL, this.consolePrompt, MessagePrinter.CONSOLE);
-    }
+    } 
 
     /**
      * <p>
@@ -317,7 +317,7 @@ public class Shell
     private void showConsole(String message)
     {
         MessagePrinter.println(message, SHELL, this.consoleDisplay, MessagePrinter.CONSOLE);
-    }
+    } 
 
     /**
      * <p>
@@ -332,8 +332,8 @@ public class Shell
         for (int index = 0; index < message.length; index++)
         {
             MessagePrinter.println(message[index], SHELL, this.consoleDisplay, MessagePrinter.CONSOLE);
-        }
-    }
+        } 
+    } 
 
     /**
      * <p>
@@ -348,7 +348,7 @@ public class Shell
     private void showConsole(String preprompt, String message)
     {
         MessagePrinter.println(preprompt + PROMPT + message, SHELL, this.consoleDisplay, MessagePrinter.CONSOLE);
-    }
+    } 
 
     /**
      * <p>
@@ -366,8 +366,8 @@ public class Shell
         {
             MessagePrinter.println(preprompt + PROMPT + message[index], SHELL, this.consoleDisplay,
                     MessagePrinter.CONSOLE);
-        }
-    }
+        } 
+    } 
 
     /**
      * Prints an exit message.
@@ -375,7 +375,7 @@ public class Shell
     private void printExitMessage()
     {
         Log.userinfo("Exiting at user request.", Log.STARTUP);
-    }
+    } 
 
     /**
      * Prints help text.
@@ -383,7 +383,7 @@ public class Shell
     public void help()
     {
         showConsole(HELP_TEXT);
-    }
+    } 
 
     /**
      * Loads a given file for a given bot.
@@ -395,7 +395,7 @@ public class Shell
         if (space == -1)
         {
             showConsole("You must specify a filename.");
-        }
+        } 
         else
         {
             int categories = Graphmaster.getTotalCategories();
@@ -403,17 +403,17 @@ public class Shell
             try
             {
                 path = FileManager.getFile(line.substring(space + 1)).getCanonicalPath();
-            }
+            } 
             catch (IOException e)
             {
                 showConsole("I/O exception trying to locate file.");
                 return;
-            }
+            } 
             Graphmaster.load(path, botidToUse);
             Log.userinfo(Graphmaster.getTotalCategories() - categories + " categories loaded from \"" + path + "\".",
                     Log.LEARN);
-        }
-    }
+        } 
+    } 
 
     /**
      * Unloads a given file for a given bot.
@@ -425,7 +425,7 @@ public class Shell
         if (space == -1)
         {
             showConsole("You must specify a filename.");
-        }
+        } 
         else
         {
             int categories = Graphmaster.getTotalCategories();
@@ -442,13 +442,13 @@ public class Shell
                 if (iteratorFile.getAbsolutePath().equals(path))
                 {
                     fileToUnload = iteratorFile;
-                }
-            }
+                } 
+            } 
             Graphmaster.unload(path, bot);
             bot.getLoadedFilesMap().remove(fileToUnload);
             Log.userinfo(categories - Graphmaster.getTotalCategories() + " categories unloaded.", Log.LEARN);
-        }
-    }
+        } 
+    } 
 
     /**
      * Shows a list of active bots.
@@ -456,7 +456,7 @@ public class Shell
     public void showBotList()
     {
         showConsole("Active bots: " + Bots.getNiceList());
-    }
+    } 
 
     /**
      * Switches conversation to a given botid.
@@ -468,12 +468,12 @@ public class Shell
         if (space == -1)
         {
             showConsole("You must specify a bot id.");
-        }
+        } 
         else
         {
             switchToBot(line.substring(space + 1));
-        }
-    }
+        } 
+    } 
 
     /**
      * Switches to a bot, given an id.
@@ -486,14 +486,14 @@ public class Shell
         {
             showConsole("That bot id is not known. Check your startup files.");
             return;
-        }
+        } 
         this.botid = newBotID;
         this.botName = Bots.getBot(newBotID).getPropertyValue(BOT_NAME_PREDICATE);
         showConsole("Switched to bot \"" + newBotID + "\" (name: \"" + this.botName + "\").");
         // Send the connect string and print the first response.
         showConsole(this.botName, XMLKit.breakLinesAtTags(Multiplexor.getResponse(Globals.getProperty(
                 "programd.connect-string", "CONNECT"), HOSTNAME, this.botid, new TextResponder())));
-    }
+    } 
 
     /**
      * Prints the name of the current bot.
@@ -501,7 +501,7 @@ public class Shell
     private void who()
     {
         showConsole("You are talking to \"" + this.botid + "\".");
-    }
+    } 
 
     /**
      * Prints a list of files loaded by the current bot.
@@ -514,20 +514,20 @@ public class Shell
         if (fileCount == 0)
         {
             showConsole("No files loaded by \"" + this.botid + "\".");
-        }
+        } 
         else if (fileCount > 1)
         {
             showConsole(fileCount + " files loaded by \"" + this.botid + "\":");
-        }
+        } 
         else
         {
             showConsole("1 file loaded by \"" + this.botid + "\":");
-        }
+        } 
         while (iterator.hasNext())
         {
             showConsole(((File) iterator.next()).getAbsolutePath());
-        }
-    }
+        } 
+    } 
 
     /**
      * Rolls over the chat log file.
@@ -537,7 +537,7 @@ public class Shell
         showConsole("Rolling over chat log for \"" + botidToUse + "\".");
         XMLWriter.rollover(Bots.getBot(botidToUse).getChatlogSpec());
         showConsole("Finished rolling over chat log.");
-    }
+    } 
 
     /**
      * Rolls over the targets data file.
@@ -545,7 +545,7 @@ public class Shell
     public void rollTargets()
     {
         TargetMaster.rollTargetData();
-    }
+    } 
 
     /**
      * Lists the shell commandables that are loaded to the console.
@@ -564,23 +564,23 @@ public class Shell
                     ShellCommandable commandable = (ShellCommandable) processes.next();
                     showConsole("/" + commandable.getShellID() + " - " + commandable.getShellDescription());
                     commandableCount++;
-                }
+                } 
                 catch (ClassCastException e)
                 {
                     // Do nothing; this is not a ShellCommandable.
-                }
-            }
-        }
+                } 
+            } 
+        } 
         if (commandableCount == 0)
         {
             showConsole("No shell commandables are loaded.");
-        }
+        } 
         else
         {
             showConsole("Commands after the shell commandable will be sent to the commandable.");
             showConsole("Example: \"/irc /JOIN #foo\" tells thIRCListenerRC listener to join channel \"#foo\".");
-        }
-    }
+        } 
+    } 
 
     /**
      * Sends a command to a shell commandable, if possible.
@@ -599,11 +599,11 @@ public class Shell
         if (space == -1)
         {
             throw new NoCommandException();
-        }
+        } 
         if (space == command.length())
         {
             throw new NoCommandException();
-        }
+        } 
 
         String commandableID = command.substring(1, space);
         ShellCommandable commandable = null;
@@ -619,20 +619,20 @@ public class Shell
                     if (commandableID.equals(candidate.getShellID()))
                     {
                         commandable = candidate;
-                    }
-                }
+                    } 
+                } 
                 catch (ClassCastException e)
                 {
                     // Do nothing; this is not a ShellCommandable.
-                }
-            }
-        }
+                } 
+            } 
+        } 
         if (commandable == null)
         {
             throw new NoSuchCommandableException();
-        }
+        } 
         commandable.processShellCommand(command.substring(space + 1));
-    }
+    } 
 
     /**
      * An exception thrown if no command is specified.
@@ -640,7 +640,7 @@ public class Shell
     private class NoCommandException extends Exception
     {
         // No body.
-    }
+    } 
 
     /**
      * An exception thrown if an invalid commandable is specified.
@@ -648,5 +648,5 @@ public class Shell
     private class NoSuchCommandableException extends Exception
     {
         // No body.
-    }
+    } 
 }

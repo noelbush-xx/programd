@@ -33,12 +33,12 @@ abstract public class StartupElementProcessor extends Processor
         try
         {
             return process(level, tag, (StartupFileParser) parser);
-        }
+        } 
         catch (ClassCastException e)
         {
             throw new ProcessorException("Tried to pass a non-StartupFileParser to a StartupElementProcessor.");
-        }
-    }
+        } 
+    } 
 
     abstract public String process(int level, XMLNode tag, StartupFileParser parser)
             throws InvalidStartupElementException;
@@ -52,5 +52,5 @@ abstract public class StartupElementProcessor extends Processor
 
     {
         return XMLKit.getAttributeValue(HREF, tag.XMLAttr);
-    }
+    } 
 }

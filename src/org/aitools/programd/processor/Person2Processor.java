@@ -45,18 +45,18 @@ public class Person2Processor extends AIMLProcessor
                 // substituted.
                 return parser.processResponse(applySubstitutions(parser.evaluate(level++, tag.XMLChild), parser
                         .getBotID()));
-            }
+            } 
             catch (ProcessorException e)
             {
                 throw (AIMLProcessorException) e;
-            }
-        }
+            } 
+        } 
         // (otherwise...)
         return parser.shortcutTag(level, label, XMLNode.TAG, EMPTY_STRING, StarProcessor.label, XMLNode.EMPTY);
-    }
+    } 
 
     /**
-     * Applies substitutions as defined in the {@link #substitutionMap}.
+     * Applies substitutions as defined in the {@link #substitutionMap} .
      * Comparisons are case-insensitive.
      * 
      * @param input
@@ -66,7 +66,7 @@ public class Person2Processor extends AIMLProcessor
     public static String applySubstitutions(String input, String botid)
     {
         return Substituter.applySubstitutions(Bots.getBot(botid).getPerson2SubstitutionsMap(), input);
-    }
+    } 
 
     /**
      * Adds a substitution to the substitutions map. The <code>find</code>
@@ -83,6 +83,6 @@ public class Person2Processor extends AIMLProcessor
         if (find != null && replace != null)
         {
             substitutionMap.put(find.toUpperCase(), replace);
-        }
-    }
+        } 
+    } 
 }

@@ -21,8 +21,8 @@ import org.aitools.programd.util.DeveloperError;
 
 /**
  * Reads a targets data file. This version is based on
- * {@link org.aitools.programd.parser.AIMLReader}. Obviously this and its
- * companion {@link TargetsReaderListener}duplicate a lot from AIMLReader and
+ * {@link org.aitools.programd.parser.AIMLReader} . Obviously this and its
+ * companion {@link TargetsReaderListener} duplicate a lot from AIMLReader and
  * AIMLLoader, so once this is stabilized these should all be combined.
  * 
  * @author Noel Bush
@@ -226,12 +226,12 @@ public class TargetsReader extends GenericReader implements Runnable
         this.monitor.setProgress(0);
         this.monitor.setMillisToPopup(0);
         this.progressScaleFactor = 100.00 / length;
-    }
+    } 
 
     public void run()
     {
         super.read();
-    }
+    } 
 
     protected void initialize()
     {
@@ -241,16 +241,16 @@ public class TargetsReader extends GenericReader implements Runnable
             this.thatField = this.getClass().getDeclaredField(INPUT_THAT);
             this.topicField = this.getClass().getDeclaredField(INPUT_TOPIC);
             this.templateField = this.getClass().getDeclaredField(REPLY);
-        }
+        } 
         catch (NoSuchFieldException e)
         {
             throw new DeveloperError("The developer has specified a field that does not exist in TargetsReader.");
-        }
+        } 
         catch (SecurityException e)
         {
             throw new DeveloperError("Security manager prevents TargetsReader from functioning.");
-        }
-    }
+        } 
+    } 
 
     protected void tryStates() throws TransitionMade
     {
@@ -263,11 +263,11 @@ public class TargetsReader extends GenericReader implements Runnable
                 this.monitor.close();
                 this.done = true;
                 return;
-            }
+            } 
 
             // Update the progress.
             this.monitor.setProgress((int) (this.byteCount * this.progressScaleFactor));
-        }
+        } 
 
         switch (this.state)
         {
@@ -343,49 +343,49 @@ public class TargetsReader extends GenericReader implements Runnable
 
             default:
                 break;
-        }
-    }
+        } 
+    } 
 
     /**
      * <p>
-     * If {@link #bufferString}contains <code>tag</code> at {@link #tagStart},
-     * sets {@link #state}to <code>toState</code>, and performs the action
+     * If {@link #bufferString} contains <code>tag</code> at {@link #tagStart} ,
+     * sets {@link #state} to <code>toState</code>, and performs the action
      * indicated by <code>action</code>.
      * </p>
      * <p>
-     * If <code>action</code> is {@link #SET_INPUT_CONTEXT}, sets
-     * {@link #patternField},{@link #thatField}and {@link #topicField}to the
+     * If <code>action</code> is {@link #SET_INPUT_CONTEXT} , sets
+     * {@link #patternField} ,{@link #thatField} and {@link #topicField} to the
      * appropriate field references for the input part of the target.
      * </p>
      * <p>
-     * If <code>action</code> is {@link #SET_MATCH_CONTEXT}, sets
-     * {@link #patternField},{@link #thatField},{@link #topicField}and
-     * {@link #templateField}to the appropriate field references for the match
+     * If <code>action</code> is {@link #SET_MATCH_CONTEXT} , sets
+     * {@link #patternField} ,{@link #thatField} ,{@link #topicField} and
+     * {@link #templateField} to the appropriate field references for the match
      * part of the target.
      * </p>
      * <p>
-     * If <code>action</code> is {@link #SET_REPLY_CONTEXT}, sets
-     * {@link #topicField}to the appropriate field reference for the reply part
+     * If <code>action</code> is {@link #SET_REPLY_CONTEXT} , sets
+     * {@link #topicField} to the appropriate field reference for the reply part
      * of the target.
      * </p>
      * <p>
-     * If <code>action</code> is {@link #DELIVER_TARGET}, calls the
-     * {@link TargetsReaderListener#loadTarget loadTarget}method of the
+     * If <code>action</code> is {@link #DELIVER_TARGET} , calls the
+     * {@link TargetsReaderListener#loadTarget loadTarget} method of the
      * <code>targetsListener</code>.
      * </p>
-     * If <code>action</code> is {@link #SET_DONE}, sets {@link #done}to
+     * If <code>action</code> is {@link #SET_DONE} , sets {@link #done} to
      * <code>true</code>, so that parsing of this file is halted (no message
      * given).
      * </p>
      * 
      * @param tag
-     *            the tag to look for in {@link #buffer}
+     *            the tag to look for in {@link #buffer} 
      * @param toState
-     *            the parser {@link #state}to assign if successful
+     *            the parser {@link #state} to assign if successful
      * @param action
-     *            one of {{{@link #SET_INPUT_CONTEXT},
-     *            {@link #SET_MATCH_CONTEXT},{@link #SET_REPLY_CONTEXT},
-     *            {@link #DELIVER_TARGET},{@link #SET_DONE}}}.
+     *            one of {{{@link #SET_INPUT_CONTEXT} ,
+     *            {@link #SET_MATCH_CONTEXT} ,{@link #SET_REPLY_CONTEXT} ,
+     *            {@link #DELIVER_TARGET} ,{@link #SET_DONE} }} .
      * @throws TransitionMade
      *             if the transition is successfully made
      */
@@ -424,16 +424,16 @@ public class TargetsReader extends GenericReader implements Runnable
                         this.thatField = this.getClass().getDeclaredField(INPUT_THAT);
                         this.topicField = this.getClass().getDeclaredField(INPUT_TOPIC);
                         this.templateField = null;
-                    }
+                    } 
                     catch (NoSuchFieldException e)
                     {
                         throw new DeveloperError(
                                 "The developer has specified a field that does not exist in TargetsReader.");
-                    }
+                    } 
                     catch (SecurityException e)
                     {
                         throw new DeveloperError("Security manager prevents TargetsReader from functioning.");
-                    }
+                    } 
                     break;
 
                 case SET_MATCH_CONTEXT:
@@ -443,16 +443,16 @@ public class TargetsReader extends GenericReader implements Runnable
                         this.thatField = this.getClass().getDeclaredField(MATCH_THAT);
                         this.topicField = this.getClass().getDeclaredField(MATCH_TOPIC);
                         this.templateField = this.getClass().getDeclaredField(MATCH_TEMPLATE);
-                    }
+                    } 
                     catch (NoSuchFieldException e)
                     {
                         throw new DeveloperError(
                                 "The developer has specified a field that does not exist in TargetsReader.");
-                    }
+                    } 
                     catch (SecurityException e)
                     {
                         throw new DeveloperError("Security manager prevents TargetsReader from functioning.");
-                    }
+                    } 
                     break;
 
                 case SET_REPLY_CONTEXT:
@@ -462,21 +462,21 @@ public class TargetsReader extends GenericReader implements Runnable
                         this.thatField = null;
                         this.topicField = null;
                         this.templateField = this.getClass().getDeclaredField(REPLY);
-                    }
+                    } 
                     catch (NoSuchFieldException e)
                     {
                         throw new DeveloperError(
                                 "The developer has specified a field that does not exist in TargetsReader.");
-                    }
+                    } 
                     catch (SecurityException e)
                     {
                         throw new DeveloperError("Security manager prevents TargetsReader from functioning.");
-                    }
+                    } 
                     break;
-            }
+            } 
             throw (super.TRANSITION_MADE);
-        }
-    }
+        } 
+    } 
 
     /**
      * Closes the progress monitor (if it is in use).
@@ -486,6 +486,6 @@ public class TargetsReader extends GenericReader implements Runnable
         if (this.monitor != null)
         {
             this.monitor.close();
-        }
-    }
+        } 
+    } 
 }

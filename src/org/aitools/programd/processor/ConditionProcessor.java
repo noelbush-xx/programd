@@ -57,7 +57,7 @@ public class ConditionProcessor extends AIMLProcessor
             if (tag.XMLChild == null)
             {
                 return EMPTY_STRING;
-            }
+            } 
 
             String name = XMLKit.getAttributeValue(NAME, tag.XMLAttr);
             String value = XMLKit.getAttributeValue(VALUE, tag.XMLAttr);
@@ -69,7 +69,7 @@ public class ConditionProcessor extends AIMLProcessor
             if ((tag.XMLAttr.indexOf(NAME_EQUALS, 0) < 0) && (tag.XMLAttr.indexOf(VALUE_EQUALS, 0) < 0))
             {
                 return processListItem(level, parser, tag.XMLChild, NAME_VALUE_LI, name, value);
-            }
+            } 
 
             /*
              * Process a blockCondition: <condition name="xxx" value="yyy"> ...
@@ -83,15 +83,15 @@ public class ConditionProcessor extends AIMLProcessor
                             true))
                     {
                         return processListItem(level, parser, tag.XMLChild, DEFAULT_LI, EMPTY_STRING, EMPTY_STRING);
-                    }
-                }
+                    } 
+                } 
                 catch (NotAnAIMLPatternException e)
                 {
                     Trace.devinfo(e.getMessage());
                     return EMPTY_STRING;
-                }
+                } 
                 return EMPTY_STRING;
-            }
+            } 
 
             /*
              * Process a singlePredicateCondition: <condition name="xxx">
@@ -100,14 +100,14 @@ public class ConditionProcessor extends AIMLProcessor
             if ((tag.XMLAttr.indexOf(NAME_EQUALS, 0) >= 0) && (tag.XMLAttr.indexOf(VALUE_EQUALS, 0) < 0))
             {
                 return processListItem(level, parser, tag.XMLChild, VALUE_ONLY_LI, name, EMPTY_STRING);
-            }
+            } 
 
             // In other cases, return an empty string.
             return EMPTY_STRING;
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<condition></condition> must have content!");
-    }
+    } 
 
     /**
      * Evaluates an &lt;li/&gt; element inside a &lt;condition/&gt;.
@@ -119,8 +119,8 @@ public class ConditionProcessor extends AIMLProcessor
      * @param list
      *            the XML trie
      * @param listItemType
-     *            one of {@link #NAME_VALUE_LI},{@link #DEFAULT_LI}or
-     *            {@link #VALUE_ONLY_LI}
+     *            one of {@link #NAME_VALUE_LI} ,{@link #DEFAULT_LI} or
+     *            {@link #VALUE_ONLY_LI} 
      * @param name
      *            the name attribute of the &lt;li/&gt; (if applicable)
      * @param value
@@ -138,7 +138,7 @@ public class ConditionProcessor extends AIMLProcessor
         if (list == null)
         {
             return EMPTY_STRING;
-        }
+        } 
 
         // Point to the start of the XML trie to parse.
         iterator = list.listIterator(0);
@@ -155,7 +155,7 @@ public class ConditionProcessor extends AIMLProcessor
         if (listItemType == VALUE_ONLY_LI)
         {
             predicateValue = PredicateMaster.get(name, parser.getUserID(), parser.getBotID());
-        }
+        } 
 
         // Navigate through this entire level.
         while (iterator.hasNext())
@@ -175,11 +175,11 @@ public class ConditionProcessor extends AIMLProcessor
                         try
                         {
                             response = response + parser.processTag(level++, node);
-                        }
+                        } 
                         catch (ProcessorException e)
                         {
                             // Do nothing.
-                        }
+                        } 
                         break;
 
                     // Collect and process listitems
@@ -190,13 +190,13 @@ public class ConditionProcessor extends AIMLProcessor
                             try
                             {
                                 response = response + parser.processTag(level++, node);
-                            }
+                            } 
                             catch (ProcessorException e)
                             {
                                 // Do nothing.
-                            }
+                            } 
                             break;
-                        }
+                        } 
 
                         /*
                          * Now decide what to do based on the listItemType,
@@ -224,14 +224,14 @@ public class ConditionProcessor extends AIMLProcessor
                                 {
                                     response = response + parser.evaluate(level++, node.XMLChild);
                                     break;
-                                }
+                                } 
 
                                 // Ignore if there is not a name and a value.
                                 if ((node.XMLAttr.indexOf(NAME_EQUALS, 0) < 0)
                                         || (node.XMLAttr.indexOf(VALUE_EQUALS, 0) < 0))
                                 {
                                     break;
-                                }
+                                } 
 
                                 // Recover the values of the name and value
                                 // attributes.
@@ -249,12 +249,12 @@ public class ConditionProcessor extends AIMLProcessor
                                             .getBotID()), livalue, true))
                                     {
                                         return response + parser.evaluate(level++, node.XMLChild);
-                                    }
-                                }
+                                    } 
+                                } 
                                 catch (NotAnAIMLPatternException e)
                                 {
                                     Trace.devinfo(e.getMessage());
-                                }
+                                } 
                                 break;
 
                             // Evaluate listitems that are designated
@@ -280,13 +280,13 @@ public class ConditionProcessor extends AIMLProcessor
                                         {
                                             response = response + parser.evaluate(level++, node.XMLChild);
                                             return response;
-                                        }
-                                    }
+                                        } 
+                                    } 
                                     catch (NotAnAIMLPatternException e)
                                     {
                                         Trace.userinfo(e.getMessage());
-                                    }
-                                }
+                                    } 
+                                } 
                                 /*
                                  * When there is no value attribute, we actually
                                  * got the wrong li type, but process as a
@@ -296,18 +296,18 @@ public class ConditionProcessor extends AIMLProcessor
                                 {
                                     response = response + parser.evaluate(level++, node.XMLChild);
                                     return response;
-                                }
+                                } 
                                 break;
 
                             default:
                                 break;
-                        }
+                        } 
                     default:
                         break;
-                }
-            }
-        }
+                } 
+            } 
+        } 
         return response;
-    }
+    } 
 
 }

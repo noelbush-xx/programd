@@ -33,15 +33,15 @@ public class SentenceProcessor extends AIMLProcessor
             if (response.equals(EMPTY_STRING))
             {
                 return response;
-            }
+            } 
             if (response.trim().length() > 1)
             {
                 return response.substring(0, 1).toUpperCase() + response.substring(1);
-            }
+            } 
             // (otherwise...)
             return response;
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<sentence></sentence> must have content!");
-    }
+    } 
 }

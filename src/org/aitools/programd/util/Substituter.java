@@ -37,7 +37,7 @@ public class Substituter
      * <p>
      * <b>NB: </b> This method does <i>not </i> take care that further
      * substitutions are not performed on replaced text. For this extra caution,
-     * use {@link #applySubstitutions}.
+     * use {@link #applySubstitutions} .
      * </p>
      * 
      * @param input
@@ -59,18 +59,18 @@ public class Substituter
         {
             // If so, replace it in the result.
             result.replace(startIndex, startIndex + find.length(), replace);
-        }
+        } 
         return result.toString().trim();
-    }
+    } 
 
     /**
      * <p>
-     * Same as {@link #replace}except case is ignored.
+     * Same as {@link #replace} except case is ignored.
      * </p>
      * <p>
      * <b>NB: </b> This method does <i>not </i> take care that further
      * substitutions are not performed on replaced text. For this extra caution,
-     * use {@link #applySubstitutions}.
+     * use {@link #applySubstitutions} .
      * </p>
      * 
      * @param input
@@ -94,12 +94,12 @@ public class Substituter
         {
             // If so, replace it in the result.
             result.replace(startIndex, startIndex + find.length(), replace);
-        }
+        } 
         return result.toString().trim();
-    }
+    } 
 
     /**
-     * Same as {@link #replaceIgnoreCase}except a substitution map is given,
+     * Same as {@link #replaceIgnoreCase} except a substitution map is given,
      * and extra care is taken to ensure that a replaced value does not have
      * further substitutions performed on it.
      * 
@@ -150,14 +150,14 @@ public class Substituter
                     if (startIndex + replacement.length() < untouchedTest.length())
                     {
                         untouchedIterator.add(untouchedTest.substring(startIndex + find.length()));
-                    }
+                    } 
                     else
                     {
                         untouchedIterator.add(EMPTY_STRING);
-                    }
-                }
-            }
-        }
+                    } 
+                } 
+            } 
+        } 
 
         // Now construct the result.
         StringBuffer result = new StringBuffer();
@@ -173,8 +173,8 @@ public class Substituter
             if (replaceIterator.hasNext())
             {
                 result.append(replaceIterator.next());
-            }
-        }
+            } 
+        } 
 
         // Remove the padding spaces before returning!
         int resultLength = result.length();
@@ -184,19 +184,19 @@ public class Substituter
             if (result.charAt(0) == ' ')
             {
                 resultStart = 1;
-            }
+            } 
             if (result.charAt(resultLength - 1) == ' ')
             {
                 resultLength--;
-            }
+            } 
             if (resultStart == resultLength)
             {
                 return EMPTY_STRING;
-            }
+            } 
             // (otherwise...)
             return result.substring(resultStart, resultLength);
-        }
+        } 
         // (otherwise...)
         return result.toString();
-    }
+    } 
 }

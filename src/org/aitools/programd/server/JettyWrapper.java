@@ -28,11 +28,11 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
     public JettyWrapper()
     {
         // Do nothing.
-    }
+    } 
 
     /**
      *  Configures the server and sets the address and port number in
-     *  {@link org.aitools.programd.util.Globals Globals}
+     *  {@link org.aitools.programd.util.Globals Globals} 
      *  (for reference).
      *
      *  @param configFilePath   the config file path to pass to Jetty
@@ -58,31 +58,31 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
             if (listener.getClass().getName().equals("org.mortbay.http.SocketListener"))
             {
                 port = ((SocketListener) listener).getPort();
-            }
-        }
+            } 
+        } 
         Globals.setHttpPort(port);
-    }
+    } 
 
     public void run()
     {
         try
         {
             jetty.start();
-        }
+        } 
         catch (MultiException e)
         {
             throw new DeveloperError(e.getMessage());
-        }
-    }
+        } 
+    } 
 
     public void shutdown()
     {
         // This is crude, but jetty.stop() isn't reliable.
         jetty = null;
-    }
+    } 
 
     public Server getServer()
     {
         return jetty;
-    }
+    } 
 }

@@ -48,7 +48,7 @@ public class XMLLog
                 + "logs/view-chat.xsl");
         GENERIC_CHAT.encoding = Globals.getProperty("programd.logging.xml.chat.encoding", ENC_UTF8);
         GENERIC_CHAT.dtd = XMLResourceSpec.HTML_ENTITIES_DTD;
-    }
+    } 
 
     /**
      * Limits the number of responses written to a log file before it is rolled
@@ -60,12 +60,12 @@ public class XMLLog
         try
         {
             ROLLOVER = Integer.parseInt(Globals.getProperty("programd.logging.xml.rollover", "2000"));
-        }
+        } 
         catch (NumberFormatException e)
         {
             ROLLOVER = 2000;
-        }
-    }
+        } 
+    } 
 
     /**
      * Returns a generic chat log spec that can be customized.
@@ -75,15 +75,15 @@ public class XMLLog
     public static XMLResourceSpec getChatlogSpecClone()
     {
         return (XMLResourceSpec) GENERIC_CHAT.clone();
-    }
+    } 
 
     /**
      * Writes a message to an XML log file. If the number of entries has
-     * exceeded {@link #ROLLOVER}, the file will be renamed and a new file
+     * exceeded {@link #ROLLOVER} , the file will be renamed and a new file
      * created. Note that the approach currently used has an important defect:
      * it only counts entries during the runtime of the bot; it will not count
      * entries in an existing log file, so if the bot is restarted many times
-     * and {@link #ROLLOVER}is rather large, actual logfiles may exceed the
+     * and {@link #ROLLOVER} is rather large, actual logfiles may exceed the
      * limit significantly.
      * 
      * @param message
@@ -110,12 +110,12 @@ public class XMLLog
                 if (++entryCount % ROLLOVER == 0)
                 {
                     XMLWriter.rollover(spec);
-                }
+                } 
 
                 // Update the entry count (since the spec cares).
                 entryCounts.put(spec, new Integer(entryCount));
-            }
-        }
+            } 
+        } 
 
         // If there is not an entry count, this means we have just restarted --
         // roll over if necessary.
@@ -125,8 +125,8 @@ public class XMLLog
 
             // Create the entry count.
             entryCounts.put(spec, new Integer(1));
-        }
+        } 
 
         XMLWriter.write(message, spec);
-    }
+    } 
 }

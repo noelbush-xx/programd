@@ -67,11 +67,11 @@ import org.aitools.programd.util.logging.Log;
  * href="http://cvs.aitools.org/cgi-bin/viewcvs.cgi/ProgramD/src/org/alicebot/server/core/Attic/Classifier.java?rev=1.1&only_with_tag=v4_1_0&content-type=text/vnd.viewcvs-markup">Classifier
  * </a> has been left as-is, except it has been changed into an subclass of this
  * abstract class. There are two new subclasses called
- * {@link FlatFileMultiplexor}and {@link DBMultiplexor}.
+ * {@link FlatFileMultiplexor} and {@link DBMultiplexor} .
  * </p>
  * <p>
  * Starting in 4.1.5, this became an abstract class instead of an interface, and
- * introduced the single public {@link #getResponse}method, rather than
+ * introduced the single public {@link #getResponse} method, rather than
  * allowing multiple public methods for getting responses which can result in
  * synchronization problems. The former <code>AbstractClassifier</code> class
  * was then removed.
@@ -184,20 +184,20 @@ abstract public class Multiplexor
         try
         {
             keyFile.createNewFile();
-        }
+        } 
         catch (IOException e)
         {
             throw new UserError("Error creating secret key file.");
-        }
+        } 
         PrintWriter out;
         try
         {
             out = new PrintWriter(new FileOutputStream(keyFile));
-        }
+        } 
         catch (FileNotFoundException e)
         {
             throw new UserError("Error writing secret key file.");
-        }
+        } 
         out.print(SECRET_KEY);
         out.flush();
         out.close();
@@ -207,7 +207,7 @@ abstract public class Multiplexor
 
         // Add a simple IAmAlive Pulse (this should be more configurable).
         addPulse(new org.aitools.programd.util.IAmAlivePulse());
-    }
+    } 
 
     /**
      * Returns the response to a non-internal input, using a Responder.
@@ -246,7 +246,7 @@ abstract public class Multiplexor
             // ...ask the responder to append the reply to the response, and
             // accumulate the result.
             response = responder.append((String) sentences.next(), (String) replies.next(), response);
-        }
+        } 
 
         // Log the response.
         responder.log(input, response, HOST_NAME, userid, botid);
@@ -257,7 +257,7 @@ abstract public class Multiplexor
 
         // Return the response (may be just EMPTY_STRING!)
         return response;
-    }
+    } 
 
     /**
      * <p>
@@ -266,7 +266,7 @@ abstract public class Multiplexor
      * </p>
      * <p>
      * The main differences between this and
-     * {@link #getResponse(String,String,String,Responder)}are that this method
+     * {@link #getResponse(String,String,String,Responder)} are that this method
      * takes an already-existing <code>TemplateParser</code>, <i>doesn't </i>
      * take a <code>Responder</code>, and assumes that the inputs have
      * already been normalized.
@@ -293,16 +293,16 @@ abstract public class Multiplexor
         if (that.equals(EMPTY_STRING) || that.equals(PREDICATE_EMPTY_DEFAULT))
         {
             that = ASTERISK;
-        }
+        } 
 
         String topic = InputNormalizer.patternFitIgnoreCase(PredicateMaster.get(TOPIC, userid, botid));
         if (topic.equals(EMPTY_STRING) || topic.equals(PREDICATE_EMPTY_DEFAULT))
         {
             topic = ASTERISK;
-        }
+        } 
 
         return getMatchResult(input, that, topic, userid, botid, parser);
-    }
+    } 
 
     /**
      * Gets the list of replies to some input sentences. Assumes that the
@@ -331,13 +331,13 @@ abstract public class Multiplexor
         if (that.equals(EMPTY_STRING) || that.equals(PREDICATE_EMPTY_DEFAULT))
         {
             that = ASTERISK;
-        }
+        } 
 
         String topic = InputNormalizer.patternFitIgnoreCase(PredicateMaster.get(TOPIC, userid, botid));
         if (topic.equals(EMPTY_STRING) || topic.equals(PREDICATE_EMPTY_DEFAULT))
         {
             topic = ASTERISK;
-        }
+        } 
 
         Iterator sentences = sentenceList.iterator();
 
@@ -348,13 +348,13 @@ abstract public class Multiplexor
         if (SHOW_MATCH_TRACE)
         {
             time = System.currentTimeMillis();
-        }
+        } 
 
         // Get a reply for each sentence.
         while (sentences.hasNext())
         {
             replies.add(getReply((String) sentences.next(), that, topic, userid, botid));
-        }
+        } 
 
         // Increment the (static) response count.
         responseCount++;
@@ -370,7 +370,7 @@ abstract public class Multiplexor
             totalTime += time;
             avgResponseTime = (float) totalTime / (float) responseCount;
             Trace.userinfo(RESPONSE_SPACE + responseCount + SPACE_IN_SPACE + time + MS_AVERAGE + avgResponseTime + MS);
-        }
+        } 
 
         // Invoke targeting if appropriate.
         if (responseCount % TARGET_SKIP == 0)
@@ -378,16 +378,16 @@ abstract public class Multiplexor
             if (USE_TARGETING)
             {
                 Graphmaster.checkpoint();
-            }
-        }
+            } 
+        } 
 
         // If no replies, return an empty string.
         if (replies.size() == 0)
         {
             replies.add(EMPTY_STRING);
-        }
+        } 
         return replies;
-    }
+    } 
 
     /**
      * Gets a reply to an input. Assumes that the input has already had all
@@ -415,46 +415,46 @@ abstract public class Multiplexor
         try
         {
             parser = new TemplateParser(input, userid, botid);
-        }
+        } 
         catch (TemplateParserException e)
         {
             throw new DeveloperError(e);
-        }
+        } 
 
         String reply = null;
         try
         {
             reply = getMatchResult(input, that, topic, userid, botid, parser);
-        }
+        } 
         catch (DeveloperError e)
         {
             Log.devfail(e);
             Log.devfail("Exiting due to developer error.", Log.ERROR);
             System.exit(1);
-        }
+        } 
         catch (UserError e)
         {
             Log.userfail(e);
             Log.devfail("Exiting due to user error.", Log.ERROR);
             System.exit(1);
-        }
+        } 
         catch (RuntimeException e)
         {
             Log.devfail(e);
             Log.devfail("Exiting due to unforeseen runtime exception.", Log.ERROR);
             System.exit(1);
-        }
+        } 
         if (reply == null)
         {
             Log.devfail("getMatchReply generated a null reply!", Log.ERROR);
             System.exit(1);
-        }
+        } 
 
         // Push the reply onto the <that/> stack.
         PredicateMaster.push(THAT, reply, userid, botid);
 
         return XMLKit.filterWhitespace(reply);
-    }
+    } 
 
     /**
      * Gets the match result from the Graphmaster.
@@ -475,7 +475,7 @@ abstract public class Multiplexor
             Trace.userinfo(PredicateMaster.get(Globals.getClientNamePredicate(), userid, botid) + '>' + SPACE + input
                     + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + that + SPACE + Graphmaster.PATH_SEPARATOR + SPACE
                     + topic + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + botid);
-        }
+        } 
 
         // Create a case-insensitive pattern-fitted version of the input.
         String inputIgnoreCase = InputNormalizer.patternFitIgnoreCase(input);
@@ -485,42 +485,42 @@ abstract public class Multiplexor
         try
         {
             match = Graphmaster.match(InputNormalizer.patternFitIgnoreCase(input), that, topic, botid);
-        }
+        } 
         catch (NoMatchException e)
         {
             Log.userinfo(e.getMessage(), Log.CHAT);
             return EMPTY_STRING;
-        }
+        } 
 
         if (match == null)
         {
             Log.userinfo("No match found for input \"" + input + "\".", Log.CHAT);
             return EMPTY_STRING;
-        }
+        } 
 
         if (SHOW_MATCH_TRACE)
         {
             Trace.userinfo(LABEL_MATCH + match.getPath());
             Trace.userinfo(LABEL_FILENAME + QUOTE_MARK + match.getFileName() + QUOTE_MARK);
-        }
+        } 
 
         ArrayList stars = match.getInputStars();
         if (stars.size() > 0)
         {
             parser.setInputStars(stars);
-        }
+        } 
 
         stars = match.getThatStars();
         if (stars.size() > 0)
         {
             parser.setThatStars(stars);
-        }
+        } 
 
         stars = match.getTopicStars();
         if (stars.size() > 0)
         {
             parser.setTopicStars(stars);
-        }
+        } 
 
         String template = match.getTemplate();
         String reply = null;
@@ -528,7 +528,7 @@ abstract public class Multiplexor
         try
         {
             reply = parser.processResponse(template);
-        }
+        } 
         catch (ProcessorException e)
         {
             // Log the error message.
@@ -536,7 +536,7 @@ abstract public class Multiplexor
 
             // Set response to empty string.
             return EMPTY_STRING;
-        }
+        } 
 
         // Record activation, if targeting is in use.
         // Needs review in light of multi-bot update
@@ -546,14 +546,14 @@ abstract public class Multiplexor
             if (matchNodemapper == null)
             {
                 Trace.devinfo("Match nodemapper is null!");
-            }
+            } 
             else
             {
                 Set activations = (Set) matchNodemapper.get(Graphmaster.ACTIVATIONS);
                 if (activations == null)
                 {
                     activations = new HashSet();
-                }
+                } 
                 String path = match.getPath() + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + inputIgnoreCase + SPACE
                         + Graphmaster.PATH_SEPARATOR + SPACE + that + SPACE + Graphmaster.PATH_SEPARATOR + SPACE
                         + topic + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + botid + SPACE
@@ -563,11 +563,11 @@ abstract public class Multiplexor
                     activations.add(path);
                     match.getNodemapper().put(Graphmaster.ACTIVATIONS, activations);
                     Graphmaster.activatedNode(match.getNodemapper());
-                }
-            }
-        }
+                } 
+            } 
+        } 
         return reply;
-    }
+    } 
 
     /**
      * Returns the average response time.
@@ -577,7 +577,7 @@ abstract public class Multiplexor
     public float averageResponseTime()
     {
         return avgResponseTime;
-    }
+    } 
 
     /**
      * Returns the number of queries per hour.
@@ -587,7 +587,7 @@ abstract public class Multiplexor
     public float queriesPerHour()
     {
         return responseCount / ((System.currentTimeMillis() - startTime) / 3600000.00f);
-    }
+    } 
 
     /**
      * Adds a Pulse to the registered list.
@@ -598,7 +598,7 @@ abstract public class Multiplexor
     public static void addPulse(Pulse pulse)
     {
         pulses.add(pulse);
-    }
+    } 
 
     /**
      * Emits any registered pulses.
@@ -609,8 +609,8 @@ abstract public class Multiplexor
         while (iterator.hasNext())
         {
             ((Pulse) iterator.next()).emit();
-        }
-    }
+        } 
+    } 
 
     /**
      * Saves a predicate for a given <code>userid</code>. This only applies

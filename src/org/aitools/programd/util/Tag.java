@@ -39,7 +39,7 @@ public class Tag
     {
         this.name = nameToUse;
         this.toString = LEFT_ANGLE_BRACKET + this.name + RIGHT_ANGLE_BRACKET;
-    }
+    } 
 
     /**
      * @return the tag's name surrounded by angle brackets
@@ -47,7 +47,7 @@ public class Tag
     public String toString()
     {
         return this.toString;
-    }
+    } 
 
     /**
      * @return the tag's name
@@ -55,5 +55,5 @@ public class Tag
     public String getName()
     {
         return this.name;
-    }
+    } 
 }

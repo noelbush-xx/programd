@@ -21,22 +21,22 @@ public class DeveloperError extends Error
     public DeveloperError(String message)
     {
         super(message);
-    }
+    } 
 
     public DeveloperError(Throwable e)
     {
         super("Developer did not describe exception.");
         this.throwable = e;
-    }
+    } 
 
     public DeveloperError(String message, Throwable e)
     {
         super(message);
         this.throwable = e;
-    }
+    } 
 
     public Throwable getEmbedded()
     {
         return this.throwable;
-    }
+    } 
 }

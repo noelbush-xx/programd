@@ -116,7 +116,7 @@ public class Trace
     public static void setOut(PrintStream out)
     {
         outStream = out;
-    }
+    } 
 
     /**
      * Notifies of user failures from which recovery is impossible.
@@ -130,17 +130,17 @@ public class Trace
             if (!METHOD_NAMES_ALWAYS)
             {
                 emit(message, USER_ERROR);
-            }
+            } 
             else
             {
                 emit(StackParser.getStackMethodBefore(THIS_PACKAGE, true) + COLON_SPACE + message, USER_ERROR);
-            }
-        }
+            } 
+        } 
         else
         {
             emit(FATAL_USER_UNINFORMATIVE, USER_ERROR);
-        }
-    }
+        } 
+    } 
 
     /**
      * Notifies of user failures from which recovery is impossible.
@@ -152,12 +152,12 @@ public class Trace
         if (EMIT_USER_ERRORS)
         {
             emit(e, USER_ERROR);
-        }
+        } 
         else
         {
             emit(FATAL_USER_UNINFORMATIVE, USER_ERROR);
-        }
-    }
+        } 
+    } 
 
     /**
      * Prints informative message to user.
@@ -171,13 +171,13 @@ public class Trace
             if (!METHOD_NAMES_ALWAYS)
             {
                 emit(message, USER_INFO);
-            }
+            } 
             else
             {
                 emit(StackParser.getStackMethodBefore(THIS_PACKAGE, true) + COLON_SPACE + message, USER_INFO);
-            }
-        }
-    }
+            } 
+        } 
+    } 
 
     /**
      * Prints multi-line informative message to user.
@@ -191,13 +191,13 @@ public class Trace
             if (!METHOD_NAMES_ALWAYS)
             {
                 emit(message, USER_INFO);
-            }
+            } 
             else
             {
                 emit(message, StackParser.getStackMethodBefore(THIS_PACKAGE, true) + COLON_SPACE, USER_INFO);
-            }
-        }
-    }
+            } 
+        } 
+    } 
 
     /**
      * Handle developer failure from which recovery is impossible.
@@ -209,12 +209,12 @@ public class Trace
         if (EMIT_DEVELOPER_ERRORS)
         {
             emit(StackParser.getStackMethodBefore(THIS_PACKAGE, true) + COLON_SPACE + message, DEVELOPER_ERROR);
-        }
+        } 
         else
         {
             emit(FATAL_DEVELOPER_UNINFORMATIVE, DEVELOPER_ERROR);
-        }
-    }
+        } 
+    } 
 
     /**
      * Notifies of developer failure from which recovery is impossible.
@@ -228,12 +228,12 @@ public class Trace
         {
             emit(message, DEVELOPER_ERROR);
             emit(e, DEVELOPER_ERROR);
-        }
+        } 
         else
         {
             emit(FATAL_DEVELOPER_UNINFORMATIVE, DEVELOPER_ERROR);
-        }
-    }
+        } 
+    } 
 
     /**
      * Notifies of developer failure from which recovery is impossible.
@@ -245,12 +245,12 @@ public class Trace
         if (EMIT_DEVELOPER_ERRORS)
         {
             emit(e, DEVELOPER_ERROR);
-        }
+        } 
         else
         {
             emit(FATAL_DEVELOPER_UNINFORMATIVE, DEVELOPER_ERROR);
-        }
-    }
+        } 
+    } 
 
     /**
      * Prints developer debug messages.
@@ -262,8 +262,8 @@ public class Trace
         if (EMIT_DEVELOPER_INFO)
         {
             emit(StackParser.getStackMethodBefore(THIS_PACKAGE, true) + COLON_SPACE + message, DEVELOPER_INFO);
-        }
-    }
+        } 
+    } 
 
     /**
      * Notifies of developer-level exception.
@@ -275,8 +275,8 @@ public class Trace
         if (EMIT_DEVELOPER_ERRORS)
         {
             emit(e, DEVELOPER_ERROR);
-        }
-    }
+        } 
+    } 
 
     /**
      * Insists on printing a message even if display flags are false.
@@ -286,7 +286,7 @@ public class Trace
     public static void insist(String message)
     {
         emit(message, INSIST);
-    }
+    } 
 
     /**
      * Insists on printing a message even if display flags are false.
@@ -297,7 +297,7 @@ public class Trace
     public static void insist(String[] message)
     {
         emit(message, INSIST);
-    }
+    } 
 
     /**
      * Emits a message with a given flag.
@@ -310,7 +310,7 @@ public class Trace
     private static void emit(String message, String flag)
     {
         MessagePrinter.println(message, flag, outStream, MessagePrinter.CONSOLE);
-    }
+    } 
 
     /**
      * Emits a multi-line message with a given flag.
@@ -325,8 +325,8 @@ public class Trace
         for (int line = 0; line < message.length; line++)
         {
             MessagePrinter.println(message[line], flag, outStream, MessagePrinter.CONSOLE);
-        }
-    }
+        } 
+    } 
 
     /**
      * Emits a prefixed multi-line message with a given flag.
@@ -341,8 +341,8 @@ public class Trace
         for (int line = 0; line < message.length; line++)
         {
             MessagePrinter.println(prefix + message[line], flag, outStream, MessagePrinter.CONSOLE);
-        }
-    }
+        } 
+    } 
 
     /**
      * Emits an exception message with a given flag.
@@ -358,18 +358,18 @@ public class Trace
         if (message != null)
         {
             emit(message, flag);
-        }
+        } 
         StringTokenizer lines = StackParser.getStackTraceFor(exception);
         while (lines.hasMoreElements())
         {
             if (!METHOD_NAMES_ALWAYS)
             {
                 emit(lines.nextToken(), flag);
-            }
+            } 
             else
             {
                 emit(StackParser.getStackMethodBefore(THIS_PACKAGE, true) + COLON_SPACE + lines.nextToken(), flag);
-            }
-        }
-    }
+            } 
+        } 
+    } 
 }

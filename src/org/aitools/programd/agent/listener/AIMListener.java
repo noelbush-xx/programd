@@ -223,15 +223,15 @@ public class AIMListener extends Listener
     {
         super(botToListen, "AIMListener", new String[][]
             {
-                { "owner", "" },
-                { "screenname", "" },
-                { "password", "" },
-                { "bgcolor", "White" },
-                { "fontface", "Verdana,Arial" },
-                { "fontsize", "2" },
-                { "fontcolor", "Black" },
-                { "buddies", "" } });
-    }
+                { "owner", "" } ,
+                { "screenname", "" } ,
+                { "password", "" } ,
+                { "bgcolor", "White" } ,
+                { "fontface", "Verdana,Arial" } ,
+                { "fontsize", "2" } ,
+                { "fontcolor", "Black" } ,
+                { "buddies", "" } } );
+    } 
 
     public boolean checkParameters()
     {
@@ -250,19 +250,19 @@ public class AIMListener extends Listener
         {
             logMessage("No owner specified; aborting.");
             return false;
-        }
+        } 
         if (this.name.length() == 0)
         {
             logMessage("No screen name specified; aborting.");
             return false;
-        }
+        } 
         if (this.pass.length() == 0)
         {
             logMessage("No password specified; aborting.");
             return false;
-        }
+        } 
         return true;
-    }
+    } 
 
     /**
      * Signs on the listener and starts waiting for messages.
@@ -278,12 +278,12 @@ public class AIMListener extends Listener
             this.connection.setSoTimeout(10000);
             this.in = new DataInputStream(this.connection.getInputStream());
             this.out = new DataOutputStream(new BufferedOutputStream(this.connection.getOutputStream()));
-        }
+        } 
         catch (Exception e)
         {
             signoff(ONE);
             return;
-        }
+        } 
         try
         {
             this.out.writeBytes("FLAPON\r\n\r\n");
@@ -313,7 +313,7 @@ public class AIMListener extends Listener
                 logMessage("Signon error.");
                 signoff(TWO);
                 return;
-            }
+            } 
             this.in.skip(4);
             length = this.in.readShort();
             signon = new byte[length];
@@ -326,17 +326,17 @@ public class AIMListener extends Listener
 
             logMessage("Logon complete.");
             this.connection.setSoTimeout(3000);
-        }
+        } 
         catch (InterruptedIOException e)
         {
             this.online = false;
             signoff(TWO_POINT_FIVE);
-        }
+        } 
         catch (IOException e)
         {
             this.online = false;
             signoff(THREE);
-        }
+        } 
         byte[] data;
         while (true)
         {
@@ -347,24 +347,24 @@ public class AIMListener extends Listener
                 data = new byte[length];
                 this.in.readFully(data);
                 fromAIM(data);
-            }
+            } 
             catch (InterruptedIOException e)
             {
                 Log.devinfo(MSG + "Error*: " + e, Log.LISTENERS);
-            }
+            } 
             catch (IOException e)
             {
                 Log.devinfo(MSG + "Error**: " + e, Log.LISTENERS);
                 break;
-            }
-        }
+            } 
+        } 
         signoff(FOUR);
-    }
+    } 
 
     public void shutdown()
     {
         signoff(FOUR);
-    }
+    } 
 
     public void frameSend(String toBeSent) throws IOException
     {
@@ -375,7 +375,7 @@ public class AIMListener extends Listener
         this.out.writeShort(toBeSent.length());
         this.out.writeBytes(toBeSent);
         this.out.flush();
-    }
+    } 
 
     /**
      * Processes data received from AIM.
@@ -401,7 +401,7 @@ public class AIMListener extends Listener
             {
                 mesg.append(':');
                 mesg.append(inToken.nextToken());
-            }
+            } 
             String request = XMLKit.removeMarkup(mesg.toString());
             logMessage(MSG_FROM + from + RB_COLON + request);
 
@@ -413,7 +413,7 @@ public class AIMListener extends Listener
                 String imcommandTo = st.nextToken();
                 String imcommandText = st.nextToken();
                 sendMesg(imcommandTo, imcommandText);
-            }
+            } 
             else
             {
                 String[] botResponse = XMLKit.breakLinesAtTags(Multiplexor.getResponse(request, from + _AIM,
@@ -423,11 +423,11 @@ public class AIMListener extends Listener
                     for (int line = 0; line < botResponse.length; line++)
                     {
                         sendMesg(from, botResponse[line]);
-                    }
-                }
-            }
+                    } 
+                } 
+            } 
             return;
-        }
+        } 
         if (command.equals(CHAT_IN))
         {
             String room_id = imNormalize(inToken.nextToken());
@@ -437,7 +437,7 @@ public class AIMListener extends Listener
             {
                 mesg.append(':');
                 mesg.append(inToken.nextToken());
-            }
+            } 
             String request = XMLKit.removeMarkup(mesg.toString());
             if (request.indexOf(this.name) > 0)
             {
@@ -448,11 +448,11 @@ public class AIMListener extends Listener
                     for (int line = 0; line < botResponse.length; line++)
                     {
                         sendChatRoomMesg(room_id, botResponse[line]);
-                    }
-                }
-            }
+                    } 
+                } 
+            } 
             return;
-        }
+        } 
         if (command.equals(ERROR))
         {
             String error = inToken.nextToken();
@@ -461,35 +461,35 @@ public class AIMListener extends Listener
             {
                 logMessage("Not currently available.");
                 return;
-            }
+            } 
             if (error.equals(_903))
             {
                 logMessage("Message dropped; sending too fast.");
                 return;
-            }
+            } 
             if (error.equals(_960))
             {
                 logMessage("Sending messages too fast to " + inToken.nextToken());
                 return;
-            }
+            } 
             if (error.equals(_961))
             {
                 logMessage(inToken.nextToken() + " sent you too big a message.");
                 return;
-            }
+            } 
             if (error.equals(_962))
             {
                 logMessage(inToken.nextToken() + " sent you a message too fast.");
                 return;
-            }
+            } 
             if (error.equals(SIGNON_ERR))
             {
                 logMessage("AIM signon failure: " + inToken.nextToken());
                 signoff(FIVE);
-            }
+            } 
             return;
-        }
-    }
+        } 
+    } 
 
     /**
      * Sends a message to a designated recipient.
@@ -511,12 +511,12 @@ public class AIMListener extends Listener
         try
         {
             frameSend(work);
-        }
+        } 
         catch (IOException e)
         {
             signoff(NINE);
-        }
-    }
+        } 
+    } 
 
     /**
      * Sends a message to a chat room.
@@ -535,12 +535,12 @@ public class AIMListener extends Listener
         try
         {
             frameSend(work);
-        }
+        } 
         catch (IOException e)
         {
             signoff(NINE);
-        }
-    }
+        } 
+    } 
 
     /**
      * Escapes a string according to the requirements of AIM.
@@ -559,7 +559,7 @@ public class AIMListener extends Listener
             {
                 case '$':
                 case '{':
-                case '}':
+                case '} ':
                 case '[':
                 case ']':
                 case '(':
@@ -570,12 +570,12 @@ public class AIMListener extends Listener
                     break;
                 default:
                     break;
-            }
+            } 
             work.append(aChar);
-        }
+        } 
         work.append(QUOTE_NULL);
         return work;
-    }
+    } 
 
     /**
      * Sends an AIM message. Cannot send a message longer than 2030 bytes.
@@ -590,7 +590,7 @@ public class AIMListener extends Listener
         {
             logMessage("Got a message longer than 2030 bytes.");
             return;
-        }
+        } 
         try
         {
             this.out.writeByte(42);
@@ -601,13 +601,13 @@ public class AIMListener extends Listener
             this.out.write(buffer);
             this.out.writeByte('\0');
             this.out.flush();
-        }
+        } 
         catch (IOException e)
         {
             logMessage("Exception: " + e);
             signoff(SIX);
-        }
-    }
+        } 
+    } 
 
     /**
      * Please document.
@@ -624,14 +624,14 @@ public class AIMListener extends Listener
             while (st.hasMoreTokens())
             {
                 frameSend(toBeSent + ' ' + st.nextToken() + NULL);
-            }
-        }
+            } 
+        } 
         catch (IOException e)
         {
             logMessage("Exception: " + e);
             signoff(SEVEN);
-        }
-    }
+        } 
+    } 
 
     /**
      * Please document.
@@ -648,13 +648,13 @@ public class AIMListener extends Listener
             this.out.close();
             this.in.close();
             this.connection.close();
-        }
+        } 
         catch (IOException e)
         {
             logMessage("Exception: " + e);
-        }
+        } 
         logMessage("Done.");
-    }
+    } 
 
     /**
      * Encodes a password according to AIM's stupid requirement.
@@ -675,11 +675,11 @@ public class AIMListener extends Listener
             if (append.length() < 2)
             {
                 result.append(ZERO);
-            }
+            } 
             result.append(append);
-        }
+        } 
         return result.toString();
-    }
+    } 
 
     /**
      * Removes spaces from a string.
@@ -695,9 +695,9 @@ public class AIMListener extends Listener
         while (((space = out.toString().indexOf(SPACE)) >= 0) && out.length() > 0)
         {
             out.delete(space, space + 1);
-        }
+        } 
         return out.toString();
-    }
+    } 
 
     /**
      * Standard method for logging and notifying of a message.
@@ -708,5 +708,5 @@ public class AIMListener extends Listener
     private void logMessage(String message)
     {
         Log.userinfo(MSG + message, Log.LISTENERS);
-    }
+    } 
 }

@@ -59,8 +59,8 @@ public class TargetMaster extends Targeting
 
             // Load existing targets data.
             targetsData = FileManager.getFile(TARGETS_DATA_PATH);
-        }
-    }
+        } 
+    } 
 
     /**
      * Adds a new target (no extension content) to the targets data file.
@@ -93,7 +93,7 @@ public class TargetMaster extends Targeting
 
         // Write the target to the targets data file.
         TargetWriter.write(target, TARGETS_DATA_RESOURCE);
-    }
+    } 
 
     /**
      * Deletes all saved targeting data. Rolls over the old file for
@@ -107,10 +107,10 @@ public class TargetMaster extends Targeting
             XMLWriter.rollover(TARGETS_DATA_RESOURCE);
             targetsData = FileManager.getFile(TARGETS_DATA_PATH);
             Log.userinfo("Targeting data deleted (old file rolled over).", Log.TARGETING);
-        }
+        } 
         else
         {
             Trace.userinfo("Targeting is switched off. Turn it on in server.properties.");
-        }
-    }
+        } 
+    } 
 }

@@ -37,12 +37,12 @@ public class TextResponder implements Responder
 
     /**
      * Creates a new <code>TextResponder</code> using encoding for
-     * {@link System#in}.
+     * {@link System#in} .
      */
     public TextResponder()
     {
         // Nothing to do.
-    }
+    } 
 
     /**
      * Returns the input, converted into Unicode from the request encoding.
@@ -56,7 +56,7 @@ public class TextResponder implements Responder
     public String preprocess(String input, String hostname)
     {
         return input;
-    }
+    } 
 
     /**
      * Simply appends the response to <code>appendTo</code>.
@@ -66,22 +66,22 @@ public class TextResponder implements Responder
         if (appendTo.length() > 0)
         {
             return appendTo + SPACE + response;
-        }
+        } 
         // (otherwise...)
         return appendTo + response;
-    }
+    } 
 
     public void log(String input, String reply, String hostname, String userid, String botid)
     {
         if (LOG_CHAT_TO_DATABASE)
         {
             DatabaseLogger.log(input, reply, hostname, userid, botid);
-        }
+        } 
         if (LOG_CHAT_TO_XML)
         {
             XMLLogger.log(input, reply, hostname, userid, botid);
-        }
-    }
+        } 
+    } 
 
     /**
      * Simply returns the reply.
@@ -93,5 +93,5 @@ public class TextResponder implements Responder
     public String postprocess(String reply)
     {
         return reply;
-    }
+    } 
 }

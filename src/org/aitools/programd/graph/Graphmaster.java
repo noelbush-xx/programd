@@ -71,7 +71,7 @@ public class Graphmaster
         { "Program D", "This program is free software; you can redistribute it and/or",
                 "modify it under the terms of the GNU General Public License",
                 "as published by the Free Software Foundation; either version 2",
-                "of the License, or (at your option) any later version." };
+                "of the License, or (at your option) any later version." } ;
 
     /** Version of this package. */
     public static final String VERSION = "4.2";
@@ -135,7 +135,7 @@ public class Graphmaster
 
     // Class variables.
 
-    /** The root {@link Nodemaster}. */
+    /** The root {@link Nodemaster} . */
     private static Nodemapper ROOT = new Nodemaster();
 
     /** The total number of categories read. */
@@ -165,12 +165,12 @@ public class Graphmaster
         try
         {
             RESPONSE_TIMEOUT = Integer.parseInt(Globals.getProperty("programd.response-timeout", "1000"));
-        }
+        } 
         catch (NumberFormatException e)
         {
             RESPONSE_TIMEOUT = 1000;
-        }
-    }
+        } 
+    } 
 
     /**
      * Prevents external creation of a new <code>Graphmaster</code>.
@@ -178,7 +178,7 @@ public class Graphmaster
     private Graphmaster()
     {
         // Nothing to do.
-    }
+    } 
 
     /**
      * Adds a new pattern-that-topic path to the <code>Graphmaster</code>
@@ -206,7 +206,7 @@ public class Graphmaster
         Nodemapper node = add(path.listIterator(), ROOT);
 
         return (node);
-    }
+    } 
 
     /**
      * Adds a new path to the <code>Graphmaster</code> at a given node.
@@ -226,7 +226,7 @@ public class Graphmaster
         {
             parent.setTop();
             return parent;
-        }
+        } 
         // Otherwise, get the next word.
         String word = (String) pathIterator.next();
 
@@ -236,21 +236,21 @@ public class Graphmaster
         if (parent.containsKey(word))
         {
             node = (Nodemapper) parent.get(word);
-        }
+        } 
         // Otherwise create a new node with this word.
         else
         {
             node = new Nodemaster();
             parent.put(word, node);
             node.setParent(parent);
-        }
+        } 
 
         // Add the word to the pattern vocabulary.
         patternVocabulary.add(word);
 
         // Return the result of adding the new node to the parent.
         return add(pathIterator, node);
-    }
+    } 
 
     /**
      * Removes a node, as well as many of its ancestors as have no descendants
@@ -270,11 +270,11 @@ public class Graphmaster
                 if (parent != ROOT)
                 {
                     remove(parent);
-                }
-            }
-        }
+                } 
+            } 
+        } 
         nodemapper = null;
-    }
+    } 
 
     /**
      * <p>
@@ -308,12 +308,12 @@ public class Graphmaster
         if (input.length() > 0)
         {
             inputPath = StringKit.wordSplit(input);
-        }
+        } 
         else
         {
             inputPath = new ArrayList();
             inputPath.add(ASTERISK);
-        }
+        } 
 
         // <that> marker.
         inputPath.add(THAT);
@@ -322,11 +322,11 @@ public class Graphmaster
         if (that.length() > 0)
         {
             inputPath.addAll(StringKit.wordSplit(that));
-        }
+        } 
         else
         {
             inputPath.add(ASTERISK);
-        }
+        } 
 
         // <topic> marker.
         inputPath.add(TOPIC);
@@ -335,11 +335,11 @@ public class Graphmaster
         if (topic.length() > 0)
         {
             inputPath.addAll(StringKit.wordSplit(topic));
-        }
+        } 
         else
         {
             inputPath.add(ASTERISK);
-        }
+        } 
 
         // <botid> marker.
         inputPath.add(BOTID);
@@ -357,11 +357,11 @@ public class Graphmaster
         if (match != null)
         {
             return match;
-        }
+        } 
         //(otherwise...)
         Trace.devinfo("Match is null.");
         throw new NoMatchException(input);
-    }
+    } 
 
     /**
      * <p>
@@ -395,13 +395,13 @@ public class Graphmaster
         if (System.currentTimeMillis() >= expiration)
         {
             return null;
-        }
+        } 
 
         // Halt matching if this node is higher than the length of the input.
         if (input.size() < nodemapper.getHeight())
         {
             return null;
-        }
+        } 
 
         // The match object that will be returned.
         Match match;
@@ -417,10 +417,10 @@ public class Graphmaster
                 match.setBotID(path.toString());
                 match.setNodemapper(nodemapper);
                 return match;
-            }
+            } 
             // (otherwise...)
             return null;
-        }
+        } 
 
         // Take the first word of the input as the head.
         String head = ((String) input.get(0)).trim();
@@ -442,7 +442,7 @@ public class Graphmaster
                 newPath.append(path);
                 newPath.append(' ');
                 newPath.append('_');
-            }
+            } 
 
             // Try to get a match with the tail and this new path, using the
             // head as the star.
@@ -460,27 +460,27 @@ public class Graphmaster
                         if (star.length() > 0)
                         {
                             match.pushInputStar(star);
-                        }
+                        } 
                         break;
 
                     case S_THAT:
                         if (star.length() > 0)
                         {
                             match.pushThatStar(star);
-                        }
+                        } 
                         break;
 
                     case S_TOPIC:
                         if (star.length() > 0)
                         {
                             match.pushTopicStar(star);
-                        }
+                        } 
                         break;
-                }
+                } 
                 // ...and return this match.
                 return match;
-            }
-        }
+            } 
+        } 
 
         /*
          * The nodemapper may have contained a _, but this led to no match. Or
@@ -498,15 +498,15 @@ public class Graphmaster
                 if (head.equals(THAT))
                 {
                     matchState = S_THAT;
-                }
+                } 
                 else if (head.equals(TOPIC))
                 {
                     matchState = S_TOPIC;
-                }
+                } 
                 else if (head.equals(BOTID))
                 {
                     matchState = S_BOTID;
-                }
+                } 
 
                 // Now try to get a match using the tail and an empty star and
                 // empty path.
@@ -524,7 +524,7 @@ public class Graphmaster
                             if (star.length() > 0)
                             {
                                 match.pushInputStar(star);
-                            }
+                            } 
                             // Remember the pattern segment of the matched path.
                             match.setPattern(path.toString());
                             break;
@@ -533,7 +533,7 @@ public class Graphmaster
                             if (star.length() > 0)
                             {
                                 match.pushThatStar(star);
-                            }
+                            } 
                             // Remember the that segment of the matched path.
                             match.setThat(path.toString());
                             break;
@@ -542,16 +542,16 @@ public class Graphmaster
                             if (star.length() > 0)
                             {
                                 match.pushTopicStar(star);
-                            }
+                            } 
                             // Remember the topic segment of the matched path.
                             match.setTopic(path.toString());
                             break;
 
-                    }
+                    } 
                     // ...and return this match.
                     return match;
-                }
-            }
+                } 
+            } 
             /*
              * In the case that the nodemapper contained the head, but the head
              * was not a marker, it must be that the head is a regular word. So
@@ -566,7 +566,7 @@ public class Graphmaster
                     newPath.append(path);
                     newPath.append(' ');
                     newPath.append(head);
-                }
+                } 
 
                 // Try to get a match with the tail and this path, using the
                 // current star.
@@ -577,9 +577,9 @@ public class Graphmaster
                 if (match != null)
                 {
                     return match;
-                }
-            }
-        }
+                } 
+            } 
+        } 
 
         /*
          * The nodemapper may have contained the head, but this led to no match.
@@ -596,7 +596,7 @@ public class Graphmaster
                 newPath.append(path);
                 newPath.append(' ');
                 newPath.append('*');
-            }
+            } 
 
             // Try to get a match with the tail and this new path, using the
             // head as the star.
@@ -614,27 +614,27 @@ public class Graphmaster
                         if (star.length() > 0)
                         {
                             match.pushInputStar(star);
-                        }
+                        } 
                         break;
 
                     case S_THAT:
                         if (star.length() > 0)
                         {
                             match.pushThatStar(star);
-                        }
+                        } 
                         break;
 
                     case S_TOPIC:
                         if (star.length() > 0)
                         {
                             match.pushTopicStar(star);
-                        }
+                        } 
                         break;
-                }
+                } 
                 // ...and return this match.
                 return match;
-            }
-        }
+            } 
+        } 
 
         /*
          * The nodemapper has failed to match at all: it contains neither _, nor
@@ -645,7 +645,7 @@ public class Graphmaster
         if (nodemapper.equals(parent.get(ASTERISK)) || nodemapper.equals(parent.get(UNDERSCORE)))
         {
             return match(nodemapper, parent, tail, star + SPACE + head, path, matchState, expiration);
-        }
+        } 
 
         /*
          * If we get here, we've hit a dead end; this null match will be passed
@@ -654,10 +654,10 @@ public class Graphmaster
          * NoMatchException), though this is assumed to be the rarest occurence.
          */
         return null;
-    }
+    } 
 
     /**
-     * Marks the end of loadtime. Depending on settings in {@link Globals},
+     * Marks the end of loadtime. Depending on settings in {@link Globals} ,
      * displays various trace information on the console, and writes startup
      * information to the log..
      */
@@ -671,12 +671,12 @@ public class Graphmaster
         {
             // Give number of loaded categories.
             Log.userinfo(Bots.getCount() + " bots thinking with " + TOTAL_CATEGORIES + " categories.", Log.STARTUP);
-        }
+        } 
 
         // Always print the copyright, regardless of console settings.
         Trace.insist(COPYLEFT);
         Log.userinfo("Program D version " + VERSION + " Build [" + BUILD + "]", Log.STARTUP);
-    }
+    } 
 
     /**
      * Tells the PredicateMaster to save all predicates.
@@ -684,7 +684,7 @@ public class Graphmaster
     public static void shutdown()
     {
         PredicateMaster.saveAll();
-    }
+    } 
 
     /**
      * Adds a given Nodemapper to the set of activated nodes.
@@ -692,11 +692,11 @@ public class Graphmaster
     public static void activatedNode(Nodemapper nodemapper)
     {
         ACTIVATED_NODES.add(nodemapper);
-    }
+    } 
 
     /**
      * Sends new targeting data to
-     * {@link org.aitools.programd.targeting.TargetMaster}.
+     * {@link org.aitools.programd.targeting.TargetMaster} .
      */
     public static void checkpoint()
     {
@@ -727,9 +727,9 @@ public class Graphmaster
                 TargetMaster.add(matchPattern, matchThat, matchTopic, matchTemplate, inputText, inputThat, inputTopic,
                         response);
                 activationsIterator.remove();
-            }
-        }
-    }
+            } 
+        } 
+    } 
 
     /**
      * Loads the <code>Graphmaster</code> with the contents of a given path.
@@ -744,7 +744,7 @@ public class Graphmaster
         if (path.length() < 1)
         {
             Log.userinfo("Cannot open a file whose name has zero length.", Log.ERROR);
-        }
+        } 
 
         Bot bot = null;
         boolean localFile = true;
@@ -755,17 +755,17 @@ public class Graphmaster
             if (startupLoaded)
             {
                 Log.userinfo("Cannot reload startup file.", Log.ERROR);
-            }
+            } 
             else
             {
                 startupLoaded = true;
                 Log.userinfo("Starting up with \"" + path + "\".", Log.STARTUP);
-            }
-        }
+            } 
+        } 
         else
         {
             bot = Bots.getBot(botid);
-        }
+        } 
 
         // This BufferedReader will be passed to AIMLReader to read the file.
         BufferedReader buffReader = null;
@@ -779,28 +779,28 @@ public class Graphmaster
             try
             {
                 url = new URL(path);
-            }
+            } 
             catch (MalformedURLException e)
             {
                 Log.userinfo("Malformed URL: \"" + path + "\"", Log.ERROR);
-            }
+            } 
 
             try
             {
                 String encoding = XMLKit.getDeclaredXMLEncoding(url.openStream());
                 buffReader = new BufferedReader(new InputStreamReader(url.openStream(), encoding));
-            }
+            } 
             catch (IOException e)
             {
                 Log.userinfo("I/O error trying to read \"" + path + "\"", Log.ERROR);
-            }
+            } 
 
             if (!loadCheck(url, bot))
             {
                 return;
-            }
+            } 
             localFile = false;
-        }
+        } 
 
         // Handle paths which are apparently files.
         else
@@ -812,48 +812,48 @@ public class Graphmaster
                 try
                 {
                     files = FileManager.glob(path);
-                }
+                } 
                 catch (FileNotFoundException e)
                 {
                     Log.userinfo(e.getMessage(), Log.ERROR);
-                }
+                } 
                 if (files != null)
                 {
                     for (int index = files.length; --index >= 0;)
                     {
                         load(files[index], botid);
-                    }
+                    } 
                     return;
-                }
-            }
+                } 
+            } 
 
             File toRead = null;
             try
             {
                 toRead = FileManager.getExistingFile(path);
-            }
+            } 
             catch (FileNotFoundException e)
             {
                 Trace.userinfo(e.getMessage());
-            }
+            } 
 
             if (toRead != null && toRead.exists() && !toRead.isDirectory())
             {
                 if (!loadCheck(toRead, bot))
                 {
                     return;
-                }
+                } 
 
                 try
                 {
                     String encoding = XMLKit.getDeclaredXMLEncoding(new FileInputStream(path));
                     buffReader = new BufferedReader(new InputStreamReader(new FileInputStream(path), encoding));
-                }
+                } 
                 catch (IOException e)
                 {
                     Log.userinfo("I/O error trying to read \"" + path + "\"", Log.ERROR);
                     return;
-                }
+                } 
                 // Add it to the AIMLWatcher, if active (and not the startup
                 // file).
                 if (Globals.isWatcherActive())
@@ -861,36 +861,36 @@ public class Graphmaster
                     if (!path.equals(Globals.getStartupFilePath()))
                     {
                         AIMLWatcher.addWatchFile(path, botid);
-                    }
-                }
+                    } 
+                } 
                 FileManager.pushWorkingDirectory(toRead.getParent());
-            }
+            } 
             else
             {
                 if (toRead == null)
                 {
                     Log.userinfo("Could not find \"" + path + "\".", Log.ERROR);
-                }
+                } 
                 else
                 {
                     if (!toRead.exists())
                     {
                         Log.userinfo("\"" + path + "\" does not exist!", Log.ERROR);
-                    }
+                    } 
                     if (toRead.isDirectory())
                     {
                         Log.userinfo("\"" + path + "\" is a directory!", Log.ERROR);
-                    }
-                }
-            }
-        }
+                    } 
+                } 
+            } 
+        } 
         new AIMLReader(path, buffReader, new AIMLLoader(path, botid), Globals.warnAboutDeprecatedTags()).read();
 
         if (localFile)
         {
             FileManager.popWorkingDirectory();
-        }
-    }
+        } 
+    } 
 
     /**
      * Tracks/checks whether a given path should be loaded, depending on whether
@@ -906,7 +906,7 @@ public class Graphmaster
         if (bot == null)
         {
             return true;
-        }
+        } 
 
         HashMap loadedFiles = bot.getLoadedFilesMap();
 
@@ -916,16 +916,16 @@ public class Graphmaster
             if (loadtime)
             {
                 return false;
-            }
+            } 
             // At other times, unload the file before loading it again.
             unload(path, bot);
-        }
+        } 
         else
         {
             loadedFiles.put(path, new HashSet());
-        }
+        } 
         return true;
-    }
+    } 
 
     /**
      * Removes all nodes associated with a given filename, and removes the file
@@ -943,8 +943,8 @@ public class Graphmaster
         {
             remove((Nodemapper) nodemapperIterator.next());
             TOTAL_CATEGORIES--;
-        }
-    }
+        } 
+    } 
 
     /**
      * Returns the number of categories presently loaded.
@@ -954,7 +954,7 @@ public class Graphmaster
     public static int getTotalCategories()
     {
         return TOTAL_CATEGORIES;
-    }
+    } 
 
     /**
      * Increments the total categories.
@@ -964,7 +964,7 @@ public class Graphmaster
     public static int incrementTotalCategories()
     {
         return TOTAL_CATEGORIES++;
-    }
+    } 
 
     /**
      * Returns the pattern vocabulary size.
@@ -974,5 +974,5 @@ public class Graphmaster
     public static int patternVocabularySize()
     {
         return patternVocabulary.size();
-    }
+    } 
 }

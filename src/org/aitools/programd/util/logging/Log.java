@@ -99,21 +99,21 @@ public class Log
         try
         {
             fileWriter = FileManager.getFileWriter(type, true);
-        }
+        } 
         catch (IOException e)
         {
             throw new UserError("Could not create log file \"" + type + "\".");
-        }
+        } 
         MessagePrinter.println(message, fileWriter, MessagePrinter.LOG);
         try
         {
             fileWriter.close();
-        }
+        } 
         catch (IOException e)
         {
             throw new DeveloperError("Could not close FileWriter!");
-        }
-    }
+        } 
+    } 
 
     /**
      * Logs an exception to the appropriate logfile.
@@ -139,31 +139,31 @@ public class Log
         try
         {
             fileWriter = FileManager.getFileWriter(type, true);
-        }
+        } 
         catch (IOException e)
         {
             throw new UserError("Could not create log file \"" + type + "\".");
-        }
+        } 
 
         String message = exception.getMessage();
         if (message != null)
         {
             MessagePrinter.println(message, fileWriter, MessagePrinter.LOG);
-        }
+        } 
         StringTokenizer lines = StackParser.getStackTraceFor(exception);
         while (lines.hasMoreElements())
         {
             MessagePrinter.println(lines.nextToken(), fileWriter, MessagePrinter.LOG);
-        }
+        } 
         try
         {
             fileWriter.close();
-        }
+        } 
         catch (IOException e)
         {
             throw new DeveloperError("Could not close FileWriter!");
-        }
-    }
+        } 
+    } 
 
     /**
      * Writes a multiline log message to the appropriate logfile.
@@ -185,8 +185,8 @@ public class Log
         for (int index = 0; index < lineCount; index++)
         {
             log(message[index], type);
-        }
-    }
+        } 
+    } 
 
     /**
      * Logs a message <i>and </i> prints it to the console as a user info
@@ -207,10 +207,10 @@ public class Log
     {
         Trace.userinfo(message);
         log(message, type);
-    }
+    } 
 
     /**
-     * Same as {@link #userinfo(String, String)}, but logs to multiple log
+     * Same as {@link #userinfo(String, String)} , but logs to multiple log
      * files.
      * 
      * @param message
@@ -225,8 +225,8 @@ public class Log
         for (int index = 0; index < lastType; index++)
         {
             log(message, types[index]);
-        }
-    }
+        } 
+    } 
 
     /**
      * Logs a multiline message <i>and </i> prints it to the console as a user
@@ -249,11 +249,11 @@ public class Log
         for (int index = 0; index < lineCount; index++)
         {
             userinfo(message[index], type);
-        }
-    }
+        } 
+    } 
 
     /**
-     * Same as {@link #userinfo(String[], String)}, but logs to multiple log
+     * Same as {@link #userinfo(String[], String)} , but logs to multiple log
      * files.
      * 
      * @param message
@@ -268,8 +268,8 @@ public class Log
         for (int index = 0; index < lastType; index++)
         {
             log(message, types[index]);
-        }
-    }
+        } 
+    } 
 
     /**
      * Logs a message <i>and </i> prints it to the console as a user failure
@@ -290,7 +290,7 @@ public class Log
     {
         Trace.userfail(message);
         log(message, type);
-    }
+    } 
 
     /**
      * Logs a multiline message <i>and </i> prints it to the console as a user
@@ -313,11 +313,11 @@ public class Log
         for (int index = 0; index < lastLine; index++)
         {
             userfail(message[index], type);
-        }
-    }
+        } 
+    } 
 
     /**
-     * Same as {@link #userfail(String, String)}, but logs to multiple log
+     * Same as {@link #userfail(String, String)} , but logs to multiple log
      * files.
      * 
      * @param message
@@ -332,11 +332,11 @@ public class Log
         for (int index = 0; index < lastType; index++)
         {
             log(message, types[index]);
-        }
-    }
+        } 
+    } 
 
     /**
-     * Same as {@link #userfail(String, String[])}, but logs multi-line
+     * Same as {@link #userfail(String, String[])} , but logs multi-line
      * messages.
      * 
      * @param message
@@ -351,8 +351,8 @@ public class Log
         for (int index = 0; index < lastType; index++)
         {
             log(message, types[index]);
-        }
-    }
+        } 
+    } 
 
     /**
      * Logs a message and an exception <i>and </i> prints them to the console as
@@ -375,7 +375,7 @@ public class Log
         log(message, type);
         Trace.userfail(exception);
         log(exception, type);
-    }
+    } 
 
     /**
      * Notifies of user error exceptions.
@@ -386,12 +386,12 @@ public class Log
         if (embedded == null)
         {
             userfail(e.getMessage(), Log.ERROR);
-        }
+        } 
         else
         {
             userfail(e.getMessage(), embedded, Log.ERROR);
-        }
-    }
+        } 
+    } 
 
     /**
      * Logs a message <i>and </i> prints it to the console as a developer info
@@ -412,10 +412,10 @@ public class Log
     {
         Trace.devinfo(message);
         log(message, type);
-    }
+    } 
 
     /**
-     * Same as {@link #devinfo(String, String)}, but logs to multiple log
+     * Same as {@link #devinfo(String, String)} , but logs to multiple log
      * files.
      * 
      * @param message
@@ -430,8 +430,8 @@ public class Log
         for (int index = 0; index < lastType; index++)
         {
             log(message, types[index]);
-        }
-    }
+        } 
+    } 
 
     /**
      * Logs a message <i>and </i> prints it to the console as a developer
@@ -452,7 +452,7 @@ public class Log
     {
         Trace.devfail(message);
         log(message, type);
-    }
+    } 
 
     /**
      * Logs a message and an exception <i>and </i> prints them to the console as
@@ -477,10 +477,10 @@ public class Log
         log(message, type);
         Trace.devfail(exception);
         log(exception, type);
-    }
+    } 
 
     /**
-     * Same as {@link #devfail(String, String)}, but logs to multiple log
+     * Same as {@link #devfail(String, String)} , but logs to multiple log
      * files.
      * 
      * @param message
@@ -495,8 +495,8 @@ public class Log
         for (int index = 0; index < lastType; index++)
         {
             log(message, types[index]);
-        }
-    }
+        } 
+    } 
 
     /**
      * Notifies of developer error exceptions.
@@ -507,12 +507,12 @@ public class Log
         if (embedded == null)
         {
             devfail(e.getMessage(), Log.ERROR);
-        }
+        } 
         else
         {
             devfail(e.getMessage(), embedded, Log.ERROR);
-        }
-    }
+        } 
+    } 
 
     /**
      * Notifies of runtime exceptions.
@@ -520,5 +520,5 @@ public class Log
     public static void devfail(RuntimeException e)
     {
         devfail("Unforeseen runtime exception.", e, Log.ERROR);
-    }
+    } 
 }

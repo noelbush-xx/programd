@@ -22,5 +22,5 @@ public class IAmAlivePulse implements Pulse
     public void emit()
     {
         Trace.userinfo("I am alive!");
-    }
+    } 
 }

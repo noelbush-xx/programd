@@ -37,7 +37,7 @@ abstract public class TargetAwareTabulator extends Tabulator
         super(columnNames);
         this.guiparent = guiparentToUse;
         this.table.addMouseListener(new TargetOpener(this));
-    }
+    } 
 
     private class TargetOpener extends MouseAdapter
     {
@@ -46,7 +46,7 @@ abstract public class TargetAwareTabulator extends Tabulator
         public TargetOpener(TargetAwareTabulator parentToUse)
         {
             this.parent = parentToUse;
-        }
+        } 
 
         public void mouseClicked(MouseEvent me)
         {
@@ -59,7 +59,7 @@ abstract public class TargetAwareTabulator extends Tabulator
                 this.parent.guiparent.targetPanel.setTarget(target);
                 this.parent.guiparent.targetPanel.scrollToInput(input);
                 this.parent.guiparent.viewTargets();
-            }
-        }
-    }
+            } 
+        } 
+    } 
 }

@@ -16,8 +16,8 @@ import org.aitools.programd.targeting.Target;
 
 /**
  * Reads in new targets to a given Targets object. This version is based on
- * {@link org.aitools.programd.loader.AIMLLoader}. Obviously this and its
- * companion {@link TargetsReaderListener}duplicate a lot from AIMLReader and
+ * {@link org.aitools.programd.loader.AIMLLoader} . Obviously this and its
+ * companion {@link TargetsReaderListener} duplicate a lot from AIMLReader and
  * AIMLLoader, so once this is stabilized these should all be combined.
  * 
  * @author Noel Bush
@@ -28,7 +28,7 @@ public class TargetsReaderListener implements GenericReaderListener
     private HashMap set;
 
     /**
-     * Loads a target into {@link org.aitools.programd.targeting.TargetMaster}.
+     * Loads a target into {@link org.aitools.programd.targeting.TargetMaster} .
      * 
      * @param matchPattern
      *            the <code>pattern</code> part of the matched path
@@ -55,7 +55,7 @@ public class TargetsReaderListener implements GenericReaderListener
         // Add new target to TargetingTool.
         TargetingTool.add(new Target(matchPattern, matchThat, matchTopic, matchTemplate, inputText, inputThat,
                 inputTopic, reply), this.set);
-    }
+    } 
 
     /**
      * Initializes a TargetsReaderListener with the set in which to load the
@@ -67,5 +67,5 @@ public class TargetsReaderListener implements GenericReaderListener
     public TargetsReaderListener(HashMap setToUse)
     {
         this.set = setToUse;
-    }
+    } 
 }

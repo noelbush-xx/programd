@@ -25,5 +25,5 @@ public class GenderProcessor extends StartupElementProcessor
     {
         SubstitutionsProcessor.addSubstitutions(SubstitutionsProcessor.GENDER, tag, parser);
         return EMPTY_STRING;
-    }
+    } 
 }

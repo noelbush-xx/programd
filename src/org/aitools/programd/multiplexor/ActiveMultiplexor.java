@@ -15,7 +15,7 @@ import org.aitools.programd.util.UserError;
 
 /**
  * <p>
- * Implements access to a {@link Multiplexor}of configurable type. Uses a
+ * Implements access to a {@link Multiplexor} of configurable type. Uses a
  * variant of the Singleton pattern.
  * </p>
  * <p>
@@ -30,7 +30,7 @@ import org.aitools.programd.util.UserError;
  */
 public class ActiveMultiplexor
 {
-    /** The {@link Multiplexor}managed by the instance of this class. */
+    /** The {@link Multiplexor} managed by the instance of this class. */
     private static Multiplexor multiplexor;
 
     /**
@@ -42,10 +42,10 @@ public class ActiveMultiplexor
 
     /**
      * Private constructor that initializes the <code>ActiveMultiplexor</code>
-     * with an implementation of {@link Multiplexor}.
+     * with an implementation of {@link Multiplexor} .
      * 
      * @param className
-     *            the name of the subclass of {@link Multiplexor}that should be
+     *            the name of the subclass of {@link Multiplexor} that should be
      *            used
      */
     private ActiveMultiplexor(String className)
@@ -54,34 +54,34 @@ public class ActiveMultiplexor
         try
         {
             forName = Class.forName(className);
-        }
+        } 
         catch (ClassNotFoundException e)
         {
             throw new UserError("Specified multiplexor (\"" + className + "\") could not be found.");
-        }
+        } 
         try
         {
             multiplexor = (Multiplexor) forName.newInstance();
-        }
+        } 
         catch (IllegalAccessException e)
         {
             throw new DeveloperError("Specified multiplexor class (\"" + className
                     + "\") or its nullary constructor was not available.");
-        }
+        } 
         catch (InstantiationException e)
         {
             throw new DeveloperError("Could not instantiate specified multiplexor class (\"" + className + "\").");
-        }
+        } 
         catch (ExceptionInInitializerError e)
         {
             throw new DeveloperError("Initialization of specified multiplexor class (\"" + className + "\") failed.");
-        }
+        } 
         catch (SecurityException e)
         {
             throw new DeveloperError("Permission denied to create a new instance of specified multiplexor class (\""
                     + className + "\").");
-        }
-    }
+        } 
+    } 
 
     /**
      * Prohibits cloning this class.
@@ -89,7 +89,7 @@ public class ActiveMultiplexor
     protected Object clone() throws CloneNotSupportedException
     {
         throw new CloneNotSupportedException();
-    }
+    } 
 
     /**
      * Returns the Multiplexor managed by this class.
@@ -99,5 +99,5 @@ public class ActiveMultiplexor
     public static Multiplexor getInstance()
     {
         return multiplexor;
-    }
+    } 
 }

@@ -30,8 +30,8 @@ public class SRProcessor extends AIMLProcessor
         {
             return parser.shortcutTag(level, SRAIProcessor.label, XMLNode.TAG, EMPTY_STRING, StarProcessor.label,
                     XMLNode.EMPTY);
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<sr/> cannot have content!");
-    }
+    } 
 }

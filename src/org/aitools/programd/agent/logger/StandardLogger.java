@@ -36,7 +36,7 @@ public class StandardLogger
         for (int index = 0; index < lines.length; index++)
         {
             Log.log(clientName + PROMPT + lines[index], Log.CHAT);
-        }
+        } 
 
         // Break lines at tags.
         lines = XMLKit.breakLinesAtTags(response);
@@ -45,6 +45,6 @@ public class StandardLogger
         for (int index = 0; index < lines.length; index++)
         {
             Log.log(botid + PROMPT + lines[index], Log.CHAT);
-        }
-    }
+        } 
+    } 
 }

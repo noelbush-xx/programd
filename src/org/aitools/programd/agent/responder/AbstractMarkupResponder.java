@@ -32,7 +32,7 @@ import org.aitools.programd.util.UserError;
  * <p>
  * Contains common methods of template parsing and processing that are generic
  * for all responders that deal with markup output, and which use a three-part
- * template, such as {@link HTMLResponder},{@link FlashResponder}, etc.
+ * template, such as {@link HTMLResponder} ,{@link FlashResponder} , etc.
  * </p>
  * <p>
  * Uses a very simple parser that scans a template file and looks for
@@ -93,7 +93,7 @@ abstract public class AbstractMarkupResponder implements Responder
 
     /** Tags to process from the template. */
     protected static String[] tags =
-        { EMPTY_STRING, REPLY_START, REPLY_END, HOSTNAME, USERINPUT, RESPONSE, BOT_NAME_EQUALS };
+        { EMPTY_STRING, REPLY_START, REPLY_END, HOSTNAME, USERINPUT, RESPONSE, BOT_NAME_EQUALS } ;
 
     /** Whether to log the chat to the database. */
     private static final boolean LOG_CHAT_TO_DATABASE = Boolean.valueOf(
@@ -128,7 +128,7 @@ abstract public class AbstractMarkupResponder implements Responder
     {
         this.botid = botidToRespond;
         this.bot = Bots.getBot(botidToRespond);
-    }
+    } 
 
     /**
      * Parses a template given a path.
@@ -144,12 +144,12 @@ abstract public class AbstractMarkupResponder implements Responder
             reader = new FileReader(path);
             parse(reader);
             reader.close();
-        }
+        } 
         catch (IOException e)
         {
             throw new UserError("I/O error trying to read \"" + path + "\".", e);
-        }
-    }
+        } 
+    } 
 
     public String preprocess(String input, String hostname)
     {
@@ -167,7 +167,7 @@ abstract public class AbstractMarkupResponder implements Responder
             if (thisNode instanceof String)
             {
                 this.response.append(thisNode);
-            }
+            } 
 
             // Append appropriate values for tags.
             else if (thisNode instanceof Tag)
@@ -179,12 +179,12 @@ abstract public class AbstractMarkupResponder implements Responder
                 if (tagName.equals(HOSTNAME))
                 {
                     this.response.append(hostname);
-                }
+                } 
                 // The user input.
                 else if (tagName.equals(USERINPUT))
                 {
                     this.response.append(input);
-                }
+                } 
                 // Some bot predicate.
                 else if (tagName.startsWith(BOT_NAME_EQUALS))
                 {
@@ -193,12 +193,12 @@ abstract public class AbstractMarkupResponder implements Responder
                     if (quote > 10)
                     {
                         this.response.append(this.bot.getPropertyValue(tagName.substring(10, quote)));
-                    }
-                }
-            }
-        }
+                    } 
+                } 
+            } 
+        } 
         return input;
-    }
+    } 
 
     public String append(String input, String reply, String appendTo)
     {
@@ -213,7 +213,7 @@ abstract public class AbstractMarkupResponder implements Responder
             if (thisNode instanceof String)
             {
                 this.response.append(thisNode);
-            }
+            } 
 
             // Append appropriate values for tags.
             else if (thisNode instanceof Tag)
@@ -225,16 +225,16 @@ abstract public class AbstractMarkupResponder implements Responder
                 if (tagName.equals(USERINPUT))
                 {
                     this.response.append(input);
-                }
+                } 
                 // The whole bot response.
                 else if (tagName.equals(RESPONSE))
                 {
                     if (this.response.length() > 0)
                     {
                         this.response.append(' ');
-                    }
+                    } 
                     this.response.append(reply);
-                }
+                } 
                 // Some bot predicate.
                 else if (tagName.startsWith(BOT_NAME_EQUALS))
                 {
@@ -243,28 +243,28 @@ abstract public class AbstractMarkupResponder implements Responder
                     if (quote > 10)
                     {
                         this.response.append(this.bot.getPropertyValue(tagName.substring(10, quote)));
-                    }
-                }
-            }
-        }
+                    } 
+                } 
+            } 
+        } 
         if (appendTo.length() > 0)
         {
             return appendTo + ' ' + reply;
-        }
+        } 
         return appendTo + reply;
-    }
+    } 
 
     public void log(String input, String reply, String hostname, String userid, String botidToLog)
     {
         if (LOG_CHAT_TO_DATABASE)
         {
             DatabaseLogger.log(input, reply, hostname, userid, botidToLog);
-        }
+        } 
         if (LOG_CHAT_TO_XML)
         {
             XMLLogger.log(input, reply, hostname, userid, botidToLog);
-        }
-    }
+        } 
+    } 
 
     public String postprocess(String reply)
     {
@@ -279,7 +279,7 @@ abstract public class AbstractMarkupResponder implements Responder
             if (thisNode instanceof String)
             {
                 this.response.append(thisNode);
-            }
+            } 
 
             // Append appropriate values for tags.
             else if (thisNode instanceof Tag)
@@ -293,9 +293,9 @@ abstract public class AbstractMarkupResponder implements Responder
                     if (this.response.length() > 0)
                     {
                         this.response.append(' ');
-                    }
+                    } 
                     this.response.append(reply);
-                }
+                } 
                 // Some bot predicate.
                 else if (tagName.startsWith(BOT_NAME_EQUALS))
                 {
@@ -304,17 +304,17 @@ abstract public class AbstractMarkupResponder implements Responder
                     if (quote > 10)
                     {
                         this.response.append(this.bot.getPropertyValue(tagName.substring(10, quote)));
-                    }
-                }
+                    } 
+                } 
                 // Host name.
                 else if (tagName.equals(HOSTNAME))
                 {
                     this.response.append(this.hostName);
-                }
-            }
-        }
+                } 
+            } 
+        } 
         return this.response.toString();
-    }
+    } 
 
     /**
      * Parses a template into the header, reply part and footer Lists.
@@ -339,7 +339,7 @@ abstract public class AbstractMarkupResponder implements Responder
                 while ((aChar = (char) file.read()) != '>')
                 {
                     tag.append(aChar);
-                }
+                } 
                 String tagString = tag.toString();
 
                 int tagsIndex;
@@ -350,8 +350,8 @@ abstract public class AbstractMarkupResponder implements Responder
                         currentList.add(buffer.toString());
                         buffer.setLength(0);
                         break;
-                    }
-                }
+                    } 
+                } 
                 switch (tagsIndex)
                 {
                     case 0:
@@ -369,15 +369,15 @@ abstract public class AbstractMarkupResponder implements Responder
                     default:
                         currentList.add(new Tag(tagString));
                         break;
-                }
-            }
+                } 
+            } 
             else
             {
                 buffer.append(aChar);
-            }
-        }
+            } 
+        } 
         currentList.add(buffer.toString());
-    }
+    } 
 
     /**
      * Loads a template from a file.
@@ -396,11 +396,11 @@ abstract public class AbstractMarkupResponder implements Responder
         try
         {
             freader = new FileReader(path);
-        }
+        } 
         catch (FileNotFoundException e)
         {
             return null;
-        }
+        } 
         BufferedReader breader = new BufferedReader(freader);
 
         template.clear();
@@ -410,17 +410,17 @@ abstract public class AbstractMarkupResponder implements Responder
             while ((templateLine = breader.readLine()) != null)
             {
                 template.add(templateLine);
-            }
+            } 
             freader.close();
             breader.close();
-        }
+        } 
         catch (IOException e)
         {
             throw new UserError("I/O error reading \"" + path + "\".", e);
-        }
+        } 
 
         return template;
-    }
+    } 
 
     /**
      * Scans a given directory for templates that match a given filename filter
@@ -448,9 +448,9 @@ abstract public class AbstractMarkupResponder implements Responder
                     String templateFilename = templateFilenames[index];
                     result.put(templateFilename.substring(0, templateFilename.lastIndexOf(PERIOD)), directoryName
                             + File.separator + templateFilename);
-                }
-            }
-        }
+                } 
+            } 
+        } 
         return result;
-    }
+    } 
 }

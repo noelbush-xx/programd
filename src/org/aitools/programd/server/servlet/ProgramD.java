@@ -40,22 +40,22 @@ public class ProgramD extends HttpServlet
     public void init() throws ServletException
     {
         // Do nothing.
-    }
+    } 
 
     public void init(ServletConfig config) throws ServletException
     {
         // Do nothing.
-    }
+    } 
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
         SmartResponder responder = new SmartResponder(request, response);
         responder.doResponse();
 
-    }
+    } 
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
         doGet(request, response);
-    }
+    } 
 }

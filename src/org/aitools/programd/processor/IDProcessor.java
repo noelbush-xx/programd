@@ -29,8 +29,8 @@ public class IDProcessor extends AIMLProcessor
         if (tag.XMLType == XMLNode.EMPTY)
         {
             return parser.getUserID();
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<id/> cannot have content!");
-    }
+    } 
 }

@@ -92,5 +92,5 @@ public class XMLLogger
                 + botid + BOTID_END + LINE_SEPARATOR + INDENT + INDENT + INPUT_START + XMLKit.escapeXMLChars(input)
                 + INPUT_END + LINE_SEPARATOR + INDENT + INDENT + RESPONSE_START + response + RESPONSE_END
                 + LINE_SEPARATOR + INDENT + EXCHANGE_END + LINE_SEPARATOR, Bots.getBot(botid).getChatlogSpec());
-    }
+    } 
 }

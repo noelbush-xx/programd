@@ -43,18 +43,18 @@ public class TableSorter extends TableMap
     public TableSorter()
     {
         this.indexes = new int[0];
-    }
+    } 
 
     public TableSorter(TableModel modelToSet)
     {
         setModel(modelToSet);
-    }
+    } 
 
     public void setModel(TableModel modelToSet)
     {
         super.setModel(modelToSet);
         reallocateIndexes();
-    }
+    } 
 
     public int compareRowsByColumn(int row1, int row2, int column)
     {
@@ -69,16 +69,16 @@ public class TableSorter extends TableMap
         if (o1 == null && o2 == null)
         {
             return 0;
-        }
+        } 
         // Define null less than everything.
         else if (o1 == null)
         {
             return -1;
-        }
+        } 
         else if (o2 == null)
         {
             return 1;
-        }
+        } 
 
         /*
          * We copy all returned values from the getValue call in case an
@@ -98,16 +98,16 @@ public class TableSorter extends TableMap
             if (d1 < d2)
             {
                 return -1;
-            }
+            } 
             else if (d1 > d2)
             {
                 return 1;
-            }
+            } 
             else
             {
                 return 0;
-            }
-        }
+            } 
+        } 
         else if (type == java.util.Date.class)
         {
             Date d1 = (Date) data.getValueAt(row1, column);
@@ -118,16 +118,16 @@ public class TableSorter extends TableMap
             if (n1 < n2)
             {
                 return -1;
-            }
+            } 
             else if (n1 > n2)
             {
                 return 1;
-            }
+            } 
             else
             {
                 return 0;
-            }
-        }
+            } 
+        } 
         else if (type == String.class)
         {
             String s1 = (String) data.getValueAt(row1, column);
@@ -137,16 +137,16 @@ public class TableSorter extends TableMap
             if (result < 0)
             {
                 return -1;
-            }
+            } 
             else if (result > 0)
             {
                 return 1;
-            }
+            } 
             else
             {
                 return 0;
-            }
-        }
+            } 
+        } 
         else if (type == Boolean.class)
         {
             Boolean bool1 = (Boolean) data.getValueAt(row1, column);
@@ -157,17 +157,17 @@ public class TableSorter extends TableMap
             if (b1 == b2)
             {
                 return 0;
-            }
+            } 
             // Define false < true.
             else if (b1)
             {
                 return 1;
-            }
+            } 
             else
             {
                 return -1;
-            }
-        }
+            } 
+        } 
         else
         {
             Object v1 = data.getValueAt(row1, column);
@@ -179,17 +179,17 @@ public class TableSorter extends TableMap
             if (result < 0)
             {
                 return -1;
-            }
+            } 
             else if (result > 0)
             {
                 return 1;
-            }
+            } 
             else
             {
                 return 0;
-            }
-        }
-    }
+            } 
+        } 
+    } 
 
     public int compare(int row1, int row2)
     {
@@ -201,10 +201,10 @@ public class TableSorter extends TableMap
             if (result != 0)
             {
                 return this.ascending ? result : -result;
-            }
-        }
+            } 
+        } 
         return 0;
-    }
+    } 
 
     public void reallocateIndexes()
     {
@@ -220,22 +220,22 @@ public class TableSorter extends TableMap
         for (int row = 0; row < rowCount; row++)
         {
             this.indexes[row] = row;
-        }
-    }
+        } 
+    } 
 
     public void tableChanged(TableModelEvent e)
     {
         reallocateIndexes();
         super.tableChanged(e);
-    }
+    } 
 
     public void checkModel()
     {
         if (this.indexes.length != this.model.getRowCount())
         {
             Trace.devinfo("Sorter not informed of a change in model.");
-        }
-    }
+        } 
+    } 
 
     public void sort(Object sender)
     {
@@ -243,7 +243,7 @@ public class TableSorter extends TableMap
 
         this.compares = 0;
         shuttlesort((int[]) this.indexes.clone(), this.indexes, 0, this.indexes.length);
-    }
+    } 
 
     public void n2sort()
     {
@@ -254,10 +254,10 @@ public class TableSorter extends TableMap
                 if (compare(this.indexes[i], this.indexes[j]) == -1)
                 {
                     swap(i, j);
-                }
-            }
-        }
-    }
+                } 
+            } 
+        } 
+    } 
 
     /**
      * This is a home-grown implementation which we have not had time to
@@ -272,7 +272,7 @@ public class TableSorter extends TableMap
         if (high - low < 2)
         {
             return;
-        }
+        } 
         int middle = (low + high) / 2;
         shuttlesort(to, from, low, middle);
         shuttlesort(to, from, middle, high);
@@ -301,9 +301,9 @@ public class TableSorter extends TableMap
             for (int i = low; i < high; i++)
             {
                 to[i] = from[i];
-            }
+            } 
             return;
-        }
+        } 
 
         // A normal merge.
         for (int i = low; i < high; i++)
@@ -311,20 +311,20 @@ public class TableSorter extends TableMap
             if (q >= high || (p < middle && compare(from[p], from[q]) <= 0))
             {
                 to[i] = from[p++];
-            }
+            } 
             else
             {
                 to[i] = from[q++];
-            }
-        }
-    }
+            } 
+        } 
+    } 
 
     public void swap(int i, int j)
     {
         int tmp = this.indexes[i];
         this.indexes[i] = this.indexes[j];
         this.indexes[j] = tmp;
-    }
+    } 
 
     // The mapping only affects the contents of the data rows.
     // Pass all requests to these rows through the mapping array: "indexes".
@@ -333,18 +333,18 @@ public class TableSorter extends TableMap
     {
         checkModel();
         return this.model.getValueAt(this.indexes[aRow], aColumn);
-    }
+    } 
 
     public void setValueAt(Object aValue, int aRow, int aColumn)
     {
         checkModel();
         this.model.setValueAt(aValue, this.indexes[aRow], aColumn);
-    }
+    } 
 
     public void sortByColumn(int column)
     {
         sortByColumn(column, true);
-    }
+    } 
 
     public void sortByColumn(int column, boolean ascendingSetting)
     {
@@ -353,7 +353,7 @@ public class TableSorter extends TableMap
         this.sortingColumns.addElement(new Integer(column));
         sort(this);
         super.tableChanged(new TableModelEvent(this));
-    }
+    } 
 
     // There is no-where else to put this.
     // Add a mouse listener to the Table to trigger a table sort
@@ -374,10 +374,10 @@ public class TableSorter extends TableMap
                 {
                     int shiftPressed = e.getModifiers() & InputEvent.SHIFT_MASK;
                     sorter.sortByColumn(column, (shiftPressed == 0));
-                }
-            }
-        };
+                } 
+            } 
+        } ;
         JTableHeader th = tableView.getTableHeader();
         th.addMouseListener(listMouseListener);
-    }
+    } 
 }

@@ -48,7 +48,7 @@ public class SystemProcessor extends AIMLProcessor
      * form of Runtime.exec().
      */
     private static final String[] arrayFormOSnames =
-        { "mac os x", "linux", "solaris", "sunos", "mpe", "hp-ux", "pa_risc", "aix", "freebsd", "irix", "unix" };
+        { "mac os x", "linux", "solaris", "sunos", "mpe", "hp-ux", "pa_risc", "aix", "freebsd", "irix", "unix" } ;
 
     /** Whether to use the array form of Runtime.exec(). */
     private static boolean useArrayExecForm;
@@ -64,9 +64,9 @@ public class SystemProcessor extends AIMLProcessor
             if (os.indexOf(arrayFormOSnames[index]) != -1)
             {
                 useArrayExecForm = true;
-            }
-        }
-    }
+            } 
+        } 
+    } 
 
     public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
@@ -75,7 +75,7 @@ public class SystemProcessor extends AIMLProcessor
         {
             Log.userinfo("Use of <system> prohibited!", Log.SYSTEM);
             return EMPTY_STRING;
-        }
+        } 
 
         String directoryPath = Globals.getSystemDirectory();
         String prefix = Globals.getSystemPrefix();
@@ -86,7 +86,7 @@ public class SystemProcessor extends AIMLProcessor
             if (prefix != null)
             {
                 response = prefix + response;
-            }
+            } 
             String output = EMPTY_STRING;
             response = response.trim();
             Log.log("<system> call:", Log.SYSTEM);
@@ -103,38 +103,38 @@ public class SystemProcessor extends AIMLProcessor
                         Log.userinfo("programd.interpreter.system.directory (\"" + directoryPath
                                 + "\") does not exist or is not a directory.", Log.SYSTEM);
                         return EMPTY_STRING;
-                    }
-                }
+                    } 
+                } 
                 else
                 {
                     Log.userinfo("No programd.interpreter.system.directory defined!", Log.SYSTEM);
                     return EMPTY_STRING;
-                }
+                } 
                 Process child;
                 if (useArrayExecForm)
                 {
                     child = Runtime.getRuntime().exec(
-                            (String[]) StringKit.wordSplit(response).toArray(new String[] {}), null, directory);
-                }
+                            (String[]) StringKit.wordSplit(response).toArray(new String[] {} ), null, directory);
+                } 
                 else
                 {
                     child = Runtime.getRuntime().exec(response, null, directory);
-                }
+                } 
                 if (child == null)
                 {
                     Log.userinfo("Could not get separate process for <system> command.", Log.SYSTEM);
                     return EMPTY_STRING;
-                }
+                } 
 
                 try
                 {
                     child.waitFor();
-                }
+                } 
                 catch (InterruptedException e)
                 {
                     Log.userinfo("System process interruped; could not complete.", Log.SYSTEM);
                     return EMPTY_STRING;
-                }
+                } 
 
                 InputStream in = child.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -142,7 +142,7 @@ public class SystemProcessor extends AIMLProcessor
                 while ((line = br.readLine()) != null)
                 {
                     output = output + line + "\n";
-                }
+                } 
 
                 Log.log("output:", Log.SYSTEM);
                 Log.log(output, Log.SYSTEM);
@@ -150,7 +150,7 @@ public class SystemProcessor extends AIMLProcessor
                 response = output;
                 in.close();
                 Log.userinfo("System process exit value: " + child.exitValue(), Log.SYSTEM);
-            }
+            } 
             catch (IOException e)
             {
                 Log.userinfo("Cannot execute <system> command.  Response logged.", Log.SYSTEM);
@@ -158,12 +158,12 @@ public class SystemProcessor extends AIMLProcessor
                 while (lines.hasMoreTokens())
                 {
                     Log.log(lines.nextToken(), Log.SYSTEM);
-                }
-            }
+                } 
+            } 
 
             return response.trim();
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<system></system> must have content!");
-    }
+    } 
 }

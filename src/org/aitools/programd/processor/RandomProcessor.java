@@ -72,7 +72,7 @@ public class RandomProcessor extends AIMLProcessor
             if (tag.XMLChild == null)
             {
                 return EMPTY_STRING;
-            }
+            } 
 
             // Construct the identifying string (botid + userid + element
             // contents).
@@ -84,7 +84,7 @@ public class RandomProcessor extends AIMLProcessor
             {
                 generator = new MersenneTwisterFast(System.currentTimeMillis());
                 generators.put(identifier, generator);
-            }
+            } 
 
             int nodeCount = parser.nodeCount(LI, tag.XMLChild, false);
 
@@ -92,19 +92,19 @@ public class RandomProcessor extends AIMLProcessor
             if (nodeCount == 0)
             {
                 return EMPTY_STRING;
-            }
+            } 
 
             // Only one <li></li> child means we don't have to pick anything.
             if (nodeCount == 1)
             {
                 return parser.evaluate(level++, parser.getNode(LI, tag.XMLChild, 1).XMLChild);
-            }
+            } 
 
             // Select a random element of the listitem.
             return parser
                     .evaluate(level++, parser.getNode(LI, tag.XMLChild, generator.nextInt(nodeCount) + 1).XMLChild);
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<random></random> must have content!");
-    }
+    } 
 }

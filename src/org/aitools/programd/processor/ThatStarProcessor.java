@@ -31,8 +31,8 @@ public class ThatStarProcessor extends IndexedPredicateProcessor
         if (tag.XMLType == XMLNode.EMPTY)
         {
             return super.process(level, tag, parser, parser.getThatStars(), 1);
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<thatstar/> cannot have content!");
-    }
+    } 
 }

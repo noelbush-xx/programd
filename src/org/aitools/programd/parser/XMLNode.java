@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 /**
- * Implements a node of the XML trie created by {@link XMLParser}.
+ * Implements a node of the XML trie created by {@link XMLParser} .
  * 
  * @version 4.1.4
  * @author Thomas Ringate/Pedro Colla
@@ -43,8 +43,8 @@ public class XMLNode
     // Structure of an XML node
 
     /**
-     * Type of the node ({@link #TAG},{@link #EMPTY},{@link #DATA},
-     * {@link #CDATA},{@link #COMMENT}, or {@link #ENDTAG}).
+     * Type of the node ({@link #TAG} ,{@link #EMPTY} ,{@link #DATA} ,
+     * {@link #CDATA} ,{@link #COMMENT} , or {@link #ENDTAG} ).
      */
     public int XMLType;
 
@@ -69,7 +69,7 @@ public class XMLNode
         this.XMLData = EMPTY_STRING;
         this.XMLAttr = EMPTY_STRING;
         this.XMLChild = null;
-    }
+    } 
 
     /**
      * Produces a simple string representation of this node. Any two nodes with
@@ -88,8 +88,8 @@ public class XMLNode
             while (iterator.hasNext())
             {
                 result.append(iterator.next().toString());
-            }
-        }
+            } 
+        } 
         return result.toString();
-    }
+    } 
 }

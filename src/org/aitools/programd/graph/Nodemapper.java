@@ -13,7 +13,7 @@ import java.util.Set;
 
 /**
  * A <code>Nodemapper</code> maps the branches in a
- * {@link Graphmaster Graphmaster}structure.
+ * {@link Graphmaster Graphmaster} structure.
  * 
  * @author Richard Wallace
  * @author Noel Bush

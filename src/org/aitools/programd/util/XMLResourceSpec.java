@@ -65,7 +65,7 @@ public class XMLResourceSpec implements Cloneable
     public XMLResourceSpec()
     {
         // Nothing to do.
-    }
+    } 
 
     public Object clone()
     {
@@ -81,5 +81,5 @@ public class XMLResourceSpec implements Cloneable
         myClone.rolloverAtMax = this.rolloverAtMax;
         myClone.rolloverAtRestart = this.rolloverAtRestart;
         return myClone;
-    }
+    } 
 }

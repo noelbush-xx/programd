@@ -36,10 +36,10 @@ public class GetProcessor extends AIMLProcessor
             if (name.equals(EMPTY_STRING))
             {
                 throw new AIMLProcessorException("<get/> must have a non-empty name attribute.");
-            }
+            } 
             return PredicateMaster.get(name, parser.getUserID(), parser.getBotID());
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<get/> cannot have content!");
-    }
+    } 
 }

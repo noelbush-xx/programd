@@ -16,7 +16,7 @@ import org.aitools.programd.util.Globals;
 import org.aitools.programd.util.SuffixFilenameFilter;
 
 /**
- * Implements a {@link Responder}for a Flash client.
+ * Implements a {@link Responder} for a Flash client.
  * 
  * @author Chris Fahey
  */
@@ -24,7 +24,7 @@ public class FlashResponder extends AbstractMarkupResponder
 {
     /** A filename filter for finding html templates. */
     private static final SuffixFilenameFilter flashFilenameFilter = new SuffixFilenameFilter(new String[]
-        { ".flash", ".data" });
+        { ".flash", ".data" } );
 
     /** Map of template names to filenames. */
     private static HashMap templates;
@@ -43,7 +43,7 @@ public class FlashResponder extends AbstractMarkupResponder
     static
     {
         templates = registerTemplates(templatesDirectoryName, flashFilenameFilter);
-    }
+    } 
 
     public FlashResponder(String botidToRespond, String templateName)
     {
@@ -51,7 +51,7 @@ public class FlashResponder extends AbstractMarkupResponder
         if (templateName.equals(EMPTY_STRING))
         {
             parseTemplate(chatTemplatePath);
-        }
+        } 
         else
         {
             // Otherwise, try to find the named template.
@@ -59,11 +59,11 @@ public class FlashResponder extends AbstractMarkupResponder
             if (templateFileName != null)
             {
                 parseTemplate(templateFileName);
-            }
+            } 
             else
             {
                 parseTemplate(chatTemplatePath);
-            }
-        }
-    }
+            } 
+        } 
+    } 
 }

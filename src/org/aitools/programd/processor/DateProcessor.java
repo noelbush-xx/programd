@@ -31,8 +31,8 @@ public class DateProcessor extends AIMLProcessor
         if (tag.XMLType == XMLNode.EMPTY)
         {
             return new Date().toString();
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<date/> cannot have content!");
-    }
+    } 
 }

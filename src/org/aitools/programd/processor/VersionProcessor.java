@@ -30,8 +30,8 @@ public class VersionProcessor extends AIMLProcessor
         if (tag.XMLType == XMLNode.EMPTY)
         {
             return Graphmaster.VERSION;
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<version/> cannot have content!");
-    }
+    } 
 }

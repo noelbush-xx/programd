@@ -13,7 +13,7 @@ import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.util.ClassRegistry;
 
 /**
- * Registers {@link StartupElementProcessor}s for Program D.
+ * Registers {@link StartupElementProcessor} s for Program D.
  * 
  * @since 4.1.3
  * @author Noel Bush
@@ -39,9 +39,9 @@ public class StartupElementProcessorRegistry extends ClassRegistry
                 "org.aitools.programd.processor.loadtime.PropertiesProcessor",
                 "org.aitools.programd.processor.loadtime.PropertyProcessor",
                 "org.aitools.programd.processor.loadtime.SentenceSplittersProcessor",
-                "org.aitools.programd.processor.loadtime.SubstitutionsProcessor" };
+                "org.aitools.programd.processor.loadtime.SubstitutionsProcessor" } ;
 
-    /** The fully-qualified name of {@link StartupElementProcessor}. */
+    /** The fully-qualified name of {@link StartupElementProcessor} . */
     private static final String PROCESSOR_BASE_CLASS_NAME = "org.aitools.programd.processor.loadtime.StartupElementProcessor";
 
     /** The private member that initializes this class. */
@@ -50,10 +50,10 @@ public class StartupElementProcessorRegistry extends ClassRegistry
     private StartupElementProcessorRegistry()
     {
         super(VERSION, PROCESSOR_LIST, PROCESSOR_BASE_CLASS_NAME);
-    }
+    } 
 
     public static StartupElementProcessorRegistry getSelf()
     {
         return self;
-    }
+    } 
 }

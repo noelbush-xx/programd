@@ -41,14 +41,14 @@ public class SetProcessor extends AIMLProcessor
             if (name.equals(EMPTY_STRING))
             {
                 throw new AIMLProcessorException("<set></set> must have a name attribute!");
-            }
+            } 
 
             // Return the result of setting this predicate value (should check
             // its type, but not yet implemented).
             return PredicateMaster.set(name, parser.evaluate(level++, tag.XMLChild), parser.getUserID(), parser
                     .getBotID());
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<set></set> must have content!");
-    }
+    } 
 }

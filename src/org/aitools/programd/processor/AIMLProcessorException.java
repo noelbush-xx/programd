@@ -10,7 +10,7 @@
 package org.aitools.programd.processor;
 
 /**
- * Should be thrown by {@link AIMLProcessor}s when they find invalid AIML.
+ * Should be thrown by {@link AIMLProcessor} s when they find invalid AIML.
  * 
  * @since 4.1.3
  * @author Noel Bush
@@ -20,5 +20,5 @@ public class AIMLProcessorException extends ProcessorException
     public AIMLProcessorException(String message)
     {
         super(message);
-    }
+    } 
 }

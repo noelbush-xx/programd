@@ -34,7 +34,7 @@ public class GossipProcessor extends AIMLProcessor
     {
         spec.path = Globals.getProperty("programd.logging.xml.gossip.path", "./aiml/gossip.aiml");
         spec.root = "aiml";
-    }
+    } 
 
     private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
 
@@ -49,11 +49,11 @@ public class GossipProcessor extends AIMLProcessor
             if (Globals.gossipToXML())
             {
                 XMLLog.log(response + LINE_SEPARATOR, spec);
-            }
+            } 
             Log.log(response, Log.GOSSIP);
             return EMPTY_STRING;
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<gossip></gossip> must have content!");
-    }
+    } 
 }

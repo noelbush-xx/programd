@@ -36,7 +36,7 @@ public class Category
     public Category()
     {
         this.address = new StringTriple(EMPTY_STRING, EMPTY_STRING, EMPTY_STRING);
-    }
+    } 
 
     /**
      * Creates a new <code>Category</code>.
@@ -54,7 +54,7 @@ public class Category
     {
         this.address = new StringTriple(pattern, that, topic);
         this.template = templateToUse;
-    }
+    } 
 
     /**
      * Returns the <code>pattern</code>.
@@ -64,7 +64,7 @@ public class Category
     public String getPattern()
     {
         return this.address.getFirst();
-    }
+    } 
 
     /**
      * Returns the <code>that</code>.
@@ -74,7 +74,7 @@ public class Category
     public String getThat()
     {
         return this.address.getSecond();
-    }
+    } 
 
     /**
      * Returns the <code>topic</code>.
@@ -84,7 +84,7 @@ public class Category
     public String getTopic()
     {
         return this.address.getThird();
-    }
+    } 
 
     /**
      * Returns the <code>template</code>.
@@ -94,7 +94,7 @@ public class Category
     public String getTemplate()
     {
         return this.template;
-    }
+    } 
 
     /**
      * Sets the <code>pattern</code>.
@@ -105,7 +105,7 @@ public class Category
     public void setPattern(String pattern)
     {
         this.address.setFirst(pattern);
-    }
+    } 
 
     /**
      * Sets the <code>that</code>.
@@ -116,7 +116,7 @@ public class Category
     public void setThat(String that)
     {
         this.address.setSecond(that);
-    }
+    } 
 
     /**
      * Sets the <code>topic</code>.
@@ -127,7 +127,7 @@ public class Category
     public void setTopic(String topic)
     {
         this.address.setThird(topic);
-    }
+    } 
 
     /**
      * Sets the <code>template</code>.
@@ -138,5 +138,5 @@ public class Category
     public void setTemplate(String templateToUse)
     {
         this.template = templateToUse;
-    }
+    } 
 }

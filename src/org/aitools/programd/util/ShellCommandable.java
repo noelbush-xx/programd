@@ -11,7 +11,7 @@ package org.aitools.programd.util;
 
 /**
  * Defines the interface for processes that can receive commands from the
- * interactive {@link Shell}.
+ * interactive {@link Shell} .
  * 
  * @author Noel Bush
  * @version 4.1.4

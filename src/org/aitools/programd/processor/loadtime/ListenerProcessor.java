@@ -57,39 +57,39 @@ public class ListenerProcessor extends StartupElementProcessor
             try
             {
                 return parser.processResponse(FileManager.getFileContents(href));
-            }
+            } 
             catch (ProcessorException e)
             {
                 throw new UserError(e.getMessage());
-            }
-        }
+            } 
+        } 
         // (otherwise...)
         // Does it have a type attribute?
         String type = XMLKit.getAttributeValue(TYPE, tag.XMLAttr);
         if (type == null)
         {
             throw new UserError("You did not specify a type for a listener.");
-        }
+        } 
 
         // Does its type correspond to a registered listener type?
         Class listenerClass = (Class) ListenerRegistry.getSelf().get(type);
         if (listenerClass == null)
         {
             throw new UserError("You specified an unknown listener \"" + type + "\".");
-        }
+        } 
 
         // Does it have an enabled attribute?
         String enabled = XMLKit.getAttributeValue(ENABLED, tag.XMLAttr);
         if (enabled == null)
         {
             throw new UserError("<listener type=\"" + type + "\"> is missing an enabled attribute.");
-        }
+        } 
 
         // Is the enabled attribute true?
         if (!enabled.equals(TRUE))
         {
             return EMPTY_STRING;
-        }
+        } 
 
         // Get the current bot.
         Bot bot = parser.getCurrentBot();
@@ -99,29 +99,29 @@ public class ListenerProcessor extends StartupElementProcessor
         try
         {
             listener = (Listener) listenerClass.getConstructor(new Class[]
-                { Bot.class }).newInstance(new Object[]
-                { bot });
-        }
+                { Bot.class } ).newInstance(new Object[]
+                { bot } );
+        } 
         catch (IllegalAccessException e)
         {
             throw new DeveloperError("The constructor for the \"" + type + "\" listener class is inaccessible.");
-        }
+        } 
         catch (IllegalArgumentException e)
         {
             throw new DeveloperError("The constructor for the \"" + type + "\" listener class is incorrectly specifed.");
-        }
+        } 
         catch (InstantiationException e)
         {
             throw new DeveloperError("The \"" + type + "\" listener class is abstract.");
-        }
+        } 
         catch (NoSuchMethodException e)
         {
             throw new DeveloperError("The constructor for the \"" + type + "\" listener class is incorrectly specifed.");
-        }
+        } 
         catch (InvocationTargetException e)
         {
             throw new DeveloperError("The constructor for the \"" + type + "\" listener class threw an exception.", e);
-        }
+        } 
 
         // Count the parameters
         int parameterCount = parser.nodeCount(PARAMETER, tag.XMLChild, true);
@@ -137,20 +137,20 @@ public class ListenerProcessor extends StartupElementProcessor
                 if (name != null && value != null)
                 {
                     listener.setParameter(name, value);
-                }
-            }
+                } 
+            } 
             else
             {
                 throw new InvalidStartupElementException("<" + node.XMLData + "/> cannot have content!");
-            }
-        }
+            } 
+        } 
 
         // Check the parameters for the listener.
         if (!listener.checkParameters())
         {
             Log.userinfo("Listener \"" + type + "\" is incorrectly configured; will not be started.", Log.STARTUP);
             return EMPTY_STRING;
-        }
+        } 
 
         // Start listener
         BotProcesses.start(listener, type + SEPARATOR + bot.getID());
@@ -158,7 +158,7 @@ public class ListenerProcessor extends StartupElementProcessor
         if (Globals.showConsole())
         {
             Log.userinfo("Started \"" + type + "\" listener for bot \"" + bot.getID() + "\".", Log.STARTUP);
-        }
+        } 
         return EMPTY_STRING;
-    }
+    } 
 }

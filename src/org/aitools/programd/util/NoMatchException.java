@@ -11,7 +11,7 @@ package org.aitools.programd.util;
 
 /**
  * Indicates that no match was found in the
- * {@link org.aitools.programd.graph.Graphmaster}.
+ * {@link org.aitools.programd.graph.Graphmaster} .
  */
 public class NoMatchException extends Exception
 {
@@ -27,10 +27,10 @@ public class NoMatchException extends Exception
     public NoMatchException(String pathToUse)
     {
         this.path = pathToUse;
-    }
+    } 
 
     public String getMessage()
     {
         return "No match found for path \"" + this.path + "\".";
-    }
+    } 
 }

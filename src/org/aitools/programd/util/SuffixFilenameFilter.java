@@ -31,25 +31,25 @@ public class SuffixFilenameFilter implements FilenameFilter
     public SuffixFilenameFilter(String[] suffixes)
     {
         SUFFIXES = suffixes;
-    }
+    } 
 
     public boolean accept(File dir, String name)
     {
         if (name == null)
         {
             return false;
-        }
+        } 
         if (name.length() == 0)
         {
             return false;
-        }
+        } 
         for (int index = SUFFIXES.length; --index >= 0;)
         {
             if (name.endsWith(SUFFIXES[index]))
             {
                 return true;
-            }
-        }
+            } 
+        } 
         return false;
-    }
+    } 
 }

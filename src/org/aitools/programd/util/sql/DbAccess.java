@@ -74,20 +74,20 @@ public class DbAccess
         this.user = userToUse;
         this.password = passwordToUse;
         connect();
-    }
+    } 
 
     /**
      * Constructs a <code>DbAccess</code> object given a
-     * {@link java.sql.Connection}object.
+     * {@link java.sql.Connection} object.
      * 
      * @param connectionToUse
-     *            the {@link java.sql.Connection}object from which to construct
+     *            the {@link java.sql.Connection} object from which to construct
      *            the <code>DbAccess</code> object
      */
     public DbAccess(Connection connectionToUse)
     {
         this.connection = connectionToUse;
-    }
+    } 
 
     /**
      * Connects to the database using the values of the fields already set in
@@ -100,22 +100,22 @@ public class DbAccess
             try
             {
                 Class.forName(this.driver);
-            }
+            } 
             catch (ClassNotFoundException e)
             {
                 throw new UserError("Could not find your database driver.");
-            }
+            } 
             try
             {
                 if (this.user == null || this.password == null)
                 {
                     this.connection = DriverManager.getConnection(this.url);
-                }
+                } 
                 else
                 {
                     this.connection = DriverManager.getConnection(this.url, this.user, this.password);
-                }
-            }
+                } 
+            } 
             catch (SQLException e)
             {
                 throw new UserError(
@@ -123,26 +123,26 @@ public class DbAccess
                                 + this.url
                                 + "\".  Please check that the parameters specified in your server properties file are correct.",
                         e);
-            }
+            } 
             // Create the statement to be used in queries or updates.
             try
             {
                 this.statement = this.connection.createStatement();
-            }
+            } 
             catch (SQLException e)
             {
                 throw new UserError("Could not create a SQL statement using your database.");
-            }
-        }
-    }
+            } 
+        } 
+    } 
 
     /**
-     * Returns the {@link java.sql.ResultSet ResultSet}from executing a given
+     * Returns the {@link java.sql.ResultSet ResultSet} from executing a given
      * query.
      * 
      * @param query
      *            the query to execute
-     * @return the {@link java.sql.ResultSet ResultSet}from executing a given
+     * @return the {@link java.sql.ResultSet ResultSet} from executing a given
      *         query
      * @throws SQLException
      *             if there was a problem.
@@ -152,23 +152,23 @@ public class DbAccess
         if (this.statement == null)
         {
             throw new DeveloperError("Tried to execute query before creating Statement object!");
-        }
+        } 
         try
         {
             return this.statement.executeQuery(query);
-        }
+        } 
         catch (SQLException e)
         {
             Log.userinfo(new String[]
-                { "Problem executing a query on your database.  Check structure and availability.", e.getMessage() },
+                { "Problem executing a query on your database.  Check structure and availability.", e.getMessage() } ,
                     new String[]
-                        { Log.ERROR, Log.DATABASE });
+                        { Log.ERROR, Log.DATABASE } );
             throw e;
-        }
-    }
+        } 
+    } 
 
     /**
-     * Returns the {@link java.sql.ResultSet ResultSet}from executing a given
+     * Returns the {@link java.sql.ResultSet ResultSet} from executing a given
      * update.
      * 
      * @param update
@@ -180,30 +180,30 @@ public class DbAccess
         if (this.statement == null)
         {
             throw new DeveloperError("Tried to execute query before creating Statement object!");
-        }
+        } 
         try
         {
             return this.statement.executeUpdate(update);
-        }
+        } 
         catch (SQLException e)
         {
             Log.userinfo(new String[]
-                { "Problem executing an update on your database.  Check structure and availability.", e.getMessage() },
+                { "Problem executing an update on your database.  Check structure and availability.", e.getMessage() } ,
                     new String[]
-                        { Log.ERROR, Log.DATABASE });
+                        { Log.ERROR, Log.DATABASE } );
             throw new UserError(e);
-        }
-    }
+        } 
+    } 
 
     /**
-     * Returns the {@link java.sql.Connection}object used by this object.
+     * Returns the {@link java.sql.Connection} object used by this object.
      * 
      * @return the Connection object used by this object.
      */
     public Connection getConnection()
     {
         return this.connection;
-    }
+    } 
 
     /**
      * Returns the name of the driver used by this object.
@@ -213,7 +213,7 @@ public class DbAccess
     public String getDriver()
     {
         return this.driver;
-    }
+    } 
 
     /**
      * Returns the password used by this object.
@@ -223,17 +223,17 @@ public class DbAccess
     public String getPassword()
     {
         return this.password;
-    }
+    } 
 
     /**
-     * Returns the {@link java.sql.Statement}object used by this object.
+     * Returns the {@link java.sql.Statement} object used by this object.
      * 
      * @return the Statement object used by this object.
      */
     public Statement getStatement()
     {
         return this.statement;
-    }
+    } 
 
     /**
      * Returns the URL string used by this object.
@@ -243,7 +243,7 @@ public class DbAccess
     public String getUrl()
     {
         return this.url;
-    }
+    } 
 
     /**
      * Returns the user name used by this object.
@@ -253,10 +253,10 @@ public class DbAccess
     public String getUser()
     {
         return this.user;
-    }
+    } 
 
     /**
-     * Sets the {@link java.sql.Connection}object used by this object.
+     * Sets the {@link java.sql.Connection} object used by this object.
      * 
      * @param connectionToSet
      *            the Connection object to be used
@@ -264,7 +264,7 @@ public class DbAccess
     public void setConnection(Connection connectionToSet)
     {
         this.connection = connectionToSet;
-    }
+    } 
 
     /**
      * Sets the name of the driver to be used by this object.
@@ -275,7 +275,7 @@ public class DbAccess
     public void setDriver(String driverToSet)
     {
         this.driver = driverToSet;
-    }
+    } 
 
     /**
      * Sets the password to be used by this object.
@@ -286,7 +286,7 @@ public class DbAccess
     public void setPassword(String passwordToSet)
     {
         this.password = passwordToSet;
-    }
+    } 
 
     /**
      * Sets the URL string to be used by this object.
@@ -297,7 +297,7 @@ public class DbAccess
     public void setUrl(String urlToSet)
     {
         this.url = urlToSet;
-    }
+    } 
 
     /**
      * Sets the user name to be used by this object.
@@ -308,5 +308,5 @@ public class DbAccess
     public void setUser(String userToSet)
     {
         this.user = userToSet;
-    }
+    } 
 }

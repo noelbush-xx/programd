@@ -40,15 +40,15 @@ public class PersonProcessor extends AIMLProcessor
                 // substituted.
                 return parser.processResponse(applySubstitutions(parser.evaluate(level++, tag.XMLChild), parser
                         .getBotID()));
-            }
+            } 
             catch (ProcessorException e)
             {
                 return EMPTY_STRING;
-            }
-        }
+            } 
+        } 
         // (otherwise...)
         return parser.shortcutTag(level, label, XMLNode.TAG, EMPTY_STRING, StarProcessor.label, XMLNode.EMPTY);
-    }
+    } 
 
     /**
      * Applies substitutions as defined in the substitution map. Comparisons are
@@ -61,5 +61,5 @@ public class PersonProcessor extends AIMLProcessor
     public static String applySubstitutions(String input, String botid)
     {
         return Substituter.applySubstitutions(Bots.getBot(botid).getPersonSubstitutionsMap(), input);
-    }
+    } 
 }

@@ -151,7 +151,7 @@ public class MersenneTwisterFast implements Serializable
     public MersenneTwisterFast()
     {
         setSeed(GOOD_SEED);
-    }
+    } 
 
     /**
      * Constructor using a given seed. Though you pass this seed in as a long,
@@ -160,7 +160,7 @@ public class MersenneTwisterFast implements Serializable
     public MersenneTwisterFast(final long seed)
     {
         setSeed(seed);
-    }
+    } 
 
     /**
      * Initalize the pseudo random number generator. This is the old
@@ -195,7 +195,7 @@ public class MersenneTwisterFast implements Serializable
         this.mag01 = new int[2];
         this.mag01[0] = 0x0;
         this.mag01[1] = MATRIX_A;
-    }
+    } 
 
     /**
      * An alternative, more complete, method of seeding the pseudo random number
@@ -213,7 +213,7 @@ public class MersenneTwisterFast implements Serializable
         this.mag01 = new int[2];
         this.mag01[0] = 0x0;
         this.mag01[1] = MATRIX_A;
-    }
+    } 
 
     /**
      * Initalize the pseudo random number generator. Don't pass in a long that's
@@ -235,14 +235,14 @@ public class MersenneTwisterFast implements Serializable
             _seed = 69069 * _seed + 1;
             this.mt[i] |= (_seed & 0xffff0000) >>> 16;
             _seed = 69069 * _seed + 1;
-        }
+        } 
 
         this.mti = N;
         // mag01[x] = x * MATRIX_A for x=0,1
         this.mag01 = new int[2];
         this.mag01[0] = 0x0;
         this.mag01[1] = MATRIX_A;
-    }
+    } 
 
     public final int nextInt()
     {
@@ -256,17 +256,17 @@ public class MersenneTwisterFast implements Serializable
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             for (; kk < N - 1; kk++)
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
             this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
             this.mti = 0;
-        }
+        } 
 
         y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
@@ -275,7 +275,7 @@ public class MersenneTwisterFast implements Serializable
         y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
 
         return y;
-    }
+    } 
 
     public final short nextShort()
     {
@@ -289,17 +289,17 @@ public class MersenneTwisterFast implements Serializable
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             for (; kk < N - 1; kk++)
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
             this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
             this.mti = 0;
-        }
+        } 
 
         y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
@@ -308,7 +308,7 @@ public class MersenneTwisterFast implements Serializable
         y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
 
         return (short) (y >>> 16);
-    }
+    } 
 
     public final char nextChar()
     {
@@ -322,17 +322,17 @@ public class MersenneTwisterFast implements Serializable
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             for (; kk < N - 1; kk++)
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
             this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
             this.mti = 0;
-        }
+        } 
 
         y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
@@ -341,7 +341,7 @@ public class MersenneTwisterFast implements Serializable
         y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
 
         return (char) (y >>> 16);
-    }
+    } 
 
     public final boolean nextBoolean()
     {
@@ -355,17 +355,17 @@ public class MersenneTwisterFast implements Serializable
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             for (; kk < N - 1; kk++)
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
             this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
             this.mti = 0;
-        }
+        } 
 
         y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
@@ -374,7 +374,7 @@ public class MersenneTwisterFast implements Serializable
         y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
 
         return ((y >>> 31) != 0);
-    }
+    } 
 
     /**
      * This generates a coin flip with a probability <tt>probability</tt> of
@@ -398,17 +398,17 @@ public class MersenneTwisterFast implements Serializable
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             for (; kk < N - 1; kk++)
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
             this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
             this.mti = 0;
-        }
+        } 
 
         y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
@@ -417,7 +417,7 @@ public class MersenneTwisterFast implements Serializable
         y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
 
         return (y >>> 8) / ((float) (1 << 24)) < probability;
-    }
+    } 
 
     /**
      * This generates a coin flip with a probability <tt>probability</tt> of
@@ -440,17 +440,17 @@ public class MersenneTwisterFast implements Serializable
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             for (; kk < N - 1; kk++)
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
             this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
             this.mti = 0;
-        }
+        } 
 
         y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
@@ -466,17 +466,17 @@ public class MersenneTwisterFast implements Serializable
             {
                 z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + M] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-            }
+            } 
             for (; kk < N - 1; kk++)
             {
                 z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + (M - N)] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-            }
+            } 
             z = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
             this.mt[N - 1] = this.mt[M - 1] ^ (z >>> 1) ^ this.mag01[z & 0x1];
 
             this.mti = 0;
-        }
+        } 
 
         z = this.mt[this.mti++];
         z ^= z >>> 11; // TEMPERING_SHIFT_U(z)
@@ -486,7 +486,7 @@ public class MersenneTwisterFast implements Serializable
 
         /* derived from nextDouble documentation in jdk 1.2 docs, see top */
         return ((((long) (y >>> 6)) << 27) + (z >>> 5)) / (double) (1L << 53) < probability;
-    }
+    } 
 
     public final byte nextByte()
     {
@@ -500,17 +500,17 @@ public class MersenneTwisterFast implements Serializable
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             for (; kk < N - 1; kk++)
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
             this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
             this.mti = 0;
-        }
+        } 
 
         y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
@@ -519,7 +519,7 @@ public class MersenneTwisterFast implements Serializable
         y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
 
         return (byte) (y >>> 24);
-    }
+    } 
 
     public final void nextBytes(byte[] bytes)
     {
@@ -535,17 +535,17 @@ public class MersenneTwisterFast implements Serializable
                 {
                     y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                     this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-                }
+                } 
                 for (; kk < N - 1; kk++)
                 {
                     y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                     this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-                }
+                } 
                 y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
                 this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
                 this.mti = 0;
-            }
+            } 
 
             y = this.mt[this.mti++];
             y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
@@ -554,8 +554,8 @@ public class MersenneTwisterFast implements Serializable
             y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
 
             bytes[x] = (byte) (y >>> 24);
-        }
-    }
+        } 
+    } 
 
     public final long nextLong()
     {
@@ -570,17 +570,17 @@ public class MersenneTwisterFast implements Serializable
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             for (; kk < N - 1; kk++)
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
             this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
             this.mti = 0;
-        }
+        } 
 
         y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
@@ -596,17 +596,17 @@ public class MersenneTwisterFast implements Serializable
             {
                 z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + M] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-            }
+            } 
             for (; kk < N - 1; kk++)
             {
                 z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + (M - N)] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-            }
+            } 
             z = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
             this.mt[N - 1] = this.mt[M - 1] ^ (z >>> 1) ^ this.mag01[z & 0x1];
 
             this.mti = 0;
-        }
+        } 
 
         z = this.mt[this.mti++];
         z ^= z >>> 11; // TEMPERING_SHIFT_U(z)
@@ -615,7 +615,7 @@ public class MersenneTwisterFast implements Serializable
         z ^= (z >>> 18); // TEMPERING_SHIFT_L(z)
 
         return (((long) y) << 32) + z;
-    }
+    } 
 
     public final double nextDouble()
     {
@@ -630,17 +630,17 @@ public class MersenneTwisterFast implements Serializable
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             for (; kk < N - 1; kk++)
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
             this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
             this.mti = 0;
-        }
+        } 
 
         y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
@@ -656,17 +656,17 @@ public class MersenneTwisterFast implements Serializable
             {
                 z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + M] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-            }
+            } 
             for (; kk < N - 1; kk++)
             {
                 z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + (M - N)] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-            }
+            } 
             z = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
             this.mt[N - 1] = this.mt[M - 1] ^ (z >>> 1) ^ this.mag01[z & 0x1];
 
             this.mti = 0;
-        }
+        } 
 
         z = this.mt[this.mti++];
         z ^= z >>> 11; // TEMPERING_SHIFT_U(z)
@@ -676,7 +676,7 @@ public class MersenneTwisterFast implements Serializable
 
         /* derived from nextDouble documentation in jdk 1.2 docs, see top */
         return ((((long) (y >>> 6)) << 27) + (z >>> 5)) / (double) (1L << 53);
-    }
+    } 
 
     public final double nextGaussian()
     {
@@ -684,7 +684,7 @@ public class MersenneTwisterFast implements Serializable
         {
             this.haveNextNextGaussian = false;
             return this.nextNextGaussian;
-        }
+        } 
         // (otherwise...)
         double v1, v2, s;
         do
@@ -702,17 +702,17 @@ public class MersenneTwisterFast implements Serializable
                 {
                     y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                     this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-                }
+                } 
                 for (; kk < N - 1; kk++)
                 {
                     y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                     this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-                }
+                } 
                 y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
                 this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
                 this.mti = 0;
-            }
+            } 
 
             y = this.mt[this.mti++];
             y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
@@ -728,17 +728,17 @@ public class MersenneTwisterFast implements Serializable
                 {
                     z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                     this.mt[kk] = this.mt[kk + M] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-                }
+                } 
                 for (; kk < N - 1; kk++)
                 {
                     z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                     this.mt[kk] = this.mt[kk + (M - N)] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-                }
+                } 
                 z = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
                 this.mt[N - 1] = this.mt[M - 1] ^ (z >>> 1) ^ this.mag01[z & 0x1];
 
                 this.mti = 0;
-            }
+            } 
 
             z = this.mt[this.mti++];
             z ^= z >>> 11; // TEMPERING_SHIFT_U(z)
@@ -754,17 +754,17 @@ public class MersenneTwisterFast implements Serializable
                 {
                     a = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                     this.mt[kk] = this.mt[kk + M] ^ (a >>> 1) ^ this.mag01[a & 0x1];
-                }
+                } 
                 for (; kk < N - 1; kk++)
                 {
                     a = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                     this.mt[kk] = this.mt[kk + (M - N)] ^ (a >>> 1) ^ this.mag01[a & 0x1];
-                }
+                } 
                 a = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
                 this.mt[N - 1] = this.mt[M - 1] ^ (a >>> 1) ^ this.mag01[a & 0x1];
 
                 this.mti = 0;
-            }
+            } 
 
             a = this.mt[this.mti++];
             a ^= a >>> 11; // TEMPERING_SHIFT_U(a)
@@ -780,17 +780,17 @@ public class MersenneTwisterFast implements Serializable
                 {
                     b = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                     this.mt[kk] = this.mt[kk + M] ^ (b >>> 1) ^ this.mag01[b & 0x1];
-                }
+                } 
                 for (; kk < N - 1; kk++)
                 {
                     b = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                     this.mt[kk] = this.mt[kk + (M - N)] ^ (b >>> 1) ^ this.mag01[b & 0x1];
-                }
+                } 
                 b = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
                 this.mt[N - 1] = this.mt[M - 1] ^ (b >>> 1) ^ this.mag01[b & 0x1];
 
                 this.mti = 0;
-            }
+            } 
 
             b = this.mt[this.mti++];
             b ^= b >>> 11; // TEMPERING_SHIFT_U(b)
@@ -807,7 +807,7 @@ public class MersenneTwisterFast implements Serializable
         this.nextNextGaussian = v2 * multiplier;
         this.haveNextNextGaussian = true;
         return v1 * multiplier;
-    }
+    } 
 
     public final float nextFloat()
     {
@@ -821,17 +821,17 @@ public class MersenneTwisterFast implements Serializable
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             for (; kk < N - 1; kk++)
             {
                 y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                 this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
+            } 
             y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
             this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
             this.mti = 0;
-        }
+        } 
 
         y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
@@ -840,7 +840,7 @@ public class MersenneTwisterFast implements Serializable
         y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
 
         return (y >>> 8) / ((float) (1 << 24));
-    }
+    } 
 
     /**
      * Returns an integer drawn uniformly from 0 to n-1. Suffice it to say, n
@@ -863,17 +863,17 @@ public class MersenneTwisterFast implements Serializable
                 {
                     y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                     this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-                }
+                } 
                 for (; kk < N - 1; kk++)
                 {
                     y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                     this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-                }
+                } 
                 y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
                 this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
                 this.mti = 0;
-            }
+            } 
 
             y = this.mt[this.mti++];
             y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
@@ -882,7 +882,7 @@ public class MersenneTwisterFast implements Serializable
             y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
 
             return (int) ((n * (long) (y >>> 1)) >> 31);
-        }
+        } 
 
         int bits, val;
         do
@@ -897,17 +897,17 @@ public class MersenneTwisterFast implements Serializable
                 {
                     y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                     this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-                }
+                } 
                 for (; kk < N - 1; kk++)
                 {
                     y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
                     this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-                }
+                } 
                 y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
                 this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
                 this.mti = 0;
-            }
+            } 
 
             y = this.mt[this.mti++];
             y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
@@ -919,7 +919,7 @@ public class MersenneTwisterFast implements Serializable
             val = bits % n;
         } while (bits - val + (n - 1) < 0);
         return val;
-    }
+    } 
 
     /**
      * Tests the code.
@@ -930,7 +930,7 @@ public class MersenneTwisterFast implements Serializable
         for (int i = 0; i < 100000; i++)
         {
             System.out.println(g.nextInt(5) + 1);
-        }
+        } 
 
         // UNCOMMENT THIS TO TEST FOR CORRECTNESS
         // WITH ORIGINAL ALGORITHM
@@ -941,7 +941,7 @@ public class MersenneTwisterFast implements Serializable
          * "unsigned" long l = (long)r.nextInt(); if (l < 0 ) l += 4294967296L; //
          * max int value String s = String.valueOf(l); while(s.length() < 10) s = " " +
          * s; // buffer System.out.print(s + " "); if (j%8==7)
-         * System.out.println(); }
+         * System.out.println(); } 
          */
 
         // UNCOMMENT THIS TO TEST FOR CORRECTNESS WITH
@@ -954,7 +954,7 @@ public class MersenneTwisterFast implements Serializable
          * <1000;j++) { // first, convert the int from signed to "unsigned" long
          * l = (long)r.nextInt(); if (l < 0 ) l += 4294967296L; // max int value
          * String s = String.valueOf(l); while(s.length() < 10) s = " " + s; //
-         * buffer System.out.print(s + " "); if (j%5==4) System.out.println(); }
+         * buffer System.out.print(s + " "); if (j%5==4) System.out.println(); } 
          */
 
         // UNCOMMENT THIS TO TEST FOR SPEED
@@ -990,7 +990,7 @@ public class MersenneTwisterFast implements Serializable
          * bytes = new byte[1000]; System.out.println("\nGrab the first 1000
          * bytes using nextBytes"); r = new MersenneTwister();
          * r.nextBytes(bytes); for (j = 0; j < 1000; j++) {
-         * System.out.print(bytes[j] + " "); if (j%16==15) System.out.println(); }
+         * System.out.print(bytes[j] + " "); if (j%16==15) System.out.println(); } 
          * if (!(j%16==15)) System.out.println(); byte b;
          * System.out.println("\nGrab the first 1000 bytes -- must be same as
          * nextBytes"); r = new MersenneTwister(); for (j = 0; j < 1000; j++) {
@@ -1025,6 +1025,6 @@ public class MersenneTwisterFast implements Serializable
          * System.out.print(r.nextGaussian() + " "); if (j%3==2)
          * System.out.println(); } if (!(j%3==2)) System.out.println();
          */
-    }
+    } 
 
 }

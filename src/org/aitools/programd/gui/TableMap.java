@@ -23,13 +23,13 @@ public class TableMap extends AbstractTableModel implements TableModelListener
     public TableModel getModel()
     {
         return this.model;
-    }
+    } 
 
     public synchronized void setModel(TableModel modelToSet)
     {
         this.model = modelToSet;
         this.model.addTableModelListener(this);
-    }
+    } 
 
     // By default, implement TableModel by forwarding all messages
     // to the model.
@@ -37,40 +37,40 @@ public class TableMap extends AbstractTableModel implements TableModelListener
     public Object getValueAt(int aRow, int aColumn)
     {
         return this.model.getValueAt(aRow, aColumn);
-    }
+    } 
 
     public void setValueAt(Object aValue, int aRow, int aColumn)
     {
         this.model.setValueAt(aValue, aRow, aColumn);
-    }
+    } 
 
     public synchronized int getRowCount()
     {
         return (this.model == null) ? 0 : this.model.getRowCount();
-    }
+    } 
 
     public int getColumnCount()
     {
         return (this.model == null) ? 0 : this.model.getColumnCount();
-    }
+    } 
 
     public String getColumnName(int aColumn)
     {
         return this.model.getColumnName(aColumn);
-    }
+    } 
 
     public Class getColumnClass(int aColumn)
     {
         return this.model.getColumnClass(aColumn);
-    }
+    } 
 
     public boolean isCellEditable(int row, int column)
     {
         return this.model.isCellEditable(row, column);
-    }
+    } 
 
     public void tableChanged(TableModelEvent e)
     {
         fireTableChanged(e);
-    }
+    } 
 }

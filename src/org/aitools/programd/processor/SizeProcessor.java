@@ -30,8 +30,8 @@ public class SizeProcessor extends AIMLProcessor
         if (tag.XMLType == XMLNode.EMPTY)
         {
             return String.valueOf(Graphmaster.getTotalCategories());
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<size/> cannot have content!");
-    }
+    } 
 }

@@ -51,8 +51,8 @@ public abstract class Listener implements BotProcess
         for (int index = listenerParameters.length; --index >= 0;)
         {
             this.parameters.put(listenerParameters[index][0], listenerParameters[index][1]);
-        }
-    }
+        } 
+    } 
 
     /**
      * Sets a parameter for the listener.
@@ -67,9 +67,9 @@ public abstract class Listener implements BotProcess
         if (!this.parameters.containsKey(parameterName))
         {
             throw new UserError("Invalid parameter \"" + parameterName + "\" for listener \"" + this.name + "\"");
-        }
+        } 
         this.parameters.put(parameterName, parameterValue);
-    }
+    } 
 
     /**
      * Checks that the parameters that have been set for the listener are okay.

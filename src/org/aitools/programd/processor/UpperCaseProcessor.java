@@ -29,8 +29,8 @@ public class UpperCaseProcessor extends AIMLProcessor
         if (tag.XMLType == XMLNode.TAG)
         {
             return parser.evaluate(level++, tag.XMLChild).toUpperCase();
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<uppercase></uppercase> must have content!");
-    }
+    } 
 }

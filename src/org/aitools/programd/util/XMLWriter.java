@@ -99,31 +99,31 @@ public class XMLWriter
         try
         {
             spec.path = FileManager.getAbsolutePath(spec.path);
-        }
+        } 
         catch (FileNotFoundException e)
         {
             Log.userinfo(e.getMessage(), Log.ERROR);
-        }
+        } 
         try
         {
             file = new RandomAccessFile(spec.path, RW);
-        }
+        } 
         catch (FileNotFoundException e)
         {
             Log.userinfo("Can't write to file \"" + spec.path + "\".", Log.ERROR);
             return;
-        }
+        } 
 
         // Get the file length.
         long fileLength = 0;
         try
         {
             fileLength = file.length();
-        }
+        } 
         catch (IOException e)
         {
             Log.userinfo("Error reading file \"" + spec.path + "\".", Log.ERROR);
-        }
+        } 
 
         // Create the root close marker string.
         String rootCloseMarker = CLOSE_MARKER_START + spec.root + NONATOMIC_MARKER_END + LINE_SEPARATOR;
@@ -142,24 +142,24 @@ public class XMLWriter
                 if (spec.encoding != null)
                 {
                     file.writeBytes(spec.encoding);
-                }
+                } 
                 else
                 {
                     file.writeBytes(ENC_UTF8);
-                }
+                } 
                 file.writeBytes(PI_END + LINE_SEPARATOR);
 
                 // Write the stylesheet pi if a stylesheet is defined.
                 if (spec.stylesheet != null)
                 {
                     file.writeBytes(STYLESHEET_PI_START + spec.stylesheet + PI_END + LINE_SEPARATOR);
-                }
+                } 
 
                 // Write the DTD, if defined.
                 if (spec.dtd != null)
                 {
                     file.writeBytes(spec.dtd + LINE_SEPARATOR);
-                }
+                } 
 
                 // Start the opening root element.
                 file.writeBytes(OPEN_MARKER_START + spec.root);
@@ -168,20 +168,20 @@ public class XMLWriter
                 if (spec.backlink != null)
                 {
                     file.writeBytes(BACKLINK_EQUALS + spec.backlink + QUOTE_MARK);
-                }
+                } 
                 // Insert a starttime attribute if available.
                 if (spec.starttime != null)
                 {
                     file.writeBytes(STARTTIME_EQUALS + spec.starttime + QUOTE_MARK);
-                }
+                } 
                 file.writeBytes(NONATOMIC_MARKER_END + LINE_SEPARATOR);
-            }
+            } 
             catch (IOException e)
             {
                 Log.userinfo("Error writing to \"" + spec.path + "\".", Log.ERROR);
                 return;
-            }
-        }
+            } 
+        } 
         // Otherwise, try to find the root element closing tag at the end of the
         // file.
         else
@@ -190,13 +190,13 @@ public class XMLWriter
             try
             {
                 file.seek(closeMarkerStart);
-            }
+            } 
             catch (IOException e)
             {
                 Log.userinfo("Error reading \"" + spec.path + "\".", Log.ERROR);
                 return;
-            }
-        }
+            } 
+        } 
 
         /*
          * Now write the message and the root element closing tag to the file,
@@ -207,20 +207,20 @@ public class XMLWriter
             if (spec.encoding == null)
             {
                 file.write(message.getBytes(ENC_UTF8));
-            }
+            } 
             else
             {
                 file.write(message.getBytes(spec.encoding));
-            }
+            } 
             file.writeBytes(rootCloseMarker);
             file.close();
-        }
+        } 
         catch (IOException e)
         {
             Log.userinfo("Error writing to \"" + spec.encoding + "\".", Log.ERROR);
             return;
-        }
-    }
+        } 
+    } 
 
     /**
      * Rolls over a spec (renames current file designated by a spec, and creates
@@ -235,11 +235,11 @@ public class XMLWriter
         {
             Trace.userinfo("No resource found to roll over.");
             return;
-        }
+        } 
         if (spec.description != null)
         {
             Trace.devinfo("Rolling over " + spec.description + ".");
-        }
+        } 
         Date starts = new Date();
         File specPath = FileManager.getFile(spec.path);
         String parentPart = specPath.getParent();
@@ -249,13 +249,13 @@ public class XMLWriter
         if (dot > 0)
         {
             spec.backlink = namePart.substring(0, dot) + "-end-" + dateTime + namePart.substring(dot);
-        }
+        } 
         else
         {
             spec.backlink = namePart + "-end-" + dateTime;
-        }
+        } 
         spec.starttime = new SimpleDateFormat(STARTTIME_DATE_FORMAT).format(starts);
         File rollover = FileManager.getFile(parentPart + File.separator + spec.backlink);
         FileManager.getFile(spec.path).renameTo(rollover);
-    }
+    } 
 }

@@ -68,12 +68,12 @@ public class TemplateParser extends GenericParser
         if (input == null)
         {
             throw new TemplateParserException("No input supplied for TemplateParser!");
-        }
+        } 
         this.inputs.add(input);
         this.userid = useridToUse;
         this.botid = botidToUse;
         super.processorRegistry = AIMLProcessorRegistry.getSelf();
-    }
+    } 
 
     /**
      * Processes the AIML within and including a given AIML element.
@@ -91,7 +91,7 @@ public class TemplateParser extends GenericParser
         try
         {
             return super.processTag(level, tag);
-        }
+        } 
         // A ProcessorException at this point can mean several things.
         catch (ProcessorException e0)
         {
@@ -101,12 +101,12 @@ public class TemplateParser extends GenericParser
                 try
                 {
                     return DeprecatedAIMLParser.processTag(level, this.userid, tag, this);
-                }
+                } 
                 catch (UnknownDeprecatedAIMLException e1)
                 {
                     // For now, do nothing (drop down to next).
-                }
-            }
+                } 
+            } 
             // It could also be a non-AIML tag.
             if (Globals.nonAIMLRequireNamespaceQualification())
             {
@@ -114,17 +114,17 @@ public class TemplateParser extends GenericParser
                 if (tag.XMLData.indexOf(COLON) == -1)
                 {
                     throw new AIMLProcessorException("Unknown element \"" + tag.XMLData + "\"");
-                }
-            }
+                } 
+            } 
             // But if namespace qualification is not required, don't care.
             return formatTag(level, tag);
-        }
+        } 
         catch (StackOverflowError e)
         {
             Log.userinfo("Stack overflow error processing " + tag.XMLData + " tag.", Log.ERROR);
             return EMPTY_STRING;
-        }
-    }
+        } 
+    } 
 
     /**
      * Adds an input to the inputs list (for avoiding infinite loops).
@@ -135,7 +135,7 @@ public class TemplateParser extends GenericParser
     public void addInput(String input)
     {
         this.inputs.add(input);
-    }
+    } 
 
     /**
      * Returns the input that matched the <code>pattern</code> associated with
@@ -147,7 +147,7 @@ public class TemplateParser extends GenericParser
     public ArrayList getInputs()
     {
         return this.inputs;
-    }
+    } 
 
     /**
      * Returns the values captured from the input path by wildcards in the
@@ -159,7 +159,7 @@ public class TemplateParser extends GenericParser
     public ArrayList getInputStars()
     {
         return this.inputStars;
-    }
+    } 
 
     /**
      * Returns the the values captured from the input path by wildcards in the
@@ -171,7 +171,7 @@ public class TemplateParser extends GenericParser
     public ArrayList getThatStars()
     {
         return this.thatStars;
-    }
+    } 
 
     /**
      * Returns the values captured from the input path by wildcards in the
@@ -183,7 +183,7 @@ public class TemplateParser extends GenericParser
     public ArrayList getTopicStars()
     {
         return this.topicStars;
-    }
+    } 
 
     /**
      * Sets the <code>inputStars</code> list.
@@ -195,7 +195,7 @@ public class TemplateParser extends GenericParser
     public void setInputStars(ArrayList stars)
     {
         this.inputStars = stars;
-    }
+    } 
 
     /**
      * Sets the <code>thatStars</code> list.
@@ -207,7 +207,7 @@ public class TemplateParser extends GenericParser
     public void setThatStars(ArrayList stars)
     {
         this.thatStars = stars;
-    }
+    } 
 
     /**
      * Sets the <code>topicStars</code> Vector.
@@ -219,7 +219,7 @@ public class TemplateParser extends GenericParser
     public void setTopicStars(ArrayList stars)
     {
         this.topicStars = stars;
-    }
+    } 
 
     /**
      * Returns the userid.
@@ -229,7 +229,7 @@ public class TemplateParser extends GenericParser
     public String getUserID()
     {
         return this.userid;
-    }
+    } 
 
     /**
      * Returns the botid.
@@ -239,5 +239,5 @@ public class TemplateParser extends GenericParser
     public String getBotID()
     {
         return this.botid;
-    }
+    } 
 }

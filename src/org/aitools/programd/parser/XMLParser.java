@@ -134,16 +134,16 @@ public class XMLParser
                             node.XMLAttr = EMPTY_STRING;
 
                             xmlIterator.add(node);
-                        }
+                        } 
 
                         // Initialize parsing buffers.
                         text = new StringBuffer();
-                    }
+                    } 
                     // Otherwise, just store the text.
                     else
                     {
                         text.append(token);
-                    }
+                    } 
                     break;
 
                 // XML state: XML just detected
@@ -153,25 +153,25 @@ public class XMLParser
                     {
                         state = Q_COMMENT;
                         break;
-                    }
+                    } 
                     // See if this is a processing instruction.
                     if (input.indexOf(PI_START, index) - index == 0)
                     {
                         state = Q_PI;
                         break;
-                    }
+                    } 
                     // See if this is a CDATA block start.
                     if (input.indexOf(CDATA_START, index) - index == 0)
                     {
                         state = Q_CDATA;
                         break;
-                    }
+                    } 
                     // See if this is an end tag.
                     if (input.indexOf(SLASH, index) - index == 0)
                     {
                         state = Q_ENDTAG;
                         break;
-                    }
+                    } 
                     // Otherwise, just a normal tag.
                     state = Q_TAG;
 
@@ -190,23 +190,23 @@ public class XMLParser
                     {
                         tagType = XMLNode.EMPTY;
                         tag = tag.substring(0, tagLastIndex);
-                    }
+                    } 
                     else
                     {
                         tagType = XMLNode.TAG;
-                    }
+                    } 
                     // Everything before the first space is the tag.
                     spaceIndex = tag.indexOf(SPACE);
                     if (spaceIndex > 0)
                     {
                         tagData = tag.substring(0, spaceIndex);
                         tagArguments = SPACE + tag.substring(spaceIndex + 1, tag.length());
-                    }
+                    } 
                     else
                     {
                         tagData = tag;
                         tagArguments = EMPTY_STRING;
-                    }
+                    } 
                     /*
                      * Mark the input buffer as processed up to the closing ">"
                      * and reset the state to Q_TEXT.
@@ -225,7 +225,7 @@ public class XMLParser
                         xmlIterator.add(node);
 
                         tag = EMPTY_STRING;
-                    }
+                    } 
                     break;
 
                 // State: end tag
@@ -241,11 +241,11 @@ public class XMLParser
                     {
                         tagData = tag.substring(0, spaceIndex);
                         tagArguments = SPACE + tag.substring(spaceIndex + 1, tag.length());
-                    }
+                    } 
                     else
                     {
                         tagData = tag;
-                    }
+                    } 
                     // Flag it as ENDTAG.
                     tagType = XMLNode.ENDTAG;
                     tagArguments = EMPTY_STRING;
@@ -257,7 +257,7 @@ public class XMLParser
                         node.XMLData = tagData;
                         node.XMLAttr = tagArguments;
                         xmlIterator.add(node);
-                    }
+                    } 
 
                     /*
                      * Mark the input buffer as processed up to the closing ">"
@@ -290,7 +290,7 @@ public class XMLParser
                         node.XMLData = tagData;
                         node.XMLAttr = tagArguments;
                         xmlIterator.add(node);
-                    }
+                    } 
 
                     // Mark the input buffer to continue after the tag; reset to
                     // text mode.
@@ -319,7 +319,7 @@ public class XMLParser
                         node.XMLData = tagData;
                         node.XMLAttr = tagArguments;
                         xmlIterator.add(node);
-                    }
+                    } 
 
                     // Mark the input buffer to continue after the tag; reset to
                     // text mode.
@@ -347,11 +347,11 @@ public class XMLParser
                 default:
                     Log.userinfo("Invalid tag format.", Log.ERROR);
                     return null;
-            }
+            } 
 
             // Advance to next character in the input buffer
             index++;
-        }
+        } 
 
         /*
          * If the buffer ended while processing a text chunk, this chunk will be
@@ -364,9 +364,9 @@ public class XMLParser
             node.XMLData = text.toString();
             node.XMLAttr = EMPTY_STRING;
             xmlIterator.add(node);
-        }
+        } 
         return XMLList;
-    }
+    } 
 
     /**
      * Converts a linear linked list with parsed XML into a trie.
@@ -440,15 +440,15 @@ public class XMLParser
 
                     default:
                         break;
-                }
-            }
+                } 
+            } 
             else
             {
                 Log.userinfo("XML element is null.", Log.ERROR);
-            }
-        }
+            } 
+        } 
         return trie;
-    }
+    } 
 
     /**
      * Returns the full evaluation of a string containing an XML segment.
@@ -477,9 +477,9 @@ public class XMLParser
             while (lines.hasMoreTokens())
             {
                 Log.userinfo(lines.nextToken(), Log.ERROR);
-            }
+            } 
             return null;
-        }
+        } 
 
         // Get the linear list's iterator.
         listIterator = linearList.listIterator(0);
@@ -495,5 +495,5 @@ public class XMLParser
         linearList.clear();
 
         return trie;
-    }
+    } 
 }

@@ -39,13 +39,13 @@ public class ProgramDServer
     private ProgramDServer(String propertiesPathToUse)
     {
         this.propertiesPath = propertiesPathToUse;
-    }
+    } 
 
     public ProgramDServer(String propertiesPathToUse, Shell shellToUse)
     {
         this.propertiesPath = propertiesPathToUse;
         this.shell = shellToUse;
-    }
+    } 
 
     /**
      * Tries to register any listeners in the classpath, starts the http server,
@@ -56,13 +56,13 @@ public class ProgramDServer
         if (this.propertiesPath == null)
         {
             throw new DeveloperError("Did not specify a server properties path.");
-        }
+        } 
 
         if (!Globals.isLoaded())
         {
             Globals.load(this.propertiesPath);
             this.shell = new Shell();
-        }
+        } 
         String className = Globals.getProperty("programd.httpserver.classname");
         String configParameter = Globals.getProperty("programd.httpserver.config");
 
@@ -70,7 +70,7 @@ public class ProgramDServer
         if (className == null)
         {
             throw new UserError("You must specify an http server to run ProgramDServer. Failing.");
-        }
+        } 
 
         try
         {
@@ -84,7 +84,7 @@ public class ProgramDServer
 
                 Log.userinfo("Predicates with no values defined will return: \"" + Globals.getPredicateEmptyDefault()
                         + "\".", Log.STARTUP);
-            }
+            } 
 
             // Start the http server.
             startHttpServer(className, configParameter);
@@ -93,7 +93,7 @@ public class ProgramDServer
             if (Globals.showConsole())
             {
                 Log.userinfo("Initializing Multiplexor.", Log.STARTUP);
-            }
+            } 
             ActiveMultiplexor.getInstance().initialize();
 
             String serverAddress = serverAddress = "http://" + Globals.getHostName() + ":" + Globals.getHttpPort();
@@ -104,7 +104,7 @@ public class ProgramDServer
             if (Globals.showConsole())
             {
                 Log.userinfo("Loading Graphmaster.", Log.STARTUP);
-            }
+            } 
 
             // Load the startup file (and whatever it specifies).
             Graphmaster.load(Globals.getStartupFilePath(), null);
@@ -127,15 +127,15 @@ public class ProgramDServer
                 {
                     AIMLWatcher.start();
                     Log.userinfo("The AIML Watcher is active.", Log.STARTUP);
-                }
+                } 
                 else
                 {
                     Log.userinfo("The AIML Watcher is not active.", Log.STARTUP);
-                }
+                } 
 
                 // Give server info.
                 Log.userinfo("HTTP server listening at " + serverAddress, Log.STARTUP);
-            }
+            } 
 
             // If configured, start up a browser with the address.
             String browserCommand = Globals.getProperty("programd.browser-launch");
@@ -144,12 +144,12 @@ public class ProgramDServer
                 try
                 {
                     Runtime.getRuntime().exec(browserCommand + " " + serverAddress);
-                }
+                } 
                 catch (IOException e)
                 {
                     Trace.userinfo("Could not launch your web browser. Sorry.");
-                }
-            }
+                } 
+            } 
 
             // Request garbage collection.
             System.gc();
@@ -159,56 +159,56 @@ public class ProgramDServer
             {
                 Heart.start();
                 Trace.userinfo("Heart started.");
-            }
+            } 
 
             // If shell is enabled, start it.
             if (Globals.useShell())
             {
                 this.shell.run();
                 Trace.devinfo("Shell exited.");
-            }
+            } 
             else
             {
                 if (Globals.showConsole())
                 {
                     Log.userinfo("Interactive shell disabled.  Awaiting interrupt to shut down.", Log.STARTUP);
-                }
+                } 
                 while (true)
                 {
                     try
                     {
                         Thread.sleep(86400000);
-                    }
+                    } 
                     catch (InterruptedException e)
                     {
                         // That's it!
-                    }
-                }
-            }
-        }
+                    } 
+                } 
+            } 
+        } 
         catch (DeveloperError e)
         {
             Log.devfail(e);
             Log.userfail("Exiting abnormally due to developer error.", Log.ERROR);
             System.exit(1);
-        }
+        } 
         catch (UserError e)
         {
             Log.userfail(e);
             Log.userfail("Exiting abnormally due to user error.", Log.ERROR);
             System.exit(1);
-        }
+        } 
         catch (RuntimeException e)
         {
             Log.userfail("Exiting abnormally due to unforeseen runtime exception.", e, Log.ERROR);
             System.exit(1);
-        }
+        } 
         catch (Exception e)
         {
             Log.userfail("Exiting abnormally due to unforeseen exception.", e, Log.ERROR);
             System.exit(1);
-        }
-    }
+        } 
+    } 
 
     /**
      * Tries to instantiate an http server of unpredetermined type. We wish to
@@ -221,11 +221,11 @@ public class ProgramDServer
         try
         {
             serverClass = Class.forName(className);
-        }
+        } 
         catch (ClassNotFoundException e)
         {
             throw new UserError("Could not find http server \"" + className + "\".");
-        }
+        } 
 
         // Now, try to get an instance of the server.
         ProgramDCompatibleHttpServer server;
@@ -239,19 +239,19 @@ public class ProgramDServer
         try
         {
             server = (ProgramDCompatibleHttpServer) serverClass.newInstance();
-        }
+        } 
         catch (InstantiationException e)
         {
             throw new UserError("Couldn't instantiate http server \"" + className + "\".");
-        }
+        } 
         catch (IllegalAccessException e)
         {
             throw new DeveloperError("The constructor for \"" + className + "\" or the class itself is not available.");
-        }
+        } 
         catch (ClassCastException e)
         {
             throw new DeveloperError("\"" + className + "\" is not an implementation ofProgramDCompatibleHttpServerr.");
-        }
+        } 
 
         /*
          * If the server config parameter was defined, and if the http server is
@@ -262,16 +262,16 @@ public class ProgramDServer
             try
             {
                 server.configure(configParameter);
-            }
+            } 
             catch (IOException e)
             {
                 throw new UserError("Could not find \"" + configParameter + "\".");
-            }
-        }
+            } 
+        } 
 
         // Start the server as one of the BotProcesses.
         BotProcesses.start(server, "http server");
-    }
+    } 
 
     public static void main(String[] args)
     {
@@ -280,11 +280,11 @@ public class ProgramDServer
         if (args.length > 0)
         {
             serverPropertiesPath = args[0];
-        }
+        } 
         else
         {
             serverPropertiesPath = "server.properties";
-        }
+        } 
 
         ProgramDServer server = new ProgramDServer(serverPropertiesPath);
 
@@ -293,11 +293,11 @@ public class ProgramDServer
             public void run()
             {
                 shutdown();
-            }
-        });
+            } 
+        } );
 
         server.startup();
-    }
+    } 
 
     /**
      * Performs all necessary shutdown tasks. Shuts down the Graphmaster and all
@@ -309,5 +309,5 @@ public class ProgramDServer
         BotProcesses.shutdownAll();
         Graphmaster.shutdown();
         Trace.userinfo("Shutdown complete.");
-    }
+    } 
 }

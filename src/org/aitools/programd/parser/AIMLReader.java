@@ -32,8 +32,8 @@ import org.aitools.programd.util.logging.Log;
  * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-template">
  * <code>template</code> </a> elements. If the elements occur in the correct
  * sequence/structure, their contents are delivered to the
- * {@link AIMLReaderListener#newCategory newCategory}method of whatever
- * {@link AIMLReaderListener}is assigned to this <code>AIMLReader</code>.
+ * {@link AIMLReaderListener#newCategory newCategory} method of whatever
+ * {@link AIMLReaderListener} is assigned to this <code>AIMLReader</code>.
  * </p>
  * <p>
  * This version is a refactoring of Kris Drent's original parser (including
@@ -129,25 +129,25 @@ public class AIMLReader extends GenericReader
      */
     private static final String[] UNEXPECTED_OUTSIDE_TEMPLATE =
         { TEMPLATE_END, PATTERN_END, CATEGORY_START, TEMPLATE_START, PATTERN_START, THAT_END, THAT_START, TOPIC_END,
-                TOPIC_START };
+                TOPIC_START } ;
 
     /**
      * Any of these tags, if found at an unexpected place (context not
      * specified), will raise an alert that the tag is unexpected and cause
-     * parsing of the file to abort. {@link #AIML_END}is handled specially if
-     * found when {@link #categoryCount}=<code>0</code>.
+     * parsing of the file to abort. {@link #AIML_END} is handled specially if
+     * found when {@link #categoryCount} =<code>0</code>.
      * 
      * @see #alertUnexpected()
      */
     private static final String[] UNEXPECTED_GENERAL =
-        { AIML_END, AIML_START, AIML_VERSION_START };
+        { AIML_END, AIML_START, AIML_VERSION_START } ;
 
     /**
      * For convenience, a constant indicating both startup and error log
      * destinations.
      */
     private static final String[] STARTUP_AND_ERROR = new String[]
-        { Log.STARTUP, Log.ERROR };
+        { Log.STARTUP, Log.ERROR } ;
 
     /*
      * Parser states.
@@ -230,32 +230,32 @@ public class AIMLReader extends GenericReader
     /** The most recently collected &lt;pattern&gt;&lt;/pattern&gt; contents. */
     protected String pattern = ASTERISK;
 
-    /** A reference to {@link #pattern}. */
+    /** A reference to {@link #pattern} . */
     protected Field patternField;
 
     /** The most recently collected &lt;that&gt;&lt;/that&gt; contents. */
     protected String that = ASTERISK;
 
-    /** A reference to {@link #that}. */
+    /** A reference to {@link #that} . */
     protected Field thatField;
 
     /** The most recently collected &lt;topic&gt;&lt;/topic&gt; contents. */
     protected String topic = ASTERISK;
 
-    /** A reference to {@link #topic}. */
+    /** A reference to {@link #topic} . */
     protected Field topicField;
 
     /** The most recently collected &lt;template&gt;&lt;/template&gt; contents. */
     protected String template = ASTERISK;
 
-    /** A reference to {@link #template}. */
+    /** A reference to {@link #template} . */
     protected Field templateField;
 
     /**
      * Constructs a new <code>AIMLReader</code>, given a
-     * {@link java.io.BufferedReader BufferedReader}handle to some input stream (
+     * {@link java.io.BufferedReader BufferedReader} handle to some input stream (
      * <code>buffReader</code>), a filename to use in printing error messages (
-     * <code>fileName</code>), and an {@link AIMLReaderListener}that will
+     * <code>fileName</code>), and an {@link AIMLReaderListener} that will
      * handle creation of new categories as they are discovered.
      * 
      * @see AIMLReaderListener
@@ -276,7 +276,7 @@ public class AIMLReader extends GenericReader
         super.readerInstance = this;
         this.warnNonAIML = warnNonAIMLSetting;
         this.state = AIMLReader.S_NONE;
-    }
+    } 
 
     protected void initialize()
     {
@@ -286,16 +286,16 @@ public class AIMLReader extends GenericReader
             this.thatField = this.getClass().getDeclaredField(THAT);
             this.topicField = this.getClass().getDeclaredField(TOPIC);
             this.templateField = this.getClass().getDeclaredField(TEMPLATE);
-        }
+        } 
         catch (NoSuchFieldException e)
         {
             throw new DeveloperError("The developer has specified a field that does not exist in AIMLReader.");
-        }
+        } 
         catch (SecurityException e)
         {
             throw new DeveloperError("Security manager prevents AIMLReader from functioning.");
-        }
-    }
+        } 
+    } 
 
     protected void tryStates() throws TransitionMade
     {
@@ -363,40 +363,40 @@ public class AIMLReader extends GenericReader
 
             default:
                 break;
-        }
+        } 
         alertUnexpected();
-    }
+    } 
 
     /**
      * <p>
-     * If {@link #bufferString}contains <code>tag</code> at {@link #tagStart},
-     * sets {@link #state}to <code>toState</code>, and performs the action
+     * If {@link #bufferString} contains <code>tag</code> at {@link #tagStart} ,
+     * sets {@link #state} to <code>toState</code>, and performs the action
      * indicated by <code>action</code>.
      * </p>
      * <p>
-     * If <code>action</code> is {@link #DELIVER_CATEGORY}, checks whether
-     * required {@link #pattern}and {@link #template}have values; if so, calls
-     * the {@link AIMLReaderListener#newCategory newCategory}method of
-     * {@link #listener}; if not, alerts the user that one of the required
+     * If <code>action</code> is {@link #DELIVER_CATEGORY} , checks whether
+     * required {@link #pattern} and {@link #template} have values; if so, calls
+     * the {@link AIMLReaderListener#newCategory newCategory} method of
+     * {@link #listener} ; if not, alerts the user that one of the required
      * components is missing and aborts the category.
      * </p>
      * <p>
-     * If <code>action</code> is {@link #SET_DONE}, sets {@link #done}to
+     * If <code>action</code> is {@link #SET_DONE} , sets {@link #done} to
      * <code>true</code>, so that parsing of this file is halted (no message
      * given).
      * </p>
      * <p>
-     * If <code>action</code> is {@link #UNSET_TOPIC}, deletes the contents
-     * of {@link #topic}.
+     * If <code>action</code> is {@link #UNSET_TOPIC} , deletes the contents
+     * of {@link #topic} .
      * </p>
      * 
      * @param tag
-     *            the tag to look for in {@link #buffer}
+     *            the tag to look for in {@link #buffer} 
      * @param toState
-     *            the parser {@link #state}to assign if successful
+     *            the parser {@link #state} to assign if successful
      * @param action
-     *            one of {{{@link #DELIVER_CATEGORY},{@link #SET_DONE},
-     *            {@link #UNSET_TOPIC}}}.
+     *            one of {{{@link #DELIVER_CATEGORY} ,{@link #SET_DONE} ,
+     *            {@link #UNSET_TOPIC} }} .
      * @throws TransitionMade
      *             if the transition is successfully made
      */
@@ -411,11 +411,11 @@ public class AIMLReader extends GenericReader
                     if (this.pattern.length() == 0)
                     {
                         abortCategory("Pattern missing from category.");
-                    }
+                    } 
                     else if (this.template.length() == 0)
                     {
                         abortCategory("Template missing from category.");
-                    }
+                    } 
                     else
                     {
                         // Check that the pattern, that and topic are valid
@@ -430,11 +430,11 @@ public class AIMLReader extends GenericReader
                             // AIMLReaderListener.
                             ((AIMLReaderListener) super.listener).newCategory(this.pattern, this.that, this.topic,
                                     this.template);
-                        }
+                        } 
                         catch (NotAnAIMLPatternException e)
                         {
                             abortCategory(e.getMessage());
-                        }
+                        } 
 
                         // Reset pattern, that and template to defaults (note
                         // that topic is not reset).
@@ -448,7 +448,7 @@ public class AIMLReader extends GenericReader
                         // Recreate the buffer (otherwise it gets huge).
                         this.buffer = new StringBuffer(Math.max(bufferStartCapacity, this.buffer.length()));
                         this.buffer.append(this.bufferString);
-                    }
+                    } 
                     break;
 
                 case SET_DONE:
@@ -463,26 +463,26 @@ public class AIMLReader extends GenericReader
                     try
                     {
                         new StartupFileParser().processResponse(this.bufferString.substring(0, this.tagStart));
-                    }
+                    } 
                     catch (ProcessorException e)
                     {
                         // Do nothing.
-                    }
+                    } 
                     break;
-            }
+            } 
             throw (super.TRANSITION_MADE);
-        }
-    }
+        } 
+    } 
 
     /**
      * <p>
-     * As long as state is not {@link #S_IN_TEMPLATE}, cycles through the tags
-     * in {@link #UNEXPECTED_OUTSIDE_TEMPLATE}and {@link #UNEXPECTED_GENERAL}
-     * and checks whether they occur at {@link #tagStart}in {@link #buffer}.
+     * As long as state is not {@link #S_IN_TEMPLATE} , cycles through the tags
+     * in {@link #UNEXPECTED_OUTSIDE_TEMPLATE} and {@link #UNEXPECTED_GENERAL} 
+     * and checks whether they occur at {@link #tagStart} in {@link #buffer} .
      * If so, the user is alerted that the tags are unexpected. The first of
-     * {@link #UNEXPECTED_OUTSIDE_TEMPLATE}found (if any) alerts the user that
+     * {@link #UNEXPECTED_OUTSIDE_TEMPLATE} found (if any) alerts the user that
      * the current category will be aborted; the first of
-     * {@link #UNEXPECTED_GENERAL}found (if any) alerts the user that the rest
+     * {@link #UNEXPECTED_GENERAL} found (if any) alerts the user that the rest
      * of the file will be aborted.
      * </p>
      * <p>
@@ -491,7 +491,7 @@ public class AIMLReader extends GenericReader
      * delivered.
      * </p>
      * <p>
-     * If {@link #warnNonAIML}is set to <code>true</code>, this method will
+     * If {@link #warnNonAIML} is set to <code>true</code>, this method will
      * also alert the user about non-AIML tags directly beneath the <aiml>
      * element that are not namespace-qualified. Obviously this is not real XML
      * validation; it's mostly meant to warn about stray &quot;meta&quot; tags
@@ -510,10 +510,10 @@ public class AIMLReader extends GenericReader
                 {
                     Log.userinfo(new String[]
                         { "Unexpected " + unexpectedTag + "; aborting category.",
-                                "  (Line " + this.lineNumber + ", \"" + this.fileName + "\")" }, Log.ERROR);
+                                "  (Line " + this.lineNumber + ", \"" + this.fileName + "\")" } , Log.ERROR);
                     return;
-                }
-            }
+                } 
+            } 
             for (int index = UNEXPECTED_GENERAL.length; --index >= 0;)
             {
                 String unexpectedTag = UNEXPECTED_GENERAL[index];
@@ -524,17 +524,17 @@ public class AIMLReader extends GenericReader
                     {
                         Log.userinfo("aiml element does not contain any AIML content in \"" + this.fileName + "\".",
                                 Log.ERROR);
-                    }
+                    } 
                     else
                     {
                         Log.userinfo(new String[]
                             { "Unexpected " + unexpectedTag + "; rest of file ignored.",
-                                    "  (Line " + this.lineNumber + ", \"" + this.fileName + "\")" }, Log.ERROR);
-                    }
+                                    "  (Line " + this.lineNumber + ", \"" + this.fileName + "\")" } , Log.ERROR);
+                    } 
                     this.done = true;
                     return;
-                }
-            }
+                } 
+            } 
             if (this.warnNonAIML && this.state == AIMLReader.S_IN_AIML)
             {
                 int nextSpace = this.bufferString.indexOf(SPACE, this.tagStart);
@@ -545,12 +545,12 @@ public class AIMLReader extends GenericReader
                     {
                         Log.userinfo(new String[]
                             { "There is no \"" + unexpectedTag + "\" element in AIML.",
-                                    "  (Line " + this.lineNumber + ", \"" + this.fileName + "\")" }, Log.ERROR);
-                    }
-                }
-            }
-        }
-    }
+                                    "  (Line " + this.lineNumber + ", \"" + this.fileName + "\")" } , Log.ERROR);
+                    } 
+                } 
+            } 
+        } 
+    } 
 
     /**
      * Prints a standard set of error info when a category read is aborted for
@@ -563,6 +563,6 @@ public class AIMLReader extends GenericReader
     {
         Log.userinfo(new String[]
             { "Aborting category:", reason,
-                    "  (Category ends line " + this.lineNumber + ", \"" + this.fileName + "\")." }, STARTUP_AND_ERROR);
-    }
+                    "  (Category ends line " + this.lineNumber + ", \"" + this.fileName + "\")." } , STARTUP_AND_ERROR);
+    } 
 }

@@ -21,22 +21,22 @@ public class AIMResponder implements Responder
     public AIMResponder()
     {
         // Please document this.
-    }
+    } 
 
     public String preprocess(String input, String hostname)
     {
         return input;
-    }
+    } 
 
     public String append(String input, String response, String appendTo)
     {
         return appendTo + response;
-    }
+    } 
 
     public void log(String input, String reply, String hostname, String userid, String botid)
     {
         XMLLogger.log(input, reply, hostname, userid, botid);
-    }
+    } 
 
     public String postprocess(String reply)
     {
@@ -44,11 +44,11 @@ public class AIMResponder implements Responder
         if (reply.length() > 1024)
         {
             postReply = "Huh?";
-        }
+        } 
         else
         {
             postReply = reply;
-        }
+        } 
         return postReply;
-    }
+    } 
 }

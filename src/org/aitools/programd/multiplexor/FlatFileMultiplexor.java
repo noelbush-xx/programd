@@ -24,7 +24,7 @@ import org.aitools.programd.util.Globals;
 /**
  * <p>
  * Presently more a proof-of-concept than anything else, for checking the new
- * {@link Multiplexor}architecture.
+ * {@link Multiplexor} architecture.
  * </p>
  * <p>
  * Uses &quot;flat-file&quot; Java properties files, as in Program B, to store
@@ -55,7 +55,7 @@ public class FlatFileMultiplexor extends Multiplexor
     public boolean checkUser(String userid, String password, String secretKey, String botid)
     {
         return true;
-    }
+    } 
 
     /**
      * Always returns true (FlatFileMultiplexor currently does not support
@@ -64,7 +64,7 @@ public class FlatFileMultiplexor extends Multiplexor
     public boolean createUser(String userid, String password, String secretKey, String botid)
     {
         return true;
-    }
+    } 
 
     /**
      * Always returns true (FlatFileMultiplexor currently does not support
@@ -73,7 +73,7 @@ public class FlatFileMultiplexor extends Multiplexor
     public boolean changePassword(String userid, String password, String secretKey, String botid)
     {
         return true;
-    }
+    } 
 
     /**
      * Saves a predicate to disk.
@@ -84,7 +84,7 @@ public class FlatFileMultiplexor extends Multiplexor
         if (predicateSets == null)
         {
             predicateSets = new Hashtable();
-        }
+        } 
 
         Properties predicates = loadPredicates(userid, botid);
 
@@ -93,7 +93,7 @@ public class FlatFileMultiplexor extends Multiplexor
 
         // Write predicates to disk immediately.
         savePredicates(predicates, userid, botid);
-    }
+    } 
 
     /**
      * Loads the value of a predicate from disk.
@@ -104,7 +104,7 @@ public class FlatFileMultiplexor extends Multiplexor
         if (predicateSets == null)
         {
             predicateSets = new Hashtable();
-        }
+        } 
 
         Properties predicates = loadPredicates(userid, botid);
 
@@ -114,9 +114,9 @@ public class FlatFileMultiplexor extends Multiplexor
         if (result == null)
         {
             throw new NoSuchPredicateException(name);
-        }
+        } 
         return result;
-    }
+    } 
 
     /**
      * Loads the predicates file for a given userid. Ensures that the directory
@@ -136,14 +136,14 @@ public class FlatFileMultiplexor extends Multiplexor
             try
             {
                 predicates.load(new FileInputStream(predicateFile));
-            }
+            } 
             catch (IOException e)
             {
                 throw new DeveloperError("Error trying to load predicates.", e);
-            }
-        }
+            } 
+        } 
         return predicates;
-    }
+    } 
 
     /**
      * Saves the predicates file for a given userid. Ensures that the directory
@@ -159,26 +159,26 @@ public class FlatFileMultiplexor extends Multiplexor
         try
         {
             outputStream = FileManager.getFileOutputStream(fileName);
-        }
+        } 
         catch (FileNotFoundException e)
         {
             throw new DeveloperError("Could not locate just-created file: \"" + fileName + "\".");
-        }
+        } 
 
         try
         {
             predicates.store(outputStream, null);
-        }
+        } 
         catch (IOException e)
         {
             System.err.println(System.getProperty("user.dir"));
             System.err.println(e.getMessage());
             throw new DeveloperError("Error trying to save predicates.", e);
-        }
-    }
+        } 
+    } 
 
     public int useridCount(String botid)
     {
         return 0;
-    }
+    } 
 }

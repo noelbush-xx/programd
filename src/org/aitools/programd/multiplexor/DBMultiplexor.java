@@ -25,7 +25,7 @@ import org.aitools.programd.util.sql.DbAccessRefsPoolMgr;
 
 /**
  * <p>
- * A database-oriented {@link Multiplexor}. Uses a database for storage and
+ * A database-oriented {@link Multiplexor} . Uses a database for storage and
  * retrieval of predicates.
  * </p>
  * <p>
@@ -57,17 +57,17 @@ public class DBMultiplexor extends Multiplexor
         super.initialize();
 
         Log.devinfo("Opening database pool.", new String[]
-            { Log.DATABASE, Log.STARTUP });
+            { Log.DATABASE, Log.STARTUP } );
 
         dbManager = new DbAccessRefsPoolMgr(Globals.getProperty("programd.database.driver", ""), Globals.getProperty(
                 "programd.database.url", ""), Globals.getProperty("programd.database.user", ""), Globals.getProperty(
                 "programd.database.password", ""));
 
         Log.devinfo("Populating database pool.", new String[]
-            { Log.DATABASE, Log.STARTUP });
+            { Log.DATABASE, Log.STARTUP } );
 
         dbManager.populate(Integer.parseInt(Globals.getProperty("programd.database.connections", "")));
-    }
+    } 
 
     /**
      * Saves a predicate in a database.
@@ -82,22 +82,22 @@ public class DBMultiplexor extends Multiplexor
         try
         {
             encodedValue = URLEncoder.encode(value.trim(), ENC_UTF8);
-        }
+        } 
         catch (UnsupportedEncodingException e)
         {
             throw new DeveloperError("This platform does not support UTF-8!");
-        }
+        } 
 
         DbAccess dbaRef = null;
         try
         {
             dbaRef = dbManager.takeDbaRef();
-        }
+        } 
         catch (Exception e)
         {
             throw new UserError("Could not get database reference when setting predicate name \"" + name
                     + "\" to value \"" + value + "\" for \"" + userid + "\" as known to \"" + botid + "\".", e);
-        }
+        } 
         try
         {
             ResultSet records = dbaRef.executeQuery("select value from predicates where botid = '" + botid
@@ -106,26 +106,26 @@ public class DBMultiplexor extends Multiplexor
             while (records.next())
             {
                 count++;
-            }
+            } 
             if (count > 0)
             {
                 dbaRef.executeUpdate("update predicates set value = '" + encodedValue + "' where botid = '" + botid
                         + "' and userid= '" + userid + "' and name = '" + name + "'");
-            }
+            } 
             else
             {
                 dbaRef.executeUpdate("insert into predicates (userid, botid, name, value) values ('" + userid + "', '"
                         + botid + "' , '" + name + "','" + encodedValue + "')");
-            }
+            } 
             records.close();
             dbManager.returnDbaRef(dbaRef);
-        }
+        } 
         catch (SQLException e)
         {
             Log.userinfo("Database error: " + e, new String[]
-                { Log.DATABASE, Log.ERROR });
-        }
-    }
+                { Log.DATABASE, Log.ERROR } );
+        } 
+    } 
 
     /**
      * Loads the value of a predicate from a database.
@@ -137,12 +137,12 @@ public class DBMultiplexor extends Multiplexor
         try
         {
             dbaRef = dbManager.takeDbaRef();
-        }
+        } 
         catch (Exception e)
         {
             throw new UserError("Could not get database reference when getting value for predicate name \"" + name
                     + "\" for \"" + userid + "\" as known to \"" + botid + "\".", e);
-        }
+        } 
         try
         {
             ResultSet records = dbaRef.executeQuery("select value from predicates where botid = '" + botid
@@ -152,29 +152,29 @@ public class DBMultiplexor extends Multiplexor
             {
                 returnCount++;
                 result = records.getString(VALUE);
-            }
+            } 
             records.close();
             dbManager.returnDbaRef(dbaRef);
-        }
+        } 
         catch (SQLException e)
         {
             Log.log("Database error: " + e, Log.ERROR);
             throw new NoSuchPredicateException(name);
-        }
+        } 
         if (result == null)
         {
             throw new NoSuchPredicateException(name);
-        }
+        } 
         // If found, return it (don't forget to decode!).
         try
         {
             return URLDecoder.decode(result, ENC_UTF8);
-        }
+        } 
         catch (UnsupportedEncodingException e)
         {
             throw new DeveloperError("This platform does not support UTF-8!");
-        }
-    }
+        } 
+    } 
 
     /**
      * Creates a userid with a given password. If the userid already exists,
@@ -186,19 +186,19 @@ public class DBMultiplexor extends Multiplexor
         {
             Log.userinfo("ACCESS VIOLATION: Tried to create a user with invalid secret key.", Log.ERROR);
             return false;
-        }
+        } 
         userid = userid.trim().toLowerCase();
         password = password.trim().toLowerCase();
         DbAccess dba = null;
         try
         {
             dba = dbManager.takeDbaRef();
-        }
+        } 
         catch (Exception e)
         {
             throw new UserError("Could not get database reference when creating user \"" + userid
                     + "\" with password \"" + password + "\" and secret key \"" + secretKey + "\".", e);
-        }
+        } 
         try
         {
             ResultSet rs = dba.executeQuery("select * from users where userid = '" + userid + "' and botid = '" + botid
@@ -212,19 +212,19 @@ public class DBMultiplexor extends Multiplexor
                     rs.close();
                     dbManager.returnDbaRef(dba);
                     return false;
-                }
-            }
+                } 
+            } 
             dba.executeUpdate("insert into users (userid, password, botid) values ('" + userid + "' , '" + password
                     + "' , '" + botid + "')");
             rs.close();
-        }
+        } 
         catch (SQLException e)
         {
             throw new UserError("Error working with database.", e);
-        }
+        } 
         dbManager.returnDbaRef(dba);
         return true;
-    }
+    } 
 
     public boolean checkUser(String userid, String password, String secretKey, String botid)
     {
@@ -232,12 +232,12 @@ public class DBMultiplexor extends Multiplexor
         {
             Log.userinfo("ACCESS VIOLATION: Tried to create a user with invalid secret key.", Log.ERROR);
             return false;
-        }
+        } 
         // Look first to see if the user is already in the cache.
         if (!userCacheForBots.containsKey(botid))
         {
             userCacheForBots.put(botid, new HashMap());
-        }
+        } 
         HashMap userCache = (HashMap) userCacheForBots.get(botid);
         if (userCache.containsKey(userid))
         {
@@ -245,19 +245,19 @@ public class DBMultiplexor extends Multiplexor
             if (((String) userCache.get(userid)).equals(password))
             {
                 return true;
-            }
+            } 
             // (otherwise...)
             return false;
-        }
+        } 
         // Otherwise, look in the database, and put in the cache if valid.
         if (checkUserInDB(userid, password, botid))
         {
             userCache.put(userid, password);
             return true;
-        }
+        } 
         // (otherwise...)
         return false;
-    }
+    } 
 
     /**
      * Checks a userid/password combination in the database.
@@ -278,12 +278,12 @@ public class DBMultiplexor extends Multiplexor
         try
         {
             dbaRef = dbManager.takeDbaRef();
-        }
+        } 
         catch (Exception e)
         {
             throw new UserError("Could not get database reference when checking user \"" + userid
                     + "\" with password \"" + password + "\".", e);
-        }
+        } 
         try
         {
             ResultSet rs = dbaRef.executeQuery("select * from users where userid = '" + userid + "' and botid = '"
@@ -295,35 +295,35 @@ public class DBMultiplexor extends Multiplexor
                 if (returnCount == 1)
                 {
                     passwordInDatabase = rs.getString("password");
-                }
+                } 
                 if (returnCount == 0)
                 {
                     rs.close();
                     dbManager.returnDbaRef(dbaRef);
                     return false;
-                }
+                } 
                 if (returnCount > 1)
                 {
                     throw new UserError("Duplicate user name: \"" + userid + "\"");
-                }
-            }
+                } 
+            } 
             rs.close();
             dbManager.returnDbaRef(dbaRef);
-        }
+        } 
         catch (SQLException e)
         {
             throw new UserError("Database error.", e);
-        }
+        } 
         if (passwordInDatabase == null)
         {
             return false;
-        }
+        } 
         if (!password.equals(passwordInDatabase))
         {
             return false;
-        }
+        } 
         return true;
-    }
+    } 
 
     public boolean changePassword(String userid, String password, String secretKey, String botid)
     {
@@ -331,19 +331,19 @@ public class DBMultiplexor extends Multiplexor
         {
             Log.userinfo("ACCESS VIOLATION: Tried to create a user with invalid secret key.", Log.ERROR);
             return false;
-        }
+        } 
         userid = userid.trim().toLowerCase();
         password = password.trim().toLowerCase();
         DbAccess dbaRef = null;
         try
         {
             dbaRef = dbManager.takeDbaRef();
-        }
+        } 
         catch (Exception e)
         {
             throw new UserError("Could not get database reference when changing password to \"" + password
                     + "\" for \"" + userid + "\" as known to \"" + botid + "\".", e);
-        }
+        } 
         try
         {
             ResultSet rs = dbaRef.executeQuery("select * from users where userid = '" + userid + "' and botid = '"
@@ -352,29 +352,29 @@ public class DBMultiplexor extends Multiplexor
             while (rs.next())
             {
                 returnCount++;
-            }
+            } 
             if (returnCount == 0)
             {
                 rs.close();
                 dbManager.returnDbaRef(dbaRef);
                 return (false);
-            }
+            } 
             dbaRef.executeUpdate("update users set password = '" + password + "' where userid = '" + userid
                     + "' and botid = '" + botid + "'");
             rs.close();
             dbManager.returnDbaRef(dbaRef);
-        }
+        } 
         catch (SQLException e)
         {
             throw new UserError("Database error.", e);
-        }
+        } 
         userCacheForBots.remove(userid);
         userCacheForBots.put(userid, password);
         return true;
-    }
+    } 
 
     public int useridCount(String botid)
     {
         return ((HashMap) userCacheForBots.get(botid)).size();
-    }
+    } 
 }

@@ -68,7 +68,7 @@ abstract public class Tabulator extends JPanel
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(scrollPane);
-    }
+    } 
 
     /**
      * Reloads the table with given data.
@@ -91,7 +91,7 @@ abstract public class Tabulator extends JPanel
         if (longestRow == null)
         {
             return;
-        }
+        } 
 
         for (int index = 0; index < this.visibleColumnCount; index++)
         {
@@ -105,8 +105,8 @@ abstract public class Tabulator extends JPanel
 
             cellWidth = component.getPreferredSize().width;
             column.setPreferredWidth(Math.max(headerWidth, cellWidth));
-        }
-    }
+        } 
+    } 
 
     private class TabulatorTableModel extends AbstractTableModel
     {
@@ -119,49 +119,49 @@ abstract public class Tabulator extends JPanel
         public TabulatorTableModel(String[] columnNamesToSet)
         {
             this.columnNames = columnNamesToSet;
-        }
+        } 
 
         public int getColumnCount()
         {
             return this.columnNames.length;
-        }
+        } 
 
         public synchronized int getRowCount()
         {
             if (this.data == null)
             {
                 return 0;
-            }
+            } 
             return this.data.length;
-        }
+        } 
 
         public String getColumnName(int col)
         {
             return this.columnNames[col];
-        }
+        } 
 
         public Object getValueAt(int row, int col)
         {
             return this.data[row][col];
-        }
+        } 
 
         public Class getColumnClass(int c)
         {
             return getValueAt(0, c).getClass();
-        }
+        } 
 
         public synchronized void setData(Object[][] dataToSet)
         {
             this.data = dataToSet;
             fireTableDataChanged();
-        }
+        } 
 
         public Object[] getLongestRow()
         {
             if (this.data == null)
             {
                 return null;
-            }
+            } 
             int longestLength = 0;
             int longestRow = 0;
             for (int row = 0; row < this.data.length; row++)
@@ -170,26 +170,26 @@ abstract public class Tabulator extends JPanel
                 for (int column = 0; column < this.columnNames.length; column++)
                 {
                     rowLength += this.data[row][column].toString().length();
-                }
+                } 
                 longestLength = rowLength > longestLength ? rowLength : longestLength;
                 longestRow = rowLength > longestLength ? row : longestRow;
-            }
+            } 
             return this.data[longestRow];
-        }
-    }
+        } 
+    } 
 
     public TableSorter getSorterTableModel()
     {
         return this.sorterTableModel;
-    }
+    } 
 
     public int getColumnCount()
     {
         return this.columnCount;
-    }
+    } 
 
     public JTable getTable()
     {
         return this.table;
-    }
+    } 
 }

@@ -32,7 +32,7 @@ public class Bots extends HashMap
     private Bots()
     {
         super();
-    }
+    } 
 
     /**
      * Returns whether the loaded bots include one with the given id.
@@ -42,7 +42,7 @@ public class Bots extends HashMap
     public static boolean include(String botid)
     {
         return !(myself.get(botid) == null);
-    }
+    } 
 
     /**
      * Adds the given bot with the given id. No check is made to see whether a
@@ -56,7 +56,7 @@ public class Bots extends HashMap
     public static void addBot(String botid, Bot bot)
     {
         myself.put(botid, bot);
-    }
+    } 
 
     /**
      * Returns the bot with the given id.
@@ -71,17 +71,17 @@ public class Bots extends HashMap
         try
         {
             wanted = (Bot) myself.get(botid);
-        }
+        } 
         catch (ClassCastException e)
         {
             throw new DeveloperError("Something other than a Bot stored in Bots!");
-        }
+        } 
         if (wanted == null)
         {
             throw new DeveloperError("Tried to get unknown bot \"" + botid + "\".");
-        }
+        } 
         return wanted;
-    }
+    } 
 
     /**
      * Returns any bot (probably the last one loaded).
@@ -93,10 +93,10 @@ public class Bots extends HashMap
         if (myself.size() > 0)
         {
             return (Bot) myself.values().iterator().next();
-        }
+        } 
         // (otherwise...)
         return null;
-    }
+    } 
 
     /**
      * Returns the number of bots (the size)
@@ -106,7 +106,7 @@ public class Bots extends HashMap
     public static int getCount()
     {
         return myself.size();
-    }
+    } 
 
     /**
      * Returns a nicely-formatted list of the bots.
@@ -118,7 +118,7 @@ public class Bots extends HashMap
         if (myself.size() == 0)
         {
             return "";
-        }
+        } 
         StringBuffer result = new StringBuffer();
         Iterator iterator = myself.keySet().iterator();
         while (iterator.hasNext())
@@ -126,11 +126,11 @@ public class Bots extends HashMap
             if (result.length() > 0)
             {
                 result.append(' ');
-            }
+            } 
             result.append((String) iterator.next());
-        }
+        } 
         return result.toString();
-    }
+    } 
 
     /**
      * Returns the IDs (the key set)
@@ -140,7 +140,7 @@ public class Bots extends HashMap
     public static Set getIDs()
     {
         return myself.keySet();
-    }
+    } 
 
     /**
      * Returns an iterator over the key set
@@ -150,7 +150,7 @@ public class Bots extends HashMap
     public static Iterator keysIterator()
     {
         return myself.keySet().iterator();
-    }
+    } 
 
     /**
      * Returns whether any bots have loaded the given file(name).
@@ -166,8 +166,8 @@ public class Bots extends HashMap
             if (((Bot) bots.next()).hasLoaded(filename))
             {
                 return true;
-            }
-        }
+            } 
+        } 
         return false;
-    }
+    } 
 }

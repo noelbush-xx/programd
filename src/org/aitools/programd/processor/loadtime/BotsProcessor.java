@@ -23,5 +23,5 @@ public class BotsProcessor extends StartupElementProcessor
     public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
     {
         return parser.evaluate(level++, tag.XMLChild);
-    }
+    } 
 }

@@ -76,7 +76,7 @@ abstract public class GenericParser
         if (content == null)
         {
             throw new ProcessorException("No content to parse.");
-        }
+        } 
         // Create a new XML parser and load it with the template.
         XMLParser parser = new XMLParser();
         LinkedList list = parser.load(content);
@@ -89,9 +89,9 @@ abstract public class GenericParser
             while (lines.hasMoreTokens())
             {
                 Log.userinfo(lines.nextToken(), Log.ERROR);
-            }
+            } 
             throw new ProcessorException("Invalid content (see log file).");
-        }
+        } 
 
         /*
          * Evaluate the template starting from its first token. The evaluate
@@ -103,7 +103,7 @@ abstract public class GenericParser
         list.clear();
 
         return response;
-    }
+    } 
 
     /**
      * Processes a given XML node for a given identifier.
@@ -122,7 +122,7 @@ abstract public class GenericParser
         if (tag == null)
         {
             return EMPTY_STRING;
-        }
+        } 
 
         // Search for the tag in the processor registry.
         Class processorClass = null;
@@ -130,11 +130,11 @@ abstract public class GenericParser
         if (this.processorRegistry != null)
         {
             processorClass = (Class) this.processorRegistry.get(tag.XMLData);
-        }
+        } 
         else
         {
             throw new DeveloperError("processorRegistry has not been initialized!");
-        }
+        } 
 
         // Create a new instance of the processor.
         Processor processor = null;
@@ -143,33 +143,33 @@ abstract public class GenericParser
             try
             {
                 processor = (Processor) processorClass.newInstance();
-            }
+            } 
             catch (InstantiationException e)
             {
                 throw new DeveloperError(e);
-            }
+            } 
             catch (IllegalAccessException e)
             {
                 throw new DeveloperError(e);
-            }
+            } 
             catch (RuntimeException e)
             {
                 throw new DeveloperError(e);
-            }
-        }
+            } 
+        } 
         else
         {
             throw new ProcessorException("Could not find a processor for \"" + tag.XMLData + "\"!");
-        }
+        } 
 
         // Return the results of processing the tag.
         if (processor != null)
         {
             return XMLKit.filterWhitespace(processor.process(level++, tag, this));
-        }
+        } 
         // (otherwise...)
         throw new DeveloperError("Corrupt processor set.");
-    }
+    } 
 
     /**
      * <p>
@@ -198,7 +198,7 @@ abstract public class GenericParser
         if (list == null)
         {
             return EMPTY_STRING;
-        }
+        } 
 
         // Point to the start of the XML trie to parse
         iterator = list.listIterator(0);
@@ -217,11 +217,11 @@ abstract public class GenericParser
                         try
                         {
                             response = response + processTag(level, node);
-                        }
+                        } 
                         catch (ProcessorException e)
                         {
                             throw new DeveloperError(e.getMessage(), e);
-                        }
+                        } 
                         break;
 
                     // Text chunks should just be added to the response.
@@ -232,11 +232,11 @@ abstract public class GenericParser
 
                     default:
                         break;
-                }
-            }
-        }
+                } 
+            } 
+        } 
         return response;
-    }
+    } 
 
     /**
      * <p>
@@ -275,7 +275,7 @@ abstract public class GenericParser
                 if (!tag.XMLAttr.equals(EMPTY_STRING))
                 {
                     response = response + tag.XMLAttr;
-                }
+                } 
                 // Close the head.
                 response = response + NONATOMIC_MARKER_END;
 
@@ -283,7 +283,7 @@ abstract public class GenericParser
                 if (tag.XMLChild != null)
                 {
                     response = response + evaluate(level++, tag.XMLChild);
-                }
+                } 
 
                 // Format the response tag.
                 response = response + CLOSE_MARKER_START + tag.XMLData + NONATOMIC_MARKER_END;
@@ -295,7 +295,7 @@ abstract public class GenericParser
                 if (!tag.XMLAttr.equals(EMPTY_STRING))
                 {
                     response = response + tag.XMLAttr;
-                }
+                } 
                 response = response + ATOMIC_MARKER_END;
                 break;
 
@@ -308,9 +308,9 @@ abstract public class GenericParser
             default:
                 break;
 
-        }
+        } 
         return response;
-    }
+    } 
 
     /**
      * <p>
@@ -344,7 +344,7 @@ abstract public class GenericParser
         if (list == null)
         {
             return 0;
-        }
+        } 
 
         // Point to the start of the XML trie to parse.
         iterator = list.listIterator(0);
@@ -364,18 +364,18 @@ abstract public class GenericParser
                         if ((!node.XMLData.equals(tagname)) && (allnodes == false))
                         {
                             break;
-                        }
+                        } 
                         numbernodes++;
                         break;
 
                     // Just ignore everything else.
                     default:
                         break;
-                }
-            }
-        }
+                } 
+            } 
+        } 
         return numbernodes;
-    }
+    } 
 
     /**
      * <p>
@@ -404,7 +404,7 @@ abstract public class GenericParser
         if (list == null)
         {
             return null;
-        }
+        } 
 
         // Point to the start of the XML trie to parse.
         iterator = list.listIterator(0);
@@ -424,24 +424,24 @@ abstract public class GenericParser
                         if (!node.XMLData.equals(tagname))
                         {
                             break;
-                        }
+                        } 
                         // We've found the one we're looking for when ordernode
                         // is zero (after decrementing).
                         if (--ordernode == 0)
                         {
                             return node;
-                        }
+                        } 
                         // Otherwise, continue.
                         break;
 
                     // Just ignore everything else.
                     default:
                         break;
-                }
-            }
-        }
+                } 
+            } 
+        } 
         return null;
-    }
+    } 
 
     /**
      * <p>
@@ -478,7 +478,7 @@ abstract public class GenericParser
         if (rootTag.equals(EMPTY_STRING))
         {
             return EMPTY_STRING;
-        }
+        } 
 
         /*
          * Create a new node for use in evaluation, with the content and
@@ -527,7 +527,7 @@ abstract public class GenericParser
                     nodeChild.XMLData = childTag;
                     nodeChild.XMLAttr = EMPTY_STRING;
                     break;
-            }
+            } 
 
             // Insert the child tag into the child trie.
             ListIterator childListIterator = childList.listIterator(0);
@@ -537,7 +537,7 @@ abstract public class GenericParser
             // Point the root tag to the child tag.
             node.XMLChild = childList;
 
-        }
+        } 
 
         // Insert the root tag.
         iterator.add(node);
@@ -554,7 +554,7 @@ abstract public class GenericParser
         list = null;
 
         return response;
-    }
+    } 
 
     /**
      * Corrects a tag to use a valid 2-dimensional index, and returns the
@@ -569,13 +569,13 @@ abstract public class GenericParser
     {
         String indexValue = XMLKit.getAttributeValue(INDEX, tag.XMLAttr);
         int[] result =
-            { 1, 1 };
+            { 1, 1 } ;
 
         // Assign the default if the index attribute is empty.
         if (indexValue.equals(EMPTY_STRING))
         {
             return result;
-        }
+        } 
 
         // If only one dimension is specified, fill in the other as 1.
         int comma = indexValue.indexOf(COMMA);
@@ -584,33 +584,33 @@ abstract public class GenericParser
             try
             {
                 result[0] = Integer.parseInt(indexValue);
-            }
+            } 
             catch (NumberFormatException e)
             {
                 // Nothing to do.
-            }
+            } 
             result[1] = 1;
             return result;
-        }
+        } 
         // (otherwise...)
         try
         {
             result[0] = Integer.parseInt(indexValue.substring(0, comma));
-        }
+        } 
         catch (NumberFormatException e)
         {
             // Nothing to do.
-        }
+        } 
         try
         {
             result[1] = Integer.parseInt(indexValue.substring(comma + 1));
-        }
+        } 
         catch (NumberFormatException e)
         {
             // Nothing to do.
-        }
+        } 
         return result;
-    }
+    } 
 
     /**
      * Corrects a tag to use a valid 1-dimensional index, and returns the index.
@@ -627,10 +627,10 @@ abstract public class GenericParser
         try
         {
             return Integer.parseInt(XMLKit.getAttributeValue(INDEX, tag.XMLAttr));
-        }
+        } 
         catch (NumberFormatException e)
         {
             return 1;
-        }
-    }
+        } 
+    } 
 }

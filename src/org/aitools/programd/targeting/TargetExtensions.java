@@ -27,7 +27,7 @@ public class TargetExtensions extends StringTripleMatrix
     public TargetExtensions()
     {
         super();
-    }
+    } 
 
     /**
      * Returns the extension <code>pattern</code> s
@@ -37,7 +37,7 @@ public class TargetExtensions extends StringTripleMatrix
     public LinkedList getPatterns()
     {
         return getFirsts();
-    }
+    } 
 
     /**
      * Returns the extension <code>that</code> s
@@ -47,7 +47,7 @@ public class TargetExtensions extends StringTripleMatrix
     public LinkedList getThats()
     {
         return getSeconds();
-    }
+    } 
 
     /**
      * Returns the extension <code>topic</code> s
@@ -57,5 +57,5 @@ public class TargetExtensions extends StringTripleMatrix
     public LinkedList getTopics()
     {
         return getThirds();
-    }
+    } 
 }

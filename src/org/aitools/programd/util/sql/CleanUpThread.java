@@ -1,8 +1,8 @@
 package org.aitools.programd.util.sql;
 
 /**
- * Calls the cleanup method of an {@link ObjectPool}at a period determined by
- * its {@link #sleepTime}.
+ * Calls the cleanup method of an {@link ObjectPool} at a period determined by
+ * its {@link #sleepTime} .
  * 
  * @author Cristian Mircioiu
  */
@@ -28,10 +28,10 @@ class CleanUpThread extends Thread
         super("Database Pool Cleanup Thread");
         this.pool = poolToUse;
         this.sleepTime = sleepTimeToUse;
-    }
+    } 
 
     /**
-     * Cleans up the object pool at the period determined by {@link #sleepTime}.
+     * Cleans up the object pool at the period determined by {@link #sleepTime} .
      */
     public void run()
     {
@@ -40,12 +40,12 @@ class CleanUpThread extends Thread
             try
             {
                 sleep(this.sleepTime);
-            }
+            } 
             catch (InterruptedException e)
             {
                 // ignore it
-            }
+            } 
             this.pool.cleanUp();
-        }
-    }
+        } 
+    } 
 }

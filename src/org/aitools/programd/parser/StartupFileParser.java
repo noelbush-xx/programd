@@ -25,15 +25,15 @@ public class StartupFileParser extends GenericParser
     public StartupFileParser()
     {
         super.processorRegistry = StartupElementProcessorRegistry.getSelf();
-    }
+    } 
 
     public void setCurrentBot(Bot bot)
     {
         this.currentBot = bot;
-    }
+    } 
 
     public Bot getCurrentBot()
     {
         return this.currentBot;
-    }
+    } 
 }

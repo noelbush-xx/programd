@@ -29,8 +29,8 @@ public class LearnProcessor extends StartupElementProcessor
         {
             Graphmaster.load(parser.evaluate(level++, tag.XMLChild), parser.getCurrentBot().getID());
             return EMPTY_STRING;
-        }
+        } 
         // (otherwise...)
         throw new InvalidStartupElementException("<learn></learn> must have content!");
-    }
+    } 
 }

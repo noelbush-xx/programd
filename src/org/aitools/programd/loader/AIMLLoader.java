@@ -20,7 +20,7 @@ import org.aitools.programd.util.logging.Log;
 
 /**
  * A utility class used by the
- * {@link org.aitools.programd.graph.Graphmaster Graphmaster}to load AIML
+ * {@link org.aitools.programd.graph.Graphmaster Graphmaster} to load AIML
  * files.
  * 
  * @author Richard Wallace
@@ -77,9 +77,9 @@ public class AIMLLoader implements AIMLReaderListener
         if (botid != null)
         {
             AIMLLoader.bot = Bots.getBot(botidToUse);
-        }
+        } 
         AIMLLoader.policy = Globals.getMergePolicy();
-    }
+    } 
 
     public void newCategory(String pattern, String that, String topic, String template)
     {
@@ -89,27 +89,27 @@ public class AIMLLoader implements AIMLReaderListener
         if (pattern == null)
         {
             pattern = Graphmaster.ASTERISK;
-        }
+        } 
         if (that == null)
         {
             that = Graphmaster.ASTERISK;
-        }
+        } 
         if (topic == null)
         {
             topic = Graphmaster.ASTERISK;
-        }
+        } 
         if (template == null)
         {
             template = Graphmaster.ASTERISK;
-        }
+        } 
 
         if (SHOW_CONSOLE)
         {
             if (Graphmaster.getTotalCategories() % NOTIFY_INTERVAL == 0 && Graphmaster.getTotalCategories() > 0)
             {
                 Trace.userinfo(Graphmaster.getTotalCategories() + " categories loaded so far.");
-            }
-        }
+            } 
+        } 
 
         if (process)
         {
@@ -120,7 +120,7 @@ public class AIMLLoader implements AIMLReaderListener
                 bot.addToFilenameMap(filename, node);
                 node.put(Graphmaster.TEMPLATE, template);
                 Graphmaster.incrementTotalCategories();
-            }
+            } 
             else
             {
                 if (!policy.equals("true"))
@@ -130,15 +130,15 @@ public class AIMLLoader implements AIMLReaderListener
                         Log.userinfo(new String[]
                             { "Duplicate category:", pattern + " : " + that + " : " + topic,
                                     " in \"" + filename + "\"", "conflicts with category already loaded from",
-                                    (String) node.get(Graphmaster.FILENAME) }, Log.MERGE);
-                    }
-                }
+                                    (String) node.get(Graphmaster.FILENAME) } , Log.MERGE);
+                    } 
+                } 
                 else
                 {
                     node.put(Graphmaster.FILENAME, filename);
                     node.put(Graphmaster.TEMPLATE, template);
-                }
-            }
-        }
-    }
+                } 
+            } 
+        } 
+    } 
 }

@@ -68,7 +68,7 @@ public class Target
         this.match = new Category(matchPattern, matchThat, matchTopic, matchTemplate);
         this.inputs = new TargetInputs(inputText, inputThat, inputTopic);
         this.replies.add(reply);
-    }
+    } 
 
     /**
      * Returns a hash code representing the target.
@@ -78,7 +78,7 @@ public class Target
     public int hashCode()
     {
         return (this.match.getPattern() + this.match.getThat() + this.match.getTopic()).hashCode();
-    }
+    } 
 
     /**
      * Returns a hash code that would be generated for a target with the given
@@ -93,7 +93,7 @@ public class Target
     public static int generateHashCode(String matchPattern, String matchThat, String matchTopic)
     {
         return (matchPattern + matchThat + matchTopic).hashCode();
-    }
+    } 
 
     /**
      * Merges input and extension values from one target to this one.
@@ -106,7 +106,7 @@ public class Target
         if (hashCode() != target.hashCode())
         {
             throw new DeveloperError("Targets with non-matching <match> segments cannot be merged!");
-        }
+        } 
 
         // Only add unique inputs.
         Iterator inputIterator = target.getInputs().iterator();
@@ -119,12 +119,12 @@ public class Target
             try
             {
                 nextExtension = (StringTriple) extensionIterator.next();
-            }
+            } 
             catch (NoSuchElementException e)
             {
                 // It's okay if the target being merged does not have an
                 // exception.
-            }
+            } 
 
             String nextReply = (String) replyIterator.next();
 
@@ -135,16 +135,16 @@ public class Target
                 if (nextExtension != null)
                 {
                     this.extensions.add(nextExtension);
-                }
-            }
-        }
+                } 
+            } 
+        } 
 
         if (!(this.inputs.size() == this.replies.size()))
         {
             throw new DeveloperError("Merge operation failed to maintain stable activation count.");
-        }
+        } 
         this.activations = this.inputs.size();
-    }
+    } 
 
     /**
      * Returns the match <code>pattern</code>.
@@ -154,7 +154,7 @@ public class Target
     public String getMatchPattern()
     {
         return this.match.getPattern();
-    }
+    } 
 
     /**
      * Returns the match <code>that</code>.
@@ -164,7 +164,7 @@ public class Target
     public String getMatchThat()
     {
         return this.match.getThat();
-    }
+    } 
 
     /**
      * Returns the match <code>topic</code>.
@@ -174,7 +174,7 @@ public class Target
     public String getMatchTopic()
     {
         return this.match.getTopic();
-    }
+    } 
 
     /**
      * Returns the match <code>template</code>.
@@ -184,7 +184,7 @@ public class Target
     public String getMatchTemplate()
     {
         return this.match.getTemplate();
-    }
+    } 
 
     /**
      * Returns the inputs.
@@ -194,7 +194,7 @@ public class Target
     public StringTripleMatrix getInputs()
     {
         return this.inputs;
-    }
+    } 
 
     /**
      * Returns the input texts.
@@ -204,7 +204,7 @@ public class Target
     public LinkedList getInputTexts()
     {
         return this.inputs.getTexts();
-    }
+    } 
 
     /**
      * Returns the input <code>that</code>s.
@@ -214,7 +214,7 @@ public class Target
     public LinkedList getInputThats()
     {
         return this.inputs.getThats();
-    }
+    } 
 
     /**
      * Returns the input <code>topic</code>s.
@@ -224,7 +224,7 @@ public class Target
     public LinkedList getInputTopics()
     {
         return this.inputs.getTopics();
-    }
+    } 
 
     /**
      * Returns the first input text.
@@ -234,7 +234,7 @@ public class Target
     public String getFirstInputText()
     {
         return (String) this.inputs.getTexts().getFirst();
-    }
+    } 
 
     /**
      * Returns the first input <code>that</code>.
@@ -244,7 +244,7 @@ public class Target
     public String getFirstInputThat()
     {
         return (String) this.inputs.getThats().getFirst();
-    }
+    } 
 
     /**
      * Returns the first input <code>topic</code>.
@@ -254,7 +254,7 @@ public class Target
     public String getFirstInputTopic()
     {
         return (String) this.inputs.getTopics().getFirst();
-    }
+    } 
 
     /**
      * Returns the last input text.
@@ -264,7 +264,7 @@ public class Target
     public String getLastInputText()
     {
         return (String) this.inputs.getTexts().getLast();
-    }
+    } 
 
     /**
      * Returns the last input <code>that</code>.
@@ -274,7 +274,7 @@ public class Target
     public String getLastInputThat()
     {
         return (String) this.inputs.getThats().getLast();
-    }
+    } 
 
     /**
      * Returns the last input <code>topic</code>.
@@ -284,7 +284,7 @@ public class Target
     public String getLastInputTopic()
     {
         return (String) this.inputs.getTopics().getLast();
-    }
+    } 
 
     /**
      * Returns the <code>n</code> th input text.
@@ -296,7 +296,7 @@ public class Target
     public String getNthInputText(int n)
     {
         return (String) this.inputs.getTexts().get(n);
-    }
+    } 
 
     /**
      * Returns the <code>n</code> th input <code>that</code>.
@@ -308,7 +308,7 @@ public class Target
     public String getNthInputThat(int n)
     {
         return (String) this.inputs.getThats().get(n);
-    }
+    } 
 
     /**
      * Returns the <code>n</code> th input <code>topic</code>.
@@ -320,7 +320,7 @@ public class Target
     public String getNthInputTopic(int n)
     {
         return (String) this.inputs.getTopics().get(n);
-    }
+    } 
 
     /**
      * Returns the extensions.
@@ -330,7 +330,7 @@ public class Target
     public StringTripleMatrix getExtensions()
     {
         return this.extensions;
-    }
+    } 
 
     /**
      * Returns the extension <code>pattern</code>s.
@@ -340,7 +340,7 @@ public class Target
     public LinkedList getExtensionPatterns()
     {
         return this.extensions.getPatterns();
-    }
+    } 
 
     /**
      * Returns the extension <code>that</code>s.
@@ -350,7 +350,7 @@ public class Target
     public LinkedList getExtensionThats()
     {
         return this.extensions.getThats();
-    }
+    } 
 
     /**
      * Returns the extension <code>topic</code>s.
@@ -360,7 +360,7 @@ public class Target
     public LinkedList getExtensionTopics()
     {
         return this.extensions.getTopics();
-    }
+    } 
 
     /**
      * Returns the first extension <code>pattern</code>.
@@ -370,7 +370,7 @@ public class Target
     public String getFirstExtensionPattern()
     {
         return (String) this.extensions.getPatterns().getFirst();
-    }
+    } 
 
     /**
      * Returns the first extension <code>that</code>.
@@ -380,7 +380,7 @@ public class Target
     public String getFirstExtensionThat()
     {
         return (String) this.extensions.getThats().getFirst();
-    }
+    } 
 
     /**
      * Returns the first extension <code>topic</code>.
@@ -390,7 +390,7 @@ public class Target
     public String getFirstExtensionTopic()
     {
         return (String) this.extensions.getTopics().getFirst();
-    }
+    } 
 
     /**
      * Returns the last extension <code>pattern</code>.
@@ -400,7 +400,7 @@ public class Target
     public String getLastExtensionPattern()
     {
         return (String) this.extensions.getPatterns().getLast();
-    }
+    } 
 
     /**
      * Returns the last extension <code>that</code>.
@@ -410,7 +410,7 @@ public class Target
     public String getLastExtensionThat()
     {
         return (String) this.extensions.getThats().getLast();
-    }
+    } 
 
     /**
      * Returns the last extension <code>topic</code>.
@@ -420,7 +420,7 @@ public class Target
     public String getLastExtensionTopic()
     {
         return (String) this.extensions.getTopics().getLast();
-    }
+    } 
 
     /**
      * Returns the <code>n</code> th extension pattern.
@@ -433,7 +433,7 @@ public class Target
     {
         extend(n);
         return (String) this.extensions.getPatterns().get(n);
-    }
+    } 
 
     /**
      * Returns the <code>n</code> th extension <code>that</code>.
@@ -446,7 +446,7 @@ public class Target
     {
         extend(n);
         return (String) this.extensions.getThats().get(n);
-    }
+    } 
 
     /**
      * Returns the <code>n</code> th extension <code>topic</code>.
@@ -459,7 +459,7 @@ public class Target
     {
         extend(n);
         return (String) this.extensions.getTopics().get(n);
-    }
+    } 
 
     /**
      * Returns the <code>reply</code>s.
@@ -469,7 +469,7 @@ public class Target
     public LinkedList getReplies()
     {
         return this.replies;
-    }
+    } 
 
     /**
      * Returns the first <code>reply</code>.
@@ -479,7 +479,7 @@ public class Target
     public String getFirstReply()
     {
         return (String) this.replies.getFirst();
-    }
+    } 
 
     /**
      * Returns the last <code>reply</code>.
@@ -489,7 +489,7 @@ public class Target
     public String getLastReply()
     {
         return (String) this.replies.getLast();
-    }
+    } 
 
     /**
      * Returns the <code>n</code> th reply
@@ -501,7 +501,7 @@ public class Target
     public String getNthReply(int n)
     {
         return (String) this.replies.get(n);
-    }
+    } 
 
     /**
      * Returns the new <code>pattern</code>.
@@ -511,7 +511,7 @@ public class Target
     public String getNewPattern()
     {
         return this.newCategory.getPattern();
-    }
+    } 
 
     /**
      * Returns the new <code>that</code>.
@@ -521,7 +521,7 @@ public class Target
     public String getNewThat()
     {
         return this.newCategory.getThat();
-    }
+    } 
 
     /**
      * Returns the new <code>topic</code>.
@@ -531,7 +531,7 @@ public class Target
     public String getNewTopic()
     {
         return this.newCategory.getTopic();
-    }
+    } 
 
     /**
      * Returns the new <code>template</code>.
@@ -541,7 +541,7 @@ public class Target
     public String getNewTemplate()
     {
         return this.newCategory.getTemplate();
-    }
+    } 
 
     /**
      * Sets the new <code>pattern</code>.
@@ -552,7 +552,7 @@ public class Target
     public void setNewPattern(String pattern)
     {
         this.newCategory.setPattern(pattern);
-    }
+    } 
 
     /**
      * Sets the new <code>that</code>.
@@ -563,7 +563,7 @@ public class Target
     public void setNewThat(String that)
     {
         this.newCategory.setThat(that);
-    }
+    } 
 
     /**
      * Sets the new <code>topic</code>.
@@ -574,7 +574,7 @@ public class Target
     public void setNewTopic(String topic)
     {
         this.newCategory.setTopic(topic);
-    }
+    } 
 
     /**
      * Sets the new <code>template</code>.
@@ -585,7 +585,7 @@ public class Target
     public void setNewTemplate(String template)
     {
         this.newCategory.setTemplate(template);
-    }
+    } 
 
     /**
      * Returns the activations count.
@@ -595,7 +595,7 @@ public class Target
     public int getActivations()
     {
         return this.activations;
-    }
+    } 
 
     /**
      * Generates extension patterns for all inputs.
@@ -605,8 +605,8 @@ public class Target
         for (int index = this.activations; --index >= 0;)
         {
             extend(index);
-        }
-    }
+        } 
+    } 
 
     /**
      * Generates extension patterns for the target, at a given input index.
@@ -636,7 +636,7 @@ public class Target
              */
             extensionThat = InputNormalizer.patternFit(this.match.getThat());
             extensionTopic = InputNormalizer.patternFit(this.match.getTopic());
-        }
+        } 
         catch (CannotExtendException e0)
         {
             // Couldn't extend the match-pattern, so set target-pattern to
@@ -652,7 +652,7 @@ public class Target
                  * match-topic.
                  */
                 extensionTopic = InputNormalizer.patternFit(this.match.getTopic());
-            }
+            } 
             catch (CannotExtendException e1)
             {
                 // Couldn't extend the match-that, so set target-that to
@@ -662,18 +662,18 @@ public class Target
                 {
                     // Try to extend the match-topic using the input-topic.
                     extensionTopic = InputNormalizer.patternFit(extend(this.match.getTopic(), inputTopic));
-                }
+                } 
                 catch (CannotExtendException e2)
                 {
                     // Couldn't even extend topic, so return, doing nothing.
                     return;
-                }
-            }
-        }
+                } 
+            } 
+        } 
         this.extensions.getFirsts().set(index, extensionPattern);
         this.extensions.getSeconds().set(index, extensionThat);
         this.extensions.getThirds().set(index, extensionTopic);
-    }
+    } 
 
     /**
      * Creates a new target pattern, by extending a pattern using an input.
@@ -693,7 +693,7 @@ public class Target
         if ((pattern.indexOf('*') == -1) && (pattern.indexOf('_') == -1))
         {
             throw new CannotExtendException();
-        }
+        } 
 
         // Tokenize the pattern and input.
         StringTokenizer patternTokenizer = new StringTokenizer(pattern);
@@ -706,7 +706,7 @@ public class Target
         if (patternTokenCount > inputTokenCount)
         {
             patternTokenCount = inputTokenCount;
-        }
+        } 
 
         // Result will be constructed in this buffer.
         StringBuffer result = new StringBuffer();
@@ -721,24 +721,24 @@ public class Target
             if (patternToken.equals(Graphmaster.ASTERISK) || patternToken.equals(Graphmaster.UNDERSCORE))
             {
                 hitWildcard = true;
-            }
+            } 
             result.append(inputTokenizer.nextToken());
             result.append(' ');
-        }
+        } 
 
         // Append a * wildcard if the end of the input was not reached.
         if (inputTokenizer.hasMoreTokens())
         {
             result.append(Graphmaster.ASTERISK);
-        }
+        } 
 
         // Return the result.
         return result.toString();
-    }
-}
+    } 
+} 
 
 /**
- * An exception thrown by {@link Target#extend(String, String)}.
+ * An exception thrown by {@link Target#extend(String, String)} .
  */
 
 class CannotExtendException extends Exception
@@ -746,5 +746,5 @@ class CannotExtendException extends Exception
     public CannotExtendException()
     {
         // Nothing to do.
-    }
+    } 
 }

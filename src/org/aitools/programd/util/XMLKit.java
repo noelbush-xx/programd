@@ -33,7 +33,7 @@ public class XMLKit
 
     /** An empty string array (one element). */
     private static final String[] EMPTY_STRING_ARRAY =
-        { (EMPTY_STRING) };
+        { (EMPTY_STRING) } ;
 
     /** A space, for convenience. */
     private static final String SPACE = " ";
@@ -68,11 +68,11 @@ public class XMLKit
      */
     private static final String[][] XML_ESCAPES =
         {
-            { "&amp;", "&" },
-            { "&lt;", "<" },
-            { "&gt;", ">" },
-            { "&apos;", "'" },
-            { "&quot;", "\"" } };
+            { "&amp;", "&" } ,
+            { "&lt;", "<" } ,
+            { "&gt;", ">" } ,
+            { "&apos;", "'" } ,
+            { "&quot;", "\"" } } ;
 
     /** The string &quot;UTF-8&quot;. */
     private static final String UTF8 = "UTF-8";
@@ -80,7 +80,7 @@ public class XMLKit
     /** The start of an XML processing instruction. */
     private static final String XML_PI_START = "<?xml version=\"1.0\"";
 
-    /** The length of {@link #XML_PI_START}. */
+    /** The length of {@link #XML_PI_START} . */
     private static final int XML_PI_START_LENGTH = XML_PI_START.length();
 
     /** The string &quot;encoding&quot;. */
@@ -127,10 +127,10 @@ public class XMLKit
             for (int index = XML_ESCAPES.length; --index >= 0;)
             {
                 xmlEscapes.put(XML_ESCAPES[index][0], XML_ESCAPES[index][1]);
-            }
-        }
+            } 
+        } 
         return Substituter.applySubstitutions(xmlEscapes, input);
-    }
+    } 
 
     /**
      * <p>
@@ -164,10 +164,10 @@ public class XMLKit
             for (int index = XML_ESCAPES.length; --index >= 0;)
             {
                 xmlProhibited.put(XML_ESCAPES[index][1], XML_ESCAPES[index][0]);
-            }
-        }
+            } 
+        } 
         return Substituter.applySubstitutions(xmlProhibited, input);
-    }
+    } 
 
     /**
      * Removes all characters that are not considered <a
@@ -184,7 +184,7 @@ public class XMLKit
         if (input == null)
         {
             return EMPTY_STRING;
-        }
+        } 
 
         // trim() removes all whitespace, not only spaces.
         input = input.trim();
@@ -193,7 +193,7 @@ public class XMLKit
         if (input.equals((EMPTY_STRING)))
         {
             return EMPTY_STRING;
-        }
+        } 
 
         // This StringBuffer will hold the result.
         StringBuffer result = new StringBuffer(input.length());
@@ -209,15 +209,15 @@ public class XMLKit
                     || (('\u0020' <= aChar) && (aChar <= '\uD7FF')) || (('\uE000' <= aChar) && (aChar <= '\uFFFD')))
             {
                 result.append(aChar);
-            }
-        }
+            } 
+        } 
         if (result.length() > input.length())
         {
             return result.toString();
-        }
+        } 
         // (otherwise...)
         return input;
-    }
+    } 
 
     /**
      * <p>
@@ -264,13 +264,13 @@ public class XMLKit
                                         .append((char) Integer.decode(input.substring(pointer + 2, semicolon))
                                                 .intValue());
                                 pointer += (semicolon - pointer + 1);
-                            }
+                            } 
                             catch (NumberFormatException e)
                             {
                                 // drop out
-                            }
-                        }
-                    }
+                            } 
+                        } 
+                    } 
                     // Decimal character code.
                     else
                     {
@@ -286,20 +286,20 @@ public class XMLKit
                                 result.append((char) Integer.parseInt(input.substring(pointer + 2, semicolon)));
                                 pointer += (semicolon - pointer + 1);
                                 continue;
-                            }
+                            } 
                             catch (NumberFormatException e)
                             {
                                 // drop out
-                            }
-                        }
-                    }
-                }
-            }
+                            } 
+                        } 
+                    } 
+                } 
+            } 
             result.append(input.charAt(pointer));
             pointer++;
-        }
+        } 
         return result.toString();
-    }
+    } 
 
     /**
      * Returns the declared encoding string from the XML resource supposedly
@@ -320,7 +320,7 @@ public class XMLKit
         if (firstLine == null)
         {
             return SYSTEM_ENCODING;
-        }
+        } 
 
         // Look for the XML processing instruction.
         int piStart = firstLine.indexOf(XML_PI_START);
@@ -331,11 +331,11 @@ public class XMLKit
             if (!encoding.trim().equals(EMPTY_STRING))
             {
                 return encoding;
-            }
-        }
+            } 
+        } 
         // If encoding was unspecified, return the system encoding.
         return SYSTEM_ENCODING;
-    }
+    } 
 
     /**
      * <p>
@@ -365,19 +365,19 @@ public class XMLKit
             if (index + argpattern.length() >= args.length())
             {
                 args = EMPTY_STRING;
-            }
+            } 
             else
             {
                 args = args.substring(index + argpattern.length(), args.length());
-            }
+            } 
             index = args.indexOf(QUOTE_MARK);
             if (index >= 0)
             {
                 argvalue = args.substring(0, index);
-            }
-        }
+            } 
+        } 
         return unescapeXMLChars(argvalue);
-    }
+    } 
 
     /**
      * Formats AIML from a single long string into a nicely indented multi-line
@@ -392,7 +392,7 @@ public class XMLKit
         LinkedList trie = parser.load(content);
 
         return formatAIML(trie, 0, true);
-    }
+    } 
 
     /**
      * Formats AIML from a trie into a nicely indented multi-line string.
@@ -421,17 +421,17 @@ public class XMLKit
                     if (!atStart)
                     {
                         result.append(LINE_SEPARATOR);
-                    }
+                    } 
                     else
                     {
                         atStart = false;
-                    }
+                    } 
                     result.append(StringKit.tab(level) + TAG_START + node.XMLData + node.XMLAttr + TAG_END);
                     String contents = formatAIML(node.XMLChild, level + 1, true);
                     if (contents.trim().length() > 0)
                     {
                         result.append(LINE_SEPARATOR + contents);
-                    }
+                    } 
                     result.append(LINE_SEPARATOR + StringKit.tab(level) + TAG_START + '/' + node.XMLData + node.XMLAttr
                             + TAG_END);
                     break;
@@ -442,13 +442,13 @@ public class XMLKit
                     {
                         result.append(StringKit.tab(level));
                         atStart = false;
-                    }
+                    } 
                     result.append(TAG_START + node.XMLData + node.XMLAttr + '/' + TAG_END);
                     // Treat HTML line breaks specially.
                     if (node.XMLData.trim().equals("br"))
                     {
                         result.append(LINE_SEPARATOR + StringKit.tab(level));
-                    }
+                    } 
                     break;
 
                 // Append data.
@@ -460,8 +460,8 @@ public class XMLKit
                             result.append(StringKit.tab(level) + node.XMLData);
                             atStart = false;
                             break;
-                        }
-                    }
+                        } 
+                    } 
                     result.append(node.XMLData);
                     break;
 
@@ -471,7 +471,7 @@ public class XMLKit
                     {
                         result.append(StringKit.tab(level));
                         atStart = false;
-                    }
+                    } 
                     result.append(LINE_SEPARATOR + StringKit.tab(level) + TAG_START + XMLParser.CDATA_START
                             + node.XMLData + XMLParser.CDATA_END);
                     break;
@@ -482,14 +482,14 @@ public class XMLKit
                     {
                         result.append(StringKit.tab(level));
                         atStart = false;
-                    }
+                    } 
                     result.append(LINE_SEPARATOR + StringKit.tab(level) + TAG_START + XMLParser.COMMENT_START
                             + node.XMLData + XMLParser.COMMENT_END);
                     break;
-            }
-        }
+            } 
+        } 
         return result.toString();
-    }
+    } 
 
     /**
      * <p>
@@ -517,7 +517,7 @@ public class XMLKit
             return StringKit.filterMultipleConsecutive(
                     Substituter.replace(TAB, SPACE, Substituter.replace(LINE_SEPARATOR, SPACE, filterXML(input))),
                     SPACE).trim();
-        }
+        } 
         // If there is a cdata start marker, this will be slower!
         // Ensure that there is a cdata end marker.
         int cdataEnd = input.indexOf(CDATA_END) + 2;
@@ -529,16 +529,16 @@ public class XMLKit
                 // Most likely (?) that it doesn't.
                 return filterWhitespace(input.substring(0, cdataStart)) + input.substring(cdataStart, cdataEnd)
                         + filterWhitespace(input.substring(cdataEnd));
-            }
+            } 
             // As above, in either case, don't filter the cdata part.
             return filterWhitespace(input.substring(0, cdataStart)) + input.substring(cdataStart, cdataEnd);
-        }
+        } 
         // If there was no cdata end marker, we have wasted our time. Duplicate
         // code from above.
         return StringKit.filterMultipleConsecutive(
                 Substituter.replace(TAB, SPACE, Substituter.replace(LINE_SEPARATOR, SPACE, filterXML(input))), SPACE)
                 .trim();
-    }
+    } 
 
     /**
      * <p>
@@ -559,7 +559,7 @@ public class XMLKit
         if (input == null)
         {
             return EMPTY_STRING_ARRAY;
-        }
+        } 
         // Trim all whitespace at beginning and end.
         input = input.trim();
 
@@ -567,15 +567,15 @@ public class XMLKit
         if (input.equals(EMPTY_STRING))
         {
             return EMPTY_STRING_ARRAY;
-        }
+        } 
 
         // No tags means no breaks.
         int tagStart = input.indexOf(TAG_START);
         if (tagStart == -1)
         {
             return new String[]
-                { input };
-        }
+                { input } ;
+        } 
         // (otherwise...)
         // tagEnd indexes the end of a tag.
         int tagEnd = 0;
@@ -600,23 +600,23 @@ public class XMLKit
             if (tagStart > 0)
             {
                 result.addElement(input.substring(lastEnd, tagStart).trim());
-            }
+            } 
 
             // Set last end to the character following the end of the tag.
             lastEnd = tagEnd + 1;
 
             // Look for another tag.
             tagStart = input.indexOf(TAG_START, lastEnd);
-        }
+        } 
         // All tags are exhausted; if there is still something left in the
         // input,
         if ((lastEnd < inputLength) && (lastEnd > 0))
         {
             // Add the remainder as the final line.
             result.addElement(input.substring(lastEnd).trim());
-        }
-        return (String[]) result.toArray(new String[] {});
-    }
+        } 
+        return (String[]) result.toArray(new String[] {} );
+    } 
 
     /**
      * Removes all tags from a string (retains character content of tags,
@@ -632,7 +632,7 @@ public class XMLKit
         if (input == null)
         {
             return EMPTY_STRING;
-        }
+        } 
         // Trim all whitespace at beginning and end.
         input = input.trim();
 
@@ -640,14 +640,14 @@ public class XMLKit
         if (input.equals(EMPTY_STRING))
         {
             return input;
-        }
+        } 
 
         // No tags means no processing necessary.
         int tagStart = input.indexOf(TAG_START);
         if (tagStart == -1)
         {
             return input;
-        }
+        } 
         //  (otherwise...)
         // tagEnd indexes the end of a tag.
         int tagEnd = 0;
@@ -672,22 +672,22 @@ public class XMLKit
             if (tagStart > 0)
             {
                 result.append(input.substring(lastEnd, tagStart));
-            }
+            } 
 
             // Set last end to the character following the end of the tag.
             lastEnd = tagEnd + 1;
 
             // Look for another tag.
             tagStart = input.indexOf(TAG_START, lastEnd);
-        }
+        } 
         // All tags are exhausted; if there is still something left in the
         // input,
         if ((lastEnd < inputLength) && (lastEnd > 0))
         {
             // Add the remainder as the final line.
             result.append(input.substring(lastEnd));
-        }
+        } 
         return result.toString();
-    }
+    } 
 
 }

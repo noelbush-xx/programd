@@ -27,7 +27,7 @@ public class BotProcessor extends AIMLProcessor
 
     /**
      * Retrieves the value of the desired bot predicate from
-     * {@link org.aitools.programd.util.Globals}.
+     * {@link org.aitools.programd.util.Globals} .
      * 
      * @see AIMLProcessor#process(int, XMLNode,
      *      org.aitools.programd.parser.GenericParser)
@@ -40,10 +40,10 @@ public class BotProcessor extends AIMLProcessor
             if (name.equals(EMPTY_STRING))
             {
                 return name;
-            }
+            } 
             return Bots.getBot(parser.getBotID()).getPropertyValue(name);
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<bot/> cannot contain element content!");
-    }
+    } 
 }

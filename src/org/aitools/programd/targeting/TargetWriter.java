@@ -37,7 +37,7 @@ public class TargetWriter extends Targeting
         {
             Trace.userinfo("Cannot write targets.");
             return;
-        }
+        } 
         file.delete();
 
         // Construct the resource spec to use with XMLWriter.
@@ -54,13 +54,13 @@ public class TargetWriter extends Targeting
             while (targetsIterator.hasNext())
             {
                 write((Target) targetsIterator.next(), spec);
-            }
-        }
+            } 
+        } 
         else
         {
             write(null, spec);
-        }
-    }
+        } 
+    } 
 
     /**
      * Writes a target to a file defined by a given typespec.
@@ -87,10 +87,10 @@ public class TargetWriter extends Targeting
                     + TEMPLATE_END + LINE_SEPARATOR + INDENT + INDENT + MATCH_END + LINE_SEPARATOR + INDENT + INDENT
                     + REPLY_START + target.getLastReply() + REPLY_END + LINE_SEPARATOR + INDENT + TARGET_END
                     + LINE_SEPARATOR, spec);
-        }
+        } 
         else
         {
             XMLWriter.write(EMPTY_STRING, spec);
-        }
-    }
+        } 
+    } 
 }

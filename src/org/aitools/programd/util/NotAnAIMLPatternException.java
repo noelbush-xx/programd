@@ -10,7 +10,7 @@
 package org.aitools.programd.util;
 
 /**
- * Thrown by {@link PatternArbiter}when it gets a pattern candidate that does
+ * Thrown by {@link PatternArbiter} when it gets a pattern candidate that does
  * not meet the definition of an AIML pattern.
  * 
  * @author Noel Bush
@@ -38,10 +38,10 @@ public class NotAnAIMLPatternException extends Exception
     {
         super(message);
         this.pattern = patternToUse;
-    }
+    } 
 
     public String getMessage()
     {
         return MSG_PART_ONE + this.pattern + MSG_PART_TWO + super.getMessage();
-    }
+    } 
 }

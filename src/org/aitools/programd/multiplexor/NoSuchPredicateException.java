@@ -29,7 +29,7 @@ public class NoSuchPredicateException extends Exception
     public NoSuchPredicateException(String predicateName)
     {
         NoSuchPredicateException.name = predicateName;
-    }
+    } 
 
     /**
      * Constructs a new NoSuchPredicateException for the given name and index.
@@ -44,15 +44,15 @@ public class NoSuchPredicateException extends Exception
     {
         NoSuchPredicateException.name = predicateName;
         NoSuchPredicateException.index = predicateIndex;
-    }
+    } 
 
     public String getMessage()
     {
         if (index != -1)
         {
             return "No predicate with name \"" + name + "\" with a value at index " + index + ".";
-        }
+        } 
         // (otherwise...)
         return "No predicate with name \"" + name + "\".";
-    }
+    } 
 }

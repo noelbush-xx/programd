@@ -86,7 +86,7 @@ public class SimpleConsole extends JPanel
     protected static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
 
     private static final Object[] HELP_MESSAGE =
-        { "Simple Console for", "Program D version " + Graphmaster.VERSION };
+        { "Simple Console for", "Program D version " + Graphmaster.VERSION } ;
 
     private static JMenuBar menuBar;
 
@@ -96,12 +96,12 @@ public class SimpleConsole extends JPanel
         try
         {
             logo = new ImageIcon(ClassLoader.getSystemResource("org/aitools/programd/gui/icons/logo.jpg"));
-        }
+        } 
         catch (NullPointerException e)
         {
             Trace.userinfo("The logo is missing from available resources.");
-        }
-    }
+        } 
+    } 
 
     private static ImageIcon icon;
     static
@@ -109,12 +109,12 @@ public class SimpleConsole extends JPanel
         try
         {
             icon = new ImageIcon(ClassLoader.getSystemResource("org/aitools/programd/gui/icons/icon.jpg"));
-        }
+        } 
         catch (NullPointerException e)
         {
             Trace.userinfo("The icon is missing from available resources.");
-        }
-    }
+        } 
+    } 
 
     /**
      * Constructs a new simple console gui with a new shell.
@@ -154,8 +154,8 @@ public class SimpleConsole extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 loadAIMLURLBox();
-            }
-        });
+            } 
+        } );
 
         JMenuItem loadAIMLFilePath = new JMenuItem("Load AIML from file path...");
         loadAIMLFilePath.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -165,8 +165,8 @@ public class SimpleConsole extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 loadAIMLFilePathChooser();
-            }
-        });
+            } 
+        } );
 
         JMenuItem exit = new JMenuItem("Exit");
         exit.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -176,8 +176,8 @@ public class SimpleConsole extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 shutdown();
-            }
-        });
+            } 
+        } );
         fileMenu.add(loadAIMLURL);
         fileMenu.add(loadAIMLFilePath);
         fileMenu.addSeparator();
@@ -196,8 +196,8 @@ public class SimpleConsole extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 ((SimpleConsole) this.parent).consoleDisplay.togglePause();
-            }
-        });
+            } 
+        } );
 
         JMenuItem talkToBot = new JMenuItem("Talk to bot...");
         talkToBot.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -207,8 +207,8 @@ public class SimpleConsole extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 chooseBot();
-            }
-        });
+            } 
+        } );
 
         JMenuItem botFiles = new JMenuItem("List bot files");
         botFiles.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -218,8 +218,8 @@ public class SimpleConsole extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 ((SimpleConsole) this.parent).shell.listBotFiles();
-            }
-        });
+            } 
+        } );
 
         JMenuItem listBots = new JMenuItem("List bots");
         listBots.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -229,8 +229,8 @@ public class SimpleConsole extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 ((SimpleConsole) this.parent).shell.showBotList();
-            }
-        });
+            } 
+        } );
 
         JMenuItem rollTargets = new JMenuItem("Roll targets");
         rollTargets.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -240,8 +240,8 @@ public class SimpleConsole extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 ((SimpleConsole) this.parent).shell.rollTargets();
-            }
-        });
+            } 
+        } );
 
         actionsMenu.add(pause);
         actionsMenu.addSeparator();
@@ -264,8 +264,8 @@ public class SimpleConsole extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 ((SimpleConsole) this.parent).shell.help();
-            }
-        });
+            } 
+        } );
         JMenuItem about = new JMenuItem("About Simple Console...");
         about.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         about.setMnemonic(KeyEvent.VK_A);
@@ -274,8 +274,8 @@ public class SimpleConsole extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 showAboutBox();
-            }
-        });
+            } 
+        } );
 
         helpMenu.add(about);
         helpMenu.add(shellHelp);
@@ -293,7 +293,7 @@ public class SimpleConsole extends JPanel
         this.frame.pack();
         this.frame.setLocation(50, 50);
         this.frame.setVisible(true);
-    }
+    } 
 
     /**
      * Starts the simple console and an ProgramDServer, given the path to a
@@ -310,17 +310,17 @@ public class SimpleConsole extends JPanel
         Trace.setOut(this.displayStream);
         this.server.startup();
         shutdown();
-    }
+    } 
 
     protected void shutdown()
     {
         if (this.server != null)
         {
             ProgramDServer.shutdown();
-        }
+        } 
         // Let the user exit, in case termination was abnormal or messages are
         // otherwise interesting.
-    }
+    } 
 
     class InputPanel extends JPanel
     {
@@ -367,21 +367,21 @@ public class SimpleConsole extends JPanel
             this.add(this.prompt);
             this.add(this.input);
             this.add(enter);
-        }
+        } 
 
         public void setPrompt(String text)
         {
             this.prompt.setText(text);
             this.prompt.revalidate();
             this.input.requestFocus();
-        }
+        } 
 
         private class InputSender extends ParentAwareActionListener
         {
             public InputSender(InputPanel parentToUse)
             {
                 super(parentToUse);
-            }
+            } 
 
             public void actionPerformed(ActionEvent ae)
             {
@@ -390,9 +390,9 @@ public class SimpleConsole extends JPanel
                         + inputText + LINE_SEPARATOR);
                 ((InputPanel) this.parent).parent.inStream.receive(inputText);
                 ((InputPanel) this.parent).input.setText(null);
-            }
-        }
-    }
+            } 
+        } 
+    } 
 
     /**
      * Extends OutputStream to direct all output to the display textarea.
@@ -407,7 +407,7 @@ public class SimpleConsole extends JPanel
         {
             super();
             this.parent = parentToUse;
-        }
+        } 
 
         public void write(byte[] b, int off, int len)
         {
@@ -416,15 +416,15 @@ public class SimpleConsole extends JPanel
                 try
                 {
                     Thread.sleep(500);
-                }
+                } 
                 catch (InterruptedException e)
                 {
                     // Nothing to do.
-                }
-            }
+                } 
+            } 
             this.parent.display.append(new String(b, off, len));
             this.parent.display.setCaretPosition(this.parent.display.getText().length());
-        }
+        } 
 
         public void write(int b)
         {
@@ -433,21 +433,21 @@ public class SimpleConsole extends JPanel
                 try
                 {
                     Thread.sleep(500);
-                }
+                } 
                 catch (InterruptedException e)
                 {
                     // Do nothing.
-                }
-            }
+                } 
+            } 
             this.parent.display.append(String.valueOf((char) b));
             this.parent.display.setCaretPosition(this.parent.display.getText().length());
-        }
+        } 
 
         protected void togglePause()
         {
             this.paused = !this.paused;
-        }
-    }
+        } 
+    } 
 
     /**
      * Extends OutputStream to direct all output to the prompt field.
@@ -460,35 +460,35 @@ public class SimpleConsole extends JPanel
         {
             super();
             this.parent = parentToUse;
-        }
+        } 
 
         public void write(byte[] b, int off, int len)
         {
             this.parent.inputPanel.setPrompt(new String(b, off, len));
-        }
+        } 
 
         public void write(int b)
         {
             this.parent.inputPanel.setPrompt(String.valueOf((char) b));
-        }
-    }
+        } 
+    } 
 
     public class ConsoleInputStream extends InputStream
     {
-        byte[] content = new byte[] {};
+        byte[] content = new byte[] {} ;
 
         private int mark = 0;
 
         public ConsoleInputStream()
         {
             // Nothing to do.
-        }
+        } 
 
         public void receive(String string)
         {
             this.content = (string + '\n').getBytes();
             this.mark = 0;
-        }
+        } 
 
         public int read(byte b[], int off, int len) throws IOException
         {
@@ -497,47 +497,47 @@ public class SimpleConsole extends JPanel
                 try
                 {
                     Thread.sleep(100);
-                }
+                } 
                 catch (InterruptedException e)
                 {
                     return -1;
-                }
-            }
+                } 
+            } 
             if (b == null)
             {
                 throw new NullPointerException();
-            }
+            } 
             else if ((off < 0) || (off > b.length) || (len < 0) || ((off + len) > b.length) || ((off + len) < 0))
             {
                 throw new IndexOutOfBoundsException();
-            }
+            } 
             else if (len == 0)
             {
                 return 0;
-            }
+            } 
             else if (this.content.length == 0)
             {
                 return -1;
-            }
+            } 
 
             int i = 1;
             b[off] = this.content[this.mark++];
             for (; i < len && i < this.content.length; i++)
             {
                 b[off + i] = this.content[this.mark++];
-            }
+            } 
             return i;
-        }
+        } 
 
         public int available() throws IOException
         {
             return this.content.length - this.mark - 1;
-        }
+        } 
 
         public boolean markSupported()
         {
             return false;
-        }
+        } 
 
         public int read()
         {
@@ -546,21 +546,21 @@ public class SimpleConsole extends JPanel
                 try
                 {
                     Thread.sleep(100);
-                }
+                } 
                 catch (InterruptedException e)
                 {
                     return -1;
-                }
-            }
+                } 
+            } 
             if (this.mark < this.content.length)
             {
                 return this.content[this.mark++];
-            }
+            } 
             //          (otherwise...)
             return -1;
-        }
+        } 
 
-    }
+    } 
 
     protected void loadAIMLURLBox()
     {
@@ -569,13 +569,13 @@ public class SimpleConsole extends JPanel
         if (response == null)
         {
             return;
-        }
+        } 
 
         int categories = Graphmaster.getTotalCategories();
         Graphmaster.load((String) response, this.shell.getCurrentBotID());
         Log.userinfo(Graphmaster.getTotalCategories() - categories + " categories loaded from \"" + (String) response
                 + "\".", Log.LEARN);
-    }
+    } 
 
     protected void loadAIMLFilePathChooser()
     {
@@ -590,35 +590,35 @@ public class SimpleConsole extends JPanel
             try
             {
                 newPath = chosen.getCanonicalPath();
-            }
+            } 
             catch (IOException e)
             {
                 Trace.userinfo("I/O error trying to access \"" + newPath + "\".");
                 return;
-            }
+            } 
             int categories = Graphmaster.getTotalCategories();
             Graphmaster.load(newPath, this.shell.getCurrentBotID());
             Log.userinfo(
                     Graphmaster.getTotalCategories() - categories + " categories loaded from \"" + newPath + "\".",
                     Log.LEARN);
-        }
-    }
+        } 
+    } 
 
     protected void chooseBot()
     {
-        String[] botIDs = (String[]) Bots.getIDs().toArray(new String[] {});
+        String[] botIDs = (String[]) Bots.getIDs().toArray(new String[] {} );
         ListDialog.initialize(this.frame, botIDs, "Choose a bot", "Choose the bot with whom you want to talk.");
         String choice = ListDialog.showDialog(null, this.shell.getCurrentBotID());
         if (choice != null)
         {
             this.shell.switchToBot(choice);
-        }
-    }
+        } 
+    } 
 
     protected void showAboutBox()
     {
         JOptionPane.showMessageDialog(null, HELP_MESSAGE, "About", JOptionPane.INFORMATION_MESSAGE, logo);
-    }
+    } 
 
     public static void main(String[] args)
     {
@@ -627,12 +627,12 @@ public class SimpleConsole extends JPanel
         if (args.length > 0)
         {
             serverPropertiesPath = args[0];
-        }
+        } 
         else
         {
             serverPropertiesPath = "server.properties";
-        }
+        } 
 
         new SimpleConsole().start(serverPropertiesPath);
-    }
+    } 
 }

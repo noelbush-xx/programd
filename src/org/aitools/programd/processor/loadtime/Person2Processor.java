@@ -25,5 +25,5 @@ public class Person2Processor extends StartupElementProcessor
     {
         SubstitutionsProcessor.addSubstitutions(SubstitutionsProcessor.PERSON2, tag, parser);
         return EMPTY_STRING;
-    }
+    } 
 }

@@ -39,7 +39,7 @@ public class DbAccessRefsPoolMgr extends ObjectPool
         this.url = urlToUse;
         this.user = userToUse;
         this.password = passwordToUse;
-    }
+    } 
 
     /**
      * Initializes the object by attempting to get a <code>DbAccess</code>
@@ -48,7 +48,7 @@ public class DbAccessRefsPoolMgr extends ObjectPool
     protected Object create()
     {
         return new DbAccess(this.driver, this.url, this.user, this.password);
-    }
+    } 
 
     /**
      * Builds a pool of the specified number of connections.
@@ -61,8 +61,8 @@ public class DbAccessRefsPoolMgr extends ObjectPool
         for (int index = connectionCount; --index >= 0;)
         {
             super.checkIn(create());
-        }
-    }
+        } 
+    } 
 
     /**
      * Checks back in and locks a <code>DbAccess</code> reference to the
@@ -74,7 +74,7 @@ public class DbAccessRefsPoolMgr extends ObjectPool
     public void returnDbaRef(DbAccess dba)
     {
         super.checkIn(dba);
-    }
+    } 
 
     /**
      * Checks out and unlocks a <code>DbAccess</code> reference to the
@@ -85,15 +85,15 @@ public class DbAccessRefsPoolMgr extends ObjectPool
     public DbAccess takeDbaRef()
     {
         return (DbAccess) super.checkOut();
-    }
+    } 
 
     protected boolean validate(Object o)
     {
         return true;
-    }
+    } 
 
     protected void expire(Object o)
     {
         // Nothing to do.
-    }
+    } 
 }

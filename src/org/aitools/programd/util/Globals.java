@@ -130,12 +130,12 @@ public class Globals
         try
         {
             hostName = InetAddress.getLocalHost().getHostName();
-        }
+        } 
         catch (UnknownHostException e)
         {
             hostName = "unknown-host";
-        }
-    }
+        } 
+    } 
 
     /** The port on which the http server is listening. */
     private static int httpPort;
@@ -155,7 +155,7 @@ public class Globals
     private Globals()
     {
         // Do nothing.
-    }
+    } 
 
     /**
      * Loads properties from a path.
@@ -168,15 +168,15 @@ public class Globals
         try
         {
             properties.load(FileManager.getFileInputStream(path));
-        }
+        } 
         catch (IOException e)
         {
             // Error loading properties
             System.err.println("Could not find \"" + path + "\"!");
             System.exit(1);
-        }
+        } 
         loadProperties();
-    }
+    } 
 
     /**
      * Loads some global values from a properties object.
@@ -187,7 +187,7 @@ public class Globals
         {
             System.err.println("Server properties not loaded!");
             System.exit(1);
-        }
+        } 
 
         // Whether to use the watcher; default false.
         useWatcher = Boolean.valueOf(properties.getProperty("programd.watcher", "false")).booleanValue();
@@ -221,11 +221,11 @@ public class Globals
         try
         {
             targetSkip = Integer.parseInt(properties.getProperty("programd.targeting.targetskip", "1"));
-        }
+        } 
         catch (NumberFormatException e)
         {
             targetSkip = 1;
-        }
+        } 
 
         // Don't let targetSkip be less than 1.
         targetSkip = targetSkip < 1 ? 1 : targetSkip;
@@ -276,11 +276,11 @@ public class Globals
         try
         {
             predicateValueCacheMax = Integer.parseInt(properties.getProperty("programd.predicate-cache.max", "5000"));
-        }
+        } 
         catch (NumberFormatException e)
         {
             predicateValueCacheMax = 5000;
-        }
+        } 
         predicateValueCacheMax = predicateValueCacheMax > 0 ? predicateValueCacheMax : 5000;
 
         // The fully-qualified name of the JavaScript interpreter.
@@ -291,21 +291,21 @@ public class Globals
         {
             categoryLoadNotifyInterval = Integer.parseInt(properties.getProperty(
                     "programd.console.category-load-notify-interval", "1000"));
-        }
+        } 
         catch (NumberFormatException e)
         {
             categoryLoadNotifyInterval = 1000;
-        }
+        } 
         categoryLoadNotifyInterval = categoryLoadNotifyInterval > 0 ? categoryLoadNotifyInterval : 1000;
 
         try
         {
             responseTimeout = Integer.parseInt(properties.getProperty("programd.response-timeout", "1000"));
-        }
+        } 
         catch (NumberFormatException e)
         {
             responseTimeout = 1000;
-        }
+        } 
         responseTimeout = responseTimeout > 0 ? responseTimeout : 1000;
 
         // Make sure the root path actually exists.
@@ -313,13 +313,13 @@ public class Globals
         {
             rootPath = new File(properties.getProperty("programd.root-directory", "..")).getCanonicalPath()
                     + File.separator;
-        }
+        } 
         catch (IOException e)
         {
             String error = "Root directory cannot be found (check server properties).";
             Log.log(error, Log.STARTUP);
             throw new UserError(error);
-        }
+        } 
         FileManager.setRootPath(rootPath);
 
         // Make sure the startup file actually exists.
@@ -327,15 +327,15 @@ public class Globals
         {
             startupFilePath = FileManager.getFile(properties.getProperty("programd.startup", "startup.xml"))
                     .getCanonicalPath();
-        }
+        } 
         catch (IOException e)
         {
             String error = "Startup file cannot be found (check server properties).";
             Log.log(error, Log.STARTUP);
             throw new UserError(error);
-        }
+        } 
         isLoaded = true;
-    }
+    } 
 
     /**
      * Returns whether Globals is loaded.
@@ -345,7 +345,7 @@ public class Globals
     public static boolean isLoaded()
     {
         return isLoaded;
-    }
+    } 
 
     /**
      * Returns the version string.
@@ -355,7 +355,7 @@ public class Globals
     public static String getVersion()
     {
         return version;
-    }
+    } 
 
     /**
      * Returns the root path.
@@ -365,7 +365,7 @@ public class Globals
     public static String getRootPath()
     {
         return rootPath;
-    }
+    } 
 
     /**
      * Returns the startup file path.
@@ -375,7 +375,7 @@ public class Globals
     public static String getStartupFilePath()
     {
         return startupFilePath;
-    }
+    } 
 
     /**
      * Returns the predicate name with which the client's name is associated.
@@ -385,7 +385,7 @@ public class Globals
     public static String getClientNamePredicate()
     {
         return clientNamePredicate;
-    }
+    } 
 
     /**
      * Returns the predicate name with which the bot's name is associated.
@@ -395,7 +395,7 @@ public class Globals
     public static String getBotNamePredicate()
     {
         return botNamePredicate;
-    }
+    } 
 
     /**
      * Returns the default value for undefined predicate values.
@@ -405,7 +405,7 @@ public class Globals
     public static String getPredicateEmptyDefault()
     {
         return predicateEmptyDefault;
-    }
+    } 
 
     /**
      * Returns the input to match if an infinite loop exception is thrown.
@@ -415,7 +415,7 @@ public class Globals
     public static String getInfiniteLoopInput()
     {
         return infiniteLoopInput;
-    }
+    } 
 
     /**
      * Returns whether to show the console.
@@ -425,7 +425,7 @@ public class Globals
     public static boolean showConsole()
     {
         return showConsole;
-    }
+    } 
 
     /**
      * Returns whether to show match trace messages on the console.
@@ -435,20 +435,20 @@ public class Globals
     public static boolean showMatchTrace()
     {
         return showMatchTrace;
-    }
+    } 
 
     /**
      * Returns whether the
-     * {@link org.aitools.programd.loader.AIMLWatcher AIML Watcher}is active.
+     * {@link org.aitools.programd.loader.AIMLWatcher AIML Watcher} is active.
      * 
      * @return whether the
-     *         {@link org.aitools.programd.loader.AIMLWatcher AIML Watcher}is
+     *         {@link org.aitools.programd.loader.AIMLWatcher AIML Watcher} is
      *         active
      */
     public static boolean isWatcherActive()
     {
         return useWatcher;
-    }
+    } 
 
     /**
      * Returns whether to use the Heart.
@@ -458,7 +458,7 @@ public class Globals
     public static boolean useHeart()
     {
         return haveAHeart;
-    }
+    } 
 
     /**
      * Returns whether to use the command-line shell.
@@ -468,7 +468,7 @@ public class Globals
     public static boolean useShell()
     {
         return useShell;
-    }
+    } 
 
     /**
      * Returns the merge policy.
@@ -478,7 +478,7 @@ public class Globals
     public static String getMergePolicy()
     {
         return mergePolicy;
-    }
+    } 
 
     /**
      * Returns whether to use targeting.
@@ -488,7 +488,7 @@ public class Globals
     public static boolean useTargeting()
     {
         return useTargeting;
-    }
+    } 
 
     /**
      * Returns whether to log gossip to XML.
@@ -498,7 +498,7 @@ public class Globals
     public static boolean gossipToXML()
     {
         return gossipToXML;
-    }
+    } 
 
     /**
      * Returns the path to the targets file for dumping generated AIML.
@@ -508,7 +508,7 @@ public class Globals
     public static String getTargetsAIMLPath()
     {
         return targetsAIMLPath;
-    }
+    } 
 
     /**
      * Returns the path to the data file for dumping targeting data.
@@ -518,7 +518,7 @@ public class Globals
     public static String getTargetsDataPath()
     {
         return targetsDataPath;
-    }
+    } 
 
     /**
      * Returns the response period for invoking targeting.
@@ -528,7 +528,7 @@ public class Globals
     public static int getTargetSkip()
     {
         return targetSkip;
-    }
+    } 
 
     /**
      * @return the category load notify interval
@@ -536,7 +536,7 @@ public class Globals
     public static int getCategoryLoadNotifyInterval()
     {
         return categoryLoadNotifyInterval;
-    }
+    } 
 
     /**
      * Sets the http port number.
@@ -547,7 +547,7 @@ public class Globals
     public static void setHttpPort(int port)
     {
         httpPort = port;
-    }
+    } 
 
     /**
      * Returns the http port number.
@@ -557,7 +557,7 @@ public class Globals
     public static int getHttpPort()
     {
         return httpPort;
-    }
+    } 
 
     /**
      * Returns the response timeout.
@@ -567,7 +567,7 @@ public class Globals
     public static int getResponseTimeout()
     {
         return responseTimeout;
-    }
+    } 
 
     /**
      * Returns the host name.
@@ -577,7 +577,7 @@ public class Globals
     public static String getHostName()
     {
         return hostName;
-    }
+    } 
 
     /**
      * Returns whether to support deprecated &quot;AIML 0.9&quot; tags.
@@ -587,7 +587,7 @@ public class Globals
     public static boolean supportDeprecatedTags()
     {
         return supportDeprecatedTags;
-    }
+    } 
 
     /**
      * Returns whether to warn about deprecated &quot;AIML 0.9&quot; tags.
@@ -597,7 +597,7 @@ public class Globals
     public static boolean warnAboutDeprecatedTags()
     {
         return warnAboutDeprecatedTags;
-    }
+    } 
 
     /**
      * Returns whether to require namespace qualifiers on non-AIML tags.
@@ -607,7 +607,7 @@ public class Globals
     public static boolean nonAIMLRequireNamespaceQualification()
     {
         return nonAIMLRequireNamespaceQualification;
-    }
+    } 
 
     /**
      * Returns the number of predicate values to cache.
@@ -617,7 +617,7 @@ public class Globals
     public static int predicateValueCacheMax()
     {
         return predicateValueCacheMax;
-    }
+    } 
 
     /**
      * Returns whether the <code>system</code> tag is allowed.
@@ -627,7 +627,7 @@ public class Globals
     public static boolean osAccessAllowed()
     {
         return osAccessAllowed;
-    }
+    } 
 
     /**
      * Returns whether the <code>javascript</code> tag is allowed.
@@ -637,7 +637,7 @@ public class Globals
     public static boolean jsAccessAllowed()
     {
         return jsAccessAllowed;
-    }
+    } 
 
     /**
      * Returns the fully-qualified class name of the JavaScript interpteter (if
@@ -649,7 +649,7 @@ public class Globals
     public static String javaScriptInterpreter()
     {
         return javaScriptInterpreter;
-    }
+    } 
 
     /**
      * Returns the directory in which to run system commands.
@@ -659,7 +659,7 @@ public class Globals
     public static String getSystemDirectory()
     {
         return systemDirectory;
-    }
+    } 
 
     /**
      * Returns the prefix for system commands.
@@ -669,7 +669,7 @@ public class Globals
     public static String getSystemPrefix()
     {
         return systemPrefix;
-    }
+    } 
 
     /**
      * Returns the value of a property string.
@@ -681,7 +681,7 @@ public class Globals
     public static String getProperty(String propertyName)
     {
         return properties.getProperty(propertyName);
-    }
+    } 
 
     /**
      * Returns the value of a property string (allows specifying a default).
@@ -695,10 +695,10 @@ public class Globals
     public static String getProperty(String propertyName, String defaultValue)
     {
         return properties.getProperty(propertyName, defaultValue);
-    }
+    } 
 
     public static Properties getProperties()
     {
         return properties;
-    }
+    } 
 }

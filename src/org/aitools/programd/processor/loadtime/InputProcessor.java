@@ -25,5 +25,5 @@ public class InputProcessor extends StartupElementProcessor
     {
         SubstitutionsProcessor.addSubstitutions(SubstitutionsProcessor.INPUT, tag, parser);
         return EMPTY_STRING;
-    }
+    } 
 }

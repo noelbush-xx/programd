@@ -62,15 +62,15 @@ public class SubstitutionsProcessor extends StartupElementProcessor
             try
             {
                 return parser.processResponse(FileManager.getFileContents(href));
-            }
+            } 
             catch (ProcessorException e)
             {
                 throw new UserError(e.getMessage());
-            }
-        }
+            } 
+        } 
         // (otherwise...)
         return parser.evaluate(level++, tag.XMLChild);
-    }
+    } 
 
     /**
      * Adds substitutions of the specified type.
@@ -113,17 +113,17 @@ public class SubstitutionsProcessor extends StartupElementProcessor
                         case PERSON2:
                             bot.addPerson2Substitution(find, replace);
                             break;
-                    }
-                }
-            }
+                    } 
+                } 
+            } 
             else
             {
                 throw new InvalidStartupElementException("<" + tag.XMLData + "/> cannot have content!");
-            }
-        }
+            } 
+        } 
         if (Globals.showConsole())
         {
             Log.userinfo("Loaded " + substituteCount + " " + tag.XMLData + " substitutions.", Log.STARTUP);
-        }
-    }
+        } 
+    } 
 }

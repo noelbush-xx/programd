@@ -24,7 +24,7 @@ public class StackParser
     private StackParser()
     {
         // Nothing to do.
-    }
+    } 
 
     /**
      * Gets the name of the method in the stack the given number of levels down.
@@ -45,7 +45,7 @@ public class StackParser
         while (level-- >= 0 && start >= 0)
         {
             start = backtrace.indexOf(AT, start + 3);
-        }
+        } 
 
         if (start > 0)
         {
@@ -53,10 +53,10 @@ public class StackParser
             if (finish > 0)
             {
                 method = backtrace.substring(start + 3, finish);
-            }
-        }
+            } 
+        } 
         return method;
-    }
+    } 
 
     /**
      * Gets the name of the method in the stack the given number of levels down.
@@ -71,7 +71,7 @@ public class StackParser
         level++;
         Throwable throwable = new Throwable().fillInStackTrace();
         return getStackMethod(throwable, level);
-    }
+    } 
 
     /**
      * Gets the name of the most recent method in the stack that does not
@@ -88,7 +88,7 @@ public class StackParser
         while ((method.indexOf(search) != -1) && (method != null))
         {
             method = getStackMethod(++level);
-        }
+        } 
 
         if (prettify)
         {
@@ -96,13 +96,13 @@ public class StackParser
             if (nextToLastDot != -1)
             {
                 return method.substring(nextToLastDot + 1);
-            }
+            } 
             // (otherwise...)
             return method;
-        }
+        } 
         // (otherwise...)
         return method;
-    }
+    } 
 
     /**
      * Creates a string containing the stack backtrace of the given Throwable
@@ -117,7 +117,7 @@ public class StackParser
         StringWriter writer = new StringWriter();
         throwable.printStackTrace(new PrintWriter(writer));
         return writer.toString();
-    }
+    } 
 
     /**
      * Returns the backtrace of a given throwable as an enumeration of lines.
@@ -125,5 +125,5 @@ public class StackParser
     public static StringTokenizer getStackTraceFor(Throwable throwable)
     {
         return new StringTokenizer(getStackString(throwable), System.getProperty("line.separator"));
-    }
+    } 
 }

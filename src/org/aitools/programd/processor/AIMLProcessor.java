@@ -29,12 +29,12 @@ abstract public class AIMLProcessor extends Processor
         try
         {
             return process(level, tag, (TemplateParser) parser);
-        }
+        } 
         catch (ClassCastException e)
         {
             throw new ProcessorException("Tried to pass a non-TemplateParser to an AIMLProcessor.");
-        }
-    }
+        } 
+    } 
 
     abstract public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException;
 }

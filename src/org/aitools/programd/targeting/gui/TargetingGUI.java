@@ -74,7 +74,7 @@ public class TargetingGUI extends JPanel
     public JLabel statusBar;
 
     private static final Object[] HELP_MESSAGE =
-        { "AIML Targeting Tool", "Program D version " + TargetingTool.VERSION, "http://aitools.org" };
+        { "AIML Targeting Tool", "Program D version " + TargetingTool.VERSION, "http://aitools.org" } ;
 
     private static ImageIcon logo;
     static
@@ -82,12 +82,12 @@ public class TargetingGUI extends JPanel
         try
         {
             logo = new ImageIcon(ClassLoader.getSystemResource("org/aitools/programd/gui/icons/logo.jpg"));
-        }
+        } 
         catch (NullPointerException e)
         {
             Trace.userinfo("The logo is missing from available resources.");
-        }
-    }
+        } 
+    } 
 
     private static ImageIcon icon;
     static
@@ -95,12 +95,12 @@ public class TargetingGUI extends JPanel
         try
         {
             icon = new ImageIcon(ClassLoader.getSystemResource("org/aitools/programd/gui/icons/icon.jpg"));
-        }
+        } 
         catch (NullPointerException e)
         {
             Trace.userinfo("The icon is missing from available resources.");
-        }
-    }
+        } 
+    } 
 
     public void start()
     {
@@ -116,7 +116,7 @@ public class TargetingGUI extends JPanel
 
         // Go to the next (first) target.
         this.targetPanel.nextTarget();
-    }
+    } 
 
     public TargetingGUI(TargetingTool targetingToolToUse)
     {
@@ -183,8 +183,8 @@ public class TargetingGUI extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 loadDataURLBox();
-            }
-        });
+            } 
+        } );
 
         JMenuItem loadDataFilePath = new JMenuItem("Load targets data from file path...");
         loadDataFilePath.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -194,8 +194,8 @@ public class TargetingGUI extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 loadDataFilePathChooser();
-            }
-        });
+            } 
+        } );
 
         JMenuItem reload = new JMenuItem("Reload target data");
         reload.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -205,8 +205,8 @@ public class TargetingGUI extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 reloadTargets();
-            }
-        });
+            } 
+        } );
 
         JMenuItem exit = new JMenuItem("Exit");
         exit.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -216,8 +216,8 @@ public class TargetingGUI extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 shutdown();
-            }
-        });
+            } 
+        } );
         fileMenu.add(loadDataURL);
         fileMenu.add(loadDataFilePath);
         fileMenu.addSeparator();
@@ -243,8 +243,8 @@ public class TargetingGUI extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 viewTargets();
-            }
-        });
+            } 
+        } );
 
         JMenuItem viewInputs = new JMenuItem("Inputs");
         viewInputs.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -254,8 +254,8 @@ public class TargetingGUI extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 viewInputs();
-            }
-        });
+            } 
+        } );
 
         JMenuItem viewCategories = new JMenuItem("Inputs");
         viewCategories.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -265,8 +265,8 @@ public class TargetingGUI extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 viewCategories();
-            }
-        });
+            } 
+        } );
 
         viewMenu.add(viewTargets);
         viewMenu.add(viewInputs);
@@ -287,8 +287,8 @@ public class TargetingGUI extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 includeIncompleteThats(((JCheckBoxMenuItem) ae.getSource()).getState());
-            }
-        });
+            } 
+        } );
 
         JCheckBoxMenuItem includeIncompleteTopics = new JCheckBoxMenuItem("Include incomplete <topic>s", targetingTool
                 .includeIncompleteTopics());
@@ -300,8 +300,8 @@ public class TargetingGUI extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 includeIncompleteTopics(((JCheckBoxMenuItem) ae.getSource()).getState());
-            }
-        });
+            } 
+        } );
 
         JMenuItem changeReloadFrequency = new JMenuItem("Change reload frequency...");
         changeReloadFrequency.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -311,8 +311,8 @@ public class TargetingGUI extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 showSetReloadFrequencyBox();
-            }
-        });
+            } 
+        } );
 
         optionsMenu.add(includeIncompleteThats);
         optionsMenu.add(includeIncompleteTopics);
@@ -362,8 +362,8 @@ public class TargetingGUI extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 showAboutBox();
-            }
-        });
+            } 
+        } );
         helpMenu.add(about);
 
         // Add menus to the menu bar.
@@ -373,25 +373,25 @@ public class TargetingGUI extends JPanel
         menuBar.add(optionsMenu);
         menuBar.add(actionsMenu);
         menuBar.add(helpMenu);
-    }
+    } 
 
     public void shutdown()
     {
         TargetingTool.shutdown();
         System.exit(0);
-    }
+    } 
 
     public void reloadTargets()
     {
         try
         {
             targetingTool.reload();
-        }
+        } 
         catch (Exception e)
         {
             showError(e.getMessage());
-        }
-    }
+        } 
+    } 
 
     protected void includeIncompleteThats(boolean b)
     {
@@ -399,8 +399,8 @@ public class TargetingGUI extends JPanel
         if (!this.targetPanel.hasTarget())
         {
             this.targetPanel.nextTarget();
-        }
-    }
+        } 
+    } 
 
     protected void includeIncompleteTopics(boolean b)
     {
@@ -408,13 +408,13 @@ public class TargetingGUI extends JPanel
         if (!this.targetPanel.hasTarget())
         {
             this.targetPanel.nextTarget();
-        }
-    }
+        } 
+    } 
 
     protected void showAboutBox()
     {
         JOptionPane.showMessageDialog(null, HELP_MESSAGE, "About", JOptionPane.INFORMATION_MESSAGE, logo);
-    }
+    } 
 
     protected void showSetReloadFrequencyBox()
     {
@@ -424,23 +424,23 @@ public class TargetingGUI extends JPanel
         if (response == null)
         {
             return;
-        }
+        } 
 
         int newFrequency;
         try
         {
             newFrequency = Integer.parseInt((String) response);
-        }
+        } 
         catch (NumberFormatException e)
         {
             JOptionPane.showMessageDialog(null, "Invalid entry. Reload frequency unchanged from " + currentFrequency
                     + ".", "Invalid entry.", JOptionPane.WARNING_MESSAGE);
             return;
-        }
+        } 
         targetingTool.restartTimer(newFrequency);
         JOptionPane.showMessageDialog(null, "Reload frequency changed to " + newFrequency + ".", "Frequency changed.",
                 JOptionPane.PLAIN_MESSAGE);
-    }
+    } 
 
     protected void loadDataURLBox()
     {
@@ -450,7 +450,7 @@ public class TargetingGUI extends JPanel
         if (response == null)
         {
             return;
-        }
+        } 
 
         JOptionPane.showMessageDialog(null, "Targets data URL changed to " + (String) response + ".",
                 "Data path changed.", JOptionPane.PLAIN_MESSAGE);
@@ -459,7 +459,7 @@ public class TargetingGUI extends JPanel
         this.targetPanel.nextTarget();
         setStatus("");
         updateTitle();
-    }
+    } 
 
     protected void loadDataFilePathChooser()
     {
@@ -476,13 +476,13 @@ public class TargetingGUI extends JPanel
             try
             {
                 newPath = chosen.getCanonicalPath();
-            }
+            } 
             catch (IOException e)
             {
                 showError("I/O error trying to access \"" + newPath + "\".");
                 Trace.userinfo("I/O error trying to access \"" + newPath + "\".");
                 return;
-            }
+            } 
             JOptionPane.showMessageDialog(null, "Targets data file path changed to " + newPath + ".",
                     "Data path changed.", JOptionPane.PLAIN_MESSAGE);
             setStatus("Loading targets data....");
@@ -490,38 +490,38 @@ public class TargetingGUI extends JPanel
             this.targetPanel.nextTarget();
             setStatus("");
             updateTitle();
-        }
-    }
+        } 
+    } 
 
     public void showError(String error)
     {
         JOptionPane.showMessageDialog(null, error, "Error", JOptionPane.ERROR_MESSAGE);
-    }
+    } 
 
     public void setStatus(String status)
     {
         this.statusBar.setText(status);
         Trace.devinfo(status);
-    }
+    } 
 
     private void updateTitle()
     {
         this.frame.setTitle("AIML Targeting Tool, Program D version " + TargetingTool.VERSION + " - "
                 + targetingTool.getTargetsDataPath());
-    }
+    } 
 
     public void viewTargets()
     {
         this.tabbedPane.setSelectedIndex(0);
-    }
+    } 
 
     public void viewInputs()
     {
         this.tabbedPane.setSelectedIndex(1);
-    }
+    } 
 
     public void viewCategories()
     {
         this.tabbedPane.setSelectedIndex(2);
-    }
+    } 
 }

@@ -45,30 +45,30 @@ public class GenderProcessor extends AIMLProcessor
             {
                 return parser.processResponse(applySubstitutions(parser.evaluate(level++, tag.XMLChild), parser
                         .getBotID()));
-            }
+            } 
             catch (ProcessorException e)
             {
                 throw (AIMLProcessorException) e;
-            }
-        }
+            } 
+        } 
         else if (tag.XMLType == XMLNode.EMPTY)
         {
             if (!Globals.supportDeprecatedTags())
             {
                 return parser.shortcutTag(level, label, XMLNode.TAG, EMPTY_STRING, StarProcessor.label, XMLNode.EMPTY);
-            }
+            } 
             // (otherwise...)
             return parser.shortcutTag(level, BotProcessor.label, XMLNode.EMPTY, "name=\"gender\"", EMPTY_STRING,
                     XMLNode.EMPTY);
-        }
+        } 
         else
         {
             throw new AIMLProcessorException("Invalid gender element!");
-        }
-    }
+        } 
+    } 
 
     /**
-     * Applies substitutions as defined in the {@link #substitutionMap}.
+     * Applies substitutions as defined in the {@link #substitutionMap} .
      * Comparisons are case-insensitive.
      * 
      * @param input
@@ -78,7 +78,7 @@ public class GenderProcessor extends AIMLProcessor
     public static String applySubstitutions(String input, String botid)
     {
         return Substituter.applySubstitutions(Bots.getBot(botid).getGenderSubstitutionsMap(), input);
-    }
+    } 
 
     /**
      * Adds a substitution to the substitutions map. The <code>find</code>
@@ -95,6 +95,6 @@ public class GenderProcessor extends AIMLProcessor
         if (find != null && replace != null)
         {
             substitutionMap.put(find.toUpperCase(), replace);
-        }
-    }
+        } 
+    } 
 }

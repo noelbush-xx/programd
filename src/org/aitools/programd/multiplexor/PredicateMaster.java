@@ -49,7 +49,7 @@ public class PredicateMaster
 
     /**
      * The preferred minimum value for the cache (starts at half of
-     * {@link #CACHE_MAX}, may be adjusted).
+     * {@link #CACHE_MAX} , may be adjusted).
      */
     private static int cacheMin = Math.max(CACHE_MAX / 2, 1);
 
@@ -74,7 +74,7 @@ public class PredicateMaster
     private PredicateMaster()
     {
         // Nothing to do.
-    }
+    } 
 
     /**
      * Prohibits cloning this class.
@@ -82,7 +82,7 @@ public class PredicateMaster
     protected Object clone() throws CloneNotSupportedException
     {
         throw new CloneNotSupportedException();
-    }
+    } 
 
     /**
      * Sets a predicate <code>value</code> against a predicate
@@ -116,7 +116,7 @@ public class PredicateMaster
 
         // Return the name or value.
         return nameOrValue(name, value, botid);
-    }
+    } 
 
     /**
      * Sets a <code>value</code> against an indexed predicate
@@ -149,12 +149,12 @@ public class PredicateMaster
         try
         {
             values.add(index - 1, value);
-        }
+        } 
         catch (IndexOutOfBoundsException e)
         {
             // If failed, push the value onto the front of the list.
             pushOnto(values, value);
-        }
+        } 
 
         // Increment the cache count.
         cacheSize++;
@@ -164,7 +164,7 @@ public class PredicateMaster
 
         // Return the name or value.
         return nameOrValue(name, value, botid);
-    }
+    } 
 
     /**
      * Pushes a <code>value</code> onto an indexed predicate <code>name</code>
@@ -201,7 +201,7 @@ public class PredicateMaster
 
         // Return the name or value.
         return nameOrValue(name, value, botid);
-    }
+    } 
 
     /**
      * Gets the predicate <code>value</code> associated with a
@@ -231,51 +231,51 @@ public class PredicateMaster
             try
             {
                 value = ActiveMultiplexor.getInstance().loadPredicate(name, userid, botid);
-            }
+            } 
             catch (NoSuchPredicateException e0)
             {
                 // If not found, set and cache the best available default.
                 value = bestAvailableDefault(name, botid);
-            }
+            } 
 
             // Check that the result is not null.
             if (value != null)
             {
                 // Cache it.
                 userPredicates.put(name, value);
-            }
+            } 
             else
             {
                 // This should never, ever happen!
                 throw new DeveloperError("Null string found in user predicates cache!");
-            }
+            } 
 
-        }
+        } 
 
         // Determine whether this is an indexed or unindexed predicate.
         else if (valueObject instanceof String)
         {
             // This is an unindexed predicate.
             value = (String) valueObject;
-        }
+        } 
         else if (valueObject instanceof ArrayList)
         {
             // This is an indexed predicate.
             ArrayList values = (ArrayList) valueObject;
             value = (String) values.get(0);
-        }
+        } 
         else
         {
             // This should never, ever happen!
             throw new DeveloperError("Something other than a String or a ArrayList found in user predicates cache!");
-        }
+        } 
 
         // Check the cache.
         checkCache();
 
         // Cache and return the value.
         return value;
-    }
+    } 
 
     /**
      * Gets the predicate <code>value</code> associated with a
@@ -306,21 +306,21 @@ public class PredicateMaster
         try
         {
             values = getValueList(name, userPredicates);
-        }
+        } 
         catch (NoSuchPredicateException e0)
         {
             // No values cached; try loading.
             try
             {
                 values = loadValueList(name, userPredicates, userid, botid);
-            }
+            } 
             catch (NoSuchPredicateException e1)
             {
                 // Still no list, so set and cache default.
                 value = bestAvailableDefault(name, botid);
                 userPredicates.put(name, value);
-            }
-        }
+            } 
+        } 
 
         if (values != null)
         {
@@ -329,24 +329,24 @@ public class PredicateMaster
             {
                 // Get the value at index (minus one -- no zero index in AIML).
                 value = (String) values.get(index - 1);
-            }
+            } 
             catch (IndexOutOfBoundsException e)
             {
                 // Return the best available default.
                 value = bestAvailableDefault(name, botid);
-            }
-        }
+            } 
+        } 
 
         // Check the cache.
         checkCache();
 
         // Return the value.
         return value;
-    }
+    } 
 
     /**
      * Pushes a value onto the front of a list, and pops off any values at the
-     * end of the list so that the list size is no more than {@link #MAX_INDEX}.
+     * end of the list so that the list size is no more than {@link #MAX_INDEX} .
      * 
      * @param values
      *            the list onto which to push
@@ -359,8 +359,8 @@ public class PredicateMaster
         while (values.size() > MAX_INDEX)
         {
             values.remove(values.size() - 1);
-        }
-    }
+        } 
+    } 
 
     /**
      * Returns, from the cache, an ArrayList of values assigned to a
@@ -393,37 +393,37 @@ public class PredicateMaster
                 {
                     values = createValueList(name, userPredicates);
                     values.add(valueObject);
-                }
+                } 
                 else
                 {
                     // This should never, ever happen!
                     throw new DeveloperError("Null String found as value in predicates!");
-                }
-            }
+                } 
+            } 
             else if (valueObject instanceof ArrayList)
             {
                 if (valueObject != null)
                 {
                     values = (ArrayList) valueObject;
-                }
+                } 
                 else
                 {
                     // This should never, ever happen!
                     throw new DeveloperError("Null ArrayList found as value in predicates!");
-                }
-            }
+                } 
+            } 
             else
             {
                 throw new DeveloperError("Something other than a String or ArrayList found in predicates!");
-            }
-        }
+            } 
+        } 
         // If the predicate is not found, throw an exception.
         else
         {
             throw new NoSuchPredicateException(name);
-        }
+        } 
         return values;
-    }
+    } 
 
     /**
      * Tries to load a predicate with <code>name</code> for
@@ -452,7 +452,7 @@ public class PredicateMaster
         if (userPredicates == null)
         {
             throw new NullPointerException("Cannot call loadValueList with null userPredicates!");
-        }
+        } 
 
         // Try to load the predicate as an indexed predicate.
         int index = 1;
@@ -460,11 +460,11 @@ public class PredicateMaster
         try
         {
             value = ActiveMultiplexor.getInstance().loadPredicate(name + '.' + index, userid, botid);
-        }
+        } 
         catch (NoSuchPredicateException e0)
         {
             throw new NoSuchPredicateException(name);
-        }
+        } 
 
         // If this succeeded, create the new values list in the predicates.
         ArrayList values = createValueList(name, userPredicates);
@@ -480,16 +480,16 @@ public class PredicateMaster
             {
                 index++;
                 values.add(ActiveMultiplexor.getInstance().loadPredicate(name + '.' + index, userid, botid));
-            }
-        }
+            } 
+        } 
         catch (NoSuchPredicateException e1)
         {
             // Do nothing if the exception is thrown; that's fine (there is at
             // least one).
-        }
+        } 
 
         return values;
-    }
+    } 
 
     /**
      * Creates a value list for the given predicate <code>name</code> and
@@ -507,7 +507,7 @@ public class PredicateMaster
         ArrayList values = new ArrayList();
         userPredicates.put(name, values);
         return values;
-    }
+    } 
 
     /**
      * Returns a value list one way or another: first tries to get it from the
@@ -530,22 +530,22 @@ public class PredicateMaster
         try
         {
             values = getValueList(name, userPredicates);
-        }
+        } 
         catch (NoSuchPredicateException e0)
         {
             // No list found in cache; try load.
             try
             {
                 values = loadValueList(name, userPredicates, userid, botid);
-            }
+            } 
             catch (NoSuchPredicateException e1)
             {
                 // Still no list, so create new one.
                 values = createValueList(name, userPredicates);
-            }
-        }
+            } 
+        } 
         return values;
-    }
+    } 
 
     /**
      * Returns the best available default predicate <code>value</code> for a
@@ -566,11 +566,11 @@ public class PredicateMaster
             if (value != null)
             {
                 return value;
-            }
-        }
+            } 
+        } 
         // If not, return the global empty default.
         return PREDICATE_EMPTY_DEFAULT;
-    }
+    } 
 
     /**
      * Returns the name or value of a predicate, depending on whether or not it
@@ -593,10 +593,10 @@ public class PredicateMaster
             if (((PredicateInfo) predicatesInfo.get(name)).returnNameWhenSet)
             {
                 return name;
-            }
-        }
+            } 
+        } 
         return value;
-    }
+    } 
 
     /**
      * Attempts to dump a given number of predicate values from the cache,
@@ -628,14 +628,14 @@ public class PredicateMaster
                     try
                     {
                         userid = (String) userids.next();
-                    }
+                    } 
                     catch (ConcurrentModificationException e)
                     {
                         Log
                                 .log(
                                         "Some problem with PredicateMaster design: ConcurrentModificationException in save() [1].",
                                         Log.RUNTIME);
-                    }
+                    } 
 
                     // Get the cached predicates for this user.
                     Map userPredicates = (Map) cache.get(userid);
@@ -660,8 +660,8 @@ public class PredicateMaster
                             {
                                 ActiveMultiplexor.getInstance().savePredicate(name, value, userid, botid);
                                 saveCount++;
-                            }
-                        }
+                            } 
+                        } 
                         // Save indexed predicates.
                         else if (valueObject instanceof ArrayList)
                         {
@@ -679,37 +679,37 @@ public class PredicateMaster
                                     ActiveMultiplexor.getInstance().savePredicate(name + '.' + index, value, userid,
                                             botid);
                                     saveCount++;
-                                }
-                            }
-                        }
+                                } 
+                            } 
+                        } 
                         else
                         {
                             // This should never, ever happen.
                             throw new DeveloperError("Something other than a String or ArrayList found in predicates!");
-                        }
-                    }
+                        } 
+                    } 
 
                     // Remove the userid from the cache.
                     try
                     {
                         userids.remove();
-                    }
+                    } 
                     catch (ConcurrentModificationException e)
                     {
                         Log
                                 .log(
                                         "Some problem with PredicateMaster design: ConcurrentModificationException in save() [2].",
                                         Log.RUNTIME);
-                    }
-                }
-            }
-        }
+                    } 
+                } 
+            } 
+        } 
 
         cacheSize -= saveCount;
 
         // Return the cacheSize now.
         return cacheSize;
-    }
+    } 
 
     /**
      * Dumps the entire cache.
@@ -718,7 +718,7 @@ public class PredicateMaster
     {
         Trace.userinfo("Saving all cached predicates (" + cacheSize + ")");
         save(cacheSize);
-    }
+    } 
 
     /**
      * Checks the predicate cache, and saves out predicates if necessary.
@@ -735,7 +735,7 @@ public class PredicateMaster
             if (resultSize < cacheMin)
             {
                 cacheMin = (resultSize + cacheMin) / 2;
-            }
-        }
-    }
+            } 
+        } 
+    } 
 }

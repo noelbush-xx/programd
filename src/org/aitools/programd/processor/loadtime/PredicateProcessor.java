@@ -35,30 +35,30 @@ public class PredicateProcessor extends StartupElementProcessor
             if (name.equals(EMPTY_STRING))
             {
                 throw new InvalidStartupElementException("<predicate/> must specify a name!");
-            }
+            } 
             String defaultValue = XMLKit.getAttributeValue(DEFAULT, tag.XMLAttr);
             if (defaultValue.equals(EMPTY_STRING))
             {
                 defaultValue = null;
-            }
+            } 
             String setReturn = XMLKit.getAttributeValue(SET_RETURN, tag.XMLAttr);
             boolean returnNameWhenSet;
             if (setReturn.equals(NAME))
             {
                 returnNameWhenSet = true;
-            }
+            } 
             else if (setReturn.equals(VALUE))
             {
                 returnNameWhenSet = false;
-            }
+            } 
             else
             {
                 throw new InvalidStartupElementException("Invalid value for set-return attribute on <predicate/>.");
-            }
+            } 
             parser.getCurrentBot().addPredicateInfo(name, defaultValue, returnNameWhenSet);
             return EMPTY_STRING;
-        }
+        } 
         // (otherwise...)
         throw new InvalidStartupElementException("<predicate/> cannot have element content!");
-    }
+    } 
 }

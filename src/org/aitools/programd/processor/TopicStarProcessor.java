@@ -31,8 +31,8 @@ public class TopicStarProcessor extends IndexedPredicateProcessor
         if (tag.XMLType == XMLNode.EMPTY)
         {
             return super.process(level, tag, parser, parser.getTopicStars(), 1);
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<topicstar/> cannot have content!");
-    }
+    } 
 }

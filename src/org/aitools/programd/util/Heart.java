@@ -35,7 +35,7 @@ public class Heart
     private Heart()
     {
         // Do nothing.
-    }
+    } 
 
     /**
      * Do not allow anyone to clone a Heart.
@@ -43,7 +43,7 @@ public class Heart
     protected Object clone() throws CloneNotSupportedException
     {
         throw new CloneNotSupportedException();
-    }
+    } 
 
     /**
      * Starts the heart (if the pulse is greater than zero).
@@ -54,16 +54,16 @@ public class Heart
         try
         {
             pulse = 60000 / Integer.parseInt(Globals.getProperty("programd.heart.pulserate"));
-        }
+        } 
         catch (NumberFormatException e)
         {
             // Do nothing.
-        }
+        } 
         if (pulse > 0)
         {
             self.startBeating(pulse);
-        }
-    }
+        } 
+    } 
 
     /**
      * Starts the heart beating with a specified pulse.
@@ -75,13 +75,13 @@ public class Heart
     {
         this.timer = new Timer();
         this.timer.schedule(new HeartBeat(), 0, pulse);
-    }
+    } 
 
     class HeartBeat extends TimerTask
     {
         public void run()
         {
             Multiplexor.pulse();
-        }
-    }
+        } 
+    } 
 }

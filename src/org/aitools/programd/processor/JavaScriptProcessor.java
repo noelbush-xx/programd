@@ -39,13 +39,13 @@ public class JavaScriptProcessor extends AIMLProcessor
         {
             Log.userinfo("Use of <javascript> prohibited!", Log.INTERPRETER);
             return EMPTY_STRING;
-        }
+        } 
         if (tag.XMLType == XMLNode.TAG)
         {
             Log.devinfo("Calling JavaScript interpreter " + Globals.javaScriptInterpreter(), Log.INTERPRETER);
             return ActiveJavaScriptInterpreter.getInstance().evaluate(parser.evaluate(level++, tag.XMLChild));
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<javascript></javascript> must have content!");
-    }
+    } 
 }

@@ -95,7 +95,7 @@ public class TargetPanel extends JPanel
         this.add(templateAndReplyPanel);
         this.add(Box.createRigidArea(new Dimension(0, 10)));
         this.add(this.actionButtonsBar);
-    }
+    } 
 
     public class PatternsPanel extends JPanel
     {
@@ -139,8 +139,8 @@ public class TargetPanel extends JPanel
             this.add(this.parent.matchedBar);
             this.add(Box.createRigidArea(new Dimension(0, 5)));
             this.add(this.parent.targetBar);
-        }
-    }
+        } 
+    } 
 
     public class TemplateAndReplyPanel extends JPanel
     {
@@ -169,8 +169,8 @@ public class TargetPanel extends JPanel
             this.add(templateButtons);
             this.add(Box.createRigidArea(new Dimension(10, 0)));
             this.add(tabbedPane);
-        }
-    }
+        } 
+    } 
 
     class AIMLTextPane extends JPanel
     {
@@ -191,19 +191,19 @@ public class TargetPanel extends JPanel
             scrollPane.setBorder(BorderFactory.createTitledBorder(label));
 
             this.add(scrollPane);
-        }
+        } 
 
         public void setText(String text)
         {
             this.textArea.setText(XMLKit.formatAIML(text));
             this.textArea.setCaretPosition(0);
-        }
+        } 
 
         public String getText()
         {
             return this.textArea.getText();
-        }
-    }
+        } 
+    } 
 
     class ActionButtonsBar extends JPanel
     {
@@ -263,8 +263,8 @@ public class TargetPanel extends JPanel
             this.add(discardAll);
             this.add(save);
             this.add(next);
-        }
-    }
+        } 
+    } 
 
     class CategoryBar extends JPanel
     {
@@ -279,7 +279,7 @@ public class TargetPanel extends JPanel
             this.patternField.setEditable(b);
             this.thatField.setEditable(b);
             this.topicField.setEditable(b);
-        }
+        } 
 
         public void setFields(String pattern, String that, String topic)
         {
@@ -289,7 +289,7 @@ public class TargetPanel extends JPanel
             this.thatField.setCaretPosition(0);
             this.topicField.setText(topic);
             this.topicField.setCaretPosition(0);
-        }
+        } 
 
         public CategoryBar(String barLabel, String patternLabel, String thatLabel, String topicLabel, int height)
         {
@@ -347,7 +347,7 @@ public class TargetPanel extends JPanel
             this.add(patternScroll);
             this.add(thatScroll);
             this.add(topicScroll);
-        }
+        } 
 
         public class PatternFitter implements KeyListener
         {
@@ -356,7 +356,7 @@ public class TargetPanel extends JPanel
             public PatternFitter(JTextComponent fieldToUse)
             {
                 this.field = fieldToUse;
-            }
+            } 
 
             public void keyTyped(KeyEvent ke)
             {
@@ -370,18 +370,18 @@ public class TargetPanel extends JPanel
                         if (prevChar != ' ')
                         {
                             this.field.setText(this.field.getText() + ' ');
-                        }
-                    }
+                        } 
+                    } 
                     return;
-                }
+                } 
                 if (!Character.isLetterOrDigit(keyChar) && keyChar != ' ')
                 {
                     ke.consume();
-                }
+                } 
                 if (!Character.isUpperCase(keyChar))
                 {
                     ke.setKeyChar(Character.toUpperCase(keyChar));
-                }
+                } 
                 int caretPosition = this.field.getCaretPosition();
                 if (caretPosition > 0)
                 {
@@ -389,21 +389,21 @@ public class TargetPanel extends JPanel
                     if (prevChar == '*' || prevChar == '_')
                     {
                         this.field.setText(this.field.getText() + ' ');
-                    }
-                }
-            }
+                    } 
+                } 
+            } 
 
             public void keyPressed(KeyEvent ke)
             {
                 // Do nothing.
-            }
+            } 
 
             public void keyReleased(KeyEvent ke)
             {
                 // Do nothing.
-            }
-        }
-    }
+            } 
+        } 
+    } 
 
     class InputBar extends CategoryBar
     {
@@ -414,8 +414,8 @@ public class TargetPanel extends JPanel
             this.thatField.setToolTipText("What the bot had said previously");
             this.topicField.setToolTipText("The value of <topic> at the time");
             setEditable(false);
-        }
-    }
+        } 
+    } 
 
     class MatchedBar extends CategoryBar
     {
@@ -426,8 +426,8 @@ public class TargetPanel extends JPanel
             this.thatField.setToolTipText("The <that> that was matched");
             this.topicField.setToolTipText("The <topic> that was matched");
             setEditable(false);
-        }
-    }
+        } 
+    } 
 
     class TargetBar extends CategoryBar
     {
@@ -438,8 +438,8 @@ public class TargetPanel extends JPanel
             this.thatField.setToolTipText("Suggestion for a new <that>");
             this.topicField.setToolTipText("Suggestion for a new <topic>");
             setEditable(true);
-        }
-    }
+        } 
+    } 
 
     public void setTarget(Target target)
     {
@@ -463,15 +463,15 @@ public class TargetPanel extends JPanel
         this.replyPane.setText(target.getFirstReply());
 
         this.templatePane.setText(target.getMatchTemplate());
-    }
+    } 
 
     class NextTarget implements ActionListener
     {
         public void actionPerformed(ActionEvent ae)
         {
             nextTarget();
-        }
-    }
+        } 
+    } 
 
     public void nextTarget()
     {
@@ -480,7 +480,7 @@ public class TargetPanel extends JPanel
         {
             setTarget(next);
             this.hasTarget = true;
-        }
+        } 
         else
         {
             this.inputBar.setFields("", "", "");
@@ -498,9 +498,9 @@ public class TargetPanel extends JPanel
 
             this.guiparent.setStatus("No more targets meet your selection criteria.");
             this.hasTarget = false;
-        }
+        } 
         updateCountDisplay();
-    }
+    } 
 
     class NextInput implements AdjustmentListener
     {
@@ -509,13 +509,13 @@ public class TargetPanel extends JPanel
         public NextInput(TargetPanel parentToUse)
         {
             this.parent = parentToUse;
-        }
+        } 
 
         public void adjustmentValueChanged(AdjustmentEvent ae)
         {
             showInput(this.parent.inputScroller.getValue());
-        }
-    }
+        } 
+    } 
 
     protected void showInput(int number)
     {
@@ -526,33 +526,33 @@ public class TargetPanel extends JPanel
             this.targetBar.setFields(this.selectedTarget.getNthExtensionPattern(number - 1), this.selectedTarget
                     .getNthExtensionThat(number - 1), this.selectedTarget.getNthExtensionTopic(number - 1));
             this.replyPane.setText(this.selectedTarget.getNthReply(number - 1));
-        }
-    }
+        } 
+    } 
 
     public void scrollToInput(int number)
     {
         this.inputScroller.setValue(number);
         showInput(number);
-    }
+    } 
 
     public boolean hasTarget()
     {
         return this.hasTarget;
-    }
+    } 
 
     class DiscardTarget extends ParentAwareActionListener
     {
         public DiscardTarget(TargetPanel parentToUse)
         {
             super(parentToUse);
-        }
+        } 
 
         public void actionPerformed(ActionEvent ae)
         {
             TargetingTool.discard(((TargetPanel) this.parent).selectedTarget);
             nextTarget();
-        }
-    }
+        } 
+    } 
 
     class DiscardAllTargets implements ActionListener
     {
@@ -560,22 +560,22 @@ public class TargetPanel extends JPanel
         {
             TargetingTool.discardAll();
             nextTarget();
-        }
-    }
+        } 
+    } 
 
     public void updateCountDisplay()
     {
         this.countField.setText(TargetingTool.countLive() + " live, " + TargetingTool.countSaved() + " saved, "
                 + TargetingTool.countDiscarded() + " discarded");
-    }
+    } 
 
     class SaveTarget implements ActionListener
     {
         public void actionPerformed(ActionEvent ae)
         {
             saveTarget();
-        }
-    }
+        } 
+    } 
 
     public void saveTarget()
     {
@@ -584,7 +584,7 @@ public class TargetPanel extends JPanel
         {
             this.templatePane.setText("Template is empty!");
             return;
-        }
+        } 
         if (this.selectedTarget != null)
         {
             this.selectedTarget.setNewPattern(InputNormalizer.patternFit(this.targetBar.patternField.getText()));
@@ -593,8 +593,8 @@ public class TargetPanel extends JPanel
             this.selectedTarget.setNewTemplate(template);
             TargetingTool.saveCategory(this.selectedTarget);
             nextTarget();
-        }
-    }
+        } 
+    } 
 
     class TemplateButtons extends JPanel
     {
@@ -623,24 +623,24 @@ public class TargetPanel extends JPanel
                 {
                     ((TargetPanel) this.parent).templatePane.setText("<random><li>"
                             + ((TargetPanel) this.parent).templatePane.getText() + "</li><li></random>");
-                }
-            });
+                } 
+            } );
             this.think.addActionListener(new ParentAwareActionListener(this.parent)
             {
                 public void actionPerformed(ActionEvent ae)
                 {
                     ((TargetPanel) this.parent).templatePane.setText("<think>"
                             + ((TargetPanel) this.parent).templatePane.getText() + "</think>");
-                }
-            });
+                } 
+            } );
             this.sr.addActionListener(new ParentAwareActionListener(this.parent)
             {
                 public void actionPerformed(ActionEvent ae)
                 {
                     ((TargetPanel) this.parent).templatePane.setText(((TargetPanel) this.parent).templatePane.getText()
                             + "<sr/>");
-                }
-            });
+                } 
+            } );
             this.reduce.addActionListener(new ParentAwareActionListener(this.parent)
             {
                 public void actionPerformed(ActionEvent ae)
@@ -654,33 +654,33 @@ public class TargetPanel extends JPanel
                         for (int i = 0; i < n - 2; i++)
                         {
                             newpat += st.nextToken() + " ";
-                        }
+                        } 
                         newpat += "<star/>";
                         newpat = "<srai>" + newpat + "</srai>";
-                    }
+                    } 
                     else
                     {
                         newpat = "<sr/>";
-                    }
+                    } 
                     ((TargetPanel) this.parent).templatePane.setText(((TargetPanel) this.parent).templatePane.getText()
                             + newpat);
-                }
-            });
+                } 
+            } );
             this.srai.addActionListener(new ParentAwareActionListener(this.parent)
             {
                 public void actionPerformed(ActionEvent ae)
                 {
                     ((TargetPanel) this.parent).templatePane.setText("<srai>"
                             + ((TargetPanel) this.parent).templatePane.getText() + "</srai>");
-                }
-            });
+                } 
+            } );
             this.clear.addActionListener(new ParentAwareActionListener(this.parent)
             {
                 public void actionPerformed(ActionEvent ae)
                 {
                     ((TargetPanel) this.parent).templatePane.setText("");
-                }
-            });
+                } 
+            } );
 
             this.think.setBackground(Color.orange);
             this.think.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -734,6 +734,6 @@ public class TargetPanel extends JPanel
             this.add(this.srai);
             this.add(this.reduce);
             this.add(this.clear);
-        }
-    }
+        } 
+    } 
 }

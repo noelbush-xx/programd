@@ -37,7 +37,7 @@ public class FormalProcessor extends AIMLProcessor
             if (response.equals(EMPTY_STRING))
             {
                 return response;
-            }
+            } 
             StringTokenizer tokenizer = new StringTokenizer(response, SPACE);
             StringBuffer result = new StringBuffer(response.length());
             while (tokenizer.hasMoreTokens())
@@ -46,12 +46,12 @@ public class FormalProcessor extends AIMLProcessor
                 if (result.length() > 0)
                 {
                     result.append(SPACE);
-                }
+                } 
                 result.append(word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase());
-            }
+            } 
             return result.toString();
-        }
+        } 
         // (otherwise...)
         throw new AIMLProcessorException("<formal></formal> must have content!");
-    }
+    } 
 }

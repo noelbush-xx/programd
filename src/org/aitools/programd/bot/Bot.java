@@ -82,7 +82,7 @@ public class Bot
         this.chatlogSpec = XMLLog.getChatlogSpecClone();
         this.chatlogSpec.path = Globals.getProperty("programd.logging.xml.chat.log-directory", "./logs")
                 + File.separator + this.id + File.separator + "chat.xml";
-    }
+    } 
 
     /**
      * Returns the id of the bot.
@@ -92,7 +92,7 @@ public class Bot
     public String getID()
     {
         return this.id;
-    }
+    } 
 
     /**
      * Returns a map of the files loaded by this bot.
@@ -102,7 +102,7 @@ public class Bot
     public HashMap getLoadedFilesMap()
     {
         return this.loadedFiles;
-    }
+    } 
 
     /**
      * Returns whether the bot has loaded the given file(name).
@@ -112,7 +112,7 @@ public class Bot
     public boolean hasLoaded(String filename)
     {
         return this.loadedFiles.containsKey(filename);
-    }
+    } 
 
     /**
      * Adds a nodemapper to the filename map.
@@ -128,8 +128,8 @@ public class Bot
         if (nodemappers != null)
         {
             nodemappers.add(nodemapper);
-        }
-    }
+        } 
+    } 
 
     /**
      * Retrieves the value of a named bot property.
@@ -144,17 +144,17 @@ public class Bot
         if (name.equals(EMPTY_STRING))
         {
             return this.PREDICATE_EMPTY_DEFAULT;
-        }
+        } 
 
         // Retrieve the contents of the property.
         String value = (String) this.properties.get(name);
         if (value != null)
         {
             return value;
-        }
+        } 
         // (otherwise...)
         return this.PREDICATE_EMPTY_DEFAULT;
-    }
+    } 
 
     /**
      * Sets the value of a bot property.
@@ -170,21 +170,21 @@ public class Bot
         if (name.equals(EMPTY_STRING))
         {
             return;
-        }
+        } 
 
         // Store the property.
         this.properties.put(name, value);
-    }
+    } 
 
     public Map getProperties()
     {
         return this.properties;
-    }
+    } 
 
     public void setProperties(HashMap map)
     {
         this.properties = map;
-    }
+    } 
 
     /**
      * Registers some information about a predicate in advance. Not required;
@@ -205,7 +205,7 @@ public class Bot
         info.defaultValue = defaultValue;
         info.returnNameWhenSet = returnNameWhenSet;
         this.predicatesInfo.put(name, info);
-    }
+    } 
 
     /**
      * Returns the predicates info map.
@@ -215,7 +215,7 @@ public class Bot
     public HashMap getPredicatesInfo()
     {
         return this.predicatesInfo;
-    }
+    } 
 
     /**
      * Returns the predicate cache.
@@ -225,7 +225,7 @@ public class Bot
     public Map getPredicateCache()
     {
         return this.predicateCache;
-    }
+    } 
 
     /**
      * Returns the map of predicates for a userid if it is cached, or a new map
@@ -243,7 +243,7 @@ public class Bot
             // Create them if not.
             userPredicates = Collections.synchronizedMap(new HashMap());
             this.predicateCache.put(userid, userPredicates);
-        }
+        } 
         else
         {
             userPredicates = (Map) this.predicateCache.get(userid);
@@ -251,30 +251,30 @@ public class Bot
             {
                 // This should never happen!
                 throw new DeveloperError("userPredicates is null.");
-            }
-        }
+            } 
+        } 
         return userPredicates;
-    }
+    } 
 
     public void addInputSubstitution(String find, String replace)
     {
         addSubstitution(this.inputSubstitutions, find, replace);
-    }
+    } 
 
     public void addGenderSubstitution(String find, String replace)
     {
         addSubstitution(this.genderSubstitutions, find, replace);
-    }
+    } 
 
     public void addPersonSubstitution(String find, String replace)
     {
         addSubstitution(this.personSubstitutions, find, replace);
-    }
+    } 
 
     public void addPerson2Substitution(String find, String replace)
     {
         addSubstitution(this.person2Substitutions, find, replace);
-    }
+    } 
 
     /**
      * Adds a substitution to the substitutions map. The <code>find</code>
@@ -292,8 +292,8 @@ public class Bot
         if (find != null && replace != null)
         {
             substitutionMap.put(find.toUpperCase(), replace);
-        }
-    }
+        } 
+    } 
 
     /**
      * Adds a sentence splitter to the sentence splitters list.
@@ -306,46 +306,46 @@ public class Bot
         if (splitter != null)
         {
             this.sentenceSplitters.add(splitter);
-        }
-    }
+        } 
+    } 
 
     public HashMap getInputSubstitutionsMap()
     {
         return this.inputSubstitutions;
-    }
+    } 
 
     public HashMap getGenderSubstitutionsMap()
     {
         return this.genderSubstitutions;
-    }
+    } 
 
     public HashMap getPersonSubstitutionsMap()
     {
         return this.personSubstitutions;
-    }
+    } 
 
     public HashMap getPerson2SubstitutionsMap()
     {
         return this.person2Substitutions;
-    }
+    } 
 
     public ArrayList getSentenceSplitters()
     {
         return this.sentenceSplitters;
-    }
+    } 
 
     public ArrayList sentenceSplit(String input)
     {
         return InputNormalizer.sentenceSplit(this.sentenceSplitters, input);
-    }
+    } 
 
     public String applyInputSubstitutions(String input)
     {
         return Substituter.applySubstitutions(this.inputSubstitutions, input);
-    }
+    } 
 
     public XMLResourceSpec getChatlogSpec()
     {
         return this.chatlogSpec;
-    }
+    } 
 }

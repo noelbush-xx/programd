@@ -33,13 +33,13 @@ public class ListenersProcessor extends StartupElementProcessor
             try
             {
                 return parser.processResponse(FileManager.getFileContents(href));
-            }
+            } 
             catch (ProcessorException e)
             {
                 throw new UserError(e.getMessage());
-            }
-        }
+            } 
+        } 
         // (otherwise...)
         return parser.evaluate(level++, tag.XMLChild);
-    }
+    } 
 }

@@ -38,12 +38,12 @@ public class PropertyProcessor extends StartupElementProcessor
             {
                 String value = XMLKit.getAttributeValue(VALUE, tag.XMLAttr);
                 parser.getCurrentBot().setPropertyValue(name, value);
-            }
-        }
+            } 
+        } 
         else
         {
             throw new InvalidStartupElementException("<property/> cannot have contents!");
-        }
+        } 
         return EMPTY_STRING;
-    }
+    } 
 }

@@ -38,7 +38,7 @@ public class ListDialog extends JDialog
     {
         Frame frame = JOptionPane.getFrameForComponent(comp);
         dialog = new ListDialog(frame, possibleValues, title, labelText);
-    }
+    } 
 
     /**
      * Show the initialized dialog. The first argument should be null if you
@@ -53,19 +53,19 @@ public class ListDialog extends JDialog
             dialog.setValue(initialValue);
             dialog.setLocationRelativeTo(comp);
             dialog.setVisible(true);
-        }
+        } 
         else
         {
             System.err.println("ListDialog requires you to call initialize before calling showDialog.");
-        }
+        } 
         return value;
-    }
+    } 
 
     private void setValue(String newValue)
     {
         value = newValue;
         this.list.setSelectedValue(value, true);
-    }
+    } 
 
     private ListDialog(Frame frame, Object[] data, String title, String labelText)
     {
@@ -78,16 +78,16 @@ public class ListDialog extends JDialog
             public void actionPerformed(ActionEvent e)
             {
                 dialog.setVisible(false);
-            }
-        });
+            } 
+        } );
         setButton.addActionListener(new ParentAwareActionListener(this)
         {
             public void actionPerformed(ActionEvent e)
             {
                 ListDialog.value = (String) (((ListDialog) this.parent).list.getSelectedValue());
                 ListDialog.dialog.setVisible(false);
-            }
-        });
+            } 
+        } );
         getRootPane().setDefaultButton(setButton);
 
         this.list = new JList(data);
@@ -99,9 +99,9 @@ public class ListDialog extends JDialog
                 if (e.getClickCount() == 2)
                 {
                     setButton.doClick();
-                }
-            }
-        });
+                } 
+            } 
+        } );
         JScrollPane listScroller = new JScrollPane(this.list);
         listScroller.setPreferredSize(new Dimension(250, 80));
 
@@ -138,5 +138,5 @@ public class ListDialog extends JDialog
         contentPane.add(buttonPane, BorderLayout.SOUTH);
 
         pack();
-    }
+    } 
 }

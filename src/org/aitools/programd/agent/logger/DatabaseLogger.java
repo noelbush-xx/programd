@@ -43,18 +43,18 @@ public class DatabaseLogger
     private DatabaseLogger()
     {
         Log.devinfo("Opening database pool.", new String[]
-            { Log.DATABASE, Log.STARTUP });
+            { Log.DATABASE, Log.STARTUP } );
 
         dbManager = new DbAccessRefsPoolMgr(Globals.getProperty("programd.database.driver", ""), Globals.getProperty(
                 "programd.database.url", ""), Globals.getProperty("programd.database.user", ""), Globals.getProperty(
                 "programd.database.password", ""));
 
         Log.devinfo("Populating database pool.", new String[]
-            { Log.DATABASE, Log.STARTUP });
+            { Log.DATABASE, Log.STARTUP } );
 
         dbManager.populate(Integer.parseInt(Globals.getProperty("programd.database.connections", "")));
 
-    }
+    } 
 
     public static void log(String input, String response, String hostname, String userid, String botid)
     {
@@ -63,11 +63,11 @@ public class DatabaseLogger
         try
         {
             dbaRef = dbManager.takeDbaRef();
-        }
+        } 
         catch (Exception e)
         {
             throw new UserError("Could not get database reference when logging.", e);
-        }
+        } 
 
         // Write the log info.
         try
@@ -77,17 +77,17 @@ public class DatabaseLogger
                     + URLEncoder.encode(PredicateMaster.get(Globals.getClientNamePredicate(), userid, botid), ENC_UTF8)
                     + "', '" + URLEncoder.encode(botid, ENC_UTF8) + "', '" + URLEncoder.encode(input, ENC_UTF8)
                     + "', '" + URLEncoder.encode(response, ENC_UTF8) + "')");
-        }
+        } 
         catch (UnsupportedEncodingException e)
         {
             throw new DeveloperError("This platform does not support UTF-8!");
-        }
+        } 
         catch (SQLException e)
         {
             Log.userinfo("Database error: " + e, new String[]
-                { Log.DATABASE, Log.ERROR });
-        }
+                { Log.DATABASE, Log.ERROR } );
+        } 
 
         dbManager.returnDbaRef(dbaRef);
-    }
+    } 
 }

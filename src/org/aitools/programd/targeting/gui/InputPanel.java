@@ -28,8 +28,8 @@ public class InputPanel extends TargetAwareTabulator
     public InputPanel(TargetingGUI gui)
     {
         super(new String[]
-            { "<input>", "<pattern>", "<that>", "<topic>" }, gui);
-    }
+            { "<input>", "<pattern>", "<that>", "<topic>" } , gui);
+    } 
 
     public void updateFromTargets()
     {
@@ -58,16 +58,16 @@ public class InputPanel extends TargetAwareTabulator
                 {
                     rows.add(new Object[]
                         { inputText, matchPattern, matchThat, matchTopic, target,
-                                new Integer(inputIterator.previousIndex() + 1) });
+                                new Integer(inputIterator.previousIndex() + 1) } );
                     inputTexts.add(inputText);
-                }
-            }
-        }
-        Object[][] newData = new Object[][] {};
+                } 
+            } 
+        } 
+        Object[][] newData = new Object[][] {} ;
     newData = (Object[][]) rows.toArray(newData);
     if (newData.length > 0)
     {
         reloadData(newData);
-    }
-}
+    } 
+} 
 }

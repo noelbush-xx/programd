@@ -46,7 +46,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         if (!((dimensions == 1) || (dimensions == 2)))
         {
             return EMPTY_STRING;
-        }
+        } 
 
         // Get a valid 2-dimensional index.
         int indexes[] = TemplateParser.getValid2dIndex(tag);
@@ -54,7 +54,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         if (indexes[0] <= 0)
         {
             return EMPTY_STRING;
-        }
+        } 
 
         // Get entire predicate value at this index (may contain multiple
         // "sentences").
@@ -70,16 +70,16 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         if (sentenceCount == 0)
         {
             return value;
-        }
+        } 
 
         // Return "" for a sentence whose index is greater than sentence count.
         if (indexes[1] > sentenceCount)
         {
             return EMPTY_STRING;
-        }
+        } 
         // Get the nth "sentence" (1 is most recent, 2 just before that, etc.)
         return XMLKit.removeMarkup((String) sentenceList.get(sentenceCount - indexes[1])).trim();
-    }
+    } 
 
     /**
      * Processes an indexed predicate whose values are stored in the supplied
@@ -102,13 +102,13 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         if (dimensions != 1)
         {
             throw new DeveloperError("Wrong number of dimensions: " + dimensions + " != 1");
-        }
+        } 
 
         // No need to go further if no predicate values are available.
         if (predicates.isEmpty())
         {
             return EMPTY_STRING;
-        }
+        } 
 
         // Get a valid 1-dimensional index.
         int index = TemplateParser.getValid1dIndex(tag);
@@ -120,9 +120,9 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         if (index >= predicates.size())
         {
             return EMPTY_STRING;
-        }
+        } 
 
         // Retrieve and prettify the result.
         return XMLKit.removeMarkup((String) predicates.get(index)).trim();
-    }
+    } 
 }

@@ -41,7 +41,7 @@ public class BotProcesses
 
         // Start the thread.
         botProcess.start();
-    }
+    } 
 
     /**
      * Returns an iterator on the registry.
@@ -51,7 +51,7 @@ public class BotProcesses
     public static Iterator getRegistryIterator()
     {
         return registry.values().iterator();
-    }
+    } 
 
     /**
      * Returns a given process.
@@ -63,7 +63,7 @@ public class BotProcesses
     public static BotProcess get(String name)
     {
         return (BotProcess) registry.get(name);
-    }
+    } 
 
     /**
      * Shuts down all registered processes.
@@ -77,9 +77,9 @@ public class BotProcesses
             BotProcess process = (BotProcess) iterator.next();
             Trace.userinfo("Shutting down " + process);
             process.shutdown();
-        }
+        } 
         Trace.userinfo("Finished shutting down BotProcesses.");
-    }
+    } 
 
     /**
      * Prevents instantiation of this class.
@@ -87,5 +87,5 @@ public class BotProcesses
     private BotProcesses()
     {
         // Nothing to do.
-    }
+    } 
 }

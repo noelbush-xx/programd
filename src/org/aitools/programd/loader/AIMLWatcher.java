@@ -46,12 +46,12 @@ public class AIMLWatcher
     private AIMLWatcher()
     {
         // Nothing to do.
-    }
+    } 
 
     public static void start()
     {
         myself.startTimer();
-    }
+    } 
 
     /**
      * Initializes the AIMLWatcher timer as a daemon. Waits 10 seconds before
@@ -64,8 +64,8 @@ public class AIMLWatcher
             this.timer = new Timer(true);
             this.timer
                     .schedule(new CheckAIMLTask(), 0, Integer.parseInt(Globals.getProperty("programd.watcher.timer")));
-        }
-    }
+        } 
+    } 
 
     /**
      * Prohibits cloning this class.
@@ -73,7 +73,7 @@ public class AIMLWatcher
     protected Object clone() throws CloneNotSupportedException
     {
         throw new CloneNotSupportedException();
-    }
+    } 
 
     /**
      * Reloads AIML from a given file.
@@ -89,14 +89,14 @@ public class AIMLWatcher
         try
         {
             path = file.getCanonicalPath();
-        }
+        } 
         catch (IOException e)
         {
             return;
-        }
+        } 
         Log.userinfo("Reloading \"" + path + "\".", Log.LEARN);
         Graphmaster.load(path, botid);
-    }
+    } 
 
     /**
      * Adds a file to the watchlist.
@@ -113,13 +113,13 @@ public class AIMLWatcher
             if (!myself.watchMaps.containsKey(botid))
             {
                 myself.watchMaps.put(botid, new HashMap());
-            }
+            } 
             ((HashMap) myself.watchMaps.get(botid)).put(theFile, new Long(theFile.lastModified()));
-        }
-    }
+        } 
+    } 
 
     /**
-     * A {@link java.util.TimerTask TimerTask}for checking changed AIML files.
+     * A {@link java.util.TimerTask TimerTask} for checking changed AIML files.
      */
     private class CheckAIMLTask extends TimerTask
     {
@@ -138,18 +138,18 @@ public class AIMLWatcher
                     try
                     {
                         theFile = (File) iterator.next();
-                    }
+                    } 
                     catch (ConcurrentModificationException e)
                     {
                         // Try again next time.
                         return;
-                    }
+                    } 
                     Long previousTime = (Long) watchMap.get(theFile);
                     if (previousTime == null)
                     {
                         watchMap.put(theFile, new Long(theFile.lastModified()));
                         reload(theFile, botid);
-                    }
+                    } 
                     else
                     {
                         long lastModified = theFile.lastModified();
@@ -157,13 +157,13 @@ public class AIMLWatcher
                         {
                             watchMap.put(theFile, new Long(lastModified));
                             reload(theFile, botid);
-                        }
-                    }
-                }
-            }
+                        } 
+                    } 
+                } 
+            } 
             // This, unfortunately, seems to be the only way to prevent a memory
             // leak.
             System.gc();
-        }
-    }
+        } 
+    } 
 }

@@ -40,7 +40,7 @@ public class TargetInputs extends StringTripleMatrix
     {
         super();
         add(new StringTriple(text, that, topic));
-    }
+    } 
 
     /**
      * Returns the input <code>text</code> s
@@ -50,7 +50,7 @@ public class TargetInputs extends StringTripleMatrix
     public LinkedList getTexts()
     {
         return getFirsts();
-    }
+    } 
 
     /**
      * Returns the input <code>that</code> s
@@ -60,7 +60,7 @@ public class TargetInputs extends StringTripleMatrix
     public LinkedList getThats()
     {
         return getSeconds();
-    }
+    } 
 
     /**
      * Returns the input <code>topic</code> s
@@ -70,5 +70,5 @@ public class TargetInputs extends StringTripleMatrix
     public LinkedList getTopics()
     {
         return getThirds();
-    }
+    } 
 }

@@ -10,7 +10,7 @@
 package org.aitools.programd.parser;
 
 /**
- * Thrown by {@link DeprecatedAIMLParser}when it does not recognize a purported
+ * Thrown by {@link DeprecatedAIMLParser} when it does not recognize a purported
  * deprecated AIML tag.
  * 
  * @since 4.1.3

@@ -50,7 +50,7 @@ public class StringKit
         if (input == null)
         {
             return EMPTY_STRING;
-        }
+        } 
 
         // trim() removes all whitespace, not only spaces.
         input = input.trim();
@@ -59,7 +59,7 @@ public class StringKit
         if (input.equals((EMPTY_STRING)))
         {
             return EMPTY_STRING;
-        }
+        } 
 
         // Index the input length.
         int inputLength = input.length();
@@ -87,14 +87,14 @@ public class StringKit
                 if (!(current.equals(previous) && current.equals(filter)))
                 {
                     result.append(current);
-                }
+                } 
                 previous = current;
-            }
+            } 
             return result.toString();
-        }
+        } 
         // (otherwise...)
         return input;
-    }
+    } 
 
     /**
      * Removes all instances of a given string from an input.
@@ -113,7 +113,7 @@ public class StringKit
         if (input == null)
         {
             return EMPTY_STRING;
-        }
+        } 
 
         // trim() removes all whitespace, not only spaces.
         input = input.trim();
@@ -122,19 +122,19 @@ public class StringKit
         if (input.equals((EMPTY_STRING)))
         {
             return EMPTY_STRING;
-        }
+        } 
 
         // If the filter is null, return the input as-is.
         if (filter == null)
         {
             return input;
-        }
+        } 
 
         // If the filter is an empty string, return the input as-is.
         if (filter.equals(EMPTY_STRING))
         {
             return input;
-        }
+        } 
 
         // Index the input length.
         int inputLength = input.length();
@@ -147,7 +147,7 @@ public class StringKit
         if (input.indexOf(filter) == -1)
         {
             return input;
-        }
+        } 
 
         // Never look for the filter at an offset greater than inputLength -
         // filterAddend.
@@ -166,20 +166,20 @@ public class StringKit
                 {
                     // append the present character.
                     result.append(input.substring(index, index + 1));
-                }
+                } 
                 // Otherwise, we have found an instance of the filter,
                 else
                 {
                     // and so do not append anything, but increment index to
                     // skip ahead of the filter.
                     index += filterAddend;
-                }
-            }
+                } 
+            } 
             return result.toString();
-        }
+        } 
         // (otherwise...)
         return input;
-    }
+    } 
 
     /**
      * Returns a tab of the specified length.
@@ -193,9 +193,9 @@ public class StringKit
         for (int index = level; --index >= 0;)
         {
             result[index] = '\t';
-        }
+        } 
         return new String(result);
-    }
+    } 
 
     /**
      * Splits an input into words, breaking at spaces. This method is obviously
@@ -214,7 +214,7 @@ public class StringKit
         {
             result.add(EMPTY_STRING);
             return result;
-        }
+        } 
 
         int wordStart = 0;
 
@@ -227,13 +227,13 @@ public class StringKit
                 int index = iterator.getIndex();
                 result.add(input.substring(wordStart, index));
                 wordStart = index + 1;
-            }
-        }
+            } 
+        } 
         if (wordStart < input.length())
         {
             result.add(input.substring(wordStart));
-        }
+        } 
         return result;
-    }
+    } 
 
 }

@@ -12,7 +12,7 @@ package org.aitools.programd.processor.loadtime;
 import org.aitools.programd.processor.ProcessorException;
 
 /**
- * Should be thrown by {@link StartupElementProcessor}s when they find invalid
+ * Should be thrown by {@link StartupElementProcessor} s when they find invalid
  * AIML.
  * 
  * @since 4.1.3
@@ -23,5 +23,5 @@ public class InvalidStartupElementException extends ProcessorException
     public InvalidStartupElementException(String message)
     {
         super(message);
-    }
+    } 
 }

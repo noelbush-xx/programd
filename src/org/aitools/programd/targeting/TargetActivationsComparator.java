@@ -23,10 +23,10 @@ public class TargetActivationsComparator implements Comparator
     public int compare(Object o1, Object o2)
     {
         return ((Target) o1).getActivations() - ((Target) o2).getActivations();
-    }
+    } 
 
     public boolean equals(Object obj)
     {
         return obj instanceof TargetActivationsComparator;
-    }
+    } 
 }

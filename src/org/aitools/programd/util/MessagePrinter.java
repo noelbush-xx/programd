@@ -78,7 +78,7 @@ public class MessagePrinter
 
     /**
      * Print a message line with a type flag to a
-     * {@link java.io.PrintStream PrintStream}.
+     * {@link java.io.PrintStream PrintStream} .
      * 
      * @param message
      *            the message to print
@@ -86,7 +86,7 @@ public class MessagePrinter
      *            user-defined
      * @param out
      *            (such as
-     * {@link java.lang.System.out System.out})
+     * {@link java.lang.System.out System.out} )
      * @param destination
      *            destination flag (for choosing format)
      */
@@ -95,14 +95,14 @@ public class MessagePrinter
         if (midLine)
         {
             out.println();
-        }
+        } 
         out.println(typeFlag + timestamp(destination) + message);
         midLine = false;
-    }
+    } 
 
     /**
      * Print a message (no linebreak) with a type flag to a
-     * {@link java.io.PrintStream PrintStream}.
+     * {@link java.io.PrintStream PrintStream} .
      * 
      * @param message
      *            the message to print
@@ -110,7 +110,7 @@ public class MessagePrinter
      *            user-defined
      * @param out
      *            (such as
-     * {@link java.lang.System.out System.out})
+     * {@link java.lang.System.out System.out} )
      * @param destination
      *            destination flag (for choosing format)
      */
@@ -119,18 +119,18 @@ public class MessagePrinter
         if (midLine)
         {
             out.println();
-        }
+        } 
         out.print(typeFlag + timestamp(destination) + message);
         midLine = true;
-    }
+    } 
 
     /**
-     * Print a message to a {@link java.io.FileWriter FileWriter}.
+     * Print a message to a {@link java.io.FileWriter FileWriter} .
      * 
      * @param message
      *            the message to print
      * @param out
-     *            the {@link java.io.FileWriter FileWriter}to use
+     *            the {@link java.io.FileWriter FileWriter} to use
      * @param destination
      *            destination flag (for choosing format)
      */
@@ -140,13 +140,13 @@ public class MessagePrinter
         {
             out.write(timestamp(destination) + message + LINE_SEPARATOR);
             out.flush();
-        }
+        } 
         catch (IOException e)
         {
             Trace.devinfo(FILE_WRITER_ERROR + out);
             Trace.devinfo(e);
-        }
-    }
+        } 
+    } 
 
     /**
      * Returns the date & time in a consistent format.
@@ -162,24 +162,24 @@ public class MessagePrinter
             if (consoleTimestamp)
             {
                 return LBRACKET + new SimpleDateFormat(TIMESTAMP_CONSOLE_FORMAT).format(new Date()) + RBRACKET + SPACE;
-            }
+            } 
             // (otherwise...)
             return EMPTY_STRING;
-        }
+        } 
         else if (destination == LOG)
         {
             if (logTimestamp)
             {
                 return LBRACKET + new SimpleDateFormat(TIMESTAMP_LOG_FORMAT).format(new Date()) + RBRACKET + SPACE;
-            }
+            } 
             // (otherwise...)
             return EMPTY_STRING;
-        }
+        } 
         else
         {
             return EMPTY_STRING;
-        }
-    }
+        } 
+    } 
 
     /**
      * Tells the MessagePrinter that we got an input; not midLine anymore.
@@ -187,5 +187,5 @@ public class MessagePrinter
     public static void gotLine()
     {
         midLine = false;
-    }
+    } 
 }

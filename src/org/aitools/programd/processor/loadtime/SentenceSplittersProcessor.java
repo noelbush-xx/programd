@@ -42,12 +42,12 @@ public class SentenceSplittersProcessor extends StartupElementProcessor
             try
             {
                 return parser.processResponse(FileManager.getFileContents(href));
-            }
+            } 
             catch (ProcessorException e)
             {
                 throw new UserError(e.getMessage());
-            }
-        }
+            } 
+        } 
         // (otherwise...)
         Bot bot = parser.getCurrentBot();
 
@@ -61,17 +61,17 @@ public class SentenceSplittersProcessor extends StartupElementProcessor
                 if (splitter != null)
                 {
                     bot.addSentenceSplitter(splitter);
-                }
-            }
+                } 
+            } 
             else
             {
                 throw new InvalidStartupElementException("<splitter/> cannot have content!");
-            }
-        }
+            } 
+        } 
         if (Globals.showConsole())
         {
             Log.userinfo("Loaded " + splitterCount + " " + tag.XMLData + ".", Log.STARTUP);
-        }
+        } 
         return EMPTY_STRING;
-    }
+    } 
 }

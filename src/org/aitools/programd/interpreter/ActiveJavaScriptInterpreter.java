@@ -19,7 +19,7 @@ import org.aitools.programd.util.Globals;
  */
 abstract public class ActiveJavaScriptInterpreter implements Interpreter
 {
-    /** The {@link Interpreter}managed by the instance of this class. */
+    /** The {@link Interpreter} managed by the instance of this class. */
     private static Interpreter interpreter;
 
     /**
@@ -28,14 +28,14 @@ abstract public class ActiveJavaScriptInterpreter implements Interpreter
     private ActiveJavaScriptInterpreter()
     {
         // Nothing to do.
-    }
+    } 
 
     /**
      * Initializes the <code>ActiveInterpreter</code> with an implementation
-     * of {@link Interpreter}.
+     * of {@link Interpreter} .
      * 
      * @param className
-     *            the name of the subclass of {@link Interpreter}that should be
+     *            the name of the subclass of {@link Interpreter} that should be
      *            used
      */
     static
@@ -43,12 +43,12 @@ abstract public class ActiveJavaScriptInterpreter implements Interpreter
         try
         {
             interpreter = (Interpreter) Class.forName(Globals.javaScriptInterpreter()).newInstance();
-        }
+        } 
         catch (Exception e)
         {
             throw new DeveloperError(e);
-        }
-    }
+        } 
+    } 
 
     /**
      * Prohibits cloning this class.
@@ -56,10 +56,10 @@ abstract public class ActiveJavaScriptInterpreter implements Interpreter
     protected Object clone() throws CloneNotSupportedException
     {
         throw new CloneNotSupportedException();
-    }
+    } 
 
     public static Interpreter getInstance()
     {
         return interpreter;
-    }
+    } 
 }

@@ -14,7 +14,7 @@ import org.aitools.programd.parser.XMLNode;
 
 /**
  * A <code>Processor</code> is responsible for processing an element.
- * Subclasses of this base class need only implement the {@link #process}method
+ * Subclasses of this base class need only implement the {@link #process} method
  * and set <code>label</code> to the appropriate string.
  * 
  * @since 4.1.3

@@ -44,7 +44,7 @@ public class HTMLResponder extends AbstractMarkupResponder
 
     /** A filename filter for finding html templates. */
     private static final SuffixFilenameFilter htmlFilenameFilter = new SuffixFilenameFilter(new String[]
-        { ".html", ".htm", ".data", ".php" });
+        { ".html", ".htm", ".data", ".php" } );
 
     /** Map of template names to filenames. */
     private static HashMap templates;
@@ -167,7 +167,7 @@ public class HTMLResponder extends AbstractMarkupResponder
         if (templateName.equals(EMPTY_STRING))
         {
             parseTemplate(chatTemplatePath);
-        }
+        } 
         else
         {
             // Otherwise, try to find the named template.
@@ -175,13 +175,13 @@ public class HTMLResponder extends AbstractMarkupResponder
             if (templateFileName != null)
             {
                 parseTemplate(templateFileName);
-            }
+            } 
             else
             {
                 parseTemplate(chatTemplatePath);
-            }
-        }
-    }
+            } 
+        } 
+    } 
 
     /**
      * Loads the registration, login and change password templates. Also scans
@@ -204,22 +204,22 @@ public class HTMLResponder extends AbstractMarkupResponder
                 BufferedReader keyReader = new BufferedReader(new FileReader(FileManager.getFile("secret.key")));
                 SECRET_KEY = keyReader.readLine();
 
-            }
+            } 
             catch (FileNotFoundException e)
             {
                 Trace.userinfo("Could not find secret.key file!");
                 SECRET_KEY = EMPTY_STRING;
-            }
+            } 
             catch (IOException e)
             {
                 Trace.userinfo("I/O error reading secret.key file!");
                 SECRET_KEY = EMPTY_STRING;
-            }
-        }
+            } 
+        } 
 
         // Scan and register other templates.
         templates = registerTemplates(templatesDirectoryName, htmlFilenameFilter);
-    }
+    } 
 
     /**
      * loginRequest with no parameters means unknown username, password
@@ -227,7 +227,7 @@ public class HTMLResponder extends AbstractMarkupResponder
     public static String loginRequest()
     {
         return (loginRequest("", ""));
-    }
+    } 
 
     /**
      * Processes a login request
@@ -253,21 +253,21 @@ public class HTMLResponder extends AbstractMarkupResponder
                     if ((index = item.indexOf("value=\"\"")) != -1)
                     {
                         sb.replace(index + 6, index + 7, "\"" + requestUser + "\"");
-                    }
-                }
+                    } 
+                } 
                 if ((index = item.indexOf("name=\"password\"")) != -1)
                 {
                     if ((index = item.indexOf("value=\"\"")) != -1)
                     {
                         sb.replace(index + 6, index + 7, "\"" + requestPassword + "\"");
-                    }
-                }
+                    } 
+                } 
                 output.append(sb.toString());
-            }
+            } 
             return output.toString();
-        }
+        } 
         return EMPTY_STRING;
-    }
+    } 
 
     /**
      * Processes a registration request
@@ -281,11 +281,11 @@ public class HTMLResponder extends AbstractMarkupResponder
             while (li.hasNext())
             {
                 output.append((String) li.next());
-            }
+            } 
             return output.toString();
-        }
+        } 
         return EMPTY_STRING;
-    }
+    } 
 
     /**
      * Processes a change password request.
@@ -299,11 +299,11 @@ public class HTMLResponder extends AbstractMarkupResponder
             while (li.hasNext())
             {
                 output.append((String) li.next());
-            }
+            } 
             return output.toString();
-        }
+        } 
         return EMPTY_STRING;
-    }
+    } 
 
     /**
      * <p>
@@ -365,12 +365,12 @@ public class HTMLResponder extends AbstractMarkupResponder
             {
                 this.user = cookies[index].getValue();
                 userCookieSet = true;
-            }
+            } 
             if (cookies[index].getName().equals(PASSWORD_COOKIE_NAME))
             {
                 this.password = cookies[index].getValue();
-            }
-        }
+            } 
+        } 
 
         // Get parameters (so we don't do this repeatedly). Don't care yet if
         // they exist or not.
@@ -386,31 +386,31 @@ public class HTMLResponder extends AbstractMarkupResponder
         {
             state = state | LOGIN;
             state = state | SEND_FORM;
-        }
+        } 
         // User request concerns password change (need to qualify)
         else if (parameterEquals(request, "change-password", "yes"))
         {
             state = state | CHANGE_PASSWORD;
             state = state | QUALIFY;
-        }
+        } 
         // User is requesting authentication (need to qualify)
         else if (parameterEquals(request, "checkauth", "auth"))
         {
             state = state | LOGIN;
             state = state | QUALIFY;
-        }
+        } 
         // User is requesting registration form
         else if (parameterEquals(request, "register", "yes"))
         {
             state = state | REGISTER;
             state = state | SEND_FORM;
-        }
+        } 
         // User is requesting registration (need to qualify)
         else if (parameterEquals(request, "register", "auth"))
         {
             state = state | REGISTER;
             state = state | QUALIFY;
-        }
+        } 
         // Otherwise user is requesting nothing -- let's get out fast!
         // If the cookie is set (meaning we have user and password values to
         // test)
@@ -421,7 +421,7 @@ public class HTMLResponder extends AbstractMarkupResponder
             {
                 // Return the all-clear
                 state = state | GO_USER;
-            }
+            } 
             // If user is not okay
             else
             {
@@ -430,14 +430,14 @@ public class HTMLResponder extends AbstractMarkupResponder
                 {
                     Trace.devinfo("Found invalid cookie but created new one because autocookie is on.");
                     state = state | GO_USER;
-                }
+                } 
                 else
                 {
                     Log.userinfo("Server error: Could not create new user using autocookie.", Log.ERROR);
                     return loginRequest();
-                }
-            }
-        }
+                } 
+            } 
+        } 
         // User requested nothing but had no cookie.
         else
         {
@@ -447,19 +447,19 @@ public class HTMLResponder extends AbstractMarkupResponder
                 if (makeNewCookies(servletResponse))
                 {
                     state = state | GO_USER;
-                }
+                } 
                 else
                 {
                     Log.userinfo("Server error: Could not create new user using autocookie.", Log.ERROR);
                     return loginRequest();
-                }
-            }
+                } 
+            } 
             // So sad, no auto-cookie....
             else
             {
                 return loginRequest();
-            }
-        }
+            } 
+        } 
 
         // Situations that need to be qualified
         if ((state & QUALIFY) == QUALIFY)
@@ -474,7 +474,7 @@ public class HTMLResponder extends AbstractMarkupResponder
                     if ((state & LOGIN) == LOGIN)
                     {
                         state = state | DO;
-                    }
+                    } 
                     // All such situations which require the repeatPassword
                     // param
                     else if (repeatPasswordParam != null)
@@ -488,43 +488,43 @@ public class HTMLResponder extends AbstractMarkupResponder
                             if (passwordParam.equals(repeatPasswordParam))
                             {
                                 state = state | DO;
-                            }
+                            } 
                             // Not otherwise
                             else
                             {
                                 return badUserIDOrPasswordMessage + registerRequest();
-                            }
-                        }
+                            } 
+                        } 
                         else if ((state & CHANGE_PASSWORD) == CHANGE_PASSWORD)
                         {
                             if (passwordParam.equals(oldPasswordParam))
                             {
                                 state = state | DO;
-                            }
+                            } 
                             else
                             {
                                 return passwordMismatchMessage + changePasswordRequest();
-                            }
-                        }
-                    }
+                            } 
+                        } 
+                    } 
                     // Invalid situation means send form
                     else
                     {
                         state = state | SEND_FORM;
-                    }
-                }
+                    } 
+                } 
                 // Empty password param means send form
                 else
                 {
                     state = state | SEND_FORM;
-                }
-            }
+                } 
+            } 
             // Empty user param means send form
             else
             {
                 state = state | SEND_FORM;
-            }
-        }
+            } 
+        } 
 
         // DO flags
         if ((state & DO) == DO)
@@ -544,12 +544,12 @@ public class HTMLResponder extends AbstractMarkupResponder
 
                     session.setAttribute(USER_COOKIE_NAME, this.user);
                     state = state | PROCESS_OK;
-                }
+                } 
                 else
                 {
                     return badUserIDOrPasswordMessage + loginRequest();
-                }
-            }
+                } 
+            } 
             // Try change password
             else if ((state & CHANGE_PASSWORD) == CHANGE_PASSWORD)
             {
@@ -560,12 +560,12 @@ public class HTMLResponder extends AbstractMarkupResponder
                     pcookie.setMaxAge(1000000);
                     servletResponse.addCookie(pcookie);
                     state = state | PROCESS_OK;
-                }
+                } 
                 else
                 {
                     return badUserIDOrPasswordMessage + loginRequest();
-                }
-            }
+                } 
+            } 
             // Try registration
             else if ((state & REGISTER) == REGISTER)
             {
@@ -573,29 +573,29 @@ public class HTMLResponder extends AbstractMarkupResponder
                 {
                     // sessionID = session.getId();
                     state = state | PROCESS_OK;
-                }
+                } 
                 else
                 {
                     return userAlreadyExistsMessage + registerRequest();
-                }
-            }
-        }
+                } 
+            } 
+        } 
         // SEND_FORM flags
         else if ((state & SEND_FORM) == SEND_FORM)
         {
             if ((state & LOGIN) == LOGIN)
             {
                 return loginRequest();
-            }
+            } 
             else if ((state & REGISTER) == REGISTER)
             {
                 return registerRequest();
-            }
+            } 
             else if ((state & CHANGE_PASSWORD) == CHANGE_PASSWORD)
             {
                 return changePasswordRequest();
-            }
-        }
+            } 
+        } 
 
         // If user has all clear, set the programd_user session attribute and
         // return null.
@@ -603,7 +603,7 @@ public class HTMLResponder extends AbstractMarkupResponder
         {
             session.setAttribute(USER_COOKIE_NAME, this.user);
             return null;
-        }
+        } 
         // If a process was successful (should have exited by now otherwise)
         else if ((state & PROCESS_OK) == PROCESS_OK)
         {
@@ -613,32 +613,32 @@ public class HTMLResponder extends AbstractMarkupResponder
             {
                 session.setAttribute(USER_COOKIE_NAME, this.user);
                 return null;
-            }
+            } 
             // Successful registration? Return login form with success message
             // (lets the user see that registration was successful).
             else if ((state & REGISTER) == REGISTER)
             {
                 return successfulRegistrationMessage + loginRequest(userParam, passwordParam);
-            }
+            } 
             // Successful password change? Return login form with success
             // message (lets the user see that password change was successful).
             else if ((state & CHANGE_PASSWORD) == REGISTER)
             {
                 return successfulPasswordChangeMessage + loginRequest(userParam, passwordParam);
-            }
+            } 
             // Something strange. Unclear state. Notify the console; send a
             // blank login form with a developer error message.
             else
             {
                 return developerErrorMessage + loginRequest();
-            }
-        }
+            } 
+        } 
         // No GO_USER, no PROCESS_OK -- some kind of developer error.
         else
         {
             return developerErrorMessage + loginRequest();
-        }
-    }
+        } 
+    } 
 
     /**
      * Convenience method; checks that a parameter value is not null before
@@ -652,12 +652,12 @@ public class HTMLResponder extends AbstractMarkupResponder
             if (parameterValue.equals(comparisonValue))
             {
                 return true;
-            }
+            } 
             // (otherwise...)
             return false;
-        }
+        } 
         return false;
-    }
+    } 
 
     /**
      * Generates a new username/password cookie pair for a user.
@@ -684,7 +684,7 @@ public class HTMLResponder extends AbstractMarkupResponder
             digit = (int) (Math.random() * 5.0);
             newusername.append(digit);
             newpassword.append(digit);
-        }
+        } 
 
         this.user = newusername.toString();
         this.password = newpassword.toString();
@@ -700,5 +700,5 @@ public class HTMLResponder extends AbstractMarkupResponder
 
         // Create the new user (and ensure that it worked).
         return ActiveMultiplexor.getInstance().createUser(this.user, this.password, SECRET_KEY, this.botid);
-    }
+    } 
 }

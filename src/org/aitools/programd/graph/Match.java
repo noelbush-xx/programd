@@ -71,7 +71,7 @@ public class Match
     public void pushInputStar(String string)
     {
         this.inputStars.add(0, string);
-    }
+    } 
 
     /**
      * Pushes a new that star onto the thatstar stack.
@@ -82,7 +82,7 @@ public class Match
     public void pushThatStar(String string)
     {
         this.thatStars.add(0, string);
-    }
+    } 
 
     /**
      * Pushes a new topic star onto the topicstar stack.
@@ -93,7 +93,7 @@ public class Match
     public void pushTopicStar(String string)
     {
         this.topicStars.add(0, string);
-    }
+    } 
 
     /**
      * Sets the <code>pattern</code> part of the matched path.
@@ -104,7 +104,7 @@ public class Match
     public void setPattern(String string)
     {
         this.pattern = string;
-    }
+    } 
 
     /**
      * Sets the <code>that</code> part of the matched path.
@@ -115,7 +115,7 @@ public class Match
     public void setThat(String string)
     {
         this.that = string;
-    }
+    } 
 
     /**
      * Sets the <code>topic</code> part of the matched path.
@@ -126,7 +126,7 @@ public class Match
     public void setTopic(String string)
     {
         this.topic = string;
-    }
+    } 
 
     /**
      * Sets the <code>botid</code> part of the matched path.
@@ -137,7 +137,7 @@ public class Match
     public void setBotID(String string)
     {
         this.botid = string;
-    }
+    } 
 
     /**
      * Set the match-resulting nodemapper.
@@ -149,7 +149,7 @@ public class Match
     public void setNodemapper(Nodemapper nodemapperToSet)
     {
         this.nodemapper = nodemapperToSet;
-    }
+    } 
 
     /**
      * Returns the <code>pattern</code> part of the matched path.
@@ -159,7 +159,7 @@ public class Match
     public String getPattern()
     {
         return this.pattern;
-    }
+    } 
 
     /**
      * Returns the <code>that</code> part of the matched path.
@@ -169,7 +169,7 @@ public class Match
     public String getThat()
     {
         return this.that;
-    }
+    } 
 
     /**
      * Returns the <code>topic</code> part of the matched path.
@@ -179,7 +179,7 @@ public class Match
     public String getTopic()
     {
         return this.topic;
-    }
+    } 
 
     /**
      * Returns the match path.
@@ -190,7 +190,7 @@ public class Match
     {
         return InputNormalizer.patternFit(this.pattern) + SPACED_PATH_SEPARATOR + InputNormalizer.patternFit(this.that)
                 + SPACED_PATH_SEPARATOR + InputNormalizer.patternFit(this.topic) + SPACED_PATH_SEPARATOR + this.botid;
-    }
+    } 
 
     /**
      * Returns the match-resulting nodemapper.
@@ -201,7 +201,7 @@ public class Match
     public Nodemapper getNodemapper()
     {
         return this.nodemapper;
-    }
+    } 
 
     /**
      * Gets the template attached to this node.
@@ -211,7 +211,7 @@ public class Match
     public String getTemplate()
     {
         return (String) this.nodemapper.get(Graphmaster.TEMPLATE);
-    }
+    } 
 
     /**
      * Gets the filename from which the &lt;template/&gt; originally came.
@@ -221,7 +221,7 @@ public class Match
     public String getFileName()
     {
         return (String) this.nodemapper.get(Graphmaster.FILENAME);
-    }
+    } 
 
     /**
      * Returns the input stars.
@@ -231,7 +231,7 @@ public class Match
     public ArrayList getInputStars()
     {
         return this.inputStars;
-    }
+    } 
 
     /**
      * Returns the &lt;that/&gt; stars.
@@ -241,7 +241,7 @@ public class Match
     public ArrayList getThatStars()
     {
         return this.thatStars;
-    }
+    } 
 
     /**
      * Returns the &lt;topic/&gt; stars.
@@ -251,5 +251,5 @@ public class Match
     public ArrayList getTopicStars()
     {
         return this.topicStars;
-    }
+    } 
 }

@@ -12,7 +12,7 @@ package org.aitools.programd.processor;
 import org.aitools.programd.util.ClassRegistry;
 
 /**
- * Registers {@link AIMLProcessor}s for a given version of AIML.
+ * Registers {@link AIMLProcessor} s for a given version of AIML.
  * 
  * @since 4.1.3
  * @author Noel Bush
@@ -37,9 +37,9 @@ public class AIMLProcessorRegistry extends ClassRegistry
                 "org.aitools.programd.processor.StarProcessor", "org.aitools.programd.processor.SystemProcessor",
                 "org.aitools.programd.processor.ThatProcessor", "org.aitools.programd.processor.ThatStarProcessor",
                 "org.aitools.programd.processor.ThinkProcessor", "org.aitools.programd.processor.TopicStarProcessor",
-                "org.aitools.programd.processor.UpperCaseProcessor", "org.aitools.programd.processor.VersionProcessor" };
+                "org.aitools.programd.processor.UpperCaseProcessor", "org.aitools.programd.processor.VersionProcessor" } ;
 
-    /** The fully-qualified name of {@link AIMLProcessor}. */
+    /** The fully-qualified name of {@link AIMLProcessor} . */
     private static final String PROCESSOR_BASE_CLASS_NAME = "org.aitools.programd.processor.AIMLProcessor";
 
     /** The private member that initializes this class. */
@@ -48,10 +48,10 @@ public class AIMLProcessorRegistry extends ClassRegistry
     public AIMLProcessorRegistry()
     {
         super(VERSION, PROCESSOR_LIST, PROCESSOR_BASE_CLASS_NAME);
-    }
+    } 
 
     public static AIMLProcessorRegistry getSelf()
     {
         return self;
-    }
+    } 
 }
