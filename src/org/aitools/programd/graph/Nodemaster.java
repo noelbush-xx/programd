@@ -56,7 +56,14 @@ public class Nodemaster implements Nodemapper
         if (this.size == 0)
         {
             this.key = keyToPut.toUpperCase().intern();
-            this.value = valueToPut;
+            if (valueToPut instanceof String)
+            {
+                this.value = ((String)valueToPut).intern();
+            }
+            else
+            {
+                this.value = valueToPut;
+            }
             this.size = 1;
             return this.value;
         } 
@@ -65,12 +72,22 @@ public class Nodemaster implements Nodemapper
             this.Hidden = new HashMap();
             this.Hidden.put(this.key, this.value);
             this.size = 2;
-            return this.Hidden.put(keyToPut.toUpperCase().intern(), valueToPut);
+            if (valueToPut instanceof String)
+            {
+                return this.Hidden.put(keyToPut.toUpperCase().intern(), valueToPut);
+            }
+            // otherwise...
+            return this.Hidden.put(keyToPut.toUpperCase().intern(), ((String)valueToPut).intern());
         } 
         else
         {
             this.size++;
-            return this.Hidden.put(keyToPut.toUpperCase().intern(), valueToPut);
+            if (valueToPut instanceof String)
+            {
+                return this.Hidden.put(keyToPut.toUpperCase().intern(), valueToPut);
+            }
+            // otherwise...
+            return this.Hidden.put(keyToPut.toUpperCase().intern(), ((String)valueToPut).intern());
         } 
     } 
 
