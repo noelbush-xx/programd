@@ -9,10 +9,9 @@
 
 package org.aitools.programd.util;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import org.aitools.programd.multiplexor.Multiplexor;
 
 /**
  * A Heart beats. At a configurable interval, it calls pulse() methods on some
@@ -26,15 +25,15 @@ public class Heart
     /** The Timer object used to beat the heart. */
     private Timer timer;
 
-    /** A bot server can have only one Heart. */
-    private static final Heart self = new Heart();
+    /** The pulse rate. */
+    private int pulserate;
 
-    /**
-     * Do not allow anyone to create a Heart.
-     */
-    private Heart()
+    /** Will hold a set of Pulses. */
+    private ArrayList<Pulse> pulses = new ArrayList<Pulse>();
+    
+    public Heart(int pulserateToUse)
     {
-        // Do nothing.
+        this.pulserate = pulserateToUse;
     } 
 
     /**
@@ -48,12 +47,12 @@ public class Heart
     /**
      * Starts the heart (if the pulse is greater than zero).
      */
-    public static void start()
+    public void start()
     {
         int pulse = 0;
         try
         {
-            pulse = 60000 / Integer.parseInt(Globals.getProperty("programd.heart.pulserate"));
+            pulse = 60000 / this.pulserate;
         } 
         catch (NumberFormatException e)
         {
@@ -61,7 +60,7 @@ public class Heart
         } 
         if (pulse > 0)
         {
-            self.startBeating(pulse);
+            startBeating(pulse);
         } 
     } 
 
@@ -77,11 +76,33 @@ public class Heart
         this.timer.schedule(new HeartBeat(), 0, pulse);
     } 
 
+    /**
+     * Adds a Pulse to the registered list.
+     * 
+     * @param pulse
+     *            the Pulse to be added
+     */
+    public void addPulse(Pulse pulse)
+    {
+        this.pulses.add(pulse);
+    } 
+
+    /**
+     * Emits any registered pulses.
+     */
+    public synchronized void pulse()
+    {
+        for (Pulse pulse : this.pulses)
+        {
+            pulse.emit();
+        } 
+    } 
+
     class HeartBeat extends TimerTask
     {
         public void run()
         {
-            Multiplexor.pulse();
+            pulse();
         } 
     } 
 }
