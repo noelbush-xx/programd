@@ -201,24 +201,23 @@ public class DeprecatedAIMLParser
      * used if one can help it.
      * </p>
      * <p>
-     * The actual tag to process is driven by
+     * The actual tag to process is driven by {@link TemplateParser#evaluate},
+     * so strict sequencing is used. For each valid tag, the associated
+     * {@link org.aitools.programd.processor.AIMLProcessor AIMLProcessor},
+     * resolution code or {@link GenericParser#shortcutTag}processor is
+     * activated.
+     * </p>
+     * <p>
+     * If no tag is recognized, an
+     * {@link org.aitools.programd.parser.UnknownDeprecatedAIMLException}is
+     * thrown.
+     * </p>
+     * <p>
+     * Tags are explored sequentially. The sequence has performance implications
+     * (frequently-used tags should be first). However, the actual sequence
+     * within the template <i>is </i> preserved.
+     * </p>
      * 
-     * @{link TemplateParser#evaluate}, so strict sequencing is used. For each
-     *        valid tag, the associated
-     *        {@link org.aitools.programd.processor.AIMLProcessor AIMLProcessor},
-     *        resolution code or {@link GenericParser#shortcutTag}processor is
-     *        activated.
-     *        </p>
-     *        <p>
-     *        If no tag is recognized, an
-     *        {@link org.aitools.programd.parser.UnknownDeprecatedAIMLException}
-     *        is thrown.
-     *        </p>
-     *        <p>
-     *        Tags are explored sequentially. The sequence has performance
-     *        implications (frequently-used tags should be first). However, the
-     *        actual sequence within the template <i>is </i> preserved.
-     *        </p>
      * @param level
      *            the current level in the XML trie
      * @param userid

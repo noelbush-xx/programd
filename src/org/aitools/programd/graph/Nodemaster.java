@@ -26,10 +26,9 @@ import org.aitools.programd.util.DeveloperError;
  * <p>
  * The <code>Nodemaster</code> saves space when many of the
  * {@link Nodemapper Nodemappers}have only one branch, as is often the case in
- * a real-world
+ * a real-world {@link Graphmaster Graphmaster}.
+ * </p>
  * 
- * @{link Graphmaster Graphmaster}.
- *        </p>
  * @author Richard Wallace
  * @author Noel Bush
  * @author Eion Robb
