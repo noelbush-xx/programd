@@ -156,6 +156,7 @@ public class MersenneTwisterFast implements Serializable
     /**
      * Constructor using a given seed. Though you pass this seed in as a long,
      * it's best to make sure it's actually an integer.
+     * @param seed the seed to use
      */
     public MersenneTwisterFast(final long seed)
     {
@@ -169,6 +170,7 @@ public class MersenneTwisterFast implements Serializable
      * an int (Mersenne Twister only uses the first 32 bits for its seed). Also
      * it's suggested that for you avoid even-numbered seeds in this older
      * seed-generation procedure.
+     * @param seed the seed to use
      */
 
     public final void setSeedOld(final long seed)
@@ -201,6 +203,7 @@ public class MersenneTwisterFast implements Serializable
      * An alternative, more complete, method of seeding the pseudo random number
      * generator. array must be an array of 624 ints, and they can be any value
      * as long as they're not *all* zero.
+     * @param array an array of 624 ints
      */
 
     public final void setSeed(final int[] array)
@@ -219,6 +222,7 @@ public class MersenneTwisterFast implements Serializable
      * Initalize the pseudo random number generator. Don't pass in a long that's
      * bigger than an int (Mersenne Twister only uses the first 32 bits for its
      * seed).
+     * @param seed the seed to use
      */
 
     public final void setSeed(final long seed)
@@ -244,6 +248,9 @@ public class MersenneTwisterFast implements Serializable
         this.mag01[1] = MATRIX_A;
     } 
 
+    /**
+     * @return the next int
+     */
     public final int nextInt()
     {
         int y;
@@ -277,6 +284,9 @@ public class MersenneTwisterFast implements Serializable
         return y;
     } 
 
+    /**
+     * @return the next short
+     */
     public final short nextShort()
     {
         int y;
@@ -310,6 +320,9 @@ public class MersenneTwisterFast implements Serializable
         return (short) (y >>> 16);
     } 
 
+    /**
+     * @return the next char
+     */
     public final char nextChar()
     {
         int y;
@@ -343,6 +356,9 @@ public class MersenneTwisterFast implements Serializable
         return (char) (y >>> 16);
     } 
 
+    /**
+     * @return the next boolean
+     */
     public final boolean nextBoolean()
     {
         int y;
@@ -382,6 +398,8 @@ public class MersenneTwisterFast implements Serializable
      * between 0.0 and 1.0, inclusive. Not as precise a random real event as
      * nextBoolean(double), but twice as fast. To explicitly use this, remember
      * you may need to cast to float first.
+     * @param probability between 0.0 and 1.0
+     * @return the result of the coin flip
      */
 
     public final boolean nextBoolean(final float probability)
@@ -389,7 +407,7 @@ public class MersenneTwisterFast implements Serializable
         int y;
 
         if (probability < 0.0f || probability > 1.0f)
-            throw new IllegalArgumentException("probability must be between 0.0 and 1.0 inclusive.");
+            throw new IllegalArgumentException("probability must be between 0.0 and 1.0 inclusive."); //$NON-NLS-1$
         if (this.mti >= N) // generate N words at one time
         {
             int kk;
@@ -423,6 +441,8 @@ public class MersenneTwisterFast implements Serializable
      * This generates a coin flip with a probability <tt>probability</tt> of
      * returning true, else returning false. <tt>probability</tt> must be
      * between 0.0 and 1.0, inclusive.
+     * @param probability between 0.0 and 1.0
+     * @return the result of the coin flip
      */
 
     public final boolean nextBoolean(final double probability)
@@ -431,7 +451,7 @@ public class MersenneTwisterFast implements Serializable
         int z;
 
         if (probability < 0.0 || probability > 1.0)
-            throw new IllegalArgumentException("probability must be between 0.0 and 1.0 inclusive.");
+            throw new IllegalArgumentException("probability must be between 0.0 and 1.0 inclusive."); //$NON-NLS-1$
         if (this.mti >= N) // generate N words at one time
         {
             int kk;
@@ -488,6 +508,9 @@ public class MersenneTwisterFast implements Serializable
         return ((((long) (y >>> 6)) << 27) + (z >>> 5)) / (double) (1L << 53) < probability;
     } 
 
+    /**
+     * @return the next byte
+     */
     public final byte nextByte()
     {
         int y;
@@ -521,6 +544,9 @@ public class MersenneTwisterFast implements Serializable
         return (byte) (y >>> 24);
     } 
 
+    /**
+     * @param bytes the next bytes
+     */
     public final void nextBytes(byte[] bytes)
     {
         int y;
@@ -557,6 +583,9 @@ public class MersenneTwisterFast implements Serializable
         } 
     } 
 
+    /**
+     * @return the next long
+     */
     public final long nextLong()
     {
         int y;
@@ -617,6 +646,9 @@ public class MersenneTwisterFast implements Serializable
         return (((long) y) << 32) + z;
     } 
 
+    /**
+     * @return the next double
+     */
     public final double nextDouble()
     {
         int y;
@@ -678,6 +710,9 @@ public class MersenneTwisterFast implements Serializable
         return ((((long) (y >>> 6)) << 27) + (z >>> 5)) / (double) (1L << 53);
     } 
 
+    /**
+     * @return the next Gaussian
+     */
     public final double nextGaussian()
     {
         if (this.haveNextNextGaussian)
@@ -809,6 +844,9 @@ public class MersenneTwisterFast implements Serializable
         return v1 * multiplier;
     } 
 
+    /**
+     * @return the next gloat
+     */
     public final float nextFloat()
     {
         int y;
@@ -845,11 +883,13 @@ public class MersenneTwisterFast implements Serializable
     /**
      * Returns an integer drawn uniformly from 0 to n-1. Suffice it to say, n
      * must be > 0, or an IllegalArgumentException is raised.
+     * @param n the upper bound
+     * @return the next int
      */
     public final int nextInt(final int n)
     {
         if (n <= 0)
-            throw new IllegalArgumentException("n must be positive");
+            throw new IllegalArgumentException("n must be positive"); //$NON-NLS-1$
 
         if ((n & -n) == n) // i.e., n is a power of 2
         {
@@ -923,6 +963,7 @@ public class MersenneTwisterFast implements Serializable
 
     /**
      * Tests the code.
+     * @param args not used
      */
     public static void main(String args[])
     {
