@@ -1,0 +1,97 @@
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+package org.aitools.programd.configurations;
+
+import gnu.getopt.Getopt;
+import gnu.getopt.LongOpt;
+
+import org.aitools.programd.Core;
+
+import org.aitools.programd.interfaces.Console;
+
+/**
+ * A <code>SimpleConsole</code> gives you a running {@link org.aitools.programd.Core Core}
+ * with a regular {@link org.aitools.programd.interfaces.Console Console} and 
+ * just a basic {@link org.aitools.programd.interfaces.Shell Shell}
+ * attached (if you enable it).  Input, output and error are routed via standard system objects.
+ * 
+ * @author Noel Bush
+ * @since 4.2
+ */
+public class SimpleConsole
+{
+    /** The Core to which this console will be attached. */
+    private Core core;
+
+    /** The console. */
+    private Console console;
+    
+    private SimpleConsole(String corePropertiesPath, String consolePropertiesPath)
+    {
+        this.core = new Core(corePropertiesPath);
+        this.console = new Console(consolePropertiesPath);
+        this.console.attach(this.core);
+        this.core.startup();
+    }
+    
+    private static void usage()
+    {
+        System.out.println("Usage: simple-console -c <CORE_CONFIG> -n <CONSOLE_CONFIG>");
+        System.out.println("Start up a simple console version of Program D using the specified config files.");
+        System.out.println();
+        System.out.println("  -c, --core-properties     the path to the core configuration (XML properties) file");
+        System.out.println("  -n, --console-properties  the path to the console configuration (XML properties) file");
+        System.out.println();
+        System.out.println("Report bugs to <programd@aitools.org>");
+    }
+
+    public static void main(String[] argv)
+    {
+        String corePropertiesPath = null;
+        String consolePropertiesPath = null;
+        
+        int opt;
+        LongOpt[] longopts = new LongOpt[2];
+        longopts[0] = new LongOpt("core-properties", LongOpt.REQUIRED_ARGUMENT, null, 'c');
+        longopts[1] = new LongOpt("console-properties", LongOpt.REQUIRED_ARGUMENT, null, 'n');
+        
+        Getopt getopt = new Getopt("simple-console", argv, ":c:n:", longopts);
+        
+        while ((opt = getopt.getopt()) != -1)
+        {
+            switch (opt)
+            {
+                case 'c':
+                    corePropertiesPath = getopt.getOptarg();
+                    break;
+                    
+                case 'n':
+                    consolePropertiesPath = getopt.getOptarg();
+                    break;
+            }
+        }
+        
+        if (corePropertiesPath == null)
+        {
+            System.err.println("You must specify a core properties path.");
+            usage();
+            System.exit(1);
+        }
+
+        if (consolePropertiesPath == null)
+        {
+            System.err.println("You must specify a console properties path.");
+            usage();
+            System.exit(1);
+        }
+
+        new SimpleConsole(corePropertiesPath, consolePropertiesPath);
+    } 
+}
