@@ -35,9 +35,7 @@ public class ThinkProcessor extends AIMLProcessor
             parser.evaluate(level++, tag.XMLChild);
             return EMPTY_STRING;
         }
-        else
-        {
-            throw new AIMLProcessorException("<think></think> must have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<think></think> must have content!");
     }
 }

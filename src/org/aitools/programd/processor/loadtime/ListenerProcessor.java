@@ -65,138 +65,136 @@ public class ListenerProcessor extends StartupElementProcessor
             }
             catch (ProcessorException e)
             {
-                throw new UserError(e);
+                throw new UserError(e.getMessage());
             }
         }
-        else
+        // (otherwise...)
+        // Does it have a type attribute?
+        String type = XMLKit.getAttributeValue(TYPE, tag.XMLAttr);
+        if (type == null)
         {
-            // Does it have a type attribute?
-            String type = XMLKit.getAttributeValue(TYPE, tag.XMLAttr);
-            if (type == null)
-            {
-                throw new UserError("You did not specify a type for a listener.");
-            }
+            throw new UserError("You did not specify a type for a listener.");
+        }
 
-            // Does its type correspond to a registered listener type?
-            Class listenerClass = (Class) ListenerRegistry.getSelf().get(type);
-            if (listenerClass == null)
-            {
-                throw new UserError(
-                    "You specified an unknown listener \"" + type + "\".");
-            }
+        // Does its type correspond to a registered listener type?
+        Class listenerClass = (Class) ListenerRegistry.getSelf().get(type);
+        if (listenerClass == null)
+        {
+            throw new UserError(
+                "You specified an unknown listener \"" + type + "\".");
+        }
 
-            // Does it have an enabled attribute?
-            String enabled = XMLKit.getAttributeValue(ENABLED, tag.XMLAttr);
-            if (enabled == null)
-            {
-                throw new UserError(
-                    "<listener type=\""
-                        + type
-                        + "\"> is missing an enabled attribute.");
-            }
+        // Does it have an enabled attribute?
+        String enabled = XMLKit.getAttributeValue(ENABLED, tag.XMLAttr);
+        if (enabled == null)
+        {
+            throw new UserError(
+                "<listener type=\""
+                    + type
+                    + "\"> is missing an enabled attribute.");
+        }
 
-            // Is the enabled attribute true?
-            if (!enabled.equals(TRUE))
-            {
-                return EMPTY_STRING;
-            }
+        // Is the enabled attribute true?
+        if (!enabled.equals(TRUE))
+        {
+            return EMPTY_STRING;
+        }
 
-            // Get the current bot.
-            Bot bot = parser.getCurrentBot();
+        // Get the current bot.
+        Bot bot = parser.getCurrentBot();
 
-            // Instantiate a new listener for the bot.
-            Listener listener;
-            try
-            {
-                listener =
-                    (Listener) listenerClass.getConstructor(
-                        new Class[] { Bot.class }).newInstance(
-                        new Object[] { bot });
-            }
-            catch (IllegalAccessException e)
-            {
-                throw new DeveloperError(
-                    "The constructor for the \""
-                        + type
-                        + "\" listener class is inaccessible.");
-            }
-            catch (IllegalArgumentException e)
-            {
-                throw new DeveloperError(
-                    "The constructor for the \""
-                        + type
-                        + "\" listener class is incorrectly specifed.");
-            }
-            catch (InstantiationException e)
-            {
-                throw new DeveloperError(
-                    "The \"" + type + "\" listener class is abstract.");
-            }
-            catch (NoSuchMethodException e)
-            {
-                throw new DeveloperError(
-                    "The constructor for the \""
-                        + type
-                        + "\" listener class is incorrectly specifed.");
-            }
-            catch (InvocationTargetException e)
-            {
-                throw new DeveloperError(
-                    "The constructor for the \""
-                        + type
-                        + "\" listener class threw an exception.",
-                    e);
-            }
+        // Instantiate a new listener for the bot.
+        Listener listener;
+        try
+        {
+            listener =
+                (Listener) listenerClass.getConstructor(
+                    new Class[] { Bot.class }).newInstance(
+                    new Object[] { bot });
+        }
+        catch (IllegalAccessException e)
+        {
+            throw new DeveloperError(
+                "The constructor for the \""
+                    + type
+                    + "\" listener class is inaccessible.");
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new DeveloperError(
+                "The constructor for the \""
+                    + type
+                    + "\" listener class is incorrectly specifed.");
+        }
+        catch (InstantiationException e)
+        {
+            throw new DeveloperError(
+                "The \"" + type + "\" listener class is abstract.");
+        }
+        catch (NoSuchMethodException e)
+        {
+            throw new DeveloperError(
+                "The constructor for the \""
+                    + type
+                    + "\" listener class is incorrectly specifed.");
+        }
+        catch (InvocationTargetException e)
+        {
+            throw new DeveloperError(
+                "The constructor for the \""
+                    + type
+                    + "\" listener class threw an exception.",
+                e);
+        }
 
-            // Count the parameters
-            int parameterCount =
-                parser.nodeCount(PARAMETER, tag.XMLChild, true);
+        // Count the parameters
+        int parameterCount =
+            parser.nodeCount(PARAMETER, tag.XMLChild, true);
 
-            // Set each parameter for the listener.
-            for (int index = parameterCount; index > 0; index--)
+        // Set each parameter for the listener.
+        for (int index = parameterCount; index > 0; index--)
+        {
+            XMLNode node = parser.getNode(PARAMETER, tag.XMLChild, index);
+            if (node.XMLType == XMLNode.EMPTY)
             {
-                XMLNode node = parser.getNode(PARAMETER, tag.XMLChild, index);
-                if (node.XMLType == XMLNode.EMPTY)
+                String name = XMLKit.getAttributeValue(NAME, node.XMLAttr);
+                String value =
+                    XMLKit.getAttributeValue(VALUE, node.XMLAttr);
+                if (name != null && value != null)
                 {
-                    String name = XMLKit.getAttributeValue(NAME, node.XMLAttr);
-                    String value =
-                        XMLKit.getAttributeValue(VALUE, node.XMLAttr);
-                    if (name != null && value != null)
-                    {
-                        listener.setParameter(name, value);
-                    }
-                }
-                else
-                {
-                    throw new InvalidStartupElementException(
-                        "<" + node.XMLData + "/> cannot have content!");
+                    listener.setParameter(name, value);
                 }
             }
-
-            // Check the parameters for the listener.
-            if (!listener.checkParameters())
+            else
             {
-                Log.userinfo(
-                    "Listener \""
-                        + type
-                        + "\" is incorrectly configured; will not be started.",
-                    Log.STARTUP);
-                return EMPTY_STRING;
+                throw new InvalidStartupElementException(
+                    "<" + node.XMLData + "/> cannot have content!");
             }
+        }
 
-            // Start listener
-            BotProcesses.start(listener, type + SEPARATOR + bot.getID());
+        // Check the parameters for the listener.
+        if (!listener.checkParameters())
+        {
+            Log.userinfo(
+                "Listener \""
+                    + type
+                    + "\" is incorrectly configured; will not be started.",
+                Log.STARTUP);
+            return EMPTY_STRING;
+        }
 
-            if (Globals.showConsole())
-            {
-                Log.userinfo(
-                    "Started \""
-                        + type
-                        + "\" listener for bot \""
-                        + bot.getID()
-                        + "\".",
-                    Log.STARTUP);
-            }
+        // Start listener
+        BotProcesses.start(listener, type + SEPARATOR + bot.getID());
+
+        if (Globals.showConsole())
+        {
+            Log.userinfo(
+                "Started \""
+                    + type
+                    + "\" listener for bot \""
+                    + bot.getID()
+                    + "\".",
+                Log.STARTUP);
         }
         return EMPTY_STRING;
     }

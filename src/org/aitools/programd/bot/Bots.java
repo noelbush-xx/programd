@@ -98,10 +98,8 @@ public class Bots extends HashMap
         {
             return (Bot) myself.values().iterator().next();
         }
-        else
-        {
-            return null;
-        }
+        // (otherwise...)
+        return null;
     }
 
     /**

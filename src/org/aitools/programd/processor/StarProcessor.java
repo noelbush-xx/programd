@@ -36,9 +36,7 @@ public class StarProcessor extends IndexedPredicateProcessor
         {
             return super.process(level, tag, parser, parser.getInputStars(), 1);
         }
-        else
-        {
-            throw new AIMLProcessorException("<star/> cannot have element content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<star/> cannot have element content!");
     }
 }

@@ -77,7 +77,7 @@ public class AIMListener extends Listener
     private DataOutputStream out;
 
     /** Please describe. */
-    private boolean online;
+    protected boolean online;
 
     // Convenience constants.
 

@@ -46,9 +46,7 @@ public class BotProcessor extends AIMLProcessor
             }
             return Bots.getBot(parser.getBotID()).getPropertyValue(name);
         }
-        else
-        {
-            throw new AIMLProcessorException("<bot/> cannot contain element content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<bot/> cannot contain element content!");
     }
 }

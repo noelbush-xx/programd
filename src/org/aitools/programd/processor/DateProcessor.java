@@ -36,9 +36,7 @@ public class DateProcessor extends AIMLProcessor
         {
             return new Date().toString();
         }
-        else
-        {
-            throw new AIMLProcessorException("<date/> cannot have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<date/> cannot have content!");
     }
 }

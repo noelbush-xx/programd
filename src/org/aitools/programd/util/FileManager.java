@@ -409,62 +409,60 @@ public class FileManager
         {
             return new String[] { path };
         }
-        else
+        // (otherwise...)
+        int separatorIndex = path.lastIndexOf(File.separatorChar);
+        // In case someone used a file separator char that doesn't belong to this system....
+        if (separatorIndex < 0)
         {
-            int separatorIndex = path.lastIndexOf(File.separatorChar);
-            // In case someone used a file separator char that doesn't belong to this system....
+            separatorIndex = path.lastIndexOf('\\');
             if (separatorIndex < 0)
             {
-                separatorIndex = path.lastIndexOf('\\');
+                separatorIndex = path.lastIndexOf('/');
                 if (separatorIndex < 0)
                 {
-                    separatorIndex = path.lastIndexOf('/');
-                    if (separatorIndex < 0)
-                    {
-                        // This is really going the extra mile....
-                        separatorIndex = path.lastIndexOf(':');
-                    }
+                    // This is really going the extra mile....
+                    separatorIndex = path.lastIndexOf(':');
                 }
             }
-            if (separatorIndex > wildCardIndex)
-            {
-                throw new FileNotFoundException("Cannot expand " + path);
-            }
-            String pattern;
-            String dirName;
-            File dir;
-            if (separatorIndex >= 0)
-            {
-                pattern = path.substring(separatorIndex + 1);
-                dirName = path.substring(0, separatorIndex + 1);
-                dir = new File(dirName);
-                if (!dir.isDirectory())
-                {
-                    dir = new File(workingDirectory + File.separator + dirName);
-                }
-            }
-            else
-            {
-                pattern = path;
-                dirName = workingDirectoryToUse;
-                dir = new File(dirName);
-            }
+        }
+        if (separatorIndex > wildCardIndex)
+        {
+            throw new FileNotFoundException("Cannot expand " + path);
+        }
+        String pattern;
+        String dirName;
+        File dir;
+        if (separatorIndex >= 0)
+        {
+            pattern = path.substring(separatorIndex + 1);
+            dirName = path.substring(0, separatorIndex + 1);
+            dir = new File(dirName);
             if (!dir.isDirectory())
             {
-                throw new UserError(
-                    "\"" + dir.getPath() + "\" is not a valid directory path!");
+                dir = new File(workingDirectory + File.separator + dirName);
             }
-            String[] list = dir.list(new WildCardFilter(pattern, '*'));
-            if (list == null)
-            {
-                return new String[0];
-            }
-            for (int i = list.length; --i >= 0;)
-            {
-                list[i] = dirName + File.separator + list[i];
-            }
-            return list;
         }
+        else
+        {
+            pattern = path;
+            dirName = workingDirectoryToUse;
+            dir = new File(dirName);
+        }
+        if (!dir.isDirectory())
+        {
+            throw new UserError(
+                "\"" + dir.getPath() + "\" is not a valid directory path!");
+        }
+        String[] list = dir.list(new WildCardFilter(pattern, '*'));
+        if (list == null)
+        {
+            return new String[0];
+        }
+        for (int i = list.length; --i >= 0;)
+        {
+            list[i] = dirName + File.separator + list[i];
+        }
+        return list;
     }
 
     /**

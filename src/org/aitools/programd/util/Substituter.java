@@ -203,14 +203,10 @@ public class Substituter
             {
                 return EMPTY_STRING;
             }
-            else
-            {
-                return result.substring(resultStart, resultLength);
-            }
+            // (otherwise...)
+            return result.substring(resultStart, resultLength);
         }
-        else
-        {
-            return result.toString();
-        }
+        // (otherwise...)
+        return result.toString();
     }
 }

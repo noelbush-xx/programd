@@ -526,7 +526,7 @@ public class TargetPanel extends JPanel
         
         public void adjustmentValueChanged(AdjustmentEvent ae)
         {
-            showInput((int) this.parent.inputScroller.getValue());
+            showInput(this.parent.inputScroller.getValue());
         }
     }
 

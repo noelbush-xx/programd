@@ -173,10 +173,8 @@ abstract public class GenericParser
             return XMLKit.filterWhitespace(
                 processor.process(level++, tag, this));
         }
-        else
-        {
-            throw new DeveloperError("Corrupt processor set.");
-        }
+        // (otherwise...)
+        throw new DeveloperError("Corrupt processor set.");
     }
 
     /**
@@ -595,26 +593,24 @@ abstract public class GenericParser
             result[1] = 1;
             return result;
         }
-        else
+        // (otherwise...)
+        try
         {
-            try
-            {
-                result[0] = Integer.parseInt(indexValue.substring(0, comma));
-            }
-            catch (NumberFormatException e)
-            {
-                // Nothing to do.
-            }
-            try
-            {
-                result[1] = Integer.parseInt(indexValue.substring(comma + 1));
-            }
-            catch (NumberFormatException e)
-            {
-                // Nothing to do.
-            }
-            return result;
+            result[0] = Integer.parseInt(indexValue.substring(0, comma));
         }
+        catch (NumberFormatException e)
+        {
+            // Nothing to do.
+        }
+        try
+        {
+            result[1] = Integer.parseInt(indexValue.substring(comma + 1));
+        }
+        catch (NumberFormatException e)
+        {
+            // Nothing to do.
+        }
+        return result;
     }
 
     /**

@@ -97,9 +97,7 @@ public class SRAIProcessor extends AIMLProcessor
                 parser.getBotID(),
                 parser);
         }
-        else
-        {
-            throw new AIMLProcessorException("<srai></srai> must have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<srai></srai> must have content!");
     }
 }

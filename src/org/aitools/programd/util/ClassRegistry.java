@@ -42,7 +42,7 @@ abstract public class ClassRegistry extends Hashtable
         String baseClassNameToUse)
     {
         // Initialize the Hastable that this is.
-        super(classesToRegister.length);
+        super(classesToRegisterToUse.length);
 
         // Set the field values for this.
         ClassRegistry.version = versionToUse;

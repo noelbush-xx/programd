@@ -77,10 +77,8 @@ public class TextResponder implements Responder
         {
             return appendTo + SPACE + response;
         }
-        else
-        {
-            return appendTo + response;
-        }
+        // (otherwise...)
+        return appendTo + response;
     }
 
     public void log(

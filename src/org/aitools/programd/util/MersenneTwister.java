@@ -450,21 +450,19 @@ public class MersenneTwister extends java.util.Random implements Serializable
             this.__haveNextNextGaussian = false;
             return this.__nextNextGaussian;
         }
-        else
+        // (otherwise...)
+        double v1, v2, s;
+        do
         {
-            double v1, v2, s;
-            do
-            {
-                v1 = 2 * nextDouble() - 1; // between -1.0 and 1.0
-                v2 = 2 * nextDouble() - 1; // between -1.0 and 1.0
-                s = v1 * v1 + v2 * v2;
-            }
-            while (s >= 1 || s == 0);
-            double multiplier = Math.sqrt(-2 * Math.log(s) / s);
-            this.__nextNextGaussian = v2 * multiplier;
-            this.__haveNextNextGaussian = true;
-            return v1 * multiplier;
+            v1 = 2 * nextDouble() - 1; // between -1.0 and 1.0
+            v2 = 2 * nextDouble() - 1; // between -1.0 and 1.0
+            s = v1 * v1 + v2 * v2;
         }
+        while (s >= 1 || s == 0);
+        double multiplier = Math.sqrt(-2 * Math.log(s) / s);
+        this.__nextNextGaussian = v2 * multiplier;
+        this.__haveNextNextGaussian = true;
+        return v1 * multiplier;
     }
 
     /**
@@ -551,7 +549,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
         r = new MersenneTwister();
         for (j = 0; j < 1000; j++)
         {
-            System.out.print(r.nextBoolean((double) (j / 999.0)) + " ");
+            System.out.print(r.nextBoolean((j / 999.0)) + " ");
             if (j % 8 == 7)
                 System.out.println();
         }
@@ -563,7 +561,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
         r = new MersenneTwister();
         for (j = 0; j < 1000; j++)
         {
-            System.out.print(r.nextBoolean((float) (j / 999.0f)) + " ");
+            System.out.print(r.nextBoolean((j / 999.0f)) + " ");
             if (j % 8 == 7)
                 System.out.println();
         }

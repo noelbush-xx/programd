@@ -48,7 +48,7 @@ public class IRCListener extends Listener implements ShellCommandable
     private static final String SIRCMESSAGE = "[irc]";
 
     /** Please document. */
-    private static final String DEBUGPREFIX = "[debug]";
+    protected static final String DEBUGPREFIX = "[debug]";
 
     /** Please document. */
     private static final String NONE = "";
@@ -194,13 +194,11 @@ public class IRCListener extends Listener implements ShellCommandable
             processMessageCommand(command.substring(1), "");
             return;
         }
-        else
-        {
-            processMessageCommand(
-                command.substring(1, space),
-                command.substring(space + 1));
-            return;
-        }
+        // (otherwise...)
+        processMessageCommand(
+            command.substring(1, space),
+            command.substring(space + 1));
+        return;
     }
 
     /**
@@ -1192,10 +1190,9 @@ public class IRCListener extends Listener implements ShellCommandable
             {
                 return string.substring(1);
             }
-            else
-            {
-                return string;
-            }
+            // (otherwise...)
+            return string;
+
         }
         catch (StringIndexOutOfBoundsException e)
         {

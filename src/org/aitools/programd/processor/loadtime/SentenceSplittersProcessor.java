@@ -51,38 +51,36 @@ public class SentenceSplittersProcessor extends StartupElementProcessor
             }
             catch (ProcessorException e)
             {
-                throw new UserError(e);
+                throw new UserError(e.getMessage());
             }
         }
-        else
-        {
-            Bot bot = parser.getCurrentBot();
+        // (otherwise...)
+        Bot bot = parser.getCurrentBot();
 
-            int splitterCount = parser.nodeCount(SPLITTER, tag.XMLChild, true);
-            for (int index = splitterCount; --index > 0;)
+        int splitterCount = parser.nodeCount(SPLITTER, tag.XMLChild, true);
+        for (int index = splitterCount; --index > 0;)
+        {
+            XMLNode node = parser.getNode(SPLITTER, tag.XMLChild, index);
+            if (node.XMLType == XMLNode.EMPTY)
             {
-                XMLNode node = parser.getNode(SPLITTER, tag.XMLChild, index);
-                if (node.XMLType == XMLNode.EMPTY)
+                String splitter =
+                    XMLKit.getAttributeValue(VALUE, node.XMLAttr);
+                if (splitter != null)
                 {
-                    String splitter =
-                        XMLKit.getAttributeValue(VALUE, node.XMLAttr);
-                    if (splitter != null)
-                    {
-                        bot.addSentenceSplitter(splitter);
-                    }
-                }
-                else
-                {
-                    throw new InvalidStartupElementException("<splitter/> cannot have content!");
+                    bot.addSentenceSplitter(splitter);
                 }
             }
-            if (Globals.showConsole())
+            else
             {
-                Log.userinfo(
-                    "Loaded " + splitterCount + " " + tag.XMLData + ".",
-                    Log.STARTUP);
+                throw new InvalidStartupElementException("<splitter/> cannot have content!");
             }
-            return EMPTY_STRING;
         }
+        if (Globals.showConsole())
+        {
+            Log.userinfo(
+                "Loaded " + splitterCount + " " + tag.XMLData + ".",
+                Log.STARTUP);
+        }
+        return EMPTY_STRING;
     }
 }

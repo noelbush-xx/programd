@@ -459,31 +459,22 @@ public class PatternArbiter
             // Return false because match failed.
             return false;
         }
-        else
+        // Otherwise, check if literal iterator is at or past end.
+        if ((literalIteratorState == AT_END)
+            || (literalIteratorState == PAST_END))
         {
-            // Check if literal iterator is at or past end.
-            if ((literalIteratorState == AT_END)
-                || (literalIteratorState == PAST_END))
+            // Check if pattern iterator is at or past end.
+            if ((patternIteratorState == AT_END)
+                || (patternIteratorState == PAST_END))
             {
-                // Check if pattern iterator is at or past end.
-                if ((patternIteratorState == AT_END)
-                    || (patternIteratorState == PAST_END))
-                {
-                    // Return true because both iterators are at or past end.
-                    return true;
-                }
-                else
-                {
-                    // Return false because both iterators are not at or past end.
-                    return false;
-                }
+                // Return true because both iterators are at or past end.
+                return true;
             }
-            else
-            {
-                // Return false because literal iterator is not at end.
-                return false;
-            }
+            // Otherwise, return false because both iterators are not at or past end.
+            return false;
         }
+        // Otherwise, return false because literal iterator is not at end.
+        return false;
     }
 
     /**

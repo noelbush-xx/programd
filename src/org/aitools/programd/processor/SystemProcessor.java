@@ -200,9 +200,7 @@ public class SystemProcessor extends AIMLProcessor
 
             return response.trim();
         }
-        else
-        {
-            throw new AIMLProcessorException("<system></system> must have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<system></system> must have content!");
     }
 }

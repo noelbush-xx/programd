@@ -94,11 +94,9 @@ public class StringKit
             }
             return result.toString();
         }
-        else
-        {
-            return input;
-        }
-    }
+        // (otherwise...)
+        return input;
+     }
 
     /**
      *  Removes all instances of a given string from an input.
@@ -177,10 +175,8 @@ public class StringKit
             }
             return result.toString();
         }
-        else
-        {
-            return input;
-        }
+        // (otherwise...)
+        return input;
     }
 
     /**

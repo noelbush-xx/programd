@@ -146,7 +146,7 @@ public class ProgramDServer
                 Log.userinfo(
                     Graphmaster.getTotalCategories()
                         + " categories loaded in "
-                        + (float) time / 1000.00
+                        + time / 1000.00
                         + " seconds.",
                     Log.STARTUP);
 

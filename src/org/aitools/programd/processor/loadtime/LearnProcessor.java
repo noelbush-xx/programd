@@ -36,9 +36,7 @@ public class LearnProcessor extends StartupElementProcessor
                 parser.getCurrentBot().getID());
             return EMPTY_STRING;
         }
-        else
-        {
-            throw new InvalidStartupElementException("<learn></learn> must have content!");
-        }
+        // (otherwise...)
+        throw new InvalidStartupElementException("<learn></learn> must have content!");
     }
 }

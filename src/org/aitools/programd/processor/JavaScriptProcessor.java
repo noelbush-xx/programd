@@ -53,9 +53,7 @@ public class JavaScriptProcessor extends AIMLProcessor
             return ActiveJavaScriptInterpreter.getInstance().evaluate(
                 parser.evaluate(level++, tag.XMLChild));
         }
-        else
-        {
-            throw new AIMLProcessorException("<javascript></javascript> must have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<javascript></javascript> must have content!");
     }
 }

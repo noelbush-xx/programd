@@ -222,10 +222,8 @@ public class XMLKit
         {
             return result.toString();
         }
-        else
-        {
-            return input;
-        }
+        // (otherwise...)
+        return input;
     }
 
     /**
@@ -573,43 +571,34 @@ public class XMLKit
                 .trim();
         }
         // If there is a cdata start marker, this will be slower!
-        else
+        // Ensure that there is a cdata end marker.
+        int cdataEnd = input.indexOf(CDATA_END) + 2;
+        if (cdataEnd != -1)
         {
-            // Ensure that there is a cdata end marker.
-            int cdataEnd = input.indexOf(CDATA_END) + 2;
-            if (cdataEnd != -1)
+            // Two possibilities: the string ends with cdata, or doesn't.
+            if (cdataEnd < input.length())
             {
-                // Two possibilities: the string ends with cdata, or doesn't.
-                if (cdataEnd < input.length())
-                {
-                    // Most likely (?) that it doesn't.
-                    return filterWhitespace(input.substring(0, cdataStart))
-                        + input.substring(cdataStart, cdataEnd)
-                        + filterWhitespace(input.substring(cdataEnd));
-                }
-                // As above, in either case, don't filter the cdata part.
-                else
-                {
-                    return filterWhitespace(input.substring(0, cdataStart))
-                        + input.substring(cdataStart, cdataEnd);
-                }
+                // Most likely (?) that it doesn't.
+                return filterWhitespace(input.substring(0, cdataStart))
+                    + input.substring(cdataStart, cdataEnd)
+                    + filterWhitespace(input.substring(cdataEnd));
             }
-            // If there was no cdata end marker, we have wasted our time.  Duplicate code from above.
-            else
-            {
-                return StringKit
-                    .filterMultipleConsecutive(
-                        Substituter.replace(
-                            TAB,
-                            SPACE,
-                            Substituter.replace(
-                                LINE_SEPARATOR,
-                                SPACE,
-                                filterXML(input))),
-                        SPACE)
-                    .trim();
-            }
+            // As above, in either case, don't filter the cdata part.
+            return filterWhitespace(input.substring(0, cdataStart))
+                + input.substring(cdataStart, cdataEnd);
         }
+        // If there was no cdata end marker, we have wasted our time.  Duplicate code from above.
+        return StringKit
+            .filterMultipleConsecutive(
+                Substituter.replace(
+                    TAB,
+                    SPACE,
+                    Substituter.replace(
+                        LINE_SEPARATOR,
+                        SPACE,
+                        filterXML(input))),
+                SPACE)
+            .trim();
     }
 
     /**
@@ -649,48 +638,46 @@ public class XMLKit
         {
             return new String[] { input };
         }
-        else
+        // (otherwise...)
+        // tagEnd indexes the end of a tag.
+        int tagEnd = 0;
+
+        // lastEnd indexes the previous end of a tag.
+        int lastEnd = 0;
+
+        // inputLength avoids recalculating input.length().
+        int inputLength = input.length();
+
+        // Results will be delivered by calling toArray() on this Vector.
+        Vector result = new Vector();
+
+        // Break lines at tags.
+        while ((tagStart > -1) && (tagEnd > -1))
         {
-            // tagEnd indexes the end of a tag.
-            int tagEnd = 0;
+            // Get the end of a tag.
+            tagEnd = input.indexOf(TAG_END, lastEnd);
 
-            // lastEnd indexes the previous end of a tag.
-            int lastEnd = 0;
-
-            // inputLength avoids recalculating input.length().
-            int inputLength = input.length();
-
-            // Results will be delivered by calling toArray() on this Vector.
-            Vector result = new Vector();
-
-            // Break lines at tags.
-            while ((tagStart > -1) && (tagEnd > -1))
+            // Add the input until the tag as a line, as long as the tag is not the beginning.
+            if (tagStart > 0)
             {
-                // Get the end of a tag.
-                tagEnd = input.indexOf(TAG_END, lastEnd);
-
-                // Add the input until the tag as a line, as long as the tag is not the beginning.
-                if (tagStart > 0)
-                {
-                    result.addElement(
-                        input.substring(lastEnd, tagStart).trim());
-                }
-
-                // Set last end to the character following the end of the tag.
-                lastEnd = tagEnd + 1;
-
-                // Look for another tag.
-                tagStart = input.indexOf(TAG_START, lastEnd);
+                result.addElement(
+                    input.substring(lastEnd, tagStart).trim());
             }
-            // All tags are exhausted; if there is still something left in the input,
-            if ((lastEnd < inputLength) && (lastEnd > 0))
-            {
-                // Add the remainder as the final line.
-                result.addElement(input.substring(lastEnd).trim());
-            }
-            return (String[]) result.toArray(new String[] {
-            });
+
+            // Set last end to the character following the end of the tag.
+            lastEnd = tagEnd + 1;
+
+            // Look for another tag.
+            tagStart = input.indexOf(TAG_START, lastEnd);
         }
+        // All tags are exhausted; if there is still something left in the input,
+        if ((lastEnd < inputLength) && (lastEnd > 0))
+        {
+            // Add the remainder as the final line.
+            result.addElement(input.substring(lastEnd).trim());
+        }
+        return (String[]) result.toArray(new String[] {
+        });
     }
 
     /**
@@ -723,46 +710,44 @@ public class XMLKit
         {
             return input;
         }
-        else
+        //  (otherwise...)
+        // tagEnd indexes the end of a tag.
+        int tagEnd = 0;
+
+        // lastEnd indexes the previous end of a tag.
+        int lastEnd = 0;
+
+        // inputLength avoids recalculating input.length().
+        int inputLength = input.length();
+
+        // Results will be built up in this buffer.
+        StringBuffer result = new StringBuffer();
+
+        // Break lines at tags.
+        while ((tagStart > -1) && (tagEnd > -1))
         {
-            // tagEnd indexes the end of a tag.
-            int tagEnd = 0;
+            // Get the end of a tag.
+            tagEnd = input.indexOf(TAG_END, lastEnd);
 
-            // lastEnd indexes the previous end of a tag.
-            int lastEnd = 0;
-
-            // inputLength avoids recalculating input.length().
-            int inputLength = input.length();
-
-            // Results will be built up in this buffer.
-            StringBuffer result = new StringBuffer();
-
-            // Break lines at tags.
-            while ((tagStart > -1) && (tagEnd > -1))
+            // Add the input until the tag as a line, as long as the tag is not the beginning.
+            if (tagStart > 0)
             {
-                // Get the end of a tag.
-                tagEnd = input.indexOf(TAG_END, lastEnd);
-
-                // Add the input until the tag as a line, as long as the tag is not the beginning.
-                if (tagStart > 0)
-                {
-                    result.append(input.substring(lastEnd, tagStart));
-                }
-
-                // Set last end to the character following the end of the tag.
-                lastEnd = tagEnd + 1;
-
-                // Look for another tag.
-                tagStart = input.indexOf(TAG_START, lastEnd);
+                result.append(input.substring(lastEnd, tagStart));
             }
-            // All tags are exhausted; if there is still something left in the input,
-            if ((lastEnd < inputLength) && (lastEnd > 0))
-            {
-                // Add the remainder as the final line.
-                result.append(input.substring(lastEnd));
-            }
-            return result.toString();
+
+            // Set last end to the character following the end of the tag.
+            lastEnd = tagEnd + 1;
+
+            // Look for another tag.
+            tagStart = input.indexOf(TAG_START, lastEnd);
         }
+        // All tags are exhausted; if there is still something left in the input,
+        if ((lastEnd < inputLength) && (lastEnd > 0))
+        {
+            // Add the remainder as the final line.
+            result.append(input.substring(lastEnd));
+        }
+        return result.toString();
     }
 
 }

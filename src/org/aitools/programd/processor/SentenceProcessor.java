@@ -43,14 +43,10 @@ public class SentenceProcessor extends AIMLProcessor
                 return response.substring(0, 1).toUpperCase()
                     + response.substring(1);
             }
-            else
-            {
-                return response;
-            }
+            // (otherwise...)
+            return response;
         }
-        else
-        {
-            throw new AIMLProcessorException("<sentence></sentence> must have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<sentence></sentence> must have content!");
     }
 }

@@ -75,7 +75,7 @@ public class ICQListener extends Listener
     private static InetAddress serverAddy;
 
     /** Please document. */
-    private boolean online = false;
+    protected boolean online = false;
 
     /** Please document. */
     private int clientport;
@@ -186,9 +186,9 @@ public class ICQListener extends Listener
                 {
                     logMessage(
                         "No Login Reply: "
-                            + (byte) this.buffer[2]
+                            + this.buffer[2]
                             + " "
-                            + (byte) this.buffer[3]);
+                            + this.buffer[3]);
                     return;
                 }
             }
@@ -218,9 +218,9 @@ public class ICQListener extends Listener
                         ack(this.buffer[4], this.buffer[5]);
                         Log.devinfo(
                             "ICQListener: ICQ Command in: "
-                                + Integer.toHexString((int) this.buffer[2])
+                                + Integer.toHexString(this.buffer[2])
                                 + " "
-                                + Integer.toHexString((int) this.buffer[3]),
+                                + Integer.toHexString(this.buffer[3]),
                             Log.LISTENERS);
                     }
                 }
@@ -265,9 +265,9 @@ public class ICQListener extends Listener
         Log.devinfo(
             MSG
                 + "ICQ Command out: "
-                + Integer.toHexString((int) msgBuffer[0])
+                + Integer.toHexString(msgBuffer[0])
                 + " "
-                + Integer.toHexString((int) msgBuffer[1]),
+                + Integer.toHexString(msgBuffer[1]),
             Log.LISTENERS);
         Trace.devinfo("Buffer length: " + msgBuffer.length);
         if (msgBuffer.length > 2)

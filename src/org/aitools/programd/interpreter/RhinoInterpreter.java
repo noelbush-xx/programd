@@ -52,10 +52,8 @@ public class RhinoInterpreter implements Interpreter
         {
             return result.toString();
         }
-        else
-        {
-            Log.userinfo("JavaScript returned null!", Log.INTERPRETER);
-            return EMPTY_STRING;
-        }
+        // (otherwise...)
+        Log.userinfo("JavaScript returned null!", Log.INTERPRETER);
+        return EMPTY_STRING;
     }
 }

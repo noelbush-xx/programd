@@ -567,10 +567,8 @@ public class SimpleConsole extends JPanel
             {
                 return this.content[this.mark++];
             }
-            else
-            {
-                return -1;
-            }
+//          (otherwise...)
+            return -1;
         }
 
     }

@@ -119,9 +119,7 @@ public class RandomProcessor extends AIMLProcessor
                     tag.XMLChild,
                     generator.nextInt(nodeCount) + 1).XMLChild);
         }
-        else
-        {
-            throw new AIMLProcessorException("<random></random> must have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<random></random> must have content!");
     }
 }

@@ -34,9 +34,7 @@ public class UpperCaseProcessor extends AIMLProcessor
         {
             return parser.evaluate(level++, tag.XMLChild).toUpperCase();
         }
-        else
-        {
-            throw new AIMLProcessorException("<uppercase></uppercase> must have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<uppercase></uppercase> must have content!");
     }
 }

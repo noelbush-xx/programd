@@ -227,32 +227,29 @@ public class Graphmaster
             parent.setTop();
             return parent;
         }
+        // Otherwise, get the next word.
+        String word = (String) pathIterator.next();
+
+        Nodemapper node;
+
+        // If the parent contains this word, get the node with the word.
+        if (parent.containsKey(word))
+        {
+            node = (Nodemapper) parent.get(word);
+        }
+        // Otherwise create a new node with this word.
         else
         {
-            // Otherwise, get the next word.
-            String word = (String) pathIterator.next();
-
-            Nodemapper node;
-
-            // If the parent contains this word, get the node with the word.
-            if (parent.containsKey(word))
-            {
-                node = (Nodemapper) parent.get(word);
-            }
-            // Otherwise create a new node with this word.
-            else
-            {
-                node = new Nodemaster();
-                parent.put(word, node);
-                node.setParent(parent);
-            }
-
-            // Add the word to the pattern vocabulary.
-            patternVocabulary.add(word);
-
-            // Return the result of adding the new node to the parent.
-            return add(pathIterator, node);
+            node = new Nodemaster();
+            parent.put(word, node);
+            node.setParent(parent);
         }
+
+        // Add the word to the pattern vocabulary.
+        patternVocabulary.add(word);
+
+        // Return the result of adding the new node to the parent.
+        return add(pathIterator, node);
     }
 
     /**
@@ -358,11 +355,9 @@ public class Graphmaster
         {
             return match;
         }
-        else
-        {
-            Trace.devinfo("Match is null.");
-            throw new NoMatchException(input);
-        }
+        //(otherwise...)
+        Trace.devinfo("Match is null.");
+        throw new NoMatchException(input);
     }
 
     /**
@@ -420,10 +415,8 @@ public class Graphmaster
                 match.setNodemapper(nodemapper);
                 return match;
             }
-            else
-            {
-                return null;
-            }
+            // (otherwise...)
+            return null;
         }
 
         // Take the first word of the input as the head.
@@ -927,10 +920,7 @@ public class Graphmaster
                 return false;
             }
             // At other times, unload the file before loading it again.
-            else
-            {
-                unload(path, bot);
-            }
+            unload(path, bot);
         }
         else
         {

@@ -35,9 +35,7 @@ public class VersionProcessor extends AIMLProcessor
         {
             return Graphmaster.VERSION;
         }
-        else
-        {
-            throw new AIMLProcessorException("<version/> cannot have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<version/> cannot have content!");
     }
 }

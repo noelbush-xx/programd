@@ -403,7 +403,7 @@ public class PredicateMaster
                 if (valueObject != null)
                 {
                     values = createValueList(name, userPredicates);
-                    values.add((String) valueObject);
+                    values.add(valueObject);
                 }
                 else
                 {

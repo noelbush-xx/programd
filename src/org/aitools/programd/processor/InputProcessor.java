@@ -40,9 +40,7 @@ public class InputProcessor extends IndexedPredicateProcessor
         {
             return super.process(level, tag, parser, label, 2);
         }
-        else
-        {
-            throw new AIMLProcessorException("<input/> cannot have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<input/> cannot have content!");
     }
 }

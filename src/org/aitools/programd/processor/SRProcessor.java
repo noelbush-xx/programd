@@ -40,9 +40,7 @@ public class SRProcessor extends AIMLProcessor
                 StarProcessor.label,
                 XMLNode.EMPTY);
         }
-        else
-        {
-            throw new AIMLProcessorException("<sr/> cannot have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<sr/> cannot have content!");
     }
 }

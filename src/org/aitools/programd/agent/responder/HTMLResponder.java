@@ -657,10 +657,8 @@ public class HTMLResponder extends AbstractMarkupResponder
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            // (otherwise...)
+            return false;
         }
         return false;
     }
@@ -685,7 +683,7 @@ public class HTMLResponder extends AbstractMarkupResponder
 
         for (int index = 6; --index > 0;)
         {
-            digit = (int) (Math.random() * (double) 5.0);
+            digit = (int) (Math.random() * 5.0);
             newusername.append(digit);
             newpassword.append(digit);
         }

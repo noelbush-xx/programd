@@ -161,10 +161,8 @@ public class Bot
         {
             return value;
         }
-        else
-        {
-            return this.PREDICATE_EMPTY_DEFAULT;
-        }
+        // (otherwise...)
+        return this.PREDICATE_EMPTY_DEFAULT;
     }
 
     /**

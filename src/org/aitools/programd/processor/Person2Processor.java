@@ -59,16 +59,14 @@ public class Person2Processor extends AIMLProcessor
                 throw (AIMLProcessorException) e;
             }
         }
-        else
-        {
-            return parser.shortcutTag(
-                level,
-                label,
-                XMLNode.TAG,
-                EMPTY_STRING,
-                StarProcessor.label,
-                XMLNode.EMPTY);
-        }
+        // (otherwise...)
+        return parser.shortcutTag(
+            level,
+            label,
+            XMLNode.TAG,
+            EMPTY_STRING,
+            StarProcessor.label,
+            XMLNode.EMPTY);
     }
 
     /**

@@ -72,16 +72,14 @@ public class GenderProcessor extends AIMLProcessor
                     StarProcessor.label,
                     XMLNode.EMPTY);
             }
-            else
-            {
-                return parser.shortcutTag(
+            // (otherwise...)
+            return parser.shortcutTag(
                     level,
                     BotProcessor.label,
                     XMLNode.EMPTY,
                     "name=\"gender\"",
                     EMPTY_STRING,
                     XMLNode.EMPTY);
-            }
         }
         else
         {

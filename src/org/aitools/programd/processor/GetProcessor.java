@@ -46,9 +46,7 @@ public class GetProcessor extends AIMLProcessor
                 parser.getUserID(),
                 parser.getBotID());
         }
-        else
-        {
-            throw new AIMLProcessorException("<get/> cannot have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<get/> cannot have content!");
     }
 }

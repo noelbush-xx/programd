@@ -47,13 +47,11 @@ public class BotProcessor extends StartupElementProcessor
                     Bots.addBot(botID, bot);
                     return parser.evaluate(level++, tag.XMLChild);
                 }
-                else
-                {
-                    Log.userinfo(
-                        "Bot \"" + botID + "\" has already been configured.",
-                        Log.STARTUP);
-                    return EMPTY_STRING;
-                }
+                // (otherwise...)
+                Log.userinfo(
+                    "Bot \"" + botID + "\" has already been configured.",
+                    Log.STARTUP);
+                return EMPTY_STRING;
             }
         }
         return EMPTY_STRING;

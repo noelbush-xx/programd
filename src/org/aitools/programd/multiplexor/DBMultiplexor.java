@@ -1,14 +1,14 @@
 /*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+ USA.
+ */
 
 package org.aitools.programd.multiplexor;
 
@@ -58,39 +58,28 @@ public class DBMultiplexor extends Multiplexor
     {
         super.initialize();
 
-        Log.devinfo(
-            "Opening database pool.",
-            new String[] { Log.DATABASE, Log.STARTUP });
+        Log.devinfo("Opening database pool.", new String[]
+            { Log.DATABASE, Log.STARTUP });
 
-        dbManager =
-            new DbAccessRefsPoolMgr(
-                Globals.getProperty("programd.database.driver", ""),
-                Globals.getProperty("programd.database.url", ""),
-                Globals.getProperty("programd.database.user", ""),
-                Globals.getProperty("programd.database.password", ""));
+        dbManager = new DbAccessRefsPoolMgr(Globals.getProperty("programd.database.driver", ""), Globals.getProperty(
+                "programd.database.url", ""), Globals.getProperty("programd.database.user", ""), Globals.getProperty(
+                "programd.database.password", ""));
 
-        Log.devinfo(
-            "Populating database pool.",
-            new String[] { Log.DATABASE, Log.STARTUP });
+        Log.devinfo("Populating database pool.", new String[]
+            { Log.DATABASE, Log.STARTUP });
 
-        dbManager.populate(
-            Integer.parseInt(
-                Globals.getProperty("programd.database.connections", "")));
+        dbManager.populate(Integer.parseInt(Globals.getProperty("programd.database.connections", "")));
     }
 
     /**
      *  Saves a predicate in a database.
      */
-    public void savePredicate(
-        String name,
-        String value,
-        String userid,
-        String botid)
+    public void savePredicate(String name, String value, String userid, String botid)
     {
         /*
-            URLEncoder conveniently escapes things that
-            would otherwise be problematic.
-        */
+         URLEncoder conveniently escapes things that
+         would otherwise be problematic.
+         */
         String encodedValue;
         try
         {
@@ -108,29 +97,13 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (Exception e)
         {
-            throw new UserError(
-                "Could not get database reference when setting predicate name \""
-                    + name
-                    + "\" to value \""
-                    + value
-                    + "\" for \""
-                    + userid
-                    + "\" as known to \""
-                    + botid
-                    + "\".",
-                e);
+            throw new UserError("Could not get database reference when setting predicate name \"" + name + "\" to value \"" + value
+                    + "\" for \"" + userid + "\" as known to \"" + botid + "\".", e);
         }
         try
         {
-            ResultSet records =
-                dbaRef.executeQuery(
-                    "select value from predicates where botid = '"
-                        + botid
-                        + "' and userid = '"
-                        + userid
-                        + "' and name = '"
-                        + name
-                        + "'");
+            ResultSet records = dbaRef.executeQuery("select value from predicates where botid = '" + botid + "' and userid = '" + userid
+                    + "' and name = '" + name + "'");
             int count = 0;
             while (records.next())
             {
@@ -138,46 +111,28 @@ public class DBMultiplexor extends Multiplexor
             }
             if (count > 0)
             {
-                dbaRef.executeUpdate(
-                    "update predicates set value = '"
-                        + encodedValue
-                        + "' where botid = '"
-                        + botid
-                        + "' and userid= '"
-                        + userid
-                        + "' and name = '"
-                        + name
-                        + "'");
+                dbaRef.executeUpdate("update predicates set value = '" + encodedValue + "' where botid = '" + botid + "' and userid= '"
+                        + userid + "' and name = '" + name + "'");
             }
             else
             {
-                dbaRef.executeUpdate(
-                    "insert into predicates (userid, botid, name, value) values ('"
-                        + userid
-                        + "', '"
-                        + botid
-                        + "' , '"
-                        + name
-                        + "','"
-                        + encodedValue
-                        + "')");
+                dbaRef.executeUpdate("insert into predicates (userid, botid, name, value) values ('" + userid + "', '" + botid + "' , '"
+                        + name + "','" + encodedValue + "')");
             }
             records.close();
             dbManager.returnDbaRef(dbaRef);
         }
         catch (SQLException e)
         {
-            Log.userinfo(
-                "Database error: " + e,
-                new String[] { Log.DATABASE, Log.ERROR });
+            Log.userinfo("Database error: " + e, new String[]
+                { Log.DATABASE, Log.ERROR });
         }
     }
 
     /**
      *  Loads the value of a predicate from a database.
      */
-    public String loadPredicate(String name, String userid, String botid)
-        throws NoSuchPredicateException
+    public String loadPredicate(String name, String userid, String botid) throws NoSuchPredicateException
     {
         String result = null;
         DbAccess dbaRef = null;
@@ -187,27 +142,13 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (Exception e)
         {
-            throw new UserError(
-                "Could not get database reference when getting value for predicate name \""
-                    + name
-                    + "\" for \""
-                    + userid
-                    + "\" as known to \""
-                    + botid
-                    + "\".",
-                e);
+            throw new UserError("Could not get database reference when getting value for predicate name \"" + name + "\" for \"" + userid
+                    + "\" as known to \"" + botid + "\".", e);
         }
         try
         {
-            ResultSet records =
-                dbaRef.executeQuery(
-                    "select value from predicates where botid = '"
-                        + botid
-                        + "' and userid = '"
-                        + userid
-                        + "' and name = '"
-                        + name
-                        + "'");
+            ResultSet records = dbaRef.executeQuery("select value from predicates where botid = '" + botid + "' and userid = '" + userid
+                    + "' and name = '" + name + "'");
             int returnCount = 0;
             while (records.next())
             {
@@ -243,17 +184,11 @@ public class DBMultiplexor extends Multiplexor
      *
      *  @see {@link Multiplexor#createUser}
      */
-    public boolean createUser(
-        String userid,
-        String password,
-        String secretKey,
-        String botid)
+    public boolean createUser(String userid, String password, String secretKey, String botid)
     {
         if (!secretKey.equals(SECRET_KEY))
         {
-            Log.userinfo(
-                "ACCESS VIOLATION: Tried to create a user with invalid secret key.",
-                Log.ERROR);
+            Log.userinfo("ACCESS VIOLATION: Tried to create a user with invalid secret key.", Log.ERROR);
             return false;
         }
         userid = userid.trim().toLowerCase();
@@ -265,25 +200,12 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (Exception e)
         {
-            throw new UserError(
-                "Could not get database reference when creating user \""
-                    + userid
-                    + "\" with password \""
-                    + password
-                    + "\" and secret key \""
-                    + secretKey
-                    + "\".",
-                e);
+            throw new UserError("Could not get database reference when creating user \"" + userid + "\" with password \"" + password
+                    + "\" and secret key \"" + secretKey + "\".", e);
         }
         try
         {
-            ResultSet rs =
-                dba.executeQuery(
-                    "select * from users where userid = '"
-                        + userid
-                        + "' and botid = '"
-                        + botid
-                        + "'");
+            ResultSet rs = dba.executeQuery("select * from users where userid = '" + userid + "' and botid = '" + botid + "'");
             int returnCount = 0;
             while (rs.next())
             {
@@ -295,13 +217,7 @@ public class DBMultiplexor extends Multiplexor
                     return false;
                 }
             }
-            dba.executeUpdate(
-                "insert into users (userid, password, botid) values ('"
-                    + userid
-                    + "' , '"
-                    + password
-                    + "' , '"
-                    + botid
+            dba.executeUpdate("insert into users (userid, password, botid) values ('" + userid + "' , '" + password + "' , '" + botid
                     + "')");
             rs.close();
         }
@@ -313,17 +229,11 @@ public class DBMultiplexor extends Multiplexor
         return true;
     }
 
-    public boolean checkUser(
-        String userid,
-        String password,
-        String secretKey,
-        String botid)
+    public boolean checkUser(String userid, String password, String secretKey, String botid)
     {
         if (!secretKey.equals(SECRET_KEY))
         {
-            Log.userinfo(
-                "ACCESS VIOLATION: Tried to create a user with invalid secret key.",
-                Log.ERROR);
+            Log.userinfo("ACCESS VIOLATION: Tried to create a user with invalid secret key.", Log.ERROR);
             return false;
         }
         // Look first to see if the user is already in the cache.
@@ -339,24 +249,17 @@ public class DBMultiplexor extends Multiplexor
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            // (otherwise...)
+            return false;
         }
         // Otherwise, look in the database, and put in the cache if valid.
-        else
+        if (checkUserInDB(userid, password, botid))
         {
-            if (checkUserInDB(userid, password, botid))
-            {
-                userCache.put(userid, password);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            userCache.put(userid, password);
+            return true;
         }
+        // (otherwise...)
+        return false;
     }
 
     /**
@@ -380,23 +283,12 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (Exception e)
         {
-            throw new UserError(
-                "Could not get database reference when checking user \""
-                    + userid
-                    + "\" with password \""
-                    + password
-                    + "\".",
-                e);
+            throw new UserError("Could not get database reference when checking user \"" + userid + "\" with password \"" + password
+                    + "\".", e);
         }
         try
         {
-            ResultSet rs =
-                dbaRef.executeQuery(
-                    "select * from users where userid = '"
-                        + userid
-                        + "' and botid = '"
-                        + botid
-                        + "'");
+            ResultSet rs = dbaRef.executeQuery("select * from users where userid = '" + userid + "' and botid = '" + botid + "'");
             int returnCount = 0;
             while (rs.next())
             {
@@ -413,8 +305,7 @@ public class DBMultiplexor extends Multiplexor
                 }
                 if (returnCount > 1)
                 {
-                    throw new UserError(
-                        "Duplicate user name: \"" + userid + "\"");
+                    throw new UserError("Duplicate user name: \"" + userid + "\"");
                 }
             }
             rs.close();
@@ -435,17 +326,11 @@ public class DBMultiplexor extends Multiplexor
         return true;
     }
 
-    public boolean changePassword(
-        String userid,
-        String password,
-        String secretKey,
-        String botid)
+    public boolean changePassword(String userid, String password, String secretKey, String botid)
     {
         if (!secretKey.equals(SECRET_KEY))
         {
-            Log.userinfo(
-                "ACCESS VIOLATION: Tried to create a user with invalid secret key.",
-                Log.ERROR);
+            Log.userinfo("ACCESS VIOLATION: Tried to create a user with invalid secret key.", Log.ERROR);
             return false;
         }
         userid = userid.trim().toLowerCase();
@@ -457,25 +342,12 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (Exception e)
         {
-            throw new UserError(
-                "Could not get database reference when changing password to \""
-                    + password
-                    + "\" for \""
-                    + userid
-                    + "\" as known to \""
-                    + botid
-                    + "\".",
-                e);
+            throw new UserError("Could not get database reference when changing password to \"" + password + "\" for \"" + userid
+                    + "\" as known to \"" + botid + "\".", e);
         }
         try
         {
-            ResultSet rs =
-                dbaRef.executeQuery(
-                    "select * from users where userid = '"
-                        + userid
-                        + "' and botid = '"
-                        + botid
-                        + "'");
+            ResultSet rs = dbaRef.executeQuery("select * from users where userid = '" + userid + "' and botid = '" + botid + "'");
             int returnCount = 0;
             while (rs.next())
             {
@@ -487,13 +359,7 @@ public class DBMultiplexor extends Multiplexor
                 dbManager.returnDbaRef(dbaRef);
                 return (false);
             }
-            dbaRef.executeUpdate(
-                "update users set password = '"
-                    + password
-                    + "' where userid = '"
-                    + userid
-                    + "' and botid = '"
-                    + botid
+            dbaRef.executeUpdate("update users set password = '" + password + "' where userid = '" + userid + "' and botid = '" + botid
                     + "'");
             rs.close();
             dbManager.returnDbaRef(dbaRef);

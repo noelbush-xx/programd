@@ -40,9 +40,7 @@ public class ThatProcessor extends IndexedPredicateProcessor
         {
             return super.process(level, tag, parser, label, 2);
         }
-        else
-        {
-            throw new AIMLProcessorException("Template-side <that/> cannot have element content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("Template-side <that/> cannot have element content!");
     }
 }

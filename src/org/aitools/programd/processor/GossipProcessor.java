@@ -60,9 +60,7 @@ public class GossipProcessor extends AIMLProcessor
             Log.log(response, Log.GOSSIP);
             return EMPTY_STRING;
         }
-        else
-        {
-            throw new AIMLProcessorException("<gossip></gossip> must have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<gossip></gossip> must have content!");
     }
 }

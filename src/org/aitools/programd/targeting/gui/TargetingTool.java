@@ -733,11 +733,8 @@ public class TargetingTool extends Targeting implements Runnable
             // Return whatever result was found (may be null).
             return toReturn;
         }
-        else
-        {
-            // Return null in the case that no next target was found.
-            return null;
-        }
+        // Otherwise, return null in the case that no next target was found.
+        return null;
     }
 
     /**

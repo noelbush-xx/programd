@@ -34,9 +34,7 @@ public class IDProcessor extends AIMLProcessor
         {
             return parser.getUserID();
         }
-        else
-        {
-            throw new AIMLProcessorException("<id/> cannot have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<id/> cannot have content!");
     }
 }

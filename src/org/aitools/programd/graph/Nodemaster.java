@@ -97,10 +97,8 @@ public class Nodemaster implements Nodemapper
             {
                 return this.value;
             }
-            else
-            {
-                return null;
-            }
+//          (otherwise...)
+            return null;
         }
         else
         {
@@ -119,10 +117,8 @@ public class Nodemaster implements Nodemapper
             }
             return result;
         }
-        else
-        {
-            return this.Hidden.keySet();
-        }
+        // (otherwise...)
+        return this.Hidden.keySet();
     }
 
     public boolean containsKey(String keyToCheck)

@@ -57,9 +57,7 @@ public class FormalProcessor extends AIMLProcessor
             }
             return result.toString();
         }
-        else
-        {
-            throw new AIMLProcessorException("<formal></formal> must have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<formal></formal> must have content!");
     }
 }

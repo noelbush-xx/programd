@@ -227,99 +227,97 @@ public class Shell
                 }
                 break;
             }
-            else
-            {
-                MessagePrinter.gotLine();
+            // (otherwise...)
+            MessagePrinter.gotLine();
 
-                // Handle commands.
-                if (theLine.indexOf('/') == 0)
+            // Handle commands.
+            if (theLine.indexOf('/') == 0)
+            {
+                // Exit command
+                if (theLine.toLowerCase().equals(EXIT))
                 {
-                    // Exit command
-                    if (theLine.toLowerCase().equals(EXIT))
+                    printExitMessage();
+                    return;
+                }
+                // Help command
+                else if (theLine.toLowerCase().equals(HELP))
+                {
+                    help();
+                }
+                // Load into Graphmaster command
+                else if (theLine.toLowerCase().startsWith(LOAD))
+                {
+                    load(theLine, this.botid);
+                }
+                // Unload from Graphmaster command
+                else if (theLine.toLowerCase().startsWith(UNLOAD))
+                {
+                    unload(theLine, this.botid);
+                }
+                // Bot list command
+                else if (theLine.toLowerCase().equals(BOTLIST))
+                {
+                    showBotList();
+                }
+                // Talk to bot command
+                else if (theLine.toLowerCase().startsWith(TALKTO))
+                {
+                    talkto(theLine);
+                }
+                // Who's the bot command
+                else if (theLine.toLowerCase().equals(WHO))
+                {
+                    who();
+                }
+                // List bot files command
+                else if (theLine.toLowerCase().equals(BOT_FILES))
+                {
+                    listBotFiles();
+                }
+                // Roll chatlog command
+                else if (theLine.toLowerCase().startsWith(ROLL_CHATLOG))
+                {
+                    rollChatLog(this.botid);
+                }
+                // Roll targets command
+                else if (theLine.toLowerCase().equals(ROLL_TARGETS))
+                {
+                    rollTargets();
+                }
+                // List commandables command
+                else if (theLine.toLowerCase().equals(COMMANDABLES))
+                {
+                    listCommandables();
+                }
+                else
+                {
+                    try
                     {
-                        printExitMessage();
-                        return;
+                        sendCommand(theLine);
                     }
-                    // Help command
-                    else if (theLine.toLowerCase().equals(HELP))
+                    catch (NoCommandException e0)
                     {
-                        help();
+                        showConsole("Please specify a command following the commandable.");
                     }
-                    // Load into Graphmaster command
-                    else if (theLine.toLowerCase().startsWith(LOAD))
+                    catch (NoSuchCommandableException e1)
                     {
-                        load(theLine, this.botid);
-                    }
-                    // Unload from Graphmaster command
-                    else if (theLine.toLowerCase().startsWith(UNLOAD))
-                    {
-                        unload(theLine, this.botid);
-                    }
-                    // Bot list command
-                    else if (theLine.toLowerCase().equals(BOTLIST))
-                    {
-                        showBotList();
-                    }
-                    // Talk to bot command
-                    else if (theLine.toLowerCase().startsWith(TALKTO))
-                    {
-                        talkto(theLine);
-                    }
-                    // Who's the bot command
-                    else if (theLine.toLowerCase().equals(WHO))
-                    {
-                        who();
-                    }
-                    // List bot files command
-                    else if (theLine.toLowerCase().equals(BOT_FILES))
-                    {
-                        listBotFiles();
-                    }
-                    // Roll chatlog command
-                    else if (theLine.toLowerCase().startsWith(ROLL_CHATLOG))
-                    {
-                        rollChatLog(this.botid);
-                    }
-                    // Roll targets command
-                    else if (theLine.toLowerCase().equals(ROLL_TARGETS))
-                    {
-                        rollTargets();
-                    }
-                    // List commandables command
-                    else if (theLine.toLowerCase().equals(COMMANDABLES))
-                    {
-                        listCommandables();
-                    }
-                    else
-                    {
-                        try
-                        {
-                            sendCommand(theLine);
-                        }
-                        catch (NoCommandException e0)
-                        {
-                            showConsole("Please specify a command following the commandable.");
-                        }
-                        catch (NoSuchCommandableException e1)
-                        {
-                            showConsole(
-                                "No such commandable is loaded.  Type \""
-                                    + COMMANDABLES
-                                    + "\" for a list of loaded commandables.");
-                        }
+                        showConsole(
+                            "No such commandable is loaded.  Type \""
+                                + COMMANDABLES
+                                + "\" for a list of loaded commandables.");
                     }
                 }
-                else if (theLine.length() > 0)
-                {
-                    showConsole(
-                            this.botName,
-                            XMLKit.breakLinesAtTags(
-                                    Multiplexor.getResponse(
-                                            theLine,
-                                            HOSTNAME,
-                                            this.botid,
-                                            new TextResponder())));
-                }
+            }
+            else if (theLine.length() > 0)
+            {
+                showConsole(
+                        this.botName,
+                        XMLKit.breakLinesAtTags(
+                                Multiplexor.getResponse(
+                                        theLine,
+                                        HOSTNAME,
+                                        this.botid,
+                                        new TextResponder())));
             }
         }
     }

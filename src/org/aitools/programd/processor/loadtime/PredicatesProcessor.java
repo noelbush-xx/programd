@@ -42,12 +42,10 @@ public class PredicatesProcessor extends StartupElementProcessor
             }
             catch (ProcessorException e)
             {
-                throw new UserError(e);
+                throw new UserError(e.getMessage());
             }
         }
-        else
-        {
-            return parser.evaluate(level++, tag.XMLChild);
-        }
+        // (otherwise...)
+        return parser.evaluate(level++, tag.XMLChild);
     }
 }

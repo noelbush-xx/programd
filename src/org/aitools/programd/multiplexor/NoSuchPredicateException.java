@@ -58,9 +58,7 @@ public class NoSuchPredicateException extends Exception
                 + index
                 + ".";
         }
-        else
-        {
-            return "No predicate with name \"" + name + "\".";
-        }
+        // (otherwise...)
+        return "No predicate with name \"" + name + "\".";
     }
 }

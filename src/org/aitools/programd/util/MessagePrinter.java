@@ -166,10 +166,8 @@ public class MessagePrinter
                     + RBRACKET
                     + SPACE;
             }
-            else
-            {
-                return EMPTY_STRING;
-            }
+            // (otherwise...)
+            return EMPTY_STRING;
         }
         else if (destination == LOG)
         {
@@ -181,10 +179,8 @@ public class MessagePrinter
                     + RBRACKET
                     + SPACE;
             }
-            else
-            {
-                return EMPTY_STRING;
-            }
+            // (otherwise...)
+            return EMPTY_STRING;
         }
         else
         {

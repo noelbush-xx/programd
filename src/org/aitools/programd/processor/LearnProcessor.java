@@ -44,9 +44,7 @@ public class LearnProcessor extends AIMLProcessor
                 parser.getBotID());
             return EMPTY_STRING;
         }
-        else
-        {
-            throw new AIMLProcessorException("<learn></learn> must have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<learn></learn> must have content!");
     }
 }

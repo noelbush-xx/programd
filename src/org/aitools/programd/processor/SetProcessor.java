@@ -54,9 +54,7 @@ public class SetProcessor extends AIMLProcessor
                 parser.getUserID(),
                 parser.getBotID());
         }
-        else
-        {
-            throw new AIMLProcessorException("<set></set> must have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<set></set> must have content!");
     }
 }

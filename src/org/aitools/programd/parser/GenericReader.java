@@ -321,10 +321,8 @@ abstract public class GenericReader
             this.buffer.delete(0, this.tagStart + this.tagLength);
             return true;
         }
-        else
-        {
-            return false;
-        }
+        // (otherwise...)
+        return false;
     }
 
     /**

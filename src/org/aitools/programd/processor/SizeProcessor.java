@@ -35,9 +35,7 @@ public class SizeProcessor extends AIMLProcessor
         {
             return String.valueOf(Graphmaster.getTotalCategories());
         }
-        else
-        {
-            throw new AIMLProcessorException("<size/> cannot have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<size/> cannot have content!");
     }
 }

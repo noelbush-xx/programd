@@ -1,14 +1,14 @@
 /*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+ USA.
+ */
 
 package org.aitools.programd.processor;
 
@@ -43,26 +43,15 @@ public class PersonProcessor extends AIMLProcessor
             try
             {
                 // Return the processed contents of the element, properly substituted.
-                return parser.processResponse(
-                    applySubstitutions(
-                        parser.evaluate(level++, tag.XMLChild),
-                        parser.getBotID()));
+                return parser.processResponse(applySubstitutions(parser.evaluate(level++, tag.XMLChild), parser.getBotID()));
             }
             catch (ProcessorException e)
             {
                 return EMPTY_STRING;
             }
         }
-        else
-        {
-            return parser.shortcutTag(
-                level,
-                label,
-                XMLNode.TAG,
-                EMPTY_STRING,
-                StarProcessor.label,
-                XMLNode.EMPTY);
-        }
+        // (otherwise...)
+        return parser.shortcutTag(level, label, XMLNode.TAG, EMPTY_STRING, StarProcessor.label, XMLNode.EMPTY);
     }
 
     /**
@@ -75,8 +64,6 @@ public class PersonProcessor extends AIMLProcessor
      */
     public static String applySubstitutions(String input, String botid)
     {
-        return Substituter.applySubstitutions(
-            Bots.getBot(botid).getPersonSubstitutionsMap(),
-            input);
+        return Substituter.applySubstitutions(Bots.getBot(botid).getPersonSubstitutionsMap(), input);
     }
 }

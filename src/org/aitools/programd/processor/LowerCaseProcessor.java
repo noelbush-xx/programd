@@ -34,9 +34,7 @@ public class LowerCaseProcessor extends AIMLProcessor
         {
             return parser.evaluate(level++, tag.XMLChild).toLowerCase();
         }
-        else
-        {
-            throw new AIMLProcessorException("<lowercase></lowercase> must have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<lowercase></lowercase> must have content!");
     }
 }

@@ -87,12 +87,10 @@ public abstract class ObjectPool
                     this.locked.put(object, new Long(now));
                     return (object);
                 }
-                else
-                {
-                    this.unlocked.remove(object);
-                    expire(object);
-                    object = null;
-                }
+                // (otherwise...)
+                this.unlocked.remove(object);
+                expire(object);
+                object = null;
             }
         }
 

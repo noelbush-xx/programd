@@ -144,10 +144,8 @@ public class ConditionProcessor extends AIMLProcessor
             // In other cases, return an empty string.
             return EMPTY_STRING;
         }
-        else
-        {
-            throw new AIMLProcessorException("<condition></condition> must have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<condition></condition> must have content!");
     }
 
     /**

@@ -66,9 +66,7 @@ public class PredicateProcessor extends StartupElementProcessor
                 returnNameWhenSet);
             return EMPTY_STRING;
         }
-        else
-        {
-            throw new InvalidStartupElementException("<predicate/> cannot have element content!");
-        }
+        // (otherwise...)
+        throw new InvalidStartupElementException("<predicate/> cannot have element content!");
     }
 }

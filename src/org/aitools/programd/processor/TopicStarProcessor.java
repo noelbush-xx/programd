@@ -36,9 +36,7 @@ public class TopicStarProcessor extends IndexedPredicateProcessor
         {
             return super.process(level, tag, parser, parser.getTopicStars(), 1);
         }
-        else
-        {
-            throw new AIMLProcessorException("<topicstar/> cannot have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<topicstar/> cannot have content!");
     }
 }

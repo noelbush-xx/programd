@@ -96,15 +96,11 @@ public class StackParser
             {
                 return method.substring(nextToLastDot + 1);
             }
-            else
-            {
-                return method;
-            }
-        }
-        else
-        {
+            // (otherwise...)
             return method;
         }
+        // (otherwise...)
+        return method;
     }
 
     /** 

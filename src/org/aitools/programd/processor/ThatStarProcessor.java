@@ -36,9 +36,7 @@ public class ThatStarProcessor extends IndexedPredicateProcessor
         {
             return super.process(level, tag, parser, parser.getThatStars(), 1);
         }
-        else
-        {
-            throw new AIMLProcessorException("<thatstar/> cannot have content!");
-        }
+        // (otherwise...)
+        throw new AIMLProcessorException("<thatstar/> cannot have content!");
     }
 }
