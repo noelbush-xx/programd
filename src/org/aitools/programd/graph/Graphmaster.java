@@ -9,38 +9,38 @@
 
 package org.aitools.programd.graph;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Set;
-//import java.util.StringTokenizer;
-import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.aitools.programd.Core;
+import org.aitools.programd.CoreSettings;
 import org.aitools.programd.bot.Bot;
-import org.aitools.programd.bot.Bots;
 import org.aitools.programd.loader.AIMLLoader;
-import org.aitools.programd.loader.AIMLWatcher;
-import org.aitools.programd.multiplexor.PredicateMaster;
 import org.aitools.programd.parser.AIMLReader;
-//import org.aitools.programd.targeting.TargetMaster;
+import org.aitools.programd.parser.StartupFileParser;
+import org.aitools.programd.processor.ProcessorException;
+import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.Globals;
 import org.aitools.programd.util.NoMatchException;
 import org.aitools.programd.util.StringKit;
-import org.aitools.programd.util.Trace;
-import org.aitools.programd.util.XMLKit;
-import org.aitools.programd.util.logging.Log;
+import org.aitools.programd.util.UserError;
+
+import org.xml.sax.SAXException;
 
 /**
  * <p>
@@ -60,25 +60,10 @@ import org.aitools.programd.util.logging.Log;
  * @author Thomas Ringate/Pedro Colla
  * @author Noel Bush
  * @author Eion Robb
- * @version 4.1.6
+ * @version 4.2
  */
 public class Graphmaster
 {
-    // Public access informational constants.
-
-    /** Copyright notice. */
-    public static final String[] COPYLEFT =
-        { "Program D", "This program is free software; you can redistribute it and/or",
-                "modify it under the terms of the GNU General Public License",
-                "as published by the Free Software Foundation; either version 2",
-                "of the License, or (at your option) any later version." } ;
-
-    /** Version of this package. */
-    public static final String VERSION = "4.2";
-
-    /** Build Number of this package (internal regression test control). */
-    public static final String BUILD = "00";
-
     // Public access convenience constants.
 
     /** A template marker. */
@@ -113,12 +98,15 @@ public class Graphmaster
     /** The start of a marker. */
     private static final String MARKER_START = "<";
 
-    /** The end of a marker. */
-    private static final String MARKER_END = ">";
-
     /** A space. */
     private static final String SPACE = " ";
-
+    
+    /** The string "://". */
+    private static final String COLON_SLASH_SLASH = "://";
+    
+    /** The string "file" */
+    private static final String FILE = "file";
+    
     // State constants
 
     /** Match state: in <code>input</code> portion of path. */
@@ -134,51 +122,59 @@ public class Graphmaster
     private static final int S_BOTID = 3;
 
     // Class variables.
+    
+    /** The core that owns this Graphmaster. */
+    private Core core;
+    
+    /** The core's settings. */
+    private CoreSettings coreSettings;
+    
+    /** The startup logger. */
+    private Logger startupLogger;
+    
+    /** The Core (usual) logger. */
+    private Logger logger;
+
+    /** The matching logger. */
+    private Logger matchLogger;
 
     /** The root {@link Nodemaster} . */
-    private static Nodemapper ROOT = new Nodemaster();
+    private Nodemapper root = new Nodemaster();
 
     /** The total number of categories read. */
-    private static int TOTAL_CATEGORIES = 0;
+    private int totalCategories = 0;
 
-    /** The pattern vocabulary. */
-    private static TreeSet<String> patternVocabulary = new TreeSet<String>();
-
-    /** Load time marker. */
-    private static boolean loadtime = true;
-
-    /** Indicates whether the startup file has been loaded. */
-    private static boolean startupLoaded = false;
-
-    // Constants used by targeting.
-
-    /** Set of activated nodes. */
-    private static Set<Nodemapper> ACTIVATED_NODES = new HashSet<Nodemapper>();
-
-    /** Activations marker. */
-    public static final String ACTIVATIONS = "<activations>";
+    /** The SAXParser used in loading AIML. */
+    private SAXParser parser;
 
     /** The response timeout. */
-    protected static int RESPONSE_TIMEOUT;
-    static
+    protected int responseTimeout;
+
+    /** Load time marker. */
+    private boolean loadtime;
+
+    public Graphmaster(Core coreToUse)
     {
+        this.core = coreToUse;
+        this.coreSettings = this.core.getSettings();
+        this.startupLogger = Logger.getLogger("programd.startup");
+        this.logger = Logger.getLogger("programd.core");
+        
         try
         {
-            RESPONSE_TIMEOUT = Integer.parseInt(Globals.getProperty("programd.response-timeout", "1000"));
-        } 
-        catch (NumberFormatException e)
+            this.parser = SAXParserFactory.newInstance().newSAXParser();
+        }
+        catch (SAXException e)
         {
-            RESPONSE_TIMEOUT = 1000;
-        } 
-    } 
+            throw new DeveloperError(e);
+        }
+        catch (ParserConfigurationException e)
+        {
+            throw new DeveloperError(e);
+        }
 
-    /**
-     * Prevents external creation of a new <code>Graphmaster</code>.
-     */
-    private Graphmaster()
-    {
-        // Nothing to do.
-    } 
+        this.responseTimeout = this.coreSettings.getResponseTimeout();
+} 
 
     /**
      * Adds a new pattern-that-topic path to the <code>Graphmaster</code>
@@ -193,7 +189,7 @@ public class Graphmaster
      * @param botid
      * @return <code>Nodemapper</code> which is the result of adding the path.
      */
-    public static Nodemapper add(String pattern, String that, String topic, String botid)
+    public Nodemapper add(String pattern, String that, String topic, String botid)
     {
         ArrayList<String> path = StringKit.wordSplit(pattern);
         path.add(THAT);
@@ -203,7 +199,7 @@ public class Graphmaster
         path.add(BOTID);
         path.add(botid);
 
-        Nodemapper node = add(path.listIterator(), ROOT);
+        Nodemapper node = add(path.listIterator(), this.root);
 
         return (node);
     } 
@@ -219,7 +215,7 @@ public class Graphmaster
      *            be appended
      * @return <code>Nodemapper</code> which is the result of adding the node
      */
-    private static Nodemapper add(ListIterator pathIterator, Nodemapper parent)
+    private Nodemapper add(ListIterator pathIterator, Nodemapper parent)
     {
         // If there are no more words in the path, return the parent node
         if (!pathIterator.hasNext())
@@ -245,9 +241,6 @@ public class Graphmaster
             node.setParent(parent);
         } 
 
-        // Add the word to the pattern vocabulary.
-        patternVocabulary.add(word);
-
         // Return the result of adding the new node to the parent.
         return add(pathIterator, node);
     } 
@@ -259,7 +252,7 @@ public class Graphmaster
      * @param nodemapper
      *            the mapper for the node to remove
      */
-    private static void remove(Nodemapper nodemapper)
+    private void remove(Nodemapper nodemapper)
     {
         Nodemapper parent = nodemapper.getParent();
         if (parent != null)
@@ -267,7 +260,7 @@ public class Graphmaster
             parent.remove(nodemapper);
             if (parent.size() == 0)
             {
-                if (parent != ROOT)
+                if (parent != this.root)
                 {
                     remove(parent);
                 } 
@@ -299,7 +292,7 @@ public class Graphmaster
      * @throws NoMatchException
      *             if no match was found
      */
-    public static Match match(String input, String that, String topic, String botid) throws NoMatchException
+    public Match match(String input, String that, String topic, String botid) throws NoMatchException
     {
         // Compose the input path. Fill in asterisks for empty values.
         ArrayList<String> inputPath;
@@ -349,9 +342,9 @@ public class Graphmaster
 
         // Get the match, starting at the root, with an empty star and path,
         // starting in "in input" mode.
-        Match match = match(ROOT, ROOT, inputPath, EMPTY_STRING, new StringBuffer(), S_INPUT, System
+        Match match = match(this.root, this.root, inputPath, EMPTY_STRING, new StringBuffer(), S_INPUT, System
                 .currentTimeMillis()
-                + RESPONSE_TIMEOUT);
+                + this.responseTimeout);
 
         // Return it if not null; throw an exception if null.
         if (match != null)
@@ -359,8 +352,9 @@ public class Graphmaster
             return match;
         } 
         //(otherwise...)
-        Trace.devinfo("Match is null.");
-        throw new NoMatchException(input);
+        NoMatchException e = new NoMatchException(input);
+        this.matchLogger.log(Level.WARNING, "Match is null.", e);
+        throw e;
     } 
 
     /**
@@ -388,7 +382,7 @@ public class Graphmaster
      *            when this response process expires
      * @return the resulting <code>Match</code> object
      */
-    private static Match match(Nodemapper nodemapper, Nodemapper parent, List input, String star, StringBuffer path,
+    private Match match(Nodemapper nodemapper, Nodemapper parent, List input, String star, StringBuffer path,
             int matchState, long expiration)
     {
         // Return null if expiration has been reached.
@@ -657,81 +651,55 @@ public class Graphmaster
     } 
 
     /**
-     * Marks the end of loadtime. Depending on settings in {@link Globals} ,
-     * displays various trace information on the console, and writes startup
-     * information to the log..
-     */
-    public static void markReady()
-    {
-        // Mark the end of the load time.
-        loadtime = false;
-
-        // Display some console information (if set).
-        if (Globals.showConsole())
-        {
-            // Give number of loaded categories.
-            Log.userinfo(Bots.getCount() + " bots thinking with " + TOTAL_CATEGORIES + " categories.", Log.STARTUP);
-        } 
-
-        // Always print the copyright, regardless of console settings.
-        Trace.insist(COPYLEFT);
-        Log.userinfo("Program D version " + VERSION + " Build [" + BUILD + "]", Log.STARTUP);
-    } 
-
-    /**
      * Tells the PredicateMaster to save all predicates.
      */
-    public static void shutdown()
+    public void shutdown()
     {
-        PredicateMaster.saveAll();
+        this.core.getPredicateMaster().saveAll();
     } 
-
+    
     /**
-     * Adds a given Nodemapper to the set of activated nodes.
+     * Starts up the <code>Graphmaster</code> with the given startup file.
+     * 
+     * @param   startupFilePath
      */
-    public static void activatedNode(Nodemapper nodemapper)
+    public void startup(String startupFilePath)
     {
-        ACTIVATED_NODES.add(nodemapper);
-    } 
-
-    /**
-     * Sends new targeting data to
-     * {@link org.aitools.programd.targeting.TargetMaster} .
-     */
-    /*
-    public static void checkpoint()
-    {
-        // Log this checkpoint event.
-        Log.log("Targeting checkpoint.", Log.TARGETING);
-
-        Iterator activatedNodesIterator = ACTIVATED_NODES.iterator();
-        while (activatedNodesIterator.hasNext())
+        this.loadtime = true;
+        URI uri = null;
+        if (startupFilePath.indexOf(COLON_SLASH_SLASH) > 0)
         {
-            Nodemapper nodemapper = (Nodemapper) activatedNodesIterator.next();
-            Set activations = (Set) nodemapper.get(ACTIVATIONS);
-            Iterator activationsIterator = activations.iterator();
-            while (activationsIterator.hasNext())
+            try
             {
-                String path = (String) activationsIterator.next();
-                StringTokenizer pathTokenizer = new StringTokenizer(path, PATH_SEPARATOR);
-
-                String matchPattern = pathTokenizer.nextToken().trim();
-                String matchThat = pathTokenizer.nextToken().trim();
-                String matchTopic = pathTokenizer.nextToken().trim();
-                pathTokenizer.nextToken();
-                String matchTemplate = (String) nodemapper.get(TEMPLATE);
-                String inputText = pathTokenizer.nextToken().trim();
-                String inputThat = pathTokenizer.nextToken().trim();
-                String inputTopic = pathTokenizer.nextToken().trim();
-                pathTokenizer.nextToken();
-                String response = pathTokenizer.nextToken().trim();
-                TargetMaster.add(matchPattern, matchThat, matchTopic, matchTemplate, inputText, inputThat, inputTopic,
-                        response);
-                activationsIterator.remove();
-            } 
-        } 
+                uri = new URI(startupFilePath);
+            }
+            catch (URISyntaxException e)
+            {
+                this.logger.log(Level.WARNING, "Cannot convert to URI: \"" + startupFilePath + "\"");
+            }            
+        }
+        else
+        {
+            try
+            {
+                uri = new URI(FILE, startupFilePath, EMPTY_STRING);
+            }
+            catch (URISyntaxException e)
+            {
+                this.logger.log(Level.WARNING, "Malformed URI: \"" + startupFilePath + "\"");
+            }            
+        }
+        try
+        {
+            new StartupFileParser(this.core).process(uri);
+        }
+        catch (ProcessorException e)
+        {
+            this.startupLogger.log(Level.SEVERE, e.getMessage());
+            this.core.fail("processor exception during startup", e);
+        }
+        this.loadtime = false;
     }
-    */
 
     /**
      * Loads the <code>Graphmaster</code> with the contents of a given path.
@@ -740,64 +708,32 @@ public class Graphmaster
      *            path to the file(s) to load
      * @param botid
      */
-    public static void load(String path, String botid)
+    public void load(String path, String botid)
     {
         // Check for obviously invalid paths of zero length.
         if (path.length() < 1)
         {
-            Log.userinfo("Cannot open a file whose name has zero length.", Log.ERROR);
+            this.logger.log(Level.WARNING, "Cannot open a file whose name has zero length.");
         } 
 
-        Bot bot = null;
+        Bot bot = this.core.getBots().getBot(botid);
         boolean localFile = true;
-
-        // Don't reload the startup file.
-        if (path.equals(Globals.getStartupFilePath()))
-        {
-            if (startupLoaded)
-            {
-                Log.userinfo("Cannot reload startup file.", Log.ERROR);
-            } 
-            else
-            {
-                startupLoaded = true;
-                Log.userinfo("Starting up with \"" + path + "\".", Log.STARTUP);
-            } 
-        } 
-        else
-        {
-            bot = Bots.getBot(botid);
-        } 
-
-        // This BufferedReader will be passed to AIMLReader to read the file.
-        BufferedReader buffReader = null;
+        URI uri = null;
 
         // Guess if this is a URL.
-        if (path.indexOf("://") != -1)
+        if (path.indexOf(COLON_SLASH_SLASH) != -1)
         {
             // Try to create this as a URL.
-            URL url = null;
-
             try
             {
-                url = new URL(path);
+                uri = new URI(path);
             } 
-            catch (MalformedURLException e)
+            catch (URISyntaxException e)
             {
-                Log.userinfo("Malformed URL: \"" + path + "\"", Log.ERROR);
+                this.logger.log(Level.WARNING, "Malformed URI: \"" + path + "\"");
             } 
 
-            try
-            {
-                String encoding = XMLKit.getDeclaredXMLEncoding(url.openStream());
-                buffReader = new BufferedReader(new InputStreamReader(url.openStream(), encoding));
-            } 
-            catch (IOException e)
-            {
-                Log.userinfo("I/O error trying to read \"" + path + "\"", Log.ERROR);
-            } 
-
-            if (!loadCheck(url, bot))
+            if (!loadCheck(uri, bot))
             {
                 return;
             } 
@@ -817,7 +753,7 @@ public class Graphmaster
                 } 
                 catch (FileNotFoundException e)
                 {
-                    Log.userinfo(e.getMessage(), Log.ERROR);
+                    this.logger.log(Level.WARNING, e.getMessage());
                 } 
                 if (files != null)
                 {
@@ -836,7 +772,7 @@ public class Graphmaster
             } 
             catch (FileNotFoundException e)
             {
-                Trace.userinfo(e.getMessage());
+                throw new UserError(e.getMessage());
             } 
 
             if (toRead != null && toRead.exists() && !toRead.isDirectory())
@@ -846,47 +782,57 @@ public class Graphmaster
                     return;
                 } 
 
-                try
-                {
-                    String encoding = XMLKit.getDeclaredXMLEncoding(new FileInputStream(path));
-                    buffReader = new BufferedReader(new InputStreamReader(new FileInputStream(path), encoding));
-                } 
-                catch (IOException e)
-                {
-                    Log.userinfo("I/O error trying to read \"" + path + "\"", Log.ERROR);
-                    return;
-                } 
                 // Add it to the AIMLWatcher, if active (and not the startup
                 // file).
-                if (Globals.isWatcherActive())
+                if (this.coreSettings.useWatcher())
                 {
-                    if (!path.equals(Globals.getStartupFilePath()))
+                    if (!path.equals(this.coreSettings.getStartupFilePath()))
                     {
-                        AIMLWatcher.addWatchFile(path, botid);
+                        this.core.getAIMLWatcher().addWatchFile(path, botid);
                     } 
                 } 
                 FileManager.pushWorkingDirectory(toRead.getParent());
+                try
+                {
+                    uri = new URI(FILE, path, EMPTY_STRING);
+                }
+                catch (URISyntaxException e)
+                {
+                    this.logger.log(Level.WARNING, "Malformed URI: \"" + path + "\"");
+                }
             } 
             else
             {
                 if (toRead == null)
                 {
-                    Log.userinfo("Could not find \"" + path + "\".", Log.ERROR);
+                    this.logger.log(Level.WARNING, "Could not find \"" + path + "\".");
                 } 
                 else
                 {
                     if (!toRead.exists())
                     {
-                        Log.userinfo("\"" + path + "\" does not exist!", Log.ERROR);
+                        this.logger.log(Level.WARNING, "\"" + path + "\" does not exist!");
                     } 
                     if (toRead.isDirectory())
                     {
-                        Log.userinfo("\"" + path + "\" is a directory!", Log.ERROR);
+                        this.logger.log(Level.WARNING, "\"" + path + "\" is a directory!");
                     } 
                 } 
             } 
-        } 
-        new AIMLReader(path, buffReader, new AIMLLoader(path, botid), Globals.warnAboutDeprecatedTags()).read();
+        }
+        
+        try
+        {
+            this.parser.parse(uri.toString(), new AIMLReader(new AIMLLoader(this, this.core.getBots(), path, botid)));
+        }
+        catch (IOException e)
+        {
+            this.logger.log(Level.WARNING, "Error reading \"" + uri + "\".");
+        }
+        catch (SAXException e)
+        {
+            this.logger.log(Level.WARNING, "Error parsing \"" + uri + "\".");
+        }
 
         if (localFile)
         {
@@ -903,7 +849,7 @@ public class Graphmaster
      * @param path
      * @param bot
      */
-    private static boolean loadCheck(Object path, Bot bot)
+    private boolean loadCheck(Object path, Bot bot)
     {
         if (bot == null)
         {
@@ -915,7 +861,7 @@ public class Graphmaster
         if (loadedFiles.keySet().contains(path))
         {
             // At load time, don't load an already-loaded file.
-            if (loadtime)
+            if (this.loadtime)
             {
                 return false;
             } 
@@ -936,7 +882,7 @@ public class Graphmaster
      * @param path
      *            the filename
      */
-    public static void unload(Object path, Bot bot)
+    public void unload(Object path, Bot bot)
     {
         HashSet<Nodemapper> nodemappers = bot.getLoadedFilesMap().get(path);
         Iterator nodemapperIterator = nodemappers.iterator();
@@ -944,7 +890,7 @@ public class Graphmaster
         while (nodemapperIterator.hasNext())
         {
             remove((Nodemapper) nodemapperIterator.next());
-            TOTAL_CATEGORIES--;
+            this.totalCategories--;
         } 
     } 
 
@@ -953,9 +899,9 @@ public class Graphmaster
      * 
      * @return the number of categories presently loaded
      */
-    public static int getTotalCategories()
+    public int getTotalCategories()
     {
-        return TOTAL_CATEGORIES;
+        return this.totalCategories;
     } 
 
     /**
@@ -963,18 +909,16 @@ public class Graphmaster
      * 
      * @return the number of categories presently loaded
      */
-    public static int incrementTotalCategories()
+    public int incrementTotalCategories()
     {
-        return TOTAL_CATEGORIES++;
-    } 
-
+        return this.totalCategories++;
+    }
+    
     /**
-     * Returns the pattern vocabulary size.
-     * 
-     * @return the pattern vocabulary size
+     * @return the Core
      */
-    public static int patternVocabularySize()
+    public Core getCore()
     {
-        return patternVocabulary.size();
-    } 
+        return this.core;
+    }
 }
