@@ -17,9 +17,9 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Properties;
 
+import org.aitools.programd.Core;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.Globals;
 
 /**
  * <p>
@@ -40,7 +40,7 @@ public class FlatFileMultiplexor extends Multiplexor
     private static Hashtable predicateSets;
 
     /** The name of the subdirectory for the predicate files. */
-    private static final String FFM_DIR_NAME = Globals.getProperty("programd.multiplexor.ffm-dir", "ffm");
+    private String ffmDirName;
 
     /** The suffix for a predicates storage file. */
     private static final String PREDICATES_SUFFIX = ".predicates";
@@ -48,6 +48,12 @@ public class FlatFileMultiplexor extends Multiplexor
     /** The string &quot;FlatFileMultiplexor predicates file&quot;. */
     private static final String FFM_FILE_LABEL = "FlatFileMultiplexor predicates file";
 
+    public FlatFileMultiplexor(Core coreOwner)
+    {
+        super(coreOwner);
+        this.ffmDirName = this.core.getSettings().getMultiplexorFfmDir();
+    }
+    
     /**
      * Always returns true (FlatFileMultiplexor currently does not support
      * authentication).
@@ -124,11 +130,11 @@ public class FlatFileMultiplexor extends Multiplexor
      * 
      * @param userid
      */
-    private static Properties loadPredicates(String userid, String botid)
+    private Properties loadPredicates(String userid, String botid)
     {
         Properties predicates = new Properties();
 
-        String fileName = FFM_DIR_NAME + File.separator + botid + File.separator + userid + PREDICATES_SUFFIX;
+        String fileName = this.ffmDirName + File.separator + botid + File.separator + userid + PREDICATES_SUFFIX;
 
         File predicateFile = FileManager.checkOrCreate(fileName, FFM_FILE_LABEL);
         if (predicateFile.canRead())
@@ -151,9 +157,9 @@ public class FlatFileMultiplexor extends Multiplexor
      * 
      * @param userid
      */
-    private static void savePredicates(Properties predicates, String userid, String botid)
+    private void savePredicates(Properties predicates, String userid, String botid)
     {
-        String fileName = FFM_DIR_NAME + File.separator + botid + File.separator + userid + PREDICATES_SUFFIX;
+        String fileName = this.ffmDirName + File.separator + botid + File.separator + userid + PREDICATES_SUFFIX;
         FileManager.checkOrCreate(fileName, FFM_FILE_LABEL);
         FileOutputStream outputStream;
         try

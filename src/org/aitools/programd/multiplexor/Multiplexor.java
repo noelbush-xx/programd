@@ -15,29 +15,25 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-//import java.util.HashSet;
 import java.util.Iterator;
-//import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.aitools.programd.agent.responder.Responder;
+import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.graph.Match;
-//import org.aitools.programd.graph.Nodemapper;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.parser.TemplateParserException;
 import org.aitools.programd.processor.ProcessorException;
+import org.aitools.programd.responder.Responder;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.Globals;
 import org.aitools.programd.util.InputNormalizer;
 import org.aitools.programd.util.NoMatchException;
-import org.aitools.programd.util.Pulse;
-import org.aitools.programd.util.Trace;
 import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.XMLKit;
-import org.aitools.programd.util.logging.Log;
 
 /**
  * <p>
@@ -78,6 +74,7 @@ import org.aitools.programd.util.logging.Log;
  * </p>
  * 
  * @since 4.1.3
+ * @version 4.2
  * @author Noel Bush
  * @author Richard Wallace, Jon Baer
  * @author Thomas Ringate/Pedro Colla
@@ -131,46 +128,56 @@ abstract public class Multiplexor
     /* The string &quot; ms).&quot; */
     private static final String MS = " ms.)";
 
-    /** The host name. */
-    protected static final String HOST_NAME = Globals.getHostName();
-
-    /** Whether to show the console. */
-    protected static final boolean SHOW_CONSOLE = Globals.showConsole();
-
-    /** Whether to show the match trace. */
-    protected static final boolean SHOW_MATCH_TRACE = Globals.showMatchTrace();
-
-    /** Whether to use targeting. */
-    protected static final boolean USE_TARGETING = Globals.useTargeting();
-
-    /** The response-count period for invoking targeting. */
-    private static final int TARGET_SKIP = Globals.getTargetSkip();
-
     /** The predicate empty default. */
-    protected static final String PREDICATE_EMPTY_DEFAULT = Globals.getPredicateEmptyDefault();
+    protected String predicateEmptyDefault;
 
     /** A secret key used for (weakly) authorizing authentication requests. */
     protected static String SECRET_KEY;
 
     // Class variables.
+    
+    /** The Core that owns this Multiplexor. */
+    protected Core core;
+    
+    /** The Graphmaster in use by the Core. */
+    protected Graphmaster graphmaster;
+    
+    /** The PredicateMaster in use by the Core. */
+    protected PredicateMaster predicateMaster;
+    
+    /** The Bots object that belongs to the Core. */
+    protected Bots bots;
+    
+    /** The matching log where we will record some events. */
+    protected Logger matchingLogger;
 
     /** The time that the Multiplexor started operation. */
-    protected static long startTime = System.currentTimeMillis();
+    protected long startTime = System.currentTimeMillis();
 
     /** A counter for tracking the number of responses produced. */
-    protected static long responseCount = 0;
+    protected long responseCount = 0;
 
     /** The total response time. */
-    protected static long totalTime = 0;
+    protected long totalTime = 0;
 
     /** A counter for tracking average response time. */
-    protected static float avgResponseTime = 0;
+    protected float avgResponseTime = 0;
 
-    /** A proxy multiplexor used for instantiating match threads. */
-    private static Multiplexor proxy;
-
-    /** Will hold a set of Pulses. */
-    private static ArrayList<Pulse> pulses = new ArrayList<Pulse>();
+    /**
+     * Constructs the Multiplexor, using some values taken from the
+     * Core object's settings.
+     * 
+     * @param coreOwner the Core that owns this Multiplexor
+     */
+    public Multiplexor(Core coreOwner)
+    {
+        this.core = coreOwner;
+        this.graphmaster = this.core.getGraphmaster();
+        this.matchingLogger = Logger.getLogger("programd.matching");
+        this.bots = this.core.getBots();
+        this.predicateMaster = this.core.getPredicateMaster();
+        this.predicateEmptyDefault = this.core.getSettings().getPredicateEmptyDefault();
+    }
 
     /**
      * Initializes the <code>Multiplexor</code>, creating the secret key that
@@ -201,12 +208,6 @@ abstract public class Multiplexor
         out.print(SECRET_KEY);
         out.flush();
         out.close();
-
-        // Initialize the proxy.
-        proxy = ActiveMultiplexor.getInstance();
-
-        // Add a simple IAmAlive Pulse (this should be more configurable).
-        addPulse(new org.aitools.programd.util.IAmAlivePulse());
     } 
 
     /**
@@ -222,14 +223,14 @@ abstract public class Multiplexor
      * @param responder
      *            the Responder who cares about this response
      */
-    public static synchronized String getResponse(String input, String userid, String botid, Responder responder)
+    public synchronized String getResponse(String input, String userid, String botid, Responder responder)
     {
         // Get the specified bot object.
-        Bot bot = Bots.getBot(botid);
+        Bot bot = this.bots.getBot(botid);
 
         // Split sentences (after performing substitutions and responder
         // pre-processing).
-        ArrayList sentenceList = bot.sentenceSplit(bot.applyInputSubstitutions(responder.preprocess(input, HOST_NAME)));
+        ArrayList sentenceList = bot.sentenceSplit(bot.applyInputSubstitutions(responder.preprocess(input)));
 
         // Get an iterator on the replies.
         Iterator replies = getReplies(sentenceList, userid, botid).iterator();
@@ -249,7 +250,7 @@ abstract public class Multiplexor
         } 
 
         // Log the response.
-        responder.log(input, response, HOST_NAME, userid, botid);
+        //responder.log(input, response, hostName, userid, botid);
 
         // Finally, ask the responder to postprocess the response, and return
         // the result.
@@ -281,22 +282,22 @@ abstract public class Multiplexor
      * @param parser
      *            the parser object to update when generating the response
      */
-    public static String getInternalResponse(String input, String userid, String botid, TemplateParser parser)
+    public String getInternalResponse(String input, String userid, String botid, TemplateParser parser)
     {
         // Get the requested bot.
-        Bot bot = Bots.getBot(botid);
+        Bot bot = this.bots.getBot(botid);
 
         // Ready the that and topic predicates for constructing the match path.
-        ArrayList thatSentences = bot.sentenceSplit(PredicateMaster.get(THAT, 1, userid, botid));
+        ArrayList thatSentences = bot.sentenceSplit(this.predicateMaster.get(THAT, 1, userid, botid));
         String that = InputNormalizer.patternFitIgnoreCase((String) thatSentences.get(thatSentences.size() - 1));
 
-        if (that.equals(EMPTY_STRING) || that.equals(PREDICATE_EMPTY_DEFAULT))
+        if (that.equals(EMPTY_STRING) || that.equals(this.predicateEmptyDefault))
         {
             that = ASTERISK;
         } 
 
-        String topic = InputNormalizer.patternFitIgnoreCase(PredicateMaster.get(TOPIC, userid, botid));
-        if (topic.equals(EMPTY_STRING) || topic.equals(PREDICATE_EMPTY_DEFAULT))
+        String topic = InputNormalizer.patternFitIgnoreCase(this.predicateMaster.get(TOPIC, userid, botid));
+        if (topic.equals(EMPTY_STRING) || topic.equals(this.predicateEmptyDefault))
         {
             topic = ASTERISK;
         } 
@@ -316,25 +317,25 @@ abstract public class Multiplexor
      * @param botid
      * @return the list of replies to the input sentences
      */
-    private static ArrayList getReplies(ArrayList sentenceList, String userid, String botid)
+    private ArrayList getReplies(ArrayList sentenceList, String userid, String botid)
     {
         // All replies will be assembled in this ArrayList.
         ArrayList<String> replies = new ArrayList<String>(sentenceList.size());
 
         // Get the requested bot.
-        Bot bot = Bots.getBot(botid);
+        Bot bot = this.bots.getBot(botid);
 
         // Ready the that and topic predicates for constructing the match path.
-        ArrayList thatSentences = bot.sentenceSplit(PredicateMaster.get(THAT, 1, userid, botid));
+        ArrayList thatSentences = bot.sentenceSplit(this.predicateMaster.get(THAT, 1, userid, botid));
         String that = InputNormalizer.patternFitIgnoreCase((String) thatSentences.get(thatSentences.size() - 1));
 
-        if (that.equals(EMPTY_STRING) || that.equals(PREDICATE_EMPTY_DEFAULT))
+        if (that.equals(EMPTY_STRING) || that.equals(this.predicateEmptyDefault))
         {
             that = ASTERISK;
         } 
 
-        String topic = InputNormalizer.patternFitIgnoreCase(PredicateMaster.get(TOPIC, userid, botid));
-        if (topic.equals(EMPTY_STRING) || topic.equals(PREDICATE_EMPTY_DEFAULT))
+        String topic = InputNormalizer.patternFitIgnoreCase(this.predicateMaster.get(TOPIC, userid, botid));
+        if (topic.equals(EMPTY_STRING) || topic.equals(this.predicateEmptyDefault))
         {
             topic = ASTERISK;
         } 
@@ -345,10 +346,10 @@ abstract public class Multiplexor
         long time = 0;
 
         // If match trace info is on, mark the time just before matching starts.
-        if (SHOW_MATCH_TRACE)
-        {
+        /* if (SHOW_MATCH_TRACE)
+        {*/
             time = System.currentTimeMillis();
-        } 
+        /*}*/ 
 
         // Get a reply for each sentence.
         while (sentences.hasNext())
@@ -357,20 +358,20 @@ abstract public class Multiplexor
         } 
 
         // Increment the (static) response count.
-        responseCount++;
+        this.responseCount++;
 
         // If match trace info is on, produce statistics about the response
         // time.
-        if (SHOW_MATCH_TRACE)
-        {
+        /*if (SHOW_MATCH_TRACE)
+        {*/
             // Mark the time that processing is finished.
             time = System.currentTimeMillis() - time;
 
             // Calculate the average response time.
-            totalTime += time;
-            avgResponseTime = (float) totalTime / (float) responseCount;
-            Trace.userinfo(RESPONSE_SPACE + responseCount + SPACE_IN_SPACE + time + MS_AVERAGE + avgResponseTime + MS);
-        } 
+            this.totalTime += time;
+            this.avgResponseTime = (float) this.totalTime / (float) this.responseCount;
+            /*Trace.userinfo(RESPONSE_SPACE + responseCount + SPACE_IN_SPACE + time + MS_AVERAGE + avgResponseTime + MS);
+        }*/
 
         // Invoke targeting if appropriate.
         /*
@@ -407,16 +408,16 @@ abstract public class Multiplexor
      * @param botid
      * @return the reply to the input sentence
      */
-    private static String getReply(String input, String that, String topic, String userid, String botid)
+    private String getReply(String input, String that, String topic, String userid, String botid)
     {
         // Push the input onto the <input/> stack.
-        PredicateMaster.push(INPUT, input, userid, botid);
+        this.predicateMaster.push(INPUT, input, userid, botid);
 
         // Create a new TemplateParser.
         TemplateParser parser;
         try
         {
-            parser = new TemplateParser(input, userid, botid);
+            parser = new TemplateParser(input, userid, botid, this.core);
         } 
         catch (TemplateParserException e)
         {
@@ -424,10 +425,11 @@ abstract public class Multiplexor
         } 
 
         String reply = null;
-        try
-        {
+        //try
+        //{
             reply = getMatchResult(input, that, topic, userid, botid, parser);
-        } 
+        //}
+        /*
         catch (DeveloperError e)
         {
             Log.devfail(e);
@@ -445,15 +447,15 @@ abstract public class Multiplexor
             Log.devfail(e);
             Log.devfail("Exiting due to unforeseen runtime exception.", Log.ERROR);
             System.exit(1);
-        } 
+        }
+        */
         if (reply == null)
         {
-            Log.devfail("getMatchReply generated a null reply!", Log.ERROR);
-            System.exit(1);
+            this.core.fail(new DeveloperError("getMatchReply generated a null reply!"));
         } 
 
         // Push the reply onto the <that/> stack.
-        PredicateMaster.push(THAT, reply, userid, botid);
+        this.predicateMaster.push(THAT, reply, userid, botid);
 
         return XMLKit.filterWhitespace(reply);
     } 
@@ -468,16 +470,16 @@ abstract public class Multiplexor
      * @param botid
      * @param parser
      */
-    private static String getMatchResult(String input, String that, String topic, String userid, String botid,
+    private String getMatchResult(String input, String that, String topic, String userid, String botid,
             TemplateParser parser)
     {
         // Always show the input path (in any case, if match trace is on).
-        if (SHOW_MATCH_TRACE)
+        /*if (SHOW_MATCH_TRACE)
         {
-            Trace.userinfo(PredicateMaster.get(Globals.getClientNamePredicate(), userid, botid) + '>' + SPACE + input
+            Trace.userinfo(PredicateMaster.get(Settings.getClientNamePredicate(), userid, botid) + '>' + SPACE + input
                     + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + that + SPACE + Graphmaster.PATH_SEPARATOR + SPACE
                     + topic + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + botid);
-        } 
+        }*/
 
         // Create a case-insensitive pattern-fitted version of the input.
         //String inputIgnoreCase = InputNormalizer.patternFitIgnoreCase(input);
@@ -486,25 +488,25 @@ abstract public class Multiplexor
 
         try
         {
-            match = Graphmaster.match(InputNormalizer.patternFitIgnoreCase(input), that, topic, botid);
+            match = this.graphmaster.match(InputNormalizer.patternFitIgnoreCase(input), that, topic, botid);
         } 
         catch (NoMatchException e)
         {
-            Log.userinfo(e.getMessage(), Log.CHAT);
+            this.matchingLogger.log(Level.INFO, e.getMessage());
             return EMPTY_STRING;
         } 
 
         if (match == null)
         {
-            Log.userinfo("No match found for input \"" + input + "\".", Log.CHAT);
+            this.matchingLogger.log(Level.INFO, "No match found for input \"" + input + "\".");
             return EMPTY_STRING;
         } 
 
-        if (SHOW_MATCH_TRACE)
+        /*if (SHOW_MATCH_TRACE)
         {
             Trace.userinfo(LABEL_MATCH + match.getPath());
             Trace.userinfo(LABEL_FILENAME + QUOTE_MARK + match.getFileName() + QUOTE_MARK);
-        } 
+        }*/ 
 
         ArrayList<String> stars = match.getInputStars();
         if (stars.size() > 0)
@@ -534,7 +536,7 @@ abstract public class Multiplexor
         catch (ProcessorException e)
         {
             // Log the error message.
-            Log.userinfo(e.getMessage(), Log.ERROR);
+            Logger.getLogger("programd.error").log(Level.SEVERE, e.getMessage());
 
             // Set response to empty string.
             return EMPTY_STRING;
@@ -580,7 +582,7 @@ abstract public class Multiplexor
      */
     public float averageResponseTime()
     {
-        return avgResponseTime;
+        return this.avgResponseTime;
     } 
 
     /**
@@ -590,30 +592,7 @@ abstract public class Multiplexor
      */
     public float queriesPerHour()
     {
-        return responseCount / ((System.currentTimeMillis() - startTime) / 3600000.00f);
-    } 
-
-    /**
-     * Adds a Pulse to the registered list.
-     * 
-     * @param pulse
-     *            the Pulse to be added
-     */
-    public static void addPulse(Pulse pulse)
-    {
-        pulses.add(pulse);
-    } 
-
-    /**
-     * Emits any registered pulses.
-     */
-    public synchronized static void pulse()
-    {
-        Iterator iterator = pulses.iterator();
-        while (iterator.hasNext())
-        {
-            ((Pulse) iterator.next()).emit();
-        } 
+        return this.responseCount / ((System.currentTimeMillis() - this.startTime) / 3600000.00f);
     } 
 
     /**

@@ -12,16 +12,16 @@ package org.aitools.programd.multiplexor;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.aitools.programd.Core;
+import org.aitools.programd.CoreSettings;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.Globals;
-import org.aitools.programd.util.Trace;
-import org.aitools.programd.util.logging.Log;
 
 /**
  * <p>
@@ -45,35 +45,45 @@ public class PredicateMaster
     private static final int MAX_INDEX = 5;
 
     /** The maximum size of the cache. */
-    private static final int CACHE_MAX = Globals.predicateValueCacheMax();
+    private int cacheMax;
 
     /**
      * The preferred minimum value for the cache (starts at half of
-     * {@link #CACHE_MAX}, may be adjusted).
+     * {@link #cacheMax}, may be adjusted).
      */
-    private static int cacheMin = Math.max(CACHE_MAX / 2, 1);
+    private int cacheMin;
 
     /** A counter for tracking the number of predicate value cache operations. */
     protected static int cacheSize = 0;
 
-    /** The listeners to the PredicateMaster. */
-    private static HashSet listeners = new HashSet();
-
-    /** Private instance of self. */
-    private static final PredicateMaster myself = new PredicateMaster();
-
     /** The predicate empty default. */
-    protected static final String PREDICATE_EMPTY_DEFAULT = Globals.getPredicateEmptyDefault();
+    protected String predicateEmptyDefault;
 
-    /** An empty string. */
-    private static final String EMPTY_STRING = "";
+    /** The Core that owns this. */
+    protected Core core;
+    
+    /** The Multiplexor in use. */
+    protected Multiplexor multiplexor;
+    
+    /** The Bots object in use. */
+    protected Bots bots;
+    
+    /** The general Program D logger. */
+    protected Logger logger;
 
     /**
      * Private constructor.
      */
-    private PredicateMaster()
+    public PredicateMaster(Core coreOwner)
     {
-        // Nothing to do.
+        this.core = coreOwner;
+        this.bots = this.core.getBots();
+        CoreSettings coreSettings = this.core.getSettings();
+        this.multiplexor = this.core.getMultiplexor();
+        this.predicateEmptyDefault = coreSettings.getPredicateEmptyDefault();
+        this.logger = Logger.getLogger("programd");
+        this.cacheMax = coreSettings.getPredicateCacheMax();
+        this.cacheMin = Math.max(this.cacheMax / 2, 1);
     } 
 
     /**
@@ -100,10 +110,10 @@ public class PredicateMaster
      * @return the <code>name</code> or the <code>value</code>, depending
      *         on the predicate type
      */
-    public static String set(String name, String value, String userid, String botid)
+    public String set(String name, String value, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        Map<String, Object> userPredicates = Bots.getBot(botid).predicatesFor(userid);
+        Map<String, Object> userPredicates = this.bots.getBot(botid).predicatesFor(userid);
 
         // Put the new value into the predicate.
         userPredicates.put(name, value);
@@ -136,10 +146,10 @@ public class PredicateMaster
      * @return the <code>name</code> or the <code>value</code>, depending
      *         on the predicate type
      */
-    public synchronized static String set(String name, int index, String value, String userid, String botid)
+    public synchronized String set(String name, int index, String value, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        Map<String, Object> userPredicates = Bots.getBot(botid).predicatesFor(userid);
+        Map<String, Object> userPredicates = this.bots.getBot(botid).predicatesFor(userid);
 
         // Get, load or create the list of values.
         ArrayList<String> values = getLoadOrCreateValueList(name, userPredicates, userid, botid);
@@ -182,10 +192,10 @@ public class PredicateMaster
      * @return the <code>name</code> or the <code>value</code>, depending
      *         on the predicate type
      */
-    public synchronized static String push(String name, String value, String userid, String botid)
+    public synchronized String push(String name, String value, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        Map<String, Object> userPredicates = Bots.getBot(botid).predicatesFor(userid);
+        Map<String, Object> userPredicates = this.bots.getBot(botid).predicatesFor(userid);
 
         // Get, load or create the list of values.
         ArrayList<String> values = getLoadOrCreateValueList(name, userPredicates, userid, botid);
@@ -215,12 +225,12 @@ public class PredicateMaster
      * @return the <code>value</code> associated with the given
      *         <code>name</code>, for the given <code>userid</code>
      */
-    public synchronized static String get(String name, String userid, String botid)
+    public synchronized String get(String name, String userid, String botid)
     {
         String value;
 
         // Get existing or new predicates map for userid.
-        Map<String, Object> userPredicates = Bots.getBot(botid).predicatesFor(userid);
+        Map<String, Object> userPredicates = this.bots.getBot(botid).predicatesFor(userid);
 
         // Try to get the predicate value from the cache.
         Object valueObject = userPredicates.get(name);
@@ -230,7 +240,7 @@ public class PredicateMaster
         {
             try
             {
-                value = ActiveMultiplexor.getInstance().loadPredicate(name, userid, botid);
+                value = this.multiplexor.loadPredicate(name, userid, botid);
             } 
             catch (NoSuchPredicateException e0)
             {
@@ -293,10 +303,10 @@ public class PredicateMaster
      *         <code>name</code> at the given <code>index</code>, for the
      *         given <code>userid</code>
      */
-    public synchronized static String get(String name, int index, String userid, String botid)
+    public synchronized String get(String name, int index, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        Map<String, Object> userPredicates = Bots.getBot(botid).predicatesFor(userid);
+        Map<String, Object> userPredicates = this.bots.getBot(botid).predicatesFor(userid);
 
         String value = null;
 
@@ -429,7 +439,7 @@ public class PredicateMaster
      * @throws NullPointerException
      *             if <code>userPredicates</code> is null
      */
-    private static ArrayList<String> loadValueList(String name, Map<String, Object> userPredicates, String userid, String botid)
+    private ArrayList<String> loadValueList(String name, Map<String, Object> userPredicates, String userid, String botid)
             throws NoSuchPredicateException, NullPointerException
     {
         // Prevent this from being called with a null predicates map.
@@ -443,7 +453,7 @@ public class PredicateMaster
         String value;
         try
         {
-            value = ActiveMultiplexor.getInstance().loadPredicate(name + '.' + index, userid, botid);
+            value = this.multiplexor.loadPredicate(name + '.' + index, userid, botid);
         } 
         catch (NoSuchPredicateException e0)
         {
@@ -463,7 +473,7 @@ public class PredicateMaster
             while (index <= MAX_INDEX)
             {
                 index++;
-                values.add(ActiveMultiplexor.getInstance().loadPredicate(name + '.' + index, userid, botid));
+                values.add(this.multiplexor.loadPredicate(name + '.' + index, userid, botid));
             } 
         } 
         catch (NoSuchPredicateException e1)
@@ -507,7 +517,7 @@ public class PredicateMaster
      * @return a value list in <code>userPredicates</code> for
      *         <code>name</code> for <code>userid</code>
      */
-    private static ArrayList<String> getLoadOrCreateValueList(String name, Map<String, Object> userPredicates, String userid, String botid)
+    private ArrayList<String> getLoadOrCreateValueList(String name, Map<String, Object> userPredicates, String userid, String botid)
     {
         ArrayList<String> values;
 
@@ -539,9 +549,9 @@ public class PredicateMaster
      *            the predicate name
      * @param botid
      */
-    private static String bestAvailableDefault(String name, String botid)
+    private String bestAvailableDefault(String name, String botid)
     {
-        HashMap predicatesInfo = Bots.getBot(botid).getPredicatesInfo();
+        HashMap predicatesInfo = this.bots.getBot(botid).getPredicatesInfo();
 
         // There may be an individual default defined.
         if (predicatesInfo.containsKey(name))
@@ -553,7 +563,7 @@ public class PredicateMaster
             } 
         } 
         // If not, return the global empty default.
-        return PREDICATE_EMPTY_DEFAULT;
+        return this.predicateEmptyDefault;
     } 
 
     /**
@@ -566,9 +576,9 @@ public class PredicateMaster
      *            the predicate value
      * @param botid
      */
-    private static String nameOrValue(String name, String value, String botid)
+    private String nameOrValue(String name, String value, String botid)
     {
-        HashMap predicatesInfo = Bots.getBot(botid).getPredicatesInfo();
+        HashMap predicatesInfo = this.bots.getBot(botid).getPredicatesInfo();
 
         // Check if any info is known about this predicate.
         if (predicatesInfo.containsKey(name))
@@ -590,16 +600,16 @@ public class PredicateMaster
      *            the number of values to try to dump
      * @return the number that were actually dumped
      */
-    private static int save(int dumpCount)
+    private int save(int dumpCount)
     {
         int saveCount = 0;
 
-        Iterator botsIterator = Bots.keysIterator();
+        Iterator botsIterator = this.bots.keysIterator();
 
         while (botsIterator.hasNext() && saveCount < dumpCount)
         {
             String botid = (String) botsIterator.next();
-            Bot bot = Bots.getBot(botid);
+            Bot bot = this.bots.getBot(botid);
             Map cache = bot.getPredicateCache();
 
             if (!cache.isEmpty())
@@ -615,10 +625,7 @@ public class PredicateMaster
                     } 
                     catch (ConcurrentModificationException e)
                     {
-                        Log
-                                .log(
-                                        "Some problem with PredicateMaster design: ConcurrentModificationException in save() [1].",
-                                        Log.RUNTIME);
+                        throw new DeveloperError("Some problem with PredicateMaster design: ConcurrentModificationException in save() [1].", e);
                     } 
 
                     // Get the cached predicates for this user.
@@ -642,7 +649,7 @@ public class PredicateMaster
                             // Do not save default values.
                             if (!value.equals(bestAvailableDefault(name, botid)))
                             {
-                                ActiveMultiplexor.getInstance().savePredicate(name, value, userid, botid);
+                                this.multiplexor.savePredicate(name, value, userid, botid);
                                 saveCount++;
                             } 
                         } 
@@ -660,7 +667,7 @@ public class PredicateMaster
                                 String value = (String) values.get(index - 1);
                                 if (!value.equals(bestAvailableDefault(name, botid)))
                                 {
-                                    ActiveMultiplexor.getInstance().savePredicate(name + '.' + index, value, userid,
+                                    this.multiplexor.savePredicate(name + '.' + index, value, userid,
                                             botid);
                                     saveCount++;
                                 } 
@@ -680,10 +687,7 @@ public class PredicateMaster
                     } 
                     catch (ConcurrentModificationException e)
                     {
-                        Log
-                                .log(
-                                        "Some problem with PredicateMaster design: ConcurrentModificationException in save() [2].",
-                                        Log.RUNTIME);
+                        throw new DeveloperError("Some problem with PredicateMaster design: ConcurrentModificationException in save() [2].", e);
                     } 
                 } 
             } 
@@ -698,27 +702,27 @@ public class PredicateMaster
     /**
      * Dumps the entire cache.
      */
-    public static void saveAll()
+    public void saveAll()
     {
-        Trace.userinfo("Saving all cached predicates (" + cacheSize + ")");
+        this.logger.log(Level.INFO, "PredicateMaster saving all cached predicates (" + cacheSize + ")");
         save(cacheSize);
     } 
 
     /**
      * Checks the predicate cache, and saves out predicates if necessary.
      */
-    private static void checkCache()
+    private void checkCache()
     {
-        // See if we have exceeded or reached the CACHE_MAX.
-        if (cacheSize >= CACHE_MAX)
+        // See if we have exceeded or reached the cacheMax.
+        if (cacheSize >= this.cacheMax)
         {
             // Remove at least enough so that cacheMin is reached.
-            int resultSize = save((cacheSize - cacheMin));
+            int resultSize = save((cacheSize - this.cacheMin));
 
             // Adjust cacheMin upward if this removed too many.
-            if (resultSize < cacheMin)
+            if (resultSize < this.cacheMin)
             {
-                cacheMin = (resultSize + cacheMin) / 2;
+                this.cacheMin = (resultSize + this.cacheMin) / 2;
             } 
         } 
     } 

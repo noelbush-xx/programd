@@ -15,11 +15,13 @@ import java.net.URLEncoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.aitools.programd.Core;
+import org.aitools.programd.CoreSettings;
 import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.Globals;
 import org.aitools.programd.util.UserError;
-import org.aitools.programd.util.logging.Log;
 import org.aitools.programd.util.sql.DbAccess;
 import org.aitools.programd.util.sql.DbAccessRefsPoolMgr;
 
@@ -42,31 +44,43 @@ import org.aitools.programd.util.sql.DbAccessRefsPoolMgr;
 public class DBMultiplexor extends Multiplexor
 {
     /** A manager for database access. */
-    private static DbAccessRefsPoolMgr dbManager;
+    private DbAccessRefsPoolMgr dbManager;
+    
+    /** The logger for database activity. */
+    private Logger dbLogger;
 
-    private static HashMap<String, HashMap<String, String>> userCacheForBots = new HashMap<String, HashMap<String, String>>();
+    private HashMap<String, HashMap<String, String>> userCacheForBots = new HashMap<String, HashMap<String, String>>();
 
+    // Convenience constants.
+    
     /** The string &quot;UTF-8&quot; (for character encoding conversion). */
     private static final String ENC_UTF8 = "UTF-8";
 
+    public DBMultiplexor(Core coreOwner)
+    {
+        super(coreOwner);
+        this.dbLogger = Logger.getLogger("programd.database");
+    }
+    
     /**
      * Loads the database properties from the server configuration.
      */
     public void initialize()
     {
         super.initialize();
+        
+        CoreSettings coreSettings = this.core.getSettings();
 
-        Log.devinfo("Opening database pool.", new String[]
-            { Log.DATABASE, Log.STARTUP } );
+        this.dbLogger.log(Level.FINE, "Opening database pool.");
 
-        dbManager = new DbAccessRefsPoolMgr(Globals.getProperty("programd.database.driver", ""), Globals.getProperty(
-                "programd.database.url", ""), Globals.getProperty("programd.database.user", ""), Globals.getProperty(
-                "programd.database.password", ""));
+        this.dbManager = new DbAccessRefsPoolMgr(coreSettings.getDatabaseDriver(),
+                coreSettings.getDatabaseUrl(),
+                coreSettings.getDatabaseUser(),
+                coreSettings.getDatabasePassword());
 
-        Log.devinfo("Populating database pool.", new String[]
-            { Log.DATABASE, Log.STARTUP } );
+        this.dbLogger.log(Level.FINE, "Populating database pool.");
 
-        dbManager.populate(Integer.parseInt(Globals.getProperty("programd.database.connections", "")));
+        this.dbManager.populate(coreSettings.getDatabaseConnections());
     } 
 
     /**
@@ -91,7 +105,7 @@ public class DBMultiplexor extends Multiplexor
         DbAccess dbaRef = null;
         try
         {
-            dbaRef = dbManager.takeDbaRef();
+            dbaRef = this.dbManager.takeDbaRef();
         } 
         catch (Exception e)
         {
@@ -118,12 +132,11 @@ public class DBMultiplexor extends Multiplexor
                         + botid + "' , '" + name + "','" + encodedValue + "')");
             } 
             records.close();
-            dbManager.returnDbaRef(dbaRef);
+            this.dbManager.returnDbaRef(dbaRef);
         } 
         catch (SQLException e)
         {
-            Log.userinfo("Database error: " + e, new String[]
-                { Log.DATABASE, Log.ERROR } );
+            this.dbLogger.log(Level.SEVERE, "Database error: " + e);
         } 
     } 
 
@@ -136,7 +149,7 @@ public class DBMultiplexor extends Multiplexor
         DbAccess dbaRef = null;
         try
         {
-            dbaRef = dbManager.takeDbaRef();
+            dbaRef = this.dbManager.takeDbaRef();
         } 
         catch (Exception e)
         {
@@ -154,11 +167,11 @@ public class DBMultiplexor extends Multiplexor
                 result = records.getString(VALUE);
             } 
             records.close();
-            dbManager.returnDbaRef(dbaRef);
+            this.dbManager.returnDbaRef(dbaRef);
         } 
         catch (SQLException e)
         {
-            Log.log("Database error: " + e, Log.ERROR);
+            this.dbLogger.log(Level.SEVERE, "Database error: " + e);
             throw new NoSuchPredicateException(name);
         } 
         if (result == null)
@@ -184,7 +197,7 @@ public class DBMultiplexor extends Multiplexor
     {
         if (!secretKey.equals(SECRET_KEY))
         {
-            Log.userinfo("ACCESS VIOLATION: Tried to create a user with invalid secret key.", Log.ERROR);
+            this.dbLogger.log(Level.SEVERE, "ACCESS VIOLATION: Tried to create a user with invalid secret key.");
             return false;
         } 
         userid = userid.trim().toLowerCase();
@@ -192,7 +205,7 @@ public class DBMultiplexor extends Multiplexor
         DbAccess dba = null;
         try
         {
-            dba = dbManager.takeDbaRef();
+            dba = this.dbManager.takeDbaRef();
         } 
         catch (Exception e)
         {
@@ -210,7 +223,7 @@ public class DBMultiplexor extends Multiplexor
                 if (returnCount == 1)
                 {
                     rs.close();
-                    dbManager.returnDbaRef(dba);
+                    this.dbManager.returnDbaRef(dba);
                     return false;
                 } 
             } 
@@ -222,7 +235,7 @@ public class DBMultiplexor extends Multiplexor
         {
             throw new UserError("Error working with database.", e);
         } 
-        dbManager.returnDbaRef(dba);
+        this.dbManager.returnDbaRef(dba);
         return true;
     } 
 
@@ -230,15 +243,15 @@ public class DBMultiplexor extends Multiplexor
     {
         if (!secretKey.equals(SECRET_KEY))
         {
-            Log.userinfo("ACCESS VIOLATION: Tried to create a user with invalid secret key.", Log.ERROR);
+            this.dbLogger.log(Level.SEVERE, "ACCESS VIOLATION: Tried to create a user with invalid secret key.");
             return false;
         } 
         // Look first to see if the user is already in the cache.
-        if (!userCacheForBots.containsKey(botid))
+        if (!this.userCacheForBots.containsKey(botid))
         {
-            userCacheForBots.put(botid, new HashMap<String, String>());
+            this.userCacheForBots.put(botid, new HashMap<String, String>());
         } 
-        HashMap<String, String> userCache = userCacheForBots.get(botid);
+        HashMap<String, String> userCache = this.userCacheForBots.get(botid);
         if (userCache.containsKey(userid))
         {
             // If so, check against stored password.
@@ -277,7 +290,7 @@ public class DBMultiplexor extends Multiplexor
         DbAccess dbaRef = null;
         try
         {
-            dbaRef = dbManager.takeDbaRef();
+            dbaRef = this.dbManager.takeDbaRef();
         } 
         catch (Exception e)
         {
@@ -299,7 +312,7 @@ public class DBMultiplexor extends Multiplexor
                 if (returnCount == 0)
                 {
                     rs.close();
-                    dbManager.returnDbaRef(dbaRef);
+                    this.dbManager.returnDbaRef(dbaRef);
                     return false;
                 } 
                 if (returnCount > 1)
@@ -308,7 +321,7 @@ public class DBMultiplexor extends Multiplexor
                 } 
             } 
             rs.close();
-            dbManager.returnDbaRef(dbaRef);
+            this.dbManager.returnDbaRef(dbaRef);
         } 
         catch (SQLException e)
         {
@@ -329,7 +342,7 @@ public class DBMultiplexor extends Multiplexor
     {
         if (!secretKey.equals(SECRET_KEY))
         {
-            Log.userinfo("ACCESS VIOLATION: Tried to create a user with invalid secret key.", Log.ERROR);
+            this.dbLogger.log(Level.SEVERE, "ACCESS VIOLATION: Tried to create a user with invalid secret key.");
             return false;
         } 
         userid = userid.trim().toLowerCase();
@@ -337,7 +350,7 @@ public class DBMultiplexor extends Multiplexor
         DbAccess dbaRef = null;
         try
         {
-            dbaRef = dbManager.takeDbaRef();
+            dbaRef = this.dbManager.takeDbaRef();
         } 
         catch (Exception e)
         {
@@ -356,19 +369,19 @@ public class DBMultiplexor extends Multiplexor
             if (returnCount == 0)
             {
                 rs.close();
-                dbManager.returnDbaRef(dbaRef);
+                this.dbManager.returnDbaRef(dbaRef);
                 return (false);
             } 
             dbaRef.executeUpdate("update users set password = '" + password + "' where userid = '" + userid
                     + "' and botid = '" + botid + "'");
             rs.close();
-            dbManager.returnDbaRef(dbaRef);
+            this.dbManager.returnDbaRef(dbaRef);
         } 
         catch (SQLException e)
         {
             throw new UserError("Database error.", e);
         }
-        HashMap<String, String> userCache = userCacheForBots.get(botid);
+        HashMap<String, String> userCache = this.userCacheForBots.get(botid);
         userCache.remove(userid);
         userCache.put(userid, password);
         return true;
@@ -376,6 +389,6 @@ public class DBMultiplexor extends Multiplexor
 
     public int useridCount(String botid)
     {
-        return ((HashMap) userCacheForBots.get(botid)).size();
+        return ((HashMap) this.userCacheForBots.get(botid)).size();
     } 
 }
