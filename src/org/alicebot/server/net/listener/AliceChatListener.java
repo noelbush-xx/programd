@@ -17,16 +17,20 @@ package org.alicebot.server.net.listener;
 
 import java.util.Properties;
 
+import org.alicebot.server.core.BotProcess;
+
 /**
  *  Specifies the interface that should be used by all listeners.
  */
-public interface AliceChatListener
+public interface AliceChatListener extends BotProcess
 {
     /**
      *  Given a properties set, initializes the listener if possible.
      *
-     *  @param  the properties set that may (or may not)
-     *          contain necessary configuration values
+     *  @param properties   the properties set that may (or may not!)
+     *                      contain necessary configuration values
+     *
+     *  @return <code>true</code> if the initialization was successful, <code>false</code> if not
      */
-    public void initialize(Properties properties);
+    public boolean initialize(Properties properties);
 }

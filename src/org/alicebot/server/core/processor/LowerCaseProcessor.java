@@ -30,7 +30,6 @@ package org.alicebot.server.core.processor;
 
 import org.alicebot.server.core.parser.AIMLParser;
 import org.alicebot.server.core.parser.XMLNode;
-import org.alicebot.server.core.util.Substituter;
 
 
 /**
@@ -46,7 +45,7 @@ public class LowerCaseProcessor extends AIMLProcessor
     public static final String label = "lowercase";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
@@ -54,7 +53,7 @@ public class LowerCaseProcessor extends AIMLProcessor
         }
         else
         {
-            throw new InvalidAIMLException("<lowercase></lowercase> must have content!");
+            throw new AIMLProcessorException("<lowercase></lowercase> must have content!");
         }
     }
 }

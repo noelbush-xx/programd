@@ -20,8 +20,15 @@
     - added createUser(), checkUser() and changePassword()
 */
 
+/*
+    4.1.4 [00] - December 2001, Noel Bush
+    - moved all get/set methods to PredicateMaster
+    - changed this now to require "save" and "load"
+*/
+
 package org.alicebot.server.core;
 
+import org.alicebot.server.core.parser.AIMLParser;
 import org.alicebot.server.core.responder.Responder;
 
 /**
@@ -46,14 +53,16 @@ import org.alicebot.server.core.responder.Responder;
  *  implementations. Furthermore, {@link Classifier} lost part of its
  *  original purpose as a &quot;classifier of user inputs into categories&quot;.
  *  Hence, the Program D {@link Classifier} has been left as-is, except it
- *  has been changed into an implementation of this interface. You may wish
- *  to implement another <code>Multiplexor</code> that does not use a database,
- *  or that uses a database in a more efficient way than {@link Classifier}.
+ *  has been changed into an implementation of this interface. There are two
+ *  new implementations called {@link FlatFileMultiplexor} and {@link DBMultiplexor}.
  *  </p>
  *
  *  @since 4.1.3
  *
  *  @author Noel Bush
+ *
+ *  @see {@link FlatFileMultiplexor}
+ *  @see {@link DBMultiplexor}
  */
 public interface Multiplexor
 {
@@ -108,100 +117,41 @@ public interface Multiplexor
      *
      *  @param input    the input
      *  @param userid   the userid requesting the response
+     *  @param parser   the parser object in use
      *
      *  @return the response to the input
      */
-    public String getInternalResponse(String input, String userid);
+    public String getInternalResponse(String input, String userid, AIMLParser parser);
 
         
     /**
-     *  Sets a predicate name (unindexed) with a specific value,
-     *  for a given <code>userid</code>.
+     *  Saves a predicate for a given <code>userid</code>.  This only applies to
+     *  Multiplexors that provide long-term storage (others may just do nothing).
      *
-     *  @since 4.1.3
+     *  @since 4.1.4
      *
      *  @param name     predicate name
-     *  @param value    value to assign to the name
+     *  @param value    predicate value
      *  @param userid   user identifier
-     *
-     *  @return the new value of the predicate, or its name (if it is return-value-when-set)
      */
-    public String setPredicateValue(String name, String value, String userid);
+    public void savePredicate(String name, String value, String userid);
 
 
     /**
-     *  Sets an indexed value of a <code>predicate</code> with a specific value,
-     *  for a given <code>userid</code>.
+     *  Loads a predicate into memory
+     *  for a given <code>userid</code>.  This only applies to
+     *  Multiplexors that provide long-term storage (others may just do nothing).
      *
-     *  @since 4.1.3
-     *
-     *  @param name         predicate name
-     *  @param index        index of the <code>predicate</code> value to set
-     *  @param value        value to assign to the <code>predicate</code> value at <code>index</code>
-     *  @param userid       user identifier
-     *
-     *  @return the new value of the predicate, or its name (if it is return-value-when-set)
-     */
-    public String setPredicateValue(String name, int index, String value, String userid);
-
-
-    /**
-     *  Pushes a new value of an indexed <code>predicate</code>
-     *  onto the stack of indexed values for this <code>predicate</code>
-     *  for a given <code>userid</code>.
-     *
-     *  @since 4.1.3
-     *
-     *  @param name         predicate name
-     *  @param value        value to push onto the stack
-     *  @param userid       user identifier
-     */
-    public String pushPredicateValue(String name, String value, String userid);
-
-
-    /**
-     *  Gets the value of an unindexed <code>predicate</code>
-     *  for a given <code>userid</code>.
-     *
-     *  @since 4.1.3
+     *  @since 4.1.4
      *
      *  @param name         predicate name
      *  @param userid       user identifier
      *
-     *  @return value of the <code>predicate</code>
+     *  @return the predicate value
      *
      *  @throws NoSuchPredicateException if there is no predicate with this name
      */
-    public String getPredicateValue(String name, String userid) throws NoSuchPredicateException;
-
-
-    /**
-     *  Gets an indexed value of a <code>predicate</code>
-     *  for a given <code>userid</code>.
-     *
-     *  @since 4.1.3
-     *
-     *  @param name         predicate name
-     *  @param index        index of the <code>predicate</code> value desired
-     *  @param userid       user identifier
-     *
-     *  @return value of the <code>predicate</code> at <code>index</code>, or an empty string if not set / no value
-     */
-    public String getPredicateValue(String name, int index, String userid) throws NoSuchPredicateException;
-
-
-    /**
-     *  Creates a new user entry, given a userid and password.
-     *  Multiplexors for which this makes no sense should just
-     *  return true.
-     *
-     *  @param userid       the userid to use
-     *  @param password     the password to assign
-     *  @param secretKey    the secret key that should authenticate this request
-     *
-     *  @return whether the creation was successful
-     */
-    public boolean createUser(String userid, String password, String secretKey);
+    public String loadPredicate(String name, String userid) throws NoSuchPredicateException;
 
 
     /**
@@ -219,6 +169,20 @@ public interface Multiplexor
     
 
     /**
+     *  Creates a new user entry, given a userid and password.
+     *  Multiplexors for which this makes no sense should just
+     *  return true.
+     *
+     *  @param userid       the userid to use
+     *  @param password     the password to assign
+     *  @param secretKey    the secret key that should authenticate this request
+     *
+     *  @return whether the creation was successful
+     */
+    public boolean createUser(String userid, String password, String secretKey);
+
+
+    /**
      *  Changes the password associated with a userid.
      *  Multiplexors for which this makes no sense should just
      *  return true.
@@ -230,14 +194,4 @@ public interface Multiplexor
      *  @return whether the change was successful
      */
     public boolean changePassword(String userid, String password, String secretKey);
-    
-
-    /**
-     *  Implementations of <code>Multiplexor</code> may provide
-     *  static versions of the above required methods within here,
-     *  but this is not guaranteed.
-     */
-    public static class StaticSelf
-    {
-    }
  }

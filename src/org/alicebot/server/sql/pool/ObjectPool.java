@@ -1,4 +1,5 @@
 package org.alicebot.server.sql.pool;
+
     
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -44,6 +45,7 @@ public abstract class ObjectPool
         lastCheckOut = System.currentTimeMillis();
 
         cleaner = new CleanUpThread(this, expirationTime);
+        cleaner.setDaemon(true);
         cleaner.start();
     }
 

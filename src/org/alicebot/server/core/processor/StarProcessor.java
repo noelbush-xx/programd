@@ -29,8 +29,6 @@
 
 package org.alicebot.server.core.processor;
 
-import java.util.Vector;
-
 import org.alicebot.server.core.parser.AIMLParser;
 import org.alicebot.server.core.parser.XMLNode;
 
@@ -50,7 +48,7 @@ public class StarProcessor extends IndexedPredicateProcessor
     public static final String label = "star";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.EMPTY)
         {
@@ -58,7 +56,7 @@ public class StarProcessor extends IndexedPredicateProcessor
         }
         else
         {
-            throw new InvalidAIMLException("<star/> cannot have element content!");
+            throw new AIMLProcessorException("<star/> cannot have element content!");
         }
     }
 }

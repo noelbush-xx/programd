@@ -51,23 +51,22 @@
     - fixed getPredicateValue so it does not return encoded value (rather decoded)
 */
 
+/*
+    4.1.4 [00] - December 2001, Noel Bush
+    - added support of *not* saving special predicates <that/>, <input/> and <star/>
+*/
+
 package org.alicebot.server.core;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Properties;
 
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.parser.AIMLParser;
-import org.alicebot.server.core.responder.Responder;
-import org.alicebot.server.core.util.InputNormalizer;
-import org.alicebot.server.core.util.Substituter;
 import org.alicebot.server.core.util.Toolkit;
 import org.alicebot.server.sql.pool.DbAccess;
 import org.alicebot.server.sql.pool.DbAccessRefsPoolMgr;
+
 
 /**
  *  <p>
@@ -99,18 +98,6 @@ public class Classifier extends AbstractClassifier
 
     /** The bot name (this will go away for multi-bot support) */
     private static final String botName = Globals.getBotName();
-
-
-    public String setPredicateValue(String name, String value, String userid)
-    {
-        return StaticSelf.setPredicateValue(name, value, userid);
-    }
-
-
-    public String getPredicateValue(String name, String userid)
-    {
-        return StaticSelf.getPredicateValue(name, userid);
-    }
 
 
     /**
@@ -146,7 +133,7 @@ public class Classifier extends AbstractClassifier
     /**
      *  Loads the database properties from the server configuration.
      */
-    public void initialize()
+    public synchronized void initialize()
     {
         Log.devinfo("Classifier: Opening database pool.", new String[] {Log.DATABASE, Log.STARTUP});
         dbManager = new DbAccessRefsPoolMgr(Globals.getProperty("programd.database.driver", ""),
@@ -159,215 +146,73 @@ public class Classifier extends AbstractClassifier
 
 
     /**
-     *  Contains static synchronized versions of
-     *  {@link Multiplexor} methods, to ensure thread-safety.
+     *  Stores a predicate in a database.
+     *  The structure of the database assumed here is non-optimal.
      */
-    public static class StaticSelf
+    public void savePredicate(String name, String value, String userid)
     {
-        /**
-         *  <p>
-         *  Stores a predicate in a database.
-         *  </p>
-         *  <p>
-         *  The structure of the database assumed here is non-optimal.
-         *  Future implementations will provide a better structure.
-         *  </p>
-         *
-         *  @see Multiplexor#setPredicate(String, String, String)
-         */
-        public static synchronized String setPredicateValue(String name, String value, String userid)
+        /*
+            URLEncoder conveniently escapes things that
+            would otherwise be problematic.
+        */
+        String encodedValue = URLEncoder.encode(value.trim());
+
+        try
         {
-            if (name.equals(THAT))
+            DbAccess dbaRef = dbManager.takeDbaRef();
+            ResultSet records = dbaRef.executeQuery("select value from properties where ip = '" + userid + "' and bot = '" + botName + "' and property = '" + name + "'");
+            int count = 0;
+            while (records.next())
             {
-                // Get the last sentence for <that/> storage.
-                ArrayList sentences = InputNormalizer.sentenceSplit(value);
-                value = (String)sentences.get(sentences.size() - 1);
-
-                if (value.length() > MAX_PREDICATE_VALUE_LENGTH)
-                {
-                    value = value.substring(0, MAX_PREDICATE_VALUE_LENGTH - 1);
-                }
-                else if (value.length() <= 0)
-                {
-                    value = THAT;
-                }
+                count++;
             }
-            
-            // URLEncoder conveniently escapes things that would otherwise be problematic.
-            String encodedValue = URLEncoder.encode(value.trim());
-
-            try
+            if (count > 0)
             {
-                DbAccess dbaRef = dbManager.takeDbaRef();
-                ResultSet records = dbaRef.executeQuery("select value from properties where ip = '" + userid + "' and bot = '" + botName + "' and property = '" + name + "'");
-                int count = 0;
-                while (records.next())
-                {
-                    count++;
-                }
-                if (count > 0)
-                {
-                    dbaRef.executeUpdate("update properties set value = '" + value + "' where ip = '" + userid + "' and property = '" + name + "'");
-                }
-                else
-                {
-                    dbaRef.executeUpdate("insert into properties values ('" + botName + "','" + userid + "', null, null, null, null, '" + name + "','" + encodedValue + "')");
-                }
-                records.close();
-                dbManager.returnDbaRef(dbaRef);
+                dbaRef.executeUpdate("update properties set value = '" + encodedValue + "' where ip = '" + userid + "' and property = '" + name + "'");
             }
-            catch (Exception e) {
-                Log.log("Database error: " + e, Log.ERROR);
+            else
+            {
+                dbaRef.executeUpdate("insert into properties values ('" + botName + "','" + userid + "', null, null, null, null, '" + name + "','" + encodedValue + "')");
             }
-            return value;
+            records.close();
+            dbManager.returnDbaRef(dbaRef);
         }
-
-
-        /**
-         *  <p>
-         *  Gets the value of a predicate from a database.
-         *  </p>
-         *  <p>
-         *  The structure of the database assumed here is non-optimal.
-         *  Future versions will replace this with a better structure.
-         *  </p>
-         *
-         *  @see Multiplexor#getPredicate(String, String)
-         */
-        public static synchronized String getPredicateValue(String name, String userid)
-        {
-            String result = EMPTY_STRING;
-            boolean foundIt = false;
-            try
-            {
-                DbAccess dbaRef = dbManager.takeDbaRef();
-                ResultSet records = dbaRef.executeQuery("select value from properties where ip = '" + userid + "' and bot = '" + botName + "' and property = '" + name + "'");
-                int returnCount = 0;
-                while (records.next())
-                {
-                    foundIt = true;
-                    returnCount++;
-                    result = URLDecoder.decode(records.getString(VALUE).trim());
-                }
-                records.close();
-                dbManager.returnDbaRef(dbaRef);
-            }
-            catch (Exception e)
-            {
-                Log.log("Database error: " + e, Log.ERROR);
-                result = Globals.getBotPredicateEmptyDefault();
-                return result;
-            }
-            if (foundIt == false)
-            {
-                result = Globals.getBotPredicateEmptyDefault();
-                return result;
-            }
-            return URLDecoder.decode(result);
+        catch (Exception e) {
+            Log.log("Database error: " + e, Log.ERROR);
         }
     }
 
 
     /**
-     *  A backward-compatibility method for {@link #getResponse(String, String)}.
-     *
-     *  @deprected since 4.1.3
-     *  @see {@link #getResponse(String, String)}
+     *  Loads the value of a predicate from a database.
+     *  The structure of the database assumed here is non-optimal.
      */
-    public static String doRespond(String input, String userid, int depth)
+    public String loadPredicate(String name, String userid) throws NoSuchPredicateException
     {
-        return AbstractClassifier.StaticSelf.getResponse(input, userid);
-    }
-
-    
-    /**
-     *  Backward-compatibility method for
-     *  {@link setPredicate(String, String, String)}.
-     *
-     *  @deprecated since 4.1.3
-     *  @see {@link setPredicateValue(String, String, String)}
-     */
-    public static synchronized void setValue(String name, String userid, String value)
-    {
-        StaticSelf.setPredicateValue(name, value, userid);
-    }
-    
-
-    /**
-     *  Backward-compatibility method for
-     *  {@link getPredicate(String, String)}.
-     *
-     *  @deprecated since 4.1.3
-     *  @see {@link getPredicate(String, String)}
-     */    
-    public static String getValue(String name, String userid)
-    {
-        return StaticSelf.getPredicateValue(name, userid);
-    }
-
-
-    /**
-     *  Double-backward-compatibility method. It's unclear what
-     *  <code>conjunction</code> was supposed to be used for,
-     *  but rest assured this method will make a hasty departure.
-     *
-     *  @deprecated since 4.1.3
-     *  @see {@link getPredicateValue(String, String)}
-     */
-    public static synchronized String getValue(String name, String userid, String conjunction)
-    {
-        return StaticSelf.getPredicateValue(name, userid);
-    }
-    
-
-    /**
-     *  Backward-compatibility method for
-     *  {@link setPredicateValue(String, int, String, String)}.
-     *
-     *  @deprecated since 4.1.3
-     *  @see setPredicate(String, int, String, String)
-     */
-    public static String setValueIndex(String name, int index, String userid, String value)
-    {
-        return AbstractClassifier.StaticSelf.setPredicateValue(name, index, value, userid);
-    }
-
-
-    /**
-     *  Backward-compatibility method for
-     *  {@link #pushPredicate(String, String, String)}.
-     *
-     *  @deprecated since 4.1.3
-     *  @see #pushPredicateValue(String, String, String)
-     */
-    public static String pushValueIndex(String name, String userid, String value)
-    {
-        return AbstractClassifier.StaticSelf.pushPredicateValue(name, value, userid);
-    }
-        
-
-    /**
-     *  Backward-compatibility method for
-     *  {@link #getResponse(String, String)}.
-     *
-     *  @deprecated since 4.1.3
-     *  @see #getResponse(String, String)
-     */
-    public static String doRespond(String input, String userid)
-    {
-        return AbstractClassifier.StaticSelf.getResponse(input, userid);
-    }
-    
-
-    /**
-     *  Backward-compatibility method for
-     *  {@link #getResponse(String, String, String)}.
-     *
-     *  @deprecated since 4.1.3
-     *  @see #getResponse(String, String, String)
-     */
-    public static synchronized String doResponse(String input, String userid, Responder robot)
-    {
-        return AbstractClassifier.StaticSelf.getResponse(input, userid, robot);
+        String result = null;
+        try
+        {
+            DbAccess dbaRef = dbManager.takeDbaRef();
+            ResultSet records = dbaRef.executeQuery("select value from properties where ip = '" + userid + "' and bot = '" + botName + "' and property = '" + name + "'");
+            int returnCount = 0;
+            while (records.next())
+            {
+                returnCount++;
+                result = records.getString(VALUE);
+            }
+            records.close();
+            dbManager.returnDbaRef(dbaRef);
+        }
+        catch (Exception e)
+        {
+            Log.log("Database error: " + e, Log.ERROR);
+            throw new NoSuchPredicateException(name);
+        }
+        if (result == null)
+        {
+            throw new NoSuchPredicateException(name);
+        }
+        // If found, return it (don't forget to decode!).
+        return URLDecoder.decode(result);
     }
 } 

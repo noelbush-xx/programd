@@ -22,4 +22,4 @@ echo Starting Alicebot Program D Targeting Utility.
 ALICE_HOME=.
 ALICE_LIB=lib/aliceserver.jar
 
-java -classpath $ALICE_LIB -Xms64m -Xmx64m org.alicebot.server.core.targeting.TargetingTool $1 $2
+java -classpath $ALICE_LIB -Xms64m -Xmx64m org.alicebot.server.core.targeting.TargetingTool $1

@@ -30,7 +30,6 @@ package org.alicebot.server.core.processor;
 
 import org.alicebot.server.core.parser.AIMLParser;
 import org.alicebot.server.core.parser.XMLNode;
-import org.alicebot.server.core.util.Substituter;
 
 
 /**
@@ -46,7 +45,7 @@ public class UpperCaseProcessor extends AIMLProcessor
     public static final String label = "uppercase";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
@@ -54,7 +53,7 @@ public class UpperCaseProcessor extends AIMLProcessor
         }
         else
         {
-            throw new InvalidAIMLException("<uppercase></uppercase> must have content!");
+            throw new AIMLProcessorException("<uppercase></uppercase> must have content!");
         }
     }
 }

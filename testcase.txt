@@ -36,6 +36,8 @@ testarray1multisentencethat
 testthatarray
 testbotproperties
 testconditionsetvalue
+testjavascript
+testsystem
 testnestedcondition
 testnestedcondition1
 testnestedcondition2
@@ -106,4 +108,8 @@ testperson2 make you
 testperson2 make me
 testperson2 made you
 testperson2 made me
+testcasereturnnamewhenset
+testcaseinfiniteloop
+testcaseinfiniteloop2
+testcaseinfiniteloop3
 exit

@@ -27,11 +27,9 @@
 
 package org.alicebot.server.core.node;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.HashMap;
-
-import org.alicebot.server.core.Graphmaster;
 
 
 /**

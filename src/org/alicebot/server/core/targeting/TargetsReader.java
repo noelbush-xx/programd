@@ -15,17 +15,15 @@
 
 
 package org.alicebot.server.core.targeting;
+
     
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.lang.reflect.Field;
 
-import org.alicebot.server.core.Globals;
-import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.logging.Trace;
 import org.alicebot.server.core.parser.GenericReader;
-import org.alicebot.server.core.processor.ProcessorException;
-import org.alicebot.server.core.util.Toolkit;
+import org.alicebot.server.core.parser.GenericReader.TransitionMade;
+import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.Trace;
 
 
 /**
@@ -94,38 +92,44 @@ public class TargetsReader extends GenericReader
     /** Parser state: entered a &lt;pattern&gt; element. */
     private final int S_IN_PATTERN                  = 5;
 
-    /** Parser state: exited a &lt;pattern&gt; element. */
-    private final int S_OUT_PATTERN                 = 6;
-
-    /** Parser state: entered a &lt;that&gt; element. */
-    private final int S_IN_THAT                     = 7;
-
-    /** Parser state: exited a &lt;that&gt; element. */
-    private final int S_OUT_THAT                    = 8;
-
-    /** Parser state: entered a &lt;topic&gt; element. */
-    private final int S_IN_TOPIC                    = 9;
+    /** Parser state: entered a &lt;template&gt; element. */
+    private final int S_IN_TEMPLATE                 = 6;
 
     /** Parser state: exited a &lt;template&gt; element. */
-    private final int S_OUT_TOPIC                   = 10;
+    private final int S_OUT_TEMPLATE                = 7;
+
+    /** Parser state: exited a &lt;pattern&gt; element. */
+    private final int S_OUT_PATTERN                 = 8;
+
+    /** Parser state: entered a &lt;that&gt; element. */
+    private final int S_IN_THAT                     = 9;
+
+    /** Parser state: exited a &lt;that&gt; element. */
+    private final int S_OUT_THAT                    = 10;
+
+    /** Parser state: entered a &lt;topic&gt; element. */
+    private final int S_IN_TOPIC                    = 11;
+
+    /** Parser state: exited a &lt;template&gt; element. */
+    private final int S_OUT_TOPIC                   = 12;
 
     /** Parser state: exited an &lt;input&gt; element. */
-    private final int S_OUT_INPUT                   = 11;
+    private final int S_OUT_INPUT                   = 13;
 
     /** Parser state: entered a &lt;match&gt; element. */
-    private final int S_IN_MATCH                    = 12;
+    private final int S_IN_MATCH                    = 14;
 
     /** Parser state: exited a &lt;match&gt; element. */
-    private final int S_OUT_MATCH                   = 13;
+    private final int S_OUT_MATCH                   = 15;
 
     /** Parser state: entered an &lt;extension&gt; element. */
-    private final int S_IN_EXTENSION                = 14;
+    private final int S_IN_EXTENSION                = 16;
 
     /** Parser state: exited an &lt;extension&gt; element. */
-    private final int S_OUT_EXTENSION               = 15;
+    private final int S_OUT_EXTENSION               = 17;
 
     /** Parser state: exited a &lt;target&gt; element. */
-    private final int S_OUT_TARGET                  = 16;
+    private final int S_OUT_TARGET                  = 18;
 
 
     /*
@@ -220,11 +224,11 @@ public class TargetsReader extends GenericReader
         }
         catch (NoSuchFieldException e)
         {
-            Trace.devfail("The developer has specified a field that does not exist in TargetsReader.", e);
+            throw new DeveloperErrorException("The developer has specified a field that does not exist in TargetsReader.");
         }
         catch (SecurityException e)
         {
-            Trace.devfail("Security manager prevents TargetsReader from functioning.", e);
+            throw new DeveloperErrorException("Security manager prevents TargetsReader from functioning.");
         }
     }
 
@@ -276,8 +280,16 @@ public class TargetsReader extends GenericReader
 
             case S_OUT_TOPIC :
                 transition(Targeting.INPUT_END, S_IN_TARGET);
-                transition(Targeting.MATCH_END, S_IN_TARGET);
+                transition(Targeting.TEMPLATE_START, S_IN_TEMPLATE);
                 transition(Targeting.EXTENSION_END, S_IN_TARGET);
+                break;
+
+            case S_IN_TEMPLATE :
+                transition(Targeting.TEMPLATE_END, S_OUT_TEMPLATE, templateField);
+                break;
+
+            case S_OUT_TEMPLATE :
+                transition(Targeting.MATCH_END, S_IN_TARGET);
                 break;
 
             case S_OUT_TARGET :
@@ -305,7 +317,7 @@ public class TargetsReader extends GenericReader
      *  </p>
      *  <p>
      *  If <code>action</code> is {@link #SET_MATCH_CONTEXT},
-     *  sets {@link #patternField}, {@link #thatField} and {@link #topicField}
+     *  sets {@link #patternField}, {@link #thatField}, {@link #topicField} and {@link #templateField}
      *  to the appropriate field references for the match part of the target.
      *  </p>
      *  <p>
@@ -341,16 +353,16 @@ public class TargetsReader extends GenericReader
             {
                 case DELIVER_TARGET :
                     // Deliver new target to targetsListener.
-                    ((TargetsReaderListener)super.listener).loadTarget(matchPattern.toString(),
-                                                                       matchThat.toString(),
-                                                                       matchTopic.toString(),
-                                                                       matchTemplate.toString(),
-                                                                       inputText.toString(),
-                                                                       inputThat.toString(),
-                                                                       inputTopic.toString(),
-                                                                       extensionPattern.toString(),
-                                                                       extensionThat.toString(),
-                                                                       extensionTopic.toString());
+                    ((TargetsReaderListener)super.listener).loadTarget(matchPattern,
+                                                                       matchThat,
+                                                                       matchTopic,
+                                                                       matchTemplate,
+                                                                       inputText,
+                                                                       inputThat,
+                                                                       inputTopic,
+                                                                       extensionPattern,
+                                                                       extensionThat,
+                                                                       extensionTopic);
 
                     // Reset all fields to defaults.
                     matchPattern = matchThat = matchTopic =
@@ -375,11 +387,11 @@ public class TargetsReader extends GenericReader
                     }
                     catch (NoSuchFieldException e)
                     {
-                        Trace.devfail("The developer has specified a field that does not exist in TargetsReader.", e);
+                        throw new DeveloperErrorException("The developer has specified a field that does not exist in TargetsReader.");
                     }
                     catch (SecurityException e)
                     {
-                        Trace.devfail("Security manager prevents TargetsReader from functioning.", e);
+                        throw new DeveloperErrorException("Security manager prevents TargetsReader from functioning.");
                     }
                     break;
 
@@ -393,11 +405,11 @@ public class TargetsReader extends GenericReader
                     }
                     catch (NoSuchFieldException e)
                     {
-                        Trace.devfail("The developer has specified a field that does not exist in TargetsReader.", e);
+                        throw new DeveloperErrorException("The developer has specified a field that does not exist in TargetsReader.");
                     }
                     catch (SecurityException e)
                     {
-                        Trace.devfail("Security manager prevents TargetsReader from functioning.", e);
+                        throw new DeveloperErrorException("Security manager prevents TargetsReader from functioning.");
                     }
                     break;
 
@@ -411,11 +423,11 @@ public class TargetsReader extends GenericReader
                     }
                     catch (NoSuchFieldException e)
                     {
-                        Trace.devfail("The developer has specified a field that does not exist in TargetsReader.", e);
+                        throw new DeveloperErrorException("The developer has specified a field that does not exist in TargetsReader.");
                     }
                     catch (SecurityException e)
                     {
-                        Trace.devfail("Security manager prevents TargetsReader from functioning.", e);
+                        throw new DeveloperErrorException("Security manager prevents TargetsReader from functioning.");
                     }
                     break;
 

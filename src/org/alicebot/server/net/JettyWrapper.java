@@ -1,18 +1,19 @@
 package org.alicebot.server.net;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.Iterator;
 
 import org.alicebot.server.core.Globals;
+import org.alicebot.server.core.logging.Log;
+import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.Trace;
+
+import org.mortbay.http.HttpServer;
 import org.mortbay.http.SocketListener;
 import org.mortbay.jetty.Server;
-import org.mortbay.util.Log;
+import org.mortbay.util.LogSink;
 import org.mortbay.util.MultiException;
 import org.mortbay.util.OutputStreamLogSink;
-
-import org.alicebot.server.core.logging.Trace;
-
 
 /**
  *  <p>
@@ -50,7 +51,7 @@ public class JettyWrapper implements AliceCompatibleHttpServer
 
         // Add a LogSink to Jetty so it will shut up and not send messages to System.err.
         OutputStreamLogSink quietJetty = new OutputStreamLogSink("./logs/jetty.log");
-        Log.instance().add(quietJetty);
+        org.mortbay.util.Log.instance().add(quietJetty);
 
         jetty.configure(configFilePath);
 
@@ -69,7 +70,7 @@ public class JettyWrapper implements AliceCompatibleHttpServer
     }
 
 
-    public void start()
+    public void run()
     {
         try
         {
@@ -77,7 +78,20 @@ public class JettyWrapper implements AliceCompatibleHttpServer
         }
         catch (MultiException e)
         {
-            Trace.devfail(e.getMessage());
+            throw new DeveloperErrorException(e.getMessage());
+        }
+    }
+
+
+    public void shutdown()
+    {
+        try
+        {
+            jetty.stop();
+        }
+        catch (InterruptedException e)
+        {
+            Log.devinfo("Jetty was interrupted while stopping.", Log.ERROR);
         }
     }
 }

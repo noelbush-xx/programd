@@ -13,25 +13,11 @@
     USA.
 */
 
-/*
-    Code cleanup (4.1.3 [00] - October 2001, Noel Bush)
-    - formatting cleanup
-    - complete javadoc
-    - made all imports explicit
-*/
-
-/*
-    Further optimizations {4.1.3 [0]1 - November 2001, Noel Bush)
-    - changed to extend StartupTagProcessor
-    - moved to loadtime subpackage
-*/
-
 package org.alicebot.server.core.processor.loadtime;
 
-import org.alicebot.server.core.Globals;
-import org.alicebot.server.core.logging.Trace;
 import org.alicebot.server.core.parser.StartupFileParser;
 import org.alicebot.server.core.parser.XMLNode;
+
 
 /**
  *  The <code>bots</code> element is a container for bot

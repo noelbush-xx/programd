@@ -17,6 +17,7 @@ package org.alicebot.server.core.targeting;
 
 import java.util.ArrayList;
 
+
 /**
  *  Represents an individial target.
  */

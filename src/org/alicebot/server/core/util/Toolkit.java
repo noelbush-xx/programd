@@ -46,31 +46,42 @@
     - added unescapeXMLChars and escapeXMLChars methods
 */
 
+/*
+    4.1.4 [00] - December 2001, Noel Bush
+    - made filterMultipleConsecutive actually work!
+    - added tabs to characters that get filtered
+*/
+
 package org.alicebot.server.core.util;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.Reader;
+
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
+
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.text.StringCharacterIterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
 import java.util.jar.JarFile;
+
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javax.servlet.ServletRequest;
-
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.logging.Trace;
-import org.alicebot.server.core.util.Substituter;
+import org.alicebot.server.core.parser.XMLParser;
+import org.alicebot.server.core.parser.XMLNode;
+import org.alicebot.server.core.util.Trace;
 
 
 /**
@@ -90,22 +101,22 @@ public class Toolkit
     private static final String[] EMPTY_STRING_ARRAY = {(EMPTY_STRING)};
     
     /** A tag start marker. */
-    private static final String TAG_START = "<";
+    private static final char TAG_START = '<';
     
     /** A tag end marker. */
-    private static final String TAG_END = ">";
+    private static final char TAG_END = '>';
 
     /** A space, for convenience. */
     private static final String SPACE = " ";
 
-    /** An asterisk, for convenience. */
-    private static final String ASTERISK = "*";
+    /** A tab, for convenience. */
+    private static final String TAB = new Character('\u0009').toString();
 
     /** A common string we search for when parsing attributes in tags. */
     protected static final String EQUAL_QUOTE = "=\"";
 
     /** A quote mark, for convenience. */
-    protected static final String QUOTE_MARK = "\"";
+    protected static final char QUOTE_MARK = '"';
 
     /** The system line separator. */
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
@@ -154,7 +165,9 @@ public class Toolkit
      */
     public static String filterWhitespace(String input) throws StringIndexOutOfBoundsException
     {
-        return filterMultipleConsecutive(Substituter.replace(LINE_SEPARATOR, SPACE, filterXML(input)), SPACE).trim();
+        return filterMultipleConsecutive(
+                Substituter.replace(TAB, SPACE,
+                    Substituter.replace(LINE_SEPARATOR, SPACE, filterXML(input))), SPACE).trim();
     }
 
 
@@ -417,7 +430,7 @@ public class Toolkit
         // Index the input length.
         int inputLength = input.length();
 
-        // Index the filter length minus one.
+        // Index the filter length.
         int filterLength = filter.length();
 
         // Calculate maximum index.
@@ -441,6 +454,7 @@ public class Toolkit
                 {
                     result.append(current);
                 }
+                previous = current;
             }
             return result.toString();
         }
@@ -687,6 +701,11 @@ public class Toolkit
         // Read the first line. May throw an IOException.
         String firstLine = buffReader.readLine();
 
+        if (firstLine == null)
+        {
+            return SYSTEM_ENCODING;
+        }
+
         // Look for the XML processing instruction.
         int piStart = firstLine.indexOf(XML_PI_START);
 
@@ -747,6 +766,130 @@ public class Toolkit
 
 
     /**
+     *  Formats AIML from a single long string into a nicely indented multi-line string.
+     *
+     *  @param content  the AIML content to format
+     */
+    public static String formatAIML(String content)
+    {
+        XMLParser parser = new XMLParser();
+        LinkedList trie = parser.load(content);
+
+        return formatAIML(trie, 0, true);
+    }
+
+
+    /**
+     *  Formats AIML from a trie into a nicely indented multi-line string.
+     *
+     *  @param trie     the trie containing the AIML
+     *  @param level    the level (for indenting)
+     *  @param atStart  whether the whole XML string is at its beginning
+     */
+    public static String formatAIML(LinkedList trie, int level, boolean atStart)
+    {
+        ListIterator trieIterator = trie.listIterator();
+
+        StringBuffer result = new StringBuffer();
+
+        while (trieIterator.hasNext())
+        {
+            XMLNode node = (XMLNode)trieIterator.next();
+            
+            switch (node.XMLType)
+            {
+                // Append a start tag.
+                case XMLNode.TAG :
+                    if (!atStart)
+                    {
+                        result.append(LINE_SEPARATOR);
+                    }
+                    else
+                    {
+                        atStart = false;
+                    }
+                    result.append(tab(level) + TAG_START + node.XMLData + node.XMLAttr + TAG_END);
+                    String contents = formatAIML(node.XMLChild, level + 1, true);
+                    if (contents.trim().length() > 0)
+                    {
+                        result.append(LINE_SEPARATOR + contents);
+                    }
+                    result.append(LINE_SEPARATOR + tab(level) + TAG_START + '/' + node.XMLData + node.XMLAttr + TAG_END);
+                    break;
+                
+                // Append an atomic tag.
+                case XMLNode.EMPTY :
+                    if (atStart)
+                    {
+                        result.append(LINE_SEPARATOR + tab(level));
+                        atStart = false;
+                    }
+                    result.append(TAG_START + node.XMLData + node.XMLAttr + '/' + TAG_END);
+                    // Treat HTML line breaks specially.
+                    if (node.XMLData.trim().equals("br"))
+                    {
+                        result.append(LINE_SEPARATOR + tab(level));
+                    }
+                    break;
+                
+                // Append data.
+                case XMLNode.DATA :
+                    if (atStart)
+                    {
+                        if (node.XMLData.trim().length() > 0)
+                        {
+                            result.append(tab(level) + node.XMLData);
+                            atStart = false;
+                            break;
+                        }
+                    }
+                    result.append(node.XMLData);
+                    break;
+
+                // Append CDATA.
+                case XMLNode.CDATA :
+                    if (atStart)
+                    {
+                        result.append(tab(level));
+                        atStart = false;
+                    }
+                    result.append(LINE_SEPARATOR + tab(level) +
+                        TAG_START + XMLParser.CDATA_START + node.XMLData + XMLParser.CDATA_END);
+                    break;
+
+                // Append comments.
+                case XMLNode.COMMENT :
+                    if (atStart)
+                    {
+                        result.append(tab(level));
+                        atStart = false;
+                    }
+                    result.append(LINE_SEPARATOR + tab(level) +
+                        TAG_START + XMLParser.COMMENT_START + node.XMLData + XMLParser.COMMENT_END);
+                    break;
+            }
+        }
+        return result.toString();
+    }
+
+
+    /**
+     *  Returns a tab of the specified length.
+     *
+     *  @param length   the length of the tab
+     */
+    private static String tab(int level)
+    {
+        char[] result = new char[level];
+        for (int index = 0; index < level; index++)
+        {
+            result[index] = '\t';
+        }
+        return new String(result);
+    }
+
+
+    /**
      *  <p>
      *  Scans the classpath for classes that implement a given interface.
      *  </p>
@@ -773,7 +916,7 @@ public class Toolkit
         }
         catch (ClassNotFoundException e)
         {
-            Trace.devfail("Could not find class \"" + interfaceName + "\".");
+            throw new DeveloperErrorException("Could not find class \"" + interfaceName + "\".");
         }
 
         StringTokenizer tokenizer = new StringTokenizer(System.getProperty("java.class.path", (EMPTY_STRING)),
@@ -1025,17 +1168,17 @@ public class Toolkit
                         }
                         catch (IOException e1)
                         {
-                            Trace.userfail("Could not create " + description + " \"" + file.getAbsolutePath() + "\".");
+                            throw new UserErrorException("Could not create " + description + " \"" + file.getAbsolutePath() + "\".");
                         }
                     }
                     else
                     {
-                        Trace.userfail("Could not create directory \"" + directory.getAbsolutePath() + "\".");
+                        throw new UserErrorException("Could not create directory \"" + directory.getAbsolutePath() + "\".");
                     }
                 }
                 else
                 {
-                    Trace.userfail("Could not create " + description + " directory.");
+                    throw new UserErrorException("Could not create " + description + " directory.");
                 }
             }
             Trace.devinfo("Created new " + description + " \"" + path + "\".");

@@ -19,6 +19,9 @@ import java.lang.reflect.Field;
 import java.util.Hashtable;
 
 import org.alicebot.server.core.logging.Log;
+import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.UserErrorException;
+
 
 /**
  *  Registers {@link AIMLProcessor}s for a given version of AIML.
@@ -61,7 +64,7 @@ public class ProcessorRegistry extends Hashtable
         }
         catch (ClassNotFoundException e)
         {
-            Log.userfail("Could not find processor base class \"" + processorBaseClassName + "\"!", Log.ERROR);
+            throw new UserErrorException("Could not find processor base class \"" + processorBaseClassName + "\"!", e);
         }
 
         // Load in the subclasses of the processor.
@@ -78,16 +81,15 @@ public class ProcessorRegistry extends Hashtable
             }
             catch (ClassNotFoundException e)
             {
-                Log.userfail("\"" + processorList[index] +
-                             "\" is missing from your classpath.  Cannot initialize processor registry.",
-                             Log.ERROR);
+                throw new UserErrorException("\"" + processorList[index] +
+                             "\" is missing from your classpath.  Cannot initialize processor registry.", e);
             }
 
             // Ensure that the class is actually an extension of the processor.
             if (!baseClass.isAssignableFrom(processor))
             {
-                Log.devfail("Developer has incorrectly specified \"" + processorList[index] +
-                            "\" as a processor.", Log.ERROR);
+                throw new DeveloperErrorException("Developer has incorrectly specified \"" + processorList[index] +
+                            "\" as a processor.");
             }
 
             // Get the label field.
@@ -100,13 +102,13 @@ public class ProcessorRegistry extends Hashtable
                 }
                 catch (NoSuchFieldException e)
                 {
-                    Log.devfail("Unlikely error: \"" + processorList[index] + "\" is missing field \"" +
-                                labelFieldName + "\"!", Log.ERROR);
+                    throw new DeveloperErrorException("Unlikely error: \"" + processorList[index] + "\" is missing field \"" +
+                                labelFieldName + "\"!");
                 }
             }
             else
             {
-                Log.devfail("Failed to get processor \"" + processorList[index] + "\"", Log.ERROR);
+                throw new DeveloperErrorException("Failed to get processor \"" + processorList[index] + "\"");
             }
 
             // Get the value in the label field.
@@ -119,7 +121,7 @@ public class ProcessorRegistry extends Hashtable
                 }
                 catch (IllegalAccessException e)
                 {
-                    Log.devfail(e.getMessage(), Log.ERROR);
+                    throw new DeveloperErrorException(e.getMessage());
                 }
             }
 

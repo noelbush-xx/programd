@@ -15,6 +15,13 @@
 
 package org.alicebot.server.core.util;
 
+
+/**
+ *  Thrown by {@link PatternArbiter} when it gets a pattern
+ *  candidate that does not meet the definition of an AIML pattern.
+ *
+ *  @author Noel Bush
+ */
 public class NotAnAIMLPatternException extends Exception
 {
     public NotAnAIMLPatternException(String message)
@@ -22,3 +29,4 @@ public class NotAnAIMLPatternException extends Exception
         super(message);
     }
 }
+

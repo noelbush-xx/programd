@@ -1,4 +1,5 @@
 package org.alicebot.server.sql.pool;
+
     
 
 /**
@@ -25,6 +26,7 @@ class CleanUpThread extends Thread
      */
     public CleanUpThread(ObjectPool pool, long sleepTime)
     {
+        super("Database Pool Cleanup Thread");
         this.pool = pool;
         this.sleepTime = sleepTime;
     }
@@ -50,3 +52,4 @@ class CleanUpThread extends Thread
         }
     }
 }
+

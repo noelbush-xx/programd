@@ -24,16 +24,17 @@
 
 package org.alicebot.server.core.responder;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,9 +42,10 @@ import javax.servlet.http.HttpSession;
 
 import org.alicebot.server.core.ActiveMultiplexor;
 import org.alicebot.server.core.Globals;
+import org.alicebot.server.core.Multiplexor;
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.logging.Trace;
 import org.alicebot.server.core.util.SuffixFilenameFilter;
+import org.alicebot.server.core.util.Trace;
 
 
 /**
@@ -435,7 +437,7 @@ public class HTMLResponder extends AbstractMarkupResponder
         else if (userCookieSet)
         {
             // If user is known by ActiveMultiplexor
-            if (ActiveMultiplexor.StaticSelf.checkUser(this.user, this.password, SECRET_KEY))
+            if (ActiveMultiplexor.getInstance().checkUser(this.user, this.password, SECRET_KEY))
             {
                 // Return the all-clear
                 state = state | GO_USER;
@@ -548,7 +550,7 @@ public class HTMLResponder extends AbstractMarkupResponder
             if((state & LOGIN) == LOGIN)
             {
                 // Check user/password combo
-                if (ActiveMultiplexor.StaticSelf.checkUser(userParam, passwordParam, SECRET_KEY))
+                if (ActiveMultiplexor.getInstance().checkUser(userParam, passwordParam, SECRET_KEY))
                 {
                     Cookie ucookie = new Cookie(USER_COOKIE_NAME, userParam);
                     Cookie pcookie = new Cookie(PASSWORD_COOKIE_NAME, passwordParam);
@@ -569,7 +571,7 @@ public class HTMLResponder extends AbstractMarkupResponder
             else if ((state & CHANGE_PASSWORD) == CHANGE_PASSWORD)
             {
                 // Check user/password combo
-                if (ActiveMultiplexor.StaticSelf.checkUser(this.user, oldPasswordParam, SECRET_KEY))
+                if (ActiveMultiplexor.getInstance().checkUser(this.user, oldPasswordParam, SECRET_KEY))
                 {
                     Cookie pcookie = new Cookie(PASSWORD_COOKIE_NAME, passwordParam);
                     pcookie.setMaxAge(1000000);
@@ -584,7 +586,7 @@ public class HTMLResponder extends AbstractMarkupResponder
             // Try registration
             else if ((state & REGISTER) == REGISTER)
             {
-                if(ActiveMultiplexor.StaticSelf.createUser(userParam, passwordParam, SECRET_KEY))
+                if(ActiveMultiplexor.getInstance().createUser(userParam, passwordParam, SECRET_KEY))
                 {
                     sessionID = session.getId();
                     state = state | PROCESS_OK;
@@ -711,6 +713,6 @@ public class HTMLResponder extends AbstractMarkupResponder
         response.addCookie(pcookie);
 
         // Create the new user (and ensure that it worked).
-        return ActiveMultiplexor.StaticSelf.createUser(this.user, this.password, SECRET_KEY);
+        return ActiveMultiplexor.getInstance().createUser(this.user, this.password, SECRET_KEY);
     }
 }

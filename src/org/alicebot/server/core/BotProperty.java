@@ -24,12 +24,8 @@
 
 package org.alicebot.server.core;
 
-import java.util.Vector;
-import java.util.StringTokenizer;
-import java.util.ResourceBundle;
-import java.util.Properties;
-import java.util.Locale;
 import java.util.Hashtable;
+
 
 /**
  *  <p>
@@ -71,13 +67,13 @@ public class BotProperty
         // If no predicates have been set, don't bother looking.
         if (botPredicates == null)
         {
-            return Globals.getBotPredicateEmptyDefault();
+            return Globals.getPredicateEmptyDefault();
         }
 
         // Don't bother with empty predicate names.
         if (name.equals(EMPTY_STRING))
         {
-            return Globals.getBotPredicateEmptyDefault();
+            return Globals.getPredicateEmptyDefault();
         }
 
         // Retrieve the contents of the predicate.
@@ -88,7 +84,7 @@ public class BotProperty
         }
         else
         {
-            return Globals.getBotPredicateEmptyDefault();
+            return Globals.getPredicateEmptyDefault();
         }
     }
 

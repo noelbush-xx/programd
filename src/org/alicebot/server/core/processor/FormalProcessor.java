@@ -48,7 +48,7 @@ public class FormalProcessor extends AIMLProcessor
     // Convenience constants.
     private static final String SPACE = " ";
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
@@ -73,7 +73,7 @@ public class FormalProcessor extends AIMLProcessor
         }
         else
         {
-            throw new InvalidAIMLException("<formal></formal> must have content!");
+            throw new AIMLProcessorException("<formal></formal> must have content!");
         }
     }
 }

@@ -18,7 +18,7 @@ package org.alicebot.server.core.processor;
 
 /**
  *  Should be thrown by processors when they
- *  find invalid content.
+ *  find content that they cannot handle.
  *
  *  @since 4.1.3
  *
@@ -26,12 +26,9 @@ package org.alicebot.server.core.processor;
  */
 public class ProcessorException extends Exception
 {
-    public ProcessorException()
-    {
-    }
-
     public ProcessorException(String message)
     {
         super(message);
     }
 }
+

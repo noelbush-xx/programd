@@ -15,10 +15,8 @@
 
 package org.alicebot.server.core.responder;
 
-import org.alicebot.server.core.ActiveMultiplexor;
 import org.alicebot.server.core.Globals;
-import org.alicebot.server.core.Graphmaster;
-import org.alicebot.server.core.NoSuchPredicateException;
+import org.alicebot.server.core.PredicateMaster;
 import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.core.util.Toolkit;
 
@@ -43,15 +41,7 @@ public class ResponderStandardLogger
         // Break lines at tags.
         String[] lines = Toolkit.breakLines(input);
 
-        String clientName = null;
-        try
-        {
-            clientName = ActiveMultiplexor.StaticSelf.getPredicateValue(Globals.getClientNamePredicate(), userid);
-        }
-        catch (NoSuchPredicateException e)
-        {
-            clientName = Graphmaster.GENERIC_CLIENT_NAME;
-        }
+        String clientName = PredicateMaster.get(Globals.getClientNamePredicate(), userid);
 
         // Log the input.
         for (int index = 0; index < lines.length; index++)

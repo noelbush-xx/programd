@@ -16,6 +16,15 @@ rem Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
 rem USA.
 rem ==========================================================================
 
-erase .\logs\chat.log
-erase .\logs\chat.xml
+if not answer%1==answeryes goto warn
+if exist .\logs\chat.xml erase .\logs\chat.xml
 server < testcase.txt
+
+:warn
+echo ----
+echo This is the Program D testing utility.
+echo It will erase your current chat.xml log!
+echo This file also uses tester.properties, which assumes that the AIML set
+echo is located at ..\bots\standard (standard location if you're using CVS).
+echo You must confirm this by typing "tester yes" at the prompt.
+echo ----

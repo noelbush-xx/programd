@@ -1,4 +1,59 @@
 #########
+# 4.1.4 #
+###############################################################################
+Bug fixes and miscellany by Noel Bush.
+
+Functional fixes:
+* "secret.key" problem with DBMultiplexor fixed
+* Important fix to sentence-splitting: problem with method was causing multiple
+  consecutive punctuation marks to generate multiple "sentences", so an input like
+  "hi!!!!!!!!!!" would get a long, long response.
+* Fixed error in which values saved to database weren't being properly escaped
+* "targets directory not found" problem fixed
+* problem in which some targets were not saved fixed
+* target extension algorithm fixed
+
+Functional improvements:
+* implemented support of default predicate values, and return-name-when-set predicates
+* Configurable caching system now caches predicates in memory, writes out to
+  disk or database only when necessary
+* IRC, ICQ and AIM listeners now work.
+* Interactive shell has been extended to permit:
+  - commanding listeners (currently AliceIRC is enabled this way by means of illustration).
+  - delete existing target data
+  - load new AIML files
+* direct checking of some types of infinite loops
+* XML chat log now has a "rollover" capability -- will not write more than a fixed
+  number of entries to file before rolling it over
+* XML chat log viewing stylesheet looks in local directory for entity declaration
+  resources, rather than to the W3C
+
+Code improvements, changes:
+* Somewhat better management of threads; inclusion of a shutdown hook from
+  main Aliceserver in order to do cleanup before dying.
+* Introduction of PredicateMaster -- removal of "StaticSelf" mess from Multiplexor,
+  and somewhat more clarity about what a Multiplexor is all about
+* Moved Trace and MessagePrinter to util; devinfo and devfail methods will now
+  print the name of the method that called them (not quite perfect but useful)
+* AIMLReader works just a bit faster now, by recreating the StringBuffer after
+  each new category is created
+* Dependence on third-party "LinkedList" and "LinkedListItr" has been eliminated
+* Now use "XMLResourceSpec" instead of my embarassing String array for calling
+  XMLWriter
+* introduction of UserErrorException and DeveloperErrorException for
+  the promotion of responsible coding ;-)
+
+Other notable changes:
+* JavaScript interpreter is no longer hard-linked -- could easily be replaced by
+  a wrapper for another one.
+* Hypersonic SQL code has been removed entirely.
+* This marks the end of the effort to decouple Program D from GPL-incompatible code.
+  We recognize that a tightly-linked combination of ALICE code with GPL-incompatible
+  code is a contradiction of the terms of the GPL, and have striven to re-align the
+  codebase with the spirit and terms of the GPL.
+
+
+#########
 # 4.1.3 #
 ###############################################################################
 Major cleanup and optimization work by Noel Bush.  User authentication

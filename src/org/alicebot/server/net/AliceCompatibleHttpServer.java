@@ -17,6 +17,8 @@ package org.alicebot.server.net;
 
 import java.io.IOException;
 
+import org.alicebot.server.core.BotProcess;
+
 
 /**
  *  Specifies the methods that an http server must implement
@@ -24,7 +26,7 @@ import java.io.IOException;
  *
  *  @author Noel Bush
  */
-public interface AliceCompatibleHttpServer
+public interface AliceCompatibleHttpServer extends BotProcess
 {
     /**
      *  Configures the http server given
@@ -40,5 +42,5 @@ public interface AliceCompatibleHttpServer
     /**
      *  Starts the http server.
      */
-    public void start();
+    public void run();
 }

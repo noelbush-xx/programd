@@ -24,11 +24,11 @@
 package org.alicebot.server.core.responder;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 
 import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.util.SuffixFilenameFilter;
+
 
 /**
  *  Implements a {@link Responder} for a Flash client.

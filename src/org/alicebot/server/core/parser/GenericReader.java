@@ -15,15 +15,14 @@
 
 
 package org.alicebot.server.core.parser;
-    
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.logging.Trace;
-import org.alicebot.server.core.processor.ProcessorException;
+import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.Trace;
 import org.alicebot.server.core.util.Toolkit;
 
 
@@ -70,7 +69,7 @@ abstract public class GenericReader
     protected static final String LINE_SEPARATOR      = System.getProperty("line.separator");
 
     /** An estimate of the maximum buffer length needed (helps tune performance). */
-    protected static final int BUFFER_LENGTH_ESTIMATE = 100;
+    protected static int bufferStartCapacity          = 100;
 
 
     /*
@@ -111,7 +110,7 @@ abstract public class GenericReader
     protected int                    lineNumber      = 0;
 
     /** The parse buffer. */
-    protected StringBuffer           buffer          = new StringBuffer(BUFFER_LENGTH_ESTIMATE);
+    protected StringBuffer           buffer          = new StringBuffer(bufferStartCapacity);
 
     /** The parse buffer as a String. */
     protected String                 bufferString    = null;
@@ -319,7 +318,7 @@ abstract public class GenericReader
             }
             catch (Exception e)
             {
-                Trace.devfail(e);
+                throw new DeveloperErrorException(e);
             }
             throw(TRANSITION_MADE);
         }
@@ -368,7 +367,7 @@ abstract public class GenericReader
                     }
                     catch (Exception e)
                     {
-                        Trace.devfail(e);
+                        throw new DeveloperErrorException(e);
                     }
                     throw(TRANSITION_MADE);
                 }

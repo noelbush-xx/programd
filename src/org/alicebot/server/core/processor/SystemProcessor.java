@@ -38,12 +38,14 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.StringTokenizer;
 
 import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.core.parser.AIMLParser;
 import org.alicebot.server.core.parser.XMLNode;
+
 
 /**
  *  <p>
@@ -65,8 +67,12 @@ public class SystemProcessor extends AIMLProcessor
 {
     public static final String label = "system";
 
+    private static final String directoryPath = Globals.getProperty("programd.interpreter.system.directory");
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    private static final String prefix = Globals.getProperty("programd.interpreter.system.prefix");
+
+
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         // Don't use the system tag if not permitted.
         if (!Globals.osAccessAllowed())
@@ -78,16 +84,37 @@ public class SystemProcessor extends AIMLProcessor
         if (tag.XMLType == XMLNode.TAG)
         {
             String response = parser.evaluate(level++, "localhost", tag.XMLChild);
+            if (prefix != null)
+            {
+                response = prefix + response;
+            }
             String output = EMPTY_STRING;
+            Log.log("<system> call:", Log.SYSTEM);
+            Log.log(response, Log.SYSTEM);
             try
             {
-                File cwd = null;
-                String currentdir = Globals.getProperty("programd.home");
-                if (currentdir != null)
+                File directory = null;
+                if (directoryPath != null)
                 {
-                    cwd = new File(currentdir);
+                    Log.log("Executing <system> call in \"" + directoryPath + "\"", Log.SYSTEM);
+                    directory = new File(directoryPath);
+                    if (!directory.isDirectory())
+                    {
+                        Log.userinfo("programd.interpreter.system.directory (\"" + directoryPath + "\") does not exist or is not a directory.", Log.SYSTEM);
+                        return EMPTY_STRING;
+                    }
                 }
-                Process child = Runtime.getRuntime().exec(response, null, cwd);
+                else
+                {
+                    Log.userinfo("No programd.interpreter.system.directory defined!", Log.SYSTEM);
+                    return EMPTY_STRING;
+                }
+                Process child = Runtime.getRuntime().exec(response, null, directory);
+                if (child == null)
+                {
+                    Log.userinfo("Could not get separate process for <system> command.", Log.SYSTEM);
+                    return EMPTY_STRING;
+                }
 
                 InputStream in = child.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -97,8 +124,6 @@ public class SystemProcessor extends AIMLProcessor
                     output = output + line + "<br />\n";
                 }
 
-                Log.log("<system> call:", Log.SYSTEM);
-                Log.log(response, Log.SYSTEM);
                 Log.log("output:", Log.SYSTEM);
                 Log.log(output, Log.SYSTEM);
 
@@ -107,11 +132,11 @@ public class SystemProcessor extends AIMLProcessor
             }
             catch (IOException e)
             {
-                Log.userinfo("Cannot execute \"" + response + "\".  Response:", Log.SYSTEM);
+                Log.userinfo("Cannot execute <system> command.  Response logged.", Log.SYSTEM);
                 StringTokenizer lines = new StringTokenizer(e.getMessage(), System.getProperty("line.separator"));
                 while (lines.hasMoreTokens())
                 {
-                    Log.userinfo(lines.nextToken(), Log.SYSTEM);
+                    Log.log(lines.nextToken(), Log.SYSTEM);
                 }
             }
 
@@ -119,7 +144,7 @@ public class SystemProcessor extends AIMLProcessor
         }
         else
         {
-            throw new InvalidAIMLException("<system></system> must have content!");
+            throw new AIMLProcessorException("<system></system> must have content!");
         }
     }
 }

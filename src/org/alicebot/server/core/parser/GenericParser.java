@@ -15,15 +15,16 @@
 
 package org.alicebot.server.core.parser;
 
+import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.StringTokenizer;
 
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.logging.Trace;
+import org.alicebot.server.core.util.Trace;
 import org.alicebot.server.core.processor.Processor;
-import org.alicebot.server.core.processor.ProcessorRegistry;
 import org.alicebot.server.core.processor.ProcessorException;
-import org.alicebot.server.core.util.LinkedList;
-import org.alicebot.server.core.util.LinkedListItr;
+import org.alicebot.server.core.processor.ProcessorRegistry;
+import org.alicebot.server.core.util.DeveloperErrorException;
 import org.alicebot.server.core.util.Toolkit;
 
 
@@ -83,7 +84,7 @@ abstract public class GenericParser
     {
         // Create a new XML parser and load it with the template.
         XMLParser parser = new XMLParser();
-        LinkedList list = parser.XMLLoad(content);
+        LinkedList list = parser.load(content);
 
         // If XML processing went badly, return error.
         if (list == null)
@@ -104,7 +105,7 @@ abstract public class GenericParser
         String response = evaluate(0, id, list);
 
         // Perhaps unnecessary: a controlled cleanup
-        list = parser.XMLFree(list);
+        list.clear();
 
         return response;
     }
@@ -138,7 +139,7 @@ abstract public class GenericParser
         }
         else
         {
-            Trace.devfail("processorRegistry has not been initialized!");
+            throw new DeveloperErrorException("processorRegistry has not been initialized!");
         }
 
         // Create a new instance of the processor.
@@ -151,40 +152,30 @@ abstract public class GenericParser
             }
             catch (InstantiationException e)
             {
-                Trace.devfail(e);
+                throw new DeveloperErrorException(e);
             }
             catch (IllegalAccessException e)
             {
-                Trace.devfail(e);
+                throw new DeveloperErrorException(e);
             }
             catch (RuntimeException e)
             {
-                Trace.devfail(e);
+                throw new DeveloperErrorException(e);
             }
         }
         else
         {
-            throw new ProcessorException();
+            throw new ProcessorException("Could not find a processor for \"" + tag.XMLData + "\"!");
         }
 
         // Return the results of processing the tag.
         if (processor != null)
         {
-            try
-            {
-                return Toolkit.filterWhitespace(processor.process(level++, id, tag, this));
-            }
-            catch (ProcessorException e)
-            {
-                // Would be great to provide a line number, file name here.
-                Log.userinfo(e.getMessage(), Log.ERROR);
-                return EMPTY_STRING;
-            }
+            return Toolkit.filterWhitespace(processor.process(level++, id, tag, this));
         }
         else
         {
-            Trace.devfail("Corrupt processor set.");
-            return EMPTY_STRING;
+            throw new DeveloperErrorException("Corrupt processor set.");
         }
     }
 
@@ -205,13 +196,13 @@ abstract public class GenericParser
      *  @param id       an identifier (e.g., user, bot, ...)
      *  @param list     the XML trie to parse
      *
-     *  @return the result of processing the tag.
+     *  @return the result of processing the tag
      */
     public String evaluate(int level, String id, LinkedList list)
     {
-        String         response = EMPTY_STRING;
-        LinkedListItr  iterator;
-        XMLNode        node;
+        String response = EMPTY_STRING;
+        ListIterator iterator;
+        XMLNode node;
 
         // Verify there is something to work with.
         if (list == null)
@@ -220,12 +211,12 @@ abstract public class GenericParser
         }
 
         // Point to the start of the XML trie to parse
-        iterator = list.zeroth();
+        iterator = list.listIterator(0);
 
         // Navigate thru the entire level of it
-        while (!iterator.isPastEnd())
+        while (iterator.hasNext())
         {
-            node = (XMLNode)iterator.retrieve();
+            node = (XMLNode)iterator.next();
             if (node != null)
             {
                 switch(node.XMLType)
@@ -239,7 +230,7 @@ abstract public class GenericParser
                         }
                         catch (ProcessorException e)
                         {
-                            Log.userinfo(e.getMessage(), Log.ERROR);
+                            throw new DeveloperErrorException(e);
                         }
                         break;
 
@@ -253,7 +244,6 @@ abstract public class GenericParser
                         break;
                 }
             }
-            iterator.advance();
         }
         return response;
     }
@@ -275,7 +265,7 @@ abstract public class GenericParser
      *
      *  @return the formatted result
      */
-    public String formatTag (int level, String id, XMLNode tag)
+    public String formatTag(int level, String id, XMLNode tag)
     {
         // A given level always starts with an empty answer.
         String response = EMPTY_STRING;
@@ -352,10 +342,10 @@ abstract public class GenericParser
      */
     public int nodeCount(String tagname, LinkedList list, boolean allnodes)
     {
-        String         response = EMPTY_STRING;
-        LinkedListItr  iterator;
-        XMLNode        node;
-        int            numbernodes = 0;
+        String response = EMPTY_STRING;
+        ListIterator iterator;
+        XMLNode node;
+        int numbernodes = 0;
 
         // Verify there is something to work with.
         if (list == null)
@@ -364,13 +354,12 @@ abstract public class GenericParser
         }
 
         // Point to the start of the XML trie to parse.
-        iterator = list.zeroth();
-        iterator.advance();
+        iterator = list.listIterator(0);
 
         // Navigate through this entire level.
-        while (!iterator.isPastEnd())
+        while (iterator.hasNext())
         {
-            node = (XMLNode)iterator.retrieve();
+            node = (XMLNode)iterator.next();
             if (node != null)
             {
                 switch(node.XMLType)
@@ -392,7 +381,6 @@ abstract public class GenericParser
                         break;
                 }
             }
-            iterator.advance();
         }
         return numbernodes;
     }
@@ -416,9 +404,9 @@ abstract public class GenericParser
      */
     public XMLNode getNode(String tagname, LinkedList list, int ordernode)
     {
-        String         response = EMPTY_STRING;
-        LinkedListItr  iterator;
-        XMLNode        node;
+        String response = EMPTY_STRING;
+        ListIterator iterator;
+        XMLNode node;
 
         // Verify there is something to work with.
         if (list == null)
@@ -427,13 +415,12 @@ abstract public class GenericParser
         }
 
         // Point to the start of the XML trie to parse.
-        iterator = list.zeroth();
-        iterator.advance();
+        iterator = list.listIterator(0);
 
         // Navigate thru the entire level.
-        while (!iterator.isPastEnd())
+        while (iterator.hasNext())
         {
-            node = (XMLNode)iterator.retrieve();
+            node = (XMLNode)iterator.next();
             if (node != null)
             {
                 switch(node.XMLType)
@@ -459,7 +446,6 @@ abstract public class GenericParser
                         break;
                 }
             }
-            iterator.advance();
         }
         return null;
     }
@@ -487,7 +473,7 @@ abstract public class GenericParser
      *
      *  @return the result of processing this structure
      */
-    public String shortcutTag (int level, String id, String rootTag, int rootType,
+    public String shortcutTag(int level, String id, String rootTag, int rootType,
                               String rootAttr, String childTag, int childType)
     {
         String response = EMPTY_STRING;
@@ -513,11 +499,9 @@ abstract public class GenericParser
             came from the original AIML in this form.
         */
         LinkedList list = new LinkedList();
-        list.makeEmpty();
 
         // Prepare the list to receive inserts.
-        LinkedListItr iterator;
-        iterator = list.zeroth();
+        ListIterator iterator = list.listIterator(0);
 
         /*
             Process child tags (if any). Clearly, the root tag cannot
@@ -552,11 +536,9 @@ abstract public class GenericParser
             }
 
             // Insert the child tag into the child trie.
-            LinkedListItr childListIterator;
-            childListIterator = childList.zeroth();
+            ListIterator childListIterator = childList.listIterator(0);
 
-            childList.insert(nodeChild, childListIterator);
-            childListIterator.advance();
+            childListIterator.add(nodeChild);
 
             // Point the root tag to the child tag.
             node.XMLChild = childList;
@@ -564,8 +546,7 @@ abstract public class GenericParser
         }
 
         // Insert the root tag.
-        list.insert(node, iterator);
-        iterator.advance();
+        iterator.add(node);
 
         // Now evaluate this XML trie, just as if it came from the original AIML.
         response = response + evaluate(level++, id, list);

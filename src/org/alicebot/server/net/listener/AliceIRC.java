@@ -1,50 +1,55 @@
-package org.alicebot.server.net.listener;
-
-/**
-Alice Program D
-Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-USA.
-
-@author  Richard Wallace
-@author  Jon Baer
-@author  Thomas Ringate/Pedro Colla
-@version 4.1.1
-*/
-
 /*
     - added initialize method and made implementation of AliceChatListener
     - changed some server property names
 */
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+/*
+    4.1.4 [00] - December 2001, Noel Bush
+    - changed "ICQ" to "IRC" as noted by spider@wanfear.com
+    - cleaned up some of the gratuitous text decorations,
+      and changed all System.out/System.err prints to use Log/Trace
+    - added line breaking to response
+    - reworked to fit changes to AliceChatListener
+    - made to implement ShellCommandable
+*/
 
-import org.alicebot.server.core.*;
-import org.alicebot.server.core.responder.*;
+package org.alicebot.server.net.listener;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Properties;
+
+import org.alicebot.server.core.ActiveMultiplexor;
+import org.alicebot.server.core.Multiplexor;
+import org.alicebot.server.core.logging.Log;
+import org.alicebot.server.core.util.Trace;
+import org.alicebot.server.core.responder.Responder;
+import org.alicebot.server.core.responder.TextResponder;
+import org.alicebot.server.core.util.ShellCommandable;
+import org.alicebot.server.core.util.Toolkit;
+
 
 /**
- * Alicebot IRC Chat Listener
+ *  This code is from the sIRC project and was written
+ *  by Chris Knight <a href="http://www.chrisknight.com/sirc/">http://www.chrisknight.com/sirc/</a>
+ *  and modified to work with an Alicebot server.
  *
- * This code is from the sIRC project and was written
- * by Chris Knight http://www.chrisknight.com/sirc/
- * and modified to work with an Alicebot server.
+ *  @author  Chris Knight
+ *  @author  Jon Baer
+ *  @version 4.1.4
  *
- * @author Chris Knight
- * @author Jon Baer
- * @version 1.0
+ *  @see <a href="http://www.chrisknight.com/sirc/">http://www.chrisknight.com/sirc/</a>
  */
 
-public class AliceIRC implements Runnable, AliceChatListener
+public class AliceIRC implements AliceChatListener, ShellCommandable
 {
     // ------------------------------------------------------------------------
     
@@ -59,9 +64,9 @@ public class AliceIRC implements Runnable, AliceChatListener
     
     private static final int    MAXARGC        = 16;
     
-    private static final String SERVERPREFIX   = "** ";
-    private static final String SIRCMESSAGE    = "-- ";
-    private static final String DEBUGPREFIX    = "!! ";
+    private static final String SERVERPREFIX   = "[server]";
+    private static final String SIRCMESSAGE    = "[irc]";
+    private static final String DEBUGPREFIX    = "[debug]";
     private static final String NONE           = "";
     
     private static final byte   NOTCONNECTED   = 0;
@@ -74,88 +79,164 @@ public class AliceIRC implements Runnable, AliceChatListener
     private byte clientStatus = NOTCONNECTED;
     
     private Socket socket;
-    private BufferedReader reader;    // new BufferedReader(new InputStreamReader(socketthing));
-    private PrintWriter writer;       // new PrintWriter(sockething);
-    private Thread thread;
+    private BufferedReader reader;
+    private PrintWriter writer;
     
     private String host, nick, channel;
     private int port;
     
     
-    public void initialize(Properties properties)
+    public boolean initialize(Properties properties)
     {
-        if (properties.getProperty("programd.listeners.irc.host") != null)
+        // Check if enabled.
+        if (Boolean.valueOf(properties.getProperty("programd.listeners.irc.enabled", "false")).booleanValue())
         {
-            AliceIRC irc = new AliceIRC(properties.getProperty("programd.listeners.irc.host"), 
-                                        properties.getProperty("programd.listeners.irc.port"), 
-                                        properties.getProperty("programd.listeners.irc.nick"),
-                                        properties.getProperty("programd.listeners.irc.channel"));
+            // Get parameters.
+            host = properties.getProperty("programd.listeners.irc.host", "");
+            try
+            {
+                port = Integer.parseInt(properties.getProperty("programd.listeners.irc.port", ""));
+            }
+            catch (NumberFormatException e)
+            {
+                Log.userinfo("AliceIRC: Invalid port specification (try a number!); aborting.", Log.LISTENERS);
+                return false;
+            }
+            nick = properties.getProperty("programd.listeners.irc.nick", "");
+            channel = properties.getProperty("programd.listeners.irc.channel", "");
+
+            // Check parameters.
+            if (host.length() == 0)
+            {
+                Log.userinfo("AliceIRC: no host specified; aborting.", Log.LISTENERS);
+                return false;
+            }
+            if (port <= 0)
+            {
+                Log.userinfo("AliceIRC: invalid port; aborting.", Log.LISTENERS);
+            }
+            if (nick.length() == 0)
+            {
+                Log.userinfo("AliceIRC: no nick specified; aborting.", Log.LISTENERS);
+                return false;
+            }
+            if (channel.length() == 0)
+            {
+                Log.userinfo("AliceIRC: no channel specified; aborting.", Log.LISTENERS);
+                return false;
+            }
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
+
+    public void shutdown()
+    {
+        disconnect();
+    }
+
+
+    /**
+     *  Creates a new AliceIRC chat listener.
+     */
     public AliceIRC()
     {
-
     }
 
     
-    // ------------------------------------------------------------------------
-    // CONSTRUCTOR: AliceIRC()
-    // ------------------------------------------------------------------------  
-    
-    public AliceIRC(String host, String port, String nick, String channel)
+    /**
+     *  Connects to the given host and begins listening.
+     */
+    public void run()
     {
-        super();
-        this.host = host;
-        this.port = Integer.parseInt(port);
-        this.nick = nick;
-        this.channel = channel;
         processMessageCommandClient("CONNECT", this.host + " " + this.port);
-        try {
-            Thread.sleep(5000);
-        } catch (Exception e) {}
         processMessage("/NICK " + this.nick);
         processMessage("/JOIN " + this.channel);
+        listen();
     }
-    
-    // ------------------------------------------------------------------------
-    // METHOD: getVersion()
-    // ------------------------------------------------------------------------  
-    
+
+
+    public String getShellID()
+    {
+        return "irc";
+    }
+
+
+    public String getShellDescription()
+    {
+        return "Alice IRC chat listener";
+    }
+
+
+    public String getShellCommands()
+    {
+        return "Not yet implemented.";
+    }
+
+
+    public void processShellCommand(String command)
+    {
+        int slash = command.indexOf('/');
+        if (slash != 0)
+        {
+            Log.userinfo("AliceIRC: invalid command.", Log.LISTENERS);
+            return;
+        }
+        int space = command.indexOf(' ');
+        if (space == -1)
+        {
+            processMessageCommand(command.substring(1), "");
+            return;
+        }
+        else
+        {
+            processMessageCommand(command.substring(1, space), command.substring(space + 1));
+            return;
+        }
+    }
+
+
+    /**
+     *  Returns the version string.
+     *
+     *  @return the version string
+     */
     public String getVersion()
     {
         return VERSION + " " + VERDATE;
     }
     
     
-    // ------------------------------------------------------------------------
-    // METHOD: connect()
-    // ------------------------------------------------------------------------  
-    
+    /**
+     *  Please document this.
+     */
     private void connect()
     {
         if (clientStatus == NOTCONNECTED)
         {
             clientStatus = CONNECTING;
-            System.out.println("*** IRC: " + SIRCMESSAGE + "Contacting " + this.host + ":" + this.port + " ***\n");
+            Log.userinfo("AliceIRC contacting " + this.host + ":" + this.port, Log.LISTENERS);
             
             try
             {
                 socket = new Socket(this.host, this.port);
-                System.out.println("*** IRC: " +SIRCMESSAGE + "Connected to " + this.host + " " + this.port + " ***\n");
+                Log.userinfo("AliceIRC connected to " + this.host + ":" + this.port, Log.LISTENERS);
                 
             }
-            catch (UnknownHostException e)
+            catch (UnknownHostException e0)
             {
-                System.out.println("*** IRC: " +SIRCMESSAGE + "Cannot Connect; Unknown server. ***\n");
+                Log.userinfo("AliceIRC cannot connect; unknown server.", Log.LISTENERS);
                 clientStatus = NOTCONNECTED;
             }
-            catch (IOException e2)
+            catch (IOException e1)
             {
-                System.out.println("*** IRC: " +SIRCMESSAGE + "Cannot Connect; The server is down or is not responding. ***\n");
+                Log.userinfo("AliceIRC cannot connect; the server is down or not responding.", Log.LISTENERS);
                 clientStatus = NOTCONNECTED;
             }
-            
             
             if (clientStatus == CONNECTING)    // If we didn'y have any problems connecting
             {
@@ -165,16 +246,16 @@ public class AliceIRC implements Runnable, AliceChatListener
                     writer = new PrintWriter(socket.getOutputStream(), true);
                     clientStatus = CONNECTED;
                 }
-                catch (IOException e3)
+                catch (IOException e0)
                 {
-                    System.out.println("*** IRC: " +SIRCMESSAGE + "Cannot Connect; I/O Error. ***\n");
+                    Log.userinfo("AliceIRC cannot connect: I/O error.", Log.LISTENERS);
                     clientStatus = DISCONNECTING;
                     
                     try
                     {
                         socket.close();
                     }
-                    catch (IOException e4)
+                    catch (IOException e1)
                     {
                         // !
                     }
@@ -185,38 +266,34 @@ public class AliceIRC implements Runnable, AliceChatListener
                     }
                 }
             }
-            
-            if (clientStatus == CONNECTED)
-            {
-                thread = new Thread(this);
-                thread.start();  // start the thread to listen
-            }
-            
         }
         else
         {
             switch(clientStatus)
             {
-            case CONNECTED     : System.out.println("*** IRC: " +SIRCMESSAGE + "Cannot Connect; We're already connected. ***\n");
-                break;
-                
-            case CONNECTING    : System.out.println("*** IRC: " +SIRCMESSAGE + "Cannot Connect; We're already connecting. ***\n");
-                break;
-                
-            case DISCONNECTING : System.out.println("*** IRC: " +SIRCMESSAGE + "Cannot Connect; Hold on! We're still trying to disconnect! ***\n");
-                break;
-                
-            default            : System.out.println("*** IRC: " +SIRCMESSAGE + "WARNING: Unknown clientStatusCode: " + clientStatus + " ***\n");
-                break;
+                case CONNECTED :
+                    Log.userinfo("AliceIRC cannot connect; already connected.", Log.LISTENERS);
+                    break;
+                    
+                case CONNECTING :
+                    Log.userinfo("AliceIRC cannot connect; already connecting.", Log.LISTENERS);
+                    break;
+                    
+                case DISCONNECTING :
+                    Log.userinfo("AliceIRC cannot connect; still trying to disconnect.", Log.LISTENERS);
+                    break;
+                    
+                default :
+                    Log.userinfo("AliceIRC got unknown clientStatusCode: " + clientStatus, Log.LISTENERS);
+                    break;
             }
         }
     }
     
-    
-    // ------------------------------------------------------------------------
-    // METHOD: disconnect()
-    // ------------------------------------------------------------------------  
-    
+
+    /**
+     *  Please document this.
+     */
     private void disconnect()
     {
         if (clientStatus == CONNECTED)
@@ -228,16 +305,13 @@ public class AliceIRC implements Runnable, AliceChatListener
             }
             catch (IOException e)
             {
-                // !
+                Log.userinfo("AliceIRC: IO exception trying to disconnect.", Log.LISTENERS);
             }
             finally
             {
                 reader = null;
                 writer = null;
-                // socket = null;
-                thread.stop();
-                thread = null;
-                System.out.println("*** IRC: " +SIRCMESSAGE + "Connection Closed. ***\n");
+                Log.userinfo("AliceIRC connection closed.", Log.LISTENERS);
                 clientStatus = NOTCONNECTED;
             }
         }
@@ -245,32 +319,36 @@ public class AliceIRC implements Runnable, AliceChatListener
         {
             switch(clientStatus)
             {
-            case NOTCONNECTED  : System.out.println("*** IRC: " +SIRCMESSAGE + "Cannot close conenction; We're not connected.***\n");
-                break;
-                
-            case CONNECTING    : System.out.println("*** IRC: " +SIRCMESSAGE + "Cannot close conenction; We're in the process of connecting connecting.***\n");
-                break;
-                
-            case DISCONNECTING : System.out.println("*** IRC: " +SIRCMESSAGE + "Cannot close conenction; Hold on! We're still trying to close the current one!***\n");
-                break;
-                
-            default            : System.out.println("*** IRC: " +SIRCMESSAGE + "WARNING: Unknown clientStatusCode: " + clientStatus + "***\n");
-                break;
+                case NOTCONNECTED :
+                    Log.userinfo("AliceIRC cannot close connection; not connected.", Log.LISTENERS);
+                    break;
+                    
+                case CONNECTING :
+                    Log.userinfo("AliceIRC cannot close connection; currently trying to connect.", Log.LISTENERS);    
+                    break;
+                    
+                case DISCONNECTING :
+                    Log.userinfo("AliceIRC cannot close connection; currently trying to close it.", Log.LISTENERS);
+                    break;
+                    
+                default :
+                    Log.userinfo("AliceIRC got unknown clientStatusCode: " + clientStatus, Log.LISTENERS);
+                    break;
             }
         }
     }
     
     
-    // ------------------------------------------------------------------------
-    // METHOD: processMessage()
-    // ------------------------------------------------------------------------  
-    
+    /**
+     *  Please document this.
+     */
     protected void processMessage(String message)
     {
-        if (!message.equals(""))             // if the message isn't blank ...
+        // If the message isn't blank,
+        if (message.length() > 0)
         {
-            
-            if (message.charAt(0) == '/')      // ... and if it is a command
+            // and is a command,
+            if (message.charAt(0) == '/')
             {
                 String command;
                 
@@ -283,31 +361,40 @@ public class AliceIRC implements Runnable, AliceChatListener
                     command = message.substring(1);
                 }
                 
-                if (processMessageCommand(command, message)) { }
-                else if (processMessageCommandClient(command, message)) { }
-                else if (processMessageCommandDebug(command, message) && DEBUG) { }
+                if (processMessageCommand(command, message))
+                {
+                }
+                else if (processMessageCommandClient(command, message))
+                {
+                }
+                else if (processMessageCommandDebug(command, message) && DEBUG)
+                {
+                }
                 else
                 {
-                    sendMessage("*** IRC: " +SIRCMESSAGE,"Unknown Command: " + command + ". ***");
+                    sendMessage(SIRCMESSAGE, "Unknown Command: " + command);
                 }
-                
-                // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             }
             else                        
             {
                 if (clientStatus == CONNECTED)
                 {
-                    if (!channel.equals(""))
+                    if (channel.length() > 0)
                     {
                         sendMessage(NONE, "[" + nick + "] " + message);
+                        Log.userinfo("AliceIRC got a message from: " + nick + "> " + message, Log.LISTENERS);
+                        sendServerMessage("/MSG " + " " + channel + " :" + message);
                         
-                        System.out.println("A message from:" + nick + " > " + message);
-                        
-                        sendServerMessage("/MSG " + " " + channel + " :" + message);  // send to server here
-                        
-                    String bot_response = ActiveMultiplexor.StaticSelf.getResponse(message, nick+"_IRC", new TextResponder());
-                    processMessage("/PRVMSG " + nick + " " + bot_response);
-                        
+                        String[] botResponse =
+                            Toolkit.breakLines(
+                                ActiveMultiplexor.getInstance().getResponse(message, nick+"_IRC", new TextResponder()));
+                        if (botResponse.length > 0)
+                        {
+                            for (int line = 0; line < botResponse.length; line++)
+                            {
+                                processMessage("/PRVMSG " + nick + " " + botResponse[line]);
+                            }
+                        }
                     }
                 }
             }
@@ -315,43 +402,39 @@ public class AliceIRC implements Runnable, AliceChatListener
     }
     
     
-    // ------------------------------------------------------------------------
-    // METHOD: processMessageCommand()
-    // ------------------------------------------------------------------------  
-    
+    /**
+     *  Please document this.
+     */
     private boolean processMessageCommand(String command, String message)
     {
         boolean processed = false;
         
-        // here I will extract the params this.portion of the message and put it
-        // in a string of its own...
+        // Extract parameters of message.
+        String params = message.substring((message.indexOf(' ') + 1));
+        if (params.equals("/" + command))
+        {
+            params = NONE;
+        }
         
-        String params = message.substring((message.indexOf(' ')+1));
-        if (params.equals("/" + command)) { params = ""; }
-        
-        // now I will go through each command in order and do the good stuff for
-        // each one!
-        
+        // Process command.
         if (clientStatus == CONNECTED)
         {
-            // the following commands are processed if the client is connected.
-            
-            if (command.equalsIgnoreCase("AWAY"))  // - - - - - - - - - - - - - - -
+            if (command.equalsIgnoreCase("AWAY"))
             {
                 sendServerMessage("AWAY :" + params);
                 processed = true;
             }
-            else if (command.equalsIgnoreCase("INVITE")) // - - - - - - - - - - - -
+            else if (command.equalsIgnoreCase("INVITE"))
             {
-                if (!params.equals(""))
+                if (params.length() > 0)
                 {
                     sendServerMessage("INVITE " + params + " " + channel);
                 }
                 processed = true;
             }
-            else if (command.equalsIgnoreCase("KICK"))   // - - - - - - - - - - - -
+            else if (command.equalsIgnoreCase("KICK"))
             {
-                if (!params.equals(""))
+                if (params.length() > 0)
                 {
                     int firstindex = params.indexOf(' ');
                     int secondindex = params.indexOf(' ', (firstindex+1));
@@ -366,9 +449,9 @@ public class AliceIRC implements Runnable, AliceChatListener
                 }
                 processed = true;
             }
-            else if (command.equalsIgnoreCase("LIST"))  // - - - - - -- - - - - - - 
+            else if (command.equalsIgnoreCase("LIST"))
             {
-                if (params.equals(""))
+                if (params.length() == 0)
                 {
                     sendServerMessage("LIST " + channel);
                 }
@@ -378,11 +461,12 @@ public class AliceIRC implements Runnable, AliceChatListener
                 }
                 processed = true;
             }
-            else if (command.equalsIgnoreCase("JOIN"))  // - - - - - -- - - - - - - 
+            else if (command.equalsIgnoreCase("JOIN"))
             {
-                if (params.equals("")) // check the channel
+                // Check the channel.
+                if (params.length() == 0)
                 {
-                    if (channel.equals(""))
+                    if (channel.length() == 0)
                     {
                         sendMessage(SIRCMESSAGE, "You're not in a channel.");
                     }
@@ -391,32 +475,35 @@ public class AliceIRC implements Runnable, AliceChatListener
                         sendMessage(SIRCMESSAGE, "You're currently in: " + channel + ".");
                     }
                 }
-                else if (channel.equals("")) // join a new channel
+                // Join a new channel.
+                else if (channel.length() == 0)
                 {
                     sendServerMessage("JOIN " + params);
                 }
-                else if(params.equals("0"))  // leave the channel
+                // Leave the channel.
+                else if(params.equals("0"))
                 {
                     sendServerMessage("PART " + channel);
                 }
-                else                         // change channels
+                // Change channels.
+                else
                 {
                     sendServerMessage("PART " + channel);
                     sendServerMessage("JOIN " + params);
                 }
                 processed = true;
             }
-            else if (command.equalsIgnoreCase("MODE")) // - - - - - - - - - - - - -
+            else if (command.equalsIgnoreCase("MODE"))
             {
-                if (!params.equals(""))
+                if (params.length() > 0)
                 {
                     sendServerMessage("MODE " + channel + " " + params);
                 }
                 processed = true;
             }
-            else if (command.equalsIgnoreCase("MSG"))  // - - - - - - - - - - - - -
+            else if (command.equalsIgnoreCase("MSG"))
             {
-                if (!params.equals(""))
+                if (params.length() > 0)
                 {
                     try
                     {
@@ -431,9 +518,9 @@ public class AliceIRC implements Runnable, AliceChatListener
                 }
                 processed = true;
             }
-            else if (command.equalsIgnoreCase("NAMES"))  // - - - - - - - - - - - - 
+            else if (command.equalsIgnoreCase("NAMES"))
             {
-                if (params.equals(""))
+                if (params.length() == 0)
                 {
                     sendServerMessage("NAMES " + channel);
                 }
@@ -443,9 +530,9 @@ public class AliceIRC implements Runnable, AliceChatListener
                 }
                 processed = true;
             }
-            else if (command.equalsIgnoreCase("NICK")) // - - - - - - - - - - - - -
+            else if (command.equalsIgnoreCase("NICK"))
             {
-                if (params.equals(""))
+                if (params.length() == 0)
                 {
                     sendMessage(SIRCMESSAGE, "You're currently known as " + this.nick);
                 }
@@ -455,9 +542,9 @@ public class AliceIRC implements Runnable, AliceChatListener
                 }
                 processed = true;
             }
-            else if (command.equalsIgnoreCase("QUIT")) // - - - - - - - - - - - - -
+            else if (command.equalsIgnoreCase("QUIT"))
             {
-                if (params.equals(""))
+                if (params.length() == 0)
                 {
                     sendServerMessage("QUIT");
                 }
@@ -466,19 +553,19 @@ public class AliceIRC implements Runnable, AliceChatListener
                     sendServerMessage("QUIT :" + params);
                 }
                 
-                channel = "";
+                channel = NONE;
                 disconnect();
                 processed = true;
             }
-            else if (command.equalsIgnoreCase("TOPIC"))  // - - - - - - - - - - - - 
+            else if (command.equalsIgnoreCase("TOPIC"))
             {
-                if (channel.equals(""))
+                if (channel.length() == 0)
                 {
                     sendMessage(SIRCMESSAGE, "You must be in a channel to set the topic!");
                 }
                 else
                 {
-                    if (params.equals(""))
+                    if (params.length() == 0)
                     {
                         sendServerMessage("TOPIC " + channel);
                     }
@@ -489,15 +576,13 @@ public class AliceIRC implements Runnable, AliceChatListener
                 }
                 processed = true;
             }
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
         }
         else
         {
             // The following commands are processed if we're not connected...
-            
-            if (command.equalsIgnoreCase("NICK"))  // - - - - - - - - - - - - - - - 
+            if (command.equalsIgnoreCase("NICK"))
             {
-                if (params.equals(""))
+                if (params.length() == 0)
                 {
                     sendMessage(SIRCMESSAGE, "You're currently known as " + this.nick);
                 }
@@ -508,21 +593,17 @@ public class AliceIRC implements Runnable, AliceChatListener
                 }
                 processed = true;
             }
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
         }
         return processed;
     }
     
     
-    // ------------------------------------------------------------------------
-    // METHOD: processMessageCommandClient()
-    // ------------------------------------------------------------------------  
-    
+    /**
+     *  Please document this.
+     */
     private boolean processMessageCommandClient(String command, String message)
     {
         boolean processed = false;
-        
-        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
         
         int argc = -1;
         int index[] = new int[(MAXARGC + 1)];
@@ -551,11 +632,9 @@ public class AliceIRC implements Runnable, AliceChatListener
             }
         }
         
-        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-        
         if (command.equalsIgnoreCase("SERVER") || command.equalsIgnoreCase("CONNECT"))
         {
-            if (this.nick.equals(""))
+            if (this.nick.length() == 0)
             {
                 sendMessage(SIRCMESSAGE, "You cannot connect to a server unless your NICK is set.");
             }
@@ -594,13 +673,16 @@ public class AliceIRC implements Runnable, AliceChatListener
         }
         else if (command.equalsIgnoreCase("EXIT"))
         {
-            if (clientStatus == CONNECTED) { disconnect(); } 
+            if (clientStatus == CONNECTED)
+            {
+                disconnect();
+            } 
             // messagerelay.exit();
             processed = true;
         }
         else if (command.equalsIgnoreCase("COMMANDS") || command.equalsIgnoreCase("HELP"))
         {
-            sendMessage(NONE, "");
+            sendMessage(NONE, NONE);
             sendMessage(SIRCMESSAGE, "sIRC Commands:");
             sendMessage(SIRCMESSAGE, "  /away [<message>]");
             sendMessage(SIRCMESSAGE, "  /commands");
@@ -618,18 +700,18 @@ public class AliceIRC implements Runnable, AliceChatListener
             sendMessage(SIRCMESSAGE, "  /server <server> [<this.port>]");
             sendMessage(SIRCMESSAGE, "  /topic [<topic>]");
             sendMessage(SIRCMESSAGE, "  /version");
-            sendMessage(NONE, "");
+            sendMessage(NONE, NONE);
             processed = true;
         }
         else if (command.equalsIgnoreCase("VERSION"))  
         {
             /*
             String[] versions = // messagerelay.getClassVersions();
-            sendMessage(NONE, "");
+            sendMessage(NONE, NONE);
             sendMessage(SIRCMESSAGE, "sIRC Version: " + versions[0]);
             sendMessage(SIRCMESSAGE, "UserInterface: " + versions[1]);
             sendMessage(SIRCMESSAGE, "AliceIRC: " + versions[2]);
-            sendMessage(NONE, "");
+            sendMessage(NONE, NONE);
             processed = true;
             */
         }
@@ -638,10 +720,9 @@ public class AliceIRC implements Runnable, AliceChatListener
     }
     
     
-    // ------------------------------------------------------------------------
-    // METHOD: processMessageCommandDebug()
-    // ------------------------------------------------------------------------  
-    
+    /**
+     *  Please document this.
+     */
     private boolean processMessageCommandDebug(String command, String message)
     {
         boolean processed = false;
@@ -652,8 +733,14 @@ public class AliceIRC implements Runnable, AliceChatListener
         do
         {
             argc++;
-            if (argc == 0) { index[argc] = message.indexOf(" ");                      }
-            else           { index[argc] = message.indexOf(" ", (index[argc-1] + 1)); }
+            if (argc == 0)
+            {
+                index[argc] = message.indexOf(" ");
+            }
+            else
+            {
+                index[argc] = message.indexOf(" ", (index[argc-1] + 1));
+            }
         }
         while (index[argc] != -1);
         
@@ -671,8 +758,6 @@ public class AliceIRC implements Runnable, AliceChatListener
             }
         }
         
-        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-        
         if (command.equals("testargs"))  
         {
             StringBuffer teststring = new StringBuffer("Test Arguments; argc=" + argc + " command=" + command);
@@ -682,25 +767,22 @@ public class AliceIRC implements Runnable, AliceChatListener
                 teststring.append(" [" + (x+1) + ";" + args[x] + "]");
             }
             
-            System.out.println(SIRCMESSAGE + teststring + "\n");
+            Trace.devinfo(teststring.toString());
             processed = true;
         }
         else if (command.equals("debug"))
         {
-            System.out.println(SIRCMESSAGE + "- - - - - - - - - - - - - - - - - - - - \n");
-            System.out.println(SIRCMESSAGE + "clientStatus=" + clientStatus + "\n");
-            System.out.println(SIRCMESSAGE + "socket=" + socket + "\n");
-            System.out.println(SIRCMESSAGE + "reader=" + reader + "\n");
-            System.out.println(SIRCMESSAGE + "writer=" + writer + "\n");
-            System.out.println(SIRCMESSAGE + "thread=" + thread + "\n");
-            if (thread != null) { 
-                System.out.println(SIRCMESSAGE + "thread.isAlive()=" + thread.isAlive() + "\n"); }
-            System.out.println(SIRCMESSAGE + "- - - - - - - - - - - - - - - - - - - - \n");
+            Trace.devinfo("- - - - - - - - - - - - - - - - - - - - ");
+            Trace.devinfo("clientStatus=" + clientStatus);
+            Trace.devinfo("socket=" + socket);
+            Trace.devinfo("reader=" + reader);
+            Trace.devinfo("writer=" + writer);
+            Trace.devinfo("- - - - - - - - - - - - - - - - - - - - ");
             processed = true;
         }
         else if (command.equals("raw"))    
         {
-            String messagex = "";
+            String messagex = NONE;
             
             for(int x = 0; x < argc; x++)
             {
@@ -715,45 +797,32 @@ public class AliceIRC implements Runnable, AliceChatListener
         
     }
     
+
+    /**
+     *  Please document this.
+     */
     private void processServerMessage(String message)
     {
+        String prefix = NONE;
+        String command = NONE;
+        String params = NONE;
+        String targetnick = NONE;
+
         if (message == null)
         {
-            clientStatus = DISCONNECTING;
-            reader = null;
-            writer = null;
-            // socket = null;
-            // thread.stop();
-            thread = null;
-            System.out.println(SIRCMESSAGE + "Connection Closed by Server.\n");
-            clientStatus = NOTCONNECTED;
-            channel="";
+            disconnect();
+            return;
         }
-        else if (!message.equals(""))
+        else if (message.length() > 0)
         {
             if (DEBUG)
             {
-                System.out.println(message);
+                Log.devinfo(message, Log.LISTENERS);
             }
-            
-            processServerMessage2(message);
         }
-        
-    }
-    
-    
-    // ------------------------------------------------------------------------
-    // METHOD: processServerMessage2()
-    // ------------------------------------------------------------------------  
-    
-    private void processServerMessage2(String message)
-    {
-        String prefix = "";
-        String command = "";
-        String params = "";
-        String targetnick = "";
-        
-        if(message.charAt(0) == ':')  // We have a Prefix
+
+        // We have a Prefix
+        if(message.charAt(0) == ':')  
         {
             int firstspace = message.indexOf(' ');
             int secondspace = message.indexOf(' ', (firstspace + 1));
@@ -761,14 +830,15 @@ public class AliceIRC implements Runnable, AliceChatListener
             command = message.substring((firstspace+1), secondspace);
             params = message.substring((secondspace+1));
         }
-        else                          // We've got no Prefix
+        // We've got no Prefix
+        else                          
         {
             int firstspace = message.indexOf(' ');
             command = message.substring(0, firstspace);
             params = message.substring((firstspace+1));
         }
         
-        if(!prefix.equals(""))
+        if(prefix.length() > 0)
         {
             try
             {
@@ -784,41 +854,43 @@ public class AliceIRC implements Runnable, AliceChatListener
         {
             switch(Integer.parseInt(command))
             {
-            case 001 : // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            case 001 :
                 break;
                 
-            case 321 : // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            case 321 :
                 break;
                 
-            case 322 : // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            case 322 :
                 {
                     int firstSpaceIndex = params.indexOf(' ');
                     int secondSpaceIndex = params.indexOf(' ', (firstSpaceIndex+1));
                     int colonIndex = params.indexOf(':');
-                    sendMessage(SERVERPREFIX, params.substring((firstSpaceIndex+1), secondSpaceIndex) + ": " + params.substring((secondSpaceIndex+1), (colonIndex-1)) + " " + params.substring((colonIndex+1)));
+                    sendMessage(SERVERPREFIX,
+                        params.substring((firstSpaceIndex+1), secondSpaceIndex) + ": " + params.substring((secondSpaceIndex+1), (colonIndex-1)) + " " + params.substring((colonIndex+1)));
                 }
                 break;
                 
-            case 353 : // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            case 353 :
                 {
                     int colonIndex = params.indexOf(':');
                     int equalsIndex = params.indexOf('=');
-                    sendMessage(SERVERPREFIX, "Users on " + params.substring((equalsIndex+2), (colonIndex-1)) + ": " + params.substring((colonIndex+1)));
+                    sendMessage(SERVERPREFIX,
+                        "Users on " + params.substring((equalsIndex+2), (colonIndex-1)) + ": " + params.substring((colonIndex+1)));
                 }
                 break;
                 
-            case 372 : // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            case 372 :
                 sendMessage(SERVERPREFIX, params.substring((params.indexOf(':')+1)));
                 break;
                 
-            default  : // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            default :
                 sendMessage(SERVERPREFIX, "(" + command + ") " + params.substring((params.indexOf(':')+1)));
                 break;
             }
         }
         catch(NumberFormatException e)
         {
-            if (command.equals("INVITE"))  // - - - - - - - - - - - - - - - - - - -
+            if (command.equals("INVITE"))
             {
                 int firstindex = params.indexOf(' ');
                 sendMessage(SERVERPREFIX, targetnick + " has invited you to " + helpExtractIRCString(params.substring((firstindex+1))) + ".");
@@ -837,11 +909,11 @@ public class AliceIRC implements Runnable, AliceChatListener
                     sendMessage(SERVERPREFIX, targetnick + " has joined the channel.");
                 }
             }
-            else if(command.equals("KICK"))  // - - - - - - - - - - - - - - - - - - 
+            else if(command.equals("KICK"))
             {
-                String kickchannel = "";
-                String kickuser = "";
-                String kickcomment = "";
+                String kickchannel = NONE;
+                String kickuser = NONE;
+                String kickcomment = NONE;
                 
                 int firstindex = params.indexOf(' ');
                 int secondindex = params.indexOf(' ', (firstindex+1));
@@ -855,7 +927,7 @@ public class AliceIRC implements Runnable, AliceChatListener
                     if (kickuser.equals(this.nick))
                     {
                         sendMessage(SERVERPREFIX, "You've just been kicked off " + kickchannel + " by " + targetnick + " (" + kickcomment + ").");
-                        channel = "";
+                        channel = NONE;
                     }
                     else
                     {
@@ -870,7 +942,7 @@ public class AliceIRC implements Runnable, AliceChatListener
                     if (kickuser.equals(this.nick))
                     {
                         sendMessage(SERVERPREFIX, "You've just been kicked off " + kickchannel + " by " + targetnick + ".");
-                        channel = "";
+                        channel = NONE;
                     }
                     else
                     {
@@ -878,7 +950,7 @@ public class AliceIRC implements Runnable, AliceChatListener
                     }
                 }
             }
-            else if(command.equals("NICK"))  // - - - - - - - - - - - - - - - - - - 
+            else if(command.equals("NICK"))
             {
                 if (targetnick.equals(this.nick))
                 {
@@ -891,23 +963,23 @@ public class AliceIRC implements Runnable, AliceChatListener
                     sendMessage(SERVERPREFIX, targetnick + " is now known as " + params.substring(1) + ".");
                 }
             }
-            else if(command.equals("PART"))  // - - - - - - - - - - - - - - - - - - 
+            else if(command.equals("PART"))
             {
                 if (targetnick.equals(this.nick))
                 {
                     sendMessage(SERVERPREFIX, "You've just left " + params + ".");
-                    channel = "";
+                    channel = NONE;
                 }
                 else
                 {
                     sendMessage(SERVERPREFIX, targetnick + " has left the channel.");
                 }
             }
-            else if(command.equals("PING"))  // - - - - - - - - - - - - - - - - - - 
+            else if(command.equals("PING"))
             {
                 sendServerMessage("PONG " + params);
             }
-            else if (command.equals("PRIVMSG"))  // - - - - - - - - - - - - - - - -
+            else if (command.equals("PRIVMSG"))
             {
                 String target = params.substring(0, params.indexOf(' '));
                 String gitter = params.substring((params.indexOf(':') + 1));
@@ -915,20 +987,29 @@ public class AliceIRC implements Runnable, AliceChatListener
                 if (target.equals(this.nick))
                 {
                     sendMessage(NONE, "*" + targetnick + "* " + gitter);
-                    System.out.println("*** IRC REQUEST: " +targetnick + " > " + gitter + " ***");
-                    String bot_response = ActiveMultiplexor.StaticSelf.getResponse(gitter, targetnick+"_ICQ", new TextResponder());
-                    processMessage("/MSG " + targetnick + " " + bot_response);
+                    Log.userinfo("AliceIRC: Request: " +targetnick + "> " + gitter, Log.LISTENERS);
+                    String[] botResponse =
+                        Toolkit.breakLines(
+                            ActiveMultiplexor.getInstance().getResponse(gitter, targetnick+"_IRC", new TextResponder()));
+                    if (botResponse.length > 0)
+                    {
+                        for (int line = 0; line < botResponse.length; line++)
+                        {
+                            processMessage("/MSG " + targetnick + " " + botResponse[line]);
+                        }
+                    }
                 }
-                else // target equals channel
+                // target equals channel
+                else 
                 {
                     sendMessage(NONE, "[" + targetnick + "] " + gitter);
                     
                 
                 }
             }
-            else if (command.equals("QUIT"))   // - - - - - - - - - - - - - - - - -
+            else if (command.equals("QUIT"))
             {
-                if (params.equals(""))
+                if (params.length() == 0)
                 {
                     sendMessage(SERVERPREFIX, targetnick + " has quit.");
                 }
@@ -937,7 +1018,7 @@ public class AliceIRC implements Runnable, AliceChatListener
                     sendMessage(SERVERPREFIX, targetnick + " has quit (" + helpExtractIRCString(params) + ").");
                 }
             }
-            else if (command.equals("TOPIC"))  // - - - - - - - - - - - - - - - - -
+            else if (command.equals("TOPIC"))
             {
                 if(targetnick.equals(this.nick))
                 {
@@ -948,16 +1029,16 @@ public class AliceIRC implements Runnable, AliceChatListener
                     sendMessage(SERVERPREFIX, targetnick + " has set the topic to: " + helpExtractIRCString(params.substring((params.indexOf(' ')+1))));
                 }
             }
-            else // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+            else
             {
             }
         }
     }
     
-    // ------------------------------------------------------------------------
-    // METHOD: helpExtractIRCString()
-    // ------------------------------------------------------------------------  
-    
+
+    /**
+     *  Please document this.
+     */
     private String helpExtractIRCString(String string)
     {
         try
@@ -973,25 +1054,23 @@ public class AliceIRC implements Runnable, AliceChatListener
         }
         catch (StringIndexOutOfBoundsException e)
         {
-            return "";
+            return NONE;
         }
     }
     
     
-    // ------------------------------------------------------------------------
-    // METHOD: sendMessage()
-    // ------------------------------------------------------------------------  
-    
+    /**
+     *  Please document this.
+     */
     private void sendMessage(String type, String message)
     {
-        System.out.println("*** IRC: " + type + message + " ***\n");
+        Log.userinfo("AliceIRC: " + type + " " + message, Log.LISTENERS);
     }
     
     
-    // ------------------------------------------------------------------------
-    // METHOD: sendServerMessage()
-    // ------------------------------------------------------------------------  
-    
+    /**
+     *  Please document this.
+     */
     private void sendServerMessage(String message)
     {
         if (clientStatus == CONNECTED)
@@ -999,17 +1078,16 @@ public class AliceIRC implements Runnable, AliceChatListener
             writer.println(message);
             if(DEBUG)
             {
-                System.out.println(message);
+                Trace.devinfo("AliceIRC: " + message);
             }
         }
     }
     
     
-    // ------------------------------------------------------------------------
-    // METHOD: run()
-    // ------------------------------------------------------------------------
-    
-    public void run()
+    /**
+     *  Please document this.
+     */
+    private void listen()
     {
         String line;
         
@@ -1027,7 +1105,6 @@ public class AliceIRC implements Runnable, AliceChatListener
         }
         
     }
-    
 }
 
 

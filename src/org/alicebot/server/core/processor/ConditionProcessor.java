@@ -40,36 +40,37 @@
       comparing condition/li value attributes to predicate values
 */
 
+/*
+    4.1.4 [00] - December 2001, Noel Bush
+    - fixed wrong parameter order in call to PatternArbiter.matches when
+      processing blockConditions
+    - finally got rid of third-party "LnkdLstItr"
+    - changed to use PredicateMaster
+*/
+
 package org.alicebot.server.core.processor;
 
-import org.alicebot.server.core.ActiveMultiplexor;
-import org.alicebot.server.core.NoSuchPredicateException;
-import org.alicebot.server.core.logging.Trace;
+import java.util.LinkedList;
+import java.util.ListIterator;
+
+import org.alicebot.server.core.PredicateMaster;
+import org.alicebot.server.core.util.Trace;
 import org.alicebot.server.core.parser.AIMLParser;
 import org.alicebot.server.core.parser.XMLNode;
-import org.alicebot.server.core.util.LinkedList;
-import org.alicebot.server.core.util.LinkedListItr;
 import org.alicebot.server.core.util.NotAnAIMLPatternException;
 import org.alicebot.server.core.util.PatternArbiter;
 import org.alicebot.server.core.util.Toolkit;
 
 
 /**
- *  <p>
  *  Handles a
  *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-condition">condition</a></code>
  *  element.
- *  </p>
- *  <p>
- *  This implementation is currently <i>not</i> AIML 1.0.1-compliant,
- *  because it implements simple String.equals() matching for
- *  value attributes to predicates, rather than real AIML pattern
- *  matching.
- *  </p>
  *
- *  @version    4.1.3
+ *  @version    4.1.4
  *  @author     Jon Baer
  *  @author     Thomas Ringate, Pedro Colla
+ *  @author     Noel Bush
  */
 public class ConditionProcessor extends AIMLProcessor
 {
@@ -92,7 +93,7 @@ public class ConditionProcessor extends AIMLProcessor
     private static final String LI = "li";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
@@ -130,16 +131,11 @@ public class ConditionProcessor extends AIMLProcessor
             {
                 try
                 {
-                    if (PatternArbiter.matches(value, ActiveMultiplexor.StaticSelf.getPredicateValue(name, userid), true))
+                    if (PatternArbiter.matches(PredicateMaster.get(name, userid), value, true))
                     {
                         return processListItem(level, userid, parser, tag.XMLChild,
                                                       DEFAULT_LI, EMPTY_STRING, EMPTY_STRING);
                     }
-                }
-                catch (NoSuchPredicateException e)
-                {
-                    Trace.devinfo(e.getMessage());
-                    return EMPTY_STRING;
                 }
                 catch (NotAnAIMLPatternException e)
                 {
@@ -168,7 +164,7 @@ public class ConditionProcessor extends AIMLProcessor
         }
         else
         {
-            throw new InvalidAIMLException("<condition></condition> must have content!");
+            throw new AIMLProcessorException("<condition></condition> must have content!");
         }
     }
 
@@ -188,9 +184,9 @@ public class ConditionProcessor extends AIMLProcessor
      */
     public String processListItem(int level, String userid, AIMLParser parser, LinkedList list, int listItemType, String name, String value)
     {
-        String         response = EMPTY_STRING;
-        LinkedListItr  iterator;
-        XMLNode        node;
+        String response = EMPTY_STRING;
+        ListIterator iterator;
+        XMLNode node;
 
         // Verify there is something to work with.
         if (list == null)
@@ -199,8 +195,8 @@ public class ConditionProcessor extends AIMLProcessor
         }
 
         // Point to the start of the XML trie to parse.
-        iterator = list.zeroth();
-        iterator.advance();
+        iterator = list.listIterator(0);
+        //*** iterator.advance();
 
         String predicateValue = EMPTY_STRING;
         String livalue  = EMPTY_STRING;
@@ -210,22 +206,15 @@ public class ConditionProcessor extends AIMLProcessor
             For <code>valueOnlyListItem</code>s, look at the parent
             &lt;condition/&gt; to get the predicate <code>name</code>.
         */
-        try
+        if (listItemType == VALUE_ONLY_LI)
         {
-            if (listItemType == VALUE_ONLY_LI)
-            {
-                predicateValue = ActiveMultiplexor.StaticSelf.getPredicateValue(name, userid);
-            }
-        }
-        catch (NoSuchPredicateException e)
-        {
-            return EMPTY_STRING;
+            predicateValue = PredicateMaster.get(name, userid);
         }
 
         // Navigate through this entire level.
-        while (!iterator.isPastEnd())
+        while (iterator.hasNext())
         {
-            node = (XMLNode)iterator.retrieve();
+            node = (XMLNode)iterator.next();
             if (node != null)
             {
                 switch(node.XMLType)
@@ -241,7 +230,7 @@ public class ConditionProcessor extends AIMLProcessor
                         {
                             response = response + parser.processTag(level++, userid, node);
                         }
-                        catch (InvalidAIMLException e)
+                        catch (ProcessorException e)
                         {
                             // Do nothing.
                         }
@@ -256,7 +245,7 @@ public class ConditionProcessor extends AIMLProcessor
                             {
                                 response = response + parser.processTag(level++, userid, node);
                             }
-                            catch (InvalidAIMLException e)
+                            catch (ProcessorException e)
                             {
                                 // Do nothing.
                             }
@@ -298,23 +287,13 @@ public class ConditionProcessor extends AIMLProcessor
                                 liname = Toolkit.getAttributeValue(NAME, node.XMLAttr);
                                 livalue= Toolkit.getAttributeValue(VALUE, node.XMLAttr);
 
-                                // Get the current value of the predicate named.
-                                try
-                                {
-                                    predicateValue = ActiveMultiplexor.StaticSelf.getPredicateValue(liname, userid);
-                                }
-                                catch (NoSuchPredicateException e)
-                                {
-                                    predicateValue = EMPTY_STRING;
-                                }
-
                                 /*
                                     If the value of the predicate matches the value in the value
                                     attribute, process the response, otherwise skip.
                                 */
                                 try
                                 {
-                                    if (PatternArbiter.matches(predicateValue, livalue, true))
+                                    if (PatternArbiter.matches(PredicateMaster.get(liname, userid), livalue, true))
                                     {
                                         response = response + parser.evaluate(level++, userid, node.XMLChild);
                                         return response;
@@ -338,7 +317,7 @@ public class ConditionProcessor extends AIMLProcessor
                                 {
                                     livalue = Toolkit.getAttributeValue(VALUE, node.XMLAttr);
                                     /*
-                                        If the value of the predicate equals the value in the value
+                                        If the value of the predicate matches the value in the value
                                         attribute, process the response, otherwise skip.
                                     */
                                     try
@@ -351,7 +330,7 @@ public class ConditionProcessor extends AIMLProcessor
                                     }
                                     catch (NotAnAIMLPatternException e)
                                     {
-                                        Trace.devinfo(e.getMessage());
+                                        Trace.userinfo(e.getMessage());
                                     }
                                 }
                                 /*
@@ -372,7 +351,6 @@ public class ConditionProcessor extends AIMLProcessor
                             break;
                 }
             }
-            iterator.advance();
         }
         return response;
     }

@@ -53,7 +53,7 @@ public class GenderProcessor extends AIMLProcessor
     private static HashMap substitutionMap = new HashMap();
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
@@ -64,7 +64,7 @@ public class GenderProcessor extends AIMLProcessor
             }
             catch (ProcessorException e)
             {
-                throw (InvalidAIMLException)e;
+                throw (AIMLProcessorException)e;
             }
         }
         else if (tag.XMLType == XMLNode.EMPTY)
@@ -82,7 +82,7 @@ public class GenderProcessor extends AIMLProcessor
         }
         else
         {
-            throw new InvalidAIMLException("Invalid gender element!");
+            throw new AIMLProcessorException("Invalid gender element!");
         }
     }
 

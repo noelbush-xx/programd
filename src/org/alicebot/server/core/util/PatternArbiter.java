@@ -16,11 +16,13 @@
 package org.alicebot.server.core.util;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
-import java.util.NoSuchElementException;
 import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 
@@ -32,9 +34,7 @@ import java.util.StringTokenizer;
  */
 public class PatternArbiter
 {
-    /*
-        Constants used for comparison.
-    */
+    // Constants used for comparison.
 
     /** The asterisk AIML wildcard. */
     private static final char ASTERISK                 = '*';

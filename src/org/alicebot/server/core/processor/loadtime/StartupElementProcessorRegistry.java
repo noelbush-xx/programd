@@ -33,6 +33,8 @@ public class StartupElementProcessorRegistry extends ProcessorRegistry
     private static final String[] processorList = {"org.alicebot.server.core.processor.loadtime.LearnProcessor",
                                                    "org.alicebot.server.core.processor.loadtime.BotProcessor",
                                                    "org.alicebot.server.core.processor.loadtime.BotsProcessor",
+                                                   "org.alicebot.server.core.processor.loadtime.PredicateProcessor",
+                                                   "org.alicebot.server.core.processor.loadtime.PredicatesProcessor",
                                                    "org.alicebot.server.core.processor.loadtime.GenderProcessor",
                                                    "org.alicebot.server.core.processor.loadtime.InputProcessor",
                                                    "org.alicebot.server.core.processor.loadtime.PersonProcessor",

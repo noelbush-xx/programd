@@ -18,691 +18,499 @@
     - made all imports explicit
 */
 
+/*
+    4.1.4 [00] - December 2001, Noel Bush
+    - removed use of third-party "LinkedList" and "LinkedListItr"
+*/
+
 package org.alicebot.server.core.parser;
 
+import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.StringTokenizer;
 
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.util.LinkedList;
-import org.alicebot.server.core.util.LinkedListItr;
+
 
 /**
-  This class represent a simple XML Parser used by AIMLParser.java
-  @version 4.1.1
-  @author  Thomas Ringate/Pedro Colla
-*/
+ *  <p>
+ *  A simple XML parser.
+ *  </p>
+ *  <p>
+ *  Author Pedro Colla describes it as a
+ *  &quot;poor man's XML non-validating parser&quot;.
+ *  </p>
+ *  @version 4.1.4
+ *  @author  Thomas Ringate/Pedro Colla
+ */
+public class XMLParser
+{
+    // Convenience constants.
 
-public class XMLParser extends Object {
+    /** An XML marker start (&trie;). */
+    public static final String MARKER_START  = "<";
 
-        /**
-         XML Types 
-        */
-        static final int TAG     = 0;
-        static final int EMPTY   = 1;
-        static final int DATA    = 2;
-        static final int CDATA   = 3;
-        static final int COMMENT = 4;
-        static final int ENDTAG  = 5;
+    /** The start of an XML comment (!--). */
+    public static final String COMMENT_START = "!--";
 
-        /**
-         XMLRead
+    /** The end of an XML comment (!--). */
+    public static final String COMMENT_END   = "-->";
 
-         This method parses an input string which contains a XML
-         structure into the XML elements of it.
+    /** A question mark (starts a processing instruction). */
+    public static final String PI_START      = "?";
 
-         Supported XML elements are
-             DATA()    - Contents
-             TAG()     - XML Tag
-             EMPTY()   - XML Empty Tag
-             COMMENTS()- Comments
-             CDATA()   - CDATA Block
+    /** End of a processing instruction. */
+    private static final String PI_END        = "?";
 
-         --------------------------------------------------------
-         Developer Information:
+    /** The beginning of a CDATA block. */
+    public static final String CDATA_START   = "![CDATA[";
 
-         This method has been written as part of the AIML 1.0
-         ProgramD migration.
+    /** A end of a CDATA block. */
+    public static final String CDATA_END     = "]]>";
 
-         It's really a Poor's man XML non-validating parser and
-         should be replaced by a standard XML parsing object
-         when selected. Has been written only as a small
-         and centralized alternative to the also custom parsers
-         used separately on AIMLReader and the old AIMLParser.
-         */
+    /** A slash. */
+    public static final String SLASH         = "/";
 
-        public LinkedList XMLRead(String input, LinkedList XMLList) {
+    /** An XML marker end (&gt;). */
+    public static final String MARKER_END    = ">";
 
-           /*
+    /** A space. */
+    public static final String SPACE         = " ";
+
+    /** An empty string. */
+    public static final String EMPTY_STRING  = "";
+
+
+    /**
+     *  Parses an input string containing an XML structure
+     *  into its XML elements.
+     *
+     *  @param input    the input string
+     *  @param XMLList  the list to which to add the parsed XML
+     *
+     *  @return a linear linked list of the parsed XML
+     */
+    public LinkedList XMLRead(String input, LinkedList XMLList)
+    {
+        /*
             XML decoding Finite State Machine
             Internal States
-           */
-
-           final int    Q_TEXT   = 0;
-           final int    Q_TAG    = 1;
-           final int    Q_ENDTAG = 2;
-           final int    Q_CDATA  = 3;
-           final int    Q_COMMENT= 4;
-           final int    Q_XML    = 5;
-           final int    Q_XMLMARK= 6;
-
-           /*
-            Linked List local iterator
-           */
-            LinkedListItr XMLItr;
-
-           /*
-            Buffer and processing variables
-           */
-
-           XMLNode n;
-
-           String  tag      = "";
-           String  text     = "";
-           String  response = "";
-           String  token    = "";
-           int     tagtype  = TAG;
-           String  tagdata  = "";
-           String  tagargs  = "";
-
-           int     Q        = Q_TEXT;
-           int     x        = 0;
-           int     i        = 0;
-           int     start    = 0;
-           int     end      = 0;
-
-           /*
-            Initialize the Linked List Iterator
-           */
-
-           XMLItr = XMLList.zeroth( );
-
-           /*
-            Process the input String
-           */
-
-           while (x < input.length()) {
-
-             token = String.valueOf(input.charAt(x));
-             switch(Q) {
-
-              /*-------------[ Initial State -> Parse Text ]------------*/
-              case Q_TEXT : 
-
-                         /*
-                           See if a XML construct begins starting with "<"
-                         */
-                         if (token.equals("<")) {
-
-                            /*
-                             Move internal state of the machine into
-                             parsing XML
-                            */
-
-                            Q = Q_XML;
-
-                            /*
-                             Any text already parsed?
-                             If YES, process it as DATA()
-                            */
-
-                            if (!text.equals("")) {
-
-                               n = new XMLNode();
-                               n.XMLType = DATA;
-                               n.XMLData = text;
-                               n.XMLAttr = "";
-
-                               XMLList.insert( n, XMLItr );
-                               XMLItr.advance();
-
-                               response = response+tagdata;
-                            }
-
-                            /*
-                             Initialize parsing buffers
-                            */
-                            text = "";
-                            tag  = "";
-                         } else {
-                           /*
-                             No, then just store text
-                           */
-
-                           text = text + String.valueOf(token);
-                         }
-                         break;
-
-              /*-------------[ XML State -> XML just detected ]---------*/
-
-              case Q_XML :
-
-                         /*
-                          See if this is a comment
-                         */
-
-                         if (input.indexOf("!--",x)-x == 0) {
-                            // Comment
-                            Q = Q_COMMENT;
-                            break;
-                         }
-
-                         /*
-                          See if this is a XML Markup
-                         */
-
-                         if (input.indexOf("?",x)-x == 0) {
-                            // Comment
-                            Q = Q_XMLMARK;
-                            break;
-                         }
-
-
-                         /*
-                          See if this is a CDATA block
-                         */
-
-                         if (input.indexOf("![CDATA[",x)-x == 0) {
-                            // CDATA
-                            Q = Q_CDATA;
-                            break;
-                         }
-
-                         /*
-                          See if this is an end tag
-                         */
-
-                         if (input.indexOf("/",x)-x == 0) {
-                            // EndTag
-                            Q = Q_ENDTAG;
-                            break;
-                         }
-
-                         /*
-                          No, then it is a normal tag, change the finite
-                          state machine state to process it
-                         */
-
-                         Q = Q_TAG;
-
-              /*-------------[ XML Tag --> Normal/Empty Tag   ]---------*/
-              case Q_TAG:
-
-                         /*
-                          Compute start and end of the tag, extract it
-                         */
-                         start  = x;
-                         end    = input.indexOf(">",start);
-                         tag    = input.substring(start,end);
-                         tagargs= "";
-
-                         /*
-                          If the last character of the extracted block is
-                          a "/" then it's an empty tag, otherwise a normal tag
-                         */
-
-                         if (String.valueOf(tag.charAt(tag.length()-1)).equals("/")) {
-                            //Empty Tag
-                            tagtype = EMPTY;
-
-                            tag     = tag.substring(0,tag.length()-1);
-                         } else {
-                            //Normal Tag
-                            tagtype = TAG;
-                         }
-
-                         /*
-                          Trim leading and trailing blanks
-                         */
-
-                         tag = tag.trim();
-
-                         /*
-                          Up to the first blank it's the tag itself, anything
-                          after it are arguments; split both.
-                         */
-
-                         i   = tag.indexOf(" ",0);
-                         if (i >= 0) {
-                            tagdata = tag.substring(0,i);
-                            tagargs = " "+tag.substring(i+1,tag.length());
-                         } else {
-                            tagdata = tag;
-                            tagargs = "";
-                         }
-
-                         /*
-                          Mark the input buffer as processed up to the closing
-                          ">" and reset the status of the FSM into text.
-                         */
-                         x      = end;
-                         Q      = Q_TEXT;
-                         text   = "";
-
-                         /*
-                          a non-empty tag? then process it as either
-                          EMPTY() or TAG()
-                         */
-
-
-                         if (!tagdata.equals("")) {
-
-                            n = new XMLNode();
-                            n.XMLType = tagtype;
-                            n.XMLData = tagdata;
-                            n.XMLAttr = tagargs;
-                            XMLList.insert( n, XMLItr );
-                            XMLItr.advance();
-
-                            tag      = "";
-                         }
-                         break;
-
-              /*-------------[ End Tag --> Only normal tags   ]---------*/
-              case Q_ENDTAG :
-                         /*
-                          Compute start and end of the tag, extract it
-                         */
-
-                         start = x;
-                         end   = input.indexOf(">",start);
-                         tag   = input.substring(start,end);
-
-                         /*
-                          Trim the tag and remove any arguments or other
-                          otherwise creative constructs on it.
-                         */
-
-                         tag = tag.trim();
-                         i   = tag.indexOf(" ",0);
-                         if (i >= 0) {
-                            tagdata = tag.substring(0,i);
-                         } else {
-                            tagdata = tag;
-                         }
-
-                         /*
-                          Flag it as type ENDDATA()
-                         */
-
-                         tagtype = ENDTAG;
-                         tagargs = "";
-
-                         if (!tagdata.equals("")) {
-                            n = new XMLNode();
-                            n.XMLType = tagtype;
-                            n.XMLData = tagdata;
-                            n.XMLAttr = tagargs;
-                            XMLList.insert( n, XMLItr );
-                            XMLItr.advance();
-
-                         }
-
-                         /*
-                          Mark the input buffer as processed till the end
-                          of the tag, also reset the FSM back into text
-                         */
-
-                         x     = end;
-                         Q     = Q_TEXT;
-
-                         break;
-
-              /*-------------[ CDATA   --> Transparent Block  ]---------*/
-              case Q_CDATA  :
-                         /*
-                          Skip the CDATA leading header
-                         */
-                         start = x + 7;
-
-                         /*
-                          Extract the block of enclosed data
-                         */
-
-                         end   = input.indexOf("]]>",start);
-                         tag   = input.substring(start,end);
-
-                         /*
-                          If not empty just process it as CDATA()
-                         */
-
-                         tagtype= CDATA;
-                         tagdata= tag;
-                         tagargs= "";
-
-                         if (!tagdata.equals("")) {
-
-                            n = new XMLNode();
-                            n.XMLType = tagtype;
-                            n.XMLData = tagdata;
-                            n.XMLAttr = tagargs;
-
-                            XMLList.insert( n, XMLItr );
-                            XMLItr.advance();
-
-                         }
-
-                         /*
-                          Mark the input buffer to continue after the tag,
-                          reset the FSM to continue processing in text mode
-                         */
-
-                         x     = end + 2;
-                         Q     = Q_TEXT;
-
-                         break;
-
-              /*-------------[ COMMENT --> Transparent Block  ]---------*/
-              case Q_COMMENT:
-                         /*
-                          Skip the Comment leading header
-                         */
-
-                         start = x + 2;
-
-                         /*
-                          Detect the end of the comment and extract the
-                          contents as a block
-                         */
-
-                         end   = input.indexOf("-->",start);
-                         tag   = input.substring(start,end);
-
-                         /*
-                          Process it as COMMENT()
-                         */
-
-                         tagtype= COMMENT;
-                         tagdata= tag;
-                         tagargs= "";
-
-                         if (!tagdata.equals("")) {
-
-                            n = new XMLNode();
-                            n.XMLType = tagtype;
-                            n.XMLData = tagdata;
-                            n.XMLAttr = tagargs;
-
-                            XMLList.insert( n, XMLItr );
-                            XMLItr.advance();
-
-                         }
-
-                         /*
-                          Mark the input buffer to continue after the
-                          closing tag, also reset the FSM into text mode
-                         */
-
-                         x     = end + 2;
-                         Q     = Q_TEXT;
-
-                         break;
-
-              /*-------------[ XML Markup --> Transparent Block  ]---------*/
-              case Q_XMLMARK:
-                         /*
-                          Skip the Comment leading header
-                         */
-
-                         start = x ;
-
-                         /*
-                          Detect the end of the comment and extract the
-                          contents as a block
-                         */
-
-                         end   = input.indexOf("?>",start);
-                         tag   = input.substring(start,end);
-
-                         /*
-                          Mark the input buffer to continue after the
-                          closing tag, also reset the FSM into text mode
-                         */
-
-                         x     = end + 1;
-                         Q     = Q_TEXT;
-
-                         break;
-
-
-              /*-------------[ INVALID CONSTRUCT              ]---------*/
-              default:
-                         /*
-                          This option shouldn't really never be exercised
-                         */
-                         Log.userinfo("Invalid tag format.", Log.ERROR);
-                         return null;
-             }
-
-             // Advance to next character in the input buffer
-
-             x++;
-           }
-
-           /*
-            If the buffer ended while processing a text chunk
-            it will be left unprocessed in the state machine
-            buffers. A good moment as any to process it.
-           */
-
-           if ( (!text.equals("")) && (Q == Q_TEXT)) {
-
-              n = new XMLNode();
-              n.XMLType = DATA;
-              n.XMLData = text;
-              n.XMLAttr = "";
-
-              XMLList.insert( n, XMLItr );
-              XMLItr.advance();
-
-           }
-
-           return XMLList;
-        }
-        /**
-         XMLFree
-         This method frees the XML trie
         */
-        public LinkedList XMLFree (LinkedList lt) {
+        final int    Q_TEXT       = 0;
+        final int    Q_TAG        = 1;
+        final int    Q_ENDTAG     = 2;
+        final int    Q_CDATA      = 3;
+        final int    Q_COMMENT    = 4;
+        final int    Q_XML        = 5;
+        final int    Q_PI         = 6;
 
-             XMLNode        n;
-             LinkedListItr  ltItr;
+        // Linked List local iterator
+        ListIterator xmlIterator;
 
-             ltItr = lt.zeroth();
+        // Buffer and processing variables
 
-             while (!ltItr.isPastEnd()) {
+        XMLNode node;
 
-                n = (XMLNode)ltItr.retrieve();
-                if (n != null) {
+        StringBuffer text = new StringBuffer();
+        String tagArguments;
+        String tag;
+        String token;
+        String tagData;
 
-                   if (n.XMLChild != null) {
-                      XMLFree(n.XMLChild);
-                      n.XMLChild.makeEmpty();
-                      n.XMLChild = null;
-                   }
-                   n = null;
+        int tagType      = XMLNode.TAG;
+
+        int     state    = Q_TEXT;
+        int     index    = 0;
+        int     spaceIndex        = 0;
+        int     start    = 0;
+        int     end      = 0;
+
+        // Initialize the Linked List iterator.
+        xmlIterator = XMLList.listIterator(0);
+
+        // Process the input string.
+        while (index < input.length())
+        {
+            token = String.valueOf(input.charAt(index));
+
+            switch(state)
+            {
+                // Initial state: parse text.
+                case Q_TEXT : 
+                    // See if an XML construct begins with "<".
+                    if (token.equals(MARKER_START))
+                    {
+                        // Change state to parsing XML.
+                        state = Q_XML;
+
+                        // If any text is already parsed, process it as DATA.
+                        if (text.length() > 0)
+                        {
+                            node = new XMLNode();
+                            node.XMLType = XMLNode.DATA;
+                            node.XMLData = text.toString();
+                            node.XMLAttr = EMPTY_STRING;
+
+                            xmlIterator.add(node);
+                        }
+
+                        // Initialize parsing buffers.
+                        text = new StringBuffer();
+                    }
+                    // Otherwise, just store the text.
+                    else
+                    {
+                        text.append(token);
+                    }
+                    break;
+
+                // XML state: XML just detected
+                case Q_XML :
+                    // See if this is a comment.
+                    if (input.indexOf(COMMENT_START, index) - index == 0)
+                    {
+                        state = Q_COMMENT;
+                        break;
+                    }
+                    // See if this is a processing instruction.
+                    if (input.indexOf(PI_START, index) - index == 0)
+                    {
+                        state = Q_PI;
+                        break;
+                    }
+                    // See if this is a CDATA block start.
+                    if (input.indexOf(CDATA_START, index) - index == 0)
+                    {
+                        state = Q_CDATA;
+                        break;
+                    }
+                    // See if this is an end tag.
+                    if (input.indexOf(SLASH, index) - index == 0)
+                    {
+                        state = Q_ENDTAG;
+                        break;
+                    }
+                    // Otherwise, just a normal tag.
+                    state = Q_TAG;
+
+                    // State: normal/empty tag
+                    case Q_TAG:
+                        // Compute start and end of tag and extract it.
+                        start  = index;
+                        end    = input.indexOf(MARKER_END, start);
+                        tag    = input.substring(start, end);
+                        tagArguments = EMPTY_STRING;
+
+                        // If the last character is a slash, this is an "empty tag", otherwise not.
+                        int tagLastIndex = tag.length() -1;
+                        if (tag.charAt(tagLastIndex) == '/')
+                        {
+                            tagType = XMLNode.EMPTY;
+                            tag = tag.substring(0, tagLastIndex);
+                        }
+                        else
+                        {
+                            tagType = XMLNode.TAG;
+                        }
+                        // Everything before the first space is the tag.
+                        spaceIndex = tag.indexOf(SPACE);
+                        if (spaceIndex > 0)
+                        {
+                            tagData = tag.substring(0, spaceIndex);
+                            tagArguments = SPACE + tag.substring(spaceIndex + 1, tag.length());
+                        }
+                        else
+                        {
+                            tagData = tag;
+                            tagArguments = EMPTY_STRING;
+                        }
+                        /*
+                            Mark the input buffer as processed up to the closing
+                            ">" and reset the state to Q_TEXT.
+                        */
+                        index = end;
+                        state = Q_TEXT;
+                        text = new StringBuffer();
+
+                        // If the tag is not empty, process it as EMPTY or TAG.
+                        if (tagData.length() > 0)
+                        {
+                            node = new XMLNode();
+                            node.XMLType = tagType;
+                            node.XMLData = tagData;
+                            node.XMLAttr = tagArguments;
+                            xmlIterator.add(node);
+
+                            tag = EMPTY_STRING;
+                        }
+                        break;
+
+                    // State: end tag
+                    case Q_ENDTAG :
+                        // Extract the tag.
+                        start = index;
+                        end   = input.indexOf(MARKER_END, start);
+                        tag   = input.substring(start, end);
+
+                        // Everything before the first space is the tag.
+                        spaceIndex = tag.indexOf(SPACE);
+                        if (spaceIndex > 0)
+                        {
+                            tagData = tag.substring(0, spaceIndex);
+                            tagArguments = SPACE + tag.substring(spaceIndex + 1, tag.length());
+                        }
+                        else
+                        {
+                            tagData = tag;
+                        }
+                        // Flag it as ENDTAG.
+                        tagType = XMLNode.ENDTAG;
+                        tagArguments = EMPTY_STRING;
+
+                        if (tagData.length() > 0)
+                        {
+                            node = new XMLNode();
+                            node.XMLType = tagType;
+                            node.XMLData = tagData;
+                            node.XMLAttr = tagArguments;
+                            xmlIterator.add(node);
+                        }
+
+                        /*
+                            Mark the input buffer as processed up to the closing
+                            ">" and reset the state to Q_TEXT.
+                        */
+                        index = end;
+                        state = Q_TEXT;
+                        text = new StringBuffer();
+
+                        break;
+
+                    // State: CDATA
+                    case Q_CDATA  :
+                        // Skip the CDATA leading header
+                        start = index + 7;
+
+                        // Extract the block of enclosed data.
+                        end   = input.indexOf(CDATA_END, start);
+                        tag   = input.substring(start, end);
+
+                        tagType = XMLNode.CDATA;
+                        tagData = tag;
+                        tagArguments = EMPTY_STRING;
+
+                        // If not empty, process as CDATA.
+                        if (tagData.length() > 0)
+                        {
+                            node = new XMLNode();
+                            node.XMLType = tagType;
+                            node.XMLData = tagData;
+                            node.XMLAttr = tagArguments;
+                            xmlIterator.add(node);
+                        }
+
+                        // Mark the input buffer to continue after the tag; reset to text mode.
+                        index     = end + 2;
+                        state     = Q_TEXT;
+
+                        break;
+
+                    // State: comment
+                    case Q_COMMENT:
+                        // Skip the comment leading header.
+                        start = index + 2;
+
+                        // Find end of comment and extract contents as a block.
+                        end   = input.indexOf(COMMENT_END, start);
+                        tag   = input.substring(start, end);
+
+                        tagType = XMLNode.COMMENT;
+                        tagData = tag;
+                        tagArguments = EMPTY_STRING;
+
+                        if (tagData.length() > 0)
+                        {
+                            node = new XMLNode();
+                            node.XMLType = tagType;
+                            node.XMLData = tagData;
+                            node.XMLAttr = tagArguments;
+                            xmlIterator.add(node);
+                        }
+
+                        // Mark the input buffer to continue after the tag; reset to text mode.
+                        index     = end + 2;
+                        state     = Q_TEXT;
+
+                        break;
+
+                    // State: XML processing instruction.
+                    case Q_PI:
+                        start = index ;
+
+                        // Extract the processing instruction
+                        end   = input.indexOf(PI_END, start);
+                        tag   = input.substring(start, end);
+
+                        // Mark the input buffer to continue after the tag; reset to text mode.
+                        index     = end + 1;
+                        state     = Q_TEXT;
+
+                        break;
+
+                    // Invalid construct.
+                    default:
+                        Log.userinfo("Invalid tag format.", Log.ERROR);
+                        return null;
                 }
 
-                ltItr.advance();
-
-             }
-
-             return null;
+            // Advance to next character in the input buffer
+            index++;
         }
-        /**
-         XMLScan
-         This method receives a linear linked list with the parsed
-         XML string and returns a XML tree with a hierarchical
-         representation of the relation between elements.
+
+        /*
+            If the buffer ended while processing a text chunk,
+            this chunk will be left unprocessed in the buffer
+            and should be added as DATA.
         */
-        public LinkedList XMLScan(LinkedListItr llItr, LinkedList ll, LinkedList lt) {
+        if ((text.length() > 0) && (state == Q_TEXT))
+        {
+            node = new XMLNode();
+            node.XMLType = XMLNode.DATA;
+            node.XMLData = text.toString();
+            node.XMLAttr = EMPTY_STRING;
+            xmlIterator.add(node);
+        }
+        return XMLList;
+    }
 
-             XMLNode        n;
-             XMLNode        t;
-             LinkedListItr  ltItr;
 
-             /*
-               A tokenized representation of the XML stream is held in
-               one linear single Linked List (ll) which is scanned and
-               transformed into a trie (lt & descendants) using recursion
-             */
+    /**
+     *  Converts a linear linked list with parsed XML
+     *  into a trie.
+     *
+     *  @param xmlIterator  an iterator on the XML linear linked list
+     *  @param xmlList      the parsed XML as a linear linked list
+     *  @param trie         the trie to modify and return
+     *
+     *  @return a trie representation of the parsed XML
+     */
+    public LinkedList scan(ListIterator xmlIterator, LinkedList xmlList, LinkedList trie)
+    {
+        /*
+            A tokenized representation of the XML stream is held in
+            one linear single Linked List (xmlIterator), which is scanned and
+            transformed into a trie (trie & descendants) using recursion.
+        */
+        XMLNode node;
+        XMLNode child;
+        ListIterator trieIterator = trie.listIterator(0);
 
-             ltItr = lt.zeroth();
+        while (xmlIterator.hasNext())
+        {
+            // Retrieve a node from the Linked List.
+            node = (XMLNode)xmlIterator.next();
 
-             while (!llItr.isPastEnd()) {
-
-                /*
-                  Retrieve a node from the Linked List
-                */
-
-                n = (XMLNode)llItr.retrieve();
-
-                /*
-                  Only process valid references
-                */
-
-                if (n != null) {
-
-                   switch(n.XMLType) {
-
-                    case TAG    :
-                                  /*
-                                    This node is a Tag, so create a node
-                                    in the trie and recurse for it's childs
-                                    <tag>...child...</tag>
-                                  */
-
-                                  t = new XMLNode();
-                                  t.XMLType = n.XMLType;
-                                  t.XMLData = n.XMLData;
-                                  t.XMLAttr = n.XMLAttr;
-                                  t.XMLChild= new LinkedList();
-                                  t.XMLChild.makeEmpty();
-                                  llItr.advance();
-                                  t.XMLChild= XMLScan(llItr,ll,t.XMLChild);
-                                  lt.insert( t, ltItr );
-                                  ltItr.advance();
-                                  break;
-                    case EMPTY  :
-                                  /*
-                                    This node is Empty, so create a node
-                                    on the trie but there is no need to
-                                    recurse since empties doesn't have
-                                    childs. (<tag/>)
-                                  */
-                                  t = new XMLNode();
-                                  t.XMLType = n.XMLType;
-                                  t.XMLData = n.XMLData;
-                                  t.XMLAttr = n.XMLAttr;
-                                  lt.insert( t, ltItr );
-                                  ltItr.advance();
-                                  break;
-                    case DATA   :
-                    case CDATA  :
-                                  /*
-                                    This is either text or CDATA, handle
-                                    both equally creating a node on the
-                                    trie.
-                                  */
-
-                                  t = new XMLNode();
-                                  t.XMLType = n.DATA;
-                                  t.XMLData = n.XMLData;
-                                  t.XMLAttr = "";
-                                  lt.insert( t, ltItr );
-                                  ltItr.advance();
-                                  break;
-                    case ENDTAG :
-                                  /*
-                                    If there is an end tag is because
-                                    this method is recursing on a lower
-                                    level (or the XML is non-balanced).
-                                  */
-                                  return lt;
-                    default     :
-                                  break;
-                   }
-                } else
+            // Only process valid references.
+            if (node != null)
+            {
+                switch(node.XMLType)
                 {
-                    Log.userinfo("XML element is null.", Log.ERROR);
-                }
-                llItr.advance();
-             }
+                    case XMLNode.TAG :
+                        // Create a node in the trie and recurse for its children.
+                        child = new XMLNode();
+                        child.XMLType = node.XMLType;
+                        child.XMLData = node.XMLData;
+                        child.XMLAttr = node.XMLAttr;
+                        child.XMLChild = new LinkedList();
+                        child.XMLChild = scan(xmlIterator, xmlList, child.XMLChild);
+                        trie.add(child);
+                        break;
 
-             return lt;
+                    case XMLNode.EMPTY :
+                        // Create a new node; no need to recurse.
+                        child = new XMLNode();
+                        child.XMLType = node.XMLType;
+                        child.XMLData = node.XMLData;
+                        child.XMLAttr = node.XMLAttr;
+                        trie.add(child);
+                        break;
+
+                    case XMLNode.DATA :
+                    case XMLNode.CDATA :
+
+                        // Handle both equally by adding a node with no attributes, type DATA.
+                        child = new XMLNode();
+                        child.XMLType = node.DATA;
+                        child.XMLData = node.XMLData;
+                        child.XMLAttr = EMPTY_STRING;
+                        trie.add(child);
+                        break;
+
+                    case XMLNode.ENDTAG :
+
+                        // This method is already recursing, or the XML is unbalanced.
+                        return trie;
+
+                    default :
+                        break;
+                }
+            }
+            else
+            {
+                Log.userinfo("XML element is null.", Log.ERROR);
+            }
         }
-        /**
-         XMLLoad
-         This method receives a string with the XML segment to decode
-         returns the full evaluation of a trie with the hierarchical
-         representation of it.
+        return trie;
+    }
+
+
+    /**
+     *  Returns the full evaluation of a string containing
+     *  an XML segment.
+     *
+     *  @param buffer   the XML segment
+     *
+     *  @return trie representation of the XML
+     */
+    public LinkedList load(String buffer)
+    {
+        LinkedList linearList = new LinkedList();
+        LinkedList trie = new LinkedList();
+
+        XMLNode node;
+        ListIterator listIterator;
+
+        /*
+            Process the XML tags in the buffer string and return
+            one token (text or tag) per linked list node
+            (linear representation).
         */
-        public LinkedList XMLLoad(String XMLBuff) {
+        linearList = XMLRead(buffer, linearList);
 
-             LinkedList     ll;
-             LinkedList     lt;
-
-             XMLNode        n;
-             LinkedListItr  llItr;
-
-
-             ll = new LinkedList();
-             lt = new LinkedList();
-
-             /*
-               Initialize a Linked List object, process the XML tags
-               on the buffer string and return one token (text or tag)
-               per Linked List node (linear representation)
-             */
-
-             ll.makeEmpty();
-             ll = XMLRead(XMLBuff,ll);
-
-             if (ll == null)
-             {
-                Log.userinfo("Invalid XML:", Log.ERROR);
-                StringTokenizer lines = new StringTokenizer(XMLBuff, System.getProperty("line.separator"));
-                while (lines.hasMoreTokens())
-                {
-                    Log.userinfo(lines.nextToken(), Log.ERROR);
-                }
-
-                System.out.println("*** ERROR Invalid XML("+XMLBuff+") ***");
-                return null;
-             }
-
-             /*
-               Reset to the begining of the linear representation Linked
-               List
-             */
-
-             llItr = ll.zeroth();
-             llItr.advance();
-
-             /*
-               The linear Linked List isn't really useful to operate with
-               a recursive parser, so we transform it into a trie that
-               captures the parent-child relations between elements on the
-               list, also possible XML tags are reduced in the process
-               as Text, Tags Elements and Empty Tags Elements.
-               Performance considerations should counsel to come straigth
-               from XML into this tree representation, for clarity sake
-               I'm doing this in two steps, if unacceptable performance
-               is obtained both could always be merged with a somewhat
-               more obscure algorithm. Time will tell.
-             */
-
-             lt = XMLScan(llItr,ll,lt);
-
-             /*
-               The Linked List is disposed, if this step is not performed
-               the JVM garbage collector will dispose it anyway after some
-               time of being de-referenced the objects. However, it will
-               drain unnecessarily memory resources, so the process is
-               expedited here.
-             */
-
-             ll = XMLFree(ll);
-
-             return lt;
+        if (linearList == null)
+        {
+            Log.userinfo("Invalid XML:", Log.ERROR);
+            StringTokenizer lines = new StringTokenizer(buffer, System.getProperty("line.separator"));
+            while (lines.hasMoreTokens())
+            {
+                Log.userinfo(lines.nextToken(), Log.ERROR);
+            }
+            return null;
         }
+
+        // Get the linear list's iterator.
+        listIterator = linearList.listIterator(0);
+
+        /*
+            Since the linear list is not so useful with a recursive
+            parser, transform it into a trie that captures the
+            parent-child relationships among elements in the list.
+        */
+        trie = scan(listIterator, linearList, trie);
+
+        // Dispose of the linearList.
+        linearList.clear();
+
+        return trie;
+    }
 }

@@ -152,14 +152,37 @@
                         <xsl:value-of select="count(exchanges/exchange)"/> exchanges
                     </li>
                     <li>
-                        <xsl:value-of select="count(//userid[not(.=preceding::userid)])"/> users
+                        <xsl:variable name="usercount" select="count(//userid[not(.=preceding::userid)])"/>
+                        <xsl:value-of select="$usercount"/> user<xsl:if test="$usercount!=1">s</xsl:if>
                     </li>
+                    <xsl:if test="exchanges/@starttime">
+                        <li>
+                            starts: <xsl:value-of select="exchanges/@starttime"/>
+                        </li>
+                    </xsl:if>
+                    <xsl:if test="exchanges/@backlink">
+                        <li>
+                            previous:
+                                <xsl:element name="a"><xsl:attribute name="href"><xsl:value-of select="exchanges/@backlink"/></xsl:attribute>
+                                    <xsl:value-of select="exchanges/@backlink"/>
+                                </xsl:element>
+                        </li>
+                    </xsl:if>
                 </ul>
                 <!--Build a conversation for each userid, sorting by reverse time order.-->
                 <xsl:for-each select="//userid[not(.=preceding::userid)]">
                     <xsl:sort select="timestamp" order="descending"/>
                     <xsl:apply-templates select="."/>
                 </xsl:for-each>
+                <!--Print a link to previous files at the bottom as well.-->
+                <xsl:if test="exchanges/@backlink">
+                    <p>
+                        previous:
+                            <xsl:element name="a"><xsl:attribute name="href"><xsl:value-of select="exchanges/@backlink"/></xsl:attribute>
+                                <xsl:value-of select="exchanges/@backlink"/>
+                            </xsl:element>
+                    </p>
+                </xsl:if>
             </body>
         </html>
     </xsl:template>

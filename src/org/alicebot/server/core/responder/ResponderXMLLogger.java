@@ -15,13 +15,12 @@
 
 package org.alicebot.server.core.responder;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.alicebot.server.core.ActiveMultiplexor;
 import org.alicebot.server.core.Globals;
-import org.alicebot.server.core.Graphmaster;
-import org.alicebot.server.core.NoSuchPredicateException;
+import org.alicebot.server.core.PredicateMaster;
 import org.alicebot.server.core.logging.XMLLog;
 import org.alicebot.server.core.util.Toolkit;
 
@@ -90,16 +89,9 @@ public class ResponderXMLLogger
     public static void log(String input, String response, String hostname, String userid, String botid)
     {
         // Get the client name.
-        String clientName = null;
-        try
-        {
-            clientName = ActiveMultiplexor.StaticSelf.getPredicateValue(Globals.getClientNamePredicate(), userid);
-        }
-        catch (NoSuchPredicateException e)
-        {
-            clientName = Graphmaster.GENERIC_CLIENT_NAME;
-        }
+        String clientName = PredicateMaster.get(Globals.getClientNamePredicate(), userid);
 
+        // Log the exchange.
         XMLLog.log(     INDENT + EXCHANGE_START + LINE_SEPARATOR +
                         INDENT + INDENT + TIMESTAMP_START +
                                  new SimpleDateFormat(TIMESTAMP_LOG_FORMAT).format(new Date()).trim() + 

@@ -47,7 +47,7 @@ public class SentenceProcessor extends AIMLProcessor
     public static final String label = "sentence";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
@@ -67,7 +67,7 @@ public class SentenceProcessor extends AIMLProcessor
         }
         else
         {
-            throw new InvalidAIMLException("<sentence></sentence> must have content!");
+            throw new AIMLProcessorException("<sentence></sentence> must have content!");
         }
     }
 }

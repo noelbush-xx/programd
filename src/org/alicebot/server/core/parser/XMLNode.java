@@ -1,94 +1,88 @@
+/*
+    Alicebot Program D
+    Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+    
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+    USA.
+*/
+
+/*
+    4.1.4 [00] - December 2001, Noel Bush
+    - cleaned up formatting and removed unnecessary imports
+    - changed to use java.util.LinkedList
+*/
+
 package org.alicebot.server.core.parser;
 
-/**
-Alice Program D
-Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+import java.util.LinkedList;
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-USA.
-
-@author  Richard Wallace
-@author  Jon Baer
-@author  Thomas Ringate/Pedro Colla
-@version 4.1.2
-*/
-
-import org.alicebot.server.core.*;
-import org.alicebot.server.core.util.*;
-import org.alicebot.server.core.parser.*;
-import org.alicebot.server.core.processor.*;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.net.*;
-//import java.util.*;
-
-import javax.swing.*;
 
 /**
-  This class implements a node of the XML trie created by XMLParser
-  @version 4.1.1
-  @author  Thomas Ringate/Pedro Colla
+ *  Implements a node of the XML trie
+ *  created by {@link XMLParser}.
+ *
+ *  @version 4.1.4
+ *  @author  Thomas Ringate/Pedro Colla
 */
-public class XMLNode extends Object {
+public class XMLNode
+{
+    // XML Types
 
-        /*
-         XML Types
-        */
+    /** XML Tag &lt;tag&gt; */
+    public static final int TAG     = 0;
 
-        /** TAG = XML Tag <tag>*/
-        public static final int TAG     = 0;
+    /** XML Empty &lt;tag/&gt; */
+    public static final int EMPTY   = 1;
 
-        /** EMPTY = XML Empty <tag/> */
-        public static final int EMPTY   = 1;
+    /** DATA = Text */
+    public static final int DATA    = 2;
 
-        /** DATA = Text */
-        public static final int DATA    = 2;
+    /** Character Data. */
+    public static final int CDATA   = 3;
 
-        /** CDATA = Block of Data */
-        public static final int CDATA   = 3;
+    /** XML Comment. */
+    public static final int COMMENT = 4;
 
-        /** COMMENT = XML Comment */
-        public static final int COMMENT = 4;
+    /** &lt;/tag&gt; */
+    public static final int ENDTAG  = 5;
 
-        /** ENDTAG </tag> */
-        public static final int ENDTAG  = 5;
+    // Structure of an XML node
 
-        /**
-         XMLNode
-         Record structure of an XML node
-         */
+    /**
+     * Type of the node ({@link #TAG}, {@link #EMPTY},
+     * {@link #DATA}, {@link #CDATA}, {@link #COMMENT}, or {@link #ENDTAG}).
+     */
+    public    int     XMLType;
 
-         /** Type of the node (tag,empty,text,endtag,etc.) */
-         public    int     XMLType;
+    /** Actual data on the node or tag content.  */
+    public String     XMLData;
 
-         /** Actual data on the node or tag content  */
-         public String     XMLData;
+    /** String of attributes associated (only for tags, otherwise &quot;&quot;) */
+    public String     XMLAttr;
 
-         /** String of attributed associated (only for tags, otherwise "") */
-         public String     XMLAttr;
-
-         /** Pointer to a child trie structure (only for tags, otherwise null) */
-         public LinkedList XMLChild;
+    /** Pointer to a child trie structure (only for tags, otherwise null). */
+    public LinkedList XMLChild;
 
 
-         /**
-           Constructor, initializes the node into a default empty value
-         */
+    /** An empty string. */
+    private static final String EMPTY_STRING = "";
 
-         XMLNode() {
-             this.XMLType = 0;
-             this.XMLData = "";
-             this.XMLAttr = "";
-             this.XMLChild= null;
-         }
 
+     /**
+      * Initializes the node with empty default values.
+     */
+     XMLNode()
+     {
+        this.XMLType  = 0;
+        this.XMLData  = EMPTY_STRING;
+        this.XMLAttr  = EMPTY_STRING;
+        this.XMLChild = null;
+     }
 }

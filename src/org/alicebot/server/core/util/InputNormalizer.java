@@ -23,17 +23,18 @@
       (containing one member with an empty string)
 */
 
+/*
+    4.1.4 [00] - December 2001, Noel Bush
+    - important fix that avoids generating spurious sentences for extra punctuation
+*/
+
 package org.alicebot.server.core.util;
 
+import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.StringTokenizer;
-
-import org.alicebot.server.core.Graphmaster;
-import org.alicebot.server.core.logging.Trace;
-import org.alicebot.server.core.util.Toolkit;
 
 
 /**
@@ -101,7 +102,10 @@ public class InputNormalizer
             int splitterIndex = input.indexOf(splitter, start);
             while (splitterIndex != -1)
             {
-                result.add(input.substring(start, splitterIndex + 1).trim());
+                if (splitterIndex > start)
+                {
+                    result.add(input.substring(start, splitterIndex + 1).trim());
+                }
                 start = splitterIndex + 1;
                 splitterIndex = input.indexOf(splitter, start);
             }

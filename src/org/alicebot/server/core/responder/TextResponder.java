@@ -39,14 +39,6 @@
 
 package org.alicebot.server.core.responder;
 
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
-
-import org.alicebot.server.core.ActiveMultiplexor;
-import org.alicebot.server.core.Globals;
-import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.logging.Trace;
-import org.alicebot.server.core.util.Toolkit;
 
 /**
  *  Logs output of all chat.

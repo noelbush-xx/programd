@@ -30,7 +30,6 @@
 package org.alicebot.server.core.processor;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.alicebot.server.core.parser.AIMLParser;
 import org.alicebot.server.core.parser.XMLNode;
@@ -60,7 +59,7 @@ public class Person2Processor extends AIMLProcessor
     private static HashMap substitutionMap = new HashMap();
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
@@ -71,7 +70,7 @@ public class Person2Processor extends AIMLProcessor
             }
             catch (ProcessorException e)
             {
-                throw (InvalidAIMLException)e;
+                throw (AIMLProcessorException)e;
             }
         }
         else

@@ -24,12 +24,15 @@ public class NoSuchPredicateException extends Exception
     /** The name for which there was no predicate. */
     private static String name;
 
+    /** The index at which there was no value. */
+    private static int index = -1;
+
 
     /**
      *  Constructs a new NoSuchPredicateException for
-     *  the given path.
+     *  the given name.
      *
-     *  @param path the name for which there was no predicate
+     *  @param name the name for which there was no predicate
      */
     public NoSuchPredicateException(String name)
     {
@@ -37,8 +40,31 @@ public class NoSuchPredicateException extends Exception
     }
 
 
+    /**
+     *  Constructs a new NoSuchPredicateException for
+     *  the given name and index.
+     *
+     *  @param name     the name for which there was no predicate
+     *                  with a value at the given index
+     *  @param index    the index at which there was no value
+     */
+    public NoSuchPredicateException(String name, int index)
+    {
+        this.name = name;
+        this.index = index;
+    }
+
+
     public String getMessage()
     {
-        return "No predicate with name \"" + name + "\".";
+        if (index != -1)
+        {
+            return "No predicate with name \"" + name + "\" with a value at index " + index + ".";
+        }
+        else
+        {
+            return "No predicate with name \"" + name + "\".";
+        }
     }
 }
+

@@ -16,9 +16,9 @@
 package org.alicebot.server.core.parser;
 
 import org.alicebot.server.core.processor.BotProcessor;
-import org.alicebot.server.core.processor.InputProcessor;
 import org.alicebot.server.core.processor.GetProcessor;
 import org.alicebot.server.core.processor.IDProcessor;
+import org.alicebot.server.core.processor.InputProcessor;
 import org.alicebot.server.core.processor.LearnProcessor;
 import org.alicebot.server.core.processor.SetProcessor;
 import org.alicebot.server.core.processor.SizeProcessor;

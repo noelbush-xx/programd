@@ -39,7 +39,7 @@ public class SizeProcessor extends AIMLProcessor
     public static final String label = "size";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.EMPTY)
         {
@@ -47,7 +47,7 @@ public class SizeProcessor extends AIMLProcessor
         }
         else
         {
-            throw new InvalidAIMLException("<size/> cannot have content!");
+            throw new AIMLProcessorException("<size/> cannot have content!");
         }
     }
 }

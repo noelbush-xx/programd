@@ -39,7 +39,7 @@ public class VersionProcessor extends AIMLProcessor
     public static final String label = "version";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.EMPTY)
         {
@@ -47,7 +47,7 @@ public class VersionProcessor extends AIMLProcessor
         }
         else
         {
-            throw new InvalidAIMLException("<version/> cannot have content!");
+            throw new AIMLProcessorException("<version/> cannot have content!");
         }
     }
 }

@@ -32,7 +32,7 @@ public class IDProcessor extends AIMLProcessor
     public static final String label = "id";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.EMPTY)
         {
@@ -40,7 +40,7 @@ public class IDProcessor extends AIMLProcessor
         }
         else
         {
-            throw new InvalidAIMLException("<id/> cannot have content!");
+            throw new AIMLProcessorException("<id/> cannot have content!");
         }
     }
 }

@@ -34,12 +34,19 @@ package org.alicebot.server.core.logging;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.StringTokenizer;
 
 import org.alicebot.server.core.Globals;
+import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.MessagePrinter;
+import org.alicebot.server.core.util.StackParser;
 import org.alicebot.server.core.util.Toolkit;
+import org.alicebot.server.core.util.Trace;
+import org.alicebot.server.core.util.UserErrorException;
+
 
 /**
- *  Handles logging of Alicebot events to log files.
+ *  Notifies of logging of Alicebot events to log files.
  *
  *  @author Jon Baer
  *  @author Thomas Ringate, Pedro Colla
@@ -52,6 +59,9 @@ public class Log
 
     /** Chat log path. */
     public static final String CHAT        = Globals.getProperty("programd.logging.chat.path", "./logs/chat.log");
+
+    /** Listener log path. */
+    public static final String LISTENERS   = Globals.getProperty("programd.logging.listeners.path", "./logs/listeners.log");
 
     /** Database log path. */
     public static final String DATABASE    = Globals.getProperty("programd.logging.database.path", "./logs/database.log");
@@ -109,14 +119,53 @@ public class Log
         }
         catch (IOException e)
         {
-            Trace.userfail("Could not create log file \"" + type + "\".");
+            throw new UserErrorException("Could not create log file \"" + type + "\".");
         }
-        MessagePrinter.println(message, Trace.NO_FLAG, fileWriter, MessagePrinter.LOG);
+        MessagePrinter.println(message, type, fileWriter, MessagePrinter.LOG);
+    }
+
+    
+    /**
+     *  Logs an exception to the appropriate logfile.
+     *
+     *  @param exception    the exception
+     *  @param type         the type of the log event
+                    (one of <code>ACCESS</code>, <code>CHAT</code>, <code>DATABASE</code>, 
+                    <code>DEBUG</code>, <code>ERROR</code>, <code>EVENT</code>, 
+                    <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
+                    <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>, <code>TARGETING</code>)
+     */
+    public static void log(Exception exception, String type)
+    {
+        // Check if the file exists.
+        Toolkit.checkOrCreate(type, LOGFILE);
+        
+        // Get a FileWriter to the file.
+        try
+        {
+            fileWriter = new FileWriter(type, true);
+        }
+        catch (IOException e)
+        {
+            throw new UserErrorException("Could not create log file \"" + type + "\".");
+        }
+
+        String message = exception.getMessage();
+        if (message != null)
+        {
+            MessagePrinter.println(message, type, fileWriter, MessagePrinter.LOG);
+        }
+        StringTokenizer lines = StackParser.getStackTraceFor(exception);
+        while (lines.hasMoreElements())
+        {
+            MessagePrinter.println(lines.nextToken(), type, fileWriter, MessagePrinter.LOG);
+        }
     }
 
     
     /**
      *  Writes a multiline log message to the appropriate logfile.
+     *
      *  @param message  the text of the log event
      *  @param type     the type of the log event
                     (one of <code>ACCESS</code>, <code>CHAT</code>, <code>DATABASE</code>, 
@@ -154,17 +203,17 @@ public class Log
     /**
      *  Same as {@link #userinfo(String, String)}, but
      *  logs to multiple log files.
+     *
      *  @param message  the text of the log event
      *  @param types    the log types
      */
     public static void userinfo(String message, String[] types)
     {
-        int lastType = types.length - 1;
+        int lastType = types.length;
         for (int index = 0; index < lastType; index++)
         {
-            log(message, types[index]);
+            userinfo(message, types[index]);
         }
-        userinfo(message, types[lastType]);
     }
 
 
@@ -183,8 +232,7 @@ public class Log
         int lineCount = message.length;
         for (int index = 0; index < lineCount; index++)
         {
-            Trace.userinfo(message[index]);
-            log(message[index], type);
+            userinfo(message[index], type);
         }
     }
 
@@ -192,17 +240,17 @@ public class Log
     /**
      *  Same as {@link #userinfo(String[], String)}, but
      *  logs to multiple log files.
+     *
      *  @param message  the text of the log event
      *  @param types    the log types
      */
     public static void userinfo(String[] message, String[] types)
     {
-        int lastType = types.length - 1;
+        int lastType = types.length;
         for (int index = 0; index < lastType; index++)
         {
-            log(message, types[index]);
+            userinfo(message, types[index]);
         }
-        userinfo(message, types[lastType]);
     }
 
 
@@ -218,28 +266,100 @@ public class Log
     */
     public static void userfail(String message, String type)
     {
-        log(message, type);
         Trace.userfail(message);
+        log(message, type);
+    }
+
+
+    /**
+     *  Logs a multiline message <i>and</i> prints it to the console as a user failure message.
+     *
+     *  @param message  the text of the log event
+     *  @param type     the type of the log event
+                    (one of <code>ACCESS</code>, <code>CHAT</code>, <code>DATABASE</code>, 
+                    <code>DEBUG</code>, <code>ERROR</code>, <code>EVENT</code>, 
+                    <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
+                    <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>)
+    */
+    public static void userfail(String[] message, String type)
+    {
+        int lastLine = message.length;
+        for (int index = 0; index < lastLine; index++)
+        {
+            userfail(message[index], type);
+        }
     }
 
 
     /**
      *  Same as {@link #userfail(String, String)}, but
      *  logs to multiple log files.
+     *
      *  @param message  the text of the log event
      *  @param types    the log types
      */
     public static void userfail(String message, String[] types)
     {
-        int lastType = types.length - 1;
+        int lastType = types.length;
         for (int index = 0; index < lastType; index++)
         {
-            log(message, types[index]);
+            userfail(message, types[index]);
         }
-        userfail(message, types[lastType]);
     }
 
 
+    /**
+     *  Same as {@link #userfail(String, String[])}, but
+     *  logs multi-line messages.
+     *  @param message  the text of the log event
+     *  @param types    the log types
+     */
+    public static void userfail(String[] message, String[] types)
+    {
+        int lastType = types.length - 1;
+        for (int index = 0; index < lastType; index++)
+        {
+            userfail(message, types[index]);
+        }
+    }
+
+
+    /**
+     *  Logs a message and an exception <i>and</i> prints them to the console as a user failure message.
+     *
+     *  @param message  the text of the log event
+     *  @param type     the type of the log event
+                    (one of <code>ACCESS</code>, <code>CHAT</code>, <code>DATABASE</code>, 
+                    <code>DEBUG</code>, <code>ERROR</code>, <code>EVENT</code>, 
+                    <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
+                    <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>)
+    */
+    public static void userfail(String message, Exception exception, String type)
+    {
+        Trace.userfail(message);
+        log(message, type);
+        Trace.userfail(exception);
+        log(exception, type);
+    }
+
+
+    /**
+     *  Notifies of user error exceptions.
+     */
+    public static void userfail(UserErrorException e)
+    {
+        Exception embedded = e.getException();
+        if (embedded == null)
+        {
+            userfail(e.getMessage(), Log.ERROR);
+        }
+        else
+        {
+            userfail(e.getMessage(), embedded, Log.ERROR);
+        }
+    }
+
+    
     /**
      *  Logs a message <i>and</i> prints it to the console as a developer info message.
      *
@@ -265,12 +385,11 @@ public class Log
      */
     public static void devinfo(String message, String[] types)
     {
-        int lastType = types.length - 1;
+        int lastType = types.length;
         for (int index = 0; index < lastType; index++)
         {
-            log(message, types[index]);
+            devinfo(message, types[index]);
         }
-        devinfo(message, types[lastType]);
     }
 
 
@@ -292,6 +411,26 @@ public class Log
 
 
     /**
+     *  Logs a message and an exception <i>and</i> prints them to the console as a developer failure message.
+     *
+     *  @param message      the text of the log event
+     *  @param exception    the exception
+     *  @param type         the type of the log event
+                    (one of <code>ACCESS</code>, <code>CHAT</code>, <code>DATABASE</code>, 
+                    <code>DEBUG</code>, <code>ERROR</code>, <code>EVENT</code>, 
+                    <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
+                    <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>)
+    */
+    public static void devfail(String message, Exception exception, String type)
+    {
+        Trace.devfail(message);
+        log(message, type);
+        Trace.devfail(exception);
+        log(exception, type);
+    }
+
+
+    /**
      *  Same as {@link #devfail(String, String)}, but
      *  logs to multiple log files.
      *  @param message  the text of the log event
@@ -299,12 +438,37 @@ public class Log
      */
     public static void devfail(String message, String[] types)
     {
-        int lastType = types.length - 1;
+        int lastType = types.length;
         for (int index = 0; index < lastType; index++)
         {
-            log(message, types[index]);
+            devfail(message, types[index]);
         }
-        devfail(message, types[lastType]);
+    }
+
+
+    /**
+     *  Notifies of developer error exceptions.
+     */
+    public static void devfail(DeveloperErrorException e)
+    {
+        Exception embedded = e.getException();
+        if (embedded == null)
+        {
+            devfail(e.getMessage(), Log.ERROR);
+        }
+        else
+        {
+            devfail(e.getMessage(), embedded, Log.ERROR);
+        }
+    }
+
+
+    /**
+     *  Notifies of runtime exceptions.
+     */
+    public static void devfail(RuntimeException e)
+    {
+        devfail("Unforeseen runtime exception.", e, Log.ERROR);
     }
 }
 

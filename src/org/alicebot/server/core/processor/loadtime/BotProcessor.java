@@ -29,7 +29,7 @@
 package org.alicebot.server.core.processor.loadtime;
 
 import org.alicebot.server.core.Globals;
-import org.alicebot.server.core.logging.Trace;
+import org.alicebot.server.core.util.Trace;
 import org.alicebot.server.core.parser.StartupFileParser;
 import org.alicebot.server.core.parser.XMLNode;
 import org.alicebot.server.core.util.Toolkit;
@@ -62,7 +62,7 @@ public class BotProcessor extends StartupElementProcessor
                 {
                     Trace.userinfo("Sorry, this version of Program D only supports one bot.");
                     Trace.userinfo("Cannot load \"" + botID + "\" right now.");
-                    Trace.userinfo("Just wait for version 4.1.4!");
+                    Trace.userinfo("Just wait for a later version!");
                     return EMPTY_STRING;
                 }
             }

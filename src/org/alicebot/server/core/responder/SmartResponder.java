@@ -25,20 +25,22 @@
 
 package org.alicebot.server.core.responder;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.alicebot.server.core.ActiveMultiplexor;
+import org.alicebot.server.core.Multiplexor;
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.logging.Trace;
-import org.alicebot.server.core.util.Toolkit;
+import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.Trace;
+import org.alicebot.server.core.util.UserErrorException;
 
 
 /**
@@ -185,7 +187,7 @@ public class SmartResponder
             }
             catch (UnsupportedEncodingException e)
             {
-                Trace.devfail("Encodings are not properly supported!");
+                throw new DeveloperErrorException("Encodings are not properly supported!");
             }
         }
 
@@ -211,47 +213,81 @@ public class SmartResponder
     {
         try
         {
-            //this.responseWriter = this.serviceResponse.getWriter();
             this.serviceOutputStream = this.serviceResponse.getOutputStream();
+        }
+        catch (IOException e)
+        {
+            throw new DeveloperErrorException("Error getting service response output stream.", e);
+        }
             
-            switch (getServiceType())
-            {
-                case ServiceType.PLAIN_TEXT :
-                    this.serviceResponse.setContentType(TEXT_PLAIN);
-                    this.botResponse = ActiveMultiplexor.StaticSelf.getResponse(this.userRequest, this.userid,  new TextResponder());
-                    break;
-                    
-                case ServiceType.HTML :
-                    // Always force response content type to be UTF-8.
-                    this.serviceResponse.setContentType(HTML_CONTENT_TYPE);
-                    HTMLResponder responder = new HTMLResponder(this.templateName);
-                    this.botResponse = responder.authenticate(this.serviceRequest, this.serviceResponse, this.userid);
-                    // Null response from authenticate means user is authenticated.
-                    if (this.botResponse == null)
-                    {
-                        this.botResponse = ActiveMultiplexor.StaticSelf.getResponse(this.userRequest,
-                                                (String)this.serviceRequest.getSession(true).getAttribute(HTMLResponder.USER_COOKIE_NAME),
-                                                responder);
-                    }
-                    break;
-                    
-                case ServiceType.FLASH :
-                    this.serviceResponse.setContentType(TEXT_PLAIN);
-                    this.botResponse = ActiveMultiplexor.StaticSelf.getResponse(this.userRequest, this.userid,  new FlashResponder(this.templateName));
-                    break;
+        switch (getServiceType())
+        {
+            case ServiceType.PLAIN_TEXT :
+                this.serviceResponse.setContentType(TEXT_PLAIN);
+                this.botResponse = ActiveMultiplexor.getInstance().getResponse(this.userRequest, this.userid,  new TextResponder());
+                break;
+                
+            case ServiceType.HTML :
+                // Always force response content type to be UTF-8.
+                this.serviceResponse.setContentType(HTML_CONTENT_TYPE);
 
-                default :
-                    this.serviceResponse.setContentType(TEXT_PLAIN);
-                    this.botResponse = ActiveMultiplexor.StaticSelf.getResponse(this.userRequest, this.userid,  new TextResponder());
-                    break;
-            }
+                HTMLResponder responder;
+                try
+                {
+                    responder = new HTMLResponder(this.templateName);
+                }
+                catch (IOException e)
+                {
+                    throw new DeveloperErrorException("Error initializing HTMLResponder.");
+                }
+
+                this.botResponse = responder.authenticate(this.serviceRequest, this.serviceResponse, this.userid);
+                // Null response from authenticate means user is authenticated.
+                if (this.botResponse == null)
+                {
+                    this.botResponse = ActiveMultiplexor.getInstance().getResponse(this.userRequest,
+                                            (String)this.serviceRequest.getSession(true).getAttribute(HTMLResponder.USER_COOKIE_NAME),
+                                            responder);
+                }
+                break;
+                
+            case ServiceType.FLASH :
+                this.serviceResponse.setContentType(TEXT_PLAIN);
+                this.botResponse = ActiveMultiplexor.getInstance().getResponse(this.userRequest, this.userid,  new FlashResponder(this.templateName));
+                break;
+
+            default :
+                this.serviceResponse.setContentType(TEXT_PLAIN);
+                this.botResponse = ActiveMultiplexor.getInstance().getResponse(this.userRequest, this.userid,  new TextResponder());
+                break;
+        }
+        try
+        {
             this.serviceOutputStream.write(this.botResponse.getBytes(ENC_UTF8));
+        }
+        catch (UnsupportedEncodingException e0)
+        {
+            throw new UserErrorException("UTF-8 encoding is not supported on your platform!", e0);
+        }
+        catch (IOException e1)
+        {
+            throw new DeveloperErrorException("Error writing to service output stream.", e1);
+        }
+        try
+        {
             this.serviceOutputStream.flush();
+        }
+        catch (IOException e)
+        {
+            throw new DeveloperErrorException("Error flushing service output stream.", e);
+        }
+        try
+        {
             this.serviceOutputStream.close();
         }
         catch (IOException e)
         {
-            Log.devinfo("Error writing to servlet response object.", Log.ERROR);
+            throw new DeveloperErrorException("Error closing service output stream.", e);
         }
     }
     

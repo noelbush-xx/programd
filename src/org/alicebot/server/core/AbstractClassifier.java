@@ -29,37 +29,51 @@
     - some more checks that resulted from testing the bot with an empty category set
 */
 
+/*
+    4.1.4 [00] - December 2001, Noel Bush
+    - changed response time display back so that it shows when console is in use
+    - added support of *not* saving special predicates <that/>, <input/> and <star/>
+*/
+
 package org.alicebot.server.core;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.logging.Trace;
+import org.alicebot.server.core.util.Trace;
 import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.AIMLParserException;
 import org.alicebot.server.core.processor.ProcessorException;
 import org.alicebot.server.core.responder.Responder;
+import org.alicebot.server.core.util.DeveloperErrorException;
 import org.alicebot.server.core.util.InputNormalizer;
 import org.alicebot.server.core.util.Match;
 import org.alicebot.server.core.util.NoMatchException;
-import org.alicebot.server.core.util.Substituter;
 import org.alicebot.server.core.util.Toolkit;
+import org.alicebot.server.core.util.UserErrorException;
+
 
 /**
- *  This is the database-independent part of the old
- *  <code>Classifier</code>.
+ *  This is a significantly reworked version of the
+ *  database-independent part of the old
+ *  <code>Classifier</code>.  Quite possibly the
+ *  Multiplexor framework should change, and the
+ *  reply management parts of this class should be
+ *  in a non-abstract class -- there's very little
+ *  about them that one can imagine changing.
  *
  *  @author Richard Wallace, Jon Baer
  *  @author Thomas Ringate/Pedro Colla
- *  @author Noel Bush (only moved methods here)
- *  @version 4.1.3
+ *  @author Noel Bush
+ *  @version 4.1.4
  */
 abstract public class AbstractClassifier implements Multiplexor
 {
@@ -69,13 +83,16 @@ abstract public class AbstractClassifier implements Multiplexor
     // Convenience constants.
 
     /** The name of the <code>that</code> special predicate. */
-    public static final String THAT = "that";
+    protected static final String THAT = "that";
 
     /** The name of the <code>topic</code> special predicate. */
-    public static final String TOPIC = "topic";
+    protected static final String TOPIC = "topic";
 
     /** The name of the <code>input</code> special predicate. */
-    public static final String INPUT = "input";
+    protected static final String INPUT = "input";
+
+    /** The name of the <code>star</code> special predicate. */
+    protected static final String STAR = "star";
 
     /** An empty string. */
     protected static final String EMPTY_STRING = "";
@@ -129,6 +146,9 @@ abstract public class AbstractClassifier implements Multiplexor
     protected static float avgResponseTime = 0;
 
 
+    /**
+     *  Creates the secret key.
+     */
     public void initialize()
     {
         SECRET_KEY = new Double(Math.random() * (double)new Date().getTime()).toString();
@@ -140,62 +160,25 @@ abstract public class AbstractClassifier implements Multiplexor
         }
         catch (IOException e)
         {
-            Log.userfail("Error creating secret key file.", new String[] {Log.STARTUP, Log.DATABASE});
+            throw new UserErrorException("Error creating secret key file.");
         }
-        PrintWriter out = null;
+        PrintWriter out;
         try
         {
             out = new PrintWriter(new FileOutputStream(keyFile));
         }
         catch (FileNotFoundException e)
         {
-            Log.userfail("Error writing secret key file.", new String[] {Log.STARTUP, Log.DATABASE});
+            throw new UserErrorException("Error writing secret key file.");
         }
         out.print(SECRET_KEY);
         out.flush();
         out.close();
     }
 
+    abstract public void savePredicate(String name, String value, String userid);
 
-    public String getResponse(String input, String userid)
-    {
-        return StaticSelf.getResponse(input, userid);
-    }
-
-
-    public String getResponse(String input, String userid, Responder robot)
-    {
-        return StaticSelf.getResponse(input, userid, robot);
-    }
-
-
-    public String getInternalResponse(String input, String userid)
-    {
-        return StaticSelf.getInternalResponse(input, userid);
-    }
-
-
-    abstract public String setPredicateValue(String name, String value, String userid);
-
-    public String setPredicateValue(String name, int index, String value, String userid)
-    {
-        return StaticSelf.setPredicateValue(name, index, value, userid);
-    }
-
-
-    public String pushPredicateValue(String name, String value, String userid)
-    {
-        return StaticSelf.pushPredicateValue(name, value, userid);
-    }
-
-
-    abstract public String getPredicateValue(String name, String userid) throws NoSuchPredicateException;
-
-
-    public String getPredicateValue(String name, int index, String userid)
-    {
-        return StaticSelf.getPredicateValue(name, index, userid);
-    }
+    abstract public String loadPredicate(String name, String userid) throws NoSuchPredicateException;
 
     abstract public boolean createUser(String userid, String password, String secretKey);
 
@@ -205,392 +188,284 @@ abstract public class AbstractClassifier implements Multiplexor
 
 
 
-    /**
-     *  Contains static synchronized versions of
-     *  {@link Multiplexor} methods, to ensure thread-safety.
-     */
-    public static class StaticSelf
+    public synchronized String getResponse(String input, String userid)
     {
-        public static synchronized String getResponse(String input, String userid)
+        // Get replies to each sentence.
+        Iterator replies = (getReplies(InputNormalizer.sentenceSplit(
+                                        InputNormalizer.applySubstitutions(input)), userid)).iterator();
+
+        // The result will be created in this StringBuffer.
+        StringBuffer response = new StringBuffer(EMPTY_STRING);
+
+        while (replies.hasNext())
         {
-            // Get replies to each sentence.
-            Iterator replies = (getReplies(InputNormalizer.sentenceSplit(
-                                            InputNormalizer.applySubstitutions(input)), userid)).iterator();
-
-            // The result will be created in this StringBuffer.
-            StringBuffer response = new StringBuffer(EMPTY_STRING);
-
-            while (replies.hasNext())
-            {
-                response.append((String)replies.next());
-            }
-
-            return response.toString();
+            response.append((String)replies.next());
         }
 
-        public static synchronized String getResponse(String input, String userid, Responder robot)
+        return response.toString();
+    }
+
+
+    public synchronized String getResponse(String input, String userid, Responder robot)
+    {
+        // Split sentences (after performing substitutions and robot pre-processing).
+        ArrayList sentenceList = InputNormalizer.sentenceSplit(
+                                    InputNormalizer.applySubstitutions(
+                                        robot.preprocess(input, HOSTNAME)));
+        // Get replies to each sentence.
+        Iterator replies = getReplies(sentenceList, userid).iterator();
+
+        String response = EMPTY_STRING;
+
+        Iterator sentences = sentenceList.iterator();
+
+        while (sentences.hasNext())
         {
-            // Split sentences (after performing substitutions and robot pre-processing).
-            ArrayList sentenceList = InputNormalizer.sentenceSplit(
-                                        InputNormalizer.applySubstitutions(
-                                            robot.preprocess(input, HOSTNAME)));
-            // Get replies to each sentence.
-            Iterator replies = getReplies(sentenceList, userid).iterator();
-
-            String response = EMPTY_STRING;
-
-            Iterator sentences = sentenceList.iterator();
- 
-            while (sentences.hasNext())
-            {
-                // Ask the robot to append the reply to the response, and accumulate the result.
-                response = robot.append((String)sentences.next(), (String)replies.next(), response);
-            }
-
-            // Log the response.
-            robot.log(input, response, HOSTNAME, userid, Globals.getBotName());
-
-            // Finally, ask the robot to postprocess the response, and return the result.
-            response = robot.postprocess(response);
-
-            if (response == null)
-            {
-                return EMPTY_STRING;
-            }
-            else
-            {
-                return response;
-            }
+            // Ask the robot to append the reply to the response, and accumulate the result.
+            response = robot.append((String)sentences.next(), (String)replies.next(), response);
         }
 
+        // Log the response.
+        robot.log(input, response, HOSTNAME, userid, Globals.getBotName());
 
-        public static synchronized String getInternalResponse(String input, String userid)
+        // Finally, ask the robot to postprocess the response, and return the result.
+        response = robot.postprocess(response);
+
+        if (response == null)
         {
-            // Ready the that and topic predicates for constructing the match path.
-            String that = null;
-            String topic = null;
-            try
-            {
-                that  = InputNormalizer.patternFitIgnoreCase(ActiveMultiplexor.StaticSelf.getPredicateValue(THAT, userid));
-            }
-            catch (NoSuchPredicateException e)
-            {
-                that = ASTERISK;
-            }
-            try
-            {
-                topic = InputNormalizer.patternFitIgnoreCase(ActiveMultiplexor.StaticSelf.getPredicateValue(TOPIC, userid));
-            }
-            catch (NoSuchPredicateException e)
-            {
-                topic = ASTERISK;
-            }
+            return EMPTY_STRING;
+        }
+        else
+        {
+            return response;
+        }
+    }
 
-            if (that.equals(EMPTY_STRING) || that.equals(Globals.getBotPredicateEmptyDefault()) )
-            {
-                that = ASTERISK;
-            }
-            if (topic.equals(EMPTY_STRING) || topic.equals(Globals.getBotPredicateEmptyDefault()) )
-            {
-                topic = ASTERISK;
-            }
 
-            return getInternalReply(input, that, topic, userid);
+    public synchronized String getInternalResponse(String input, String userid, AIMLParser parser)
+    {
+        // Ready the that and topic predicates for constructing the match path.
+        ArrayList thatSentences  = InputNormalizer.sentenceSplit(PredicateMaster.get(THAT, 1, userid));
+        String that = InputNormalizer.patternFitIgnoreCase((String)thatSentences.get(thatSentences.size() - 1));
+        if (that.equals(EMPTY_STRING) || that.equals(Globals.getPredicateEmptyDefault()) )
+        {
+            that = ASTERISK;
         }
 
-
-        /**
-         *  Gets the list of replies to some input sentences.
-         *  Assumes that the sentences have already had all necessary
-         *  pre-processing and substitutions performed.
-         *
-         *  @param sentenceList  the input sentences
-         *  @param userid        the userid requesting the replies
-         *
-         *  @return the list of replies to the input sentences
-         */
-        private static synchronized ArrayList getReplies(ArrayList sentenceList, String userid)
+        String topic = InputNormalizer.patternFitIgnoreCase(PredicateMaster.get(TOPIC, userid));
+        if (topic.equals(EMPTY_STRING) || topic.equals(Globals.getPredicateEmptyDefault()) )
         {
-            // All replies will be assembled in this ArrayList.
-            ArrayList replies = new ArrayList(sentenceList.size());
-
-            // Ready the that and topic predicates for constructing the match path.
-            String that  = null;
-            String topic = null;
-            try
-            {
-                that = InputNormalizer.patternFitIgnoreCase(ActiveMultiplexor.StaticSelf.getPredicateValue(THAT, userid));
-            }
-            catch (NoSuchPredicateException e)
-            {
-                that = ASTERISK;
-            }
-            try
-            {
-                topic = InputNormalizer.patternFitIgnoreCase(ActiveMultiplexor.StaticSelf.getPredicateValue(TOPIC, userid));
-            }
-            catch (NoSuchPredicateException e)
-            {
-                topic = ASTERISK;
-            }
-
-            if (that.equals(EMPTY_STRING) || that.equals(Globals.getBotPredicateEmptyDefault()) )
-            {
-                that = ASTERISK;
-            }
-            if (topic.equals(EMPTY_STRING) || topic.equals(Globals.getBotPredicateEmptyDefault()) )
-            {
-                topic = ASTERISK;
-            }
-
-            // We might use this to track matching statistics.
-            long time = 0;
-
-            // If the console is shown, mark the time just before matching starts.
-            if (Globals.showConsole())
-            {
-                time = new Date().getTime();
-            }
-
-            Iterator sentences = sentenceList.iterator();
-
-            // Get a reply for each sentence.
-            while (sentences.hasNext())
-            {
-                replies.add(getReply((String)sentences.next(), that, topic, userid));
-            }
-
-            // Increment the (static) response count.
-            responseCount++;;
-
-            // Invoke targeting if appropriate.
-            if (responseCount % TARGET_SKIP == 0)
-            {
-                if (Globals.useTargeting())
-                {
-                    Graphmaster.checkpoint();
-                }
-            }
-            
-            // If the console is in use, produce statistics about the response time.
-            if (Globals.showMatchTrace())
-            {
-                // Mark the time that processing is finished.
-                time = new Date().getTime() - time;
-
-                // Calculate the running average response time.
-                avgResponseTime = (avgResponseTime * (responseCount - 1) + time) / responseCount;
-                Trace.userinfo(RESPONSE_SPACE + responseCount + SPACE_IN_SPACE +
-                               time + MS_RUNNING_AVERAGE + avgResponseTime + MS);
-            }
-            // If no replies, return an empty string.
-            if (replies.size() == 0)
-            {
-                replies.add(EMPTY_STRING);
-            }
-            return replies;   
+            topic = ASTERISK;
         }
 
+        return getInternalReply(input, that, topic, userid, parser);
+    }
 
-        /**
-         *  Gets a reply to an input.  Assumes that the
-         *  input has already had all necessary substitutions and
-         *  pre-processing performed, and that the input is
-         *  a single sentence.
-         *
-         *  @param input    the input sentence
-         *  @param that     the input that value
-         *  @param topic    the input topic value
-         *  @param userid   the userid requesting the reply
-         *
-         *  @return the reply to the input sentence
-         */
-        private static synchronized String getReply(String input, String that, String topic, String userid)
+
+    /**
+     *  Gets the list of replies to some input sentences.
+     *  Assumes that the sentences have already had all necessary
+     *  pre-processing and substitutions performed.
+     *
+     *  @param sentenceList  the input sentences
+     *  @param userid        the userid requesting the replies
+     *
+     *  @return the list of replies to the input sentences
+     */
+    private synchronized ArrayList getReplies(ArrayList sentenceList, String userid)
+    {
+        // All replies will be assembled in this ArrayList.
+        ArrayList replies = new ArrayList(sentenceList.size());
+
+        // Ready the that and topic predicates for constructing the match path.
+        ArrayList thatSentences  = InputNormalizer.sentenceSplit(PredicateMaster.get(THAT, 1, userid));
+        String that = InputNormalizer.patternFitIgnoreCase((String)thatSentences.get(thatSentences.size() - 1));
+        if (that.equals(EMPTY_STRING) || that.equals(Globals.getPredicateEmptyDefault()) )
         {
-            // Push the input onto the <input/> stack.
-            pushPredicateValue(INPUT, input, userid);
-
-            // Set the unindexed <input/>.
-            ActiveMultiplexor.StaticSelf.setPredicateValue(INPUT, input, userid);
-
-            String reply = getInternalReply(input, that, topic, userid);
-
-            // Push the reply onto the <that/> stack.
-            pushPredicateValue(THAT, reply, userid);
-
-            // Set the unindexed <that/>.
-            ActiveMultiplexor.StaticSelf.setPredicateValue(THAT, reply, userid);
-
-            return Toolkit.filterWhitespace(reply);
+            that = ASTERISK;
         }
 
-
-        /**
-         *  Gets an internal reply.
-         */
-        private static synchronized String getInternalReply(String input, String that, String topic, String userid)
+        String topic = InputNormalizer.patternFitIgnoreCase(PredicateMaster.get(TOPIC, userid));
+        if (topic.equals(EMPTY_STRING) || topic.equals(Globals.getPredicateEmptyDefault()) )
         {
-            Match match = null;
-            String reply = null;
-
-            // Always show the input path (in any case, if showMatchTrace is on).
-            if (Globals.showMatchTrace())
-            {
-                Trace.userinfo(LABEL_INPUT + SPACE +
-                               input + SPACE + Graphmaster.PATH_SEPARATOR +
-                               SPACE + that + SPACE +
-                               Graphmaster.PATH_SEPARATOR + SPACE + topic);
-            }
-
-            // Call the Graphmaster pattern-matching method to get a matching pattern.
-            try
-            {
-                match = Graphmaster.match(InputNormalizer.patternFitIgnoreCase(input), that, topic);
-            }
-            catch (NoMatchException e)
-            {
-                Log.userinfo(e.getMessage(), Log.CHAT);
-                return EMPTY_STRING;
-            }
-
-            // Recover the template.
-            reply = (String)match.getTemplate();
-
-            if (Globals.showMatchTrace())
-            {
-                Trace.userinfo(LABEL_MATCH + SPACE + match.getPath());
-                Trace.userinfo(LABEL_FILENAME + SPACE + QUOTE_MARK +
-                               match.getFileName() + QUOTE_MARK);
-            }
-
-            AIMLParser parser   = new AIMLParser();
-
-            /*
-                This makes the template parser work with a local
-                copy of the star vectors structure in order to support
-                recursion and to ensure a single extraction, since the
-                getInputStars/getThatStars/getTopicStars methods are
-                destructive (can only be called once).
-            */
-            parser.setInputStars(match.getInputStars());
-            parser.setThatStars(match.getThatStars());
-            parser.setTopicStars(match.getTopicStars());
-
-            try
-            {
-                reply = parser.processResponse(userid, reply);
-            }
-            catch (ProcessorException e)
-            {
-                // Set response to empty string.
-                reply = EMPTY_STRING;
-            }
-            parser = null;
-            return reply;
+            topic = ASTERISK;
         }
 
+        // We might use this to track matching statistics.
+        long time = 0;
 
-        /**
-         *  <p>
-         *  A crude implementation of storing indexed values. The index is
-         *  appended to the name of the predicate.
-         *  </p>
-         *  <p>
-         *  This method is presently <i>not</i> AIML 1.0.1-compatible, because
-         *  it does not support
-         *  <a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-aiml-predicate-behaviors">return-name-when-set</a>
-         *  predicates. The predicate value is <i>always</i> returned in the
-         *  present implementation.
-         *  </p>
-         *
-         *  @see Multiplexor#setPredicate(String, int, String, String)
-         */
-        public static synchronized String setPredicateValue(String name, int index, String value, String userid)
+        // If the console is shown, mark the time just before matching starts.
+        if (Globals.showConsole())
         {
-            // Verify arguments (for performance).
-            if (name.equals(EMPTY_STRING))
-            {
-               return EMPTY_STRING;
-            }
-            if (index <= 0)
-            {
-               return EMPTY_STRING;
-            }
-            if (index > Globals.getMaxIndexDepth())
-            {
-               return EMPTY_STRING;
-            }
-            ActiveMultiplexor.StaticSelf.setPredicateValue(name + Integer.toString(index), value, userid);
-            return value;
+            time = new Date().getTime();
         }
 
+        Iterator sentences = sentenceList.iterator();
 
-        /**
-         *  Pushes a new value to the top of the stack of
-         *  indexes, preserving the integrity of the chain.
-         *  The farthest-back value is simply dropped when
-         *  it exceeds the horizon given by
-         *  {@link Globals#MAX_INDEX_DEPTH}.
-         *  Proper shift of the stack ([1..N-1] -&gt; [2..N]) is performed
-         *  as part of the operation.
-         *
-         *  @param name         predicate name
-         *  @param userid       the user identifier
-         *  @param value        the predicate value to add to the stack
-         */
-        public static synchronized String pushPredicateValue(String name, String value, String userid)
+        // Get a reply for each sentence.
+        while (sentences.hasNext())
         {
-            if (name.equals(EMPTY_STRING))
-            {
-                return EMPTY_STRING;
-            }
-            // Move all elements one level deeper.
-            int index = Globals.getMaxIndexDepth();
-            while (index > 1)
-            {
-                StaticSelf.setPredicateValue(name, index,
-                                    StaticSelf.getPredicateValue(name, index - 1, userid), userid);
-                index--;
-            }
-
-            // Insert the new value.
-            StaticSelf.setPredicateValue(name, 1, value, userid);
-            return value;
+            replies.add(getReply((String)sentences.next(), that, topic, userid));
         }
 
+        // Increment the (static) response count.
+        responseCount++;;
 
-        /**
-         *  Relying upon the crude method of storing indexed values
-         *  in {@link #setPredicate(String, int, String)}, this method
-         *  retrieves an indexed <code>predicate</code> value.
-         *
-         *  @see Multiplexor#getPredicateValue(String, int, String)
-         */
-        public static synchronized String getPredicateValue(String name, int index, String userid)
+        // Invoke targeting if appropriate.
+        if (responseCount % TARGET_SKIP == 0)
         {
-            // Verify arguments (for performance).
-            if (name.equals(EMPTY_STRING))
+            if (Globals.useTargeting())
             {
-               return EMPTY_STRING;
-            }
-            if (index <= 0)
-            {
-               return EMPTY_STRING;
-            }
-            if (index > Globals.getMaxIndexDepth())
-            {
-               return EMPTY_STRING;
-            }
-
-            // Return the value if present.
-            try
-            {
-                return ActiveMultiplexor.StaticSelf.getPredicateValue(name + Integer.toString(index), userid);
-            }
-            catch (NoSuchPredicateException e)
-            {
-                return EMPTY_STRING;
+                Graphmaster.checkpoint();
             }
         }
+        
+        // If the console is in use, produce statistics about the response time.
+        if (Globals.showConsole())
+        {
+            // Mark the time that processing is finished.
+            time = new Date().getTime() - time;
+
+            // Calculate the running average response time.
+            avgResponseTime = (avgResponseTime * (responseCount - 1) + time) / responseCount;
+            Trace.userinfo(RESPONSE_SPACE + responseCount + SPACE_IN_SPACE +
+                           time + MS_RUNNING_AVERAGE + avgResponseTime + MS);
+        }
+        // If no replies, return an empty string.
+        if (replies.size() == 0)
+        {
+            replies.add(EMPTY_STRING);
+        }
+        return replies;   
+    }
+
+
+    /**
+     *  Gets a reply to an input.  Assumes that the
+     *  input has already had all necessary substitutions and
+     *  pre-processing performed, and that the input is
+     *  a single sentence.
+     *
+     *  @param input    the input sentence
+     *  @param that     the input that value
+     *  @param topic    the input topic value
+     *  @param userid   the userid requesting the reply
+     *
+     *  @return the reply to the input sentence
+     */
+    private synchronized String getReply(String input, String that, String topic, String userid)
+    {
+        // Push the input onto the <input/> stack.
+        PredicateMaster.push(INPUT, input, userid);
+
+        String reply = null;
+        try
+        {
+            reply = getInternalReply(input, that, topic, userid);
+        }
+        catch (DeveloperErrorException e)
+        {
+            Log.devfail(e);
+            Log.devfail("Exiting due to developer error.", Log.ERROR);
+            System.exit(1);
+        }
+        catch (UserErrorException e)
+        {
+            Log.userfail(e);
+            Log.devfail("Exiting due to user error.", Log.ERROR);
+            System.exit(1);
+        }
+        catch (RuntimeException e)
+        {
+            Log.devfail(e);
+            Log.devfail("Exiting due to unforeseen runtime exception.", Log.ERROR);
+            System.exit(1);
+        }
+        if (reply == null)
+        {
+            Log.devfail("getInternalReply generated a null reply!", Log.ERROR);
+            System.exit(1);
+        }
+
+        // Push the reply onto the <that/> stack.
+        PredicateMaster.push(THAT, reply, userid);
+
+        return Toolkit.filterWhitespace(reply);
+    }
+
+
+    /**
+     *  Gets an internal reply.
+     */
+    private synchronized String getInternalReply(String input, String that, String topic, String userid)
+    {
+        AIMLParser parser;
+        try
+        {
+            parser = new AIMLParser(input);
+        }
+        catch (AIMLParserException e)
+        {
+            throw new DeveloperErrorException(e);
+        }
+
+        return getInternalReply(input, that, topic, userid, parser);
+    }
+
+
+    private synchronized String getInternalReply(String input, String that, String topic,
+                                                 String userid, AIMLParser parser)
+    {
+        Match match;
+
+        // Always show the input path (in any case, if showMatchTrace is on).
+        if (Globals.showMatchTrace())
+        {
+            Trace.userinfo(LABEL_INPUT + SPACE +
+                           input + SPACE + Graphmaster.PATH_SEPARATOR +
+                           SPACE + that + SPACE +
+                           Graphmaster.PATH_SEPARATOR + SPACE + topic);
+        }
+
+        // Call the Graphmaster pattern-matching method to get a matching pattern.
+        String inputIgnoreCase = InputNormalizer.patternFitIgnoreCase(input);
+        try
+        {
+            match = Graphmaster.match(inputIgnoreCase, that, topic);
+        }
+        catch (NoMatchException e)
+        {
+            Log.userinfo(e.getMessage(), Log.CHAT);
+            return EMPTY_STRING;
+        }
+
+        if (Globals.showMatchTrace())
+        {
+            Trace.userinfo(LABEL_MATCH + SPACE + match.getPath());
+            Trace.userinfo(LABEL_FILENAME + SPACE + QUOTE_MARK +
+                           match.getFileName() + QUOTE_MARK);
+        }
+
+        parser.setInputStars(match.getInputStars());
+        parser.setThatStars(match.getThatStars());
+        parser.setTopicStars(match.getTopicStars());
+
+        String template = match.getTemplate();
+        String reply = null;
+
+        try
+        {
+            reply = parser.processResponse(userid, template);
+        }
+        catch (ProcessorException e)
+        {
+            // Log the error message.
+            Log.userinfo(e.getMessage(), Log.ERROR);
+
+            // Set response to empty string.
+            reply = EMPTY_STRING;
+        }
+        parser = null;
+        return reply;
     }
 } 

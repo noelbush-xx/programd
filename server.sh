@@ -28,7 +28,7 @@ JS_LIB=lib/js.jar
 SQL_LIB=lib/mysql_comp.jar
 
 # These are for Jetty; you will want to change these if you are using a different http server.
-HTTP_SERVER_LIBS=lib/org.mortbay.jetty.jar:lib/com.sun.net.ssl.jar:lib/javax.servlet.jar:lib/javax.xml.jaxp.jar:lib/org.apache.crimson.jar
+HTTP_SERVER_LIBS=lib/org.mortbay.jetty.jar:lib/javax.xml.jaxp.jar:lib/org.apache.crimson.jar
 
 PROGRAMD_CLASSPATH=$SERVLET_LIB:$ALICE_LIB:$JS_LIB:$SQL_LIB:$HTTP_SERVER_LIBS
 java -classpath $PROGRAMD_CLASSPATH -Xms64m -Xmx64m org.alicebot.server.net.AliceServer $1

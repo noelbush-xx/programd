@@ -31,10 +31,15 @@
     - added check of server property for allowing/disallowing use
 */
 
+/*
+    4.1.4 [01] - December 2001, Noel Bush
+    - changed to use ActiveJavaScriptInterpreter
+*/
+
 package org.alicebot.server.core.processor;
 
 import org.alicebot.server.core.Globals;
-import org.alicebot.server.core.Interpreter;
+import org.alicebot.server.core.interpreter.ActiveJavaScriptInterpreter;
 import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.core.parser.AIMLParser;
 import org.alicebot.server.core.parser.XMLNode;
@@ -58,7 +63,7 @@ public class JavaScriptProcessor extends AIMLProcessor
      *  Returns the result of processing the contents of the <code>javascript</code>
      *  element by the JavaScript interpreter.
      */
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         // Don't use the system tag if not permitted.
         if (!Globals.jsAccessAllowed())
@@ -68,12 +73,12 @@ public class JavaScriptProcessor extends AIMLProcessor
         }
         if (tag.XMLType == XMLNode.TAG)
         {
-            Log.userinfo("Called JavaScript interpreter.", Log.INTERPRETER);
-            return Interpreter.evaluate(userid, parser.evaluate(level++, userid, tag.XMLChild));
+            Log.devinfo("Calling JavaScript interpreter " + Globals.javaScriptInterpreter(), Log.INTERPRETER);
+            return ActiveJavaScriptInterpreter.getInstance().evaluate(userid, parser.evaluate(level++, userid, tag.XMLChild));
         }
         else
         {
-            throw new InvalidAIMLException("<javascript></javascript> must have content!");
+            throw new AIMLProcessorException("<javascript></javascript> must have content!");
         }
     }
 }

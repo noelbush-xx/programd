@@ -27,7 +27,6 @@
 
 package org.alicebot.server.core.processor;
 
-import org.alicebot.server.core.logging.Trace;
 import org.alicebot.server.core.parser.AIMLParser;
 import org.alicebot.server.core.parser.GenericParser;
 import org.alicebot.server.core.parser.XMLNode;
@@ -56,5 +55,5 @@ abstract public class AIMLProcessor extends Processor
         }
     }
 
-    abstract public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException;
+    abstract public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException;
 }

@@ -104,3 +104,4 @@ abstract public class Targeting
     /** An empty string. */
     public static final String EMPTY_STRING       = "";
 }
+

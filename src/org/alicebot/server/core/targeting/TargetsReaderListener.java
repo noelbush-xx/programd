@@ -15,10 +15,10 @@
 
 package org.alicebot.server.core.targeting;
 
-import java.io.File;
+import java.util.HashMap;
 
 import org.alicebot.server.core.parser.GenericReaderListener;
-import org.alicebot.server.core.logging.Trace;
+
 
 /**
  *  Reads in new targets to a given Targets object.
@@ -31,8 +31,8 @@ import org.alicebot.server.core.logging.Trace;
  */
 public class TargetsReaderListener implements GenericReaderListener
 {
-    /** Flag indicating where to direct a loaded target. */
-    private static int set;
+    /** The set in which to load the targets. */
+    private static HashMap set;
 
 
     /**
@@ -53,34 +53,21 @@ public class TargetsReaderListener implements GenericReaderListener
                            String inputText, String inputThat, String inputTopic,
                            String extensionPattern, String extensionThat, String extensionTopic)
     {
-        // Find out if this target is known
-        Integer hashCode = new Integer(Target.generateHashCode(matchPattern, matchThat, matchTopic));
-
-        // If not, add it to TargetMaster.
-        Target newTarget = new Target(matchPattern, matchThat, matchTopic, matchTemplate,
-                                      inputText, inputThat, inputTopic,
-                                      extensionPattern, extensionThat, extensionTopic);
-        TargetMaster.add(newTarget, this.set);
+        // Add new target to TargetingTool.
+        TargetingTool.add(new Target(matchPattern, matchThat, matchTopic, matchTemplate,
+                                    inputText, inputThat, inputTopic,
+                                    extensionPattern, extensionThat, extensionTopic),
+                          this.set);
     }
 
     /**
-     *  Initializes a TargetsReaderListener with a flag
-     *  indicating what to do with the loaded target.
+     *  Initializes a TargetsReaderListener with the set
+     *  in which to load the given targets.
      *
-     *  @param set one of {@link TargetMaster#LIVE}, {@link TargetMaster#SAVED}, {@link TargetMaster#DISCARDED}
+     *  @param set the set in which to load the targets
      */
-    public TargetsReaderListener(int set)
+    public TargetsReaderListener(HashMap set)
     {
         this.set = set;
-    }
-
-
-    /**
-     *  Initializes a TargetsReaderListener with the
-     *  default set flag ({@link TargetMaster#LIVE}).
-     */
-    public TargetsReaderListener()
-    {
-        this.set = TargetMaster.LIVE;
     }
 }

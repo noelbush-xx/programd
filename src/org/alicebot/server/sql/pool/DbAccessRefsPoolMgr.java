@@ -3,7 +3,9 @@ package org.alicebot.server.sql.pool;
 import java.sql.SQLException;
 
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.logging.Trace;
+import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.Trace;
+import org.alicebot.server.core.util.UserErrorException;
 
     
 /**
@@ -51,28 +53,7 @@ public class DbAccessRefsPoolMgr extends ObjectPool
      */
     protected Object create()
     {
-        try
-        {
-            return new DbAccess(driver, url, user, password);    
-        }    
-        catch(SQLException e)
-        {
-            Trace.devinfo("DbAccessRefsPoolMgr.create() got a SQLException when trying to create a new DbAccess object.");
-            Trace.devfail(e.getMessage());
-
-            // This will never be reached, but the compiler doesn't know that.
-            return null;
-        }
-        catch(ClassNotFoundException e)
-        {
-            Log.devinfo("Class \"" + driver + "\" not found when creating DbAccess object from DbAccessRefsPoolMgr.",
-                        new String[] {Log.ERROR, Log.DATABASE});
-            Log.userfail("Your database driver cannot be found.  Exiting.",
-                         new String[] {Log.ERROR, Log.DATABASE});
-
-            // This will never be reached, but the compiler doesn't know that.
-            return null;
-        }
+        return new DbAccess(driver, url, user, password);    
     }
 
 

@@ -15,26 +15,16 @@
 
 package org.alicebot.server.core.logging;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.RandomAccessFile;
-import java.io.IOException;
+import java.util.HashMap;
 
 import org.alicebot.server.core.Globals;
-import org.alicebot.server.core.util.Toolkit;
+import org.alicebot.server.core.util.Trace;
+import org.alicebot.server.core.util.XMLResourceSpec;
+import org.alicebot.server.core.util.XMLWriter;
+
 
 /**
- *  <p>
- *  Provides a simplistic XML log generation facility.
- *  </p>
- *  <p>
- *  The facility is simplistic because it does not use any
- *  XML libraries; instead, it just has a hard-coded root element
- *  for each document type, and each time it gets some log text,
- *  it looks at the end of a log file for the closing tag,
- *  deletes it, appends the log text, and then re-adds the closing
- *  tag.  Yuck! :-)
- *  </p>
+ *  Provides a simplistic XML file writing facility.
  *
  *  @author Noel Bush
  *  @version 4.1.3
@@ -43,154 +33,89 @@ public class XMLLog
 {
     // Log name and element constants
 
-    /** Chat log path, root element name, stylesheet path. */
-    public static final String[] CHAT   = new String[]
-                                          {Globals.getProperty("programd.logging.xml.chat.log-path", "./logs/chat.xml"),
-                                           "exchanges",
-                                           Globals.getProperty("programd.logging.xml.chat.stylesheet-path", "../resources/logs/view-chat.xsl")};
-
-    /** An XML processing instruction header. */
-    private static final String XML_PI = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-
-    /** The start of an XML stylesheet processing instruction. */
-    private static final String STYLESHEET_PI_START = "<?xml-stylesheet type=\"text/xsl\" href=\"";
-
-    /** The end of a processing instruction. */
-    private static final String PI_END = "\"?>";
-
-    /** Entity declarations to be included in a log. */
-    private static final String DTD = "<!DOCTYPE ALLOW_HTML_ENTITIES [" +
-                                      " <!ENTITY % HTMLlat1 PUBLIC" +
-                                      " \"-//W3C//ENTITIES Latin1//EN//HTML\"" +
-                                      "   \"http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent\">" +
-                                      " %HTMLlat1;" +
-                                      " <!ENTITY % HTMLsymbol PUBLIC" +
-                                      "   \"-//W3C//ENTITIES Symbols//EN//HTML\"" +
-                                      "   \"http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent\">" +
-                                      " %HTMLsymbol;" +
-                                      " <!ENTITY % HTMLspecial PUBLIC" +
-                                      "   \"-//W3C//ENTITIES Special//EN//HTML\"" +
-                                      "   \"http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent\">" +
-                                      " %HTMLspecial;" +
-                                      " ]>";
-
-
-    /** The system line separator string. */
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
-
-    /** The starting character of an element opening tag. */
-    private static final String OPEN_MARKER_START = "<";
-
-    /** The starting character of an element closing tag. */
-    private static final String CLOSE_MARKER_START = "</";
-
-    /** The ending character of a non-atomic element opening tag. */
-    private static final String NONATOMIC_MARKER_END = ">";
-
     /** The string &quot;UTF-8&quot; (for character encoding conversion). */
     private static final String ENC_UTF8 = "UTF-8";
 
-    /** The string &quot;rw&quot; (for indicating read-write access on the file). */
-    private static final String RW = "rw";
+    /** Keeps a count of entries made in a log file. */
+    private static HashMap entryCounts = new HashMap();
 
-    /** The phrase &quot;xml file&quot;. */
-    private static final String XMLFILE = "xml file";
+    /** Chat log spec. */
+    public static final XMLResourceSpec CHAT   = new XMLResourceSpec();
+    static
+    {
+        CHAT.description       = "Chat Log";
+        CHAT.path              = Globals.getProperty("programd.logging.xml.chat.log-path", "./logs/chat.xml");
+        CHAT.rolloverAtMax     = true;
+        CHAT.rolloverAtRestart = true;
+        CHAT.root              = "exchanges";
+        CHAT.stylesheet = Globals.getProperty("programd.logging.xml.chat.stylesheet-path", "../resources/logs/view-chat.xsl");
+        CHAT.encoding   = Globals.getProperty("programd.logging.xml.chat.encoding", "UTF-8");
+        CHAT.dtd        = XMLResourceSpec.HTML_ENTITIES_DTD;
+    }
+
+    /** Limits the number of responses written to a log file before it is rolled over. */
+    private static int ROLLOVER;
+    static
+    {
+        try
+        {
+            ROLLOVER = Integer.parseInt(Globals.getProperty("programd.logging.xml.rollover", "2000"));
+        }
+        catch (NumberFormatException e)
+        {
+            ROLLOVER = 2000;
+        }
+    }
 
 
     /**
-     *  Writes a message to the appropriate logfile.
+     *  Writes a message to an XML log file.  If the number of entries
+     *  has exceeded {@link #ROLLOVER}, the file will be renamed and a
+     *  new file created.  Note that the approach currently used has an
+     *  important defect: it only counts entries during the runtime of
+     *  the bot; it will not count entries in an existing log file, so
+     *  if the bot is restarted many times and {@link #ROLLOVER} is rather
+     *  large, actual logfiles may exceed the limit significantly.
      *
      *  @param message  the text of the log event
-     *  @param type     the type of the log event
+     *  @param spec     the log spec
      */
-    public static synchronized void log(String message, String[] type)
+    public static synchronized void log(String message, XMLResourceSpec spec)
     {
-        RandomAccessFile logFile = null;
+        int entryCount;
 
-        // Create the log file if it does not exist.
-        Toolkit.checkOrCreate(type[0], XMLFILE);
-        try
-        {
-            logFile = new RandomAccessFile(type[0], RW);
-        }
-        catch (FileNotFoundException e)
-        {
-            Log.userinfo("Can't write to file \"" + type[0] + "\".", Log.ERROR);
-            return;
-        }
+        // Find out if there is an entry count record in memory for this spec.
+        Object atSpec = entryCounts.get(spec);
 
-        // Get the file length.
-        long fileLength = 0;
-        try
+        // If there is, get its value.
+        if (atSpec != null)
         {
-            fileLength = logFile.length();
-        }
-        catch (IOException e)
-        {
-            Log.userinfo("Error reading file \"" + type[0] + "\".", Log.ERROR);
-        }
+            entryCount = ((Integer)atSpec).intValue();
 
-        // Create the root close marker string.
-        String rootCloseMarker = CLOSE_MARKER_START + type[1] + NONATOMIC_MARKER_END + LINE_SEPARATOR;
-
-        /*
-            If the file has just been created, write the starting
-            XML processing instructions, entity declarations,
-            and root element opening and closing tags.
-        */
-        if (fileLength == 0)
-        {
-            try
+            // If the spec requires rollover at max.
+            if (spec.rolloverAtMax)
             {
-                // Write the XML pi.
-                logFile.writeBytes(XML_PI + LINE_SEPARATOR);
-
-                // Write the stylesheet pi if a stylesheet is defined.
-                if (type[2] != null)
+                // And if it has hit max, roll it over.
+                if (++entryCount % ROLLOVER == 0)
                 {
-                    logFile.writeBytes(STYLESHEET_PI_START + type[2] + PI_END + LINE_SEPARATOR);
+                    XMLWriter.rollover(spec);
                 }
 
-                // Write the DTD and the marker start.
-                logFile.writeBytes(DTD + LINE_SEPARATOR +
-                                   OPEN_MARKER_START + type[1] + NONATOMIC_MARKER_END + LINE_SEPARATOR);
-            }
-            catch (IOException e)
-            {
-                Log.userinfo("Error writing to \"" + type[0] + "\".", Log.ERROR);
-                return;
-            }
-        }
-        // Otherwise, try to find the root element closing tag at the end of the file.
-        else
-        {
-            long closeMarkerStart = fileLength - (rootCloseMarker.length());
-            try
-            {
-                logFile.seek(closeMarkerStart);
-            }
-            catch (IOException e)
-            {
-                Log.userinfo("Error reading \"" + type[0] + "\".", Log.ERROR);
-                return;
+                // Update the entry count (since the spec cares).
+                entryCounts.put(spec, new Integer(entryCount));
             }
         }
 
-        /*
-            Now write the message and the root element closing tag
-            to the file, and close the file.
-        */
-        try
+        // If there is not an entry count, this means we have just restarted -- roll over if necessary.
+        else if (spec.rolloverAtRestart)
         {
-            logFile.write(message.getBytes(ENC_UTF8));
-            logFile.writeBytes(rootCloseMarker);
-            logFile.close();
+            XMLWriter.rollover(spec);
+
+            // Create the entry count.
+            entryCounts.put(spec, new Integer(1));
         }
-        catch (IOException e)
-        {
-            Log.userinfo("Error writing to \"" + type[0] + "\".", Log.ERROR);
-            return;
-        }
+
+        XMLWriter.write(message, spec);
     }
 }
 

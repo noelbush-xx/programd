@@ -43,16 +43,16 @@ package org.alicebot.server.core.loader;
 import java.io.File;
 import java.io.IOException;
 import java.util.ConcurrentModificationException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.Graphmaster;
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.logging.Trace;
+
 
 /**
  *  Watches a set of AIML files. Any file changes will be loaded

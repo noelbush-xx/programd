@@ -61,7 +61,7 @@ public class RandomProcessor extends AIMLProcessor
      *  Counts the number of &lt;li&gt;&lt;/li&gt; elements
      *  it contains, and chooses one at random.
      */
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
@@ -96,7 +96,7 @@ public class RandomProcessor extends AIMLProcessor
         }
         else
         {
-            throw new InvalidAIMLException("<random></random> must have content!");
+            throw new AIMLProcessorException("<random></random> must have content!");
         }
     }
 }

@@ -25,11 +25,14 @@
     - added handling of NoSuchPredicateExpression
 */
 
+/*
+    4.1.4 [00] - December 2001, Noel Bush
+    - changed to use PredicateMaster
+*/
+
 package org.alicebot.server.core.processor;
 
-import org.alicebot.server.core.ActiveMultiplexor;
-import org.alicebot.server.core.Globals;
-import org.alicebot.server.core.NoSuchPredicateException;
+import org.alicebot.server.core.PredicateMaster;
 import org.alicebot.server.core.parser.AIMLParser;
 import org.alicebot.server.core.parser.XMLNode;
 import org.alicebot.server.core.util.Toolkit;
@@ -49,27 +52,20 @@ public class GetProcessor extends AIMLProcessor
     public static final String label = "get";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.EMPTY)
         {
             String name = Toolkit.getAttributeValue(NAME, tag.XMLAttr);
             if (name.equals(EMPTY_STRING))
             {
-                throw new InvalidAIMLException("<get/> must have a non-empty name attribute.");
+                throw new AIMLProcessorException("<get/> must have a non-empty name attribute.");
             }
-            try
-            {
-                return ActiveMultiplexor.StaticSelf.getPredicateValue(name, userid);
-            }
-            catch (NoSuchPredicateException e)
-            {
-                return EMPTY_STRING;
-            }
+            return PredicateMaster.get(name, userid);
         }
         else
         {
-            throw new InvalidAIMLException("<get/> cannot have content!");
+            throw new AIMLProcessorException("<get/> cannot have content!");
         }
     }
 }

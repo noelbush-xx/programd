@@ -50,17 +50,16 @@
 package org.alicebot.server.core;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Vector;
-import java.util.StringTokenizer;
 import java.util.Properties;
 
 import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.core.processor.AIMLProcessorRegistry;
 import org.alicebot.server.core.processor.loadtime.StartupElementProcessorRegistry;
+import org.alicebot.server.core.util.UserErrorException;
+import org.alicebot.server.core.util.InputNormalizer;
 
 
 /**
@@ -86,7 +85,7 @@ public class Globals
     private static String botNamePredicate;
 
     /** The bot id. */
-    private static String botID = null;
+    private static String botID;
 
     /** The name of the bot. */
     private static String botName;
@@ -97,8 +96,11 @@ public class Globals
     /** The version of the software. */
     private static String version;
 
-    /** The default value to return if a bot predicate is not defined. */
-    private static String botPredicateEmptyDefault;
+    /** The default value to return if a predicate is not defined. */
+    private static String predicateEmptyDefault;
+
+    /** The input to match if an infinite loop exception is thrown. */
+    private static String infiniteLoopInput;
 
     /** Whether use of the <system> tag is allowed. */
     private static boolean osAccessAllowed;
@@ -115,8 +117,8 @@ public class Globals
     /** Whether to require namespace qualification of non-AIML tags. */
     private static boolean nonAIMLRequireNamespaceQualification;
 
-    /** A hard-coded limit on the number of wildcards that can be indexed (should be handled better). */
-    private static int MAX_INDEX_DEPTH = 5;
+    /** How many predicate values to cache. */
+    private static int predicateValueCacheMax;
 
     /** The path to the bot startup file. */
     private static String startupFilePath;
@@ -156,6 +158,9 @@ public class Globals
 
     /** The port on which the http server is listening. */
     private static int httpPort;
+
+    /** The fully-qualified name of the JavaScript interpreter. */
+    private static String javaScriptInterpreter;
 
     /** An empty string, for convenience. */
     private static final String EMPTY_STRING = "";
@@ -219,10 +224,10 @@ public class Globals
         useTargeting = Boolean.valueOf(serverProperties.getProperty("programd.targeting", "true")).booleanValue();
 
         // AIML targets file path; default ./targets/targets.aiml.
-        targetsAIMLPath = serverProperties.getProperty("programd.targeting.aimlpath", "./targets/targets.aiml");
+        targetsAIMLPath = serverProperties.getProperty("programd.targeting.aiml.path", "./targets/targets.aiml");
 
         // AIML targets file path; default ./targets/targets.aiml.
-        targetsDataPath = serverProperties.getProperty("programd.targeting.datapath", "./targets/targets.xml");
+        targetsDataPath = serverProperties.getProperty("programd.targeting.data.path", "./targets/targets.xml");
 
         // Target skip
         try
@@ -247,7 +252,12 @@ public class Globals
         clientNamePredicate = serverProperties.getProperty("programd.console.client-name-predicate", "name");
 
         // Default for predicates with no defined values; default is empty string.
-        botPredicateEmptyDefault = serverProperties.getProperty("programd.emptydefault", "");
+        predicateEmptyDefault = serverProperties.getProperty("programd.emptydefault", "");
+
+        // Input to match if an infinite loop is found; default is &quot;INFINITE LOOP&quot;.
+        infiniteLoopInput =
+            InputNormalizer.patternFitIgnoreCase(
+                serverProperties.getProperty("programd.infinite-loop-input", "INFINITE LOOP"));
 
         // Whether to allow use of <system> tag; default false.
         osAccessAllowed = Boolean.valueOf(serverProperties.getProperty("programd.os-access-allowed", "false")).booleanValue();
@@ -264,6 +274,21 @@ public class Globals
         // Whether to require namespace qualifiers on non-AIML tags; default false.
         nonAIMLRequireNamespaceQualification = Boolean.valueOf(serverProperties.getProperty("programd.non-aiml-require-namespace-qualifiers", "false")).booleanValue();
 
+        // How many predicate values to cache; default 5000.
+        try
+        {
+            predicateValueCacheMax = Integer.parseInt(serverProperties.getProperty("programd.predicate-cache.max", "5000"));
+        }
+        catch (NumberFormatException e)
+        {
+            predicateValueCacheMax = 5000;
+        }
+        predicateValueCacheMax = predicateValueCacheMax > 0 ? predicateValueCacheMax : 5000;
+
+
+        // The fully-qualified name of the JavaScript interpreter.
+        javaScriptInterpreter = serverProperties.getProperty("programd.interpreter.javascript", "");
+
         
         // Get the category load notify interval.
         try
@@ -275,6 +300,7 @@ public class Globals
         {
             categoryLoadNotifyInterval = 1000;
         }
+        categoryLoadNotifyInterval = categoryLoadNotifyInterval > 0 ? categoryLoadNotifyInterval : 1000;
 
         // Make sure the startup file actually exists.
         try
@@ -286,8 +312,8 @@ public class Globals
         catch (IOException e)
         {
             String error = "Startup file does not exist (check server properties).";
-            Log.log(error, Log.ERROR);
-            Log.userfail(error, Log.STARTUP);
+            Log.log(error, Log.STARTUP);
+            throw new UserErrorException(error);
         }
 
         // Version comes from Graphmaster.
@@ -397,13 +423,24 @@ public class Globals
 
 
     /**
-     *  Returns the default value for undefined bot predicate values.
+     *  Returns the default value for undefined predicate values.
      *
-     *  @return the default value for undefined bot predicate values
+     *  @return the default value for undefined predicate values
      */
-    public static String getBotPredicateEmptyDefault()
+    public static String getPredicateEmptyDefault()
     {
-        return botPredicateEmptyDefault;
+        return predicateEmptyDefault;
+    }
+
+
+    /**
+     *  Returns the input to match if an infinite loop exception is thrown.
+     *
+     *  @return the input to match if an infinite loop exception is thrown
+     */
+    public static String getInfiniteLoopInput()
+    {
+        return infiniteLoopInput;
     }
 
 
@@ -459,17 +496,6 @@ public class Globals
     public static String getMergePolicy()
     {
         return mergePolicy;
-    }
-
-
-    /**
-     *  Returns the maximum index depth.
-     *
-     *  @return the maximum index depth
-     */
-    public static int getMaxIndexDepth()
-    {
-        return MAX_INDEX_DEPTH;
     }
 
 
@@ -591,6 +617,18 @@ public class Globals
         return nonAIMLRequireNamespaceQualification;
     }
 
+
+    /**
+     *  Returns the number of predicate values to cache.
+     *
+     *  @return the number of predicate values to cache
+     */
+    public static int predicateValueCacheMax()
+    {
+        return predicateValueCacheMax;
+    }
+
+
     /**
      *  Returns whether the <code>system</code> tag is allowed.
      *
@@ -614,6 +652,17 @@ public class Globals
 
 
     /**
+     *  Returns the fully-qualified class name of the JavaScript interpteter (if any).
+     *
+     *  @return the fully-qualified class name of the JavaScript interpteter (if any)
+     */
+    public static String javaScriptInterpreter()
+    {
+        return javaScriptInterpreter;
+    }
+
+
+    /**
      *  Returns the value of a property string.
      *
      *  @param propertyName the name of the property whose value is wanted
@@ -622,6 +671,10 @@ public class Globals
      */
     public static String getProperty(String propertyName)
     {
+        if (serverProperties == null)
+        {
+            return null;
+        }
         return serverProperties.getProperty(propertyName);
     }
 
@@ -636,6 +689,10 @@ public class Globals
      */
     public static String getProperty(String propertyName, String defaultValue)
     {
+        if (serverProperties == null)
+        {
+            return defaultValue;
+        }
         return serverProperties.getProperty(propertyName, defaultValue);
     }
 }

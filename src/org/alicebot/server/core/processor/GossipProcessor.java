@@ -41,7 +41,7 @@ public class GossipProcessor extends AIMLProcessor
     public static final String label = "gossip";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
@@ -54,7 +54,7 @@ public class GossipProcessor extends AIMLProcessor
         }
         else
         {
-            throw new InvalidAIMLException("<gossip></gossip> must have content!");
+            throw new AIMLProcessorException("<gossip></gossip> must have content!");
         }
     }
 }

@@ -34,7 +34,7 @@ public class DateProcessor extends AIMLProcessor
     public static final String label = "date";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.EMPTY)
         {
@@ -42,7 +42,7 @@ public class DateProcessor extends AIMLProcessor
         }
         else
         {
-            throw new InvalidAIMLException("<date/> cannot have content!");
+            throw new AIMLProcessorException("<date/> cannot have content!");
         }
     }
 }

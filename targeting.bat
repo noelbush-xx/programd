@@ -25,4 +25,4 @@ echo Starting Alicebot Program D Targeting Utility.
 set ALICE_HOME=.
 set ALICE_LIB=lib/aliceserver.jar
 
-java.exe -classpath %ALICE_LIB% -Xms64m -Xmx64m org.alicebot.server.core.targeting.TargetingTool %1 %2
+java.exe -classpath %ALICE_LIB% -Xms64m -Xmx64m org.alicebot.server.core.targeting.TargetingTool %1

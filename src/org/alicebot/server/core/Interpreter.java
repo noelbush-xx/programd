@@ -14,56 +14,26 @@
 */
 
 /*
-    Code cleanup (4.1.3 [00] - October 2001, Noel Bush)
-    - formatting cleanup
-    - general grammar fixes
-    - complete javadoc
-    - made all imports explicit
+    4.1.4 [00] - December 2001, Noel Bush
+    - made this an interface and moved implementation to
+      org.alicebot.server.core.interpreter.RhinoInterpreter
 */
 
 package org.alicebot.server.core;
 
-import java.util.StringTokenizer;
-
-import org.alicebot.server.core.logging.Log;
-
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.JavaScriptException;
-import org.mozilla.javascript.Scriptable;
-
 
 /**
- *  Handles server-side JavaScript.
- *
- *  @author Jon Baer
- *  @version 1.0
+ *  An <code>Interpreter</code> handles some server-side script.
  */
-public class Interpreter
+abstract public interface Interpreter
 {
-    /** The string <code>&quot;&lt;cmd&gt;&quot;</code>. */
-    private static final String CMD = "<cmd>";
-
-    public static String evaluate(String userid, String expression)
-    {
-        Context context = Context.enter();
-        Scriptable scope = context.initStandardObjects(null);
-
-        Object result = null;
-        try
-        {
-            result = context.evaluateString(scope, expression, CMD, 1, null);
-        }
-        catch (JavaScriptException e)
-        {
-            Log.userinfo("JavaScript exception (see interpreter log).", Log.ERROR);
-            Log.userinfo("JavaScript exception when processing:", Log.INTERPRETER);
-            StringTokenizer lines = new StringTokenizer(expression, System.getProperty("line.separator"));
-            while (lines.hasMoreTokens())
-            {
-                Log.userinfo(lines.nextToken(), Log.INTERPRETER);
-            }
-        }
-        Context.exit();
-        return result.toString();
-    }
+    /**
+     *  Evaluates a given JavaScript expression
+     *  for a given userid.
+     *
+     *  @param userid       the userid
+     *  @param expression   the expression to evaluate
+     */
+    public String evaluate(String userid, String expression);
 }
+

@@ -52,7 +52,7 @@ public class ThatProcessor extends IndexedPredicateProcessor
      *  Generalizes the processing of a <code>that</code>
      *  element to a job for {@link IndexedPredicateProcessor}.
      */
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.EMPTY)
         {
@@ -60,7 +60,7 @@ public class ThatProcessor extends IndexedPredicateProcessor
         }
         else
         {
-            throw new InvalidAIMLException("Template-side <that/> cannot have element content!");
+            throw new AIMLProcessorException("Template-side <that/> cannot have element content!");
         }
     }
 }

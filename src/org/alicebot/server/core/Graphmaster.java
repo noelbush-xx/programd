@@ -61,38 +61,44 @@
     Targeting re-integration (4.1.3 [04] - December 2001, Noel Bush)
 */
 
+/*
+    4.1.4 [00] - December 2001, Noel Bush
+    - changed to use PredicateMaster
+    - removed some more unneeded fields (and imports)
+    - moved shell out to its own class
+*/
+
 package org.alicebot.server.core;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.TreeSet;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
-import org.alicebot.server.core.ActiveMultiplexor;
 import org.alicebot.server.core.loader.AIMLLoader;
 import org.alicebot.server.core.loader.AIMLWatcher;
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.logging.Trace;
+import org.alicebot.server.core.util.Trace;
 import org.alicebot.server.core.node.Nodemapper;
 import org.alicebot.server.core.node.Nodemaster;
 import org.alicebot.server.core.parser.AIMLReader;
+import org.alicebot.server.core.responder.Responder;
 import org.alicebot.server.core.responder.TextResponder;
 import org.alicebot.server.core.targeting.TargetMaster;
 import org.alicebot.server.core.util.Match;
 import org.alicebot.server.core.util.NoMatchException;
+import org.alicebot.server.core.util.Shell;
 import org.alicebot.server.core.util.Substituter;
 import org.alicebot.server.core.util.Toolkit;
 
@@ -116,7 +122,7 @@ import org.alicebot.server.core.util.Toolkit;
  * @author Thomas Ringate/Pedro Colla
  * @version 4.1.2
  */
-public class Graphmaster implements Runnable
+public class Graphmaster
 {
     // Public access informational constants.
 
@@ -129,49 +135,53 @@ public class Graphmaster implements Runnable
                                               "of the License, or (at your option) any later version."};
 
     /** Version of this package. */
-    public static final String VERSION = "4.1.3";
+    public static final String VERSION     = "4.1.4";
 
     /** Build Number of this package (internal regression test control). */
-    public static final String BUILD = "04";
-
-    /** The maximum depth allowed in the <code>Graphmaster</code>. */
-    public static int MAX_DEPTH = 24; 
+    public static final String BUILD       = "00";
 
 
     // Public access convenience constants.
 
+    /** The maximum depth of the Graphmaster. */
+    public static final int MAX_DEPTH         = 24;
+
     /** A template marker. */
-    public static final String TEMPLATE = "<template>";
+    public static final String TEMPLATE       = "<template>";
 
     /** A that marker. */
-    public static final String THAT = "<that>";
+    public static final String THAT           = "<that>";
 
     /** A topic marker. */
-    public static final String TOPIC = "<topic>";
+    public static final String TOPIC          = "<topic>";
 
     /** A filename marker. */
-    public static final String FILENAME = "<filename>";
+    public static final String FILENAME       = "<filename>";
 
     /** The <code>*</code> wildcard. */
-    public static final String ASTERISK = "*";
+    public static final String ASTERISK       = "*";
 
     /** The <code>_</code> wildcard. */
-    public static final String UNDERSCORE = "_";
+    public static final String UNDERSCORE     = "_";
 
     /** A path separator. */
     public static final String PATH_SEPARATOR = ":";
     
+
+    
+    // Private convenience constants.
+
     /** An empty string. */
-    public static final String EMPTY_STRING = "";
+    private static final String EMPTY_STRING = "";
 
     /** The start of a marker. */
-    public static final String MARKER_START = "<";
+    private static final String MARKER_START = "<";
 
     /** The end of a marker. */
-    public static final String MARKER_END = ">";
+    private static final String MARKER_END = ">";
 
     /** A space. */
-    public static final String SPACE = " ";
+    private static final String SPACE = " ";
 
 
     // State constants
@@ -194,32 +204,11 @@ public class Graphmaster implements Runnable
     /** The total number of categories read. */
     private static int TOTAL_CATEGORIES = 0; 
 
-    /** The number of branches at each depth. */
-    private static int BRANCH_COUNT[] = new int[MAX_DEPTH];
-
-    /** The number of nodes at each depth. */
-    private static int NODE_COUNT[] = new int[MAX_DEPTH];
-
-    /** The &lt;that/&gt; {@link Nodemapper Nodemapper} Hashtable. */
-    private static Hashtable THAT_NODEMAPPER = new Hashtable();
-
-    /** The branch count. */
-    private static String THE_BRANCH_COUNT;
-
     /** Load time marker. */
     private static boolean loadtime = true;
 
     /** Set of files loaded. */
     private static HashSet loadedFiles = new HashSet();
-
-    /** Default name of the local host. */
-    private static final String HOSTNAME = Globals.getHostName();
-
-    /** Generic client name. */
-    public static final String GENERIC_CLIENT_NAME = "unknown client";
-
-    /** Message displayed after loading. */
-    private static String loadMessage;
 
     /** The current working directory (used by load). */
     private static String workingDirectory = System.getProperty("user.dir");
@@ -230,12 +219,6 @@ public class Graphmaster implements Runnable
     /** Set of activated nodes. */
     private static Set ACTIVATED_NODES = new HashSet();
 
-    /** Targets filename. */
-    private static final String TARGETS_DATA_PATH = Globals.getTargetsDataPath();
-
-    /** The string &quot;undefined&quot;. */
-    private static final String UNDEFINED = "undefined";
-
     /** Activations marker. */
     private static final String ACTIVATIONS = "<activations>";
 
@@ -245,19 +228,6 @@ public class Graphmaster implements Runnable
      */
     public Graphmaster()
     {
-    }
-
-
-    /**
-     *  Creates a new <code>Graphmaster</code>
-     *  with a special message that will be displayed
-     *  after loading.
-     *
-     *  @param
-     */
-    public Graphmaster(String message)
-    {
-        this.loadMessage = message;
     }
 
 
@@ -373,7 +343,7 @@ public class Graphmaster implements Runnable
                 Nodemapper matchNodemapper = match.getNodemapper();
                 if (matchNodemapper == null)
                 {
-                    Trace.devinfo("match nodemapper is null");
+                    Trace.devinfo("Match nodemapper is null!");
                 }
                 else
                 {
@@ -651,14 +621,11 @@ public class Graphmaster implements Runnable
 
 
     /**
-     *  Starts the <code>Graphmaster</code>, marking the end
-     *  of loadtime.  Depending on settings in {@link Globals},
-     *  starts up the {@link org.alicebot.server.core.loader.AIMLWatcher AIMLWatcher},
+     *  Marks the end of loadtime.  Depending on settings in {@link Globals},
      *  displays various trace information on the console,
-     *  writes startup information to the log, and runs
-     *  a simple &quot;shell&quot; for testing the bot.
+     *  and writes startup information to the log..
      */
-    public void run()
+    public static void ready()
     {
         // Mark the end of the load time.
         loadtime = false;
@@ -671,61 +638,23 @@ public class Graphmaster implements Runnable
         {
             // Give number of loaded categories.
             Log.userinfo("\"" + Globals.getBotName() + "\" is thinking with " + TOTAL_CATEGORIES + " categories.", Log.STARTUP);
-
-            // Provide load message, if it was set via the constructor.
-            if (loadMessage != null)
-            {
-                Trace.userinfo(loadMessage);
-            }
         }
 
         // Always print the copyright, regardless of console settings.
         Trace.insist(COPYRIGHT);
         Log.userinfo("Alicebot Program D version " + VERSION + " Build [" + BUILD + "]", Log.STARTUP);
-
-        // This is a simple Alice shell that is useful for debugging your AIML (could be more useful)
-        if (Globals.useShell())
-        {
-            Trace.userinfo("Type \"exit\" to shutdown.");
-            String botName = Globals.getBotName();
-            BufferedReader console = null;
-            while (true)
-            {
-                try
-                {
-                    console = Trace.console(ActiveMultiplexor.StaticSelf.getPredicateValue(Globals.getClientNamePredicate(), HOSTNAME));
-                }
-                catch (NoSuchPredicateException e)
-                {
-                    console = Trace.console(GENERIC_CLIENT_NAME, HOSTNAME);
-                }
-                String theLine = null;
-                try
-                {
-                    theLine = console.readLine();
-                }
-                catch (IOException e)
-                {
-                    Log.userinfo("Cannot read from console!", Log.ERROR);
-                    return;
-                }
-                if (theLine == null)
-                {
-                    break;
-                }
-                Trace.gotLine();
-                if (theLine.toLowerCase().equals("exit"))
-                {
-                    Log.userinfo("Exiting at user request.", Log.STARTUP);
-                    System.exit(0);
-                }
-                Trace.console(botName,
-                              Toolkit.breakLines(
-                              ActiveMultiplexor.StaticSelf.getResponse(theLine, HOSTNAME, new TextResponder())));
-            }
-        }
     }
     
+
+    /**
+     *  Tells the PredicateMaster to
+     *  save all predicates.
+     */
+    public static void shutdown()
+    {
+        PredicateMaster.saveAll();
+    }
+
 
     /**
      *  Sends new targeting data to
@@ -763,6 +692,7 @@ public class Graphmaster implements Runnable
                     String inputTopic = pathTokenizer.nextToken().trim();
                     TargetMaster.add(matchPattern, matchThat, matchTopic, matchTemplate, inputText, inputThat, inputTopic);
                 }
+                activationsIterator.remove();
             } 
         }
     }
@@ -779,6 +709,15 @@ public class Graphmaster implements Runnable
         if (path.length() < 1)
         {
             Log.userinfo("Cannot open a file whose name has zero length.", Log.ERROR);
+        }
+
+        // Don't reload the startup file after loadtime.
+        if (!loadtime)
+        {
+            if (path.equals(Globals.getStartupFilePath()))
+            {
+                Log.userinfo("Cannot reload startup file.", Log.ERROR);
+            }
         }
 
         // This BufferedReader will be passed to AIMLReader to read the file.
@@ -874,6 +813,17 @@ public class Graphmaster implements Runnable
                 if (Globals.isWatcherActive())
                 {
                     AIMLWatcher.addWatchFile(path);
+                }
+            }
+            else
+            {
+                if (!toRead.exists())
+                {
+                    Log.userinfo("\"" + path + "\" does not exist!", Log.ERROR);
+                }
+                if (toRead.isDirectory())
+                {
+                    Log.userinfo("\"" + path + "\" is a directory!", Log.ERROR);
                 }
             }
         }

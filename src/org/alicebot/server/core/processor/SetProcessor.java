@@ -32,10 +32,14 @@
     - changed "predicate" to "name"
 */
 
+/*
+    4.1.4 [00] - December 2001, Noel Bush
+    - changed to use PredicateMaster
+*/
+
 package org.alicebot.server.core.processor;
 
-import org.alicebot.server.core.ActiveMultiplexor;
-import org.alicebot.server.core.Globals;
+import org.alicebot.server.core.PredicateMaster;
 import org.alicebot.server.core.parser.AIMLParser;
 import org.alicebot.server.core.parser.XMLNode;
 import org.alicebot.server.core.util.Toolkit;
@@ -59,7 +63,7 @@ public class SetProcessor extends AIMLProcessor
     public static final String label = "set";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
@@ -68,15 +72,15 @@ public class SetProcessor extends AIMLProcessor
             // Can't process a predicate with no name.
             if (name.equals(EMPTY_STRING))
             {
-                throw new InvalidAIMLException("<set></set> must have a name attribute!");
+                throw new AIMLProcessorException("<set></set> must have a name attribute!");
             }
 
             // Return the result of setting this predicate value (should check its type, but not yet implemented).
-            return ActiveMultiplexor.StaticSelf.setPredicateValue(name, parser.evaluate(level++, userid, tag.XMLChild), userid);
+            return PredicateMaster.set(name, parser.evaluate(level++, userid, tag.XMLChild), userid);
         }
         else
         {
-            throw new InvalidAIMLException("<set></set> must have content!");
+            throw new AIMLProcessorException("<set></set> must have content!");
         }
     }
 }

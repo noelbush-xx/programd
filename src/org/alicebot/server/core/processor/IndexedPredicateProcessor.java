@@ -20,15 +20,17 @@
     - changed to handle NoSuchPredicateException
 */
 
+/*
+    4.1.4 [00] - December 2001, Noel Bush
+    - changed to use PredicateMaster
+*/
+
 package org.alicebot.server.core.processor;
 
 import java.util.ArrayList;
 import java.util.Vector;
 
-import org.alicebot.server.core.ActiveMultiplexor;
-import org.alicebot.server.core.Globals;
-import org.alicebot.server.core.NoSuchPredicateException;
-import org.alicebot.server.core.logging.Trace;
+import org.alicebot.server.core.PredicateMaster;
 import org.alicebot.server.core.parser.AIMLParser;
 import org.alicebot.server.core.parser.XMLNode;
 import org.alicebot.server.core.util.InputNormalizer;
@@ -45,14 +47,14 @@ import org.alicebot.server.core.util.Toolkit;
  */
 public class IndexedPredicateProcessor extends AIMLProcessor
 {
-
     /**
      *  This method shouldn't be called, since no predicate is specified.
      */
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         return EMPTY_STRING;
     }
+
 
     /**
      *  Processes an indexed predicate with <code>dimensions</code> dimensions
@@ -76,21 +78,13 @@ public class IndexedPredicateProcessor extends AIMLProcessor
         // Get a valid 2-dimensional index.
         int indexes[] = AIMLParser.getValid2dIndex(tag);
 
-        if ( (indexes[0] <= 0) || (indexes[0] > Globals.getMaxIndexDepth()) )
+        if (indexes[0] <= 0)
         {
             return EMPTY_STRING;
         }
 
         // Get entire predicate value at this index (may contain multiple "sentences").
-        String response = null;
-        try
-        {
-            response = ActiveMultiplexor.StaticSelf.getPredicateValue(name, indexes[0], userid);
-        }
-        catch (NoSuchPredicateException e)
-        {
-            return EMPTY_STRING;
-        }
+        String response = PredicateMaster.get(name, indexes[0], userid);
 
         // Split predicate into sentences.
         ArrayList sentenceList = InputNormalizer.sentenceSplit(response);

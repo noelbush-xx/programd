@@ -57,17 +57,13 @@
 
 package org.alicebot.server.core.parser;
 
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.alicebot.server.core.Globals;
-import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.logging.Trace;
-import org.alicebot.server.core.processor.AIMLProcessor;
-import org.alicebot.server.core.processor.InvalidAIMLException;
+import org.alicebot.server.core.processor.AIMLProcessorException;
+import org.alicebot.server.core.processor.AIMLProcessorRegistry;
 import org.alicebot.server.core.processor.ProcessorException;
-import org.alicebot.server.core.util.LinkedList;
-import org.alicebot.server.core.util.LinkedListItr;
+import org.alicebot.server.core.processor.ProcessorRegistry;
 
 
 /**
@@ -77,23 +73,34 @@ import org.alicebot.server.core.util.LinkedListItr;
 public class AIMLParser extends GenericParser
 {
     /** The values captured from the input by wildcards in the <code>pattern</code>. */
-    private Vector INPUT_STARS;
+    private Vector inputStars = new Vector();
 
     /** The values captured from the input path by wildcards in the <code>that</code>. */
-    private Vector THAT_STARS;
+    private Vector thatStars = new Vector();
 
     /** The values captured from the input path by wildcards in the <code>topic</code>. */
-    private Vector TOPIC_STARS;
+    private Vector topicStars = new Vector();
+
+    /** The input that matched the <code>pattern</code> associated with this template (helps to avoid endless loops). */
+    private Vector inputs = new Vector();
 
 
     /**
      *  Initializes an <code>AIMLParser</code>.
+     *  The <code>input</code> is a required parameter!
+     *
+     *  @param input    the input that matched the <code>pattern</code>
+     *                  associated with this template (helps to avoid endless loops)
+     *
+     *  @throws AIMLParserException if the <code>input</code> is null
      */
-    public AIMLParser()
+    public AIMLParser(String input) throws AIMLParserException
     {
-        INPUT_STARS = new Vector();
-        THAT_STARS = new Vector();
-        TOPIC_STARS = new Vector();
+        if (input == null)
+        {
+            throw new AIMLParserException("No input supplied for AIMLParser!");
+        }
+        this.inputs.add(input);
         super.processorRegistry = Globals.getAIMLProcessorRegistry();
     }
 
@@ -107,97 +114,128 @@ public class AIMLParser extends GenericParser
      *
      *  @return the result of processing the tag
      *
-     *  @throws InvalidAIMLException if the AIML cannot be processed
+     *  @throws AIMLProcessorException if the AIML cannot be processed
      */
-    public String processTag(int level, String userid, XMLNode tag) throws InvalidAIMLException
+    public String processTag(int level, String userid, XMLNode tag) throws ProcessorException
     {
         try
         {
             return super.processTag(level, userid, tag);
         }
-        catch (ProcessorException e)
+        // A ProcessorException at this point can mean several things.
+        catch (ProcessorException e0)
         {
-            // Drop down to the rest.
-        }
-        if (Globals.supportDeprecatedTags())
-        {
-            try
+            // It could be a deprecated tag.
+            if (Globals.supportDeprecatedTags())
             {
-                return DeprecatedAIMLParser.processTag(level, userid, tag, this);
+                try
+                {
+                    return DeprecatedAIMLParser.processTag(level, userid, tag, this);
+                }
+                catch (UnknownDeprecatedAIMLException e1)
+                {
+                    // For now, do nothing (drop down to next).
+                }
             }
-            catch (UnknownDeprecatedAIMLException e)
+            // It could also be a non-AIML tag.
+            if (Globals.nonAIMLRequireNamespaceQualification())
             {
-                // For now, do nothing (drop down to next).
+                // If namespace qualification is required, check for a colon.
+                if (tag.XMLData.indexOf(COLON) == -1)
+                {
+                    throw new AIMLProcessorException("Unknown element \"" + tag.XMLData + "\"");
+                }
             }
+            // But if namespace qualification is not required, don't care.
+            return formatTag(level, userid, tag);
         }
-        if (Globals.nonAIMLRequireNamespaceQualification())
-        {
-            if (tag.XMLData.indexOf(COLON) == -1)
-            {
-                throw new InvalidAIMLException("Unknown element \"" + tag.XMLData + "\"");
-            }
-        }
-        // Any tag not caught by now is an unknown tag, so expand it into text.
-        return formatTag(level, userid, tag);
     }
 
 
     /**
-     *  @return values captured from the input path by wildcards in the <code>pattern</code>
+     *  Adds an input to the inputs vector (for avoiding infinite loops).
+     *
+     *  @param input    the input to add
+     */
+    public void addInput(String input)
+    {
+        this.inputs.add(input);
+    }
+
+
+    /**
+     *  Returns the input that matched the <code>pattern</code> associated with this template.
+     *
+     *  @return the input that matched the <code>pattern</code> associated with this template
+     */
+    public Vector getInputs()
+    {
+        return this.inputs;
+    }
+
+
+    /**
+     *  Returns the values captured from the input path by wildcards in the <code>pattern</code>.
+     *
+     *  @return the values captured from the input path by wildcards in the <code>pattern</code>
      */
     public Vector getInputStars()
     {
-        return INPUT_STARS;
+        return this.inputStars;
     }
 
 
     /**
-     *  @return values captured from the input path by wildcards in the <code>that</code>
+     *  Returns the the values captured from the input path by wildcards in the <code>that</code>.
+     *
+     *  @return the values captured from the input path by wildcards in the <code>that</code>
      */
     public Vector getThatStars()
     {
-        return THAT_STARS;
+        return this.thatStars;
     }
 
 
     /**
-     *  @return values captured from the input path by wildcards in the <code>topic name</code>
+     *  Returns the values captured from the input path by wildcards in the <code>topic name</code>.
+     *
+     *  @return the values captured from the input path by wildcards in the <code>topic name</code>
      */
     public Vector getTopicStars()
     {
-        return TOPIC_STARS;
+        return this.topicStars;
     }
 
 
     /**
-     *  Sets the <code>INPUT_STARS</code> Vector.
+     *  Sets the <code>inputStars</code> Vector.
      *
      *  @param  values captured from the input path by wildcards in the <code>pattern</code>
      */
     public void setInputStars(Vector vector)
     {
-        INPUT_STARS = vector;
+        this.inputStars = vector;
     }
 
 
     /**
-     *  Sets the <code>THAT_STARS</code> Vector.
+     *  Sets the <code>thatStars</code> Vector.
      *
      *  @param  values captured from the input path by wildcards in the <code>that</code>
      */
     public void setThatStars(Vector vector)
     {
-        THAT_STARS = vector;
+        this.thatStars = vector;
     }
 
 
     /**
-     *  Sets the <code>TOPIC_STARS</code> Vector.
+     *  Sets the <code>topicStars</code> Vector.
      *
      *  @param  values captured from the input path by wildcards in the <code>topic name</code>
      */
     public void setTopicStars(Vector vector)
     {
-        TOPIC_STARS = vector;
+        this.topicStars = vector;
     }
 }

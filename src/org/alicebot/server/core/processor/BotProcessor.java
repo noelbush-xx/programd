@@ -53,7 +53,7 @@ public class BotProcessor extends AIMLProcessor
      *
      *  @see    AIMLProcessor#process
      */
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.EMPTY)
         {
@@ -66,7 +66,7 @@ public class BotProcessor extends AIMLProcessor
         }
         else
         {
-            throw new InvalidAIMLException ("<bot/> cannot contain element content!");
+            throw new AIMLProcessorException ("<bot/> cannot contain element content!");
         }
     }
 }

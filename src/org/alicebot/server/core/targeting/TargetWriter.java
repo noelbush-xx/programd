@@ -16,13 +16,21 @@
 package org.alicebot.server.core.targeting;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.alicebot.server.core.logging.Trace;
-import org.alicebot.server.core.logging.XMLLog;
+import org.alicebot.server.core.Globals;
+import org.alicebot.server.core.util.Trace;
+import org.alicebot.server.core.util.Toolkit;
+import org.alicebot.server.core.util.XMLResourceSpec;
+import org.alicebot.server.core.util.XMLWriter;
 
+
+/**
+ *  Handles writing of targets to files.
+ *
+ *  @author Noel Bush
+ */
 public class TargetWriter extends Targeting
 {
     /**
@@ -40,58 +48,26 @@ public class TargetWriter extends Targeting
         }
         file.delete();
 
-        // Construct the type spec to use with XMLLog.
-        String[] typeSpec = new String[] {file.getAbsolutePath(), TARGETS, null};
+        // Construct the resource spec to use with XMLWriter.
+        XMLResourceSpec spec = new XMLResourceSpec();
+        spec.description = "Targeting Data";
+        spec.path        = file.getAbsolutePath();
+        spec.root        = TARGETS;
+        spec.dtd         = XMLResourceSpec.HTML_ENTITIES_DTD;
+        spec.encoding    = Globals.getProperty("programd.targeting.data.encoding", "UTF-8");
 
         Iterator targetsIterator = targets.values().iterator();
         if (targetsIterator.hasNext())
         {
             while (targetsIterator.hasNext())
             {
-                write((Target)targetsIterator.next(), typeSpec);
+                write((Target)targetsIterator.next(), spec);
             }
         }
         else
         {
-            write(null, typeSpec);
+            write(null, spec);
         }
-    }
-
-
-    /**
-     *  Writes a target to a given file.
-     *
-     *  @param target   the target to write
-     *  @param file     the file to which to write
-     */
-    public static void write(Target target, File file)
-    {
-        // Create the file if it does not exist.
-        if (!file.exists())
-        {
-            try
-            {
-                if (!file.createNewFile())
-                {
-                    return;
-                }
-            }
-            catch (IOException e)
-            {
-                Trace.userinfo("Could not create new file \"" + file.getAbsolutePath() + "\".");
-            }
-        }
-
-        // Be sure that the file is writable.
-        if (!file.canWrite())
-        {
-            Trace.userinfo("Cannot write target to \"" + file.getAbsolutePath() + "\".");
-            return;
-        }
-
-        // Construct the type spec to use with XMLLog.
-        String[] typeSpec = new String[] {file.getAbsolutePath(), TARGETS, null};
-        write(target, typeSpec);
     }
 
 
@@ -99,35 +75,36 @@ public class TargetWriter extends Targeting
      *  Writes a target to a file defined by a given typespec.
      *
      *  @param target   the target to write
-     *  @param typeSpec the typeSpec to use with XMLLog
+     *  @param spec     the XML resource spec for the target file
      */
-    public static void write(Target target, String[] typeSpec)
+    public static void write(Target target, XMLResourceSpec spec)
     {
         if (target != null)
         {
             // Store the target in the given file.
-            XMLLog.log(     INDENT + TARGET_START + LINE_SEPARATOR +
-                            INDENT + INDENT + INPUT_START + LINE_SEPARATOR +
-                            INDENT + INDENT + INDENT + PATTERN_START + target.getLastInputText() + PATTERN_END + LINE_SEPARATOR +
-                            INDENT + INDENT + INDENT + THAT_START + target.getLastInputThat() + THAT_END + LINE_SEPARATOR +
-                            INDENT + INDENT + INDENT + TOPIC_START + target.getLastInputTopic() + TOPIC_END + LINE_SEPARATOR +
-                            INDENT + INDENT + INPUT_END + LINE_SEPARATOR +
-                            INDENT + INDENT + MATCH_START + LINE_SEPARATOR +
-                            INDENT + INDENT + INDENT + PATTERN_START + target.getMatchPattern() + PATTERN_END + LINE_SEPARATOR +
-                            INDENT + INDENT + INDENT + THAT_START + target.getMatchThat() + THAT_END + LINE_SEPARATOR +
-                            INDENT + INDENT + INDENT + TOPIC_START + target.getMatchTopic() + TOPIC_END + LINE_SEPARATOR +
-                            INDENT + INDENT + MATCH_END + LINE_SEPARATOR +
-                            INDENT + INDENT + EXTENSION_START + LINE_SEPARATOR +
-                            INDENT + INDENT + INDENT + PATTERN_START + target.getExtensionPattern() + PATTERN_END + LINE_SEPARATOR +
-                            INDENT + INDENT + INDENT + THAT_START + target.getExtensionThat() + THAT_END + LINE_SEPARATOR +
-                            INDENT + INDENT + INDENT + TOPIC_START + target.getExtensionTopic() + TOPIC_END + LINE_SEPARATOR +
-                            INDENT + INDENT + EXTENSION_END + LINE_SEPARATOR +
-                            INDENT + TARGET_END + LINE_SEPARATOR,
-                        typeSpec);
+            XMLWriter.write(    INDENT + TARGET_START + LINE_SEPARATOR +
+                                INDENT + INDENT + INPUT_START + LINE_SEPARATOR +
+                                INDENT + INDENT + INDENT + PATTERN_START + target.getLastInputText() + PATTERN_END + LINE_SEPARATOR +
+                                INDENT + INDENT + INDENT + THAT_START + target.getLastInputThat() + THAT_END + LINE_SEPARATOR +
+                                INDENT + INDENT + INDENT + TOPIC_START + target.getLastInputTopic() + TOPIC_END + LINE_SEPARATOR +
+                                INDENT + INDENT + INPUT_END + LINE_SEPARATOR +
+                                INDENT + INDENT + MATCH_START + LINE_SEPARATOR +
+                                INDENT + INDENT + INDENT + PATTERN_START + target.getMatchPattern() + PATTERN_END + LINE_SEPARATOR +
+                                INDENT + INDENT + INDENT + THAT_START + target.getMatchThat() + THAT_END + LINE_SEPARATOR +
+                                INDENT + INDENT + INDENT + TOPIC_START + target.getMatchTopic() + TOPIC_END + LINE_SEPARATOR +
+                                INDENT + INDENT + INDENT + TEMPLATE_START + target.getMatchTemplate() + TEMPLATE_END + LINE_SEPARATOR +
+                                INDENT + INDENT + MATCH_END + LINE_SEPARATOR +
+                                INDENT + INDENT + EXTENSION_START + LINE_SEPARATOR +
+                                INDENT + INDENT + INDENT + PATTERN_START + target.getExtensionPattern() + PATTERN_END + LINE_SEPARATOR +
+                                INDENT + INDENT + INDENT + THAT_START + target.getExtensionThat() + THAT_END + LINE_SEPARATOR +
+                                INDENT + INDENT + INDENT + TOPIC_START + target.getExtensionTopic() + TOPIC_END + LINE_SEPARATOR +
+                                INDENT + INDENT + EXTENSION_END + LINE_SEPARATOR +
+                                INDENT + TARGET_END + LINE_SEPARATOR,
+                            spec);
         }
         else
         {
-            XMLLog.log(EMPTY_STRING, typeSpec);
+            XMLWriter.write(EMPTY_STRING, spec);
         }
     }
 }

@@ -6,6 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.alicebot.server.core.Globals;
+import org.alicebot.server.core.logging.Log;
+import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.UserErrorException;
+
+
 /**
  *  <p>
  *  Represents all connection details to a DBMS and allows
@@ -32,7 +38,7 @@ public class DbAccess
     protected Connection connection;
 
     /** The statement used by this object. */
-    protected Statement statement = null;
+    protected Statement statement;
 
     /** The name of the driver used by this object. */
     protected String driver;
@@ -55,11 +61,8 @@ public class DbAccess
      *  @param url      location of a data source name (dsn)
      *  @param user     user name
      *  @param password password for user
-     *
-     *  @throws SQLException if a connection cannot be established
-     *  @throws ClassNotFoundException if the driver class cannot be found
      */
-    public DbAccess(String driver, String url, String user, String password) throws SQLException, ClassNotFoundException
+    public DbAccess(String driver, String url, String user, String password)
     {
         this.driver = driver;
         this.url = url;
@@ -89,21 +92,42 @@ public class DbAccess
      *  @throws SQLException if the connection cannot be made
      *  @throws ClassNotFoundException if the driver class cannot be found
      */
-    public void connect() throws SQLException, ClassNotFoundException
+    public void connect()
     {
         if (connection == null)
         {
-            Class.forName(driver);
-            if (user == null || password == null)
+            try
             {
-                connection = DriverManager.getConnection(url);
+                Class.forName(driver);
             }
-            else
+            catch (ClassNotFoundException e)
             {
-                connection = DriverManager.getConnection(url, user, password);
+                throw new UserErrorException("Could not find your database driver.");
             }
-                // creates the statement to be used in queries or updates
-            statement = connection.createStatement();
+            try
+            {
+                if (user == null || password == null)
+                {
+                    connection = DriverManager.getConnection(url);
+                }
+                else
+                {
+                    connection = DriverManager.getConnection(url, user, password);
+                }
+            }
+            catch (SQLException e)
+            {
+                throw new UserErrorException("Could not connect to \"" + url + "\".  Please check that the parameters specified in your server properties file are correct.", e);
+            }
+            // Create the statement to be used in queries or updates.
+            try
+            {
+                statement = connection.createStatement();
+            }
+            catch (SQLException e)
+            {
+                throw new UserErrorException("Could not create a SQL statement using your database.");
+            }
         }
     }
 
@@ -115,12 +139,21 @@ public class DbAccess
      *  @param query    the query to execute
      *
      *  @return the {@link java.sql.ResultSet ResultSet} from executing a given query
-     *
-     *  @throws SQLException if executing the query results in an error
      */
-    public ResultSet executeQuery(String query) throws SQLException
+    public ResultSet executeQuery(String query)
     {
-        return statement.executeQuery(query);
+        if (statement == null)
+        {
+            throw new DeveloperErrorException("Tried to execute query before creating Statement object!");
+        }
+        try
+        {
+            return statement.executeQuery(query);
+        }
+        catch (SQLException e)
+        {
+            throw new UserErrorException("Could not execute a query on your database.");
+        }
     }
 
 
@@ -131,12 +164,21 @@ public class DbAccess
      *  @param update   the update to execute
      *
      *  @return the row count resulting from executing a given update
-     *
-     *  @throws SQLException if executing the update results in an error
      */
-    public int executeUpdate(String update) throws SQLException
+    public int executeUpdate(String update)
     {
-        return statement.executeUpdate(update);
+        if (statement == null)
+        {
+            throw new DeveloperErrorException("Tried to execute query before creating Statement object!");
+        }
+        try
+        {
+            return statement.executeUpdate(update);
+        }
+        catch (SQLException e)
+        {
+            throw new UserErrorException("Could not execute an update on your database.", e);
+        }
     }
 
 

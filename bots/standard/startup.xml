@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <!--This is a generic startup.xml file for Program D.-->
 <!--programd-startup is the root element and is required.-->
 <programd-startup>
@@ -35,10 +35,19 @@
             <property name="msagent" value="no"/>
             <!--You may enumerate each file you want the bot to load, or use the "*"
                 to indicate you want all files in a given directory.
-                The path is relative to server.engine.home in your server properties.-->
-            <learn>*</learn>
+                The path is relative to programd.home in your server properties.-->
+            <learn>*.aiml</learn>
         </bot>
     </bots>
+    <!--Here you can define default values for predicates, as well as mark those
+        which are return-name-when-set.-->
+    <predicates>
+        <predicate name="name" default="user" set-return="value"/>
+        <predicate name="he" default="somebody" set-return="name"/>
+        <predicate name="she" default="somebody" set-return="name"/>
+        <predicate name="it" default="something" set-return="name"/>
+        <predicate name="they" default="something" set-return="name"/>
+    </predicates>
     <!--Substitutions are grouped according to several AIML interpreter functions.-->
     <substitutions>
         <!--Input substitutions correct spelling mistakes and convert
@@ -52,7 +61,7 @@
             <substitute find=",)" replace=" smile "/>
             <substitute find=";)" replace=" smile "/>
             <substitute find=";-)" replace=" smile "/>
-            <substitute find="\"" replace=""/>
+            <substitute find="&quot;" replace=""/>
             <substitute find="/" replace=" "/>
             <substitute find="&gt;" replace=" gt "/>
             <substitute find="&lt;" replace=" lt "/>
@@ -61,7 +70,7 @@
             <substitute find="`" replace=" "/>
             <substitute find="," replace=" "/>
             <substitute find=":" replace=" "/>
-            <substitute find="&" replace=" "/>
+            <substitute find="&amp;" replace=" "/>
             <substitute find="-" replace="-"/>
             <substitute find="=" replace=" "/>
             <substitute find="," replace=" "/>
@@ -230,8 +239,7 @@
             <!--sentence protection-->
             <substitute find="{" replace=" beginscript "/>
             <substitute find="}" replace=" endscript "/>
-            <substitute find="\"" replace=" "/>
-            <substitute find="\\" replace=" "/>
+            <substitute find="\" replace=" "/>
             <substitute find=":0" replace=" 0"/>
             <substitute find=": 0" replace=" 0"/>
             <substitute find=":1" replace=" 1"/>
@@ -430,11 +438,12 @@
             <substitute find=" deins " replace=" meins "/>
         </person2>
     </substitutions>
-    <!--Sentence splitters defined strings that mark the end of a sentence,
+    <!--Sentence splitters define strings that mark the end of a sentence,
         after input substitutions have been performed.-->
     <sentence-splitters>
         <splitter value="."/>
         <splitter value="!"/>
         <splitter value="?"/>
+        <splitter value=";"/>
     </sentence-splitters>
 </programd-startup>

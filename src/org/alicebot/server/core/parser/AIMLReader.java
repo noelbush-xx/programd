@@ -62,16 +62,15 @@
 */
 
 package org.alicebot.server.core.parser;
-    
+
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.lang.reflect.Field;
 
 import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.logging.Trace;
 import org.alicebot.server.core.processor.ProcessorException;
-import org.alicebot.server.core.util.Toolkit;
+import org.alicebot.server.core.util.DeveloperErrorException;
+import org.alicebot.server.core.util.Trace;
 
 
 /**
@@ -338,11 +337,11 @@ public class AIMLReader extends GenericReader
         }
         catch (NoSuchFieldException e)
         {
-            Trace.devfail("The developer has specified a field that does not exist in AIMLReader.", e);
+            throw new DeveloperErrorException("The developer has specified a field that does not exist in AIMLReader.");
         }
         catch (SecurityException e)
         {
-            Trace.devfail("Security manager prevents AIMLReader from functioning.", e);
+            throw new DeveloperErrorException("Security manager prevents AIMLReader from functioning.");
         }
     }
 
@@ -481,17 +480,17 @@ public class AIMLReader extends GenericReader
                     }
                     else if (template.length() == 0)
                     {
-                         Log.userinfo("Template missing from category ending at line " + lineNumber +
+                        Log.userinfo("Template missing from category ending at line " + lineNumber +
                                      " in \"" + fileName + "\".", Log.ERROR);
                         Log.userinfo("Aborting this category.", Log.ERROR);
                     }
                     else
                     {
                         // Deliver pattern, that and template to AIMLReaderListener.
-                        ((AIMLReaderListener)super.listener).newCategory(pattern.toString().toUpperCase(),
-                                                                         that.toString().toUpperCase(),
-                                                                         topic.toString().toUpperCase(),
-                                                                         template.toString());
+                        ((AIMLReaderListener)super.listener).newCategory(pattern.toUpperCase(),
+                                                                         that.toUpperCase(),
+                                                                         topic.toUpperCase(),
+                                                                         template);
 
                         // Reset pattern, that and template to defaults (note that topic is not reset).
                         pattern = that = template = ASTERISK;
@@ -499,6 +498,10 @@ public class AIMLReader extends GenericReader
 
                         // Index this event.
                         categoryCount++;
+
+                        // Recreate the buffer (otherwise it gets huge).
+                        buffer = new StringBuffer(Math.max(bufferStartCapacity, buffer.length()));
+                        buffer.append(bufferString);
                     }
                     break;
 

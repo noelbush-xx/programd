@@ -15,11 +15,9 @@
 
 package org.alicebot.server.core.parser;
 
-import java.util.StringTokenizer;
-import java.util.Vector;
-
 import org.alicebot.server.core.Globals;
-
+import org.alicebot.server.core.processor.ProcessorRegistry;
+import org.alicebot.server.core.processor.loadtime.StartupElementProcessorRegistry;
 
 
 /**

@@ -46,7 +46,7 @@ public class InputProcessor extends IndexedPredicateProcessor
      *  Generalizes the processing of an <code>input</code>
      *  element to a job for {@link IndexedPredicateProcessor}.
      */
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.EMPTY)
         {
@@ -54,7 +54,7 @@ public class InputProcessor extends IndexedPredicateProcessor
         }
         else
         {
-            throw new InvalidAIMLException("<input/> cannot have content!");
+            throw new AIMLProcessorException("<input/> cannot have content!");
         }
     }
 }

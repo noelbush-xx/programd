@@ -15,9 +15,8 @@
 
 package org.alicebot.server.core.processor.loadtime;
 
-import org.alicebot.server.core.logging.Trace;
-import org.alicebot.server.core.parser.StartupFileParser;
 import org.alicebot.server.core.parser.GenericParser;
+import org.alicebot.server.core.parser.StartupFileParser;
 import org.alicebot.server.core.parser.XMLNode;
 import org.alicebot.server.core.processor.Processor;
 import org.alicebot.server.core.processor.ProcessorException;

@@ -44,7 +44,7 @@ public class ThinkProcessor extends AIMLProcessor
     public static final String label = "think";
 
 
-    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
@@ -53,7 +53,7 @@ public class ThinkProcessor extends AIMLProcessor
         }
         else
         {
-            throw new InvalidAIMLException("<think></think> must have content!");
+            throw new AIMLProcessorException("<think></think> must have content!");
         }
     }
 }

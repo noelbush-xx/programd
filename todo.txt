@@ -1,35 +1,19 @@
 Bugs and missing things:
 * Logging of duplicate categories
 * Provide save capabilities to the GM
-* Fix/Rewrite of the template processor (this will hopefully solve many bugs people are currently experiencing)
-    * Add substitutions like <person> and <person2>
-    * Support for AIML 0.9 tags (AIML 0.9 compliant bot)
-* Re-structure bot properties management.
-* Normalization of eol (LF vs. CRLF) on chat.log
-* print actual server port instead of "2001" hardcoded.
 * Indefinite depth of <input/>, <that/>, <star/>, <thatstar/>, <topicstar/>
+* most (all?) listeners not working
 
 Cleanup:
-* Reduce memory leaks
-* Shorten the license text in the files
-* Provide a LICENSE.txt file
-* Generally making the code nicer
 * Documentation (README.txt)
 
-Misc
-* Sanity check for verifying that the build isn't broken (testsuite)
-
-Features, new functions
+Other ideas:
 * List all variables set for a user
-* Use different dbase than hypersoic (whic seems not suited for large scale databases)
-    * plug in architecture for database?
-* Fix/rewrite substitutions, externalizing them
 * Working admin
 * Documentation (on purpose twice)
 * ICQ
 * MSN/Yahoo
 * Methods for logging in, may require mods in the dbase too
-* Plug-in architecture for template tags (it would be good if this cold be incorporated into the new parser)
 * Plug in architecture for listeners/responders/responder templates
 * optional logging of all features in XML or something
 * Installer

@@ -13,16 +13,6 @@
     USA.
 */
 
-package org.alicebot.server.core.util;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.StringTokenizer;
-
-
 /*
     (4.1.3 [00] - October 2001, Noel Bush)
     - removed "implements Serializable"
@@ -64,6 +54,21 @@ import java.util.StringTokenizer;
     - fixed applySubstitutions so that correct part of original
       string is retained
 */
+
+/*
+    4.1.4 [00] - December 2001, Noel Bush
+    Fixed a problem with applySubstitutions in which some
+    results were getting inappropriately trimmed.
+*/
+
+package org.alicebot.server.core.util;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Set;
+
 
 /**
  *  Provides generic substitution utilities for classes
@@ -162,6 +167,8 @@ public class Substituter
     {
         // This will contain all pieces of the input untouched by substitution.
         LinkedList untouchedPieces = new LinkedList();
+
+        // Pad the input with spaces.
         untouchedPieces.add(SPACE + input + SPACE);
 
         // This will contain all replacements to be inserted in the result.
@@ -181,7 +188,7 @@ public class Substituter
                 // Is the find string in the untouched input?
                 String untouchedTest = (String)untouchedIterator.next();
                 int startIndex = untouchedTest.toUpperCase().indexOf(find);
-                if (startIndex != -1)
+                if (startIndex > 0 && startIndex < untouchedTest.length())
                 {
                     // If so, replace the current untouched input with the substring up to startIndex,
                     untouchedIterator.set(untouchedTest.substring(0, startIndex));
@@ -217,9 +224,19 @@ public class Substituter
         }
 
         // Remove the padding spaces before returning!
-        if (result.length() > 2)
+        int resultLength = result.length();
+        if (resultLength > 2)
         {
-            return result.substring(1, result.length() - 1);
+            int resultStart = 0;
+            if (result.charAt(0) == ' ')
+            {
+                resultStart = 1;
+            }
+            if (result.charAt(resultLength - 1) == ' ')
+            {
+                resultLength--;
+            }
+            return result.substring(resultStart, resultLength);
         }
         else
         {

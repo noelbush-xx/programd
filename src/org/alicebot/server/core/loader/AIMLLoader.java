@@ -38,13 +38,12 @@ import org.alicebot.server.core.BotProperty;
 import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.Graphmaster;
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.logging.Trace;
 import org.alicebot.server.core.node.Nodemapper;
-import org.alicebot.server.core.parser.AIMLParser;
 import org.alicebot.server.core.parser.AIMLReaderListener;
 import org.alicebot.server.core.parser.AIMLTag;
 import org.alicebot.server.core.util.Substituter;
 import org.alicebot.server.core.util.Toolkit;
+import org.alicebot.server.core.util.Trace;
 
 
 /** 
@@ -58,7 +57,6 @@ import org.alicebot.server.core.util.Toolkit;
  *  @author Thomas Ringate, Pedro Colla
  *  @version 4.1.3
  */
-
 public class AIMLLoader implements AIMLReaderListener
 {
     /** The interval at which loaded categories should be notified. */
@@ -108,39 +106,23 @@ public class AIMLLoader implements AIMLReaderListener
         {
             pattern = Graphmaster.ASTERISK;
         }
-        else
-        {
-            pattern = pattern.trim();
-        }
         if (that == null)
         {
             that = Graphmaster.ASTERISK;
-        }
-        else
-        {
-            that = that.trim();
         }
         if (topic == null)
         {
             topic = Graphmaster.ASTERISK;
         }
-        else
-        {
-            topic = topic.trim();
-        }
         if (template == null)
         {
             template = Graphmaster.ASTERISK;
         }
-        else
-        {
-            template = template.trim();
-        }
         
 
-        if (Graphmaster.getTotalCategories() % NOTIFY_INTERVAL == 0 && Graphmaster.getTotalCategories() > 0)
+        if (Globals.showConsole())
         {
-            if (Globals.showConsole())
+            if (Graphmaster.getTotalCategories() % NOTIFY_INTERVAL == 0 && Graphmaster.getTotalCategories() > 0)
             {
                 Trace.userinfo(Graphmaster.getTotalCategories() + " categories loaded so far.");
             }
@@ -195,11 +177,12 @@ public class AIMLLoader implements AIMLReaderListener
                 {
                     if (Globals.showConsole())
                     {
-                        Log.userinfo("Duplicate category:", Log.MERGE);
-                        Log.userinfo(pattern + " : " + that + " : " + topic, Log.MERGE);
-                        Log.userinfo(" in \"" + filename + "\"", Log.MERGE);
-                        Log.userinfo("conflicts with category already loaded from", Log.MERGE);
-                        Log.userinfo((String)node.get(Graphmaster.FILENAME), Log.MERGE);
+                        Log.userinfo(new String[] {"Duplicate category:",
+                                                   pattern + " : " + that + " : " + topic,
+                                                   " in \"" + filename + "\"",
+                                                   "conflicts with category already loaded from",
+                                                   (String)node.get(Graphmaster.FILENAME)},
+                                     Log.MERGE);
                     }
                 }
                 else

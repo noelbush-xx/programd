@@ -15,25 +15,24 @@
 
 package org.alicebot.server.core.responder;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.HashMap;
-import java.util.List;
 import java.util.LinkedList;
-import java.util.ListIterator;
+import java.util.List;
 import java.util.StringTokenizer;
 
-import org.alicebot.server.core.ActiveMultiplexor;
 import org.alicebot.server.core.BotProperty;
 import org.alicebot.server.core.Globals;
 import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.logging.Trace;
 import org.alicebot.server.core.util.SuffixFilenameFilter;
-import org.alicebot.server.core.util.Toolkit;
 import org.alicebot.server.core.util.Tag;
+import org.alicebot.server.core.util.UserErrorException;
 
 
 /**
@@ -161,7 +160,7 @@ abstract public class AbstractMarkupResponder implements Responder
         }
         catch (IOException e)
         {
-            Log.userfail("I/O error trying to read \"" + path + "\".", Log.ERROR);
+            throw new UserErrorException("I/O error trying to read \"" + path + "\".", e);
         }
     }
 
@@ -463,7 +462,7 @@ abstract public class AbstractMarkupResponder implements Responder
         }
         catch (FileNotFoundException e)
         {
-            Log.userfail("Could not find \"" + path + "\".", Log.ERROR);
+            throw new UserErrorException("Could not find \"" + path + "\".", e);
         }
         BufferedReader breader = new BufferedReader(freader);
 
@@ -480,7 +479,7 @@ abstract public class AbstractMarkupResponder implements Responder
         }
         catch (IOException e)
         {
-            Log.userfail("I/O error reading \"" + path + "\".", Log.ERROR);
+            throw new UserErrorException("I/O error reading \"" + path + "\".", e);
         }
 
         return template;
