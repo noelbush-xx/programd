@@ -62,6 +62,7 @@ import org.aitools.programd.util.logging.Log;
  *  @author Richard Wallace, Jon Baer
  *  @author Thomas Ringate/Pedro Colla
  *  @author Noel Bush
+ *  @author Eion Robb
  *
  *  @version 4.1.6
  */
@@ -265,7 +266,10 @@ public class Graphmaster
             parent.remove(nodemapper);
             if (parent.size() == 0)
             {
-                remove(parent);
+                if (parent != ROOT)
+                {
+                    remove(parent);
+                }
             }
         }
         nodemapper = null;
