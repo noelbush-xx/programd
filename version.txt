@@ -1,0 +1,86 @@
+#############
+# 4.1.0 ref #
+###############################################################################
+This is the 'reference' version Thomas Ringate and Pedro E. Colla have been
+working on. It is intermediate work in progress, with the goal to make Program
+D AIML 1.0 compliant. Currently, in version 4.0.1 ref, the support for AIML 1.0
+is partial and achieved thru quick fixes. For the most part, AIML 0.9 is not
+yet supported.
+Don't use this release as a base for further development, there will yet be
+major changes in the code. The next release 4.1.1 will hopefully adress the
+above issues within the next 2 weeks.
+-Kim, Tom and Pedro
+
+
+* change "localhost" legends to actual IP number.
+* IO checking added when files are non-existent or empty
+* std-bot.aiml must be loaded before any other AIML file if bot properties 
+  other than <bot name="name"/> are used on the pattern side.
+* Fixed <if> handling (all parameters and <else/> should work correctly)
+* Fixed <condition> - now supports all three forms
+* <sentence> now spelled correctly, as well as other occurences of this typo
+* <that/> returns uppercase.
+* Fixed error when AIML file contains XML empty <aiml .. /> tag.
+* Added AIML 1.0 compliant variable tags
+  * <get/>  
+  * <bot/>
+  * <set></set>
+* Implemented the non-brainer AIML 1.0 tags
+  * <id/>
+  * <size/>
+  * <version/>
+  * <date/>
+* Added partial support for indexed variables (return blanks when index out of
+  bounds). The index may be ommited, in which case it defaults to "1".
+  * <input index="N"/> N=1,2,3
+  * <star index="N"/> N=1
+  * <thatstar index="N"/> N=1
+  * <topicstar index="N"/> N=1
+  * <that index="N,M"/> N=1,2 M is ignored
+* Commented out non standard AIML tags
+  * <os/>
+  * <typeof_/>
+  * <display></display>
+  * <add_xxx>
+  * <decode></decode>
+  * <encode></encode>
+  * <log></log>
+  * <timer></timer>
+  * <nql></nql>
+  * <event></event>
+  * <face></face>
+  * <log></log>
+  * <random_xxx/>
+  * <login/>
+  * <logout/>
+  * <register/>
+
+#########
+# 4.0.2 # 
+###############################################################################
+Now comes WITHOUT any AIML, you must install an aiml set manually and configure
+it in the SERVER.properties file (pointers are in the bots/readme.txt file),
+otherwise you will get a 'FileNotFoundException'. You can get some AIML files
+(as well as the latest server release) here:
+http://www.alicebot.org
+ftp://ftp.alicebot.org/pub/builds
+-Kim
+
+* Finally, the release system in the CVS works (yipee!) -> even small updates 
+  are easy to release -> possibly regular updates
+* Fixed buggy CVS entries that prevented .bat files from running smoothly
+* Code cleanup (Mark Anacker)
+* now the server.engine.startup property works
+* Note - the server is not yet 1.0 compliant so the newest AIML files may not
+  work, try using the 1.0.0 release
+
+#########
+# 4.0.1 #
+##########################################################
+First release out of the CVS, included Jon Baers AIML set.
+-Kim
+
+* New run.bat to simplify startup
+* Cleanup of source, unused libraries and miscellaneous files
+* compiles 'out of the box'
+* speech support moved to another branch (development stopped)

@@ -1,0 +1,22 @@
+<html>
+	<head>
+		<title>Alicebot.Net</title>
+		<meta name="PalmComputingPlatform" content="true">
+	</head>
+		<body>
+		<!-- <form method="post" action="http://www.alicebot.net:8001/CHAT"> -->
+		<form method="post" action="http://www.alicebot.net:8001/CHAT">
+			<input type="hidden" name="virtual_ip" value="%deviceid">
+			<input type="hidden" name="zipcode" value="%zipcode">
+		<center>
+				<table border="0"><tr><td valign="middle">
+			<img src="file:AlicebotNet.pqa/normal.gif"></td><td valign="middle">
+								<br><reply></reply>
+				"<alice_out>"</td></tr></table>
+				<br>
+			<input type="text" size="30" name="text"><br><br>
+				<input type="submit" value="SEND"> &nbsp; <a href="file:Alicebot.pqa/template_about.html" button>ABOUT</a>
+		</center>
+		</form>
+		</body>
+</html>

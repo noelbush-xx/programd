@@ -1,0 +1,66 @@
+<html>
+	
+	<head>
+		<script language="javascript">
+		
+		var win;
+		var faceValue = "";
+		
+		function setFace() {
+			if (faceValue != "") {
+				setFaceValue(faceValue);
+			}
+		}
+		
+		function setFaceValue(value) {
+			document.face.src = value;
+		}
+		
+		</script>
+	</head>
+	
+	<body onload="if (!win) document.forms[0].elements[0].focus(); setFace();" alink="purple" vlink="purple" link="purple">
+		
+		
+		<center>
+			<table border=0 cellspacing=0 cellpadding=0 width=90%>
+				<tr>
+					<td>
+						<form method="post">
+							<table border=0 cellspacing=0 cellpadding=0>
+								<tr>
+									<td width=190>
+										<img name="face" src="/images/face/normal.gif">
+									</td>
+									<td>
+										<img src=/images/livedemo.gif>
+									</td>
+								</tr>
+							</table>
+							<font size="2" face="verdana,arial" color="#000000">
+								<b>Alicebot.Net Server 4.0 (Beta)</b>
+								<br>
+								<b>Bot Name:</b> <bot_name>
+								</font>
+								<br><br>
+								<font size="2" face="verdana,arial" color="purple">> <i><alice_in></i></font>
+									<br>
+									<reply></reply>
+									<!-- <font size="2" face="verdana,arial" color="#000000"> "I am offline for maintenance, be back shortly =)"</font> -->
+									<font size="2" face="verdana,arial" color="#000000"> "<alice_out>"</font>
+										<br>
+										<input type="text" size="30" name="text"> 
+										&nbsp; 
+										<input type="submit" value=" SEND ">
+										<font size="1" face="verdana,arial" color="#000000">
+											<br>Powered by AIML (Artificial Intelligence Markup Language)
+											<br>Botmaster: <a href="mailto:jonbaer@alicebot.net">jonbaer@alicebot.net</a>
+											<br><br><br><br>
+										</td>
+									</tr>
+								</table>
+							</center>
+							<img src=/images/wave.gif>
+						</body>
+					</html>
+					

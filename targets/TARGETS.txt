@@ -1,0 +1,26 @@
+Targets Instructions
+*****************************************
+
+Welcome to the wonderful world of "targeting".  Targeting is a concept designed to improve the usefulness of your bot by providing you with patterns not covered in your current AIML set.  You can assimilate targeting to learning in the real world where someone might ask you a question in which you do not have a response to.  You might not answer of you may give something generic like "Sorry, I do not know." This however doesn't mean that you will NEVER know the answer to a specific question.  
+
+In much ways when you learn later on, you can provide an answer to a question or statement.  This is what is refered to as "targeting" with an Alicebot.  Its a pretty simple, yet powerful feature because in the future we are hoping that you will never have to deal with file ... that your Alicebot may be able to find the answer it is looking for elsewhere, either on the Net (by it's own) or via another Alicebot.  For now ... a human answer will do ;-)
+
+The file TARGETS.data contain all your non-matched patterns.  This file will fill up pretty largely in the beginning if you are not using the generic Alice AIML set (included with the distribution).  This file is what is known as a "public" file in that the Graphmaster will attempt to load this file.  You can turn this feature off by specifying in the SERVER.properties with this line:
+
+server.engine.targets.load=true (true tells the Graphmaster to load this file)
+
+In order to assist in the task for creating an AIML file for you (TARGETS.aiml), we provide a simple utility.  You can run this utility via:
+
+TARGETS.bat
+TARGETS.sh
+
+Or by running the class:  java org.alicebot.server.core.utils.Targets
+
+This will take your TARGETS.data file and create TARGETS.aiml for you and clear your TARGETS.data file back to empty.  Each time this is done you do not have to do anything with TARGETS.aiml since it will build itself with any old categories in there.
+
+Note: Since there is no method of "categorizing" patterns currently, you only have TARGETS.aiml to work with.  There will be tools in the future that will be able to help you do this.  It is also possible to get targets emailed to you directly, see http://www.alicebot.net/targets/index.html for more information.
+
+Jon Baer 
+jonbaer@alicebot.net
+
+
