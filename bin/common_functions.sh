@@ -106,7 +106,7 @@ function setup_programd()
   fi
 }
 
-# Sets up a Java 2 v1.4 - compatible execution environment
+# Sets up a Java execution environment
 # (or fails informatively).
 function setup_java()
 {
@@ -126,19 +126,19 @@ function set_java_vars()
     echo
     echo JAVA_HOME is not set in your environment.
   
-    # Try the standard J2SDK install location.
-    if [ -x /usr/java/j2sdk1.4.0/bin/java ]
+    # Try the standard JDK 5.0 install location.
+    if [ -x /usr/java/jdk1.5.0/bin/java ]
     then
-      export JAVA_HOME=/usr/java/j2sdk1.4.0
+      export JAVA_HOME=/usr/java/jdk1.5.0
       JVM_COMMAND=$JAVA_HOME/bin/java
-      echo I have set JAVA_HOME to \"/usr/java/j2sdk1.4.0\".
+      echo I have set JAVA_HOME to \"/usr/java/jdk1.5.0\".
     else 
       # See if any java command exists.
       JVM_COMMAND=`which java 2>&1 | sed -e 's/.*which: no java in.*//'`
       if [ -z "$JVM_COMMAND" ]
       then
         echo I cannot find a java executable in your path.
-        echo Please check that you hava a Java 2 v1.4 compatible SDK installed.
+        echo Please check that you hava a JDK 5.0 compatible JVM installed.
         echo
         exit 1
       else
@@ -161,13 +161,13 @@ function check_java_home()
   then
     echo I can\'t find your JAVA_HOME directory.
     echo \(\"$JAVA_HOME\" doesn\'t seem to exist.\)
-    echo Please be sure that a Java 2 v1.4 compatible SDK is installed
+    echo Please be sure that a JDK 5.0 compatible JVM is installed
     echo and \(even better\) set the \$JAVA_HOME environment variable to point to
     echo the directory where it is installed.
     echo
     echo \(Note: If you are not going to build Program D, but
-    echo only run it, you can install the Java 2 JRE instead of
-    echo the whole SDK.\)
+    echo only run it, you can install the JRE instead of
+    echo the whole JDK.\)
     echo
     exit 1
   fi
@@ -188,7 +188,7 @@ function check_jvm_version()
     ;; (*)
     echo Your JVM is apparently version $JVM_VERSION.
     echo This may not be compatible with our needs.
-    echo Please install a Java 2 v1.4 compatible SDK.
+    echo Please install a JDK 5.0 compatible JVM.
     echo
     exit 1
   esac

@@ -138,7 +138,7 @@ rem will affect some messages.
 goto end
 
 
-rem Sets up a Java 2 v1.4 - compatible execution environment
+rem Sets up a JDK 5.0 - compatible execution environment
 rem (or fails informatively).
 :setup_java
   set quit=
@@ -155,19 +155,17 @@ rem Tries to find/set JAVA_HOME.
 
   echo JAVA_HOME is not set in your environment.
 
-  rem Try the standard J2SDK install location.
-  if not exist c:\j2sdk1.4.0\bin\java.exe goto seek_known_javas
+  rem Try the standard JDK 5.0 install location.
+  if not exist c:\jdk1.5.0\bin\java.exe goto seek_known_javas
 
-  set JAVA_HOME=c:\j2sdk1.4.0\
+  set JAVA_HOME=c:\jdk1.5.0\
   set JVM_COMMAND=%JAVA_HOME%\bin\java.exe
   goto successful
 
   :seek_known_javas
   rem Common paths for compatible Java SDKs (or JREs) should go here.
-  if exist d:\j2sdk1.4.0\bin\java.exe set JAVA_HOME=d:\j2sdk1.4.0
-  if exist c:\j2sdk1.4.0_01\bin\java.exe set JAVA_HOME=c:\j2sdk1.4.0_01
-  if exist d:\j2sdk1.4.0_01\bin\java.exe set JAVA_HOME=d:\j2sdk1.4.0_01
-  if not defined JAVA_HOME goto cannot_find
+  if exist d:\jdk1.5.0\bin\java.exe set JAVA_HOME=d:\jdk1.5.0
+   if not defined JAVA_HOME goto cannot_find
 
   :successful
   echo I have temporarily set JAVA_HOME to "%JAVA_HOME%".
@@ -176,7 +174,7 @@ rem Tries to find/set JAVA_HOME.
 
   :cannot_find
   echo I cannot find a java executable in your path.
-  echo Please check that you hava a Java 2 v1.4 compatible SDK installed.
+  echo Please check that you hava a JDK 5.0 compatible SDK installed.
   set quit=yes
 goto end
 
@@ -187,13 +185,13 @@ rem Checks that JAVA_HOME points to a real directory.
   
   echo I can't find your JAVA_HOME directory.
   echo ("%JAVA_HOME%" doesn't seem to exist.)
-  echo Please be sure that a Java 2 v1.4 compatible SDK is installed
+  echo Please be sure that a JDK 5.0 compatible SDK is installed
   echo and (even better) set the JAVA_HOME environment variable to point to
   echo the directory where it is installed.
   echo.
   echo (Note: If you are not going to build Program D, but
-  echo only run it, you can install the Java 2 JRE instead of
-  echo the whole SDK.)
+  echo only run it, you can install the JRE instead of
+  echo the whole JDK.)
   echo.
   set quit=yes
 goto end
