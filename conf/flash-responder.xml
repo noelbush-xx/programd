@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xml" href="../resources/xslt/generate-settings-class.xslt"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+Program D Core Configuration
+===============================================================
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 
+02111-1307, USA.
+-->
+
+<!--
+GENERAL NOTES
+
+1. Configuration options are grouped for easy maintenance.
+2. Unless otherwise noted, commenting out a property will
+   cause the engine's default value to be used.
+3. A property may only be defined once.
+4. The notations in [square brackets] are used to generate
+   the Settings class that corresponds with this properties
+   file.  Please do not change these notations unless you
+   know what you are doing.
+-->
+
+<properties version="1.0">
+    <!--[generate: org.aitools.programd.responder.FlashResponderSettings]
+        [strip-prefix: programd.responder.flash.]-->
+   
+    <!-- The flash templates directory (relative to programd.home). [String: templates/flash]-->
+    <entry key="programd.responder.flash.template.directory">templates/flash</entry>
+    
+    <!-- The default chat template. [String: chat.flash]
+         * Note: Any other *.flash or *.data files in
+           programd.responder.flash.template.directory will also be available if
+           you specify a template">name (without suffixes) parameter in the user request.-->
+    <entry key="programd.responder.flash.chat-default.template.path">chat.flash</entry>
+    
+</properties>

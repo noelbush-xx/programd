@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xml" href="../resources/xslt/generate-settings-class.xslt"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+Program D Core Configuration
+===============================================================
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 
+02111-1307, USA.
+-->
+
+<!--
+GENERAL NOTES
+
+1. Configuration options are grouped for easy maintenance.
+2. Unless otherwise noted, commenting out a property will
+   cause the engine's default value to be used.
+3. A property may only be defined once.
+4. The notations in [square brackets] are used to generate
+   the Settings class that corresponds with this properties
+   file.  Please do not change these notations unless you
+   know what you are doing.
+-->
+
+<properties version="1.0">
+    <!--[generate: org.aitools.programd.CoreSettings]
+        [strip-prefix: programd.]-->
+        
+    <!--
+    MAIN PROGRAM D CONFIGURATION
+    -->
+    
+    <!--The root directory for all paths. [String: ..]
+         * This is generally relative to the current directory
+         * (i.e., the conf directory), although you can change
+         * that in your startup script.-->
+    <entry key="programd.root-directory">..</entry>
+    
+    <!--The bot configuration startup file. [String: conf/bots.xml]--> 
+    <entry key="programd.startup-file-path">conf/bots.xml</entry>
+    
+    <!--Overwrite categories with identical pattern:that:topic? [boolean: true]-->
+    <entry key="programd.merge-policy">true</entry>
+    
+    <!--The default value for undefined predicates. [String: undefined]-->
+    <entry key="programd.predicate-empty-default">undefined</entry>
+    
+    <!--The maximum allowable time (in milliseconds) to get a response. [int: 1000]-->
+    <entry key="programd.response-timeout">1000</entry>
+    
+    <!--The input to match if an infinite loop is found. [String: INFINITE LOOP]-->
+    <entry key="programd.infinite-loop-input">INFINITE LOOP</entry>
+    
+    <!--Allow use of <system> element? [boolean: false]-->
+    <entry key="programd.os-access-allowed">false</entry>
+    
+    <!--Allow use of <javascript> element? [boolean: false]-->
+    <entry key="programd.javascript-allowed">false</entry>
+    
+    <!--The string to send when first connecting to the bot. [String: CONNECT]
+         * If this value is empty or not defined, no value
+           will be sent.-->
+    <entry key="programd.connect-string">CONNECT</entry>
+    
+    <!--The string to send after an inactivity timeout. [String: INACTIVITY]-->
+    <entry key="programd.inactivity-string">INACTIVITY</entry>
+    
+    <!--The Multiplexor to use. [String: org.aitools.programd.multiplexor.FlatFileMultiplexor]-->
+    <entry key="programd.multiplexor-classname">org.aitools.programd.multiplexor.FlatFileMultiplexor</entry>
+    <!--<entry key="programd.multiplexor">org.aitools.programd.multiplexor.DBMultiplexor</entry>-->
+    
+    <!--The subdirectory in which to save flat-file predicates (FFM only). [String: ffm]-->
+    <entry key="programd.multiplexor.ffm-dir">ffm</entry>
+    
+    <!--Enable the heart? [boolean: false]
+        * The heart can beat and let you know the bot is alive.
+        * Right now the only kind of pulse is a message "I'm alive!" printed to the console.
+        * You can write a "Pulse" that can do something more useful, like ping a server.-->
+    <entry key="programd.heart.enabled">false</entry>
+    
+    <!--The pulse rate for the heart (beats per minute). [int: 5]-->
+    <entry key="programd.heart.pulserate">5</entry>
+    
+    <!--The maximum size of the cache before writing to disk/database. [int: 500]-->
+    <entry key="programd.predicate-cache.max">500</entry>
+    
+    <!--The command line to launch your preferred browser (for testing)
+        * leaving this value blank or commented out disables the feature [String: ]-->
+    <!--<entry key="programd.browser-launch">/usr/bin/mozilla</entry>-->
+    <!--<entry key="programd.browser-launch">C:\\Program Files\\Opera\\opera.exe</entry>-->
+    <!--<entry key="programd.browser-launch">C:\\Program Files\\Netscape\\Netscape 6\\netscp6.exe</entry>-->
+    <!--<entry key="programd.browser-launch">C:\\Program Files\\Internet Explorer\\iexplore.exe</entry>-->
+    
+        
+    <!--
+    INTERPRETER CONFIGURATION
+    -->
+    
+    <!--The directory in which to execute <system> commands. [String: .]-->
+    <entry key="programd.system-interpreter.directory"></entry>
+    
+    <!--The string to prepend to all <system> calls (platform-specific). [String: ]
+         * Windows requires something like "cmd /c "; Linux doesn't (just comment out)-->
+    <entry key="programd.system-interpreter.prefix"></entry>
+    
+    <!--The JavaScript interpreter (fully-qualified class name). [String: org.aitools.programd.interpreter.RhinoInterpreter]-->
+    <entry key="programd.javascript-interpreter.classname">org.aitools.programd.interpreter.RhinoInterpreter</entry>
+    
+    
+    <!--
+    AIMLWATCHER CONFIGURATION
+    -->
+    
+    <!--Enable the AIML Watcher? [boolean: false]
+        * This will automatically load your AIML files if they are changed.-->
+    <entry key="programd.use-watcher">false</entry>
+    
+    <!--The delay period when checking changed AIML (milliseconds). [int: 2000]
+        * Only applicable if the AIML Watcher is enabled.-->
+    <entry key="programd.watcher.timer">2000</entry>
+    
+    
+    <!--
+    LOGGING CONFIGURATION
+    * Not defining a value means that the logging type will be disabled.
+    * Note that you _can_ send different log events to the same file if desired.
+    -->
+    
+    <!--
+    Standard (text file) logs
+    -->
+    
+    <!--The log file for core activity. [String: logs/core.log]-->
+    <entry key="programd.logging.core.path">logs/core.log</entry>
+    
+    <!--The log file for database activity. [String: logs/database.log]-->
+    <entry key="programd.logging.database.path">logs/database.log</entry>
+    
+    <!--The log file for any errors. [String: logs/error.log]-->
+    <entry key="programd.logging.error.path">logs/error.log</entry>
+    
+    <!--The log file for gossip. [String: logs/gossip.log]-->
+    <entry key="programd.logging.gossip.path">logs/gossip.log</entry>
+    
+    <!--The log file for interpreter activity. [String: logs/interpreter.log]-->
+    <entry key="programd.logging.interpreter.path">logs/interpreter.log</entry>
+    
+    <!--The log file for learning activity. [String: logs/learn.log]-->
+    <entry key="programd.logging.learn.path">logs/learn.log</entry>
+    
+    <!--The log file for listener activity. [String: logs/listener.log]-->
+    <entry key="programd.logging.listener.path">logs/listener.log</entry>
+    
+    <!--The log file for matching activity. [String: logs/matching.log]-->
+    <entry key="programd.logging.matching.path">logs/matching.log</entry>
+    
+    <!--The log file for merge activity. [String: logs/merge.log]-->
+    <entry key="programd.logging.merge.path">logs/merge.log</entry>
+    
+    <!--The log file for responder activity. [String: logs/responder.log]-->
+    <entry key="programd.logging.responder.path">logs/responder.log</entry>
+    
+    <!--The log file for startup activity. [String: logs/startup.log]-->
+    <entry key="programd.logging.startup.path">logs/startup.log</entry>
+    
+    <!--The log file for system command activity. [String: logs/system.log]-->
+    <entry key="programd.logging.system.path">logs/system.log</entry>
+    
+    <!--The log file for targeting activity. [String: logs/targeting.log]-->
+    <entry key="programd.logging.targeting.path">logs/targeting.log</entry>
+    
+    <!--The date-time format to use in logging. [String: yyyy-MM-dd H:mm:ss]
+        * See http://java.sun.com/jdk1.5.0_01/docs/api/java/text/SimpleDateFormat.html
+          for formatting codes.
+        * Setting the value to blank means no timestamp will be displayed.-->
+    <entry key="programd.logging.timestamp-format">yyyy-MM-dd H:mm:ss</entry>
+    
+    <!--The generic userid to use in logs when old responders don't have it. [String: client]-->
+    <entry key="programd.logging.generic-username">client</entry>
+    
+    <!--
+    XML logs
+    -->
+    
+    <!--Enable chat logging to XML text files? [boolean: true]
+        * Be sure that the database configuration (later in this file) is valid.-->
+    <entry key="programd.logging.to-xml.chat">true</entry>
+    
+    <!--How many log entries to collect before "rolling over" an XML log file. [int: 500]
+        * "Rolling over" means that the current file is renamed using the date & time,
+        * and a fresh log file is created using the path name.  The new log file will
+        * contain links to all of the previous log files of the same type.-->
+    <entry key="programd.logging.xml.rollover">500</entry>
+    
+    <!--The subdirectory for XML chat logs. [String: logs/chat]-->
+    <entry key="programd.logging.xml.chat.log-directory">logs/chat</entry>
+    
+    <!--The path to the stylesheet for viewing chat logs. [String: ../resources/logs/view-chat.xsl]-->
+    <entry key="programd.logging.xml.chat.stylesheet-path">../resources/logs/view-chat.xsl</entry>
+    
+    <!--Roll over the chat log at restart? [boolean: false]-->
+    <entry key="programd.logging.xml.chat.rollover-at-restart">false</entry>
+    
+    <!--
+    Database logs
+    -->
+    
+    <!--Enable chat logging to the database? [boolean: false]
+        * Be sure that the database configuration (later in this file) is valid.-->
+    <entry key="programd.logging.to-database.chat">false</entry>
+    
+    
+    <!--
+    DATABASE CONFIGURATION
+         * This is only meaningful if you are using a database-enabled Multiplexor
+         * and/or the database-based chat logging.
+    -->
+    
+    <!--Typical mySQL configuration-->
+    
+    <!--The URL of the database to use. [String: jdbc:mysql:///programdbot]-->
+    <entry key="programd.database.url">jdbc:mysql:///programdbot</entry>
+    
+    <!--The database driver to use. [String: org.gjt.mm.mysql.Driver]-->
+    <entry key="programd.database.driver">org.gjt.mm.mysql.Driver</entry>
+    
+    
+    <!--The maximum number of simultaneous connections to the database. [int: 25]-->
+    <entry key="programd.database.connections">25</entry>
+    
+    <!--The username which with to access the database. [String: programd]-->
+    <entry key="programd.database.user">programd</entry>
+    
+    <!--The password for the database. [String: yourpassword]-->
+    <entry key="programd.database.password">yourpassword</entry>
+    
+    
+    <!--
+    OTHER CONFIGURATION FILE LOCATIONS
+    -->
+    
+    <!--Configuration file for HTMLResponder. [String: conf/html-responder.xml]-->
+    <entry key="programd.conf-location.html-responder">conf/html-responder.xml</entry>
+
+    <!--Configuration file for FlashResponder. [String: conf/flash-responder.xml]-->
+    <entry key="programd.conf-location.flash-responder">conf/flash-responder.xml</entry>
+
+    <!--Configuration file for HTTPServer. [String: conf/http-server.xml]-->
+    <entry key="programd.conf-location.http-server">conf/http-server.xml</entry>
+
+</properties>
