@@ -1,0 +1,33 @@
+#!/bin/sh
+# ==========================================================================
+# Alicebot Program D
+# Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+# USA.
+# ==========================================================================
+
+# This script launches the Program D targeting utility.
+
+# Get "base" directory (root of Program D installation)
+BASE=`cd \`dirname $0\`/.. && echo \`pwd\``
+
+# Include utility functions.
+source $BASE/bin/common_functions.sh
+
+# Set up the Java environment.
+setup_java
+
+# Check for the alice lib.
+check_alice_lib
+
+# Change to the Program D bin directory and launch the tool.
+cd $BASE/bin
+$JVM_COMMAND -classpath $ALICE_LIB -Xms64m -Xmx64m org.alicebot.targeting.TargetingTool $1
