@@ -28,11 +28,19 @@ setup_java
 # Set up other paths to other needed jars and check their existence.
 ANT_MAIN_LIB=$LIBS/ant.jar
 ANT_LAUNCHER_LIB=$LIBS/ant-launcher.jar
-if [ ! -r $ANT_MAIN_LIB || ! -r $ANT_LAUNCHER_LIB ]
+if [ ! -r $ANT_MAIN_LIB ]
 then
   echo
-  echo I can\'t find the Ant jars.
-  echo These are necessary for the build process.
+  echo I can\'t find the main Ant jar.
+  echo This is necessary for the build process.
+  echo
+  exit 1
+fi
+if [ ! -r $ANT_LAUNCHER_LIB ]
+then
+  echo
+  echo I can\'t find the main Ant jar.
+  echo This is necessary for the build process.
   echo
   exit 1
 fi

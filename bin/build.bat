@@ -34,13 +34,26 @@ if "%quit%"=="" call common_functions.bat setup_java
 if not "%quit%"=="" goto end
 
 rem Set up other paths to needed jars and check their existence.
-set ANT_LIB=%LIBS%\ant.jar
-if exist %ANT_LIB% goto check_java_tools
+set ANT_MAIN_LIB=%LIBS%\ant.jar
+set ANT_LAUNCHER_LIB=%LIBS%\ant.jar
+if exist %ANT_MAIN_LIB% goto check_ant_launcher_lib
 
 echo.
 echo I can't find ant.jar
 echo This is necessary for the build process.
 goto end
+
+:check_ant_launcher_lib
+
+if exist %ANT_LAUNCHER_LIB% goto set_ant_path
+
+echo.
+echo I can't find ant-launcher.jar
+echo This is necessary for the build process.
+goto end
+
+:set_ant_path
+set ANT_LIB=%ANT_MAIN_LIB%;%ANT_LAUNCHER_LIB%
 
 :check_java_tools
 set JAVA_TOOLS=%JAVA_HOME%\lib\tools.jar
