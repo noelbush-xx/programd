@@ -35,4 +35,9 @@ public interface ProgramDCompatibleHttpServer extends BotProcess
      * Starts the http server.
      */
     public void run();
+    
+    /**
+     * @return the port on which the server is listening.
+     */
+    public int getHttpPort();
 }
