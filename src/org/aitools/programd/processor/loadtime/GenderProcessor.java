@@ -9,21 +9,30 @@
 
 package org.aitools.programd.processor.loadtime;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.StartupFileParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * The <code>gender</code> element is a container for definitions of <a
  * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-gender">gender </a>
  * substitutions to be performed on a string.
+ * 
+ * @version 4.2
+ * @author Noel Bush
  */
 public class GenderProcessor extends StartupElementProcessor
 {
     public static final String label = "gender";
 
-    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public GenderProcessor(Core coreToUse)
     {
-        SubstitutionsProcessor.addSubstitutions(SubstitutionsProcessor.GENDER, tag, parser);
-        return EMPTY_STRING;
+        super(coreToUse);
+    }
+    
+    public void process(Element element, StartupFileParser parser)
+    {
+        SubstitutionsProcessor.addSubstitutions(SubstitutionsProcessor.SubstitutionType.GENDER, element, parser);
     } 
 }

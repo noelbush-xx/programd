@@ -15,6 +15,7 @@ import org.aitools.programd.processor.ProcessorException;
  * Should be thrown by {@link StartupElementProcessor} s when they find invalid
  * AIML.
  * 
+ * @version 4.2
  * @since 4.1.3
  * @author Noel Bush
  */

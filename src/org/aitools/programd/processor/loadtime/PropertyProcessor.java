@@ -9,41 +9,33 @@
 
 package org.aitools.programd.processor.loadtime;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.StartupFileParser;
-import org.aitools.programd.parser.XMLNode;
-import org.aitools.programd.util.XMLKit;
 
 /**
  * <p>
  * Sets bot predicate values at load-time.
  * </p>
- * <p>
- * &lt;property/&gt; is not an AIML element, and may be removed in future
- * versions of Program D.
- * </p>
  * 
+ * @version 4.2
  * @since 4.1.2
  * @author Thomas Ringate, Pedro Colla
+ * @author Noel Bush
  */
 public class PropertyProcessor extends StartupElementProcessor
 {
     public static final String label = "property";
 
-    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public PropertyProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.EMPTY)
-        {
-            String name = XMLKit.getAttributeValue(NAME, tag.XMLAttr);
-            if (!name.equals(EMPTY_STRING))
-            {
-                String value = XMLKit.getAttributeValue(VALUE, tag.XMLAttr);
-                parser.getCurrentBot().setPropertyValue(name, value);
-            } 
-        } 
-        else
-        {
-            throw new InvalidStartupElementException("<property/> cannot have contents!");
-        } 
-        return EMPTY_STRING;
-    } 
+        super(coreToUse);
+    }
+    
+    public void process(Element element, StartupFileParser parser)
+    {
+        parser.getCurrentBot().setPropertyValue(element.getAttribute(NAME),
+                element.getAttribute(VALUE));
+    }
 }

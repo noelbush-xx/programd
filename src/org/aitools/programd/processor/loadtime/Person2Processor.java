@@ -9,8 +9,10 @@
 
 package org.aitools.programd.processor.loadtime;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.StartupFileParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * The <code>person</code> element is a container for definitions of <a
@@ -21,9 +23,14 @@ public class Person2Processor extends StartupElementProcessor
 {
     public static final String label = "person2";
 
-    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public Person2Processor(Core coreToUse)
     {
-        SubstitutionsProcessor.addSubstitutions(SubstitutionsProcessor.PERSON2, tag, parser);
-        return EMPTY_STRING;
+        super(coreToUse);
+    }
+    
+    public void process(Element element, StartupFileParser parser)
+    
+    {
+        SubstitutionsProcessor.addSubstitutions(SubstitutionsProcessor.SubstitutionType.PERSON2, element, parser);
     } 
 }

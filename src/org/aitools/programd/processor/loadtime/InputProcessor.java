@@ -9,21 +9,30 @@
 
 package org.aitools.programd.processor.loadtime;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.StartupFileParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * The <code>input</code> element is a container for definitions of <a
  * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-substitution-normalizations">substitution
  * normalizations </a> to be performed on an input.
+ * 
+ * @version 4.2
+ * @author Noel Bush
  */
 public class InputProcessor extends StartupElementProcessor
 {
     public static final String label = "input";
 
-    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public InputProcessor(Core coreToUse)
     {
-        SubstitutionsProcessor.addSubstitutions(SubstitutionsProcessor.INPUT, tag, parser);
-        return EMPTY_STRING;
+        super(coreToUse);
+    }
+    
+    public void process(Element element, StartupFileParser parser)
+    {
+        SubstitutionsProcessor.addSubstitutions(SubstitutionsProcessor.SubstitutionType.INPUT, element, parser);
     } 
 }

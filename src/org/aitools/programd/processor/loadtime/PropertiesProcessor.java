@@ -9,10 +9,14 @@
 
 package org.aitools.programd.processor.loadtime;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.StartupFileParser;
-import org.aitools.programd.parser.XMLNode;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.UserError;
 
 /**
@@ -21,23 +25,32 @@ public class PropertiesProcessor extends StartupElementProcessor
 {
     public static final String label = "properties";
 
-    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public PropertiesProcessor(Core coreToUse)
+    {
+        super(coreToUse);
+    }
+    
+    public void process(Element element, StartupFileParser parser)
     {
         // Does it have an href attribute?
-        String href = getHref(tag);
-
-        if (href.length() > 0)
+        if (element.hasAttribute(HREF))
         {
+            String href = element.getAttribute(HREF);
             try
             {
-                return parser.processResponse(FileManager.getFileContents(href));
+                parser.processResponse(new URI(href));
             } 
             catch (ProcessorException e)
             {
+                throw new UserError(e.getMessage() + ": " + e.getCause().getMessage());
+            }
+			catch (URISyntaxException e)
+			{
                 throw new UserError(e.getMessage());
-            } 
-        } 
+			}
+            return;
+        }
         // (otherwise...)
-        return parser.evaluate(level++, tag.XMLChild);
+        parser.evaluate(element.getChildNodes());
     } 
 }

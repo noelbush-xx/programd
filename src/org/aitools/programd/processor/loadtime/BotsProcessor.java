@@ -9,19 +9,21 @@
 
 package org.aitools.programd.processor.loadtime;
 
-import org.aitools.programd.parser.StartupFileParser;
-import org.aitools.programd.parser.XMLNode;
+import org.aitools.programd.Core;
 
 /**
  * The <code>bots</code> element is a container for bot configuration
  * definitions.
+ * 
+ * @version 4.2
+ * @author Noel Bush
  */
 public class BotsProcessor extends StartupElementProcessor
 {
     public static final String label = "bots";
 
-    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public BotsProcessor(Core coreToUse)
     {
-        return parser.evaluate(level++, tag.XMLChild);
-    } 
+        super(coreToUse);
+    }
 }

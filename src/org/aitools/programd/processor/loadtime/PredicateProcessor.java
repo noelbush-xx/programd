@@ -9,15 +9,19 @@
 
 package org.aitools.programd.processor.loadtime;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.StartupFileParser;
-import org.aitools.programd.parser.XMLNode;
-import org.aitools.programd.util.XMLKit;
 
 /**
  * The <code>predicate</code> element specifies for specifying characteristics
  * of a <a
  * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-aiml-predicates">predicate
  * </a>.
+ * 
+ * @version 4.2
+ * @author Noel Bush
  */
 public class PredicateProcessor extends StartupElementProcessor
 {
@@ -27,38 +31,25 @@ public class PredicateProcessor extends StartupElementProcessor
 
     private static final String SET_RETURN = "set-return";
 
-    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public PredicateProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.EMPTY)
+        super(coreToUse);
+    }
+    
+    public void process(Element element, StartupFileParser parser)
+    {
+        String name = element.getAttribute(NAME);
+        String defaultValue = element.getAttribute(DEFAULT);
+        if (defaultValue.equals(EMPTY_STRING))
         {
-            String name = XMLKit.getAttributeValue(NAME, tag.XMLAttr);
-            if (name.equals(EMPTY_STRING))
-            {
-                throw new InvalidStartupElementException("<predicate/> must specify a name!");
-            } 
-            String defaultValue = XMLKit.getAttributeValue(DEFAULT, tag.XMLAttr);
-            if (defaultValue.equals(EMPTY_STRING))
-            {
-                defaultValue = null;
-            } 
-            String setReturn = XMLKit.getAttributeValue(SET_RETURN, tag.XMLAttr);
-            boolean returnNameWhenSet;
-            if (setReturn.equals(NAME))
-            {
-                returnNameWhenSet = true;
-            } 
-            else if (setReturn.equals(VALUE))
-            {
-                returnNameWhenSet = false;
-            } 
-            else
-            {
-                throw new InvalidStartupElementException("Invalid value for set-return attribute on <predicate/>.");
-            } 
-            parser.getCurrentBot().addPredicateInfo(name, defaultValue, returnNameWhenSet);
-            return EMPTY_STRING;
-        } 
-        // (otherwise...)
-        throw new InvalidStartupElementException("<predicate/> cannot have element content!");
-    } 
+            defaultValue = null;
+        }
+        String setReturn = element.getAttribute(SET_RETURN);
+        boolean returnNameWhenSet = false;
+        if (setReturn.equals(NAME))
+        {
+            returnNameWhenSet = true;
+        }
+        parser.getCurrentBot().addPredicateInfo(name, defaultValue, returnNameWhenSet);
+    }
 }

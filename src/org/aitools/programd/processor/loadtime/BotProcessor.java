@@ -9,41 +9,49 @@
 
 package org.aitools.programd.processor.loadtime;
 
+import java.util.logging.Level; 
+
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
+import org.aitools.programd.CoreSettings;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.parser.StartupFileParser;
-import org.aitools.programd.parser.XMLNode;
-import org.aitools.programd.util.XMLKit;
-import org.aitools.programd.util.logging.Log;
 
 /**
  * Supports configuration of a bot from the startup file.
+ * 
+ * @version 4.2
+ * @author Noel Bush
  */
 public class BotProcessor extends StartupElementProcessor
 {
     public static final String label = "bot";
-
-    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    
+    public BotProcessor(Core coreToUse)
     {
-        String botID = XMLKit.getAttributeValue(ID, tag.XMLAttr);
+        super(coreToUse);
+    }
+    
+    public void process(Element element, StartupFileParser parser)
+    {
+        String botID = element.getAttribute(ID);
 
-        if (!botID.equals(EMPTY_STRING))
+        if (Boolean.valueOf(element.getAttribute(ENABLED)).booleanValue())
         {
-            if (Boolean.valueOf(XMLKit.getAttributeValue(ENABLED, tag.XMLAttr)).booleanValue())
+            Bots bots = parser.getCore().getBots();
+            if (!bots.include(botID))
             {
-                if (!Bots.include(botID))
-                {
-                    Bot bot = new Bot(botID);
-                    Log.userinfo("Configuring bot \"" + botID + "\".", Log.STARTUP);
-                    parser.setCurrentBot(bot);
-                    Bots.addBot(botID, bot);
-                    return parser.evaluate(level++, tag.XMLChild);
-                } 
-                // (otherwise...)
-                Log.userinfo("Bot \"" + botID + "\" has already been configured.", Log.STARTUP);
-                return EMPTY_STRING;
+                CoreSettings coreSettings = parser.getCore().getSettings();
+                Bot bot = new Bot(botID, coreSettings.getPredicateEmptyDefault(), coreSettings.getLoggingXmlChatLogDirectory());
+                logger.log(Level.INFO, "Configuring bot \"" + botID + "\".");
+                parser.setCurrentBot(bot);
+                bots.addBot(botID, bot);
+                parser.evaluate(element.getChildNodes());
             } 
-        } 
-        return EMPTY_STRING;
-    } 
+            // (otherwise...)
+            logger.log(Level.WARNING, "Bot \"" + botID + "\" has already been configured.");
+        }
+    }
 }

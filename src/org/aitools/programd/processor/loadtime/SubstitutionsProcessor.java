@@ -9,15 +9,16 @@
 
 package org.aitools.programd.processor.loadtime;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.parser.StartupFileParser;
-import org.aitools.programd.parser.XMLNode;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.Globals;
 import org.aitools.programd.util.UserError;
-import org.aitools.programd.util.XMLKit;
-import org.aitools.programd.util.logging.Log;
 
 /**
  * The <code>substitutions</code> element is a container for definitions of
@@ -38,38 +39,35 @@ public class SubstitutionsProcessor extends StartupElementProcessor
     /** The string &quot;replace&quot;. */
     private static final String REPLACE = "replace";
 
-    // Package-visibility constants for specifying substitution type.
+    // Package-visibility enum for specifying substitution type.
+    static enum SubstitutionType {INPUT, GENDER, PERSON, PERSON2 }
 
-    /** An input substitution. */
-    static final int INPUT = 0;
-
-    /** A gender substitution. */
-    static final int GENDER = 1;
-
-    /** A person substitution. */
-    static final int PERSON = 2;
-
-    /** A person2 substitution. */
-    static final int PERSON2 = 3;
-
-    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    public SubstitutionsProcessor(Core coreToUse)
+    {
+        super(coreToUse);
+    }
+    
+    public void process(Element element, StartupFileParser parser)
     {
         // Does it have an href attribute?
-        String href = getHref(tag);
-
-        if (href.length() > 0)
+        if (element.hasAttribute(HREF))
         {
+            String href = element.getAttribute(HREF);
             try
             {
-                return parser.processResponse(FileManager.getFileContents(href));
+                parser.processResponse(new URI(href));
             } 
             catch (ProcessorException e)
             {
                 throw new UserError(e.getMessage());
-            } 
-        } 
+            }
+			catch (URISyntaxException e)
+			{
+                throw new UserError(e.getMessage());
+			}
+        }
         // (otherwise...)
-        return parser.evaluate(level++, tag.XMLChild);
+        parser.evaluate(element.getChildNodes());
     } 
 
     /**
@@ -77,53 +75,45 @@ public class SubstitutionsProcessor extends StartupElementProcessor
      * 
      * @param type
      *            the type of substitution to add
-     * @param tag
+     * @param element
      *            the container of the &lt;substitute/&gt; elements
      * @param parser
      *            the parser handling this
      * @throws InvalidStartupElementException
      *             if the element content is bad
      */
-    static void addSubstitutions(int type, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
+    static void addSubstitutions(SubstitutionType type, Element element, StartupFileParser parser)
     {
-        int substituteCount = parser.nodeCount(SUBSTITUTE, tag.XMLChild, true);
+        int substituteCount = parser.elementCount(SUBSTITUTE, element.getChildNodes());
 
         Bot bot = parser.getCurrentBot();
 
         for (int index = substituteCount; index > 0; index--)
         {
-            XMLNode node = parser.getNode(SUBSTITUTE, tag.XMLChild, index);
-            if (node.XMLType == XMLNode.EMPTY)
+            Element substitution = (Element)parser.getNode(SUBSTITUTE, element.getChildNodes(), index);
+            String find = substitution.getAttribute(FIND);
+            String replace = substitution.getAttribute(REPLACE);
+            switch (type)
             {
-                String find = XMLKit.getAttributeValue(FIND, node.XMLAttr);
-                String replace = XMLKit.getAttributeValue(REPLACE, node.XMLAttr);
-                if (find != null && replace != null)
-                {
-                    switch (type)
-                    {
-                        case INPUT:
-                            bot.addInputSubstitution(find, replace);
-                            break;
-                        case GENDER:
-                            bot.addGenderSubstitution(find, replace);
-                            break;
-                        case PERSON:
-                            bot.addPersonSubstitution(find, replace);
-                            break;
-                        case PERSON2:
-                            bot.addPerson2Substitution(find, replace);
-                            break;
-                    } 
-                } 
+                case INPUT:
+                    bot.addInputSubstitution(find, replace);
+                    break;
+                case GENDER:
+                    bot.addGenderSubstitution(find, replace);
+                    break;
+                case PERSON:
+                    bot.addPersonSubstitution(find, replace);
+                    break;
+                case PERSON2:
+                    bot.addPerson2Substitution(find, replace);
+                    break;
             } 
-            else
-            {
-                throw new InvalidStartupElementException("<" + tag.XMLData + "/> cannot have content!");
-            } 
-        } 
-        if (Globals.showConsole())
+        }
+        /*
+        if (Settings.showConsole())
         {
-            Log.userinfo("Loaded " + substituteCount + " " + tag.XMLData + " substitutions.", Log.STARTUP);
-        } 
+            Log.userinfo("Loaded " + substituteCount + " " + element.getNodeName() + " substitutions.", Log.STARTUP);
+        }
+        */
     } 
 }

@@ -9,18 +9,21 @@
 
 package org.aitools.programd.processor.loadtime;
 
+import java.util.logging.Logger;
+
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.GenericParser;
 import org.aitools.programd.parser.StartupFileParser;
-import org.aitools.programd.parser.XMLNode;
 import org.aitools.programd.processor.Processor;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.XMLKit;
 
 /**
  * A <code>StartupElementProcessor</code> is responsible for processing an
  * element in a Program D startup file.
  * 
- * @since 4.1.3
+ * @since 4.2
  * @author Noel Bush
  */
 abstract public class StartupElementProcessor extends Processor
@@ -28,11 +31,19 @@ abstract public class StartupElementProcessor extends Processor
     /** The string &quot;href&quot;. */
     protected static final String HREF = "href";
 
-    public String process(int level, XMLNode tag, GenericParser parser) throws ProcessorException
+    protected static final Logger logger = Logger.getLogger("programd.startup");
+
+    public StartupElementProcessor(Core coreToUse)
+    {
+        super(coreToUse);
+    }
+    
+    public String process(Element element, GenericParser parser) throws ProcessorException
     {
         try
         {
-            return process(level, tag, (StartupFileParser) parser);
+            process(element, (StartupFileParser) parser);
+            return EMPTY_STRING;
         } 
         catch (ClassCastException e)
         {
@@ -40,17 +51,14 @@ abstract public class StartupElementProcessor extends Processor
         } 
     } 
 
-    abstract public String process(int level, XMLNode tag, StartupFileParser parser)
-            throws InvalidStartupElementException;
-
-    /**
-     * Returns the contents of the href attribute (if present).
-     * 
-     * @return the contents of the href attribute (if present)
-     */
-    protected String getHref(XMLNode tag)
-
+	/**
+	 * Generic implementation of process -- just processes children.
+	 * 
+	 * @param element	the element to process
+	 * @param parser	the parser that is doing the processing
+	 */
+    public void process(Element element, StartupFileParser parser)
     {
-        return XMLKit.getAttributeValue(HREF, tag.XMLAttr);
-    } 
+        parser.evaluate(element.getChildNodes());
+    }
 }

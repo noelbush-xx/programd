@@ -9,20 +9,18 @@
 
 package org.aitools.programd.processor.loadtime;
 
-import org.aitools.programd.graph.Graphmaster;
+import org.aitools.programd.Core;
 import org.aitools.programd.util.ClassRegistry;
 
 /**
  * Registers {@link StartupElementProcessor} s for Program D.
  * 
+ * @version 4.2
  * @since 4.1.3
  * @author Noel Bush
  */
 public class StartupElementProcessorRegistry extends ClassRegistry
 {
-    /** The version of Program D for which this registry is intended. */
-    private static final String VERSION = Graphmaster.VERSION;
-
     /** The list of processors (fully-qualified class names). */
     private static final String[] PROCESSOR_LIST =
         { "org.aitools.programd.processor.loadtime.BotProcessor",
@@ -36,6 +34,7 @@ public class StartupElementProcessorRegistry extends ClassRegistry
                 "org.aitools.programd.processor.loadtime.Person2Processor",
                 "org.aitools.programd.processor.loadtime.PredicateProcessor",
                 "org.aitools.programd.processor.loadtime.PredicatesProcessor",
+                "org.aitools.programd.processor.loadtime.ProgramDStartupProcessor",
                 "org.aitools.programd.processor.loadtime.PropertiesProcessor",
                 "org.aitools.programd.processor.loadtime.PropertyProcessor",
                 "org.aitools.programd.processor.loadtime.SentenceSplittersProcessor",
@@ -49,7 +48,7 @@ public class StartupElementProcessorRegistry extends ClassRegistry
 
     private StartupElementProcessorRegistry()
     {
-        super(VERSION, PROCESSOR_LIST, PROCESSOR_BASE_CLASS_NAME);
+        super(Core.VERSION, PROCESSOR_LIST, PROCESSOR_BASE_CLASS_NAME);
     } 
 
     public static StartupElementProcessorRegistry getSelf()

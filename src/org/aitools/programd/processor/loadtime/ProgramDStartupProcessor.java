@@ -9,29 +9,20 @@
 
 package org.aitools.programd.processor.loadtime;
 
-import org.w3c.dom.Element;
-
 import org.aitools.programd.Core;
-import org.aitools.programd.parser.StartupFileParser;
 
 /**
- * Loads AIML at load-time.
+ * Supports configuration of a Program D startup document.
  * 
- * @since 4.1.2
  * @version 4.2
  * @author Noel Bush
  */
-public class LearnProcessor extends StartupElementProcessor
+public class ProgramDStartupProcessor extends StartupElementProcessor
 {
-    public static final String label = "learn";
+    public static final String label = "programd-startup";
 
-    public LearnProcessor(Core coreToUse)
+    public ProgramDStartupProcessor(Core coreToUse)
     {
         super(coreToUse);
-    }
-    
-    public void process(Element element, StartupFileParser parser)
-    {
-        parser.getCore().getGraphmaster().load(parser.evaluate(element.getChildNodes()), parser.getCurrentBot().getID());
     }
 }
