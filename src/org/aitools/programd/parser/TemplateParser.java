@@ -10,19 +10,28 @@
 package org.aitools.programd.parser;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.aitools.programd.processor.AIMLProcessorException;
+import org.w3c.dom.Element;
+import org.aitools.programd.Core;
 import org.aitools.programd.processor.AIMLProcessorRegistry;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.Globals;
-import org.aitools.programd.util.logging.Log;
 
 /**
- * <code>TemplateParser</code> is still a primitive class, implementing not a
- * &quot;real&quot; XML parser, but just enough (hopefully) to get the job done.
+ * <code>TemplateParser</code> has been rewritten (starting in 4.2)
+ * to use DOM for parsing.  It also eliminates handling of 
+ * "deprecated AIML" (this will be possible to handle again later
+ * with an extensible version of D.
  */
 public class TemplateParser extends GenericParser
 {
+	/** Start of a template element. */
+	private static final String TEMPLATE_START = "<template>";
+	
+	/** End of a template element. */
+	private static final String TEMPLATE_END = "</template>";
+	
     /**
      * The values captured from the input by wildcards in the
      * <code>pattern</code>.
@@ -60,11 +69,15 @@ public class TemplateParser extends GenericParser
      * @param input
      *            the input that matched the <code>pattern</code> associated
      *            with this template (helps to avoid endless loops)
+     * @param useridToUse   the userid for whom the template is being parsed
+     * @param botidToUse    the botid for whom the template is being parsed
+     * @param coreToUse     the Core in use
      * @throws TemplateParserException
      *             if the <code>input</code> is null
      */
-    public TemplateParser(String input, String useridToUse, String botidToUse) throws TemplateParserException
+    public TemplateParser(String input, String useridToUse, String botidToUse, Core coreToUse) throws TemplateParserException
     {
+        super(coreToUse);
         if (input == null)
         {
             throw new TemplateParserException("No input supplied for TemplateParser!");
@@ -78,53 +91,29 @@ public class TemplateParser extends GenericParser
     /**
      * Processes the AIML within and including a given AIML element.
      * 
-     * @param level
-     *            the current level in the XML trie
-     * @param tag
-     *            the tag being evaluated
+     * @param node
+     *            the node being evaluated
      * @return the result of processing the tag
      * @throws AIMLProcessorException
      *             if the AIML cannot be processed
      */
-    public String processTag(int level, XMLNode tag) throws ProcessorException
+    public String processTag(Element element) throws ProcessorException
     {
         try
         {
-            return super.processTag(level, tag);
-        } 
-        // A ProcessorException at this point can mean several things.
-        catch (ProcessorException e0)
-        {
-            // It could be a deprecated tag.
-            if (Globals.supportDeprecatedTags())
-            {
-                try
-                {
-                    return DeprecatedAIMLParser.processTag(level, this.userid, tag, this);
-                } 
-                catch (UnknownDeprecatedAIMLException e1)
-                {
-                    // For now, do nothing (drop down to next).
-                } 
-            } 
-            // It could also be a non-AIML tag.
-            if (Globals.nonAIMLRequireNamespaceQualification())
-            {
-                // If namespace qualification is required, check for a colon.
-                if (tag.XMLData.indexOf(COLON) == -1)
-                {
-                    throw new AIMLProcessorException("Unknown element \"" + tag.XMLData + "\"");
-                } 
-            } 
-            // But if namespace qualification is not required, don't care.
-            return formatTag(level, tag);
+            return super.processElement(element);
         } 
         catch (StackOverflowError e)
         {
-            Log.userinfo("Stack overflow error processing " + tag.XMLData + " tag.", Log.ERROR);
+            Logger.getLogger("programd.error").log(Level.SEVERE, "Stack overflow error processing " + element.getTagName() + " tag.");
             return EMPTY_STRING;
         } 
-    } 
+    }
+	
+	public String processResponse(String templateContent) throws ProcessorException
+	{
+		return super.processResponse(TEMPLATE_START + templateContent + TEMPLATE_END);
+	}
 
     /**
      * Adds an input to the inputs list (for avoiding infinite loops).
@@ -222,8 +211,6 @@ public class TemplateParser extends GenericParser
     } 
 
     /**
-     * Returns the userid.
-     * 
      * @return the userid
      */
     public String getUserID()
@@ -232,12 +219,10 @@ public class TemplateParser extends GenericParser
     } 
 
     /**
-     * Returns the botid.
-     * 
      * @return the botid
      */
     public String getBotID()
     {
         return this.botid;
-    } 
+    }
 }

@@ -14,8 +14,9 @@ package org.aitools.programd.parser;
  * listeners that can add AIML to the Graphmaster.
  * 
  * @author Kris Drent
+ * @author Noel Bush
  */
-public interface AIMLReaderListener extends GenericReaderListener
+public interface AIMLReaderListener
 {
     /**
      * Adds a new category to the {@link org.aitools.programd.graph.Graphmaster} .

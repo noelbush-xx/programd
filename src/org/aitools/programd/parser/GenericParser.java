@@ -9,172 +9,285 @@
 
 package org.aitools.programd.parser;
 
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.StringTokenizer;
+import java.io.IOException;
+import java.io.StringReader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.processor.Processor;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.ClassRegistry;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.XMLKit;
-import org.aitools.programd.util.logging.Log;
 
 /**
- * A generic parser.
+ * A generic parser that allows us to register processors for any element type.
+ * This has been heavily modified (simplified) to use DOM.
  * 
+ * @author Noel Bush
  * @since 4.1.3
+ * @version 4.2
  */
 abstract public class GenericParser
 {
     /** Each subclass should set this. */
     protected ClassRegistry processorRegistry;
+    
+    /** The URI of this document. */
+    protected URI docURI;
+    
+    /** The Core in use. */
+    protected Core core;
 
     // Convenience constants.
 
     /** An empty string, for convenience. */
     protected static final String EMPTY_STRING = "";
 
-    /** The start of a tag marker for an element open tag. */
-    protected static final String OPEN_MARKER_START = "<";
-
-    /** The start of a tag marker for an element close tag. */
-    protected static final String CLOSE_MARKER_START = "</";
-
-    /** The end of a tag marker for a &quot;non-atomic&quot; tag. */
-    protected static final String NONATOMIC_MARKER_END = ">";
-
-    /** The end of a tag marker for an &quot;atomic&quot; tag. */
-    protected static final String ATOMIC_MARKER_END = "/>";
-
     /** The word &quot;index&quot;, for convenience. */
     protected static final String INDEX = "index";
 
     /** A comma, for convenience. */
     protected static final String COMMA = ",";
-
-    /** A colon, for convenience. */
-    protected static final String COLON = ":";
-
+	
+	/** A DocumentBuilder for producing new Documents. */
+	protected static DocumentBuilder utilDocBuilder;
+    
+    public GenericParser(Core coreToUse)
+    {
+        if (utilDocBuilder == null)
+        {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            try
+            {
+                utilDocBuilder = factory.newDocumentBuilder();
+            }
+            catch (ParserConfigurationException e)
+            {
+                throw new DeveloperError("Error creating utilDocBuilder for GenericParser.", e);
+            }
+        }
+        this.core = coreToUse;
+    }
+    
     /**
      * <p>
-     * Processes a given XML content string for a given identifier.
+     * Processes a given URI.
      * </p>
      * <p>
      * This is the general access method for external classes.
      * </p>
      * 
-     * @param content
+     * @param uri
      *            the XML content
-     * @return the result of processing the XML content for the given
-     *         <code>id</code>
+     * @return the DOM produced by parsing
      * @throws ProcessorException
      *             if the content cannot be processed
      */
-    public String processResponse(String content) throws ProcessorException
+    public Document parse(URI uri) throws ProcessorException
     {
-        if (content == null)
+		if (this.docURI != null)
+		{
+			this.docURI = this.docURI.resolve(uri);
+		}
+		else
+		{
+			this.docURI = uri;
+		}
+        Document document;
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        try
         {
-            throw new ProcessorException("No content to parse.");
-        } 
-        // Create a new XML parser and load it with the template.
-        XMLParser parser = new XMLParser();
-        LinkedList list = parser.load(content);
-
-        // If XML processing went badly, return error.
-        if (list == null)
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            document = builder.parse(this.docURI.toString());
+        }
+        catch (IOException e)
         {
-            Log.userinfo("Invalid content:", Log.ERROR);
-            StringTokenizer lines = new StringTokenizer(content, System.getProperty("line.separator"));
-            while (lines.hasMoreTokens())
-            {
-                Log.userinfo(lines.nextToken(), Log.ERROR);
-            } 
-            throw new ProcessorException("Invalid content (see log file).");
-        } 
+            throw new ProcessorException("I/O error while parsing \"" + uri + "\".", e);
+        }
+        catch (ParserConfigurationException e)
+        {
+            throw new ProcessorException("Parser configuration error while parsing \"" + uri + "\".", e);
+        }
+        catch (SAXParseException e)
+        {
+            throw new ProcessorException("SAX parsing error while parsing \"" + uri + "\".", e);
+        }
+        catch (SAXException e)
+        {
+            throw new ProcessorException("SAX exception while parsing \"" + uri + "\".", e);
+        }
 
-        /*
-         * Evaluate the template starting from its first token. The evaluate
-         * method will recurse to explore the full trie.
-         */
-        String response = evaluate(0, list);
+        return document;
+    }
 
-        // Perhaps unnecessary: a controlled cleanup
-        list.clear();
-
-        return response;
-    } 
+    public String processResponse(URI uri) throws ProcessorException
+    {
+		if (this.docURI != null)
+		{
+			this.docURI = this.docURI.resolve(uri);
+		}
+		else
+		{
+			this.docURI = uri;
+		}
+        Document document = parse(this.docURI);
+        return evaluate(document);
+    }
+    
+    public void process(URI uri) throws ProcessorException
+    {
+		if (this.docURI != null)
+		{
+			this.docURI = this.docURI.resolve(uri);
+		}
+		else
+		{
+			this.docURI = uri;
+		}
+        Document document = parse(this.docURI);
+        evaluate(document);
+    }
+	
+	/**
+	 * Processes a response by creating a document fragment from the given string
+	 * and returning the result of processing it.
+	 */
+	public String processResponse(String input) throws ProcessorException
+	{
+		Document template;
+		try
+		{
+			template = utilDocBuilder.parse(new InputSource(new StringReader(input)));
+		}
+		catch (IOException e)
+		{
+			throw new ProcessorException("I/O Error processing template: " + e.getMessage());
+		}
+		catch (SAXException e)
+		{
+			throw new ProcessorException("SAX Exception processing template: " + e.getMessage());
+		}
+		return evaluate(template);
+	}
 
     /**
      * Processes a given XML node for a given identifier.
      * 
-     * @param level
-     *            the current level in the XML trie
-     * @param tag
-     *            the tag being evaluated
-     * @return the result of processing the tag
+     * @param element
+     *            the element being evaluated
+     * @return the result of processing the element
      * @throws ProcessorException
      *             if the content cannot be processed
      */
-    public String processTag(int level, XMLNode tag) throws ProcessorException
+    public String processElement(Element element) throws ProcessorException
     {
-        // Is it a valid tag?
-        if (tag == null)
+        // Is it a valid element?
+        if (element == null)
         {
             return EMPTY_STRING;
-        } 
+        }
 
         // Search for the tag in the processor registry.
         Class processorClass = null;
 
         if (this.processorRegistry != null)
         {
-            processorClass = (Class) this.processorRegistry.get(tag.XMLData);
-        } 
+            processorClass = this.processorRegistry.get(element.getTagName());
+        }
         else
         {
             throw new DeveloperError("processorRegistry has not been initialized!");
-        } 
+        }
 
         // Create a new instance of the processor.
         Processor processor = null;
         if (processorClass != null)
         {
+            // Get the processor constructor that takes a Core as an argument.
+            Constructor<Processor> constructor = null;
             try
             {
-                processor = (Processor) processorClass.newInstance();
-            } 
-            catch (InstantiationException e)
+                constructor = processorClass.getDeclaredConstructor(new Class[] {Core.class});
+            }
+            catch (NoSuchMethodException e)
             {
-                throw new DeveloperError(e);
+                throw new DeveloperError("Developed specified an invalid constructor for Processor: " + e.getMessage());
+            }
+            catch (SecurityException e)
+            {
+                throw new DeveloperError("Permission denied to create new Processor with specified constructor: " + e.getMessage());
+            }
+            
+            // Get a new instance of the Multiplexor.
+            try
+            {
+                processor = constructor.newInstance(new Object[] {this});
             } 
             catch (IllegalAccessException e)
             {
-                throw new DeveloperError(e);
+                throw new DeveloperError("Underlying constructor for Processor is inaccessible: " + e.getMessage());
             } 
-            catch (RuntimeException e)
+            catch (InstantiationException e)
             {
-                throw new DeveloperError(e);
+                throw new DeveloperError("Could not instantiate Processor: " + e.getMessage());
             } 
-        } 
+            catch (IllegalArgumentException e)
+            {
+                throw new DeveloperError("Illegal argument exception when creating Processor: " + e.getMessage());
+            } 
+            catch (InvocationTargetException e)
+            {
+                throw new DeveloperError("Constructor threw an exception when getting a Processor instance from it: " + e.getMessage());
+            } 
+        }
         else
         {
-            throw new ProcessorException("Could not find a processor for \"" + tag.XMLData + "\"!");
-        } 
-
+            throw new ProcessorException("Could not find a processor for \"" + element.getTagName() + "\"!");
+        }
         // Return the results of processing the tag.
         if (processor != null)
         {
-            return XMLKit.filterWhitespace(processor.process(level++, tag, this));
-        } 
+            return XMLKit.filterWhitespace(processor.process(element, this));
+        }
         // (otherwise...)
         throw new DeveloperError("Corrupt processor set.");
-    } 
+    }
+
+    public String evaluate(Document document)
+    {
+        return evaluate(document.getDocumentElement());
+    }
+
+    public String evaluate(NodeList list)
+    {
+        StringBuffer result = new StringBuffer();
+        int listSize = list.getLength();
+        for (int index = 0; index < listSize; index++)
+        {
+            result.append(evaluate(list.item(index)));
+        }
+        return result.toString();
+    }
 
     /**
      * <p>
-     * Recursively evaluates an XML trie.; Both the <code>level</code> and the
-     * client <code>id</code> are carried through recursion.
+     * Recursively evaluates a tree.
      * </p>
      * <p>
      * Depending on whether the engine is at load-time or run time, determines
@@ -182,140 +295,58 @@ abstract public class GenericParser
      * result of processing it.
      * </p>
      * 
-     * @param level
-     *            the current level in the XML trie
-     * @param list
-     *            the XML trie to parse
+     * @param node the node to parse
      * @return the result of processing the tag
      */
-    public String evaluate(int level, LinkedList list)
+    public String evaluate(Node node)
     {
         String response = EMPTY_STRING;
-        ListIterator iterator;
-        XMLNode node;
 
         // Verify there is something to work with.
-        if (list == null)
+        if (node == null)
         {
-            return EMPTY_STRING;
-        } 
+            return response;
+        }
 
-        // Point to the start of the XML trie to parse
-        iterator = list.listIterator(0);
-
-        // Navigate thru the entire level of it
-        while (iterator.hasNext())
+        switch (node.getNodeType())
         {
-            node = (XMLNode) iterator.next();
-            if (node != null)
-            {
-                switch (node.XMLType)
+            // Collect and process elements.
+            case Node.ELEMENT_NODE:
+                try
                 {
-                    // Collect and process tags.
-                    case XMLNode.TAG:
-                    case XMLNode.EMPTY:
-                        try
-                        {
-                            response = response + processTag(level, node);
-                        } 
-                        catch (ProcessorException e)
-                        {
-                            throw new DeveloperError(e.getMessage(), e);
-                        } 
-                        break;
-
-                    // Text chunks should just be added to the response.
-                    case XMLNode.DATA:
-                    case XMLNode.CDATA:
-                        response = response + node.XMLData;
-                        break;
-
-                    default:
-                        break;
-                } 
-            } 
-        } 
-        return response;
-    } 
-
-    /**
-     * <p>
-     * Formats a tag from an XML node into &quot;pure&quot; ????. Mostly used
-     * when a tag cannot be evaluated and then literally included in the input.
-     * </p>
-     * <p>
-     * THIS WORDING NEEDS TO BE CLARIFIED.
-     * </p>
-     * 
-     * @param level
-     *            index of the current level in the XML trie (just passed
-     *            through)
-     * @param tag
-     *            the tag to format
-     * @return the formatted result
-     */
-    public String formatTag(int level, XMLNode tag)
-    {
-        // A given level always starts with an empty answer.
-        String response = EMPTY_STRING;
-
-        /*
-         * Format according with the XML element type. Handling of text has been
-         * added for generality since no text will ever be passed under the main
-         * usage of the method.
-         */
-        switch (tag.XMLType)
-        {
-            case XMLNode.TAG:
-                // This is a XML tag, so it might have children. Format the
-                // head.
-                response = response + OPEN_MARKER_START + tag.XMLData;
-
-                // Include any attributes.
-                if (!tag.XMLAttr.equals(EMPTY_STRING))
+                    response = response + processElement((Element) node);
+                }
+                catch (ProcessorException e)
                 {
-                    response = response + tag.XMLAttr;
-                } 
-                // Close the head.
-                response = response + NONATOMIC_MARKER_END;
-
-                // If there are any children, resolve them recursively.
-                if (tag.XMLChild != null)
-                {
-                    response = response + evaluate(level++, tag.XMLChild);
-                } 
-
-                // Format the response tag.
-                response = response + CLOSE_MARKER_START + tag.XMLData + NONATOMIC_MARKER_END;
+                    throw new DeveloperError(e.getMessage(), e);
+                }
                 break;
 
-            case XMLNode.EMPTY:
-                // Same as for XMLNode.TAG, but no recursion.
-                response = response + OPEN_MARKER_START + tag.XMLData;
-                if (!tag.XMLAttr.equals(EMPTY_STRING))
-                {
-                    response = response + tag.XMLAttr;
-                } 
-                response = response + ATOMIC_MARKER_END;
-                break;
-
-            case XMLNode.DATA:
-            case XMLNode.CDATA:
-                // Format text.
-                response = response + tag.XMLData;
+            // Text chunks should just be added to the response.
+            case Node.TEXT_NODE:
+            case Node.CDATA_SECTION_NODE:
+                response = response + node.getNodeValue();
                 break;
 
             default:
                 break;
-
-        } 
+        }
         return response;
-    } 
+    }
+
+    public int hasElement(String tagname, NodeList list)
+    {
+        return elementCount(tagname, list, false);
+    }
+
+    public int elementCount(String tagname, NodeList list)
+    {
+        return elementCount(tagname, list, true);
+    }
 
     /**
      * <p>
-     * Counts the number of nodes of a given type at a particular level of the
-     * XML trie.
+     * Counts the number of nodes of a given type.
      * </p>
      * <p>
      * Used mostly in connection with the &lt;random/&gt; tag in order to see
@@ -334,53 +365,43 @@ abstract public class GenericParser
      *         <code>1</code> if at least one node is present and
      *         <code>allnodes</code> is false
      */
-    public int nodeCount(String tagname, LinkedList list, boolean allnodes)
+    private int elementCount(String tagname, NodeList list, boolean allnodes)
     {
-        ListIterator iterator;
-        XMLNode node;
+        Node node;
         int numbernodes = 0;
 
         // Verify there is something to work with.
         if (list == null)
         {
             return 0;
-        } 
+        }
 
         // Point to the start of the XML trie to parse.
-        iterator = list.listIterator(0);
+        int nodeCount = list.getLength();
 
         // Navigate through this entire level.
-        while (iterator.hasNext())
+        for (int index = 0; index < nodeCount; index++)
         {
-            node = (XMLNode) iterator.next();
+            node = list.item(index);
             if (node != null)
             {
-                switch (node.XMLType)
+                // Collect and process only tag elements and empty tags.
+                if (node.getNodeType() == Node.ELEMENT_NODE)
                 {
-                    // Collect and process only tag elements and empty tags.
-                    case XMLNode.TAG:
-                    case XMLNode.EMPTY:
-                        // Only deal with the desired one.
-                        if ((!node.XMLData.equals(tagname)) && (allnodes == false))
-                        {
-                            break;
-                        } 
-                        numbernodes++;
+                    if ((!node.getNodeName().equals(tagname)) && (allnodes == false))
+                    {
                         break;
-
-                    // Just ignore everything else.
-                    default:
-                        break;
-                } 
-            } 
-        } 
+                    }
+                    numbernodes++;
+                }
+            }
+        }
         return numbernodes;
-    } 
+    }
 
     /**
      * <p>
-     * Retrieves the ordernode-th node of a given tag at a particular level of
-     * the XML trie.
+     * Retrieves the ordernode-th node of a given tag.
      * </p>
      * <p>
      * Typically used to find specific tags beneath a given tag being evaluated
@@ -395,53 +416,41 @@ abstract public class GenericParser
      *            index of the node we sought
      * @return the node sought
      */
-    public XMLNode getNode(String tagname, LinkedList list, int ordernode)
+    public Node getNode(String tagname, NodeList list, int ordernode)
     {
-        ListIterator iterator;
-        XMLNode node;
+        Node node;
 
         // Verify there is something to work with.
         if (list == null)
         {
             return null;
-        } 
-
-        // Point to the start of the XML trie to parse.
-        iterator = list.listIterator(0);
+        }
 
         // Navigate thru the entire level.
-        while (iterator.hasNext())
+        int nodeCount = list.getLength();
+        for (int index = 0; index < nodeCount; index++)
         {
-            node = (XMLNode) iterator.next();
+            node = list.item(index);
             if (node != null)
             {
-                switch (node.XMLType)
+                if (node.getNodeType() == Node.ELEMENT_NODE)
                 {
-                    // Collect and process only tag elements and empty tags.
-                    case XMLNode.TAG:
-                    case XMLNode.EMPTY:
-                        // Only deal with the desired one.
-                        if (!node.XMLData.equals(tagname))
-                        {
-                            break;
-                        } 
-                        // We've found the one we're looking for when ordernode
-                        // is zero (after decrementing).
-                        if (--ordernode == 0)
-                        {
-                            return node;
-                        } 
-                        // Otherwise, continue.
+                    // Only deal with the desired one.
+                    if (!node.getNodeName().equals(tagname))
+                    {
                         break;
-
-                    // Just ignore everything else.
-                    default:
-                        break;
-                } 
-            } 
-        } 
+                    }
+                    // We've found the one we're looking for when ordernode
+                    // is zero (after decrementing).
+                    if (--ordernode == 0)
+                    {
+                        return node;
+                    }
+                }
+            }
+        }
         return null;
-    } 
+    }
 
     /**
      * <p>
@@ -449,112 +458,58 @@ abstract public class GenericParser
      * child tag, then evaluates it recursively.
      * </p>
      * <p>
-     * This method is used mostly to map certain tags as combinations of other
-     * tags (as in <a
+     * This method is used to map certain tags as combinations of other tags (as
+     * in <a
      * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-short-cut-elements">short-cut
-     * elements </a>), as well as various &quot;AIML 0.9&quot; tags.
+     * elements </a>).
      * </p>
      * 
-     * @param level
-     *            the current level in the XML trie
-     * @param rootTag
-     *            the name of the root tag
-     * @param rootType
-     *            the type of the root tag
-     * @param rootAttr
-     *            an optional attribute on the root tag (use &quot;&quot; if no
-     *            attribute)
-     * @param childTag
-     *            the name of the child tag
+     * @param element    the element to modify
+     * @param newElementName  the new name to give the element
+     * @param childContent
+     *            the name or content for the child to add
      * @param childType
-     *            the type of the child tag
+     *            the type of the child
      * @return the result of processing this structure
      */
-    public String shortcutTag(int level, String rootTag, int rootType, String rootAttr, String childTag, int childType)
+    public String shortcutTag(Element element, String newElementName, String childContent, short childType)
     {
         String response = EMPTY_STRING;
 
-        // If the root tag is empty, we need not continue.
-        if (rootTag.equals(EMPTY_STRING))
+        // If the node is empty, we need not continue.
+        if (element == null)
         {
             return EMPTY_STRING;
-        } 
+        }
 
         /*
-         * Create a new node for use in evaluation, with the content and
-         * attributes of the root tag.
+         * Process children (if any). Clearly, the root tag cannot have an empty
+         * type, and the children must exist.
          */
-        XMLNode node = new XMLNode();
-        node.XMLType = rootType;
-        node.XMLData = rootTag;
-        node.XMLAttr = rootAttr;
-
-        /*
-         * Create an XML trie for this tag, so that we can use other methods of
-         * this class to process it normally (as if it came from the original
-         * AIML in this form.
-         */
-        LinkedList<XMLNode> list = new LinkedList<XMLNode>();
-
-        // Prepare the list to receive inserts.
-        ListIterator<XMLNode> iterator = list.listIterator(0);
-
-        /*
-         * Process child tags (if any). Clearly, the root tag cannot have an
-         * empty type, and the children must exist.
-         */
-        XMLNode nodeChild = new XMLNode();
-        LinkedList<XMLNode> childList = new LinkedList<XMLNode>();
-        if ((rootType == XMLNode.TAG) && (!childTag.equals(EMPTY_STRING))
-                && ((childType == XMLNode.EMPTY) || (childType == XMLNode.DATA)))
+        if ((!childContent.equals(EMPTY_STRING)) && ((childType == Node.ELEMENT_NODE) || (childType == Node.TEXT_NODE)))
         {
+			Document ownerDoc = element.getOwnerDocument();
+			Element newElement = ownerDoc.createElement(newElementName);
             /*
              * Create an XML node for the child tag. Note that we assume that
              * the child is an empty tag with no attributes. This is reasonable
              * for AIML 1.0.1, but might not always be.
              */
-            switch (childType)
+            if (childType == Node.ELEMENT_NODE)
             {
-                case XMLNode.EMPTY:
-                    nodeChild.XMLType = XMLNode.EMPTY;
-                    nodeChild.XMLData = childTag;
-                    nodeChild.XMLAttr = EMPTY_STRING;
-                    break;
+				newElement.appendChild(ownerDoc.createElement(childContent));
+            }
+            else if (childType == Node.TEXT_NODE)
+            {
+                newElement.setTextContent(childContent);
+            }
 
-                case XMLNode.DATA:
-                case XMLNode.CDATA:
-                    nodeChild.XMLType = XMLNode.DATA;
-                    nodeChild.XMLData = childTag;
-                    nodeChild.XMLAttr = EMPTY_STRING;
-                    break;
-            } 
-
-            // Insert the child tag into the child trie.
-            ListIterator<XMLNode> childListIterator = childList.listIterator(0);
-
-            childListIterator.add(nodeChild);
-
-            // Point the root tag to the child tag.
-            node.XMLChild = childList;
-
-        } 
-
-        // Insert the root tag.
-        iterator.add(node);
-
-        // Now evaluate this XML trie, just as if it came from the original
-        // AIML.
-        response = response + evaluate(level++, list);
-
-        // De-reference the heavy temporary objects created (to expedite garbage
-        // collection).
-        nodeChild = null;
-        childList = null;
-        node = null;
-        list = null;
+            // Now evaluate the node, just as if it came from the original AIML.
+            response = response + evaluate(newElement);
+        }
 
         return response;
-    } 
+    }
 
     /**
      * Corrects a tag to use a valid 2-dimensional index, and returns the
@@ -565,17 +520,16 @@ abstract public class GenericParser
      *            the tag whose 2-dimensional index we want
      * @return a valid 2-dimensional index
      */
-    public static int[] getValid2dIndex(XMLNode tag)
+    public static int[] getValid2dIndex(Element element)
     {
-        String indexValue = XMLKit.getAttributeValue(INDEX, tag.XMLAttr);
-        int[] result =
-            { 1, 1 } ;
+        String indexValue = element.getAttribute(INDEX);
+        int[] result = { 1, 1 };
 
         // Assign the default if the index attribute is empty.
         if (indexValue.equals(EMPTY_STRING))
         {
             return result;
-        } 
+        }
 
         // If only one dimension is specified, fill in the other as 1.
         int comma = indexValue.indexOf(COMMA);
@@ -584,33 +538,33 @@ abstract public class GenericParser
             try
             {
                 result[0] = Integer.parseInt(indexValue);
-            } 
+            }
             catch (NumberFormatException e)
             {
                 // Nothing to do.
-            } 
+            }
             result[1] = 1;
             return result;
-        } 
+        }
         // (otherwise...)
         try
         {
             result[0] = Integer.parseInt(indexValue.substring(0, comma));
-        } 
+        }
         catch (NumberFormatException e)
         {
             // Nothing to do.
-        } 
+        }
         try
         {
             result[1] = Integer.parseInt(indexValue.substring(comma + 1));
-        } 
+        }
         catch (NumberFormatException e)
         {
             // Nothing to do.
-        } 
+        }
         return result;
-    } 
+    }
 
     /**
      * Corrects a tag to use a valid 1-dimensional index, and returns the index.
@@ -621,16 +575,24 @@ abstract public class GenericParser
      *            the element whose 1-dimensional index we want
      * @return a valid 1-dimensional index
      */
-    public static int getValid1dIndex(XMLNode tag)
+    public static int getValid1dIndex(Element element)
     {
         // Get a valid 1-dimensional index.
         try
         {
-            return Integer.parseInt(XMLKit.getAttributeValue(INDEX, tag.XMLAttr));
-        } 
+            return Integer.parseInt(element.getAttribute(INDEX));
+        }
         catch (NumberFormatException e)
         {
             return 1;
-        } 
-    } 
+        }
+    }
+    
+    /**
+     * @return the Core
+     */
+    public Core getCore()
+    {
+        return this.core;
+    }
 }

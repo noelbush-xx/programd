@@ -9,6 +9,7 @@
 
 package org.aitools.programd.parser;
 
+import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.processor.loadtime.StartupElementProcessorRegistry;
 
@@ -22,8 +23,9 @@ public class StartupFileParser extends GenericParser
     /**
      * Initializes a <code>StartupFileParser</code>.
      */
-    public StartupFileParser()
+    public StartupFileParser(Core coreToUse)
     {
+        super(coreToUse);
         super.processorRegistry = StartupElementProcessorRegistry.getSelf();
     } 
 
