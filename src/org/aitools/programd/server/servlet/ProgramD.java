@@ -9,20 +9,18 @@
 
 package org.aitools.programd.server.servlet;
 
-import java.io.IOException;
-
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.aitools.programd.agent.responder.SmartResponder;
+import org.aitools.programd.Core;
+import org.aitools.programd.server.ResponderBroker;
 
 /**
  * <p>
  * This is the chat servlet used to broker a conversation from a client. It does
- * not really do much except pass information to the SmartResponder, which is
+ * not really do much except pass information to the ResponderBroker, which is
  * responsible for:
  * </p>
  * <ol>
@@ -37,24 +35,30 @@ import org.aitools.programd.agent.responder.SmartResponder;
  */
 public class ProgramD extends HttpServlet
 {
-    public void init() throws ServletException
+    /** The string &quot;core&quot;. */
+    private static final String CORE = "core";
+    
+    /** The Core to use. */
+    private Core core;
+    
+    public void init()
     {
-        // Do nothing.
+        this.core = (Core)this.getServletContext().getAttribute(CORE);
     } 
 
-    public void init(ServletConfig config) throws ServletException
+    public void init(ServletConfig config)
     {
-        // Do nothing.
+        this.core = (Core)config.getServletContext().getAttribute(CORE);
     } 
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
     {
-        SmartResponder responder = new SmartResponder(request, response);
+        ResponderBroker responder = new ResponderBroker(request, response, this.core);
         responder.doResponse();
 
     } 
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
     {
         doGet(request, response);
     } 
