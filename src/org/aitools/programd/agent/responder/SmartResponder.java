@@ -249,16 +249,8 @@ public class SmartResponder
                 // Always force response content type to be UTF-8.
                 this.serviceResponse.setContentType(HTML_CONTENT_TYPE);
 
-                HTMLResponder htmlResponder;
-                try
-                {
-                    htmlResponder =
-                        new HTMLResponder(this.botid, this.templateName);
-                }
-                catch (IOException e)
-                {
-                    throw new DeveloperError("Error initializing HTMLResponder.");
-                }
+                HTMLResponder htmlResponder =
+                    new HTMLResponder(this.botid, this.templateName);
 
                 this.botResponse =
                     htmlResponder.authenticate(

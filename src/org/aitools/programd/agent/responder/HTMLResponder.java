@@ -174,7 +174,7 @@ public class HTMLResponder extends AbstractMarkupResponder
     /** The password (if authentication is being used). */
     private String password;
 
-    public HTMLResponder(String botidToRespond, String templateName) throws IOException
+    public HTMLResponder(String botidToRespond, String templateName)
     {
         super(botidToRespond);
         if (templateName.equals(EMPTY_STRING))
