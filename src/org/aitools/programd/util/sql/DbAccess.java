@@ -5,10 +5,11 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.UserError;
-import org.aitools.programd.util.logging.Log;
 
 /**
  * <p>
@@ -35,6 +36,10 @@ import org.aitools.programd.util.logging.Log;
  */
 public class DbAccess
 {
+    private static Logger dbLogger = Logger.getLogger("programd.database");
+    
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
+    
     /** The Connection used by this object. */
     protected Connection connection;
 
@@ -147,7 +152,7 @@ public class DbAccess
      * @throws SQLException
      *             if there was a problem.
      */
-    public ResultSet executeQuery(String query) throws SQLException
+    public ResultSet executeQuery(String query)
     {
         if (this.statement == null)
         {
@@ -159,11 +164,8 @@ public class DbAccess
         } 
         catch (SQLException e)
         {
-            Log.userinfo(new String[]
-                { "Problem executing a query on your database.  Check structure and availability.", e.getMessage() } ,
-                    new String[]
-                        { Log.ERROR, Log.DATABASE } );
-            throw e;
+            dbLogger.log(Level.SEVERE, "Problem executing a query on your database.  Check structure and availability." + LINE_SEPARATOR + e.getMessage());
+            throw new UserError(e);
         } 
     } 
 
@@ -187,10 +189,7 @@ public class DbAccess
         } 
         catch (SQLException e)
         {
-            Log.userinfo(new String[]
-                { "Problem executing an update on your database.  Check structure and availability.", e.getMessage() } ,
-                    new String[]
-                        { Log.ERROR, Log.DATABASE } );
+            dbLogger.log(Level.SEVERE, "Problem executing an update on your database.  Check structure and availability." + LINE_SEPARATOR + e.getMessage());
             throw new UserError(e);
         } 
     } 
