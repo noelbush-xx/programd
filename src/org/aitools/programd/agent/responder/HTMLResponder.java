@@ -51,6 +51,7 @@ public class HTMLResponder extends AbstractMarkupResponder
 
     /** Location of html templates. */
     private static final String templatesDirectoryName = Globals.getProperty(
+            "programd.root-directory", ".") + File.separator + Globals.getProperty(
             "programd.responder.html.template.directory", "templates" + File.separator + "html");
 
     /** Path to the default chat template. */
