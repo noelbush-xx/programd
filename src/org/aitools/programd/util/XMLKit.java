@@ -13,15 +13,22 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.ListIterator;
 import java.util.Vector;
 
-import org.aitools.programd.parser.XMLNode;
-import org.aitools.programd.parser.XMLParser;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * A collection of XML utilities.
@@ -49,12 +56,21 @@ public class XMLKit
 
     /** A tag end marker. */
     private static final char TAG_END = '>';
+    
+    /** An empty element tag end marker. */
+    private static final String EMPTY_ELEMENT_TAG_END = "/>";
 
     /** CDATA start marker. */
     private static final String CDATA_START = "<![CDATA[";
 
     /** CDATA end marker. */
     private static final String CDATA_END = "]]>";
+    
+    /** Comment start marker. */
+    private static final String COMMENT_START = "<!--";
+    
+    /** Comment end marker. */
+    private static final String COMMENT_END = "-->";
 
     /** A common string we search for when parsing attributes in tags. */
     protected static final String EQUAL_QUOTE = "=\"";
@@ -83,8 +99,11 @@ public class XMLKit
     /** The length of {@link #XML_PI_START} . */
     private static final int XML_PI_START_LENGTH = XML_PI_START.length();
 
-    /** The string &quot;encoding&quot;. */
-    private static final String ENCODING = "encoding";
+    /** The string &apos;encoding=&quot;&apos;. */
+    private static final String ENCODING_EQUALS_QUOTE = "encoding=\"";
+    
+    /** The length of {@link #ENCODING_EQUALS_QUOTE} . */
+    private static final int ENCODING_EQUALS_QUOTE_LENGTH = ENCODING_EQUALS_QUOTE.length();
 
     /** The system default file encoding; defaults to UTF-8!!! */
     private static final String SYSTEM_ENCODING = System.getProperty("file.encoding", "UTF-8");
@@ -94,6 +113,26 @@ public class XMLKit
 
     /** The actual Map used to store escaped-to-prohibited mappings. */
     private static HashMap<String, String> xmlEscapes;
+
+    /** A DocumentBuilder for producing new documents. */
+    protected static DocumentBuilder utilBuilder;
+
+    /** A document for producing new elements. */
+    protected static Document utilDoc;
+
+    static
+    {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        try
+        {
+            utilBuilder = factory.newDocumentBuilder();
+            utilDoc = utilBuilder.newDocument();
+        }
+        catch (ParserConfigurationException e)
+        {
+            throw new DeveloperError("Error creating utilDoc.", e);
+        }
+    }
 
     /**
      * <p>
@@ -327,56 +366,19 @@ public class XMLKit
 
         if (piStart != -1)
         {
-            String encoding = getAttributeValue(ENCODING, firstLine.substring(XML_PI_START_LENGTH));
-            if (!encoding.trim().equals(EMPTY_STRING))
+            int attributeStart = firstLine.indexOf(ENCODING_EQUALS_QUOTE);
+            if (attributeStart >= 0)
             {
-                return encoding;
-            } 
+                int nextQuote = firstLine.indexOf(QUOTE_MARK, attributeStart + ENCODING_EQUALS_QUOTE_LENGTH);
+                if (nextQuote >= 0)
+                {
+                    String encoding = firstLine.substring(attributeStart + ENCODING_EQUALS_QUOTE_LENGTH, nextQuote);
+                    return encoding.trim();
+                }
+            }
         } 
         // If encoding was unspecified, return the system encoding.
         return SYSTEM_ENCODING;
-    } 
-
-    /**
-     * <p>
-     * Gets value of an attribute by name.
-     * </p>
-     * <p>
-     * This method looks in the supplied argument string, and parses it looking
-     * for the structure &quot; <i>attributeName </i>=&quot;, returning whatever
-     * is after the &quot;=&quot; until the next blank or the end of the string.
-     * This is mostly useful for extracting attributes from AIML tags.
-     * </p>
-     * 
-     * @param attributeName
-     *            the attribute whose value is wanted
-     * @param args
-     *            the argument string
-     * @return the value of the argument (or empty string if nothing)
-     */
-    public static String getAttributeValue(String attributeName, String args)
-    {
-        int index;
-        String argvalue = EMPTY_STRING;
-        String argpattern = attributeName + EQUAL_QUOTE;
-        index = args.indexOf(argpattern);
-        if (index >= 0)
-        {
-            if (index + argpattern.length() >= args.length())
-            {
-                args = EMPTY_STRING;
-            } 
-            else
-            {
-                args = args.substring(index + argpattern.length(), args.length());
-            } 
-            index = args.indexOf(QUOTE_MARK);
-            if (index >= 0)
-            {
-                argvalue = args.substring(0, index);
-            } 
-        } 
-        return unescapeXMLChars(argvalue);
     } 
 
     /**
@@ -388,106 +390,120 @@ public class XMLKit
      */
     public static String formatAIML(String content)
     {
-        XMLParser parser = new XMLParser();
-        LinkedList trie = parser.load(content);
+        Document document;
+        try
+        {
+            document = utilBuilder.parse(new InputSource(new StringReader(content)));
+        }
+        catch (IOException e)
+        {
+            throw new DeveloperError("I/O error creating a document for formatting AIML.", e);
+        }
+        catch (SAXException e)
+        {
+            throw new DeveloperError("I/O error creating a document for formatting AIML.", e);
+        }
+        StringBuffer result = new StringBuffer();
+        formatAIML(document.getDocumentElement(), 0, true, result);
+        return result.toString();
+    }
+   
+    private static void formatAIML(Node node, int level, boolean atStart, StringBuffer result)
+    {
+        switch (node.getNodeType())
+        {
+            // Append a start tag.
+            case Node.ELEMENT_NODE:
+                if (!atStart)
+                {
+                    result.append(LINE_SEPARATOR);
+                } 
+                else
+                {
+                    atStart = false;
+                } 
+                result.append(StringKit.tab(level) + TAG_START + node.getNodeName());
+                if (node.hasAttributes())
+                {
+                    NamedNodeMap attributes = node.getAttributes();
+                    int attributeCount = attributes.getLength();
+                    for (int index = 0; index < attributeCount; index++)
+                    {
+                        Node attribute = attributes.item(index);
+                        result.append(SPACE + attribute.getNodeName() + EQUAL_QUOTE + attribute.getNodeValue() + QUOTE_MARK);
+                    }
+                }
+                String contents = formatAIML(node.getChildNodes(), level + 1, true);
+                if (contents.trim().length() > 0)
+                {
+                    result.append(TAG_END);
+                    result.append(LINE_SEPARATOR + contents);
+                    result.append(LINE_SEPARATOR + StringKit.tab(level) + TAG_START + '/' + node.getNodeName() + TAG_END);
+                } 
+                else
+                {
+                    result.append(EMPTY_ELEMENT_TAG_END);
+                }
+                break;
 
-        return formatAIML(trie, 0, true);
-    } 
+            // Append text content.
+            case Node.TEXT_NODE:
+                if (atStart)
+                {
+                    if (node.getTextContent().trim().length() > 0)
+                    {
+                        result.append(StringKit.tab(level) + node.getTextContent());
+                        atStart = false;
+                        break;
+                    } 
+                }
+                // (otherwise)
+                result.append(node.getTextContent());
+                break;
 
+            // Append CDATA.
+            case Node.CDATA_SECTION_NODE:
+                if (atStart)
+                {
+                    result.append(StringKit.tab(level));
+                    atStart = false;
+                } 
+                result.append(LINE_SEPARATOR + StringKit.tab(level) + TAG_START + CDATA_START
+                        + node.getNodeValue() + CDATA_END);
+                break;
+
+            // Append comments.
+            case Node.COMMENT_NODE:
+                if (atStart)
+                {
+                    result.append(StringKit.tab(level));
+                    atStart = false;
+                } 
+                result.append(LINE_SEPARATOR + StringKit.tab(level) + TAG_START + COMMENT_START
+                        + node.getNodeValue() + COMMENT_END);
+                break;
+        } 
+    }
+    
     /**
-     * Formats AIML from a trie into a nicely indented multi-line string.
+     * Formats AIML from a node list into a nicely indented multi-line string.
      * 
-     * @param trie
-     *            the trie containing the AIML
-     * @param level
+     * @param list@param level
      *            the level (for indenting)
      * @param atStart
      *            whether the whole XML string is at its beginning
      */
-    public static String formatAIML(LinkedList trie, int level, boolean atStart)
+    public static String formatAIML(NodeList list, int level, boolean atStart)
     {
-        ListIterator trieIterator = trie.listIterator();
-
         StringBuffer result = new StringBuffer();
 
-        while (trieIterator.hasNext())
+        int listLength = list.getLength();
+        
+        for (int index = 0; index < listLength; index++)
         {
-            XMLNode node = (XMLNode) trieIterator.next();
-
-            switch (node.XMLType)
-            {
-                // Append a start tag.
-                case XMLNode.TAG:
-                    if (!atStart)
-                    {
-                        result.append(LINE_SEPARATOR);
-                    } 
-                    else
-                    {
-                        atStart = false;
-                    } 
-                    result.append(StringKit.tab(level) + TAG_START + node.XMLData + node.XMLAttr + TAG_END);
-                    String contents = formatAIML(node.XMLChild, level + 1, true);
-                    if (contents.trim().length() > 0)
-                    {
-                        result.append(LINE_SEPARATOR + contents);
-                    } 
-                    result.append(LINE_SEPARATOR + StringKit.tab(level) + TAG_START + '/' + node.XMLData + node.XMLAttr
-                            + TAG_END);
-                    break;
-
-                // Append an atomic tag.
-                case XMLNode.EMPTY:
-                    if (atStart)
-                    {
-                        result.append(StringKit.tab(level));
-                        atStart = false;
-                    } 
-                    result.append(TAG_START + node.XMLData + node.XMLAttr + '/' + TAG_END);
-                    // Treat HTML line breaks specially.
-                    if (node.XMLData.trim().equals("br"))
-                    {
-                        result.append(LINE_SEPARATOR + StringKit.tab(level));
-                    } 
-                    break;
-
-                // Append data.
-                case XMLNode.DATA:
-                    if (atStart)
-                    {
-                        if (node.XMLData.trim().length() > 0)
-                        {
-                            result.append(StringKit.tab(level) + node.XMLData);
-                            atStart = false;
-                            break;
-                        } 
-                    } 
-                    result.append(node.XMLData);
-                    break;
-
-                // Append CDATA.
-                case XMLNode.CDATA:
-                    if (atStart)
-                    {
-                        result.append(StringKit.tab(level));
-                        atStart = false;
-                    } 
-                    result.append(LINE_SEPARATOR + StringKit.tab(level) + TAG_START + XMLParser.CDATA_START
-                            + node.XMLData + XMLParser.CDATA_END);
-                    break;
-
-                // Append comments.
-                case XMLNode.COMMENT:
-                    if (atStart)
-                    {
-                        result.append(StringKit.tab(level));
-                        atStart = false;
-                    } 
-                    result.append(LINE_SEPARATOR + StringKit.tab(level) + TAG_START + XMLParser.COMMENT_START
-                            + node.XMLData + XMLParser.COMMENT_END);
-                    break;
-            } 
-        } 
+            Node node = list.item(index);
+            formatAIML(node, level, atStart, result);
+        }
         return result.toString();
     } 
 
