@@ -138,7 +138,7 @@ function set_java_vars()
       if [ -z "$JVM_COMMAND" ]
       then
         echo I cannot find a java executable in your path.
-        echo Please check that you hava a JDK 5.0 compatible JVM installed.
+        echo Please check that you hava a JDK 5.0 compatible SDK installed.
         echo
         exit 1
       else
@@ -161,7 +161,7 @@ function check_java_home()
   then
     echo I can\'t find your JAVA_HOME directory.
     echo \(\"$JAVA_HOME\" doesn\'t seem to exist.\)
-    echo Please be sure that a JDK 5.0 compatible JVM is installed
+    echo Please be sure that a JDK 5.0 compatible SDK is installed
     echo and \(even better\) set the \$JAVA_HOME environment variable to point to
     echo the directory where it is installed.
     echo
