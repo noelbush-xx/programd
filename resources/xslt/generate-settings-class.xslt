@@ -210,7 +210,7 @@ public class </xsl:text>
 </xsl:text>
         </xsl:if>
         <xsl:text>     */
-    </xsl:text>
+    private </xsl:text>
         <!--Discover type.-->
         <xsl:value-of select="substring-before(substring-after($description, '['), ':')"/>
         <xsl:text> </xsl:text>
