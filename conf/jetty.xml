@@ -16,17 +16,8 @@
     <Call name="addContext">
         <Arg>/</Arg>
         <Call name="addServlet">
-            <Arg>Alice</Arg>
+            <Arg>ProgramD</Arg>
             <Arg>/</Arg>
-            <Arg>org.aitools.programd.server.servlet.ProgramD</Arg>
-        </Call>
-    </Call>
-    <!--Old method, calling CHAT-->
-    <Call name="addContext">
-        <Arg>/</Arg>
-        <Call name="addServlet">
-            <Arg>Alice</Arg>
-            <Arg>/CHAT</Arg>
             <Arg>org.aitools.programd.server.servlet.ProgramD</Arg>
         </Call>
     </Call>
