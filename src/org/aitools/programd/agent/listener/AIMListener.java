@@ -559,7 +559,7 @@ public class AIMListener extends Listener
             {
                 case '$':
                 case '{':
-                case '} ':
+                case '}':
                 case '[':
                 case ']':
                 case '(':

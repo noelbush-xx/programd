@@ -86,7 +86,7 @@ public class MessagePrinter
      *            user-defined
      * @param out
      *            (such as
-     * {@link java.lang.System.out System.out} )
+     * {@link java.lang.System#out System.out} )
      * @param destination
      *            destination flag (for choosing format)
      */
@@ -110,7 +110,7 @@ public class MessagePrinter
      *            user-defined
      * @param out
      *            (such as
-     * {@link java.lang.System.out System.out} )
+     * {@link java.lang.System#out System.out} )
      * @param destination
      *            destination flag (for choosing format)
      */

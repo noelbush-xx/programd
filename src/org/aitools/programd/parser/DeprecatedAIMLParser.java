@@ -201,8 +201,7 @@ public class DeprecatedAIMLParser
      * used if one can help it.
      * </p>
      * <p>
-     * The actual tag to process is driven by {@link TemplateParser#evaluate} ,
-     * so strict sequencing is used. For each valid tag, the associated
+     * Strict sequencing is used. For each valid tag, the associated
      * {@link org.aitools.programd.processor.AIMLProcessor AIMLProcessor} ,
      * resolution code or {@link GenericParser#shortcutTag} processor is
      * activated.

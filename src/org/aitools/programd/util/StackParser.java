@@ -9,9 +9,7 @@ import java.util.StringTokenizer;
  * Fitch.
  * 
  * @author Simeon Fitch sfitch@swri.org
- * @see <a
- *      href="http://groups.google.com/groups?hl=en&threadm=37F455F1.E490748%40mf.uni-lj.si&rnum=2&prev=/groups%3Fq%3Djava%2B%2522get%2Bmethod%2522%2Bcalled%2Bmethod%26hl%3Den%26sa%3DN%26tab%3Dwg">reference
- *      </a>
+ * @see <a href="http://groups.google.com/groups?hl=en&threadm=37F455F1.E490748%40mf.uni-lj.si&rnum=2&prev=/groups%3Fq%3Djava%2B%2522get%2Bmethod%2522%2Bcalled%2Bmethod%26hl%3Den%26sa%3DN%26tab%3Dwg">this message</a>
  */
 public class StackParser
 {
