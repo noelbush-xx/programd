@@ -451,7 +451,7 @@ public class FileManager
         if (!dir.isDirectory())
         {
             throw new UserError(
-                "\"" + dir.getPath() + "\" is not a valid directory path!");
+                "\"" + dirName + "\" is not a valid directory path!");
         }
         String[] list = dir.list(new WildCardFilter(pattern, '*'));
         if (list == null)
