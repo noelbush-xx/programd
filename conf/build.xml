@@ -3,10 +3,10 @@
     <!--Initialization Target-->
     <target name="init">
         <tstamp/>
-        <property name="Name" value="Alicebot Program D"/>
-        <property name="name" value="alicebot"/>
+        <property name="Name" value="Program D"/>
+        <property name="name" value="programd"/>
         <property name="version" value="4.2"/>
-        <property name="year" value="2002"/>
+        <property name="year" value="2003"/>
         
         <echo message="Building ${Name} ${version}...."/>
         
@@ -17,7 +17,7 @@
         
         <property name="src.dir" value="../src"/>
         <property name="lib.dir" value="../lib"/>
-        <property name="packages" value="org.alicebot.*"/>
+        <property name="packages" value="org.aitools.programd.*"/>
         
         <property name="build.dir" value="../classes"/>
         <property name="build.src" value="../src"/>
@@ -36,7 +36,7 @@
     <target name="usage">
         <echo message=""/>
         <echo message=""/>
-        <echo message="Alicebot Program D Build System"/>
+        <echo message="Program D Build System"/>
         <echo message="-------------------------------------------------------------"/>
         <echo message=""/>
         <echo message=" Available targets are:"/>
@@ -86,7 +86,7 @@
         <!--<fixcrlf srcdir="." includes="**/*.sh" cr="remove"/>-->
         <jar jarfile="../lib/${name}.jar">
             <fileset dir="${build.dest}/" includes="org/**"/>
-            <fileset dir="${build.src}/" includes="org/alicebot/gui/icons/**"/>
+            <fileset dir="${build.src}/" includes="org/aitools/programd/gui/icons/**"/>
         </jar>
     </target>
     
@@ -103,7 +103,6 @@
             noindex="false"
             windowtitle="${Name} API"
             doctitle="${Name} API"
-            bottom="Copyright &#169; ${year} A.L.I.C.E. AI Foundation. All Rights Reserved."
             />
     </target>
     

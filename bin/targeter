@@ -1,8 +1,5 @@
 #!/bin/sh
 # ==========================================================================
-# Alicebot Program D
-# Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
-#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
@@ -25,9 +22,9 @@ source $BASE/bin/common_functions.sh
 # Set up the Java environment.
 setup_java
 
-# Check for the alice lib.
-check_alice_lib
+# Check for the programd lib.
+check_programd_lib
 
 # Change to the Program D bin directory and launch the tool.
 cd $BASE/bin
-$JVM_COMMAND -classpath $ALICE_LIB -Xms64m -Xmx64m org.alicebot.targeting.TargetingTool $1
+$JVM_COMMAND -classpath $PROGRAMD_LIB -Xms64m -Xmx64m org.aitools.programd.targeting.gui.TargetingTool $1

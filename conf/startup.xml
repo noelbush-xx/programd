@@ -1,37 +1,12 @@
-<?xml version="1.0" encoding="Windows-1251"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <programd-startup>
     <bots>
-        <bot id="e-reference" enabled="true">
-            <!--<properties href="startup/e-reference/properties.xml"/>-->
-            <!--<predicates href="startup/e-reference/predicates.xml"/>-->
-            <!--<substitutions href="startup/e-reference/substitutions.xml"/>-->
-            <!--<sentence-splitters href="startup/e-reference/sentence-splitters.xml"/>-->
-            <learn>../aiml/common-general/*.aiml</learn>
-            <learn>../aiml/common-shops/*.aiml</learn>
-            <learn>../aiml/e-reference/*.aiml</learn>
+        <bot id="yourbot" enabled="true">
+            <properties href="properties.xml"/>
+            <predicates href="predicates.xml"/>
+            <substitutions href="substitutions.xml"/>
+            <sentence-splitters href="sentence-splitters.xml"/>
+            <learn>../aiml/*.aiml</learn>
         </bot>
-        <!--<bot id="citata" enabled="true">
-            <properties href="startup/citata/properties.xml"/>
-            <predicates href="startup/citata/predicates.xml"/>
-            <substitutions href="startup/citata/substitutions.xml"/>
-            <sentence-splitters href="startup/citata/sentence-splitters.xml"/>
-            <learn>/home/aiml/generic-wildcard.aiml</learn>
-            <learn>/home/aiml/common-general/*.aiml</learn>
-            <learn>/home/aiml/citata/*.aiml</learn>
-        </bot>
-        <bot id="xavier" enabled="true">
-            <properties href="startup/xavier/properties.xml"/>
-            <predicates href="startup/xavier/predicates.xml"/>
-            <substitutions href="startup/xavier/substitutions.xml"/>
-            <sentence-splitters href="startup/xavier/sentence-splitters.xml"/>
-            <learn>/home/aiml/xavier/*.aiml</learn>
-        </bot>
-        <bot id="masyanya" enabled="true">
-            <properties href="startup/masyanya/properties.xml"/>
-            <predicates href="startup/masyanya/predicates.xml"/>
-            <substitutions href="startup/masyanya/substitutions.xml"/>
-            <sentence-splitters href="startup/masyanya/sentence-splitters.xml"/>
-            <learn>/home/aiml/masyanya/*.aiml</learn>
-        </bot>-->
     </bots>
 </programd-startup>

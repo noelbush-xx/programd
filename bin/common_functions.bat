@@ -1,7 +1,4 @@
 rem ==========================================================================
-rem Alice Program D
-rem Copyright (C) 1995-2002, A.L.I.C.E. AI Foundation
-rem 
 rem This program is free software; you can redistribute it and/or
 rem modify it under the terms of the GNU General Public License
 rem as published by the Free Software Foundation; either version 2
@@ -63,7 +60,7 @@ rem Starts Program D using a given main class.
   if "%quit%"=="" call %0 setup_java
 
   rem Set up other paths to other needed jars and check their existence.
-  if "%quit%"=="" call %0 check_alice_lib
+  if "%quit%"=="" call %0 check_programd_lib
 
   if not "%quit%"=="" goto end
 
@@ -72,7 +69,7 @@ rem Starts Program D using a given main class.
   set SQL_LIB=%LIBS%\mysql_comp.jar
 
   rem Concatenate all paths into the classpath to be used.
-  set PROGRAMD_CLASSPATH=%SERVLET_LIB%;%ALICE_LIB%;%JS_LIB%;%SQL_LIB%;%HTTP_SERVER_LIB%
+  set PROGRAMD_CLASSPATH=%SERVLET_LIB%;%PROGRAMD_LIB%;%JS_LIB%;%SQL_LIB%;%HTTP_SERVER_LIB%
 
   rem Change to the Program D bin directory and start the main class.
   pushd %BASE%\bin
@@ -89,18 +86,18 @@ rem Sets up the lib directory.
 goto end
 
 
-rem Checks that the alicebot.jar exists.
-:check_alice_lib
+rem Checks that the programd.jar exists.
+:check_programd_lib
 
   rem Set lib directory (jars)
   call %0 setup_lib_dir
   
-  set ALICE_LIB=%LIBS%\alicebot.jar
-  if exist "%ALICE_LIB%" goto end
-  echo I can\'t find your alicebot.jar file.  Have you compiled it?
+  set PROGRAMD_LIB=%LIBS%\programd.jar
+  if exist "%PROGRAMD_LIB%" goto end
+  echo I can\'t find your programd.jar file.  Have you compiled it?
   echo If you downloaded the source-only version but don\'t have
   echo a Java compiler, you can download a pre-compiled version from
-  echo http://alicebot.org/downloads/foundation.php
+  echo http://aitools.org/downloads/
   echo
   set quit=yes
 goto end
@@ -119,7 +116,7 @@ rem will affect some messages.
 
   echo.
   echo I can't find the servlet.jar that ships with Program D.
-  echo Please see http://alicebot.org/downloads/foundation.php.
+  echo Please see http://aitools.org/downloads/.
   set quit=yes
   goto end
 

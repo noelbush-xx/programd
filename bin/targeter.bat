@@ -1,8 +1,5 @@
 @echo off
 rem ==========================================================================
-rem Alicebot Program D
-rem Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
-rem
 rem This program is free software; you can redistribute it and/or
 rem modify it under the terms of the GNU General Public License
 rem as published by the Free Software Foundation; either version 2
@@ -32,10 +29,10 @@ rem Set up the Java environment.
 if "%quit%"=="" call common_functions.bat setup_java
 
 rem Check for the alice lib.
-if "%quit%"=="" call common_functions.bat check_alice_lib
+if "%quit%"=="" call common_functions.bat check_programd_lib
 
 rem Launch the tool.
-if "%quit%"=="" %JVM_COMMAND% -classpath %ALICE_LIB% -Xms64m -Xmx64m org.alicebot.targeting.TargetingTool %1
+if "%quit%"=="" %JVM_COMMAND% -classpath %PROGRAMD_LIB% -Xms64m -Xmx64m org.aitools.programd.targeting.gui.TargetingTool %1
 
 rem On exit, go back to the original directory.
 popd

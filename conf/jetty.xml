@@ -18,7 +18,7 @@
         <Call name="addServlet">
             <Arg>Alice</Arg>
             <Arg>/</Arg>
-            <Arg>org.alicebot.server.servlet.Alice</Arg>
+            <Arg>org.aitools.programd.server.servlet.ProgramD</Arg>
         </Call>
     </Call>
     <!--Old method, calling CHAT-->
@@ -27,7 +27,7 @@
         <Call name="addServlet">
             <Arg>Alice</Arg>
             <Arg>/CHAT</Arg>
-            <Arg>org.alicebot.server.servlet.Alice</Arg>
+            <Arg>org.aitools.programd.server.servlet.ProgramD</Arg>
         </Call>
     </Call>
 </Configure>

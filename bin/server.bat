@@ -1,8 +1,5 @@
 @echo off
 rem ==========================================================================
-rem Alicebot Program D
-rem Copyright (C) 1995-2002, A.L.I.C.E. AI Foundation
-rem 
 rem This program is free software; you can redistribute it and/or
 rem modify it under the terms of the GNU General Public License
 rem as published by the Free Software Foundation; either version 2
@@ -15,7 +12,7 @@ rem USA.
 rem ==========================================================================
 
 rem This script launches a server-based version of
-rem Alicebot Program D, without the GUI.  The simple
+rem Program D, without the GUI.  The simple
 rem command shell will be available if so configured
 rem in server.properties.
 
@@ -31,10 +28,10 @@ call common_functions.bat check_env %1 %2 %3 %4
 rem Get "base" directory (root of Program D installation)
 if "%quit%"=="" call common_functions.bat set_base
 
-rem Start Program D using the AliceServer main class.
+rem Start Program D using the ProgramDServer main class.
 rem You can change the second argument to set the maximum memory
 rem (in MB) allocated to the JVM.
-if "%quit%"=="" call common_functions.bat start_programd org.alicebot.server.AliceServer 64 %1
+if "%quit%"=="" call common_functions.bat start_programd org.aitools.programd.server.ProgramDServer 64 %1
 
 rem On exit, go back to the original directory.
 popd

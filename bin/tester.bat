@@ -2,9 +2,6 @@
 rem This batch file feeds the testcase.txt file to the server, after erasing
 rem the chat log.
 rem ==========================================================================
-rem Alice Program D
-rem Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
-rem 
 rem This program is free software; you can redistribute it and/or
 rem modify it under the terms of the GNU General Public License
 rem as published by the Free Software Foundation; either version 2

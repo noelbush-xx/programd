@@ -1,7 +1,4 @@
 # ==========================================================================
-# Alice Program D
-# Copyright (C) 1995-2002, A.L.I.C.E. AI Foundation
-# 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
@@ -26,33 +23,33 @@ function start_programd()
   setup_java
 
   # Set up other paths to other needed jars and check their existence.
-  check_alice_lib
+  check_programd_lib
 
   # Set SQL_LIB to the location of your database driver.
   # No warning is provided if it cannot be found.
   SQL_LIB=$LIBS/mysql_comp.jar
 
   # Concatenate all paths into the classpath to be used.
-  PROGRAMD_CLASSPATH=$SERVLET_LIB:$ALICE_LIB:$JS_LIB:$SQL_LIB:$HTTP_SERVER_LIB
+  PROGRAMD_CLASSPATH=$SERVLET_LIB:$PROGRAMD_LIB:$JS_LIB:$SQL_LIB:$HTTP_SERVER_LIB
 
   # Change to the Program D bin directory and start the main class.
   cd $BASE/bin
   $JVM_COMMAND -classpath $PROGRAMD_CLASSPATH -Xms256m -Xmx512m $1 $3
 }
 
-# Checks that the alicebot.jar exists.
-function check_alice_lib()
+# Checks that the programd.jar exists.
+function check_programd_lib()
 {
   # Set lib directory (jars)
   setup_lib_dir
   
-  ALICE_LIB=$LIBS/alicebot.jar
-  if [ ! -r $ALICE_LIB ]
+  PROGRAMD_LIB=$LIBS/programd.jar
+  if [ ! -r $PROGRAMD_LIB ]
   then
-    echo I can\'t find your alicebot.jar file.  Have you compiled it?
+    echo I can\'t find your programd.jar file.  Have you compiled it?
     echo If you downloaded the source-only version but don\'t have
     echo a Java compiler, you can download a pre-compiled version from
-    echo http://alicebot.org/downloads/foundation.php
+    echo http://aitools.org/downloads/
     echo
     exit 1
   fi
@@ -77,7 +74,7 @@ function setup_programd()
   then
     echo
     echo I can\'t find the servlet.jar that ships with Program D.
-    echo Please see http://alicebot.org/downloads/foundation.php.
+    echo Please see http://aitools.org/downloads/.
     echo
     exit 1
   fi
