@@ -7,25 +7,28 @@
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package org.aitools.programd.processor;
+package org.aitools.programd.responder;
 
-/**
- * Should be thrown by processors when they find content that they cannot
- * handle.
- * 
- * @since 4.1.3
- * @author Noel Bush
- * @version 4.2
- */
-public class ProcessorException extends Exception
+public class AIMResponder implements Responder
 {
-    public ProcessorException(String message)
+    public AIMResponder()
     {
-        super(message);
-    }
-    
-    public ProcessorException(String message, Throwable exception)
-    {
-        super(message, exception);
+        // Nothing to do.
     } 
+
+    public String preprocess(String input)
+    {
+        return input;
+    } 
+
+    public String append(String input, String response, String appendTo)
+    {
+        return appendTo + response;
+    } 
+
+    public String postprocess(String reply)
+    {
+        return reply.substring(0, Math.min(1024, reply.length()));
+    }
+
 }

@@ -9,8 +9,10 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.GenericParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * A <code>Processor</code> is responsible for processing an element.
@@ -22,6 +24,9 @@ import org.aitools.programd.parser.XMLNode;
  */
 abstract public class Processor
 {
+    /** The Core to use. */
+    protected Core core;
+    
     /*
      * Every Processor should have a String called label. But we don't specify
      * this here, to avoid a situation in which implementors are accused of
@@ -49,13 +54,16 @@ abstract public class Processor
 
     /** The string &quot;enabled&quot;. */
     protected static final String ENABLED = "enabled";
+    
+    public Processor(Core coreToUse)
+    {
+        this.core = coreToUse;
+    }
 
     /**
      * Processes an element.
      * 
-     * @param level
-     *            the starting level in the XML trie
-     * @param tag
+     * @param element
      *            the element to process
      * @param parser
      *            the parser calling the processor
@@ -63,5 +71,5 @@ abstract public class Processor
      * @throws ProcessorException
      *             if the <code>tag</code> or its contents are invalid
      */
-    abstract public String process(int level, XMLNode tag, GenericParser parser) throws ProcessorException;
+    abstract public String process(Element element, GenericParser parser) throws ProcessorException;
 }

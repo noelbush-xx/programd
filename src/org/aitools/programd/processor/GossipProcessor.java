@@ -9,12 +9,13 @@
 
 package org.aitools.programd.processor;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
-import org.aitools.programd.util.Globals;
-import org.aitools.programd.util.XMLResourceSpec;
-import org.aitools.programd.util.logging.Log;
-import org.aitools.programd.util.logging.XMLLog;
 
 /**
  * Handles a
@@ -28,32 +29,21 @@ import org.aitools.programd.util.logging.XMLLog;
 public class GossipProcessor extends AIMLProcessor
 {
     public static final String label = "gossip";
+    
+    private static final Logger logger = Logger.getLogger("programd.gossip");
 
-    private static XMLResourceSpec spec = new XMLResourceSpec();
-    static
+    public GossipProcessor(Core coreToUse)
     {
-        spec.path = Globals.getProperty("programd.logging.xml.gossip.path", "./aiml/gossip.aiml");
-        spec.root = "aiml";
-    } 
-
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
-
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
     {
-        if (tag.XMLType == XMLNode.TAG)
-        {
-            // Get the gossip.
-            String response = parser.evaluate(level++, tag.XMLChild);
+        // Get the gossip.
+        String response = parser.evaluate(element.getChildNodes());
 
-            // Put the gossip in the log.
-            if (Globals.gossipToXML())
-            {
-                XMLLog.log(response + LINE_SEPARATOR, spec);
-            } 
-            Log.log(response, Log.GOSSIP);
-            return EMPTY_STRING;
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<gossip></gossip> must have content!");
-    } 
+        // Put the gossip in the log.
+        logger.log(Level.INFO, response);
+        return EMPTY_STRING;
+    }
 }

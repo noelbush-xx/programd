@@ -9,29 +9,31 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * Handles an
  * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-sr">sr</a></code>
  * element.
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Noel Bush
  */
 public class SRProcessor extends AIMLProcessor
 {
     public static final String label = "sr";
 
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public SRProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.EMPTY)
-        {
-            return parser.shortcutTag(level, SRAIProcessor.label, XMLNode.TAG, EMPTY_STRING, StarProcessor.label,
-                    XMLNode.EMPTY);
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<sr/> cannot have content!");
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
+    {
+        return parser.shortcutTag(element, label, StarProcessor.label, Node.ELEMENT_NODE);
     } 
 }

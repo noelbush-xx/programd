@@ -9,10 +9,10 @@
 
 package org.aitools.programd.processor;
 
-import org.aitools.programd.bot.Bots;
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
-import org.aitools.programd.util.XMLKit;
 
 /**
  * Handles a
@@ -23,27 +23,20 @@ import org.aitools.programd.util.XMLKit;
  */
 public class BotProcessor extends AIMLProcessor
 {
+    public BotProcessor(Core coreToUse)
+    {
+        super(coreToUse);
+    }
+    
     public static final String label = "bot";
 
     /**
      * Retrieves the value of the desired bot predicate from
-     * {@link org.aitools.programd.util.Globals} .
-     * 
-     * @see AIMLProcessor#process(int, XMLNode,
-     *      org.aitools.programd.parser.GenericParser)
+     * {@link org.aitools.programd.server.Settings}.
      */
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public String process(Element element, TemplateParser parser)
     {
-        if (tag.XMLType == XMLNode.EMPTY)
-        {
-            String name = XMLKit.getAttributeValue(NAME, tag.XMLAttr);
-            if (name.equals(EMPTY_STRING))
-            {
-                return name;
-            } 
-            return Bots.getBot(parser.getBotID()).getPropertyValue(name);
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<bot/> cannot contain element content!");
-    } 
+        return parser.getCore().getBots().getBot(parser.getBotID()).getPropertyValue(
+                element.getAttribute(NAME));
+    }
 }

@@ -9,39 +9,42 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * Handles a
  * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-sentence">sentence</a></code>
  * element.
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
+ * @author Noel Bush
  */
 public class SentenceProcessor extends AIMLProcessor
 {
     public static final String label = "sentence";
 
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public SentenceProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.TAG)
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
+    {
+        String response = parser.evaluate(element.getChildNodes());
+        if (response.equals(EMPTY_STRING))
         {
-            String response = parser.evaluate(level++, tag.XMLChild);
-            if (response.equals(EMPTY_STRING))
-            {
-                return response;
-            } 
-            if (response.trim().length() > 1)
-            {
-                return response.substring(0, 1).toUpperCase() + response.substring(1);
-            } 
-            // (otherwise...)
             return response;
         } 
+        if (response.trim().length() > 1)
+        {
+            return response.substring(0, 1).toUpperCase() + response.substring(1);
+        } 
         // (otherwise...)
-        throw new AIMLProcessorException("<sentence></sentence> must have content!");
+        return response;
     } 
 }

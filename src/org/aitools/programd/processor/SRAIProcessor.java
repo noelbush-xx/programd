@@ -9,26 +9,35 @@
 
 package org.aitools.programd.processor;
 
-import java.util.Iterator;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
-import org.aitools.programd.multiplexor.Multiplexor;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.GenericParser;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
-import org.aitools.programd.util.Globals;
-import org.aitools.programd.util.Trace;
-import org.aitools.programd.util.logging.Log;
 
 /**
  * Implements the &lt;srai/&gt; element.
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
+ * @author Noel Bush
  */
 public class SRAIProcessor extends AIMLProcessor
 {
     public static final String label = "srai";
+    
+    public SRAIProcessor(Core coreToUse)
+    {
+        super(coreToUse);
+    }
+    
+    private static final Logger errorLogger = Logger.getLogger("programd.error");
 
     /**
      * Processes a &lt;srai/&gt; element. First, all elements contained within a
@@ -38,50 +47,48 @@ public class SRAIProcessor extends AIMLProcessor
      * 
      * @see AIMLProcessor#process(int, XMLNode, GenericParser)
      */
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public String process(Element element, TemplateParser parser)
     {
-        if (tag.XMLType == XMLNode.TAG)
+        // Check for some simple kinds of infinite loops.
+        if (element.getChildNodes().getLength() == 1)
         {
-            // Check for infinite loops.
-            if (tag.XMLChild.size() == 1)
+            Node sraiChild = element.getChildNodes().item(0);
+
+            if (sraiChild.getNodeType() == Node.TEXT_NODE)
             {
-                XMLNode sraiChild = tag.XMLChild.get(0);
+                String sraiContent = sraiChild.getTextContent();
+                Iterator inputsIterator = parser.getInputs().iterator();
 
-                if (sraiChild.XMLType == XMLNode.DATA)
+                while (inputsIterator.hasNext())
                 {
-                    String sraiContent = sraiChild.XMLData;
-                    Iterator inputsIterator = parser.getInputs().iterator();
+                    String input = (String) inputsIterator.next();
 
-                    while (inputsIterator.hasNext())
+                    if (sraiContent.equalsIgnoreCase(input))
                     {
-                        String input = (String) inputsIterator.next();
-
-                        if (sraiContent.equalsIgnoreCase(input))
+                        String infiniteLoopInput = parser.getCore().getSettings().getInfiniteLoopInput();
+                        if (!sraiContent.equalsIgnoreCase(infiniteLoopInput))
                         {
-                            if (!sraiContent.equalsIgnoreCase(Globals.getInfiniteLoopInput()))
-                            {
-                                sraiChild.XMLData = Globals.getInfiniteLoopInput();
-                                Log.userinfo("Infinite loop detected; substituting \"" + Globals.getInfiniteLoopInput()
-                                        + "\".", Log.RUNTIME);
-                            } 
-                            else
-                            {
-                                Log.userinfo("Unrecoverable infinite loop.", Log.RUNTIME);
-                                return EMPTY_STRING;
-                            } 
+                            sraiChild.setTextContent(infiniteLoopInput);
+                            errorLogger.log(Level.WARNING, "Infinite loop detected; substituting \"" + infiniteLoopInput
+                                    + "\".");
+                        } 
+                        else
+                        {
+                            errorLogger.log(Level.SEVERE, "Unrecoverable infinite loop.");
+                            return EMPTY_STRING;
                         } 
                     } 
-                    parser.addInput(sraiContent);
                 } 
+                parser.addInput(sraiContent);
             } 
-            if (Globals.showMatchTrace())
-            {
-                Trace.userinfo("Symbolic Reduction:");
-            } 
-            return Multiplexor.getInternalResponse(parser.evaluate(level++, tag.XMLChild), parser.getUserID(), parser
-                    .getBotID(), parser);
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<srai></srai> must have content!");
+        }
+        /*
+        if (Settings.showMatchTrace())
+        {
+            Trace.userinfo("Symbolic Reduction:");
+        }
+        */ 
+        return this.core.getMultiplexor().getInternalResponse(parser.evaluate(element.getChildNodes()), parser.getUserID(), parser
+                .getBotID(), parser);
     } 
 }

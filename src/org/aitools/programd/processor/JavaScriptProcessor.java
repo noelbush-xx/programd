@@ -9,11 +9,13 @@
 
 package org.aitools.programd.processor;
 
-import org.aitools.programd.interpreter.ActiveJavaScriptInterpreter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
-import org.aitools.programd.util.Globals;
-import org.aitools.programd.util.logging.Log;
 
 /**
  * Handles a
@@ -27,25 +29,29 @@ import org.aitools.programd.util.logging.Log;
 public class JavaScriptProcessor extends AIMLProcessor
 {
     public static final String label = "javascript";
+    
+    private static final Logger errorLogger = Logger.getLogger("programd.error");
 
+    private static final Logger interpreterLogger = Logger.getLogger("programd.interpreter");
+
+    public JavaScriptProcessor(Core coreToUse)
+    {
+        super(coreToUse);
+    }
+    
     /**
      * Returns the result of processing the contents of the
      * <code>javascript</code> element by the JavaScript interpreter.
      */
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public String process(Element element, TemplateParser parser)
     {
         // Don't use the system tag if not permitted.
-        if (!Globals.jsAccessAllowed())
+        if (!parser.getCore().getSettings().javascriptAllowed())
         {
-            Log.userinfo("Use of <javascript> prohibited!", Log.INTERPRETER);
+            errorLogger.log(Level.WARNING, "Use of <javascript> prohibited!");
             return EMPTY_STRING;
-        } 
-        if (tag.XMLType == XMLNode.TAG)
-        {
-            Log.devinfo("Calling JavaScript interpreter " + Globals.javaScriptInterpreter(), Log.INTERPRETER);
-            return ActiveJavaScriptInterpreter.getInstance().evaluate(parser.evaluate(level++, tag.XMLChild));
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<javascript></javascript> must have content!");
+        }
+        interpreterLogger.log(Level.FINE, "Calling JavaScript interpreter.");
+        return parser.getCore().getInterpreter().evaluate(parser.evaluate(element.getChildNodes()));
     } 
 }

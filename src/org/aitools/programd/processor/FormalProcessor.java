@@ -9,18 +9,21 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+
 import java.util.StringTokenizer;
 
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * Handles a
  * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-formal">formal</a></code>
  * element.
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Jon Baer
+ * @author Noel Bush
  */
 public class FormalProcessor extends AIMLProcessor
 {
@@ -29,29 +32,29 @@ public class FormalProcessor extends AIMLProcessor
     // Convenience constants.
     private static final String SPACE = " ";
 
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public FormalProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.TAG)
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
+    {
+        String response = parser.evaluate(element.getChildNodes());
+        if (response.equals(EMPTY_STRING))
         {
-            String response = parser.evaluate(level++, tag.XMLChild);
-            if (response.equals(EMPTY_STRING))
+            return response;
+        }
+        StringTokenizer tokenizer = new StringTokenizer(response, SPACE);
+        StringBuffer result = new StringBuffer(response.length());
+        while (tokenizer.hasMoreTokens())
+        {
+            String word = tokenizer.nextToken();
+            if (result.length() > 0)
             {
-                return response;
-            } 
-            StringTokenizer tokenizer = new StringTokenizer(response, SPACE);
-            StringBuffer result = new StringBuffer(response.length());
-            while (tokenizer.hasMoreTokens())
-            {
-                String word = tokenizer.nextToken();
-                if (result.length() > 0)
-                {
-                    result.append(SPACE);
-                } 
-                result.append(word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase());
-            } 
-            return result.toString();
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<formal></formal> must have content!");
-    } 
+                result.append(SPACE);
+            }
+            result.append(word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase());
+        }
+        return result.toString();
+    }
 }

@@ -9,8 +9,10 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * Handles an
@@ -24,13 +26,13 @@ public class IDProcessor extends AIMLProcessor
 {
     public static final String label = "id";
 
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public IDProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.EMPTY)
-        {
-            return parser.getUserID();
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<id/> cannot have content!");
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
+    {
+        return parser.getUserID();
     } 
 }

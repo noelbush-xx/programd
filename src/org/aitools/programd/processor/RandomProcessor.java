@@ -9,8 +9,10 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 import org.aitools.programd.util.LRUCache;
 import org.aitools.programd.util.MersenneTwisterFast;
 
@@ -45,7 +47,7 @@ import org.aitools.programd.util.MersenneTwisterFast;
  * <code>m * n * n</code> independent random number series.</li>
  * </ul>
  * 
- * @version 4.1.5
+ * @version 4.2
  * @author Noel Bush
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
@@ -64,47 +66,35 @@ public class RandomProcessor extends AIMLProcessor
      */
     private static final LRUCache<String, MersenneTwisterFast> generators = new LRUCache<String, MersenneTwisterFast>(100);
 
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public RandomProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.TAG)
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
+    {
+        // Construct the identifying string (botid + userid + element
+        // contents).
+        String identifier = parser.getBotID() + parser.getUserID() + element.toString();
+
+        // Does the generators map already contain this one?
+        MersenneTwisterFast generator = generators.get(identifier);
+        if (generator == null)
         {
-            // Empty <random></random> doesn't produce anything.
-            if (tag.XMLChild == null)
-            {
-                return EMPTY_STRING;
-            } 
-
-            // Construct the identifying string (botid + userid + element
-            // contents).
-            String identifier = parser.getBotID() + parser.getUserID() + tag.toString();
-
-            // Does the generators map already contain this one?
-            MersenneTwisterFast generator = generators.get(identifier);
-            if (generator == null)
-            {
-                generator = new MersenneTwisterFast(System.currentTimeMillis());
-                generators.put(identifier, generator);
-            } 
-
-            int nodeCount = parser.nodeCount(LI, tag.XMLChild, false);
-
-            // Zero <li></li> children means that there's nothing to do.
-            if (nodeCount == 0)
-            {
-                return EMPTY_STRING;
-            } 
-
-            // Only one <li></li> child means we don't have to pick anything.
-            if (nodeCount == 1)
-            {
-                return parser.evaluate(level++, parser.getNode(LI, tag.XMLChild, 1).XMLChild);
-            } 
-
-            // Select a random element of the listitem.
-            return parser
-                    .evaluate(level++, parser.getNode(LI, tag.XMLChild, generator.nextInt(nodeCount) + 1).XMLChild);
+            generator = new MersenneTwisterFast(System.currentTimeMillis());
+            generators.put(identifier, generator);
         } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<random></random> must have content!");
+
+        int nodeCount = parser.elementCount(LI, element.getChildNodes());
+
+        // Only one <li></li> child means we don't have to pick anything.
+        if (nodeCount == 1)
+        {
+            return parser.evaluate(parser.getNode(LI, element.getChildNodes(), 1).getChildNodes());
+        } 
+
+        // Otherwise, select a random element of the listitem.
+        return parser
+                .evaluate(parser.getNode(LI, element.getChildNodes(), generator.nextInt(nodeCount) + 1).getChildNodes());
     } 
 }

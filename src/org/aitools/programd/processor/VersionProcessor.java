@@ -9,29 +9,30 @@
 
 package org.aitools.programd.processor;
 
-import org.aitools.programd.graph.Graphmaster;
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * Handles a
  * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-version">version</a></code>
  * element.
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Noel Bush
  */
 public class VersionProcessor extends AIMLProcessor
 {
     public static final String label = "version";
 
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public VersionProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.EMPTY)
-        {
-            return Graphmaster.VERSION;
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<version/> cannot have content!");
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
+    {
+        return Core.VERSION;
     } 
 }

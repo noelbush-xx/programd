@@ -7,25 +7,12 @@
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package org.aitools.programd.processor;
+package org.aitools.programd.listener;
 
-/**
- * Should be thrown by processors when they find content that they cannot
- * handle.
- * 
- * @since 4.1.3
- * @author Noel Bush
- * @version 4.2
- */
-public class ProcessorException extends Exception
+public class InvalidListenerParameterException extends Exception
 {
-    public ProcessorException(String message)
+    public InvalidListenerParameterException(String message)
     {
         super(message);
     }
-    
-    public ProcessorException(String message, Throwable exception)
-    {
-        super(message, exception);
-    } 
 }

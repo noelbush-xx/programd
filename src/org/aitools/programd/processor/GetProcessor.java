@@ -9,37 +9,33 @@
 
 package org.aitools.programd.processor;
 
-import org.aitools.programd.multiplexor.PredicateMaster;
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
-import org.aitools.programd.util.XMLKit;
 
 /**
  * Handles a
  * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-get">get</a></code>
  * element.
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
+ * @author Noel Bush
  */
 public class GetProcessor extends AIMLProcessor
 {
     public static final String label = "get";
 
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public GetProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.EMPTY)
-        {
-            String name = XMLKit.getAttributeValue(NAME, tag.XMLAttr);
-
-            if (name.equals(EMPTY_STRING))
-            {
-                throw new AIMLProcessorException("<get/> must have a non-empty name attribute.");
-            } 
-            return PredicateMaster.get(name, parser.getUserID(), parser.getBotID());
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<get/> cannot have content!");
-    } 
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
+    {
+        return parser.getCore().getPredicateMaster().get(element.getAttribute(NAME), parser.getUserID(),
+                parser.getBotID());
+    }
 }

@@ -9,15 +9,17 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * Handles a
  * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-thatstar">thatstar</a></code>
  * element.
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  * @author Noel Bush
@@ -26,13 +28,13 @@ public class ThatStarProcessor extends IndexedPredicateProcessor
 {
     public static final String label = "thatstar";
 
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public ThatStarProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.EMPTY)
-        {
-            return super.process(level, tag, parser, parser.getThatStars(), 1);
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<thatstar/> cannot have content!");
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
+    {
+        return super.process(element, parser, parser.getThatStars(), 1);
     } 
 }

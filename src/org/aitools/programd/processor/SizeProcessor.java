@@ -9,9 +9,10 @@
 
 package org.aitools.programd.processor;
 
-import org.aitools.programd.graph.Graphmaster;
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * Handles a
@@ -25,13 +26,13 @@ public class SizeProcessor extends AIMLProcessor
 {
     public static final String label = "size";
 
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public SizeProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.EMPTY)
-        {
-            return String.valueOf(Graphmaster.getTotalCategories());
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<size/> cannot have content!");
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
+    {
+        return String.valueOf(parser.getCore().getGraphmaster().getTotalCategories());
     } 
 }

@@ -9,15 +9,17 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * Handles a
  * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-star">star</a></code>
  * element.
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  * @author Noel Bush
@@ -26,13 +28,13 @@ public class StarProcessor extends IndexedPredicateProcessor
 {
     public static final String label = "star";
 
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public StarProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.EMPTY)
-        {
-            return super.process(level, tag, parser, parser.getInputStars(), 1);
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<star/> cannot have element content!");
-    } 
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
+    {
+        return super.process(element, parser, parser.getInputStars(), 1);
+    }
 }

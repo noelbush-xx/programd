@@ -9,30 +9,33 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+
 import java.util.Date;
 
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * Handles a
  * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-date">date</a></code>
  * element.
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Pedro Colla
+ * @author Noel Bush
  */
 public class DateProcessor extends AIMLProcessor
 {
     public static final String label = "date";
 
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public DateProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.EMPTY)
-        {
-            return new Date().toString();
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<date/> cannot have content!");
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
+    {
+        return new Date().toString();
     } 
 }

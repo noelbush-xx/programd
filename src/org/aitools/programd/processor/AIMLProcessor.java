@@ -9,26 +9,33 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.GenericParser;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * An <code>AIMLProcessor</code> is responsible for processing a particular
  * AIML element.
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  * @author Noel Bush
  */
 abstract public class AIMLProcessor extends Processor
 {
-    public String process(int level, XMLNode tag, GenericParser parser) throws ProcessorException
+    public AIMLProcessor(Core coreToUse)
+    {
+        super(coreToUse);
+    }
+    
+    public String process(Element element, GenericParser parser) throws ProcessorException
     {
         try
         {
-            return process(level, tag, (TemplateParser) parser);
+            return process(element, (TemplateParser)parser);
         } 
         catch (ClassCastException e)
         {
@@ -36,5 +43,5 @@ abstract public class AIMLProcessor extends Processor
         } 
     } 
 
-    abstract public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException;
+    abstract public String process(Element element, TemplateParser parser) throws AIMLProcessorException;
 }

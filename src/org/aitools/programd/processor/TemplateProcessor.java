@@ -16,27 +16,24 @@ import org.aitools.programd.parser.TemplateParser;
 
 /**
  * Handles a
- * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-think">think</a></code>
+ * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-think">template</a></code>
  * element.
  * 
  * @version 4.2
  * 
- * @author Jon Baer
- * @author Thomas Ringate, Pedro Colla
  * @author Noel Bush
  */
-public class ThinkProcessor extends AIMLProcessor
+public class TemplateProcessor extends AIMLProcessor
 {
-    public static final String label = "think";
+    public static final String label = "template";
 
-    public ThinkProcessor(Core coreToUse)
+    public TemplateProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
     
     public String process(Element element, TemplateParser parser)
     {
-        parser.evaluate(element.getChildNodes());
-        return EMPTY_STRING;
+        return parser.evaluate(element.getChildNodes());
     } 
 }

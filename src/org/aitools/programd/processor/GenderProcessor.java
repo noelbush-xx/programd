@@ -9,12 +9,13 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import java.util.HashMap;
 
-import org.aitools.programd.bot.Bots;
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
-import org.aitools.programd.util.Globals;
 import org.aitools.programd.util.Substituter;
 
 /**
@@ -24,7 +25,7 @@ import org.aitools.programd.util.Substituter;
  * element.
  * </p>
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  * @author Noel Bush
@@ -36,35 +37,28 @@ public class GenderProcessor extends AIMLProcessor
     /** The map of substitutions to be performed on an input. */
     private static HashMap<String, String> substitutionMap = new HashMap<String, String>();
 
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public GenderProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.TAG)
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser) throws AIMLProcessorException
+    {
+        if (element.getChildNodes().getLength() > 0)
         {
             // This looks ugly, but completely avoids a temporary variable.
             try
             {
-                return parser.processResponse(applySubstitutions(parser.evaluate(level++, tag.XMLChild), parser
+                return parser.processResponse(applySubstitutions(parser.evaluate(element.getChildNodes()), parser
                         .getBotID()));
             } 
             catch (ProcessorException e)
             {
                 throw (AIMLProcessorException) e;
             } 
-        } 
-        else if (tag.XMLType == XMLNode.EMPTY)
-        {
-            if (!Globals.supportDeprecatedTags())
-            {
-                return parser.shortcutTag(level, label, XMLNode.TAG, EMPTY_STRING, StarProcessor.label, XMLNode.EMPTY);
-            } 
-            // (otherwise...)
-            return parser.shortcutTag(level, BotProcessor.label, XMLNode.EMPTY, "name=\"gender\"", EMPTY_STRING,
-                    XMLNode.EMPTY);
-        } 
-        else
-        {
-            throw new AIMLProcessorException("Invalid gender element!");
-        } 
+        }
+        // otherwise...
+        return parser.shortcutTag(element, label, StarProcessor.label, Node.ELEMENT_NODE);
     } 
 
     /**
@@ -75,9 +69,9 @@ public class GenderProcessor extends AIMLProcessor
      *            the input on which to perform substitutions
      * @return the input with substitutions performed
      */
-    public static String applySubstitutions(String input, String botid)
+    public String applySubstitutions(String input, String botid)
     {
-        return Substituter.applySubstitutions(Bots.getBot(botid).getGenderSubstitutionsMap(), input);
+        return Substituter.applySubstitutions(this.core.getBots().getBot(botid).getGenderSubstitutionsMap(), input);
     } 
 
     /**

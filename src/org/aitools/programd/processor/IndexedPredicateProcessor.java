@@ -9,13 +9,14 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+
 import java.util.ArrayList;
 
+import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
-import org.aitools.programd.bot.Bots;
-import org.aitools.programd.multiplexor.PredicateMaster;
+import org.aitools.programd.parser.GenericParser;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.XMLKit;
 
@@ -29,6 +30,11 @@ import org.aitools.programd.util.XMLKit;
  */
 abstract public class IndexedPredicateProcessor extends AIMLProcessor
 {
+    public IndexedPredicateProcessor(Core coreToUse)
+    {
+        super(coreToUse);
+    }
+    
     /**
      * Processes an indexed predicate with <code>dimensions</code> dimensions
      * (must be either <code>1</code> or <code>2</code>)
@@ -40,7 +46,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
      * @param dimensions
      *            the number of dimensions (<code>1</code> or <code>2</code>)
      */
-    public String process(int level, XMLNode tag, TemplateParser parser, String name, int dimensions)
+    public String process(Element element, TemplateParser parser, String name, int dimensions)
     {
         // Only 1 or 2 dimensions allowed.
         if (!((dimensions == 1) || (dimensions == 2)))
@@ -49,7 +55,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         } 
 
         // Get a valid 2-dimensional index.
-        int indexes[] = TemplateParser.getValid2dIndex(tag);
+        int indexes[] = GenericParser.getValid2dIndex(element);
 
         if (indexes[0] <= 0)
         {
@@ -58,10 +64,10 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
 
         // Get entire predicate value at this index (may contain multiple
         // "sentences").
-        String value = PredicateMaster.get(name, indexes[0], parser.getUserID(), parser.getBotID());
+        String value = parser.getCore().getPredicateMaster().get(name, indexes[0], parser.getUserID(), parser.getBotID());
 
         // Split predicate into sentences.
-        Bot bot = Bots.getBot(parser.getBotID());
+        Bot bot = parser.getCore().getBots().getBot(parser.getBotID());
         ArrayList sentenceList = bot.sentenceSplit(value);
 
         int sentenceCount = sentenceList.size();
@@ -96,7 +102,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
      * @param dimensions
      *            the number of dimensions (<code>1</code> only)
      */
-    public String process(int level, XMLNode tag, TemplateParser parser, ArrayList predicates, int dimensions)
+    public String process(Element element, TemplateParser parser, ArrayList predicates, int dimensions)
     {
         // Only 1 dimension is supported.
         if (dimensions != 1)
@@ -111,7 +117,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         } 
 
         // Get a valid 1-dimensional index.
-        int index = TemplateParser.getValid1dIndex(tag);
+        int index = GenericParser.getValid1dIndex(element);
 
         // Vectors are indexed starting with 0, so shift -1.
         index--;

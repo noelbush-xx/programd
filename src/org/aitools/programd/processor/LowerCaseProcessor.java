@@ -9,28 +9,31 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * Handles a
  * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-lowercase">lowercase</a></code>
  * element.
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Jon Baer
+ * @author Noel Bush
  */
 public class LowerCaseProcessor extends AIMLProcessor
 {
     public static final String label = "lowercase";
 
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public LowerCaseProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.TAG)
-        {
-            return parser.evaluate(level++, tag.XMLChild).toLowerCase();
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<lowercase></lowercase> must have content!");
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
+    {
+        return parser.evaluate(element.getChildNodes()).toLowerCase();
     } 
 }

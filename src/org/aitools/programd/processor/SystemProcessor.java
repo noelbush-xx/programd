@@ -9,19 +9,21 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.aitools.programd.Core;
+import org.aitools.programd.CoreSettings;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.Globals;
 import org.aitools.programd.util.StringKit;
-import org.aitools.programd.util.logging.Log;
 
 /**
  * <p>
@@ -34,24 +36,32 @@ import org.aitools.programd.util.logging.Log;
  * is harmful.
  * </p>
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Jon Baer
  * @author Mark Anacker
  * @author Thomas Ringate, Pedro Colla
+ * @author Noel Bush
  */
 public class SystemProcessor extends AIMLProcessor
 {
     public static final String label = "system";
 
     /**
-     * Known names of Unix operating systems, which tend to require the array
+     * Known names of Unix-like operating systems, which tend to require the array
      * form of Runtime.exec().
      */
-    private static final String[] arrayFormOSnames =
-        { "mac os x", "linux", "solaris", "sunos", "mpe", "hp-ux", "pa_risc", "aix", "freebsd", "irix", "unix" } ;
+    private static final String[] arrayFormOSnames = { "mac os x", "linux", "solaris", "sunos", "mpe", "hp-ux",
+            "pa_risc", "aix", "freebsd", "irix", "unix" };
+
+    /** For convenience, the system line separator. */
+    protected static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
 
     /** Whether to use the array form of Runtime.exec(). */
     private static boolean useArrayExecForm;
+    
+    private static final Logger errorLogger = Logger.getLogger("programd.error");
+
+    private static final Logger systemLogger = Logger.getLogger("programd.system");
 
     /**
      * Tries to guess whether to use the array form of Runtime.exec().
@@ -64,106 +74,101 @@ public class SystemProcessor extends AIMLProcessor
             if (os.indexOf(arrayFormOSnames[index]) != -1)
             {
                 useArrayExecForm = true;
-            } 
-        } 
-    } 
+            }
+        }
+    }
 
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public SystemProcessor(Core coreToUse)
     {
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
+    {
+        CoreSettings coreSettings = parser.getCore().getSettings();
+        
         // Don't use the system tag if not permitted.
-        if (!Globals.osAccessAllowed())
+        if (!coreSettings.osAccessAllowed())
         {
-            Log.userinfo("Use of <system> prohibited!", Log.SYSTEM);
+            errorLogger.log(Level.WARNING, "Use of <system> prohibited!");
             return EMPTY_STRING;
-        } 
+        }
 
-        String directoryPath = Globals.getSystemDirectory();
-        String prefix = Globals.getSystemPrefix();
+        String directoryPath = coreSettings.getSystemInterpreterDirectory();
+        String prefix = coreSettings.getSystemInterpreterPrefix();
 
-        if (tag.XMLType == XMLNode.TAG)
+        String response = parser.evaluate(element.getChildNodes());
+        if (prefix != null)
         {
-            String response = parser.evaluate(level++, tag.XMLChild);
-            if (prefix != null)
+            response = prefix + response;
+        }
+        String output = EMPTY_STRING;
+        response = response.trim();
+        systemLogger.log(Level.FINEST, "<system> call:" + LINE_SEPARATOR + response);
+        try
+        {
+            File directory = null;
+            if (directoryPath != null)
             {
-                response = prefix + response;
-            } 
-            String output = EMPTY_STRING;
-            response = response.trim();
-            Log.log("<system> call:", Log.SYSTEM);
-            Log.log(response, Log.SYSTEM);
+                systemLogger.log(Level.FINEST, "Executing <system> call in \"" + directoryPath + "\"");
+                directory = FileManager.getFile(directoryPath);
+                if (!directory.isDirectory())
+                {
+                    systemLogger.log(Level.WARNING, "programd.system-interpreter.directory (\"" + directoryPath
+                            + "\") does not exist or is not a directory.");
+                    return EMPTY_STRING;
+                }
+            }
+            else
+            {
+                systemLogger.log(Level.SEVERE, "No programd.interpreter.system.directory defined!");
+                return EMPTY_STRING;
+            }
+            Process child;
+            if (useArrayExecForm)
+            {
+                child = Runtime.getRuntime().exec(StringKit.wordSplit(response).toArray(new String[] {}), null,
+                        directory);
+            }
+            else
+            {
+                child = Runtime.getRuntime().exec(response, null, directory);
+            }
+            if (child == null)
+            {
+                systemLogger.log(Level.SEVERE, "Could not get separate process for <system> command.");
+                return EMPTY_STRING;
+            }
+
             try
             {
-                File directory = null;
-                if (directoryPath != null)
-                {
-                    Log.log("Executing <system> call in \"" + directoryPath + "\"", Log.SYSTEM);
-                    directory = FileManager.getFile(directoryPath);
-                    if (!directory.isDirectory())
-                    {
-                        Log.userinfo("programd.interpreter.system.directory (\"" + directoryPath
-                                + "\") does not exist or is not a directory.", Log.SYSTEM);
-                        return EMPTY_STRING;
-                    } 
-                } 
-                else
-                {
-                    Log.userinfo("No programd.interpreter.system.directory defined!", Log.SYSTEM);
-                    return EMPTY_STRING;
-                } 
-                Process child;
-                if (useArrayExecForm)
-                {
-                    child = Runtime.getRuntime().exec(
-                            StringKit.wordSplit(response).toArray(new String[] {} ), null, directory);
-                } 
-                else
-                {
-                    child = Runtime.getRuntime().exec(response, null, directory);
-                } 
-                if (child == null)
-                {
-                    Log.userinfo("Could not get separate process for <system> command.", Log.SYSTEM);
-                    return EMPTY_STRING;
-                } 
-
-                try
-                {
-                    child.waitFor();
-                } 
-                catch (InterruptedException e)
-                {
-                    Log.userinfo("System process interruped; could not complete.", Log.SYSTEM);
-                    return EMPTY_STRING;
-                } 
-
-                InputStream in = child.getInputStream();
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                String line;
-                while ((line = br.readLine()) != null)
-                {
-                    output = output + line + "\n";
-                } 
-
-                Log.log("output:", Log.SYSTEM);
-                Log.log(output, Log.SYSTEM);
-
-                response = output;
-                in.close();
-                Log.userinfo("System process exit value: " + child.exitValue(), Log.SYSTEM);
-            } 
-            catch (IOException e)
+                child.waitFor();
+            }
+            catch (InterruptedException e)
             {
-                Log.userinfo("Cannot execute <system> command.  Response logged.", Log.SYSTEM);
-                StringTokenizer lines = new StringTokenizer(e.getMessage(), System.getProperty("line.separator"));
-                while (lines.hasMoreTokens())
-                {
-                    Log.log(lines.nextToken(), Log.SYSTEM);
-                } 
-            } 
+                systemLogger.log(Level.SEVERE, "System process interruped; could not complete.");
+                return EMPTY_STRING;
+            }
 
-            return response.trim();
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<system></system> must have content!");
-    } 
+            InputStream in = child.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String line;
+            while ((line = br.readLine()) != null)
+            {
+                output = output + line + "\n";
+            }
+
+            systemLogger.log(Level.FINEST, "output:" + LINE_SEPARATOR + output);
+
+            response = output;
+            in.close();
+            systemLogger.log(Level.FINEST, "System process exit value: " + child.exitValue());
+        }
+        catch (IOException e)
+        {
+            systemLogger.log(Level.WARNING, "Cannot execute <system> command:" + LINE_SEPARATOR + e.getMessage());
+        }
+
+        return response.trim();
+    }
 }

@@ -9,9 +9,11 @@
 
 package org.aitools.programd.processor;
 
-import org.aitools.programd.bot.Bots;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 import org.aitools.programd.util.Substituter;
 
 /**
@@ -21,7 +23,7 @@ import org.aitools.programd.util.Substituter;
  * element.
  * </p>
  * 
- * @version 4.1.5
+ * @version 4.2
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  * @author Noel Bush
@@ -30,15 +32,20 @@ public class PersonProcessor extends AIMLProcessor
 {
     public static final String label = "person";
 
-    public String process(int level, XMLNode tag, TemplateParser parser)
+    public PersonProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.TAG)
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
+    {
+        if (element.getChildNodes().getLength() > 0)
         {
             try
             {
                 // Return the processed contents of the element, properly
                 // substituted.
-                return parser.processResponse(applySubstitutions(parser.evaluate(level++, tag.XMLChild), parser
+                return parser.processResponse(applySubstitutions(parser.evaluate(element.getChildNodes()), parser
                         .getBotID()));
             } 
             catch (ProcessorException e)
@@ -47,7 +54,7 @@ public class PersonProcessor extends AIMLProcessor
             } 
         } 
         // (otherwise...)
-        return parser.shortcutTag(level, label, XMLNode.TAG, EMPTY_STRING, StarProcessor.label, XMLNode.EMPTY);
+        return parser.shortcutTag(element, label, StarProcessor.label, Node.ELEMENT_NODE);
     } 
 
     /**
@@ -58,8 +65,8 @@ public class PersonProcessor extends AIMLProcessor
      *            the input on which to perform substitutions
      * @return the input with substitutions performed
      */
-    public static String applySubstitutions(String input, String botid)
+    public String applySubstitutions(String input, String botid)
     {
-        return Substituter.applySubstitutions(Bots.getBot(botid).getPersonSubstitutionsMap(), input);
+        return Substituter.applySubstitutions(this.core.getBots().getBot(botid).getPersonSubstitutionsMap(), input);
     } 
 }

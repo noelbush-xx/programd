@@ -9,15 +9,17 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * Processes a <a
  * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-template-side-that">template-side
  * <code>that</code> </a> element.
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  * @author Noel Bush
@@ -26,17 +28,17 @@ public class ThatProcessor extends IndexedPredicateProcessor
 {
     public static final String label = "that";
 
+    public ThatProcessor(Core coreToUse)
+    {
+        super(coreToUse);
+    }
+    
     /**
      * Generalizes the processing of a <code>that</code> element to a job for
      * {@link IndexedPredicateProcessor} .
      */
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public String process(Element element, TemplateParser parser)
     {
-        if (tag.XMLType == XMLNode.EMPTY)
-        {
-            return super.process(level, tag, parser, label, 2);
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("Template-side <that/> cannot have element content!");
-    } 
+        return super.process(element, parser, label, 2);
+    }
 }

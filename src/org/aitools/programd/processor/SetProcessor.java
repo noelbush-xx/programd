@@ -9,10 +9,10 @@
 
 package org.aitools.programd.processor;
 
-import org.aitools.programd.multiplexor.PredicateMaster;
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
-import org.aitools.programd.util.XMLKit;
 
 /**
  * <p>
@@ -31,24 +31,16 @@ public class SetProcessor extends AIMLProcessor
 {
     public static final String label = "set";
 
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public SetProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.TAG)
-        {
-            String name = XMLKit.getAttributeValue(NAME, tag.XMLAttr);
-
-            // Can't process a predicate with no name.
-            if (name.equals(EMPTY_STRING))
-            {
-                throw new AIMLProcessorException("<set></set> must have a name attribute!");
-            } 
-
-            // Return the result of setting this predicate value (should check
-            // its type, but not yet implemented).
-            return PredicateMaster.set(name, parser.evaluate(level++, tag.XMLChild), parser.getUserID(), parser
-                    .getBotID());
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<set></set> must have content!");
-    } 
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
+    {
+        // Return the result of setting this predicate value (should check
+        // its type, but not yet implemented).
+        return parser.getCore().getPredicateMaster().set(element.getAttribute(NAME), parser.evaluate(element
+                .getChildNodes()), parser.getUserID(), parser.getBotID());
+    }
 }

@@ -9,28 +9,31 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * Handles an
  * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-uppercase">uppercase</a></code>
  * element.
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Jon Baer
+ * @author Noel Bush
  */
 public class UpperCaseProcessor extends AIMLProcessor
 {
     public static final String label = "uppercase";
 
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public UpperCaseProcessor(Core coreToUse)
     {
-        if (tag.XMLType == XMLNode.TAG)
-        {
-            return parser.evaluate(level++, tag.XMLChild).toUpperCase();
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<uppercase></uppercase> must have content!");
-    } 
+        super(coreToUse);
+    }
+    
+    public String process(Element element, TemplateParser parser)
+    {
+        return parser.evaluate(element.getChildNodes()).toUpperCase();
+    }
 }

@@ -9,35 +9,37 @@
 
 package org.aitools.programd.processor;
 
-import org.aitools.programd.graph.Graphmaster;
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * Handles a
  * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-learn">learn</a></code>
  * element.
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
+ * @author Noel Bush
  */
 public class LearnProcessor extends AIMLProcessor
 {
     public static final String label = "learn";
 
+    public LearnProcessor(Core coreToUse)
+    {
+        super(coreToUse);
+    }
+    
     /**
      * Attempts to load an AIML file whose location is described by the results
      * of processing the content of the element.
      */
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public String process(Element element, TemplateParser parser)
     {
-        if (tag.XMLType == XMLNode.TAG)
-        {
-            Graphmaster.load(parser.evaluate(level++, tag.XMLChild), parser.getBotID());
-            return EMPTY_STRING;
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<learn></learn> must have content!");
+        parser.getCore().getGraphmaster().load(parser.evaluate(element.getChildNodes()), parser.getBotID());
+        return EMPTY_STRING;
     } 
 }

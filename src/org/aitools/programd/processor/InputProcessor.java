@@ -9,15 +9,17 @@
 
 package org.aitools.programd.processor;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.XMLNode;
 
 /**
  * Processes an
  * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-input">input</a></code>
  * element.
  * 
- * @version 4.1.3
+ * @version 4.2
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  * @author Noel Bush
@@ -26,17 +28,17 @@ public class InputProcessor extends IndexedPredicateProcessor
 {
     public static final String label = "input";
 
+    public InputProcessor(Core coreToUse)
+    {
+        super(coreToUse);
+    }
+    
     /**
      * Generalizes the processing of an <code>input</code> element to a job
      * for {@link IndexedPredicateProcessor} .
      */
-    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
+    public String process(Element element, TemplateParser parser)
     {
-        if (tag.XMLType == XMLNode.EMPTY)
-        {
-            return super.process(level, tag, parser, label, 2);
-        } 
-        // (otherwise...)
-        throw new AIMLProcessorException("<input/> cannot have content!");
+        return super.process(element, parser, label, 2);
     } 
 }
