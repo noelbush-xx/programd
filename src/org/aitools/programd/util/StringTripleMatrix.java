@@ -90,10 +90,6 @@ public class StringTripleMatrix
                 && (this.vertical[1].size() == this.vertical[2].size()) && (this.vertical[2].size() == this.horizontal
                 .size())))
         {
-            Trace.devinfo("vertical[0].size(): " + this.vertical[0].size());
-            Trace.devinfo("vertical[1].size(): " + this.vertical[1].size());
-            Trace.devinfo("vertical[2].size(): " + this.vertical[2].size());
-            Trace.devinfo("horizontal.size(): " + this.horizontal.size());
             throw new DeveloperError("Triple matrix integrity violated!");
         } 
         return this.horizontal.size();
