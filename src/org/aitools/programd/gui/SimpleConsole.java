@@ -46,7 +46,7 @@ import javax.swing.SwingConstants;
 
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
-import org.aitools.programd.server.AliceServer;
+import org.aitools.programd.server.ProgramDServer;
 import org.aitools.programd.util.Globals;
 import org.aitools.programd.util.Shell;
 import org.aitools.programd.util.Trace;
@@ -61,7 +61,7 @@ import org.aitools.programd.util.logging.Log;
 public class SimpleConsole extends JPanel
 {
     /** The server associated with this console. */
-    private AliceServer server;
+    private ProgramDServer server;
 
     /** The Shell used by this console. */
     protected Shell shell;
@@ -304,7 +304,7 @@ public class SimpleConsole extends JPanel
     }
 
     /**
-     *  Starts the simple console and an AliceServer,
+     *  Starts the simple console and an ProgramDServer,
      *  given the path to a properties file.
      *
      *  @param propertiesPath   the path to the server properties file
@@ -313,7 +313,7 @@ public class SimpleConsole extends JPanel
     {
         Globals.load(propertiesPath);
         this.shell = new Shell(inStream, displayStream, promptStream);
-        this.server = new AliceServer(propertiesPath, shell);
+        this.server = new ProgramDServer(propertiesPath, shell);
         Trace.setOut(displayStream);
         server.startup();
         shutdown();
