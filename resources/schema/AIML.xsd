@@ -97,26 +97,9 @@
 			<xs:documentation>A simple pattern expression is composed from one or more simple
 				pattern expression constituents, separated by XML spaces (#x20).</xs:documentation>
 		</xs:annotation>
-		<xs:union memberTypes="NormalWord Wildcard Space"/>
-	</xs:simpleType>
-	<xs:simpleType name="NormalWord">
 		<xs:restriction base="xs:string">
 			<xs:minLength value="1"/>
-			<xs:pattern value="(\d|\p{Lu})+"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="Wildcard">
-		<xs:restriction base="xs:string">
-			<xs:minLength value="1"/>
-			<xs:maxLength value="1"/>
-			<xs:pattern value="(\*|_)"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="Space">
-		<xs:restriction base="xs:string">
-			<xs:minLength value="1"/>
-			<xs:maxLength value="1"/>
-			<xs:pattern value=" "/>
+			<xs:pattern value="((\d|\p{Lu})+|\*|_)( +((\d|\p{Lu})+|\*|_))?"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:complexType name="MixedTemplateContentContainer" mixed="true">
