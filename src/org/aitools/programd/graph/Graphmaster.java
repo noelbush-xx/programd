@@ -1,14 +1,14 @@
 /*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+ USA.
+ */
 
 package org.aitools.programd.graph;
 
@@ -71,12 +71,10 @@ public class Graphmaster
 
     /** Copyright notice. */
     public static final String[] COPYLEFT =
-        {
-            "Program D",
-            "This program is free software; you can redistribute it and/or",
-            "modify it under the terms of the GNU General Public License",
-            "as published by the Free Software Foundation; either version 2",
-            "of the License, or (at your option) any later version." };
+        { "Program D", "This program is free software; you can redistribute it and/or",
+                "modify it under the terms of the GNU General Public License",
+                "as published by the Free Software Foundation; either version 2",
+                "of the License, or (at your option) any later version." };
 
     /** Version of this package. */
     public static final String VERSION = "4.2";
@@ -165,7 +163,8 @@ public class Graphmaster
 
     /** The response timeout. */
     protected static int RESPONSE_TIMEOUT;
-    static {
+    static
+    {
         try
         {
             RESPONSE_TIMEOUT = Integer.parseInt(Globals.getProperty("programd.response-timeout", "1000"));
@@ -340,15 +339,9 @@ public class Graphmaster
         inputPath.add(botid);
 
         // Get the match, starting at the root, with an empty star and path, starting in "in input" mode.
-        Match match =
-            match(
-                ROOT,
-                ROOT,
-                inputPath,
-                EMPTY_STRING,
-                new StringBuffer(),
-                S_INPUT,
-                System.currentTimeMillis() + RESPONSE_TIMEOUT);
+        Match match = match(ROOT, ROOT, inputPath, EMPTY_STRING, new StringBuffer(), S_INPUT, System
+                .currentTimeMillis()
+                + RESPONSE_TIMEOUT);
 
         // Return it if not null; throw an exception if null.
         if (match != null)
@@ -380,14 +373,8 @@ public class Graphmaster
      *
      *  @return the resulting <code>Match</code> object
      */
-    private static Match match(
-        Nodemapper nodemapper,
-        Nodemapper parent,
-        List input,
-        String star,
-        StringBuffer path,
-        int matchState,
-        long expiration)
+    private static Match match(Nodemapper nodemapper, Nodemapper parent, List input, String star, StringBuffer path,
+            int matchState, long expiration)
     {
         // Return null if expiration has been reached.
         if (System.currentTimeMillis() >= expiration)
@@ -426,9 +413,9 @@ public class Graphmaster
         List tail = input.subList(1, input.size());
 
         /*
-            See if this nodemapper has a _ wildcard.
-            _ comes first in the AIML "alphabet".
-        */
+         See if this nodemapper has a _ wildcard.
+         _ comes first in the AIML "alphabet".
+         */
         if (nodemapper.containsKey(UNDERSCORE))
         {
             // If so, construct a new path from the current path plus a _ wildcard.
@@ -441,8 +428,8 @@ public class Graphmaster
             }
 
             // Try to get a match with the tail and this new path, using the head as the star.
-            match =
-                match((Nodemapper) nodemapper.get(UNDERSCORE), nodemapper, tail, head, newPath, matchState, expiration);
+            match = match((Nodemapper) nodemapper.get(UNDERSCORE), nodemapper, tail, head, newPath, matchState,
+                    expiration);
 
             // If that did result in a match,
             if (match != null)
@@ -450,21 +437,21 @@ public class Graphmaster
                 // capture and push the star content appropriate to the current match state.
                 switch (matchState)
                 {
-                    case S_INPUT :
+                    case S_INPUT:
                         if (star.length() > 0)
                         {
                             match.pushInputStar(star);
                         }
                         break;
 
-                    case S_THAT :
+                    case S_THAT:
                         if (star.length() > 0)
                         {
                             match.pushThatStar(star);
                         }
                         break;
 
-                    case S_TOPIC :
+                    case S_TOPIC:
                         if (star.length() > 0)
                         {
                             match.pushTopicStar(star);
@@ -477,16 +464,16 @@ public class Graphmaster
         }
 
         /*
-            The nodemapper may have contained a _, but this led to no match.
-            Or it didn't contain a _ at all.
-        */
+         The nodemapper may have contained a _, but this led to no match.
+         Or it didn't contain a _ at all.
+         */
         if (nodemapper.containsKey(head))
         {
             /*
-                Check now whether this is a marker for the <that>,
-                <topic> or <botid> segments of the path.  If it is,
-                set the match state variable accordingly.
-            */
+             Check now whether this is a marker for the <that>,
+             <topic> or <botid> segments of the path.  If it is,
+             set the match state variable accordingly.
+             */
             if (head.startsWith(MARKER_START))
             {
                 if (head.equals(THAT))
@@ -503,15 +490,8 @@ public class Graphmaster
                 }
 
                 // Now try to get a match using the tail and an empty star and empty path.
-                match =
-                    match(
-                        (Nodemapper) nodemapper.get(head),
-                        nodemapper,
-                        tail,
-                        EMPTY_STRING,
-                        new StringBuffer(),
-                        matchState,
-                        expiration);
+                match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, EMPTY_STRING, new StringBuffer(),
+                        matchState, expiration);
 
                 // If that did result in a match,
                 if (match != null)
@@ -519,7 +499,7 @@ public class Graphmaster
                     // capture and push the star content appropriate to the *previous* match state.
                     switch (matchState)
                     {
-                        case S_THAT :
+                        case S_THAT:
                             if (star.length() > 0)
                             {
                                 match.pushInputStar(star);
@@ -528,7 +508,7 @@ public class Graphmaster
                             match.setPattern(path.toString());
                             break;
 
-                        case S_TOPIC :
+                        case S_TOPIC:
                             if (star.length() > 0)
                             {
                                 match.pushThatStar(star);
@@ -537,7 +517,7 @@ public class Graphmaster
                             match.setThat(path.toString());
                             break;
 
-                        case S_BOTID :
+                        case S_BOTID:
                             if (star.length() > 0)
                             {
                                 match.pushTopicStar(star);
@@ -552,10 +532,10 @@ public class Graphmaster
                 }
             }
             /*
-                In the case that the nodemapper contained the head,
-                but the head was not a marker, it must be that the
-                head is a regular word.  So try to match the rest of the path.
-            */
+             In the case that the nodemapper contained the head,
+             but the head was not a marker, it must be that the
+             head is a regular word.  So try to match the rest of the path.
+             */
             else
             {
                 // Construct a new path from the current path plus the head.
@@ -568,8 +548,8 @@ public class Graphmaster
                 }
 
                 // Try to get a match with the tail and this path, using the current star.
-                match =
-                    match((Nodemapper) nodemapper.get(head), nodemapper, tail, star, newPath, matchState, expiration);
+                match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, star, newPath, matchState,
+                        expiration);
 
                 // If that did result in a match, just return it.
                 if (match != null)
@@ -580,10 +560,10 @@ public class Graphmaster
         }
 
         /*
-            The nodemapper may have contained the head, but this led to no match.
-            Or it didn't contain the head at all.  In any case, check to see if
-            it contains a * wildcard.  * comes last in the AIML "alphabet".
-        */
+         The nodemapper may have contained the head, but this led to no match.
+         Or it didn't contain the head at all.  In any case, check to see if
+         it contains a * wildcard.  * comes last in the AIML "alphabet".
+         */
         if (nodemapper.containsKey(ASTERISK))
         {
             // If so, construct a new path from the current path plus a * wildcard.
@@ -596,8 +576,8 @@ public class Graphmaster
             }
 
             // Try to get a match with the tail and this new path, using the head as the star.
-            match =
-                match((Nodemapper) nodemapper.get(ASTERISK), nodemapper, tail, head, newPath, matchState, expiration);
+            match = match((Nodemapper) nodemapper.get(ASTERISK), nodemapper, tail, head, newPath, matchState,
+                    expiration);
 
             // If that did result in a match,
             if (match != null)
@@ -605,21 +585,21 @@ public class Graphmaster
                 // capture and push the star content appropriate to the current match state.
                 switch (matchState)
                 {
-                    case S_INPUT :
+                    case S_INPUT:
                         if (star.length() > 0)
                         {
                             match.pushInputStar(star);
                         }
                         break;
 
-                    case S_THAT :
+                    case S_THAT:
                         if (star.length() > 0)
                         {
                             match.pushThatStar(star);
                         }
                         break;
 
-                    case S_TOPIC :
+                    case S_TOPIC:
                         if (star.length() > 0)
                         {
                             match.pushTopicStar(star);
@@ -632,22 +612,22 @@ public class Graphmaster
         }
 
         /*
-            The nodemapper has failed to match at all: it contains neither _, nor the head,
-            nor *.  However, if it itself is a wildcard, then the match continues to be
-            valid and can proceed with the tail, the current path, and the star content plus
-            the head as the new star.
-        */
+         The nodemapper has failed to match at all: it contains neither _, nor the head,
+         nor *.  However, if it itself is a wildcard, then the match continues to be
+         valid and can proceed with the tail, the current path, and the star content plus
+         the head as the new star.
+         */
         if (nodemapper.equals(parent.get(ASTERISK)) || nodemapper.equals(parent.get(UNDERSCORE)))
         {
             return match(nodemapper, parent, tail, star + SPACE + head, path, matchState, expiration);
         }
 
         /*
-        	If we get here, we've hit a dead end; this null match will be passed back up the
-        	recursive chain of matches, perhaps even hitting the high-level match method
-        	(which will react by throwing a NoMatchException), though this is assumed to be
-        	the rarest occurence.
-        */
+         If we get here, we've hit a dead end; this null match will be passed back up the
+         recursive chain of matches, perhaps even hitting the high-level match method
+         (which will react by throwing a NoMatchException), though this is assumed to be
+         the rarest occurence.
+         */
         return null;
     }
 
@@ -720,15 +700,8 @@ public class Graphmaster
                 String inputTopic = pathTokenizer.nextToken().trim();
                 pathTokenizer.nextToken();
                 String response = pathTokenizer.nextToken().trim();
-                TargetMaster.add(
-                    matchPattern,
-                    matchThat,
-                    matchTopic,
-                    matchTemplate,
-                    inputText,
-                    inputThat,
-                    inputTopic,
-                    response);
+                TargetMaster.add(matchPattern, matchThat, matchTopic, matchTemplate, inputText, inputThat, inputTopic,
+                        response);
                 activationsIterator.remove();
             }
         }

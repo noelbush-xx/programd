@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.bot;
 
@@ -29,10 +26,10 @@ import org.aitools.programd.util.XMLResourceSpec;
 import org.aitools.programd.util.logging.XMLLog;
 
 /**
- *  Describes all of the properties of a bot.
- *
- *  @author Noel Bush
- *  @since 4.1.5
+ * Describes all of the properties of a bot.
+ * 
+ * @author Noel Bush
+ * @since 4.1.5
  */
 public class Bot
 {
@@ -67,8 +64,7 @@ public class Bot
     private Map predicateCache = Collections.synchronizedMap(new HashMap());
 
     /** The predicate empty default. */
-    protected String PREDICATE_EMPTY_DEFAULT =
-        Globals.getPredicateEmptyDefault();
+    protected String PREDICATE_EMPTY_DEFAULT = Globals.getPredicateEmptyDefault();
 
     /** An empty string. */
     private static final String EMPTY_STRING = "";
@@ -77,48 +73,40 @@ public class Bot
     protected XMLResourceSpec chatlogSpec;
 
     /**
-     *  Creates a new Bot with the given id.
-     *  The bot's chat log spec is also set.
+     * Creates a new Bot with the given id. The bot's chat log spec is also set.
      */
     public Bot(String botID)
     {
         this.id = botID;
         this.chatlogSpec = XMLLog.getChatlogSpecClone();
-        this.chatlogSpec.path =
-            Globals.getProperty(
-                "programd.logging.xml.chat.log-directory",
-                "./logs")
-                + File.separator
-                + this.id
-                + File.separator
-                + "chat.xml";
+        this.chatlogSpec.path = Globals.getProperty("programd.logging.xml.chat.log-directory", "./logs")
+                + File.separator + this.id + File.separator + "chat.xml";
     }
 
     /**
-     *  Returns the id of the bot.
-     *
-     *  @return the id of the bot
+     * Returns the id of the bot.
+     * 
+     * @return the id of the bot
      */
     public String getID()
     {
         return this.id;
     }
 
-    
     /**
-     *  Returns a map of the files loaded by this bot.
-     *
-     *  @return a map of the files loaded by this bot
+     * Returns a map of the files loaded by this bot.
+     * 
+     * @return a map of the files loaded by this bot
      */
     public HashMap getLoadedFilesMap()
     {
         return this.loadedFiles;
     }
-    
+
     /**
-     *  Returns whether the bot has loaded the given file(name).
-     *
-     *  @return whether the bot has loaded the given file(name)
+     * Returns whether the bot has loaded the given file(name).
+     * 
+     * @return whether the bot has loaded the given file(name)
      */
     public boolean hasLoaded(String filename)
     {
@@ -126,10 +114,12 @@ public class Bot
     }
 
     /**
-     *  Adds a nodemapper to the filename map.
-     *
-     *  @param filename     the filename
-     *  @param nodemapper   the mapper for the node to add
+     * Adds a nodemapper to the filename map.
+     * 
+     * @param filename
+     *            the filename
+     * @param nodemapper
+     *            the mapper for the node to add
      */
     public void addToFilenameMap(String filename, Nodemapper nodemapper)
     {
@@ -141,11 +131,11 @@ public class Bot
     }
 
     /**
-     *  Retrieves the value of a named bot property.
-     *
-     *  @param property    the name of the bot property to get
-     *
-     *  @return the value of the bot property
+     * Retrieves the value of a named bot property.
+     * 
+     * @param property
+     *            the name of the bot property to get
+     * @return the value of the bot property
      */
     public String getPropertyValue(String name)
     {
@@ -166,9 +156,10 @@ public class Bot
     }
 
     /**
-     *  Sets the value of a bot property.
-     *
-     *  @param property    the name of the bot predicate to set
+     * Sets the value of a bot property.
+     * 
+     * @param property
+     *            the name of the bot predicate to set
      */
     public void setPropertyValue(String name, String value)
     {
@@ -183,20 +174,21 @@ public class Bot
     }
 
     /**
-     *  Registers some information about a predicate in advance.
-     *  Not required; just used when it is necessary to specify a
-     *  default value for a predicate and/or specify its type
-     *  as return-name-when-set.
-     *
-     *  @param name                 the name of the predicate
-     *  @param defaultValue         the default value (if any) for the predicate
-     *  @param returnNameWhenSet    whether the predicate should return its name when set
-     *  @param botid                the bot id for whom to register the predicate this way (not yet used)
+     * Registers some information about a predicate in advance. Not required;
+     * just used when it is necessary to specify a default value for a predicate
+     * and/or specify its type as return-name-when-set.
+     * 
+     * @param name
+     *            the name of the predicate
+     * @param defaultValue
+     *            the default value (if any) for the predicate
+     * @param returnNameWhenSet
+     *            whether the predicate should return its name when set
+     * @param botid
+     *            the bot id for whom to register the predicate this way (not
+     *            yet used)
      */
-    public void addPredicateInfo(
-        String name,
-        String defaultValue,
-        boolean returnNameWhenSet)
+    public void addPredicateInfo(String name, String defaultValue, boolean returnNameWhenSet)
     {
         PredicateInfo info = new PredicateInfo();
         info.name = name;
@@ -206,9 +198,9 @@ public class Bot
     }
 
     /**
-     *  Returns the predicates info map.
-     *
-     *  @return the predicates info map
+     * Returns the predicates info map.
+     * 
+     * @return the predicates info map
      */
     public HashMap getPredicatesInfo()
     {
@@ -216,9 +208,9 @@ public class Bot
     }
 
     /**
-     *  Returns the predicate cache.
-     *
-     *  @return the predicate cache
+     * Returns the predicate cache.
+     * 
+     * @return the predicate cache
      */
     public Map getPredicateCache()
     {
@@ -226,10 +218,10 @@ public class Bot
     }
 
     /**
-     *  Returns the map of predicates for a userid if it is cached,
-     *  or a new map if it is not cached.
-     *
-     *  @param userid
+     * Returns the map of predicates for a userid if it is cached, or a new map
+     * if it is not cached.
+     * 
+     * @param userid
      */
     public Map predicatesFor(String userid)
     {
@@ -275,19 +267,17 @@ public class Bot
     }
 
     /**
-     *  Adds a substitution to the substitutions map.  The
-     *  <code>find</code> parameter is stored in uppercase,
-     *  to do case-insensitive comparisons.  The <code>replace</code>
-     *  parameter is stored as is.
-     *
-     *  @param substitutionMap
-     *  @param find     the string to find in the input
-     *  @param replace  the string with which to replace the found string
+     * Adds a substitution to the substitutions map. The <code>find</code>
+     * parameter is stored in uppercase, to do case-insensitive comparisons. The
+     * <code>replace</code> parameter is stored as is.
+     * 
+     * @param substitutionMap
+     * @param find
+     *            the string to find in the input
+     * @param replace
+     *            the string with which to replace the found string
      */
-    private void addSubstitution(
-        HashMap substitutionMap,
-        String find,
-        String replace)
+    private void addSubstitution(HashMap substitutionMap, String find, String replace)
     {
         if (find != null && replace != null)
         {
@@ -296,9 +286,10 @@ public class Bot
     }
 
     /**
-     *  Adds a sentence splitter to the sentence splitters list.
-     *
-     *  @param splitter the string on which to divide sentences
+     * Adds a sentence splitter to the sentence splitters list.
+     * 
+     * @param splitter
+     *            the string on which to divide sentences
      */
     public void addSentenceSplitter(String splitter)
     {

@@ -1,14 +1,14 @@
 /*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+ USA.
+ */
 
 package org.aitools.programd.util;
 
@@ -46,22 +46,17 @@ public class Shell
     private static final String HOSTNAME = Globals.getHostName();
 
     /** The client name predicate. */
-    private static final String CLIENT_NAME_PREDICATE =
-        Globals.getClientNamePredicate();
+    private static final String CLIENT_NAME_PREDICATE = Globals.getClientNamePredicate();
 
     /** The bot name predicate. */
-    private static final String BOT_NAME_PREDICATE =
-        Globals.getBotNamePredicate();
+    private static final String BOT_NAME_PREDICATE = Globals.getBotNamePredicate();
 
     /** The string to use for an interactive console. */
     public static final String PROMPT = "> ";
 
     /** Whether to use message type flags. */
-    private static final boolean SHOW_MESSAGE_FLAGS =
-        Boolean
-            .valueOf(
-                Globals.getProperty("programd.console.message-flags", "true"))
-            .booleanValue();
+    private static final boolean SHOW_MESSAGE_FLAGS = Boolean.valueOf(
+            Globals.getProperty("programd.console.message-flags", "true")).booleanValue();
 
     /** Flag for a line in an interactive shell. */
     public static final String SHELL = SHOW_MESSAGE_FLAGS ? "s " : "";
@@ -101,20 +96,15 @@ public class Shell
 
     /** Shell help text. */
     private static final String[] HELP_TEXT =
-        {
-            "All shell commands are preceded by a forward slash (/).",
-            "The commands available are:",
-            "/help             - prints this help",
-            "/exit             - shuts down the bot server",
-            "/load filename    - loads/reloads given filename for active bot",
-            "/unload filename  - unloads given filename for active bot",
-            "/bots             - lists loaded bots",
-            "/talkto botid     - switches conversation to given bot",
-            "/who              - prints the id of the current bot",
-            "/files            - lists the files loaded by the current bot",
-            "/roll chatlog     - rolls over chat log",
-            "/roll targets     - rolls over saved targeting data",
-            "/commandables     - lists available \"shell commandables\" (such as listeners)" };
+        { "All shell commands are preceded by a forward slash (/).", "The commands available are:",
+                "/help             - prints this help", "/exit             - shuts down the bot server",
+                "/load filename    - loads/reloads given filename for active bot",
+                "/unload filename  - unloads given filename for active bot", "/bots             - lists loaded bots",
+                "/talkto botid     - switches conversation to given bot",
+                "/who              - prints the id of the current bot",
+                "/files            - lists the files loaded by the current bot",
+                "/roll chatlog     - rolls over chat log", "/roll targets     - rolls over saved targeting data",
+                "/commandables     - lists available \"shell commandables\" (such as listeners)" };
 
     // Instance variables.
 
@@ -162,12 +152,7 @@ public class Shell
      */
     public void run()
     {
-        showConsole(
-            "Interactive shell: type \""
-                + EXIT
-                + "\" to shut down; \""
-                + HELP
-                + "\" for help.");
+        showConsole("Interactive shell: type \"" + EXIT + "\" to shut down; \"" + HELP + "\" for help.");
         Bot bot = Bots.getABot();
         if (bot == null)
         {
@@ -178,25 +163,12 @@ public class Shell
         this.botName = bot.getPropertyValue(BOT_NAME_PREDICATE);
 
         // Send the connect string and print the first response.
-        showConsole(
-                this.botName,
-                XMLKit.breakLinesAtTags(
-                Multiplexor.getResponse(
-                    Globals.getProperty("programd.connect-string", "CONNECT"),
-                    HOSTNAME,
-                    this.botid,
-                    new TextResponder())));
+        showConsole(this.botName, XMLKit.breakLinesAtTags(Multiplexor.getResponse(Globals.getProperty(
+                "programd.connect-string", "CONNECT"), HOSTNAME, this.botid, new TextResponder())));
 
         while (true)
         {
-            promptConsole(
-                '['
-                    + this.botName
-                    + "] "
-                    + PredicateMaster.get(
-                        CLIENT_NAME_PREDICATE,
-                        HOSTNAME,
-                        this.botid));
+            promptConsole('[' + this.botName + "] " + PredicateMaster.get(CLIENT_NAME_PREDICATE, HOSTNAME, this.botid));
             String theLine = null;
             try
             {
@@ -210,10 +182,10 @@ public class Shell
             if (theLine == null)
             {
                 /*
-                    A null line probably means that the shell is being mistakenly
-                    run in interactive mode when in fact there is no System.in
-                    available.  In this case, sleep for days :-) and wait to be interrupted.
-                */
+                 A null line probably means that the shell is being mistakenly
+                 run in interactive mode when in fact there is no System.in
+                 available.  In this case, sleep for days :-) and wait to be interrupted.
+                 */
                 while (true)
                 {
                     try
@@ -301,23 +273,15 @@ public class Shell
                     }
                     catch (NoSuchCommandableException e1)
                     {
-                        showConsole(
-                            "No such commandable is loaded.  Type \""
-                                + COMMANDABLES
+                        showConsole("No such commandable is loaded.  Type \"" + COMMANDABLES
                                 + "\" for a list of loaded commandables.");
                     }
                 }
             }
             else if (theLine.length() > 0)
             {
-                showConsole(
-                        this.botName,
-                        XMLKit.breakLinesAtTags(
-                                Multiplexor.getResponse(
-                                        theLine,
-                                        HOSTNAME,
-                                        this.botid,
-                                        new TextResponder())));
+                showConsole(this.botName, XMLKit.breakLinesAtTags(Multiplexor.getResponse(theLine, HOSTNAME,
+                        this.botid, new TextResponder())));
             }
         }
     }
@@ -337,11 +301,7 @@ public class Shell
      */
     private void promptConsole(String preprompt)
     {
-        MessagePrinter.print(
-            preprompt + PROMPT,
-            SHELL,
-            this.consolePrompt,
-            MessagePrinter.CONSOLE);
+        MessagePrinter.print(preprompt + PROMPT, SHELL, this.consolePrompt, MessagePrinter.CONSOLE);
     }
 
     /**
@@ -356,11 +316,7 @@ public class Shell
      */
     private void showConsole(String message)
     {
-        MessagePrinter.println(
-            message,
-            SHELL,
-            this.consoleDisplay,
-            MessagePrinter.CONSOLE);
+        MessagePrinter.println(message, SHELL, this.consoleDisplay, MessagePrinter.CONSOLE);
     }
 
     /**
@@ -374,11 +330,7 @@ public class Shell
     {
         for (int index = 0; index < message.length; index++)
         {
-            MessagePrinter.println(
-                message[index],
-                SHELL,
-                this.consoleDisplay,
-                MessagePrinter.CONSOLE);
+            MessagePrinter.println(message[index], SHELL, this.consoleDisplay, MessagePrinter.CONSOLE);
         }
     }
 
@@ -392,11 +344,7 @@ public class Shell
      */
     private void showConsole(String preprompt, String message)
     {
-        MessagePrinter.println(
-            preprompt + PROMPT + message,
-            SHELL,
-            this.consoleDisplay,
-            MessagePrinter.CONSOLE);
+        MessagePrinter.println(preprompt + PROMPT + message, SHELL, this.consoleDisplay, MessagePrinter.CONSOLE);
     }
 
     /**
@@ -411,11 +359,8 @@ public class Shell
     {
         for (int index = 0; index < message.length; index++)
         {
-            MessagePrinter.println(
-                preprompt + PROMPT + message[index],
-                SHELL,
-                this.consoleDisplay,
-                MessagePrinter.CONSOLE);
+            MessagePrinter.println(preprompt + PROMPT + message[index], SHELL, this.consoleDisplay,
+                    MessagePrinter.CONSOLE);
         }
     }
 
@@ -452,10 +397,7 @@ public class Shell
             String path;
             try
             {
-                path =
-                    FileManager
-                        .getFile(line.substring(space + 1))
-                        .getCanonicalPath();
+                path = FileManager.getFile(line.substring(space + 1)).getCanonicalPath();
             }
             catch (IOException e)
             {
@@ -463,13 +405,8 @@ public class Shell
                 return;
             }
             Graphmaster.load(path, botidToUse);
-            Log.userinfo(
-                Graphmaster.getTotalCategories()
-                    - categories
-                    + " categories loaded from \""
-                    + path
-                    + "\".",
-                Log.LEARN);
+            Log.userinfo(Graphmaster.getTotalCategories() - categories + " categories loaded from \"" + path + "\".",
+                    Log.LEARN);
         }
     }
 
@@ -490,10 +427,7 @@ public class Shell
             String path;
             try
             {
-                path =
-                    FileManager
-                        .getFile(line.substring(space + 1))
-                        .getCanonicalPath();
+                path = FileManager.getFile(line.substring(space + 1)).getCanonicalPath();
             }
             catch (IOException e)
             {
@@ -501,11 +435,7 @@ public class Shell
                 return;
             }
             Graphmaster.unload(path, Bots.getBot(botidToUse));
-            Log.userinfo(
-                categories
-                    - Graphmaster.getTotalCategories()
-                    + " categories unloaded.",
-                Log.LEARN);
+            Log.userinfo(categories - Graphmaster.getTotalCategories() + " categories unloaded.", Log.LEARN);
         }
     }
 
@@ -548,21 +478,10 @@ public class Shell
         }
         this.botid = newBotID;
         this.botName = Bots.getBot(newBotID).getPropertyValue(BOT_NAME_PREDICATE);
-        showConsole(
-            "Switched to bot \""
-                + newBotID
-                + "\" (name: \""
-                + this.botName
-                + "\").");
+        showConsole("Switched to bot \"" + newBotID + "\" (name: \"" + this.botName + "\").");
         // Send the connect string and print the first response.
-        showConsole(
-                this.botName,
-                XMLKit.breakLinesAtTags(
-                        Multiplexor.getResponse(
-                                Globals.getProperty("programd.connect-string", "CONNECT"),
-                                HOSTNAME,
-                                this.botid,
-                                new TextResponder())));
+        showConsole(this.botName, XMLKit.breakLinesAtTags(Multiplexor.getResponse(Globals.getProperty(
+                "programd.connect-string", "CONNECT"), HOSTNAME, this.botid, new TextResponder())));
     }
 
     /**
@@ -631,13 +550,8 @@ public class Shell
             {
                 try
                 {
-                    ShellCommandable commandable =
-                        (ShellCommandable) processes.next();
-                    showConsole(
-                        "/"
-                            + commandable.getShellID()
-                            + " - "
-                            + commandable.getShellDescription());
+                    ShellCommandable commandable = (ShellCommandable) processes.next();
+                    showConsole("/" + commandable.getShellID() + " - " + commandable.getShellDescription());
                     commandableCount++;
                 }
                 catch (ClassCastException e)
@@ -665,8 +579,7 @@ public class Shell
      *  @throws NoCommandException if no command is given
      *  @throws NoSuchCommandableException if an invalid commandable is specified
      */
-    private void sendCommand(String command)
-        throws NoCommandException, NoSuchCommandableException
+    private void sendCommand(String command) throws NoCommandException, NoSuchCommandableException
     {
         // Parse out the commandable.
         int space = command.indexOf(' ');
@@ -689,8 +602,7 @@ public class Shell
             {
                 try
                 {
-                    ShellCommandable candidate =
-                        (ShellCommandable) processes.next();
+                    ShellCommandable candidate = (ShellCommandable) processes.next();
                     if (commandableID.equals(candidate.getShellID()))
                     {
                         commandable = candidate;
