@@ -28,16 +28,19 @@ abstract public class ClassRegistry
 
     /** The fully-qualified name of the base class for the classesToRegister. */
     protected static String baseClassName;
+    
+    /** The actual Class represented by the {@link #baseClassName}. */
+    protected static Class<?> baseClass;
 
     /** The string &quot;label&quot;--the required name for a label field. */
     private static final String LABEL = "label";
 
     /**
-     * Loads the registry with all classes.
+     * Loads the registry with a set of classes.
      */
     public ClassRegistry(String versionToUse, String[] classesToRegisterToUse, String baseClassNameToUse)
     {
-        // Initialize the Hastable that this is.
+        // Initialize the backing Hashtable.
         this.hashtable = new Hashtable<String, Class>(classesToRegisterToUse.length);
 
         // Set the field values for this.
@@ -46,10 +49,9 @@ abstract public class ClassRegistry
         ClassRegistry.baseClassName = baseClassNameToUse;
 
         // Get a handle on the base class.
-        Class<?> baseClass = null;
         try
         {
-            baseClass = Class.forName(baseClassName);
+            ClassRegistry.baseClass = Class.forName(baseClassName);
         } 
         catch (ClassNotFoundException e)
         {
@@ -57,66 +59,76 @@ abstract public class ClassRegistry
         } 
 
         // Load in the classesToRegister.
-        Class classToRegister;
-
         for (int index = classesToRegister.length; --index >= 0;)
         {
-            // Get the class.
+        	register(classesToRegister[index]);
+        }
+    }
+    
+    /**
+     * Registers an individual class.
+     * 
+     * @param nameOfClassToRegister	the name of the class to register
+     */
+    public void register(String nameOfClassToRegister)
+    {
+    	Class classToRegister;
+    	
+        // Get the class.
+        try
+        {
+            classToRegister = Class.forName(nameOfClassToRegister);
+        } 
+        catch (ClassNotFoundException e)
+        {
+            throw new UserError("\"" + nameOfClassToRegister
+                    + "\" is missing from your classpath.  Cannot initialize registry.", e);
+        } 
+        // Ensure that the class is actually an extension of the processor.
+        if (!baseClass.isAssignableFrom(classToRegister))
+        {
+            throw new DeveloperError("Developer has incorrectly specified \"" + nameOfClassToRegister
+                    + "\" as a registrable class.");
+        } 
+
+        // Get the label field.
+        Field labelField = null;
+        if (classToRegister != null)
+        {
             try
             {
-                classToRegister = Class.forName(classesToRegister[index]);
+                labelField = classToRegister.getDeclaredField(LABEL);
             } 
-            catch (ClassNotFoundException e)
+            catch (NoSuchFieldException e)
             {
-                throw new UserError("\"" + classesToRegister[index]
-                        + "\" is missing from your classpath.  Cannot initialize registry.", e);
+                throw new DeveloperError("Unlikely error: \"" + nameOfClassToRegister
+                        + "\" is missing label field!");
             } 
-            // Ensure that the class is actually an extension of the processor.
-            if (!baseClass.isAssignableFrom(classToRegister))
-            {
-                throw new DeveloperError("Developer has incorrectly specified \"" + classesToRegister[index]
-                        + "\" as a registrable class.");
-            } 
+        } 
+        else
+        {
+            throw new DeveloperError("Failed to get processor \"" + nameOfClassToRegister + "\"");
+        } 
 
-            // Get the label field.
-            Field labelField = null;
-            if (classToRegister != null)
-            {
-                try
-                {
-                    labelField = classToRegister.getDeclaredField(LABEL);
-                } 
-                catch (NoSuchFieldException e)
-                {
-                    throw new DeveloperError("Unlikely error: \"" + classesToRegister[index]
-                            + "\" is missing label field!");
-                } 
-            } 
-            else
-            {
-                throw new DeveloperError("Failed to get processor \"" + classesToRegister[index] + "\"");
-            } 
+        // Get the value in the label field.
+        String label = null;
+        try
+        {
+            label = (String) labelField.get(null);
+        } 
+        catch (IllegalAccessException e)
+        {
+            throw new DeveloperError("Label field for \"" + nameOfClassToRegister + "\" is not accessible!");
+        } 
 
-            // Get the value in the label field.
-            String label = null;
-            try
-            {
-                label = (String) labelField.get(null);
-            } 
-            catch (IllegalAccessException e)
-            {
-                throw new DeveloperError("Label field for \"" + classesToRegister[index] + "\" is not accessible!");
-            } 
-
-            // (Finally!) register this class.
-            if (label != null)
-            {
-                this.hashtable.put(label, classToRegister);
-            } 
-            else
-            {
-                throw new DeveloperError("Tried to register class with null label!");
-            } 
+        // (Finally!) register this class.
+        if (label != null)
+        {
+            this.hashtable.put(label, classToRegister);
+        } 
+        else
+        {
+            throw new DeveloperError("Tried to register class with null label!");
         } 
     }
     
