@@ -21,17 +21,20 @@ import org.aitools.programd.util.DeveloperError;
  * @author Noel Bush
  * @since 4.1.5
  */
-public class Bots<K,V> extends HashMap<K,V>
+public class Bots
 {
     /** Part of the singleton pattern. */
-    private static final Bots<String, Bot> myself = new Bots<String, Bot>();
+    private static final Bots myself = new Bots();
+    
+    /** The private HashMap that is used by this. */
+    private HashMap<String, Bot> hashmap;
 
     /**
      * <code>Bots</code> cannot be instantiated except by itself.
      */
     private Bots()
     {
-        super();
+        this.hashmap = new HashMap<String, Bot>();
     } 
 
     /**
@@ -41,7 +44,7 @@ public class Bots<K,V> extends HashMap<K,V>
      */
     public static boolean include(String botid)
     {
-        return !(myself.get(botid) == null);
+        return !(myself.hashmap.get(botid) == null);
     }
 
     /**
@@ -55,7 +58,7 @@ public class Bots<K,V> extends HashMap<K,V>
      */
     public static void addBot(String botid, Bot bot)
     {
-        myself.put(botid, bot);
+        myself.hashmap.put(botid, bot);
     } 
 
     /**
@@ -70,7 +73,7 @@ public class Bots<K,V> extends HashMap<K,V>
         Bot wanted;
         try
         {
-            wanted = myself.get(botid);
+            wanted = myself.hashmap.get(botid);
         } 
         catch (ClassCastException e)
         {
@@ -90,9 +93,9 @@ public class Bots<K,V> extends HashMap<K,V>
      */
     public static Bot getABot()
     {
-        if (myself.size() > 0)
+        if (myself.hashmap.size() > 0)
         {
-            return myself.values().iterator().next();
+            return myself.hashmap.values().iterator().next();
         } 
         // (otherwise...)
         return null;
@@ -105,7 +108,7 @@ public class Bots<K,V> extends HashMap<K,V>
      */
     public static int getCount()
     {
-        return myself.size();
+        return myself.hashmap.size();
     } 
 
     /**
@@ -115,12 +118,12 @@ public class Bots<K,V> extends HashMap<K,V>
      */
     public static String getNiceList()
     {
-        if (myself.size() == 0)
+        if (myself.hashmap.size() == 0)
         {
             return "";
         } 
         StringBuffer result = new StringBuffer();
-        Iterator iterator = myself.keySet().iterator();
+        Iterator iterator = myself.hashmap.keySet().iterator();
         while (iterator.hasNext())
         {
             if (result.length() > 0)
@@ -139,7 +142,7 @@ public class Bots<K,V> extends HashMap<K,V>
      */
     public static Set<String> getIDs()
     {
-        return myself.keySet();
+        return myself.hashmap.keySet();
     } 
 
     /**
@@ -149,7 +152,7 @@ public class Bots<K,V> extends HashMap<K,V>
      */
     public static Iterator keysIterator()
     {
-        return myself.keySet().iterator();
+        return myself.hashmap.keySet().iterator();
     } 
 
     /**
@@ -160,7 +163,7 @@ public class Bots<K,V> extends HashMap<K,V>
      */
     public static boolean haveLoaded(String filename)
     {
-        Iterator bots = myself.values().iterator();
+        Iterator bots = myself.hashmap.values().iterator();
         while (bots.hasNext())
         {
             if (((Bot) bots.next()).hasLoaded(filename))

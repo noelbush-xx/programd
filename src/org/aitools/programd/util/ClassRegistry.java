@@ -15,8 +15,11 @@ import java.util.Hashtable;
 /**
  * Registers classes with aliases.
  */
-abstract public class ClassRegistry<K,V> extends Hashtable<K,V>
+abstract public class ClassRegistry
 {
+    /** The hidden Hashtable that backs this. */
+    private Hashtable<String, Class> hashtable;
+    
     /** The version of the content type for which this registry is intended. */
     protected static String version;
 
@@ -35,7 +38,7 @@ abstract public class ClassRegistry<K,V> extends Hashtable<K,V>
     public ClassRegistry(String versionToUse, String[] classesToRegisterToUse, String baseClassNameToUse)
     {
         // Initialize the Hastable that this is.
-        super(classesToRegisterToUse.length);
+        this.hashtable = new Hashtable<String, Class>(classesToRegisterToUse.length);
 
         // Set the field values for this.
         ClassRegistry.version = versionToUse;
@@ -108,7 +111,7 @@ abstract public class ClassRegistry<K,V> extends Hashtable<K,V>
             // (Finally!) register this class.
             if (label != null)
             {
-                this.put(label, classToRegister);
+                this.hashtable.put(label, classToRegister);
             } 
             else
             {
@@ -117,16 +120,15 @@ abstract public class ClassRegistry<K,V> extends Hashtable<K,V>
         } 
     }
     
-    
     /**
-     * Overrides the put method so that String and Class are expected.
+     * A wrapper for the internal Hashtable's get method.
      * 
-     * @param key   the String to put
-     * @param value the Class to put
-     * @return Class
+     * @param label the label of the Class desired.
+     * 
+     * @return the Class corresponding to the given label.
      */
-    public synchronized Class put(String key, Class value)
+    public synchronized Class get(String label)
     {
-        return this.put(key, value);
+        return this.hashtable.get(label);
     }
 }
