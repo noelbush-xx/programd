@@ -68,7 +68,7 @@ public class ListDialog extends JDialog
     private void setValue(String newValue)
     {
         value = newValue;
-        list.setSelectedValue(value, true);
+        this.list.setSelectedValue(value, true);
     }
 
     private ListDialog(
@@ -88,19 +88,19 @@ public class ListDialog extends JDialog
                 dialog.setVisible(false);
             }
         });
-        setButton.addActionListener(new ActionListener()
+        setButton.addActionListener(new ParentAwareActionListener(this)
         {
             public void actionPerformed(ActionEvent e)
             {
-                ListDialog.value = (String) (list.getSelectedValue());
+                ListDialog.value = (String) (((ListDialog)this.parent).list.getSelectedValue());
                 ListDialog.dialog.setVisible(false);
             }
         });
         getRootPane().setDefaultButton(setButton);
 
-        list = new JList(data);
-        list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        list.addMouseListener(new MouseAdapter()
+        this.list = new JList(data);
+        this.list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        this.list.addMouseListener(new MouseAdapter()
         {
             public void mouseClicked(MouseEvent e)
             {
@@ -110,7 +110,7 @@ public class ListDialog extends JDialog
                 }
             }
         });
-        JScrollPane listScroller = new JScrollPane(list);
+        JScrollPane listScroller = new JScrollPane(this.list);
         listScroller.setPreferredSize(new Dimension(250, 80));
 
         //XXX: Must do the following, too, or else the scroller thinks
@@ -125,7 +125,7 @@ public class ListDialog extends JDialog
         JPanel listPane = new JPanel();
         listPane.setLayout(new BoxLayout(listPane, BoxLayout.Y_AXIS));
         JLabel label = new JLabel(labelText);
-        label.setLabelFor(list);
+        label.setLabelFor(this.list);
         listPane.add(label);
         listPane.add(Box.createRigidArea(new Dimension(0, 5)));
         listPane.add(listScroller);

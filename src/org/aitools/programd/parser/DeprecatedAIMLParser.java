@@ -218,15 +218,15 @@ public class DeprecatedAIMLParser
         TemplateParser parser)
         throws UnknownDeprecatedAIMLException
     {
-        if ((tag.XMLData.equals(LOAD)) && (tag.XMLType == tag.EMPTY))
+        if ((tag.XMLData.equals(LOAD)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 LearnProcessor.label,
-                tag.TAG,
+                XMLNode.TAG,
                 EMPTY_STRING,
                 XMLKit.getAttributeValue(FILENAME, tag.XMLAttr),
-                tag.DATA);
+                XMLNode.DATA);
         }
 
         /*
@@ -234,173 +234,173 @@ public class DeprecatedAIMLParser
         */
 
         // <name/> = <bot name="name"/>
-        if ((tag.XMLData.equals(NAME)) && (tag.XMLType == tag.EMPTY))
+        if ((tag.XMLData.equals(NAME)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 ATTR_NAME_NAME,
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <justbeforethat/> = <that index="2,1"/>
         else if (
-            (tag.XMLData.equals(JUSTBEFORETHAT)) && (tag.XMLType == tag.EMPTY))
+            (tag.XMLData.equals(JUSTBEFORETHAT)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 ThatProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 ATTR_INDEX_2_1,
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <justthat/> = <input index="2"/>
-        else if ((tag.XMLData.equals(JUSTTHAT)) && (tag.XMLType == tag.EMPTY))
+        else if ((tag.XMLData.equals(JUSTTHAT)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 InputProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 ATTR_INDEX_2,
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <beforethat/> = <input index="3"/>
         else if (
-            (tag.XMLData.equals(BEFORETHAT)) && (tag.XMLType == tag.EMPTY))
+            (tag.XMLData.equals(BEFORETHAT)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 InputProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 ATTR_INDEX_3,
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <getname/> = <get name="name"/>
-        else if ((tag.XMLData.equals(GETNAME)) && (tag.XMLType == tag.EMPTY))
+        else if ((tag.XMLData.equals(GETNAME)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 GetProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 ATTR_NAME_NAME,
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <getsize/> = <size/>
-        else if ((tag.XMLData.equals(GETSIZE)) && (tag.XMLType == tag.EMPTY))
+        else if ((tag.XMLData.equals(GETSIZE)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 SizeProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 EMPTY_STRING,
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <gettopic/> = <get name="topic"/>
-        else if ((tag.XMLData.equals(GETTOPIC)) && (tag.XMLType == tag.EMPTY))
+        else if ((tag.XMLData.equals(GETTOPIC)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 GetProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 ATTR_NAME_TOPIC,
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <getversion/> = <version/>
         else if (
-            (tag.XMLData.equals(GETVERSION)) && (tag.XMLType == tag.EMPTY))
+            (tag.XMLData.equals(GETVERSION)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 VersionProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 EMPTY_STRING,
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <get_ip/> = <id/>
-        else if ((tag.XMLData.equals(GET_IP)) && (tag.XMLType == tag.EMPTY))
+        else if ((tag.XMLData.equals(GET_IP)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 IDProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 EMPTY_STRING,
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <settopic></settopic> = <set name="topic"></set>
-        else if ((tag.XMLData.equals(SETTOPIC)) && (tag.XMLType == tag.TAG))
+        else if ((tag.XMLData.equals(SETTOPIC)) && (tag.XMLType == XMLNode.TAG))
         {
             return parser.shortcutTag(
                 level,
                 SetProcessor.label,
-                tag.TAG,
+                XMLNode.TAG,
                 ATTR_NAME_TOPIC,
                 parser.evaluate(level, tag.XMLChild),
-                tag.DATA);
+                XMLNode.DATA);
         }
 
         // <setname></setname> = <set name="name"></set>
-        else if ((tag.XMLData.equals(SETNAME)) && (tag.XMLType == tag.TAG))
+        else if ((tag.XMLData.equals(SETNAME)) && (tag.XMLType == XMLNode.TAG))
         {
             return parser.shortcutTag(
                 level,
                 SetProcessor.label,
-                tag.TAG,
+                XMLNode.TAG,
                 ATTR_NAME_NAME,
                 parser.evaluate(level, tag.XMLChild),
-                tag.DATA);
+                XMLNode.DATA);
         }
 
         // <set_predicate></set_predicate> = <set name="predicate"></set>
         else if (
-            (tag.XMLData.indexOf(SET_OLD, 0) >= 0) && (tag.XMLType == tag.TAG))
+            (tag.XMLData.indexOf(SET_OLD, 0) >= 0) && (tag.XMLType == XMLNode.TAG))
         {
             return parser.shortcutTag(
                 level,
                 SetProcessor.label,
-                tag.TAG,
+                XMLNode.TAG,
                 NAME_EQUALS_QUOTE
                     + tag.XMLData.substring(
                         tag.XMLData.indexOf(UNDERSCORE, 0) + 1,
                         tag.XMLData.length())
                     + QUOTE_MARK,
                 parser.evaluate(level, tag.XMLChild),
-                tag.DATA);
+                XMLNode.DATA);
         }
 
         // <get_predicate/> = <get name="predicate"/>
         else if (
             (tag.XMLData.indexOf(GET_OLD, 0) >= 0)
-                && (tag.XMLType == tag.EMPTY))
+                && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 GetProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 NAME_EQUALS_QUOTE
                     + tag.XMLData.substring(
                         tag.XMLData.indexOf(UNDERSCORE, 0) + 1,
                         tag.XMLData.length())
                     + QUOTE_MARK,
                 EMPTY_STRING,
-                tag.DATA);
+                XMLNode.DATA);
         }
 
         /*
@@ -409,265 +409,265 @@ public class DeprecatedAIMLParser
         */
 
         // <birthday/> = <bot name="birthday"/>
-        else if ((tag.XMLData.equals(BIRTHDAY)) && (tag.XMLType == tag.EMPTY))
+        else if ((tag.XMLData.equals(BIRTHDAY)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"birthday\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <birthplace/> = <bot name="birthplace"/>
         else if (
-            (tag.XMLData.equals(BIRTHPLACE)) && (tag.XMLType == tag.EMPTY))
+            (tag.XMLData.equals(BIRTHPLACE)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"birthplace\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <boyfriend/> = <bot name="boyfriend"/>
-        else if ((tag.XMLData.equals(BOYFRIEND)) && (tag.XMLType == tag.EMPTY))
+        else if ((tag.XMLData.equals(BOYFRIEND)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"boyfriend\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <favoriteband/> = <bot name="favoriteband"/>
         else if (
-            (tag.XMLData.equals(FAVORITEBAND)) && (tag.XMLType == tag.EMPTY))
+            (tag.XMLData.equals(FAVORITEBAND)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"favoriteband\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <favoritebook/> = <bot name="favoritebook"/>
         else if (
-            (tag.XMLData.equals(FAVORITEBOOK)) && (tag.XMLType == tag.EMPTY))
+            (tag.XMLData.equals(FAVORITEBOOK)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"favoritebook\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <favoritecolor/> = <bot name="favoritecolor"/>
         else if (
-            (tag.XMLData.equals(FAVORITECOLOR)) && (tag.XMLType == tag.EMPTY))
+            (tag.XMLData.equals(FAVORITECOLOR)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"favoritecolor\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <favoritefood/> = <bot name="favoritefood"/>
         else if (
-            (tag.XMLData.equals(FAVORITEFOOD)) && (tag.XMLType == tag.EMPTY))
+            (tag.XMLData.equals(FAVORITEFOOD)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"favoritefood\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <favoritemovie/> = <bot name="favoritemovie"/>
         else if (
-            (tag.XMLData.equals(FAVORITEMOVIE)) && (tag.XMLType == tag.EMPTY))
+            (tag.XMLData.equals(FAVORITEMOVIE)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"favoritemovie\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <favoritesong/> = <bot name="favoritesong"/>
         else if (
-            (tag.XMLData.equals(FAVORITESONG)) && (tag.XMLType == tag.EMPTY))
+            (tag.XMLData.equals(FAVORITESONG)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"favoritesong\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <for_fun/> = <bot name="for_fun"/>
-        else if ((tag.XMLData.equals(FOR_FUN)) && (tag.XMLType == tag.EMPTY))
+        else if ((tag.XMLData.equals(FOR_FUN)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"forfun\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <friends/> = <bot name="friends"/>
-        else if ((tag.XMLData.equals(FRIENDS)) && (tag.XMLType == tag.EMPTY))
+        else if ((tag.XMLData.equals(FRIENDS)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"friends\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <gender/> = <bot name="gender"/>
-        else if ((tag.XMLData.equals(GENDER)) && (tag.XMLType == tag.EMPTY))
+        else if ((tag.XMLData.equals(GENDER)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"gender\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <girlfriend/> = <bot name="girlfriend"/>
         else if (
-            (tag.XMLData.equals(GIRLFRIEND)) && (tag.XMLType == tag.EMPTY))
+            (tag.XMLData.equals(GIRLFRIEND)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"girlfriend\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <kind_music/> = <bot name="kind_music"/>
         else if (
-            (tag.XMLData.equals(KIND_MUSIC)) && (tag.XMLType == tag.EMPTY))
+            (tag.XMLData.equals(KIND_MUSIC)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"kindmusic\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <location/> = <bot name="location"/>
-        else if ((tag.XMLData.equals(LOCATION)) && (tag.XMLType == tag.EMPTY))
+        else if ((tag.XMLData.equals(LOCATION)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"location\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <look_like/> = <bot name="look_like"/>
-        else if ((tag.XMLData.equals(LOOK_LIKE)) && (tag.XMLType == tag.EMPTY))
+        else if ((tag.XMLData.equals(LOOK_LIKE)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"looklike\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <botmaster/> = <bot name="botmaster"/>
-        else if ((tag.XMLData.equals(BOTMASTER)) && (tag.XMLType == tag.EMPTY))
+        else if ((tag.XMLData.equals(BOTMASTER)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"master\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <question/> = <bot name="question"/>
-        else if ((tag.XMLData.equals(QUESTION)) && (tag.XMLType == tag.EMPTY))
+        else if ((tag.XMLData.equals(QUESTION)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"question\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <sign/> = <bot name="sign"/>
-        else if ((tag.XMLData.equals(SIGN)) && (tag.XMLType == tag.EMPTY))
+        else if ((tag.XMLData.equals(SIGN)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"sign\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <talk_about/> = <bot name="talk_about"/>
         else if (
-            (tag.XMLData.equals(TALK_ABOUT)) && (tag.XMLType == tag.EMPTY))
+            (tag.XMLData.equals(TALK_ABOUT)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"talkabout\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
 
         // <wear/> = <bot name="wear"/>
-        else if ((tag.XMLData.equals(WEAR)) && (tag.XMLType == tag.EMPTY))
+        else if ((tag.XMLData.equals(WEAR)) && (tag.XMLType == XMLNode.EMPTY))
         {
             return parser.shortcutTag(
                 level,
                 BotProcessor.label,
-                tag.EMPTY,
+                XMLNode.EMPTY,
                 "name=\"wear\"",
                 EMPTY_STRING,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
         else
         {

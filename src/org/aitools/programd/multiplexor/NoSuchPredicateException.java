@@ -29,23 +29,23 @@ public class NoSuchPredicateException extends Exception
      *
      *  @param name the name for which there was no predicate
      */
-    public NoSuchPredicateException(String name)
+    public NoSuchPredicateException(String predicateName)
     {
-        this.name = name;
+        NoSuchPredicateException.name = predicateName;
     }
 
     /**
      *  Constructs a new NoSuchPredicateException for
      *  the given name and index.
      *
-     *  @param name     the name for which there was no predicate
-     *                  with a value at the given index
-     *  @param index    the index at which there was no value
+     *  @param predicateName     the name for which there was no predicate
+     *                            with a value at the given index
+     *  @param predicateIndex    the index at which there was no value
      */
-    public NoSuchPredicateException(String name, int index)
+    public NoSuchPredicateException(String predicateName, int predicateIndex)
     {
-        this.name = name;
-        this.index = index;
+        NoSuchPredicateException.name = predicateName;
+        NoSuchPredicateException.index = predicateIndex;
     }
 
     public String getMessage()

@@ -35,10 +35,10 @@ public class SRProcessor extends AIMLProcessor
             return parser.shortcutTag(
                 level,
                 SRAIProcessor.label,
-                tag.TAG,
+                XMLNode.TAG,
                 EMPTY_STRING,
                 StarProcessor.label,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
         else
         {

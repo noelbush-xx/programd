@@ -44,15 +44,6 @@ public class ListenerProcessor extends StartupElementProcessor
     /** The string &quot;type&quot;. */
     private static final String TYPE = "type";
 
-    /** The string &quot;enabled&quot;. */
-    private static final String ENABLED = "enabled";
-
-    /** The string &quot;name&quot;. */
-    private static final String NAME = "name";
-
-    /** The string &quot;value&quot;. */
-    private static final String VALUE = "value";
-
     /** The string &quot;true&quot;. */
     private static final String TRUE = "true";
 

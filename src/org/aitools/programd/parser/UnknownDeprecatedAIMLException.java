@@ -22,4 +22,5 @@ package org.aitools.programd.parser;
  */
 public class UnknownDeprecatedAIMLException extends Exception
 {
+    // No body.
 }

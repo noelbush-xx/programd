@@ -64,89 +64,89 @@ public class TargetsReader extends GenericReader implements Runnable
     */
 
     /** Parser state: not within any element. */
-    private final int S_NONE = 1;
+    private static final int S_NONE = 1;
 
     /** Parser state: entered a &lt;targets&gt; element. */
-    private final int S_IN_TARGETS = 2;
+    private static final int S_IN_TARGETS = 2;
 
     /** Parser state: exited a &lt;targets&gt; element. */
-    private final int S_OUT_TARGETS = 3;
+    private static final int S_OUT_TARGETS = 3;
 
     /** Parser state: entered a &lt;target&gt; element. */
-    private final int S_IN_TARGET = 4;
+    private static final int S_IN_TARGET = 4;
 
     /** Parser state: exited a &lt;target&gt; element. */
-    private final int S_OUT_TARGET = 5;
+    private static final int S_OUT_TARGET = 5;
 
     /** Parser state: entered an &lt;input&gt; element. */
-    private final int S_IN_INPUT = 6;
+    private static final int S_IN_INPUT = 6;
 
     /** Parser state: exited an &lt;input&gt; element. */
-    private final int S_OUT_INPUT = 7;
+    private static final int S_OUT_INPUT = 7;
 
     /** Parser state: entered a &lt;text&gt; element. */
-    private final int S_IN_TEXT = 8;
+    private static final int S_IN_TEXT = 8;
 
     /** Parser state: exited a &lt;text&gt; element. */
-    private final int S_OUT_TEXT = 9;
+    private static final int S_OUT_TEXT = 9;
 
     /** Parser state: entered a &lt;match&gt; element. */
-    private final int S_IN_MATCH = 10;
+    private static final int S_IN_MATCH = 10;
 
     /** Parser state: exited a &lt;match&gt; element. */
-    private final int S_OUT_MATCH = 11;
+    private static final int S_OUT_MATCH = 11;
 
     /** Parser state: entered a &lt;pattern&gt; element. */
-    private final int S_IN_PATTERN = 12;
+    private static final int S_IN_PATTERN = 12;
 
     /** Parser state: exited a &lt;pattern&gt; element. */
-    private final int S_OUT_PATTERN = 13;
+    private static final int S_OUT_PATTERN = 13;
 
     /** Parser state: entered a &lt;that&gt; element. */
-    private final int S_IN_THAT = 14;
+    private static final int S_IN_THAT = 14;
 
     /** Parser state: exited a &lt;that&gt; element. */
-    private final int S_OUT_THAT = 15;
+    private static final int S_OUT_THAT = 15;
 
     /** Parser state: entered a &lt;topic&gt; element. */
-    private final int S_IN_TOPIC = 16;
+    private static final int S_IN_TOPIC = 16;
 
     /** Parser state: exited a &lt;template&gt; element. */
-    private final int S_OUT_TOPIC = 17;
+    private static final int S_OUT_TOPIC = 17;
 
     /** Parser state: entered a &lt;template&gt; element. */
-    private final int S_IN_TEMPLATE = 18;
+    private static final int S_IN_TEMPLATE = 18;
 
     /** Parser state: exited a &lt;template&gt; element. */
-    private final int S_OUT_TEMPLATE = 19;
+    private static final int S_OUT_TEMPLATE = 19;
 
     /** Parser state: entered a &lt;reply&gt; element. */
-    private final int S_IN_REPLY = 20;
+    private static final int S_IN_REPLY = 20;
 
     /** Parser state: exited a &lt;reply&gt; element. */
-    private final int S_OUT_REPLY = 21;
+    private static final int S_OUT_REPLY = 21;
 
     /*
         Parser actions.
     */
 
     /** Parser action: set input context. */
-    private final int SET_INPUT_CONTEXT = 0;
+    private static final int SET_INPUT_CONTEXT = 0;
 
     /** Parser action: set match context. */
-    private final int SET_MATCH_CONTEXT = 1;
+    private static final int SET_MATCH_CONTEXT = 1;
 
     /** Parser action: set reply context. */
-    private final int SET_REPLY_CONTEXT = 2;
+    private static final int SET_REPLY_CONTEXT = 2;
 
     /** Parser action: deliver a category. */
-    private final int DELIVER_TARGET = 3;
+    private static final int DELIVER_TARGET = 3;
 
     /** Parser action: set done to true. */
-    private final int SET_DONE = 4;
+    private static final int SET_DONE = 4;
 
     /** Parser action: abort unexpectedly. */
-    private final int ABORT = 5;
+    private static final int ABORT = 5;
 
     /*
         Instance variables.
@@ -206,21 +206,21 @@ public class TargetsReader extends GenericReader implements Runnable
      *  @param length   the length of the file to be read
      */
     public TargetsReader(
-        String fileName,
-        BufferedReader buffReader,
+        String fileNameToUse,
+        BufferedReader buffReaderToUse,
         TargetsReaderListener targetsListener,
-        String encoding,
+        String encodingToUse,
         long length,
         Component parent)
     {
-        super(fileName, buffReader, encoding, true, targetsListener);
+        super(fileNameToUse, buffReaderToUse, encodingToUse, true, targetsListener);
         super.readerInstance = this;
-        state = S_NONE;
+        this.state = TargetsReader.S_NONE;
 
         this.monitor =
             new ProgressMonitor(
                 parent,
-                "Reading targets from \"" + fileName + "\"",
+                "Reading targets from \"" + this.fileName + "\"",
                 null,
                 0,
                 100);
@@ -256,39 +256,39 @@ public class TargetsReader extends GenericReader implements Runnable
     protected void tryStates() throws TransitionMade
     {
         // Update the progress monitor (if in use).
-        if (monitor != null)
+        if (this.monitor != null)
         {
             // Check if it has been cancelled.
-            if (monitor.isCanceled())
+            if (this.monitor.isCanceled())
             {
-                monitor.close();
-                done = true;
+                this.monitor.close();
+                this.done = true;
                 return;
             }
 
             // Update the progress.
-            monitor.setProgress((int) (byteCount * progressScaleFactor));
+            this.monitor.setProgress((int) (this.byteCount * this.progressScaleFactor));
         }
 
-        switch (state)
+        switch (this.state)
         {
             case S_NONE :
-                transition(Targeting.TARGETS_START, S_IN_TARGETS);
+                transition(Targeting.TARGETS_START, TargetsReader.S_IN_TARGETS);
                 break;
 
             case S_IN_TARGETS :
-                transition(Targeting.TARGET_START, S_IN_TARGET);
+                transition(Targeting.TARGET_START, TargetsReader.S_IN_TARGET);
                 break;
 
             case S_IN_TARGET :
                 transition(
                     Targeting.INPUT_START,
-                    S_IN_INPUT,
-                    SET_INPUT_CONTEXT);
+                    TargetsReader.S_IN_INPUT,
+                    TargetsReader.SET_INPUT_CONTEXT);
                 transition(
                     Targeting.MATCH_START,
-                    S_IN_MATCH,
-                    SET_MATCH_CONTEXT);
+                    TargetsReader.S_IN_MATCH,
+                    TargetsReader.SET_MATCH_CONTEXT);
                 transition(
                     Targeting.REPLY_START,
                     S_IN_REPLY,
@@ -301,7 +301,7 @@ public class TargetsReader extends GenericReader implements Runnable
                 break;
 
             case S_IN_TEXT :
-                transition(Targeting.TEXT_END, S_OUT_TEXT, patternField);
+                transition(Targeting.TEXT_END, S_OUT_TEXT, this.patternField);
                 break;
 
             case S_IN_MATCH :
@@ -309,7 +309,7 @@ public class TargetsReader extends GenericReader implements Runnable
                 break;
 
             case S_IN_PATTERN :
-                transition(Targeting.PATTERN_END, S_OUT_PATTERN, patternField);
+                transition(Targeting.PATTERN_END, S_OUT_PATTERN, this.patternField);
                 break;
 
             case S_OUT_TEXT :
@@ -318,7 +318,7 @@ public class TargetsReader extends GenericReader implements Runnable
                 break;
 
             case S_IN_THAT :
-                transition(Targeting.THAT_END, S_OUT_THAT, thatField);
+                transition(Targeting.THAT_END, S_OUT_THAT, this.thatField);
                 break;
 
             case S_OUT_THAT :
@@ -326,7 +326,7 @@ public class TargetsReader extends GenericReader implements Runnable
                 break;
 
             case S_IN_TOPIC :
-                transition(Targeting.TOPIC_END, S_OUT_TOPIC, topicField);
+                transition(Targeting.TOPIC_END, S_OUT_TOPIC, this.topicField);
                 break;
 
             case S_OUT_TOPIC :
@@ -338,7 +338,7 @@ public class TargetsReader extends GenericReader implements Runnable
                 transition(
                     Targeting.TEMPLATE_END,
                     S_OUT_TEMPLATE,
-                    templateField);
+                    this.templateField);
                 break;
 
             case S_OUT_TEMPLATE :
@@ -346,7 +346,7 @@ public class TargetsReader extends GenericReader implements Runnable
                 break;
 
             case S_IN_REPLY :
-                transition(Targeting.REPLY_END, S_IN_TARGET, templateField);
+                transition(Targeting.REPLY_END, S_IN_TARGET, this.templateField);
                 break;
 
             case S_OUT_TARGET :
@@ -405,33 +405,33 @@ public class TargetsReader extends GenericReader implements Runnable
                 case DELIVER_TARGET :
                     // Deliver new target to targetsListener.
                     ((TargetsReaderListener) super.listener).loadTarget(
-                        matchPattern,
-                        matchThat,
-                        matchTopic,
-                        matchTemplate,
-                        inputText,
-                        inputThat,
-                        inputTopic,
-                        reply);
+                            this.matchPattern,
+                            this.matchThat,
+                            this.matchTopic,
+                            this.matchTemplate,
+                            this.inputText,
+                            this.inputThat,
+                            this.inputTopic,
+                            this.reply);
 
                     // Reset all fields to defaults.
-                    matchPattern = matchThat = matchTopic = ASTERISK;
-                    inputText =
-                        inputThat =
-                            inputTopic = matchTemplate = reply = EMPTY_STRING;
+                    this.matchPattern = this.matchThat = this.matchTopic = ASTERISK;
+                    this.inputText =
+                        this.inputThat =
+                            this.inputTopic = this.matchTemplate = this.reply = EMPTY_STRING;
 
                     // Recreate the buffer (otherwise it gets huge).
-                    buffer =
+                    this.buffer =
                         new StringBuffer(
-                            Math.max(bufferStartCapacity, buffer.length()));
-                    buffer.append(bufferString);
+                            Math.max(bufferStartCapacity, this.buffer.length()));
+                    this.buffer.append(this.bufferString);
 
-                    searchStart = 0;
+                    this.searchStart = 0;
 
                     break;
 
                 case SET_DONE :
-                    done = true;
+                    this.done = true;
                     break;
 
                 case SET_INPUT_CONTEXT :
@@ -505,9 +505,9 @@ public class TargetsReader extends GenericReader implements Runnable
      */
     public void closeMonitor()
     {
-        if (monitor != null)
+        if (this.monitor != null)
         {
-            monitor.close();
+            this.monitor.close();
         }
     }
 }

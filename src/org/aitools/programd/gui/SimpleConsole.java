@@ -72,16 +72,16 @@ public class SimpleConsole extends JPanel
     /** Contains the input prompt and field. */
     protected InputPanel inputPanel;
 
-    protected ConsoleDisplayStream consoleDisplay = new ConsoleDisplayStream();
+    protected ConsoleDisplayStream consoleDisplay = new ConsoleDisplayStream(this);
 
     private JFrame frame;
 
     /** The stream to which console display will be directed. */
-    private PrintStream displayStream = new PrintStream(consoleDisplay);
+    private PrintStream displayStream = new PrintStream(this.consoleDisplay);
 
     /** The stream to which console prompt will be directed. */
     private PrintStream promptStream =
-        new PrintStream(new ConsolePromptStream());
+        new PrintStream(new ConsolePromptStream(this));
 
     /** The stream which will receive console input. */
     protected ConsoleInputStream inStream = new ConsoleInputStream();
@@ -130,23 +130,23 @@ public class SimpleConsole extends JPanel
     {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        display = new JTextArea(40, 90);
-        display.setFont(new Font("Courier New", Font.PLAIN, 12));
-        display.setLineWrap(true);
-        display.setWrapStyleWord(true);
-        display.setTabSize(4);
-        display.setForeground(Color.black);
-        display.setEditable(false);
+        this.display = new JTextArea(40, 90);
+        this.display.setFont(new Font("Courier New", Font.PLAIN, 12));
+        this.display.setLineWrap(true);
+        this.display.setWrapStyleWord(true);
+        this.display.setTabSize(4);
+        this.display.setForeground(Color.black);
+        this.display.setEditable(false);
 
-        JScrollPane scrollPane = new JScrollPane(display);
+        JScrollPane scrollPane = new JScrollPane(this.display);
         scrollPane.setAlignmentY(Component.CENTER_ALIGNMENT);
 
-        inputPanel = new InputPanel();
+        this.inputPanel = new InputPanel(this);
 
         this.add(scrollPane);
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         this.add(Box.createRigidArea(new Dimension(0, 5)));
-        this.add(inputPanel);
+        this.add(this.inputPanel);
 
         menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
@@ -199,11 +199,11 @@ public class SimpleConsole extends JPanel
         JCheckBoxMenuItem pause = new JCheckBoxMenuItem("Pause Console");
         pause.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         pause.setMnemonic(KeyEvent.VK_P);
-        pause.addActionListener(new ActionListener()
+        pause.addActionListener(new ParentAwareActionListener(this)
         {
             public void actionPerformed(ActionEvent ae)
             {
-                consoleDisplay.togglePause();
+                ((SimpleConsole)this.parent).consoleDisplay.togglePause();
             }
         });
 
@@ -221,33 +221,33 @@ public class SimpleConsole extends JPanel
         JMenuItem botFiles = new JMenuItem("List bot files");
         botFiles.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         botFiles.setMnemonic(KeyEvent.VK_F);
-        botFiles.addActionListener(new ActionListener()
+        botFiles.addActionListener(new ParentAwareActionListener(this)
         {
             public void actionPerformed(ActionEvent ae)
             {
-                shell.listBotFiles();
+                ((SimpleConsole)this.parent).shell.listBotFiles();
             }
         });
 
         JMenuItem listBots = new JMenuItem("List bots");
         listBots.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         listBots.setMnemonic(KeyEvent.VK_L);
-        listBots.addActionListener(new ActionListener()
+        listBots.addActionListener(new ParentAwareActionListener(this)
         {
             public void actionPerformed(ActionEvent ae)
             {
-                shell.showBotList();
+                ((SimpleConsole)this.parent).shell.showBotList();
             }
         });
 
         JMenuItem rollTargets = new JMenuItem("Roll targets");
         rollTargets.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         rollTargets.setMnemonic(KeyEvent.VK_T);
-        rollTargets.addActionListener(new ActionListener()
+        rollTargets.addActionListener(new ParentAwareActionListener(this)
         {
             public void actionPerformed(ActionEvent ae)
             {
-                shell.rollTargets();
+                ((SimpleConsole)this.parent).shell.rollTargets();
             }
         });
 
@@ -267,11 +267,11 @@ public class SimpleConsole extends JPanel
         JMenuItem shellHelp = new JMenuItem("Shell Help...");
         shellHelp.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         shellHelp.setMnemonic(KeyEvent.VK_H);
-        shellHelp.addActionListener(new ActionListener()
+        shellHelp.addActionListener(new ParentAwareActionListener(this)
         {
             public void actionPerformed(ActionEvent ae)
             {
-                shell.help();
+                ((SimpleConsole)this.parent).shell.help();
             }
         });
         JMenuItem about = new JMenuItem("About Simple Console...");
@@ -293,14 +293,14 @@ public class SimpleConsole extends JPanel
         menuBar.add(actionsMenu);
         menuBar.add(helpMenu);
 
-        frame = new JFrame();
-        frame.setTitle("Program D Simple Console");
-        frame.getContentPane().add(this);
-        frame.setJMenuBar(menuBar);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setLocation(50, 50);
-        frame.setVisible(true);
+        this.frame = new JFrame();
+        this.frame.setTitle("Program D Simple Console");
+        this.frame.getContentPane().add(this);
+        this.frame.setJMenuBar(menuBar);
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.frame.pack();
+        this.frame.setLocation(50, 50);
+        this.frame.setVisible(true);
     }
 
     /**
@@ -312,18 +312,18 @@ public class SimpleConsole extends JPanel
     public void start(String propertiesPath)
     {
         Globals.load(propertiesPath);
-        this.shell = new Shell(inStream, displayStream, promptStream);
-        this.server = new ProgramDServer(propertiesPath, shell);
-        Trace.setOut(displayStream);
-        server.startup();
+        this.shell = new Shell(this.inStream, this.displayStream, this.promptStream);
+        this.server = new ProgramDServer(propertiesPath, this.shell);
+        Trace.setOut(this.displayStream);
+        this.server.startup();
         shutdown();
     }
 
     protected void shutdown()
     {
-        if (server != null)
+        if (this.server != null)
         {
-            server.shutdown();
+            ProgramDServer.shutdown();
         }
         // Let the user exit, in case termination was abnormal or messages are otherwise interesting.
     }
@@ -335,27 +335,31 @@ public class SimpleConsole extends JPanel
 
         /** The console input field. */
         protected JTextField input;
+        
+        protected SimpleConsole parent;
 
-        public InputPanel()
+        public InputPanel(SimpleConsole parentToUse)
         {
+            this.parent = parentToUse;
+            
             this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
-            prompt = new JLabel();
-            prompt.setFont(new Font("Courier New", Font.PLAIN, 12));
-            prompt.setForeground(Color.black);
-            prompt.setBackground(Color.white);
-            prompt.setHorizontalAlignment(SwingConstants.LEFT);
-            prompt.setAlignmentY(Component.CENTER_ALIGNMENT);
+            this.prompt = new JLabel();
+            this.prompt.setFont(new Font("Courier New", Font.PLAIN, 12));
+            this.prompt.setForeground(Color.black);
+            this.prompt.setBackground(Color.white);
+            this.prompt.setHorizontalAlignment(SwingConstants.LEFT);
+            this.prompt.setAlignmentY(Component.CENTER_ALIGNMENT);
 
-            input = new JTextField();
-            input.setFont(new Font("Courier New", Font.PLAIN, 12));
-            input.setForeground(Color.black);
-            input.setMinimumSize(new Dimension(50, 20));
-            input.setPreferredSize(new Dimension(200, 20));
-            input.setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
-            input.setHorizontalAlignment(SwingConstants.LEFT);
-            input.setAlignmentY(Component.CENTER_ALIGNMENT);
-            input.addActionListener(new InputSender());
+            this.input = new JTextField();
+            this.input.setFont(new Font("Courier New", Font.PLAIN, 12));
+            this.input.setForeground(Color.black);
+            this.input.setMinimumSize(new Dimension(50, 20));
+            this.input.setPreferredSize(new Dimension(200, 20));
+            this.input.setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
+            this.input.setHorizontalAlignment(SwingConstants.LEFT);
+            this.input.setAlignmentY(Component.CENTER_ALIGNMENT);
+            this.input.addActionListener(new InputSender(this));
 
             JButton enter = new JButton("Enter");
             enter.setFont(new Font("Fixedsys", Font.PLAIN, 10));
@@ -363,29 +367,34 @@ public class SimpleConsole extends JPanel
             enter.setMinimumSize(new Dimension(70, 20));
             enter.setPreferredSize(new Dimension(70, 20));
             enter.setMaximumSize(new Dimension(70, 20));
-            enter.addActionListener(new InputSender());
+            enter.addActionListener(new InputSender(this));
             enter.setAlignmentY(Component.CENTER_ALIGNMENT);
 
-            this.add(prompt);
-            this.add(input);
+            this.add(this.prompt);
+            this.add(this.input);
             this.add(enter);
         }
 
         public void setPrompt(String text)
         {
-            prompt.setText(text);
-            prompt.revalidate();
-            input.requestFocus();
+            this.prompt.setText(text);
+            this.prompt.revalidate();
+            this.input.requestFocus();
         }
 
-        private class InputSender implements ActionListener
+        private class InputSender extends ParentAwareActionListener
         {
+            public InputSender(InputPanel parentToUse)
+            {
+                super(parentToUse);
+            }
+            
             public void actionPerformed(ActionEvent ae)
             {
                 String inputText = ae.getActionCommand();
-                display.append(prompt.getText() + inputText + LINE_SEPARATOR);
-                inStream.receive(inputText);
-                input.setText(null);
+                ((InputPanel)this.parent).parent.display.append(((InputPanel)this.parent).prompt.getText() + inputText + LINE_SEPARATOR);
+                ((InputPanel)this.parent).parent.inStream.receive(inputText);
+                ((InputPanel)this.parent).input.setText(null);
             }
         }
     }
@@ -396,15 +405,18 @@ public class SimpleConsole extends JPanel
     public class ConsoleDisplayStream extends OutputStream
     {
         private boolean paused = false;
+        
+        protected SimpleConsole parent;
 
-        public ConsoleDisplayStream()
+        public ConsoleDisplayStream(SimpleConsole parentToUse)
         {
             super();
+            this.parent = parentToUse;
         }
 
         public void write(byte[] b, int off, int len)
         {
-            while (paused)
+            while (this.paused)
             {
                 try
                 {
@@ -412,15 +424,16 @@ public class SimpleConsole extends JPanel
                 }
                 catch (InterruptedException e)
                 {
+                    // Nothing to do.
                 }
             }
-            display.append(new String(b, off, len));
-            display.setCaretPosition(display.getText().length());
+            this.parent.display.append(new String(b, off, len));
+            this.parent.display.setCaretPosition(this.parent.display.getText().length());
         }
 
         public void write(int b)
         {
-            while (paused)
+            while (this.paused)
             {
                 try
                 {
@@ -428,15 +441,16 @@ public class SimpleConsole extends JPanel
                 }
                 catch (InterruptedException e)
                 {
+                    // Do nothing.
                 }
             }
-            display.append(String.valueOf((char) b));
-            display.setCaretPosition(display.getText().length());
+            this.parent.display.append(String.valueOf((char) b));
+            this.parent.display.setCaretPosition(this.parent.display.getText().length());
         }
 
         protected void togglePause()
         {
-            paused = !paused;
+            this.paused = !this.paused;
         }
     }
 
@@ -445,19 +459,22 @@ public class SimpleConsole extends JPanel
      */
     public class ConsolePromptStream extends OutputStream
     {
-        public ConsolePromptStream()
+        protected SimpleConsole parent;
+        
+        public ConsolePromptStream(SimpleConsole parentToUse)
         {
             super();
+            this.parent = parentToUse;
         }
 
         public void write(byte[] b, int off, int len)
         {
-            inputPanel.setPrompt(new String(b, off, len));
+            this.parent.inputPanel.setPrompt(new String(b, off, len));
         }
 
         public void write(int b)
         {
-            inputPanel.setPrompt(String.valueOf((char) b));
+            this.parent.inputPanel.setPrompt(String.valueOf((char) b));
         }
     }
 
@@ -470,17 +487,18 @@ public class SimpleConsole extends JPanel
 
         public ConsoleInputStream()
         {
+            // Nothing to do.
         }
 
         public void receive(String string)
         {
-            content = (string + '\n').getBytes();
-            mark = 0;
+            this.content = (string + '\n').getBytes();
+            this.mark = 0;
         }
 
         public int read(byte b[], int off, int len) throws IOException
         {
-            while (mark >= content.length)
+            while (this.mark >= this.content.length)
             {
                 try
                 {
@@ -508,23 +526,23 @@ public class SimpleConsole extends JPanel
             {
                 return 0;
             }
-            else if (content.length == 0)
+            else if (this.content.length == 0)
             {
                 return -1;
             }
 
             int i = 1;
-            b[off] = content[mark++];
-            for (; i < len && i < content.length; i++)
+            b[off] = this.content[this.mark++];
+            for (; i < len && i < this.content.length; i++)
             {
-                b[off + i] = content[mark++];
+                b[off + i] = this.content[this.mark++];
             }
             return i;
         }
 
         public int available() throws IOException
         {
-            return content.length - mark - 1;
+            return this.content.length - this.mark - 1;
         }
 
         public boolean markSupported()
@@ -534,7 +552,7 @@ public class SimpleConsole extends JPanel
 
         public int read()
         {
-            while (mark >= content.length)
+            while (this.mark >= this.content.length)
             {
                 try
                 {
@@ -545,9 +563,9 @@ public class SimpleConsole extends JPanel
                     return -1;
                 }
             }
-            if (mark < content.length)
+            if (this.mark < this.content.length)
             {
-                return content[mark++];
+                return this.content[this.mark++];
             }
             else
             {
@@ -574,7 +592,7 @@ public class SimpleConsole extends JPanel
         }
 
         int categories = Graphmaster.getTotalCategories();
-        Graphmaster.load((String) response, shell.getCurrentBotID());
+        Graphmaster.load((String) response, this.shell.getCurrentBotID());
         Log.userinfo(
             Graphmaster.getTotalCategories()
                 - categories
@@ -605,7 +623,7 @@ public class SimpleConsole extends JPanel
                 return;
             }
             int categories = Graphmaster.getTotalCategories();
-            Graphmaster.load(newPath, shell.getCurrentBotID());
+            Graphmaster.load(newPath, this.shell.getCurrentBotID());
             Log.userinfo(
                 Graphmaster.getTotalCategories()
                     - categories
@@ -621,14 +639,14 @@ public class SimpleConsole extends JPanel
         String[] botIDs = (String[]) Bots.getIDs().toArray(new String[] {
         });
         ListDialog.initialize(
-            frame,
+                this.frame,
             botIDs,
             "Choose a bot",
             "Choose the bot with whom you want to talk.");
-        String choice = ListDialog.showDialog(null, shell.getCurrentBotID());
+        String choice = ListDialog.showDialog(null, this.shell.getCurrentBotID());
         if (choice != null)
         {
-            shell.switchToBot(choice);
+            this.shell.switchToBot(choice);
         }
     }
 

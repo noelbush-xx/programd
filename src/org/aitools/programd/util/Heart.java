@@ -38,6 +38,7 @@ public class Heart
      */
     private Heart()
     {
+        // Do nothing.
     }
 
     /**
@@ -63,6 +64,7 @@ public class Heart
         }
         catch (NumberFormatException e)
         {
+            // Do nothing.
         }
         if (pulse > 0)
         {
@@ -77,8 +79,8 @@ public class Heart
      */
     private void startBeating(int pulse)
     {
-        timer = new Timer();
-        timer.schedule(new HeartBeat(), 0, pulse);
+        this.timer = new Timer();
+        this.timer.schedule(new HeartBeat(), 0, pulse);
     }
 
     class HeartBeat extends TimerTask

@@ -35,14 +35,14 @@ public class NotAnAIMLPatternException extends Exception
      *  @param message	the explanation why this pattern is invalid
      *  @param pattern	the pattern itself
      */
-    public NotAnAIMLPatternException(String message, String pattern)
+    public NotAnAIMLPatternException(String message, String patternToUse)
     {
         super(message);
-        this.pattern = pattern;
+        this.pattern = patternToUse;
     }
 
     public String getMessage()
     {
-        return MSG_PART_ONE + pattern + MSG_PART_TWO + super.getMessage();
+        return MSG_PART_ONE + this.pattern + MSG_PART_TWO + super.getMessage();
     }
 }

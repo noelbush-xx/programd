@@ -74,6 +74,7 @@ public class PredicateMaster
      */
     private PredicateMaster()
     {
+        // Nothing to do.
     }
 
     /**

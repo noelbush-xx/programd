@@ -30,6 +30,7 @@ abstract public class ActiveJavaScriptInterpreter implements Interpreter
      */
     private ActiveJavaScriptInterpreter()
     {
+        // Nothing to do.
     }
 
     /**

@@ -25,13 +25,9 @@ public class PredicateProcessor extends StartupElementProcessor
 {
     public static final String label = "predicate";
 
-    private static final String NAME = "name";
-
     private static final String DEFAULT = "default";
 
     private static final String SET_RETURN = "set-return";
-
-    private static final String VALUE = "value";
 
     public String process(int level, XMLNode tag, StartupFileParser parser)
         throws InvalidStartupElementException

@@ -65,10 +65,10 @@ public class Target
         String inputTopic,
         String reply)
     {
-        match =
+        this.match =
             new Category(matchPattern, matchThat, matchTopic, matchTemplate);
-        inputs = new TargetInputs(inputText, inputThat, inputTopic);
-        replies.add(reply);
+        this.inputs = new TargetInputs(inputText, inputThat, inputTopic);
+        this.replies.add(reply);
     }
 
     /**
@@ -78,7 +78,7 @@ public class Target
      */
     public int hashCode()
     {
-        return (match.getPattern() + match.getThat() + match.getTopic())
+        return (this.match.getPattern() + this.match.getThat() + this.match.getTopic())
             .hashCode();
     }
 
@@ -131,22 +131,22 @@ public class Target
 
             String nextReply = (String) replyIterator.next();
 
-            if (!inputs.contains(nextInput))
+            if (!this.inputs.contains(nextInput))
             {
-                inputs.add(nextInput);
-                replies.add(nextReply);
+                this.inputs.add(nextInput);
+                this.replies.add(nextReply);
                 if (nextExtension != null)
                 {
-                    extensions.add(nextExtension);
+                    this.extensions.add(nextExtension);
                 }
             }
         }
 
-        if (!(inputs.size() == replies.size()))
+        if (!(this.inputs.size() == this.replies.size()))
         {
             throw new DeveloperError("Merge operation failed to maintain stable activation count.");
         }
-        activations = inputs.size();
+        this.activations = this.inputs.size();
     }
 
     /**
@@ -156,7 +156,7 @@ public class Target
      */
     public String getMatchPattern()
     {
-        return match.getPattern();
+        return this.match.getPattern();
     }
 
     /**
@@ -166,7 +166,7 @@ public class Target
      */
     public String getMatchThat()
     {
-        return match.getThat();
+        return this.match.getThat();
     }
 
     /**
@@ -176,7 +176,7 @@ public class Target
      */
     public String getMatchTopic()
     {
-        return match.getTopic();
+        return this.match.getTopic();
     }
 
     /**
@@ -186,7 +186,7 @@ public class Target
      */
     public String getMatchTemplate()
     {
-        return match.getTemplate();
+        return this.match.getTemplate();
     }
 
     /**
@@ -196,7 +196,7 @@ public class Target
      */
     public StringTripleMatrix getInputs()
     {
-        return inputs;
+        return this.inputs;
     }
 
     /**
@@ -206,7 +206,7 @@ public class Target
      */
     public LinkedList getInputTexts()
     {
-        return inputs.getTexts();
+        return this.inputs.getTexts();
     }
 
     /**
@@ -216,7 +216,7 @@ public class Target
      */
     public LinkedList getInputThats()
     {
-        return inputs.getThats();
+        return this.inputs.getThats();
     }
 
     /**
@@ -226,7 +226,7 @@ public class Target
      */
     public LinkedList getInputTopics()
     {
-        return inputs.getTopics();
+        return this.inputs.getTopics();
     }
 
     /**
@@ -236,7 +236,7 @@ public class Target
      */
     public String getFirstInputText()
     {
-        return (String) inputs.getTexts().getFirst();
+        return (String) this.inputs.getTexts().getFirst();
     }
 
     /**
@@ -246,7 +246,7 @@ public class Target
      */
     public String getFirstInputThat()
     {
-        return (String) inputs.getThats().getFirst();
+        return (String) this.inputs.getThats().getFirst();
     }
 
     /**
@@ -256,7 +256,7 @@ public class Target
      */
     public String getFirstInputTopic()
     {
-        return (String) inputs.getTopics().getFirst();
+        return (String) this.inputs.getTopics().getFirst();
     }
 
     /**
@@ -266,7 +266,7 @@ public class Target
      */
     public String getLastInputText()
     {
-        return (String) inputs.getTexts().getLast();
+        return (String) this.inputs.getTexts().getLast();
     }
 
     /**
@@ -276,7 +276,7 @@ public class Target
      */
     public String getLastInputThat()
     {
-        return (String) inputs.getThats().getLast();
+        return (String) this.inputs.getThats().getLast();
     }
 
     /**
@@ -286,7 +286,7 @@ public class Target
      */
     public String getLastInputTopic()
     {
-        return (String) inputs.getTopics().getLast();
+        return (String) this.inputs.getTopics().getLast();
     }
 
     /**
@@ -298,7 +298,7 @@ public class Target
      */
     public String getNthInputText(int n)
     {
-        return (String) inputs.getTexts().get(n);
+        return (String) this.inputs.getTexts().get(n);
     }
 
     /**
@@ -310,7 +310,7 @@ public class Target
      */
     public String getNthInputThat(int n)
     {
-        return (String) inputs.getThats().get(n);
+        return (String) this.inputs.getThats().get(n);
     }
 
     /**
@@ -322,7 +322,7 @@ public class Target
      */
     public String getNthInputTopic(int n)
     {
-        return (String) inputs.getTopics().get(n);
+        return (String) this.inputs.getTopics().get(n);
     }
 
     /**
@@ -332,7 +332,7 @@ public class Target
      */
     public StringTripleMatrix getExtensions()
     {
-        return extensions;
+        return this.extensions;
     }
 
     /**
@@ -342,7 +342,7 @@ public class Target
      */
     public LinkedList getExtensionPatterns()
     {
-        return extensions.getPatterns();
+        return this.extensions.getPatterns();
     }
 
     /**
@@ -352,7 +352,7 @@ public class Target
      */
     public LinkedList getExtensionThats()
     {
-        return extensions.getThats();
+        return this.extensions.getThats();
     }
 
     /**
@@ -362,7 +362,7 @@ public class Target
      */
     public LinkedList getExtensionTopics()
     {
-        return extensions.getTopics();
+        return this.extensions.getTopics();
     }
 
     /**
@@ -372,7 +372,7 @@ public class Target
      */
     public String getFirstExtensionPattern()
     {
-        return (String) extensions.getPatterns().getFirst();
+        return (String) this.extensions.getPatterns().getFirst();
     }
 
     /**
@@ -382,7 +382,7 @@ public class Target
      */
     public String getFirstExtensionThat()
     {
-        return (String) extensions.getThats().getFirst();
+        return (String) this.extensions.getThats().getFirst();
     }
 
     /**
@@ -392,7 +392,7 @@ public class Target
      */
     public String getFirstExtensionTopic()
     {
-        return (String) extensions.getTopics().getFirst();
+        return (String) this.extensions.getTopics().getFirst();
     }
 
     /**
@@ -402,7 +402,7 @@ public class Target
      */
     public String getLastExtensionPattern()
     {
-        return (String) extensions.getPatterns().getLast();
+        return (String) this.extensions.getPatterns().getLast();
     }
 
     /**
@@ -412,7 +412,7 @@ public class Target
      */
     public String getLastExtensionThat()
     {
-        return (String) extensions.getThats().getLast();
+        return (String) this.extensions.getThats().getLast();
     }
 
     /**
@@ -422,7 +422,7 @@ public class Target
      */
     public String getLastExtensionTopic()
     {
-        return (String) extensions.getTopics().getLast();
+        return (String) this.extensions.getTopics().getLast();
     }
 
     /**
@@ -435,7 +435,7 @@ public class Target
     public String getNthExtensionPattern(int n)
     {
         extend(n);
-        return (String) extensions.getPatterns().get(n);
+        return (String) this.extensions.getPatterns().get(n);
     }
 
     /**
@@ -448,7 +448,7 @@ public class Target
     public String getNthExtensionThat(int n)
     {
         extend(n);
-        return (String) extensions.getThats().get(n);
+        return (String) this.extensions.getThats().get(n);
     }
 
     /**
@@ -461,7 +461,7 @@ public class Target
     public String getNthExtensionTopic(int n)
     {
         extend(n);
-        return (String) extensions.getTopics().get(n);
+        return (String) this.extensions.getTopics().get(n);
     }
 
     /**
@@ -471,7 +471,7 @@ public class Target
      */
     public LinkedList getReplies()
     {
-        return replies;
+        return this.replies;
     }
 
     /**
@@ -481,7 +481,7 @@ public class Target
      */
     public String getFirstReply()
     {
-        return (String) replies.getFirst();
+        return (String) this.replies.getFirst();
     }
 
     /**
@@ -491,7 +491,7 @@ public class Target
      */
     public String getLastReply()
     {
-        return (String) replies.getLast();
+        return (String) this.replies.getLast();
     }
 
     /**
@@ -503,7 +503,7 @@ public class Target
      */
     public String getNthReply(int n)
     {
-        return (String) replies.get(n);
+        return (String) this.replies.get(n);
     }
 
     /**
@@ -513,7 +513,7 @@ public class Target
      */
     public String getNewPattern()
     {
-        return newCategory.getPattern();
+        return this.newCategory.getPattern();
     }
 
     /**
@@ -523,7 +523,7 @@ public class Target
      */
     public String getNewThat()
     {
-        return newCategory.getThat();
+        return this.newCategory.getThat();
     }
 
     /**
@@ -533,7 +533,7 @@ public class Target
      */
     public String getNewTopic()
     {
-        return newCategory.getTopic();
+        return this.newCategory.getTopic();
     }
 
     /**
@@ -543,7 +543,7 @@ public class Target
      */
     public String getNewTemplate()
     {
-        return newCategory.getTemplate();
+        return this.newCategory.getTemplate();
     }
 
     /**
@@ -553,7 +553,7 @@ public class Target
      */
     public void setNewPattern(String pattern)
     {
-        newCategory.setPattern(pattern);
+        this.newCategory.setPattern(pattern);
     }
 
     /**
@@ -563,7 +563,7 @@ public class Target
      */
     public void setNewThat(String that)
     {
-        newCategory.setThat(that);
+        this.newCategory.setThat(that);
     }
 
     /**
@@ -573,7 +573,7 @@ public class Target
      */
     public void setNewTopic(String topic)
     {
-        newCategory.setTopic(topic);
+        this.newCategory.setTopic(topic);
     }
 
     /**
@@ -583,7 +583,7 @@ public class Target
      */
     public void setNewTemplate(String template)
     {
-        newCategory.setTemplate(template);
+        this.newCategory.setTemplate(template);
     }
 
     /**
@@ -593,7 +593,7 @@ public class Target
      */
     public int getActivations()
     {
-        return activations;
+        return this.activations;
     }
 
     /**
@@ -601,7 +601,7 @@ public class Target
      */
     public void extend()
     {
-        for (int index = activations; --index >= 0;)
+        for (int index = this.activations; --index >= 0;)
         {
             extend(index);
         }
@@ -615,7 +615,7 @@ public class Target
      */
     private void extend(int index)
     {
-        extensions.ensureSize(index + 1);
+        this.extensions.ensureSize(index + 1);
 
         String inputText = getNthInputText(index);
         String inputThat = getNthInputThat(index);
@@ -630,42 +630,42 @@ public class Target
             // Try to extend the match-pattern using the input-text.
             extensionPattern =
                 InputNormalizer.patternFit(
-                    extend(match.getPattern(), inputText));
+                    extend(this.match.getPattern(), inputText));
 
             /*
                 If successful (no exception),
                 set target -that and -topic to match -that and -topic.
             */
-            extensionThat = InputNormalizer.patternFit(match.getThat());
-            extensionTopic = InputNormalizer.patternFit(match.getTopic());
+            extensionThat = InputNormalizer.patternFit(this.match.getThat());
+            extensionTopic = InputNormalizer.patternFit(this.match.getTopic());
         }
         catch (CannotExtendException e0)
         {
             // Couldn't extend the match-pattern, so set target-pattern to match-pattern.
-            extensionPattern = InputNormalizer.patternFit(match.getPattern());
+            extensionPattern = InputNormalizer.patternFit(this.match.getPattern());
             try
             {
                 // Try to extend the match-that using the input-that.
                 extensionThat =
                     InputNormalizer.patternFit(
-                        extend(match.getThat(), inputThat));
+                        extend(this.match.getThat(), inputThat));
 
                 /*
                     If successful (no exception),
                     set target-topic to match-topic.
                 */
-                extensionTopic = InputNormalizer.patternFit(match.getTopic());
+                extensionTopic = InputNormalizer.patternFit(this.match.getTopic());
             }
             catch (CannotExtendException e1)
             {
                 // Couldn't extend the match-that, so set target-that to match-that.
-                extensionThat = InputNormalizer.patternFit(match.getThat());
+                extensionThat = InputNormalizer.patternFit(this.match.getThat());
                 try
                 {
                     // Try to extend the match-topic using the input-topic.
                     extensionTopic =
                         InputNormalizer.patternFit(
-                            extend(match.getTopic(), inputTopic));
+                            extend(this.match.getTopic(), inputTopic));
                 }
                 catch (CannotExtendException e2)
                 {
@@ -674,9 +674,9 @@ public class Target
                 }
             }
         }
-        extensions.getFirsts().set(index, extensionPattern);
-        extensions.getSeconds().set(index, extensionThat);
-        extensions.getThirds().set(index, extensionTopic);
+        this.extensions.getFirsts().set(index, extensionPattern);
+        this.extensions.getSeconds().set(index, extensionThat);
+        this.extensions.getThirds().set(index, extensionTopic);
     }
 
     /**
@@ -750,5 +750,6 @@ class CannotExtendException extends Exception
 {
     public CannotExtendException()
     {
+        // Nothing to do.
     }
 }

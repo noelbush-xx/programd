@@ -71,7 +71,7 @@ public class Match
      */
     public void pushInputStar(String string)
     {
-        inputStars.add(0, string);
+        this.inputStars.add(0, string);
     }
 
     /**
@@ -81,7 +81,7 @@ public class Match
      */
     public void pushThatStar(String string)
     {
-        thatStars.add(0, string);
+        this.thatStars.add(0, string);
     }
 
     /**
@@ -91,7 +91,7 @@ public class Match
      */
     public void pushTopicStar(String string)
     {
-        topicStars.add(0, string);
+        this.topicStars.add(0, string);
     }
 
     /**
@@ -137,12 +137,12 @@ public class Match
     /**
      *  Set the match-resulting nodemapper.
      *
-     *  @param node the match-resulting nodemapper
+     *  @param nodemapperToSet the match-resulting nodemapper
      */
 
-    public void setNodemapper(Nodemapper nodemapper)
+    public void setNodemapper(Nodemapper nodemapperToSet)
     {
-        this.nodemapper = nodemapper;
+        this.nodemapper = nodemapperToSet;
     }
 
     /**
@@ -182,13 +182,13 @@ public class Match
      */
     public String getPath()
     {
-        return InputNormalizer.patternFit(pattern)
+        return InputNormalizer.patternFit(this.pattern)
             + SPACED_PATH_SEPARATOR
-            + InputNormalizer.patternFit(that)
+            + InputNormalizer.patternFit(this.that)
             + SPACED_PATH_SEPARATOR
-            + InputNormalizer.patternFit(topic)
+            + InputNormalizer.patternFit(this.topic)
             + SPACED_PATH_SEPARATOR
-            + botid;
+            + this.botid;
     }
 
     /**

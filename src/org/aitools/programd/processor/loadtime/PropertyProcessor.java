@@ -35,7 +35,7 @@ public class PropertyProcessor extends StartupElementProcessor
     public String process(int level, XMLNode tag, StartupFileParser parser)
         throws InvalidStartupElementException
     {
-        if (tag.XMLType == tag.EMPTY)
+        if (tag.XMLType == XMLNode.EMPTY)
         {
             String name = XMLKit.getAttributeValue(NAME, tag.XMLAttr);
             if (!name.equals(EMPTY_STRING))

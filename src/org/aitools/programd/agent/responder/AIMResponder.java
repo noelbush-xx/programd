@@ -23,6 +23,7 @@ public class AIMResponder implements Responder
 
     public AIMResponder()
     {
+        // Please document this.
     }
 
     public String preprocess(String input, String hostname)

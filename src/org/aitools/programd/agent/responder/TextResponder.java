@@ -52,6 +52,7 @@ public class TextResponder implements Responder
      */
     public TextResponder()
     {
+        // Nothing to do.
     }
 
     /**

@@ -47,10 +47,10 @@ public class Category
      *  @param topic    the category's <code>topic</code> contents
      *  @param template the category's <code>template</code> contents
      */
-    public Category(String pattern, String that, String topic, String template)
+    public Category(String pattern, String that, String topic, String templateToUse)
     {
         this.address = new StringTriple(pattern, that, topic);
-        this.template = template;
+        this.template = templateToUse;
     }
 
     /**
@@ -128,8 +128,8 @@ public class Category
      *
      *  @param template the <code>template</code>
      */
-    public void setTemplate(String template)
+    public void setTemplate(String templateToUse)
     {
-        this.template = template;
+        this.template = templateToUse;
     }
 }

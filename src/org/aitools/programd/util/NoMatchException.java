@@ -18,7 +18,7 @@ package org.aitools.programd.util;
 public class NoMatchException extends Exception
 {
     /** The path for which there was no match. */
-    private static String path;
+    private String path;
 
     /**
      *  Constructs a new NoMatchException for
@@ -26,13 +26,13 @@ public class NoMatchException extends Exception
      *
      *  @param path the path for which there was no match
      */
-    public NoMatchException(String path)
+    public NoMatchException(String pathToUse)
     {
-        this.path = path;
+        this.path = pathToUse;
     }
 
     public String getMessage()
     {
-        return "No match found for path \"" + path + "\".";
+        return "No match found for path \"" + this.path + "\".";
     }
 }

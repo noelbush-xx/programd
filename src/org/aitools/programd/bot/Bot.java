@@ -80,16 +80,16 @@ public class Bot
      *  Creates a new Bot with the given id.
      *  The bot's chat log spec is also set.
      */
-    public Bot(String id)
+    public Bot(String botID)
     {
-        this.id = id;
+        this.id = botID;
         this.chatlogSpec = XMLLog.getChatlogSpecClone();
         this.chatlogSpec.path =
             Globals.getProperty(
                 "programd.logging.xml.chat.log-directory",
                 "./logs")
                 + File.separator
-                + id
+                + this.id
                 + File.separator
                 + "chat.xml";
     }
@@ -101,7 +101,7 @@ public class Bot
      */
     public String getID()
     {
-        return id;
+        return this.id;
     }
 
     
@@ -112,7 +112,7 @@ public class Bot
      */
     public HashMap getLoadedFilesMap()
     {
-        return loadedFiles;
+        return this.loadedFiles;
     }
     
     /**
@@ -122,7 +122,7 @@ public class Bot
      */
     public boolean hasLoaded(String filename)
     {
-        return loadedFiles.containsKey(filename);
+        return this.loadedFiles.containsKey(filename);
     }
 
     /**
@@ -133,7 +133,7 @@ public class Bot
      */
     public void addToFilenameMap(String filename, Nodemapper nodemapper)
     {
-        HashSet nodemappers = (HashSet) loadedFiles.get(filename);
+        HashSet nodemappers = (HashSet) this.loadedFiles.get(filename);
         if (nodemappers != null)
         {
             nodemappers.add(nodemapper);
@@ -152,18 +152,18 @@ public class Bot
         // Don't bother with empty property names.
         if (name.equals(EMPTY_STRING))
         {
-            return PREDICATE_EMPTY_DEFAULT;
+            return this.PREDICATE_EMPTY_DEFAULT;
         }
 
         // Retrieve the contents of the property.
-        String value = (String) properties.get(name);
+        String value = (String) this.properties.get(name);
         if (value != null)
         {
             return value;
         }
         else
         {
-            return PREDICATE_EMPTY_DEFAULT;
+            return this.PREDICATE_EMPTY_DEFAULT;
         }
     }
 
@@ -181,7 +181,7 @@ public class Bot
         }
 
         // Store the property.
-        properties.put(name, value);
+        this.properties.put(name, value);
     }
 
     /**
@@ -204,7 +204,7 @@ public class Bot
         info.name = name;
         info.defaultValue = defaultValue;
         info.returnNameWhenSet = returnNameWhenSet;
-        predicatesInfo.put(name, info);
+        this.predicatesInfo.put(name, info);
     }
 
     /**
@@ -214,7 +214,7 @@ public class Bot
      */
     public HashMap getPredicatesInfo()
     {
-        return predicatesInfo;
+        return this.predicatesInfo;
     }
 
     /**
@@ -224,7 +224,7 @@ public class Bot
      */
     public Map getPredicateCache()
     {
-        return predicateCache;
+        return this.predicateCache;
     }
 
     /**
@@ -238,15 +238,15 @@ public class Bot
         Map userPredicates;
 
         // Find out if any predicates for this userid are cached.
-        if (!predicateCache.containsKey(userid))
+        if (!this.predicateCache.containsKey(userid))
         {
             // Create them if not.
             userPredicates = Collections.synchronizedMap(new HashMap());
-            predicateCache.put(userid, userPredicates);
+            this.predicateCache.put(userid, userPredicates);
         }
         else
         {
-            userPredicates = (Map) predicateCache.get(userid);
+            userPredicates = (Map) this.predicateCache.get(userid);
             if (userPredicates == null)
             {
                 // This should never happen!
@@ -258,22 +258,22 @@ public class Bot
 
     public void addInputSubstitution(String find, String replace)
     {
-        addSubstitution(inputSubstitutions, find, replace);
+        addSubstitution(this.inputSubstitutions, find, replace);
     }
 
     public void addGenderSubstitution(String find, String replace)
     {
-        addSubstitution(genderSubstitutions, find, replace);
+        addSubstitution(this.genderSubstitutions, find, replace);
     }
 
     public void addPersonSubstitution(String find, String replace)
     {
-        addSubstitution(personSubstitutions, find, replace);
+        addSubstitution(this.personSubstitutions, find, replace);
     }
 
     public void addPerson2Substitution(String find, String replace)
     {
-        addSubstitution(person2Substitutions, find, replace);
+        addSubstitution(this.person2Substitutions, find, replace);
     }
 
     /**
@@ -306,47 +306,47 @@ public class Bot
     {
         if (splitter != null)
         {
-            sentenceSplitters.add(splitter);
+            this.sentenceSplitters.add(splitter);
         }
     }
 
     public HashMap getInputSubstitutionsMap()
     {
-        return inputSubstitutions;
+        return this.inputSubstitutions;
     }
 
     public HashMap getGenderSubstitutionsMap()
     {
-        return genderSubstitutions;
+        return this.genderSubstitutions;
     }
 
     public HashMap getPersonSubstitutionsMap()
     {
-        return personSubstitutions;
+        return this.personSubstitutions;
     }
 
     public HashMap getPerson2SubstitutionsMap()
     {
-        return person2Substitutions;
+        return this.person2Substitutions;
     }
 
     public ArrayList getSentenceSplitters()
     {
-        return sentenceSplitters;
+        return this.sentenceSplitters;
     }
 
     public ArrayList sentenceSplit(String input)
     {
-        return InputNormalizer.sentenceSplit(sentenceSplitters, input);
+        return InputNormalizer.sentenceSplit(this.sentenceSplitters, input);
     }
 
     public String applyInputSubstitutions(String input)
     {
-        return Substituter.applySubstitutions(inputSubstitutions, input);
+        return Substituter.applySubstitutions(this.inputSubstitutions, input);
     }
 
     public XMLResourceSpec getChatlogSpec()
     {
-        return chatlogSpec;
+        return this.chatlogSpec;
     }
 }

@@ -26,11 +26,11 @@ public class StringTriple
 
     private String third;
 
-    public StringTriple(String first, String second, String third)
+    public StringTriple(String firstString, String secondString, String thirdString)
     {
-        this.first = first;
-        this.second = second;
-        this.third = third;
+        this.first = firstString;
+        this.second = secondString;
+        this.third = thirdString;
     }
 
     public String getFirst()

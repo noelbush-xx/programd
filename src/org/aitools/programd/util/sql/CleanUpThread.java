@@ -21,11 +21,11 @@ class CleanUpThread extends Thread
      *  @param pool         the object pool to clean up
      *  @param sleepTime    the period (in milliseconds) to wait before cleaning up
      */
-    public CleanUpThread(ObjectPool pool, long sleepTime)
+    public CleanUpThread(ObjectPool poolToUse, long sleepTimeToUse)
     {
         super("Database Pool Cleanup Thread");
-        this.pool = pool;
-        this.sleepTime = sleepTime;
+        this.pool = poolToUse;
+        this.sleepTime = sleepTimeToUse;
     }
 
     /**
@@ -38,13 +38,13 @@ class CleanUpThread extends Thread
         {
             try
             {
-                sleep(sleepTime);
+                sleep(this.sleepTime);
             }
             catch (InterruptedException e)
             {
                 // ignore it
             }
-            pool.cleanUp();
+            this.pool.cleanUp();
         }
     }
 }

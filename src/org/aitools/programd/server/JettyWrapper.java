@@ -27,6 +27,7 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
 
     public JettyWrapper()
     {
+        // Do nothing.
     }
 
     /**

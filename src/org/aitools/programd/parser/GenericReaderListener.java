@@ -17,4 +17,5 @@ package org.aitools.programd.parser;
  */
 public interface GenericReaderListener
 {
+    // No body.
 }

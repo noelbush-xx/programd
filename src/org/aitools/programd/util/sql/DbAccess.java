@@ -59,12 +59,12 @@ public class DbAccess
      *  @param user     user name
      *  @param password password for user
      */
-    public DbAccess(String driver, String url, String user, String password)
+    public DbAccess(String driverToUse, String urlToUse, String userToUse, String passwordToUse)
     {
-        this.driver = driver;
-        this.url = url;
-        this.user = user;
-        this.password = password;
+        this.driver = driverToUse;
+        this.url = urlToUse;
+        this.user = userToUse;
+        this.password = passwordToUse;
         connect();
     }
 
@@ -75,9 +75,9 @@ public class DbAccess
      *  @param connection   the {@link java.sql.Connection} object
      *                      from which to construct the <code>DbAccess</code> object
      */
-    public DbAccess(Connection connection)
+    public DbAccess(Connection connectionToUse)
     {
-        this.connection = connection;
+        this.connection = connectionToUse;
     }
 
     /**
@@ -89,11 +89,11 @@ public class DbAccess
      */
     public void connect()
     {
-        if (connection == null)
+        if (this.connection == null)
         {
             try
             {
-                Class.forName(driver);
+                Class.forName(this.driver);
             }
             catch (ClassNotFoundException e)
             {
@@ -101,28 +101,28 @@ public class DbAccess
             }
             try
             {
-                if (user == null || password == null)
+                if (this.user == null || this.password == null)
                 {
-                    connection = DriverManager.getConnection(url);
+                    this.connection = DriverManager.getConnection(this.url);
                 }
                 else
                 {
-                    connection =
-                        DriverManager.getConnection(url, user, password);
+                    this.connection =
+                        DriverManager.getConnection(this.url, this.user, this.password);
                 }
             }
             catch (SQLException e)
             {
                 throw new UserError(
                     "Could not connect to \""
-                        + url
+                        + this.url
                         + "\".  Please check that the parameters specified in your server properties file are correct.",
                     e);
             }
             // Create the statement to be used in queries or updates.
             try
             {
-                statement = connection.createStatement();
+                this.statement = this.connection.createStatement();
             }
             catch (SQLException e)
             {
@@ -143,13 +143,13 @@ public class DbAccess
      */
     public ResultSet executeQuery(String query) throws SQLException
     {
-        if (statement == null)
+        if (this.statement == null)
         {
             throw new DeveloperError("Tried to execute query before creating Statement object!");
         }
         try
         {
-            return statement.executeQuery(query);
+            return this.statement.executeQuery(query);
         }
         catch (SQLException e)
         {
@@ -171,13 +171,13 @@ public class DbAccess
      */
     public int executeUpdate(String update)
     {
-        if (statement == null)
+        if (this.statement == null)
         {
             throw new DeveloperError("Tried to execute query before creating Statement object!");
         }
         try
         {
-            return statement.executeUpdate(update);
+            return this.statement.executeUpdate(update);
         }
         catch (SQLException e)
         {
@@ -197,7 +197,7 @@ public class DbAccess
      */
     public Connection getConnection()
     {
-        return connection;
+        return this.connection;
     }
 
     /**
@@ -207,7 +207,7 @@ public class DbAccess
      */
     public String getDriver()
     {
-        return driver;
+        return this.driver;
     }
 
     /**
@@ -217,7 +217,7 @@ public class DbAccess
      */
     public String getPassword()
     {
-        return password;
+        return this.password;
     }
 
     /**
@@ -228,7 +228,7 @@ public class DbAccess
      */
     public Statement getStatement()
     {
-        return statement;
+        return this.statement;
     }
 
     /**
@@ -238,7 +238,7 @@ public class DbAccess
      */
     public String getUrl()
     {
-        return url;
+        return this.url;
     }
 
     /**
@@ -248,7 +248,7 @@ public class DbAccess
      */
     public String getUser()
     {
-        return user;
+        return this.user;
     }
 
     /**
@@ -257,9 +257,9 @@ public class DbAccess
      *
      *  @param connection   the Connection object to be used
      */
-    public void setConnection(Connection connection)
+    public void setConnection(Connection connectionToSet)
     {
-        this.connection = connection;
+        this.connection = connectionToSet;
     }
 
     /**
@@ -268,9 +268,9 @@ public class DbAccess
      *
      *  @param driver   the name of the driver to be used
      */
-    public void setDriver(String driver)
+    public void setDriver(String driverToSet)
     {
-        this.driver = driver;
+        this.driver = driverToSet;
     }
 
     /**
@@ -279,9 +279,9 @@ public class DbAccess
      *
      *  @param password the password to be used
      */
-    public void setPassword(String password)
+    public void setPassword(String passwordToSet)
     {
-        this.password = password;
+        this.password = passwordToSet;
     }
 
     /**
@@ -290,9 +290,9 @@ public class DbAccess
      *
      *  @param url  the URL string to be used
      */
-    public void setUrl(String url)
+    public void setUrl(String urlToSet)
     {
-        this.url = url;
+        this.url = urlToSet;
     }
 
     /**
@@ -301,8 +301,8 @@ public class DbAccess
      *
      *  @param user the user name to be used
      */
-    public void setUser(String user)
+    public void setUser(String userToSet)
     {
-        this.user = user;
+        this.user = userToSet;
     }
 }

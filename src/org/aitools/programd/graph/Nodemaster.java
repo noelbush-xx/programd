@@ -43,57 +43,57 @@ public class Nodemaster implements Nodemapper
 
     protected Nodemapper parent;
 
-    public Object put(String key, Object value)
+    public Object put(String keyToPut, Object valueToPut)
     {
         if (this.size == 0)
         {
-            this.key = key.toUpperCase().intern();
-            this.value = value;
-            size = 1;
-            return value;
+            this.key = keyToPut.toUpperCase().intern();
+            this.value = valueToPut;
+            this.size = 1;
+            return this.value;
         }
         else if (this.size == 1)
         {
-            Hidden = new HashMap();
-            Hidden.put(this.key, this.value);
-            size = 2;
-            return Hidden.put(key.toUpperCase().intern(), value);
+            this.Hidden = new HashMap();
+            this.Hidden.put(this.key, this.value);
+            this.size = 2;
+            return this.Hidden.put(keyToPut.toUpperCase().intern(), valueToPut);
         }
         else
         {
-            size++;
-            return Hidden.put(key.toUpperCase().intern(), value);
+            this.size++;
+            return this.Hidden.put(keyToPut.toUpperCase().intern(), valueToPut);
         }
     }
 
-    public void remove(Object value)
+    public void remove(Object valueToRemove)
     {
-        if (size > 2)
+        if (this.size > 2)
         {
-            Hidden.remove(value);
-            size--;
+            this.Hidden.remove(valueToRemove);
+            this.size--;
         }
-        else if (size == 2)
+        else if (this.size == 2)
         {
-            this.value = Hidden.remove(value);
-            size = 1;
+            this.value = this.Hidden.remove(valueToRemove);
+            this.size = 1;
         }
-        else if (size == 1)
+        else if (this.size == 1)
         {
             this.value = null;
-            size = 0;
+            this.size = 0;
         }
     }
 
-    public Object get(String key)
+    public Object get(String keyToGet)
     {
-        if (size == 0)
+        if (this.size == 0)
         {
             return null;
         }
-        else if (size == 1)
+        else if (this.size == 1)
         {
-            if (key.equalsIgnoreCase(this.key))
+            if (keyToGet.equalsIgnoreCase(this.key))
             {
                 return this.value;
             }
@@ -104,13 +104,13 @@ public class Nodemaster implements Nodemapper
         }
         else
         {
-            return Hidden.get(key.toUpperCase());
+            return this.Hidden.get(keyToGet.toUpperCase());
         }
     }
 
     public Set keySet()
     {
-        if (size <= 1)
+        if (this.size <= 1)
         {
             Set result = new HashSet();
             if (this.key != null)
@@ -121,23 +121,23 @@ public class Nodemaster implements Nodemapper
         }
         else
         {
-            return Hidden.keySet();
+            return this.Hidden.keySet();
         }
     }
 
-    public boolean containsKey(String key)
+    public boolean containsKey(String keyToCheck)
     {
-        if (size == 0)
+        if (this.size == 0)
         {
             return false;
         }
-        else if (size <= 1)
+        else if (this.size <= 1)
         {
-            return (key.equalsIgnoreCase(this.key));
+            return (keyToCheck.equalsIgnoreCase(this.key));
         }
         else
         {
-            return Hidden.containsKey(key.toUpperCase());
+            return this.Hidden.containsKey(keyToCheck.toUpperCase());
         }
     }
 
@@ -146,9 +146,9 @@ public class Nodemaster implements Nodemapper
         return this.size;
     }
 
-    public void setParent(Nodemapper parent)
+    public void setParent(Nodemapper parentToSet)
     {
-        this.parent = parent;
+        this.parent = parentToSet;
     }
 
     public Nodemapper getParent()
@@ -174,15 +174,15 @@ public class Nodemaster implements Nodemapper
      *
      *  @param height	the height for this node
      */
-    private void fillInHeight(int height)
+    private void fillInHeight(int heightToFillIn)
     {
-        if (this.height > height)
+        if (this.height > heightToFillIn)
         {
-            this.height = height;
+            this.height = heightToFillIn;
         }
         if (this.parent != null)
         {
-            ((Nodemaster) this.parent).fillInHeight(height + 1);
+            ((Nodemaster) this.parent).fillInHeight(heightToFillIn + 1);
         }
     }
 }

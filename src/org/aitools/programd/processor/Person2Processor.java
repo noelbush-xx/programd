@@ -64,10 +64,10 @@ public class Person2Processor extends AIMLProcessor
             return parser.shortcutTag(
                 level,
                 label,
-                tag.TAG,
+                XMLNode.TAG,
                 EMPTY_STRING,
                 StarProcessor.label,
-                tag.EMPTY);
+                XMLNode.EMPTY);
         }
     }
 

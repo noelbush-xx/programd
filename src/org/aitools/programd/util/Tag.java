@@ -37,10 +37,10 @@ public class Tag
      *
      *  @param name the name of the tag
      */
-    public Tag(String name)
+    public Tag(String nameToUse)
     {
-        this.name = name;
-        this.toString = LEFT_ANGLE_BRACKET + name + RIGHT_ANGLE_BRACKET;
+        this.name = nameToUse;
+        this.toString = LEFT_ANGLE_BRACKET + this.name + RIGHT_ANGLE_BRACKET;
     }
 
     /**

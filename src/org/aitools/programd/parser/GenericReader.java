@@ -140,17 +140,17 @@ abstract public class GenericReader
      *  @param listener         will handle new items
      */
     public GenericReader(
-        String fileName,
-        BufferedReader buffReader,
-        String encoding,
-        boolean countBytes,
-        GenericReaderListener listener)
+        String fileNameToUse,
+        BufferedReader buffReaderToUse,
+        String encodingToUse,
+        boolean countBytesToUse,
+        GenericReaderListener listenerToUse)
     {
-        this.fileName = fileName;
-        this.buffReader = buffReader;
-        this.encoding = encoding;
-        this.countBytes = countBytes;
-        this.listener = listener;
+        this.fileName = fileNameToUse;
+        this.buffReader = buffReaderToUse;
+        this.encoding = encodingToUse;
+        this.countBytes = countBytesToUse;
+        this.listener = listenerToUse;
         this.TRANSITION_MADE = new TransitionMade();
 
         // Do any initialization.
@@ -172,14 +172,14 @@ abstract public class GenericReader
      *  @param listener         will handle new items
      */
     public GenericReader(
-        String fileName,
-        BufferedReader buffReader,
-        GenericReaderListener listener)
+        String fileNameToUse,
+        BufferedReader buffReaderToUse,
+        GenericReaderListener listenerToUse)
     {
-        this.fileName = fileName;
-        this.buffReader = buffReader;
+        this.fileName = fileNameToUse;
+        this.buffReader = buffReaderToUse;
         this.countBytes = false;
-        this.listener = listener;
+        this.listener = listenerToUse;
         this.TRANSITION_MADE = new TransitionMade();
 
         // Do any initialization.
@@ -196,80 +196,80 @@ abstract public class GenericReader
         StringBuffer line = null;
 
         // Parse loop.  Anything that sets done to false will cause parsing to stop.
-        parsing : while (!done)
+        parsing : while (!this.done)
         {
             // Searching = true means we are looking for a tag marker.
-            searching = true;
+            this.searching = true;
 
             /*
                 Searching for tag marker loop.  Setting searching to false
                 will trigger a parse attempt.
             */
-            searching : while (searching)
+            searching : while (this.searching)
             {
                 // Convert the buffer to a String for matching purposes.
-                bufferString = buffer.toString();
+                this.bufferString = this.buffer.toString();
 
                 // Find the next marker start.
-                tagStart = bufferString.indexOf(MARKER_START, searchStart);
+                this.tagStart = this.bufferString.indexOf(MARKER_START, this.searchStart);
 
                 // If no tag is found, read another line.
-                if (tagStart < 0)
+                if (this.tagStart < 0)
                 {
                     // Try to read another line.
                     try
                     {
                         // If buffReader.readLine() is null, an exception will be thrown.
-                        line = new StringBuffer(buffReader.readLine());
+                        line = new StringBuffer(this.buffReader.readLine());
 
                         // Update the byteCount.
-                        if (countBytes)
+                        if (this.countBytes)
                         {
                             try
                             {
-                                byteCount
-                                    += line.toString().getBytes(encoding).length;
+                                this.byteCount
+                                    += line.toString().getBytes(this.encoding).length;
                             }
                             catch (UnsupportedEncodingException e)
                             {
                                 throw new UserError(
                                     "Encoding \""
-                                        + encoding
+                                        + this.encoding
                                         + "\" is not supported by your platform!");
                             }
                         }
 
                         // Increment the line number.
-                        lineNumber++;
+                        this.lineNumber++;
 
                         // Append line (with line separator), search again.
-                        buffer.append(line.toString() + LINE_SEPARATOR);
+                        this.buffer.append(line.toString() + LINE_SEPARATOR);
                     }
                     // An I/O exception means we've got to abort this file.
                     catch (IOException e)
                     {
                         Trace.userinfo(
-                            QUOTE_MARK + fileName + "\" could not be read.");
+                            QUOTE_MARK + this.fileName + "\" could not be read.");
                         return;
                     }
                     // A null pointer exception means the end of the file has been reached.
                     catch (NullPointerException e)
                     {
                         // End of file.
-                        searching = false;
+                        this.searching = false;
                     }
                 }
                 else
                 {
                     // Found a tag start marker, so leave.
-                    searching = false;
+                    this.searching = false;
                 }
             }
             // Check if we are at end of file.
-            if (tagStart < 0)
+            if (this.tagStart < 0)
             {
                 // If so, we are finished. Let the parsing loop take us out.
-                done = true;
+                this.done = true;
                 continue parsing;
             }
 
@@ -285,7 +285,7 @@ abstract public class GenericReader
             }
 
             // Advance searchStart to the character following the start of this unusable tag.
-            searchStart = tagStart + 1;
+            this.searchStart = this.tagStart + 1;
         }
     }
 
@@ -313,12 +313,12 @@ abstract public class GenericReader
     protected boolean succeed(String tag, int toState)
     
     {
-        tagLength = tag.length();
-        if (bufferString.regionMatches(tagStart, tag, 0, tagLength))
+        this.tagLength = tag.length();
+        if (this.bufferString.regionMatches(this.tagStart, tag, 0, this.tagLength))
         {
-            state = toState;
-            searchStart = 0;
-            buffer.delete(0, tagStart + tagLength);
+            this.state = toState;
+            this.searchStart = 0;
+            this.buffer.delete(0, this.tagStart + this.tagLength);
             return true;
         }
         else
@@ -341,7 +341,7 @@ abstract public class GenericReader
     {
         if (succeed(tag, toState))
         {
-            throw (TRANSITION_MADE);
+            throw (this.TRANSITION_MADE);
         }
     }
 
@@ -371,15 +371,15 @@ abstract public class GenericReader
             try
             {
                 component.set(
-                    readerInstance,
-                    XMLKit.filterWhitespace(
-                        bufferString.substring(0, tagStart)));
+                        this.readerInstance,
+                        XMLKit.filterWhitespace(
+                            this.bufferString.substring(0, this.tagStart)));
             }
             catch (Exception e)
             {
                 throw new DeveloperError(e);
             }
-            throw (TRANSITION_MADE);
+            throw (this.TRANSITION_MADE);
         }
     }
 
@@ -412,7 +412,7 @@ abstract public class GenericReader
         if (succeed(tag, toState))
         {
             int markerEnd =
-                bufferString.substring(tagStart).indexOf(MARKER_END);
+                this.bufferString.substring(this.tagStart).indexOf(MARKER_END);
             if (markerEnd == -1)
             {
                 Log.userinfo(
@@ -420,9 +420,9 @@ abstract public class GenericReader
                         + " is missing closing \""
                         + MARKER_END
                         + "\" at "
-                        + lineNumber
+                        + this.lineNumber
                         + " in \""
-                        + fileName
+                        + this.fileName
                         + "\".",
                     Log.ERROR);
                 Log.userinfo("Will not process this element.", Log.ERROR);
@@ -432,18 +432,18 @@ abstract public class GenericReader
                 String attributeValue =
                     XMLKit.getAttributeValue(
                         attributeName,
-                        bufferString.substring(tagStart, tagStart + markerEnd));
+                        this.bufferString.substring(this.tagStart, this.tagStart + markerEnd));
                 if (attributeValue.length() > 0)
                 {
                     try
                     {
-                        component.set(readerInstance, attributeValue);
+                        component.set(this.readerInstance, attributeValue);
                     }
                     catch (Exception e)
                     {
                         throw new DeveloperError(e);
                     }
-                    throw (TRANSITION_MADE);
+                    throw (this.TRANSITION_MADE);
                 }
             }
         }
@@ -455,5 +455,6 @@ abstract public class GenericReader
      */
     public class TransitionMade extends Throwable
     {
+        // No body.
     }
 }

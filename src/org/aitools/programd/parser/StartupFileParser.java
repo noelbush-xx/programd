@@ -32,11 +32,11 @@ public class StartupFileParser extends GenericParser
 
     public void setCurrentBot(Bot bot)
     {
-        currentBot = bot;
+        this.currentBot = bot;
     }
 
     public Bot getCurrentBot()
     {
-        return currentBot;
+        return this.currentBot;
     }
 }

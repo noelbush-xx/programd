@@ -22,6 +22,7 @@ public class StackParser
      */
     private StackParser()
     {
+        // Nothing to do.
     }
 
     /** 

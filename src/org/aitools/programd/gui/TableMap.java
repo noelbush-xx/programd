@@ -23,13 +23,13 @@ public class TableMap extends AbstractTableModel implements TableModelListener
 
     public TableModel getModel()
     {
-        return model;
+        return this.model;
     }
 
-    public synchronized void setModel(TableModel model)
+    public synchronized void setModel(TableModel modelToSet)
     {
-        this.model = model;
-        model.addTableModelListener(this);
+        this.model = modelToSet;
+        this.model.addTableModelListener(this);
     }
 
     // By default, implement TableModel by forwarding all messages 
@@ -37,37 +37,37 @@ public class TableMap extends AbstractTableModel implements TableModelListener
 
     public Object getValueAt(int aRow, int aColumn)
     {
-        return model.getValueAt(aRow, aColumn);
+        return this.model.getValueAt(aRow, aColumn);
     }
 
     public void setValueAt(Object aValue, int aRow, int aColumn)
     {
-        model.setValueAt(aValue, aRow, aColumn);
+        this.model.setValueAt(aValue, aRow, aColumn);
     }
 
     public synchronized int getRowCount()
     {
-        return (model == null) ? 0 : model.getRowCount();
+        return (this.model == null) ? 0 : this.model.getRowCount();
     }
 
     public int getColumnCount()
     {
-        return (model == null) ? 0 : model.getColumnCount();
+        return (this.model == null) ? 0 : this.model.getColumnCount();
     }
 
     public String getColumnName(int aColumn)
     {
-        return model.getColumnName(aColumn);
+        return this.model.getColumnName(aColumn);
     }
 
     public Class getColumnClass(int aColumn)
     {
-        return model.getColumnClass(aColumn);
+        return this.model.getColumnClass(aColumn);
     }
 
     public boolean isCellEditable(int row, int column)
     {
-        return model.isCellEditable(row, column);
+        return this.model.isCellEditable(row, column);
     }
 
     public void tableChanged(TableModelEvent e)

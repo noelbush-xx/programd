@@ -53,7 +53,7 @@ public class TemplateParser extends GenericParser
      *
      *  @throws TemplateParserException if the <code>input</code> is null
      */
-    public TemplateParser(String input, String userid, String botid)
+    public TemplateParser(String input, String useridToUse, String botidToUse)
         throws TemplateParserException
     {
         if (input == null)
@@ -61,8 +61,8 @@ public class TemplateParser extends GenericParser
             throw new TemplateParserException("No input supplied for TemplateParser!");
         }
         this.inputs.add(input);
-        this.userid = userid;
-        this.botid = botid;
+        this.userid = useridToUse;
+        this.botid = botidToUse;
         super.processorRegistry = AIMLProcessorRegistry.getSelf();
     }
 
@@ -92,7 +92,7 @@ public class TemplateParser extends GenericParser
                 {
                     return DeprecatedAIMLParser.processTag(
                         level,
-                        userid,
+                        this.userid,
                         tag,
                         this);
                 }

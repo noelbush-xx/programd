@@ -26,8 +26,10 @@ import org.aitools.programd.parser.XMLNode;
  */
 abstract public class Processor
 {
-    /** The label of a tag that this processor should process. */
-    public static final String label = null;
+    /* Every Processor should have a String called label.
+     * But we don't specify this here, to avoid a situation in which
+     * implementors are accused of "hiding" the member in the parent.
+     */
 
     // Convenience constants.
 

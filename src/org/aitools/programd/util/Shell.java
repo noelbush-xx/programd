@@ -139,8 +139,8 @@ public class Shell
      */
     public Shell()
     {
-        consoleIn = new BufferedReader(new InputStreamReader(System.in));
-        consoleDisplay = consolePrompt = System.out;
+        this.consoleIn = new BufferedReader(new InputStreamReader(System.in));
+        this.consoleDisplay = this.consolePrompt = System.out;
     }
 
     /**
@@ -152,9 +152,9 @@ public class Shell
      */
     public Shell(InputStream in, PrintStream display, PrintStream prompt)
     {
-        consoleIn = new BufferedReader(new InputStreamReader(in));
-        consoleDisplay = display;
-        consolePrompt = prompt;
+        this.consoleIn = new BufferedReader(new InputStreamReader(in));
+        this.consoleDisplay = display;
+        this.consolePrompt = prompt;
     }
 
     /**
@@ -174,33 +174,33 @@ public class Shell
             showConsole("No bot to talk to!");
             return;
         }
-        botid = bot.getID();
-        botName = bot.getPropertyValue(BOT_NAME_PREDICATE);
+        this.botid = bot.getID();
+        this.botName = bot.getPropertyValue(BOT_NAME_PREDICATE);
 
         // Send the connect string and print the first response.
         showConsole(
-            botName,
-            XMLKit.breakLinesAtTags(
+                this.botName,
+                XMLKit.breakLinesAtTags(
                 Multiplexor.getResponse(
                     Globals.getProperty("programd.connect-string", "CONNECT"),
                     HOSTNAME,
-                    botid,
+                    this.botid,
                     new TextResponder())));
 
         while (true)
         {
             promptConsole(
                 '['
-                    + botName
+                    + this.botName
                     + "] "
                     + PredicateMaster.get(
                         CLIENT_NAME_PREDICATE,
                         HOSTNAME,
-                        botid));
+                        this.botid));
             String theLine = null;
             try
             {
-                theLine = consoleIn.readLine();
+                theLine = this.consoleIn.readLine();
             }
             catch (IOException e)
             {
@@ -248,12 +248,12 @@ public class Shell
                     // Load into Graphmaster command
                     else if (theLine.toLowerCase().startsWith(LOAD))
                     {
-                        load(theLine, botid);
+                        load(theLine, this.botid);
                     }
                     // Unload from Graphmaster command
                     else if (theLine.toLowerCase().startsWith(UNLOAD))
                     {
-                        unload(theLine, botid);
+                        unload(theLine, this.botid);
                     }
                     // Bot list command
                     else if (theLine.toLowerCase().equals(BOTLIST))
@@ -278,7 +278,7 @@ public class Shell
                     // Roll chatlog command
                     else if (theLine.toLowerCase().startsWith(ROLL_CHATLOG))
                     {
-                        rollChatLog(botid);
+                        rollChatLog(this.botid);
                     }
                     // Roll targets command
                     else if (theLine.toLowerCase().equals(ROLL_TARGETS))
@@ -312,13 +312,13 @@ public class Shell
                 else if (theLine.length() > 0)
                 {
                     showConsole(
-                        botName,
-                        XMLKit.breakLinesAtTags(
-                            Multiplexor.getResponse(
-                                theLine,
-                                HOSTNAME,
-                                botid,
-                                new TextResponder())));
+                            this.botName,
+                            XMLKit.breakLinesAtTags(
+                                    Multiplexor.getResponse(
+                                            theLine,
+                                            HOSTNAME,
+                                            this.botid,
+                                            new TextResponder())));
                 }
             }
         }
@@ -326,7 +326,7 @@ public class Shell
 
     public String getCurrentBotID()
     {
-        return botid;
+        return this.botid;
     }
 
     /**
@@ -342,7 +342,7 @@ public class Shell
         MessagePrinter.print(
             preprompt + PROMPT,
             SHELL,
-            consolePrompt,
+            this.consolePrompt,
             MessagePrinter.CONSOLE);
     }
 
@@ -361,7 +361,7 @@ public class Shell
         MessagePrinter.println(
             message,
             SHELL,
-            consoleDisplay,
+            this.consoleDisplay,
             MessagePrinter.CONSOLE);
     }
 
@@ -379,7 +379,7 @@ public class Shell
             MessagePrinter.println(
                 message[index],
                 SHELL,
-                consoleDisplay,
+                this.consoleDisplay,
                 MessagePrinter.CONSOLE);
         }
     }
@@ -397,7 +397,7 @@ public class Shell
         MessagePrinter.println(
             preprompt + PROMPT + message,
             SHELL,
-            consoleDisplay,
+            this.consoleDisplay,
             MessagePrinter.CONSOLE);
     }
 
@@ -416,7 +416,7 @@ public class Shell
             MessagePrinter.println(
                 preprompt + PROMPT + message[index],
                 SHELL,
-                consoleDisplay,
+                this.consoleDisplay,
                 MessagePrinter.CONSOLE);
         }
     }
@@ -440,7 +440,7 @@ public class Shell
     /**
      *  Loads a given file for a given bot.
      */
-    public void load(String line, String botid)
+    public void load(String line, String botidToUse)
     {
         // See if there is a filename.
         int space = line.indexOf(' ');
@@ -464,7 +464,7 @@ public class Shell
                 showConsole("I/O exception trying to locate file.");
                 return;
             }
-            Graphmaster.load(path, botid);
+            Graphmaster.load(path, botidToUse);
             Log.userinfo(
                 Graphmaster.getTotalCategories()
                     - categories
@@ -478,7 +478,7 @@ public class Shell
     /**
      *  Unloads a given file for a given bot.
      */
-    private void unload(String line, String botid)
+    private void unload(String line, String botidToUse)
     {
         // See if there is a filename.
         int space = line.indexOf(' ');
@@ -502,7 +502,7 @@ public class Shell
                 showConsole("I/O exception trying to locate file.");
                 return;
             }
-            Graphmaster.unload(path, Bots.getBot(botid));
+            Graphmaster.unload(path, Bots.getBot(botidToUse));
             Log.userinfo(
                 categories
                     - Graphmaster.getTotalCategories()
@@ -548,23 +548,23 @@ public class Shell
             showConsole("That bot id is not known. Check your startup files.");
             return;
         }
-        botid = newBotID;
-        botName = Bots.getBot(newBotID).getPropertyValue(BOT_NAME_PREDICATE);
+        this.botid = newBotID;
+        this.botName = Bots.getBot(newBotID).getPropertyValue(BOT_NAME_PREDICATE);
         showConsole(
             "Switched to bot \""
                 + newBotID
                 + "\" (name: \""
-                + botName
+                + this.botName
                 + "\").");
         // Send the connect string and print the first response.
         showConsole(
-            botName,
-            XMLKit.breakLinesAtTags(
-                Multiplexor.getResponse(
-                    Globals.getProperty("programd.connect-string", "CONNECT"),
-                    HOSTNAME,
-                    botid,
-                    new TextResponder())));
+                this.botName,
+                XMLKit.breakLinesAtTags(
+                        Multiplexor.getResponse(
+                                Globals.getProperty("programd.connect-string", "CONNECT"),
+                                HOSTNAME,
+                                this.botid,
+                                new TextResponder())));
     }
 
     /**
@@ -572,7 +572,7 @@ public class Shell
      */
     private void who()
     {
-        showConsole("You are talking to \"" + botid + "\".");
+        showConsole("You are talking to \"" + this.botid + "\".");
     }
 
     /**
@@ -580,20 +580,20 @@ public class Shell
      */
     public void listBotFiles()
     {
-        Set keys = Bots.getBot(botid).getLoadedFilesMap().keySet();
+        Set keys = Bots.getBot(this.botid).getLoadedFilesMap().keySet();
         Iterator iterator = keys.iterator();
         int fileCount = keys.size();
         if (fileCount == 0)
         {
-            showConsole("No files loaded by \"" + botid + "\".");
+            showConsole("No files loaded by \"" + this.botid + "\".");
         }
         else if (fileCount > 1)
         {
-            showConsole(fileCount + " files loaded by \"" + botid + "\":");
+            showConsole(fileCount + " files loaded by \"" + this.botid + "\":");
         }
         else
         {
-            showConsole("1 file loaded by \"" + botid + "\":");
+            showConsole("1 file loaded by \"" + this.botid + "\":");
         }
         while (iterator.hasNext())
         {
@@ -604,10 +604,10 @@ public class Shell
     /**
      *  Rolls over the chat log file.
      */
-    public void rollChatLog(String botid)
+    public void rollChatLog(String botidToUse)
     {
-        showConsole("Rolling over chat log for \"" + botid + "\".");
-        XMLWriter.rollover(Bots.getBot(botid).getChatlogSpec());
+        showConsole("Rolling over chat log for \"" + botidToUse + "\".");
+        XMLWriter.rollover(Bots.getBot(botidToUse).getChatlogSpec());
         showConsole("Finished rolling over chat log.");
     }
 
@@ -716,9 +716,7 @@ public class Shell
      */
     private class NoCommandException extends Exception
     {
-        public NoCommandException()
-        {
-        }
+        // No body.
     }
 
     /**
@@ -726,8 +724,6 @@ public class Shell
      */
     private class NoSuchCommandableException extends Exception
     {
-        public NoSuchCommandableException()
-        {
-        }
+        // No body.
     }
 }

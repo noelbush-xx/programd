@@ -429,7 +429,7 @@ public class XMLParser
 
                         // Handle both equally by adding a node with no attributes, type DATA.
                         child = new XMLNode();
-                        child.XMLType = node.DATA;
+                        child.XMLType = XMLNode.DATA;
                         child.XMLData = node.XMLData;
                         child.XMLAttr = EMPTY_STRING;
                         trie.add(child);

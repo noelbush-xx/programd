@@ -38,19 +38,19 @@ public abstract class Listener implements BotProcess
     /**
      *  Creates a new listener with name <code>name</code>.
      *
-     *  @param bot			the bot for which this listener works
-     *  @param name			the name to give the listener
-     *  @param parameters	the parameters for the listener and their default values
+     *  @param botToListen   the bot for which this listener works
+     *  @param listenerName	  the name to give the listener
+     *  @param parameters    the parameters for the listener and their default values
      */
-    public Listener(Bot bot, String name, String[][] parameters)
+    public Listener(Bot botToListen, String listenerName, String[][] listenerParameters)
     {
-        this.bot = bot;
-        this.botID = bot.getID();
-        this.name = name;
+        this.bot = botToListen;
+        this.botID = botToListen.getID();
+        this.name = listenerName;
 
-        for (int index = parameters.length; --index >= 0;)
+        for (int index = listenerParameters.length; --index >= 0;)
         {
-            this.parameters.put(parameters[index][0], parameters[index][1]);
+            this.parameters.put(listenerParameters[index][0], listenerParameters[index][1]);
         }
     }
 

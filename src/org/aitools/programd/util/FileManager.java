@@ -401,7 +401,7 @@ public class FileManager
      *
      *  @throws FileNotFoundException if wild card is misused
      */
-    public static String[] glob(String path, String workingDirectory)
+    public static String[] glob(String path, String workingDirectoryToUse)
         throws FileNotFoundException
     {
         int wildCardIndex = path.indexOf('*');
@@ -446,7 +446,7 @@ public class FileManager
             else
             {
                 pattern = path;
-                dirName = workingDirectory;
+                dirName = workingDirectoryToUse;
                 dir = new File(dirName);
             }
             if (!dir.isDirectory())

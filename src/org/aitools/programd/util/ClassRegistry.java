@@ -37,17 +37,17 @@ abstract public class ClassRegistry extends Hashtable
      *  Loads the registry with all classes.
      */
     public ClassRegistry(
-        String version,
-        String[] classesToRegister,
-        String baseClassName)
+        String versionToUse,
+        String[] classesToRegisterToUse,
+        String baseClassNameToUse)
     {
         // Initialize the Hastable that this is.
         super(classesToRegister.length);
 
         // Set the field values for this.
-        this.version = version;
-        this.classesToRegister = classesToRegister;
-        this.baseClassName = baseClassName;
+        ClassRegistry.version = versionToUse;
+        ClassRegistry.classesToRegister = classesToRegisterToUse;
+        ClassRegistry.baseClassName = baseClassNameToUse;
 
         // Get a handle on the base class.
         Class baseClass = null;

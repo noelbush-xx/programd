@@ -169,14 +169,14 @@ public class HTMLResponder extends AbstractMarkupResponder
     // Instance variables.
 
     /** The user name (if authentication is being used). */
-    private static String user;
+    private String user;
 
     /** The password (if authentication is being used). */
-    private static String password;
+    private String password;
 
-    public HTMLResponder(String botid, String templateName) throws IOException
+    public HTMLResponder(String botidToRespond, String templateName) throws IOException
     {
-        super(botid);
+        super(botidToRespond);
         if (templateName.equals(EMPTY_STRING))
         {
             parseTemplate(chatTemplatePath);
@@ -247,7 +247,7 @@ public class HTMLResponder extends AbstractMarkupResponder
      *  @param user     the username
      *  @param password the password
      */
-    public static String loginRequest(String user, String password)
+    public static String loginRequest(String requestUser, String requestPassword)
     {
         if (loginTemplate != null)
         {
@@ -262,14 +262,14 @@ public class HTMLResponder extends AbstractMarkupResponder
                 {
                     if ((index = item.indexOf("value=\"\"")) != -1)
                     {
-                        sb.replace(index + 6, index + 7, "\"" + user + "\"");
+                        sb.replace(index + 6, index + 7, "\"" + requestUser + "\"");
                     }
                 }
                 if ((index = item.indexOf("name=\"password\"")) != -1)
                 {
                     if ((index = item.indexOf("value=\"\"")) != -1)
                     {
-                        sb.replace(index + 6, index + 7, "\"" + password + "\"");
+                        sb.replace(index + 6, index + 7, "\"" + requestPassword + "\"");
                     }
                 }
                 output.append(sb.toString());
@@ -354,7 +354,7 @@ public class HTMLResponder extends AbstractMarkupResponder
      *  @param response     the HttpServletResponse
      *  @param userid       the userid given with the request (will not be the same as final userid)
      */
-    public String authenticate(HttpServletRequest request, HttpServletResponse response, String userid)
+    public String authenticate(HttpServletRequest request, HttpServletResponse servletResponse, String userid)
     {
         int state = 0;
 
@@ -429,7 +429,7 @@ public class HTMLResponder extends AbstractMarkupResponder
         else if (userCookieSet)
         {
             // If user is known by ActiveMultiplexor
-            if (ActiveMultiplexor.getInstance().checkUser(this.user, this.password, SECRET_KEY, botid))
+            if (ActiveMultiplexor.getInstance().checkUser(this.user, this.password, SECRET_KEY, this.botid))
             {
                 // Return the all-clear
                 state = state | GO_USER;
@@ -438,7 +438,7 @@ public class HTMLResponder extends AbstractMarkupResponder
             else
             {
                 // If autocookie is on, be forgiving and make a new cookie.
-                if (makeNewCookies(response))
+                if (makeNewCookies(servletResponse))
                 {
                     Trace.devinfo("Found invalid cookie but created new one because autocookie is on.");
                     state = state | GO_USER;
@@ -456,7 +456,7 @@ public class HTMLResponder extends AbstractMarkupResponder
             // Try for the fantabulous autocookie approach.
             if (autocookie)
             {
-                if (makeNewCookies(response))
+                if (makeNewCookies(servletResponse))
                 {
                     state = state | GO_USER;
                 }
@@ -542,14 +542,14 @@ public class HTMLResponder extends AbstractMarkupResponder
             if ((state & LOGIN) == LOGIN)
             {
                 // Check user/password combo
-                if (ActiveMultiplexor.getInstance().checkUser(userParam, passwordParam, SECRET_KEY, botid))
+                if (ActiveMultiplexor.getInstance().checkUser(userParam, passwordParam, SECRET_KEY, this.botid))
                 {
                     Cookie ucookie = new Cookie(USER_COOKIE_NAME, userParam);
                     Cookie pcookie = new Cookie(PASSWORD_COOKIE_NAME, passwordParam);
                     ucookie.setMaxAge(1000000);
                     pcookie.setMaxAge(1000000);
-                    response.addCookie(ucookie);
-                    response.addCookie(pcookie);
+                    servletResponse.addCookie(ucookie);
+                    servletResponse.addCookie(pcookie);
 
                     session.setAttribute(USER_COOKIE_NAME, this.user);
                     state = state | PROCESS_OK;
@@ -563,11 +563,11 @@ public class HTMLResponder extends AbstractMarkupResponder
             else if ((state & CHANGE_PASSWORD) == CHANGE_PASSWORD)
             {
                 // Check user/password combo
-                if (ActiveMultiplexor.getInstance().checkUser(this.user, oldPasswordParam, SECRET_KEY, botid))
+                if (ActiveMultiplexor.getInstance().checkUser(this.user, oldPasswordParam, SECRET_KEY, this.botid))
                 {
                     Cookie pcookie = new Cookie(PASSWORD_COOKIE_NAME, passwordParam);
                     pcookie.setMaxAge(1000000);
-                    response.addCookie(pcookie);
+                    servletResponse.addCookie(pcookie);
                     state = state | PROCESS_OK;
                 }
                 else
@@ -578,7 +578,7 @@ public class HTMLResponder extends AbstractMarkupResponder
             // Try registration
             else if ((state & REGISTER) == REGISTER)
             {
-                if (ActiveMultiplexor.getInstance().createUser(userParam, passwordParam, SECRET_KEY, botid))
+                if (ActiveMultiplexor.getInstance().createUser(userParam, passwordParam, SECRET_KEY, this.botid))
                 {
                     // sessionID = session.getId();
                     state = state | PROCESS_OK;
@@ -670,7 +670,7 @@ public class HTMLResponder extends AbstractMarkupResponder
      *
      *  @param response the response to which to add the cookies
      */
-    private boolean makeNewCookies(HttpServletResponse response)
+    private boolean makeNewCookies(HttpServletResponse servletResponse)
     {
         StringBuffer newusername = new StringBuffer(17);
         StringBuffer newpassword = new StringBuffer(10);
@@ -699,10 +699,10 @@ public class HTMLResponder extends AbstractMarkupResponder
         pcookie = new Cookie(PASSWORD_COOKIE_NAME, this.password);
         ucookie.setMaxAge(1000000);
         pcookie.setMaxAge(1000000);
-        response.addCookie(ucookie);
-        response.addCookie(pcookie);
+        servletResponse.addCookie(ucookie);
+        servletResponse.addCookie(pcookie);
 
         // Create the new user (and ensure that it worked).
-        return ActiveMultiplexor.getInstance().createUser(this.user, this.password, SECRET_KEY, botid);
+        return ActiveMultiplexor.getInstance().createUser(this.user, this.password, SECRET_KEY, this.botid);
     }
 }

@@ -143,10 +143,10 @@ abstract public class AbstractMarkupResponder implements Responder
     /**
      *  Initializes an AbstractMarkupResponder.
      */
-    public AbstractMarkupResponder(String botid)
+    public AbstractMarkupResponder(String botidToRespond)
     {
-        this.botid = botid;
-        this.bot = Bots.getBot(botid);
+        this.botid = botidToRespond;
+        this.bot = Bots.getBot(botidToRespond);
     }
 
     /**
@@ -173,20 +173,20 @@ abstract public class AbstractMarkupResponder implements Responder
 
     public String preprocess(String input, String hostname)
     {
-        response.setLength(0);
+        this.response.setLength(0);
         this.hostName = hostname;
 
-        int headerSize = header.size();
+        int headerSize = this.header.size();
 
         // Parse character-by-character through the header template.
         for (int index = 0; index < headerSize; index++)
         {
-            Object thisNode = header.get(index);
+            Object thisNode = this.header.get(index);
 
             // Just append strings.
             if (thisNode instanceof String)
             {
-                response.append(thisNode);
+                this.response.append(thisNode);
             }
 
             // Append appropriate values for tags.
@@ -198,12 +198,12 @@ abstract public class AbstractMarkupResponder implements Responder
                 // Host name.
                 if (tagName.equals(HOSTNAME))
                 {
-                    response.append(hostname);
+                    this.response.append(hostname);
                 }
                 // The user input.
                 else if (tagName.equals(USERINPUT))
                 {
-                    response.append(input);
+                    this.response.append(input);
                 }
                 // Some bot predicate.
                 else if (tagName.startsWith(BOT_NAME_EQUALS))
@@ -212,8 +212,8 @@ abstract public class AbstractMarkupResponder implements Responder
                     // This is clunky but fast.
                     if (quote > 10)
                     {
-                        response.append(
-                            bot.getPropertyValue(tagName.substring(10, quote)));
+                        this.response.append(
+                                this.bot.getPropertyValue(tagName.substring(10, quote)));
                     }
                 }
             }
@@ -223,17 +223,17 @@ abstract public class AbstractMarkupResponder implements Responder
 
     public String append(String input, String reply, String appendTo)
     {
-        int replyPartSize = replyPart.size();
+        int replyPartSize = this.replyPart.size();
 
         // Parse character-by-character through the reply part template.
         for (int index = 0; index < replyPartSize; index++)
         {
-            Object thisNode = replyPart.get(index);
+            Object thisNode = this.replyPart.get(index);
 
             // Just append strings.
             if (thisNode instanceof String)
             {
-                response.append(thisNode);
+                this.response.append(thisNode);
             }
 
             // Append appropriate values for tags.
@@ -245,16 +245,16 @@ abstract public class AbstractMarkupResponder implements Responder
                 // The user input.
                 if (tagName.equals(USERINPUT))
                 {
-                    response.append(input);
+                    this.response.append(input);
                 }
                 // The whole bot response.
                 else if (tagName.equals(RESPONSE))
                 {
-                    if (response.length() > 0)
+                    if (this.response.length() > 0)
                     {
-                        response.append(' ');
+                        this.response.append(' ');
                     }
-                    response.append(reply);
+                    this.response.append(reply);
                 }
                 // Some bot predicate.
                 else if (tagName.startsWith(BOT_NAME_EQUALS))
@@ -263,8 +263,8 @@ abstract public class AbstractMarkupResponder implements Responder
                     // This is clunky but fast.
                     if (quote > 10)
                     {
-                        response.append(
-                            bot.getPropertyValue(tagName.substring(10, quote)));
+                        this.response.append(
+                                this.bot.getPropertyValue(tagName.substring(10, quote)));
                     }
                 }
             }
@@ -281,31 +281,31 @@ abstract public class AbstractMarkupResponder implements Responder
         String reply,
         String hostname,
         String userid,
-        String botid)
+        String botidToLog)
     {
         if (LOG_CHAT_TO_DATABASE)
         {
-            DatabaseLogger.log(input, reply, hostname, userid, botid);
+            DatabaseLogger.log(input, reply, hostname, userid, botidToLog);
         }
         if (LOG_CHAT_TO_XML)
         {
-            XMLLogger.log(input, reply, hostname, userid, botid);
+            XMLLogger.log(input, reply, hostname, userid, botidToLog);
         }
     }
 
     public String postprocess(String reply)
     {
-        int footerSize = footer.size();
+        int footerSize = this.footer.size();
 
         // Parse character by character through the footer part template.
         for (int index = 0; index < footerSize; index++)
         {
-            Object thisNode = footer.get(index);
+            Object thisNode = this.footer.get(index);
 
             // Just append strings.
             if (thisNode instanceof String)
             {
-                response.append(thisNode);
+                this.response.append(thisNode);
             }
 
             // Append appropriate values for tags.
@@ -317,11 +317,11 @@ abstract public class AbstractMarkupResponder implements Responder
                 // Bot response.
                 if (tagName.equals(RESPONSE))
                 {
-                    if (response.length() > 0)
+                    if (this.response.length() > 0)
                     {
-                        response.append(' ');
+                        this.response.append(' ');
                     }
-                    response.append(reply);
+                    this.response.append(reply);
                 }
                 // Some bot predicate.
                 else if (tagName.startsWith(BOT_NAME_EQUALS))
@@ -330,18 +330,18 @@ abstract public class AbstractMarkupResponder implements Responder
                     // This is clunky but fast.
                     if (quote > 10)
                     {
-                        response.append(
-                            bot.getPropertyValue(tagName.substring(10, quote)));
+                        this.response.append(
+                                this.bot.getPropertyValue(tagName.substring(10, quote)));
                     }
                 }
                 // Host name.
                 else if (tagName.equals(HOSTNAME))
                 {
-                    response.append(hostName);
+                    this.response.append(this.hostName);
                 }
             }
         }
-        return response.toString();
+        return this.response.toString();
     }
 
     /**
@@ -355,7 +355,7 @@ abstract public class AbstractMarkupResponder implements Responder
         char aChar;
         StringBuffer buffer = new StringBuffer();
         StringBuffer tag = new StringBuffer();
-        List currentList = header;
+        List currentList = this.header;
 
         while ((index = file.read()) != -1)
         {
@@ -386,11 +386,11 @@ abstract public class AbstractMarkupResponder implements Responder
                         break;
 
                     case 1 :
-                        currentList = replyPart;
+                        currentList = this.replyPart;
                         break;
 
                     case 2 :
-                        currentList = footer;
+                        currentList = this.footer;
                         break;
 
                     default :

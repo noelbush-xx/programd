@@ -32,10 +32,10 @@ public class LRUCache extends LinkedHashMap
      *
      *  @param maxEntries	the maximum capacity of the cache
      */
-    public LRUCache(int maxEntries)
+    public LRUCache(int maxEntriesToUse)
     {
         super();
-        this.maxEntries = maxEntries;
+        LRUCache.maxEntries = maxEntriesToUse;
     }
 
     protected boolean removeEldestEntry(Map.Entry eldest)

@@ -32,15 +32,15 @@ public class DbAccessRefsPoolMgr extends ObjectPool
      *  @param password password for user
      */
     public DbAccessRefsPoolMgr(
-        String driver,
-        String url,
-        String user,
-        String password)
+        String driverToUse,
+        String urlToUse,
+        String userToUse,
+        String passwordToUse)
     {
-        this.driver = driver;
-        this.url = url;
-        this.user = user;
-        this.password = password;
+        this.driver = driverToUse;
+        this.url = urlToUse;
+        this.user = userToUse;
+        this.password = passwordToUse;
     }
 
     /**
@@ -49,7 +49,7 @@ public class DbAccessRefsPoolMgr extends ObjectPool
      */
     protected Object create()
     {
-        return new DbAccess(driver, url, user, password);
+        return new DbAccess(this.driver, this.url, this.user, this.password);
     }
 
     /**
@@ -95,5 +95,6 @@ public class DbAccessRefsPoolMgr extends ObjectPool
 
     protected void expire(Object o)
     {
+        // Nothing to do.
     }
 }

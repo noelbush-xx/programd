@@ -160,68 +160,68 @@ public class AIMLReader extends GenericReader
     */
 
     /** Parser state: not within any element. */
-    private final int S_NONE = 1;
+    private static final int S_NONE = 1;
 
     /** Parser state: entered an &lt;aiml&gt; element. */
-    private final int S_IN_AIML = 2;
+    private static final int S_IN_AIML = 2;
 
     /** Parser state: entered a &lt;topic&gt; element. */
-    private final int S_IN_TOPIC = 3;
+    private static final int S_IN_TOPIC = 3;
 
     /** Parser state: entered a &lt;category&gt; element. */
-    private final int S_IN_CATEGORY = 4;
+    private static final int S_IN_CATEGORY = 4;
 
     /** Parser state: entered a &lt;pattern&gt; element. */
-    private final int S_IN_PATTERN = 5;
+    private static final int S_IN_PATTERN = 5;
 
     /** Parser state: exited a &lt;pattern&gt; element. */
-    private final int S_OUT_PATTERN = 6;
+    private static final int S_OUT_PATTERN = 6;
 
     /** Parser state: entered a &lt;that&gt; element. */
-    private final int S_IN_THAT = 7;
+    private static final int S_IN_THAT = 7;
 
     /** Parser state: exited a &lt;that&gt; element. */
-    private final int S_OUT_THAT = 8;
+    private static final int S_OUT_THAT = 8;
 
     /** Parser state: entered a &lt;template&gt; element. */
-    private final int S_IN_TEMPLATE = 9;
+    private static final int S_IN_TEMPLATE = 9;
 
     /** Parser state: exited a &lt;template&gt; element. */
-    private final int S_OUT_TEMPLATE = 10;
+    private static final int S_OUT_TEMPLATE = 10;
 
     /** Parser state: exited a &lt;category&gt; element. */
-    private final int S_OUT_CATEGORY = 11;
+    private static final int S_OUT_CATEGORY = 11;
 
     /** Parser state: exited a &lt;topic&gt; element. */
-    private final int S_OUT_TOPIC = 12;
+    private static final int S_OUT_TOPIC = 12;
 
     /** Parser state: exited an &lt;aiml&gt; element. */
-    private final int S_OUT_AIML = 13;
+    private static final int S_OUT_AIML = 13;
 
     /** Parser state: entered a &lt;startup&gt; element. */
-    private final int S_IN_STARTUP = 14;
+    private static final int S_IN_STARTUP = 14;
 
     /** Parser state: exited a &lt;startup&gt; element. */
-    private final int S_OUT_STARTUP = 15;
+    private static final int S_OUT_STARTUP = 15;
 
     /*
         Parser actions.
     */
 
     /** Parser action: deliver a category. */
-    private final int DELIVER_CATEGORY = 0;
+    private static final int DELIVER_CATEGORY = 0;
 
     /** Parser action: set done to true. */
-    private final int SET_DONE = 1;
+    private static final int SET_DONE = 1;
 
     /** Parser action: abort unexpectedly. */
-    private final int ABORT = 2;
+    private static final int ABORT = 2;
 
     /** Parser action: unset topic. */
-    private final int UNSET_TOPIC = 3;
+    private static final int UNSET_TOPIC = 3;
 
     /** Parser action: process a startup element. */
-    private final int PROCESS_STARTUP = 4;
+    private static final int PROCESS_STARTUP = 4;
 
     /*
         Instance variables.
@@ -272,15 +272,15 @@ public class AIMLReader extends GenericReader
      *  @param warnNonAIML      whether to warn about non-AIML elements directly beneath &lt;aiml&gt;
      */
     public AIMLReader(
-        String fileName,
-        BufferedReader buffReader,
+        String fileNameToRead,
+        BufferedReader buffReaderForFile,
         AIMLReaderListener readerListener,
-        boolean warnNonAIML)
+        boolean warnNonAIMLSetting)
     {
-        super(fileName, buffReader, readerListener);
+        super(fileNameToRead, buffReaderForFile, readerListener);
         super.readerInstance = this;
-        this.warnNonAIML = warnNonAIML;
-        state = S_NONE;
+        this.warnNonAIML = warnNonAIMLSetting;
+        this.state = AIMLReader.S_NONE;
     }
 
     protected void initialize()
@@ -304,66 +304,66 @@ public class AIMLReader extends GenericReader
 
     protected void tryStates() throws TransitionMade
     {
-        switch (state)
+        switch (this.state)
         {
             case S_NONE :
-                transition(AIML_VERSION_START, S_IN_AIML);
-                transition(AIML_START, S_IN_AIML);
-                transition(STARTUP_START, S_IN_STARTUP);
+                transition(AIML_VERSION_START, AIMLReader.S_IN_AIML);
+                transition(AIML_START, AIMLReader.S_IN_AIML);
+                transition(STARTUP_START, AIMLReader.S_IN_STARTUP);
                 break;
 
             case S_IN_AIML :
-                transition(CATEGORY_START, S_IN_CATEGORY);
-                transition(TOPIC_START, S_IN_TOPIC, topicField, NAME);
+                transition(CATEGORY_START, AIMLReader.S_IN_CATEGORY);
+                transition(TOPIC_START, AIMLReader.S_IN_TOPIC, this.topicField, NAME);
                 break;
 
             case S_IN_TOPIC :
-                transition(CATEGORY_START, S_IN_CATEGORY);
+                transition(CATEGORY_START, AIMLReader.S_IN_CATEGORY);
                 break;
 
             case S_IN_CATEGORY :
-                transition(PATTERN_START, S_IN_PATTERN);
+                transition(PATTERN_START, AIMLReader.S_IN_PATTERN);
 
             case S_IN_PATTERN :
-                transition(PATTERN_END, S_OUT_PATTERN, patternField);
+                transition(PATTERN_END, AIMLReader.S_OUT_PATTERN, this.patternField);
                 break;
 
             case S_OUT_PATTERN :
-                transition(TEMPLATE_START, S_IN_TEMPLATE);
-                transition(THAT_START, S_IN_THAT);
+                transition(TEMPLATE_START, AIMLReader.S_IN_TEMPLATE);
+                transition(THAT_START, AIMLReader.S_IN_THAT);
                 break;
 
             case S_IN_TEMPLATE :
-                transition(TEMPLATE_END, S_OUT_TEMPLATE, templateField);
+                transition(TEMPLATE_END, AIMLReader.S_OUT_TEMPLATE, this.templateField);
                 break;
 
             case S_IN_THAT :
-                transition(THAT_END, S_OUT_THAT, thatField);
+                transition(THAT_END, AIMLReader.S_OUT_THAT, this.thatField);
                 break;
 
             case S_OUT_THAT :
-                transition(TEMPLATE_START, S_IN_TEMPLATE);
+                transition(TEMPLATE_START, AIMLReader.S_IN_TEMPLATE);
                 break;
 
             case S_OUT_TEMPLATE :
-                transition(CATEGORY_END, S_OUT_CATEGORY, DELIVER_CATEGORY);
+                transition(CATEGORY_END, AIMLReader.S_OUT_CATEGORY, AIMLReader.DELIVER_CATEGORY);
                 break;
 
             case S_OUT_CATEGORY :
-                transition(CATEGORY_START, S_IN_CATEGORY);
-                transition(TOPIC_END, S_OUT_TOPIC, UNSET_TOPIC);
-                transition(TOPIC_START, S_IN_TOPIC, topicField, NAME);
-                transition(AIML_END, S_NONE, SET_DONE);
+                transition(CATEGORY_START, AIMLReader.S_IN_CATEGORY);
+                transition(TOPIC_END, AIMLReader.S_OUT_TOPIC, AIMLReader.UNSET_TOPIC);
+                transition(TOPIC_START, AIMLReader.S_IN_TOPIC, this.topicField, NAME);
+                transition(AIML_END, AIMLReader.S_NONE, AIMLReader.SET_DONE);
                 break;
 
             case S_OUT_TOPIC :
-                transition(CATEGORY_START, S_IN_CATEGORY);
-                transition(TOPIC_START, S_IN_TOPIC, topicField, NAME);
-                transition(AIML_END, S_OUT_AIML, SET_DONE);
+                transition(CATEGORY_START, AIMLReader.S_IN_CATEGORY);
+                transition(TOPIC_START, AIMLReader.S_IN_TOPIC, this.topicField, NAME);
+                transition(AIML_END, AIMLReader.S_OUT_AIML, AIMLReader.SET_DONE);
                 break;
 
             case S_IN_STARTUP :
-                transition(STARTUP_END, S_OUT_STARTUP, PROCESS_STARTUP);
+                transition(STARTUP_END, AIMLReader.S_OUT_STARTUP, AIMLReader.PROCESS_STARTUP);
                 break;
 
             default :
@@ -416,11 +416,11 @@ public class AIMLReader extends GenericReader
             {
                 case DELIVER_CATEGORY :
                     // Check for required components in category.
-                    if (pattern.length() == 0)
+                    if (this.pattern.length() == 0)
                     {
                         abortCategory("Pattern missing from category.");
                     }
-                    else if (template.length() == 0)
+                    else if (this.template.length() == 0)
                     {
                         abortCategory("Template missing from category.");
                     }
@@ -429,16 +429,16 @@ public class AIMLReader extends GenericReader
                         // Check that the pattern, that and topic are valid patterns.
                         try
                         {
-                            PatternArbiter.checkAIMLPattern(pattern, false);
-                            PatternArbiter.checkAIMLPattern(that, false);
-                            PatternArbiter.checkAIMLPattern(topic, false);
+                            PatternArbiter.checkAIMLPattern(this.pattern, false);
+                            PatternArbiter.checkAIMLPattern(this.that, false);
+                            PatternArbiter.checkAIMLPattern(this.topic, false);
 
                             // Deliver pattern, that and template to AIMLReaderListener.
                             ((AIMLReaderListener) super.listener).newCategory(
-                                pattern,
-                                that,
-                                topic,
-                                template);
+                                this.pattern,
+                                this.that,
+                                this.topic,
+                                this.template);
                         }
                         catch (NotAnAIMLPatternException e)
                         {
@@ -446,34 +446,34 @@ public class AIMLReader extends GenericReader
                         }
 
                         // Reset pattern, that and template to defaults (note that topic is not reset).
-                        pattern = template = EMPTY_STRING;
-                        that = ASTERISK;
-                        searchStart = 0;
+                        this.pattern = this.template = EMPTY_STRING;
+                        this.that = ASTERISK;
+                        this.searchStart = 0;
 
                         // Index this event.
-                        categoryCount++;
+                        this.categoryCount++;
 
                         // Recreate the buffer (otherwise it gets huge).
-                        buffer =
+                        this.buffer =
                             new StringBuffer(
-                                Math.max(bufferStartCapacity, buffer.length()));
-                        buffer.append(bufferString);
+                                Math.max(bufferStartCapacity, this.buffer.length()));
+                        this.buffer.append(this.bufferString);
                     }
                     break;
 
                 case SET_DONE :
-                    done = true;
+                    this.done = true;
                     break;
 
                 case UNSET_TOPIC :
-                    topic = ASTERISK;
+                    this.topic = ASTERISK;
                     break;
 
                 case PROCESS_STARTUP :
                     try
                     {
                         new StartupFileParser().processResponse(
-                            bufferString.substring(0, tagStart));
+                                this.bufferString.substring(0, this.tagStart));
                     }
                     catch (ProcessorException e)
                     {
@@ -512,18 +512,18 @@ public class AIMLReader extends GenericReader
      */
     private void alertUnexpected()
     {
-        if (state != S_IN_TEMPLATE)
+        if (this.state != AIMLReader.S_IN_TEMPLATE)
         {
             for (int index = UNEXPECTED_OUTSIDE_TEMPLATE.length; --index >= 0;)
             {
                 String unexpectedTag = UNEXPECTED_OUTSIDE_TEMPLATE[index];
                 int unexpectedLength = unexpectedTag.length();
-                if (bufferString
+                if (this.bufferString
                     .regionMatches(
-                        tagStart,
-                        unexpectedTag,
-                        0,
-                        unexpectedLength))
+                            this.tagStart,
+                            unexpectedTag,
+                            0,
+                            unexpectedLength))
                 {
                     Log.userinfo(
                         new String[] {
@@ -531,9 +531,9 @@ public class AIMLReader extends GenericReader
                                 + unexpectedTag
                                 + "; aborting category.",
                             "  (Line "
-                                + lineNumber
+                                + this.lineNumber
                                 + ", \""
-                                + fileName
+                                + this.fileName
                                 + "\")" },
                         Log.ERROR);
                     return;
@@ -543,18 +543,18 @@ public class AIMLReader extends GenericReader
             {
                 String unexpectedTag = UNEXPECTED_GENERAL[index];
                 int unexpectedLength = unexpectedTag.length();
-                if (bufferString
+                if (this.bufferString
                     .regionMatches(
-                        tagStart,
-                        unexpectedTag,
-                        0,
-                        unexpectedLength))
+                            this.tagStart,
+                            unexpectedTag,
+                            0,
+                            unexpectedLength))
                 {
-                    if ((unexpectedTag == AIML_END) && (categoryCount == 0))
+                    if ((unexpectedTag == AIML_END) && (this.categoryCount == 0))
                     {
                         Log.userinfo(
                             "aiml element does not contain any AIML content in \""
-                                + fileName
+                                + this.fileName
                                 + "\".",
                             Log.ERROR);
                     }
@@ -566,23 +566,23 @@ public class AIMLReader extends GenericReader
                                     + unexpectedTag
                                     + "; rest of file ignored.",
                                 "  (Line "
-                                    + lineNumber
+                                    + this.lineNumber
                                     + ", \""
-                                    + fileName
+                                    + this.fileName
                                     + "\")" },
                             Log.ERROR);
                     }
-                    done = true;
+                    this.done = true;
                     return;
                 }
             }
-            if (this.warnNonAIML && state == S_IN_AIML)
+            if (this.warnNonAIML && this.state == AIMLReader.S_IN_AIML)
             {
-                int nextSpace = bufferString.indexOf(SPACE, tagStart);
+                int nextSpace = this.bufferString.indexOf(SPACE, this.tagStart);
                 if (nextSpace > -1)
                 {
                     String unexpectedTag =
-                        bufferString.substring(tagStart + 1, nextSpace);
+                        this.bufferString.substring(this.tagStart + 1, nextSpace);
                     if (unexpectedTag.indexOf(COLON) == -1
                         && !unexpectedTag.equals(COMMENT_MARK))
                     {
@@ -592,9 +592,9 @@ public class AIMLReader extends GenericReader
                                     + unexpectedTag
                                     + "\" element in AIML.",
                                 "  (Line "
-                                    + lineNumber
+                                    + this.lineNumber
                                     + ", \""
-                                    + fileName
+                                    + this.fileName
                                     + "\")" },
                             Log.ERROR);
                     }
@@ -615,9 +615,9 @@ public class AIMLReader extends GenericReader
                 "Aborting category:",
                 reason,
                 "  (Category ends line "
-                    + lineNumber
+                    + this.lineNumber
                     + ", \""
-                    + fileName
+                    + this.fileName
                     + "\")." },
             STARTUP_AND_ERROR);
     }

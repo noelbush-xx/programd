@@ -200,9 +200,9 @@ public class MersenneTwister extends java.util.Random implements Serializable
 
         // Due to a bug in java.util.Random clear up to 1.2, we're
         // doing our own Gaussian variable.
-        __haveNextNextGaussian = false;
+        this.__haveNextNextGaussian = false;
 
-        mt = new int[N];
+        this.mt = new int[N];
 
         // setting initial seeds to mt[N] using
         // the generator Line 25 of Table 1 in
@@ -212,15 +212,15 @@ public class MersenneTwister extends java.util.Random implements Serializable
         // the 0xffffffff is commented out because in Java
         // ints are always 32 bits; hence i & 0xffffffff == i
 
-        mt[0] = ((int) seed); // & 0xffffffff;
+        this.mt[0] = ((int) seed); // & 0xffffffff;
 
-        for (mti = 1; mti < N; mti++)
-            mt[mti] = (69069 * mt[mti - 1]); //& 0xffffffff;
+        for (this.mti = 1; this.mti < N; this.mti++)
+            this.mt[this.mti] = (69069 * this.mt[this.mti - 1]); //& 0xffffffff;
 
         // mag01[x] = x * MATRIX_A  for x=0,1
-        mag01 = new int[2];
-        mag01[0] = 0x0;
-        mag01[1] = MATRIX_A;
+        this.mag01 = new int[2];
+        this.mag01[0] = 0x0;
+        this.mag01[1] = MATRIX_A;
     }
 
     /**
@@ -239,15 +239,15 @@ public class MersenneTwister extends java.util.Random implements Serializable
 
         // Due to a bug in java.util.Random clear up to 1.2, we're
         // doing our own Gaussian variable.
-        __haveNextNextGaussian = false;
+        this.__haveNextNextGaussian = false;
 
-        mt = new int[N];
-        System.arraycopy(array, 0, mt, 0, N);
-        mti = N;
+        this.mt = new int[N];
+        System.arraycopy(array, 0, this.mt, 0, N);
+        this.mti = N;
         // mag01[x] = x * MATRIX_A  for x=0,1
-        mag01 = new int[2];
-        mag01[0] = 0x0;
-        mag01[1] = MATRIX_A;
+        this.mag01 = new int[2];
+        this.mag01[0] = 0x0;
+        this.mag01[1] = MATRIX_A;
     }
 
     /**
@@ -267,23 +267,23 @@ public class MersenneTwister extends java.util.Random implements Serializable
 
         // Due to a bug in java.util.Random clear up to 1.2, we're
         // doing our own Gaussian variable.
-        __haveNextNextGaussian = false;
+        this.__haveNextNextGaussian = false;
 
-        mt = new int[N];
+        this.mt = new int[N];
 
         for (int i = 0; i < N; i++)
         {
-            mt[i] = _seed & 0xffff0000;
+            this.mt[i] = _seed & 0xffff0000;
             _seed = 69069 * _seed + 1;
-            mt[i] |= (_seed & 0xffff0000) >>> 16;
+            this.mt[i] |= (_seed & 0xffff0000) >>> 16;
             _seed = 69069 * _seed + 1;
         }
 
-        mti = N;
+        this.mti = N;
         // mag01[x] = x * MATRIX_A  for x=0,1
-        mag01 = new int[2];
-        mag01[0] = 0x0;
-        mag01[1] = MATRIX_A;
+        this.mag01 = new int[2];
+        this.mag01[0] = 0x0;
+        this.mag01[1] = MATRIX_A;
     }
 
     /**
@@ -293,27 +293,27 @@ public class MersenneTwister extends java.util.Random implements Serializable
     {
         int y;
 
-        if (mti >= N) // generate N words at one time
+        if (this.mti >= N) // generate N words at one time
         {
             int kk;
 
             for (kk = 0; kk < N - M; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
             for (; kk < N - 1; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
-            y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-            mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
+            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
-            mti = 0;
+            this.mti = 0;
         }
 
-        y = mt[mti++];
+        y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
         y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
         y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
@@ -445,10 +445,10 @@ public class MersenneTwister extends java.util.Random implements Serializable
 
     synchronized public double nextGaussian()
     {
-        if (__haveNextNextGaussian)
+        if (this.__haveNextNextGaussian)
         {
-            __haveNextNextGaussian = false;
-            return __nextNextGaussian;
+            this.__haveNextNextGaussian = false;
+            return this.__nextNextGaussian;
         }
         else
         {
@@ -461,8 +461,8 @@ public class MersenneTwister extends java.util.Random implements Serializable
             }
             while (s >= 1 || s == 0);
             double multiplier = Math.sqrt(-2 * Math.log(s) / s);
-            __nextNextGaussian = v2 * multiplier;
-            __haveNextNextGaussian = true;
+            this.__nextNextGaussian = v2 * multiplier;
+            this.__haveNextNextGaussian = true;
             return v1 * multiplier;
         }
     }

@@ -25,5 +25,6 @@ public class PredicateInfo
 
     public PredicateInfo()
     {
+        // Nothing to do.
     }
 }

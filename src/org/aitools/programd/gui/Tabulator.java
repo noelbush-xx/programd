@@ -53,16 +53,16 @@ abstract public class Tabulator extends JPanel
      */
     public Tabulator(String[] columnNames)
     {
-        visibleColumnCount = columnNames.length;
-        dataTableModel = new TabulatorTableModel(columnNames);
+        this.visibleColumnCount = columnNames.length;
+        this.dataTableModel = new TabulatorTableModel(columnNames);
 
-        sorterTableModel = new TableSorter(dataTableModel);
-        table = new JTable(sorterTableModel);
-        table.getTableHeader().setReorderingAllowed(false);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.sorterTableModel = new TableSorter(this.dataTableModel);
+        this.table = new JTable(this.sorterTableModel);
+        this.table.getTableHeader().setReorderingAllowed(false);
+        this.table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        sorterTableModel.addMouseListenerToHeaderInTable(table);
-        JScrollPane scrollPane = new JScrollPane(table);
+        this.sorterTableModel.addMouseListenerToHeaderInTable(this.table);
+        JScrollPane scrollPane = new JScrollPane(this.table);
 
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -77,7 +77,7 @@ abstract public class Tabulator extends JPanel
     public void reloadData(Object[][] data)
     {
         // Reload the data and update the column count.
-        dataTableModel.setData(data);
+        this.dataTableModel.setData(data);
         this.columnCount = data[0].length;
 
         // Size the columns to fit.
@@ -85,17 +85,17 @@ abstract public class Tabulator extends JPanel
         Component component = null;
         int headerWidth = 0;
         int cellWidth = 0;
-        Object[] longestRow = dataTableModel.getLongestRow();
+        Object[] longestRow = this.dataTableModel.getLongestRow();
         if (longestRow == null)
         {
             return;
         }
 
-        for (int index = 0; index < visibleColumnCount; index++)
+        for (int index = 0; index < this.visibleColumnCount; index++)
         {
-            column = table.getColumnModel().getColumn(index);
+            column = this.table.getColumnModel().getColumn(index);
             component =
-                table
+                this.table
                     .getTableHeader()
                     .getDefaultRenderer()
                     .getTableCellRendererComponent(
@@ -108,10 +108,10 @@ abstract public class Tabulator extends JPanel
             headerWidth = component.getPreferredSize().width;
 
             component =
-                table
-                    .getDefaultRenderer(sorterTableModel.getColumnClass(index))
+                this.table
+                    .getDefaultRenderer(this.sorterTableModel.getColumnClass(index))
                     .getTableCellRendererComponent(
-                        table,
+                            this.table,
                         longestRow[index],
                         false,
                         false,
@@ -131,33 +131,33 @@ abstract public class Tabulator extends JPanel
         /** The data of the columns in the table. */
         private Object[][] data;
 
-        public TabulatorTableModel(String[] columnNames)
+        public TabulatorTableModel(String[] columnNamesToSet)
         {
-            this.columnNames = columnNames;
+            this.columnNames = columnNamesToSet;
         }
 
         public int getColumnCount()
         {
-            return columnNames.length;
+            return this.columnNames.length;
         }
 
         public synchronized int getRowCount()
         {
-            if (data == null)
+            if (this.data == null)
             {
                 return 0;
             }
-            return data.length;
+            return this.data.length;
         }
 
         public String getColumnName(int col)
         {
-            return columnNames[col];
+            return this.columnNames[col];
         }
 
         public Object getValueAt(int row, int col)
         {
-            return data[row][col];
+            return this.data[row][col];
         }
 
         public Class getColumnClass(int c)
@@ -165,9 +165,9 @@ abstract public class Tabulator extends JPanel
             return getValueAt(0, c).getClass();
         }
 
-        public synchronized void setData(Object[][] data)
+        public synchronized void setData(Object[][] dataToSet)
         {
-            this.data = data;
+            this.data = dataToSet;
             fireTableDataChanged();
         }
 
@@ -179,12 +179,12 @@ abstract public class Tabulator extends JPanel
             }
             int longestLength = 0;
             int longestRow = 0;
-            for (int row = 0; row < data.length; row++)
+            for (int row = 0; row < this.data.length; row++)
             {
                 int rowLength = 0;
-                for (int column = 0; column < columnNames.length; column++)
+                for (int column = 0; column < this.columnNames.length; column++)
                 {
-                    rowLength += data[row][column].toString().length();
+                    rowLength += this.data[row][column].toString().length();
                 }
                 longestLength =
                     rowLength > longestLength ? rowLength : longestLength;
@@ -196,16 +196,16 @@ abstract public class Tabulator extends JPanel
     
     public TableSorter getSorterTableModel()
     {
-        return sorterTableModel;
+        return this.sorterTableModel;
     }
     
     public int getColumnCount()
     {
-        return columnCount;
+        return this.columnCount;
     }
     
     public JTable getTable()
     {
-        return table;
+        return this.table;
     }
 }

@@ -30,78 +30,78 @@ public class StringTripleMatrix
 
     public StringTripleMatrix()
     {
-        vertical =
+        this.vertical =
             new LinkedList[] {
                 new LinkedList(),
                 new LinkedList(),
                 new LinkedList()};
-        horizontal = new LinkedList();
+        this.horizontal = new LinkedList();
     }
 
     public LinkedList getAll()
     {
-        return horizontal;
+        return this.horizontal;
     }
 
     public Iterator iterator()
     {
-        return horizontal.iterator();
+        return this.horizontal.iterator();
     }
 
     public ListIterator listIterator()
     {
-        return horizontal.listIterator();
+        return this.horizontal.listIterator();
     }
 
     public boolean contains(StringTriple tuple)
     {
-        return horizontal.contains(tuple);
+        return this.horizontal.contains(tuple);
     }
 
     public LinkedList getFirsts()
     {
-        return vertical[0];
+        return this.vertical[0];
     }
 
     public LinkedList getSeconds()
     {
-        return vertical[1];
+        return this.vertical[1];
     }
 
     public LinkedList getThirds()
     {
-        return vertical[2];
+        return this.vertical[2];
     }
 
     public void add(StringTriple tuple)
     {
-        horizontal.add(tuple);
-        vertical[0].add(tuple.getFirst());
-        vertical[1].add(tuple.getSecond());
-        vertical[2].add(tuple.getThird());
+        this.horizontal.add(tuple);
+        this.vertical[0].add(tuple.getFirst());
+        this.vertical[1].add(tuple.getSecond());
+        this.vertical[2].add(tuple.getThird());
     }
 
     public void addAll(StringTripleMatrix matrix)
     {
-        horizontal.addAll(matrix.getAll());
-        vertical[0].addAll(matrix.getFirsts());
-        vertical[1].addAll(matrix.getSeconds());
-        vertical[2].addAll(matrix.getThirds());
+        this.horizontal.addAll(matrix.getAll());
+        this.vertical[0].addAll(matrix.getFirsts());
+        this.vertical[1].addAll(matrix.getSeconds());
+        this.vertical[2].addAll(matrix.getThirds());
     }
 
     public int size()
     {
-        if (!((vertical[0].size() == vertical[1].size())
-            && (vertical[1].size() == vertical[2].size())
-            && (vertical[2].size() == horizontal.size())))
+        if (!((this.vertical[0].size() == this.vertical[1].size())
+            && (this.vertical[1].size() == this.vertical[2].size())
+            && (this.vertical[2].size() == this.horizontal.size())))
         {
-            Trace.devinfo("vertical[0].size(): " + vertical[0].size());
-            Trace.devinfo("vertical[1].size(): " + vertical[1].size());
-            Trace.devinfo("vertical[2].size(): " + vertical[2].size());
-            Trace.devinfo("horizontal.size(): " + horizontal.size());
+            Trace.devinfo("vertical[0].size(): " + this.vertical[0].size());
+            Trace.devinfo("vertical[1].size(): " + this.vertical[1].size());
+            Trace.devinfo("vertical[2].size(): " + this.vertical[2].size());
+            Trace.devinfo("horizontal.size(): " + this.horizontal.size());
             throw new DeveloperError("Triple matrix integrity violated!");
         }
-        return horizontal.size();
+        return this.horizontal.size();
     }
 
     public void ensureSize(int size)
@@ -112,12 +112,12 @@ public class StringTripleMatrix
         }
         for (int index = 3; --index >= 0;)
         {
-            Vector newVertical = new Vector(vertical[index]);
+            Vector newVertical = new Vector(this.vertical[index]);
             newVertical.setSize(size);
-            vertical[index] = new LinkedList(newVertical);
+            this.vertical[index] = new LinkedList(newVertical);
         }
-        Vector newHorizontal = new Vector(horizontal);
+        Vector newHorizontal = new Vector(this.horizontal);
         newHorizontal.setSize(size);
-        horizontal = new LinkedList(newHorizontal);
+        this.horizontal = new LinkedList(newHorizontal);
     }
 }

@@ -65,9 +65,6 @@ public class AIMListener extends Listener
     private String buddies;
 
     /** Please describe. */
-    private String message;
-
-    /** Please describe. */
     private int seqNo;
 
     /** Please describe. */
@@ -228,9 +225,9 @@ public class AIMListener extends Listener
      *
      *  @see {@link Listener}
      */
-    public AIMListener(Bot bot)
+    public AIMListener(Bot botToListen)
     {
-        super(bot, "AIMListener", new String[][] { { "owner", "" }, {
+        super(botToListen, "AIMListener", new String[][] { { "owner", "" }, {
                 "screenname", "" }, {
                 "password", "" }, {
                 "bgcolor", "White" }, {
@@ -244,27 +241,27 @@ public class AIMListener extends Listener
     public boolean checkParameters()
     {
         // Get parameters.
-        owner = (String) parameters.get("owner");
-        name = (String) parameters.get("screenname");
-        pass = (String) parameters.get("password");
-        bgcolor = (String) parameters.get("bgcolor");
-        fontface = (String) parameters.get("fontface");
-        fontsize = (String) parameters.get("fontsize");
-        fontcolor = (String) parameters.get("fontcolor");
-        buddies = (String) parameters.get("buddies");
+        this.owner = (String) this.parameters.get("owner");
+        this.name = (String) this.parameters.get("screenname");
+        this.pass = (String) this.parameters.get("password");
+        this.bgcolor = (String) this.parameters.get("bgcolor");
+        this.fontface = (String) this.parameters.get("fontface");
+        this.fontsize = (String) this.parameters.get("fontsize");
+        this.fontcolor = (String) this.parameters.get("fontcolor");
+        this.buddies = (String) this.parameters.get("buddies");
 
         // Check parameters.
-        if (owner.length() == 0)
+        if (this.owner.length() == 0)
         {
             logMessage("No owner specified; aborting.");
             return false;
         }
-        if (name.length() == 0)
+        if (this.name.length() == 0)
         {
             logMessage("No screen name specified; aborting.");
             return false;
         }
-        if (pass.length() == 0)
+        if (this.pass.length() == 0)
         {
             logMessage("No password specified; aborting.");
             return false;
@@ -278,16 +275,16 @@ public class AIMListener extends Listener
     public void run()
     {
         int length;
-        seqNo = (int) Math.floor(Math.random() * MAX_SEQ);
-        logMessage("Starting for \"" + botID + "\".");
+        this.seqNo = (int) Math.floor(Math.random() * MAX_SEQ);
+        logMessage("Starting for \"" + this.botID + "\".");
         try
         {
-            connection = new Socket(HOST, PORT);
-            connection.setSoTimeout(10000);
-            in = new DataInputStream(connection.getInputStream());
-            out =
+            this.connection = new Socket(HOST, PORT);
+            this.connection.setSoTimeout(10000);
+            this.in = new DataInputStream(this.connection.getInputStream());
+            this.out =
                 new DataOutputStream(
-                    new BufferedOutputStream(connection.getOutputStream()));
+                    new BufferedOutputStream(this.connection.getOutputStream()));
         }
         catch (Exception e)
         {
@@ -296,59 +293,59 @@ public class AIMListener extends Listener
         }
         try
         {
-            out.writeBytes("FLAPON\r\n\r\n");
-            out.flush();
+            this.out.writeBytes("FLAPON\r\n\r\n");
+            this.out.flush();
             byte[] signon = new byte[10];
-            in.readFully(signon);
-            out.writeByte(42);
-            out.writeByte(1);
-            out.writeShort(seqNo);
-            seqNo = (seqNo + 1) & MAX_SEQ;
-            out.writeShort(name.length() + 8);
-            out.writeInt(1);
-            out.writeShort(1);
-            out.writeShort(name.length());
-            out.writeBytes(name);
-            out.flush();
+            this.in.readFully(signon);
+            this.out.writeByte(42);
+            this.out.writeByte(1);
+            this.out.writeShort(this.seqNo);
+            this.seqNo = (this.seqNo + 1) & MAX_SEQ;
+            this.out.writeShort(this.name.length() + 8);
+            this.out.writeInt(1);
+            this.out.writeShort(1);
+            this.out.writeShort(this.name.length());
+            this.out.writeBytes(this.name);
+            this.out.flush();
 
             frameSend(
                 "toc_signon login.oscar.aol.com 5190 "
-                    + name
+                    + this.name
                     + " "
-                    + imRoast(pass)
+                    + imRoast(this.pass)
                     + " english programdbot\0");
 
-            in.skip(4);
-            length = in.readShort();
+            this.in.skip(4);
+            length = this.in.readShort();
             signon = new byte[length];
-            in.readFully(signon);
+            this.in.readFully(signon);
             if (String.valueOf(signon).startsWith(ERROR))
             {
                 logMessage("Signon error.");
                 signoff(TWO);
                 return;
             }
-            in.skip(4);
-            length = in.readShort();
+            this.in.skip(4);
+            length = this.in.readShort();
             signon = new byte[length];
-            in.readFully(signon);
-            online = true;
+            this.in.readFully(signon);
+            this.online = true;
 
             sendBuddies();
 
             frameSend("toc_init_done\0");
 
             logMessage("Logon complete.");
-            connection.setSoTimeout(3000);
+            this.connection.setSoTimeout(3000);
         }
         catch (InterruptedIOException e)
         {
-            online = false;
+            this.online = false;
             signoff(TWO_POINT_FIVE);
         }
         catch (IOException e)
         {
-            online = false;
+            this.online = false;
             signoff(THREE);
         }
         byte[] data;
@@ -356,10 +353,10 @@ public class AIMListener extends Listener
         {
             try
             {
-                in.skip(4);
-                length = in.readShort();
+                this.in.skip(4);
+                length = this.in.readShort();
                 data = new byte[length];
-                in.readFully(data);
+                this.in.readFully(data);
                 fromAIM(data);
             }
             catch (InterruptedIOException e)
@@ -382,13 +379,13 @@ public class AIMListener extends Listener
 
     public void frameSend(String toBeSent) throws IOException
     {
-        out.writeByte(42);
-        out.writeByte(2);
-        out.writeShort(seqNo);
-        seqNo = (seqNo + 1) & MAX_SEQ;
-        out.writeShort(toBeSent.length());
-        out.writeBytes(toBeSent);
-        out.flush();
+        this.out.writeByte(42);
+        this.out.writeByte(2);
+        this.out.writeShort(this.seqNo);
+        this.seqNo = (this.seqNo + 1) & MAX_SEQ;
+        this.out.writeShort(toBeSent.length());
+        this.out.writeBytes(toBeSent);
+        this.out.flush();
     }
 
     /**
@@ -434,7 +431,7 @@ public class AIMListener extends Listener
                         Multiplexor.getResponse(
                             request,
                             from + _AIM,
-                            botID,
+                            this.botID,
                             new AIMResponder()));
                 if (botResponse.length > 0)
                 {
@@ -464,7 +461,7 @@ public class AIMListener extends Listener
                         Multiplexor.getResponse(
                             request,
                             from + _AIM,
-                            botID,
+                            this.botID,
                             new AIMResponder()));
                 if (botResponse.length > 0)
                 {
@@ -527,13 +524,13 @@ public class AIMListener extends Listener
     {
         String text =
             new StringBuffer(MSG_FMT_0)
-                .append(bgcolor)
+                .append(this.bgcolor)
                 .append(MSG_FMT_1)
-                .append(fontsize)
+                .append(this.fontsize)
                 .append(MSG_FMT_2)
-                .append(fontface)
+                .append(this.fontface)
                 .append(MSG_FMT_3)
-                .append(fontcolor)
+                .append(this.fontcolor)
                 .append(MSG_FMT_4)
                 .append(message)
                 .append(MSG_FMT_5)
@@ -635,14 +632,14 @@ public class AIMListener extends Listener
         }
         try
         {
-            out.writeByte(42);
-            out.writeByte(2);
-            out.writeShort(seqNo);
-            seqNo = (seqNo + 1) & MAX_SEQ;
-            out.writeShort(buffer.length + 1);
-            out.write(buffer);
-            out.writeByte('\0');
-            out.flush();
+            this.out.writeByte(42);
+            this.out.writeByte(2);
+            this.out.writeShort(this.seqNo);
+            this.seqNo = (this.seqNo + 1) & MAX_SEQ;
+            this.out.writeShort(buffer.length + 1);
+            this.out.write(buffer);
+            this.out.writeByte('\0');
+            this.out.flush();
         }
         catch (IOException e)
         {
@@ -682,14 +679,14 @@ public class AIMListener extends Listener
      */
     public void signoff(String place)
     {
-        online = false;
+        this.online = false;
         logMessage("Trying to close IM (" + place + ").....");
 
         try
         {
-            out.close();
-            in.close();
-            connection.close();
+            this.out.close();
+            this.in.close();
+            this.connection.close();
         }
         catch (IOException e)
         {

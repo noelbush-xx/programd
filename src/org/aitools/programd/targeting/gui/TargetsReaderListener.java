@@ -29,7 +29,7 @@ import org.aitools.programd.targeting.Target;
 public class TargetsReaderListener implements GenericReaderListener
 {
     /** The set in which to load the targets. */
-    private static HashMap set;
+    private HashMap set;
 
     /**
      *  Loads a target into {@link TargetMaster}.
@@ -64,7 +64,7 @@ public class TargetsReaderListener implements GenericReaderListener
                 inputThat,
                 inputTopic,
                 reply),
-            this.set);
+                this.set);
     }
 
     /**
@@ -73,8 +73,8 @@ public class TargetsReaderListener implements GenericReaderListener
      *
      *  @param set the set in which to load the targets
      */
-    public TargetsReaderListener(HashMap set)
+    public TargetsReaderListener(HashMap setToUse)
     {
-        this.set = set;
+        this.set = setToUse;
     }
 }

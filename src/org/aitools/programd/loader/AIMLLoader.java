@@ -74,15 +74,15 @@ public class AIMLLoader implements AIMLReaderListener
     /**
      *  Initializes the <code>AIMLLoader</code>.
      */
-    public AIMLLoader(String filename, String botid)
+    public AIMLLoader(String filenameToUse, String botidToUse)
     {
-        this.filename = filename;
-        this.botid = botid;
+        AIMLLoader.filename = filenameToUse;
+        AIMLLoader.botid = botidToUse;
         if (botid != null)
         {
-            this.bot = Bots.getBot(botid);
+            AIMLLoader.bot = Bots.getBot(botidToUse);
         }
-        this.policy = Globals.getMergePolicy();
+        AIMLLoader.policy = Globals.getMergePolicy();
     }
 
     public void newCategory(

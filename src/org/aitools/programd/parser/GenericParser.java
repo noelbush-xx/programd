@@ -131,9 +131,9 @@ abstract public class GenericParser
         // Search for the tag in the processor registry.
         Class processorClass = null;
 
-        if (processorRegistry != null)
+        if (this.processorRegistry != null)
         {
-            processorClass = (Class) processorRegistry.get(tag.XMLData);
+            processorClass = (Class) this.processorRegistry.get(tag.XMLData);
         }
         else
         {
@@ -507,9 +507,9 @@ abstract public class GenericParser
         */
         XMLNode nodeChild = new XMLNode();
         LinkedList childList = new LinkedList();
-        if ((rootType == node.TAG)
+        if ((rootType == XMLNode.TAG)
             && (!childTag.equals(EMPTY_STRING))
-            && ((childType == node.EMPTY) || (childType == node.DATA)))
+            && ((childType == XMLNode.EMPTY) || (childType == XMLNode.DATA)))
         {
             /*
                 Create an XML node for the child tag. Note that
@@ -520,14 +520,14 @@ abstract public class GenericParser
             switch (childType)
             {
                 case XMLNode.EMPTY :
-                    nodeChild.XMLType = nodeChild.EMPTY;
+                    nodeChild.XMLType = XMLNode.EMPTY;
                     nodeChild.XMLData = childTag;
                     nodeChild.XMLAttr = EMPTY_STRING;
                     break;
 
                 case XMLNode.DATA :
                 case XMLNode.CDATA :
-                    nodeChild.XMLType = nodeChild.DATA;
+                    nodeChild.XMLType = XMLNode.DATA;
                     nodeChild.XMLData = childTag;
                     nodeChild.XMLAttr = EMPTY_STRING;
                     break;
@@ -590,6 +590,7 @@ abstract public class GenericParser
             }
             catch (NumberFormatException e)
             {
+                // Nothing to do.
             }
             result[1] = 1;
             return result;
@@ -602,6 +603,7 @@ abstract public class GenericParser
             }
             catch (NumberFormatException e)
             {
+                // Nothing to do.
             }
             try
             {
@@ -609,6 +611,7 @@ abstract public class GenericParser
             }
             catch (NumberFormatException e)
             {
+                // Nothing to do.
             }
             return result;
         }

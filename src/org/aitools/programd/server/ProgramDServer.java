@@ -38,15 +38,15 @@ public class ProgramDServer
     private Shell shell;
     private String propertiesPath;
 
-    private ProgramDServer(String propertiesPath)
+    private ProgramDServer(String propertiesPathToUse)
     {
-        this.propertiesPath = propertiesPath;
+        this.propertiesPath = propertiesPathToUse;
     }
 
-    public ProgramDServer(String propertiesPath, Shell shell)
+    public ProgramDServer(String propertiesPathToUse, Shell shellToUse)
     {
-        this.propertiesPath = propertiesPath;
-        this.shell = shell;
+        this.propertiesPath = propertiesPathToUse;
+        this.shell = shellToUse;
     }
 
     /**
@@ -55,14 +55,14 @@ public class ProgramDServer
      */
     public void startup()
     {
-        if (propertiesPath == null)
+        if (this.propertiesPath == null)
         {
             throw new DeveloperError("Did not specify a server properties path.");
         }
 
         if (!Globals.isLoaded())
         {
-            Globals.load(propertiesPath);
+            Globals.load(this.propertiesPath);
             this.shell = new Shell();
         }
         String className = Globals.getProperty("programd.httpserver.classname");
@@ -199,7 +199,7 @@ public class ProgramDServer
             // If shell is enabled, start it.
             if (Globals.useShell())
             {
-                shell.run();
+                this.shell.run();
                 Trace.devinfo("Shell exited.");
             }
             else

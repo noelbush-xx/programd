@@ -386,7 +386,6 @@ abstract public class Multiplexor
 
         // Increment the (static) response count.
         responseCount++;
-        ;
 
         // If match trace info is on, produce statistics about the response time.
         if (SHOW_MATCH_TRACE)

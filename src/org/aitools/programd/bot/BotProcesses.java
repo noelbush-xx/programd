@@ -87,5 +87,6 @@ public class BotProcesses
      */
     private BotProcesses()
     {
+        // Nothing to do.
     }
 }

@@ -153,6 +153,7 @@ public class Globals
      */
     private Globals()
     {
+        // Do nothing.
     }
 
     /**

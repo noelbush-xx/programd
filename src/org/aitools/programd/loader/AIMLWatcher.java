@@ -49,6 +49,7 @@ public class AIMLWatcher
      */
     private AIMLWatcher()
     {
+        // Nothing to do.
     }
 
     public static void start()
@@ -62,10 +63,10 @@ public class AIMLWatcher
      */
     private void startTimer()
     {
-        if (timer == null)
+        if (this.timer == null)
         {
-            timer = new Timer(true);
-            timer.schedule(
+            this.timer = new Timer(true);
+            this.timer.schedule(
                 new CheckAIMLTask(),
                 0,
                 Integer.parseInt(

@@ -85,6 +85,7 @@ public class XMLResourceSpec implements Cloneable
 
     public XMLResourceSpec()
     {
+        // Nothing to do.
     }
 
     public Object clone()

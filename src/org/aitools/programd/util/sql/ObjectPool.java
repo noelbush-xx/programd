@@ -35,16 +35,16 @@ public abstract class ObjectPool
     protected ObjectPool()
     {
         // Default = 1 hour
-        expirationTime = (1000 * 60 * 60);
+        this.expirationTime = (1000 * 60 * 60);
 
-        locked = new Hashtable();
-        unlocked = new Hashtable();
+        this.locked = new Hashtable();
+        this.unlocked = new Hashtable();
 
-        lastCheckOut = System.currentTimeMillis();
+        this.lastCheckOut = System.currentTimeMillis();
 
-        cleaner = new CleanUpThread(this, expirationTime);
-        cleaner.setDaemon(true);
-        cleaner.start();
+        this.cleaner = new CleanUpThread(this, this.expirationTime);
+        this.cleaner.setDaemon(true);
+        this.cleaner.start();
     }
 
     /**
@@ -56,8 +56,8 @@ public abstract class ObjectPool
     {
         if (object != null)
         {
-            locked.remove(object);
-            unlocked.put(object, new Long(System.currentTimeMillis()));
+            this.locked.remove(object);
+            this.unlocked.put(object, new Long(System.currentTimeMillis()));
         }
     }
 
@@ -70,12 +70,12 @@ public abstract class ObjectPool
     protected Object checkOut()
     {
         long now = System.currentTimeMillis();
-        lastCheckOut = now;
+        this.lastCheckOut = now;
         Object object;
 
-        if (unlocked.size() > 0)
+        if (this.unlocked.size() > 0)
         {
-            Enumeration e = unlocked.keys();
+            Enumeration e = this.unlocked.keys();
 
             while (e.hasMoreElements())
             {
@@ -83,13 +83,13 @@ public abstract class ObjectPool
 
                 if (validate(object))
                 {
-                    unlocked.remove(object);
-                    locked.put(object, new Long(now));
+                    this.unlocked.remove(object);
+                    this.locked.put(object, new Long(now));
                     return (object);
                 }
                 else
                 {
-                    unlocked.remove(object);
+                    this.unlocked.remove(object);
                     expire(object);
                     object = null;
                 }
@@ -98,7 +98,7 @@ public abstract class ObjectPool
 
         object = create();
 
-        locked.put(object, new Long(now));
+        this.locked.put(object, new Long(now));
         return object;
     }
 
@@ -112,16 +112,16 @@ public abstract class ObjectPool
 
         long now = System.currentTimeMillis();
 
-        Enumeration e = unlocked.keys();
+        Enumeration e = this.unlocked.keys();
 
         while (e.hasMoreElements())
         {
             object = e.nextElement();
 
-            if ((now - ((Long) unlocked.get(object)).longValue())
-                > expirationTime)
+            if ((now - ((Long) this.unlocked.get(object)).longValue())
+                > this.expirationTime)
             {
-                unlocked.remove(object);
+                this.unlocked.remove(object);
                 expire(object);
                 object = null;
             }

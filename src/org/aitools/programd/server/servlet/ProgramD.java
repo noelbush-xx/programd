@@ -47,12 +47,12 @@ public class ProgramD extends HttpServlet
 {
     public void init() throws ServletException
     {
-
+        // Do nothing.
     }
 
     public void init(ServletConfig config) throws ServletException
     {
-
+        // Do nothing.
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)

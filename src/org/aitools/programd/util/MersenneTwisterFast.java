@@ -187,9 +187,9 @@ public class MersenneTwisterFast implements Serializable
 
     public final void setSeedOld(final long seed)
     {
-        haveNextNextGaussian = false;
+        this.haveNextNextGaussian = false;
 
-        mt = new int[N];
+        this.mt = new int[N];
 
         // setting initial seeds to mt[N] using
         // the generator Line 25 of Table 1 in
@@ -199,15 +199,15 @@ public class MersenneTwisterFast implements Serializable
         // the 0xffffffff is commented out because in Java
         // ints are always 32 bits; hence i & 0xffffffff == i
 
-        mt[0] = ((int) seed); // & 0xffffffff;
+        this.mt[0] = ((int) seed); // & 0xffffffff;
 
-        for (mti = 1; mti < N; mti++)
-            mt[mti] = (69069 * mt[mti - 1]); //& 0xffffffff;
+        for (this.mti = 1; this.mti < N; this.mti++)
+            this.mt[this.mti] = (69069 * this.mt[this.mti - 1]); //& 0xffffffff;
 
         // mag01[x] = x * MATRIX_A  for x=0,1
-        mag01 = new int[2];
-        mag01[0] = 0x0;
-        mag01[1] = MATRIX_A;
+        this.mag01 = new int[2];
+        this.mag01[0] = 0x0;
+        this.mag01[1] = MATRIX_A;
     }
 
     /**
@@ -220,13 +220,13 @@ public class MersenneTwisterFast implements Serializable
     public final void setSeed(final int[] array)
     {
 
-        mt = new int[N];
-        System.arraycopy(array, 0, mt, 0, N);
-        mti = N;
+        this.mt = new int[N];
+        System.arraycopy(array, 0, this.mt, 0, N);
+        this.mti = N;
         // mag01[x] = x * MATRIX_A  for x=0,1
-        mag01 = new int[2];
-        mag01[0] = 0x0;
-        mag01[1] = MATRIX_A;
+        this.mag01 = new int[2];
+        this.mag01[0] = 0x0;
+        this.mag01[1] = MATRIX_A;
     }
 
     /**
@@ -240,50 +240,50 @@ public class MersenneTwisterFast implements Serializable
     {
         // seed needs to be casted into an int first for this to work
         int _seed = (int) seed;
-        haveNextNextGaussian = false;
+        this.haveNextNextGaussian = false;
 
-        mt = new int[N];
+        this.mt = new int[N];
 
         for (int i = 0; i < N; i++)
         {
-            mt[i] = _seed & 0xffff0000;
+            this.mt[i] = _seed & 0xffff0000;
             _seed = 69069 * _seed + 1;
-            mt[i] |= (_seed & 0xffff0000) >>> 16;
+            this.mt[i] |= (_seed & 0xffff0000) >>> 16;
             _seed = 69069 * _seed + 1;
         }
 
-        mti = N;
+        this.mti = N;
         // mag01[x] = x * MATRIX_A  for x=0,1
-        mag01 = new int[2];
-        mag01[0] = 0x0;
-        mag01[1] = MATRIX_A;
+        this.mag01 = new int[2];
+        this.mag01[0] = 0x0;
+        this.mag01[1] = MATRIX_A;
     }
 
     public final int nextInt()
     {
         int y;
 
-        if (mti >= N) // generate N words at one time
+        if (this.mti >= N) // generate N words at one time
         {
             int kk;
 
             for (kk = 0; kk < N - M; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
             for (; kk < N - 1; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
-            y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-            mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
+            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
-            mti = 0;
+            this.mti = 0;
         }
 
-        y = mt[mti++];
+        y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
         y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
         y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
@@ -296,27 +296,27 @@ public class MersenneTwisterFast implements Serializable
     {
         int y;
 
-        if (mti >= N) // generate N words at one time
+        if (this.mti >= N) // generate N words at one time
         {
             int kk;
 
             for (kk = 0; kk < N - M; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
             for (; kk < N - 1; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
-            y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-            mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
+            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
-            mti = 0;
+            this.mti = 0;
         }
 
-        y = mt[mti++];
+        y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
         y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
         y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
@@ -329,27 +329,27 @@ public class MersenneTwisterFast implements Serializable
     {
         int y;
 
-        if (mti >= N) // generate N words at one time
+        if (this.mti >= N) // generate N words at one time
         {
             int kk;
 
             for (kk = 0; kk < N - M; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
             for (; kk < N - 1; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
-            y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-            mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
+            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
-            mti = 0;
+            this.mti = 0;
         }
 
-        y = mt[mti++];
+        y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
         y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
         y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
@@ -362,27 +362,27 @@ public class MersenneTwisterFast implements Serializable
     {
         int y;
 
-        if (mti >= N) // generate N words at one time
+        if (this.mti >= N) // generate N words at one time
         {
             int kk;
 
             for (kk = 0; kk < N - M; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
             for (; kk < N - 1; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
-            y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-            mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
+            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
-            mti = 0;
+            this.mti = 0;
         }
 
-        y = mt[mti++];
+        y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
         y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
         y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
@@ -403,27 +403,27 @@ public class MersenneTwisterFast implements Serializable
 
         if (probability < 0.0f || probability > 1.0f)
             throw new IllegalArgumentException("probability must be between 0.0 and 1.0 inclusive.");
-        if (mti >= N) // generate N words at one time
+        if (this.mti >= N) // generate N words at one time
         {
             int kk;
 
             for (kk = 0; kk < N - M; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
             for (; kk < N - 1; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
-            y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-            mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
+            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
-            mti = 0;
+            this.mti = 0;
         }
 
-        y = mt[mti++];
+        y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
         y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
         y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
@@ -443,53 +443,53 @@ public class MersenneTwisterFast implements Serializable
 
         if (probability < 0.0 || probability > 1.0)
             throw new IllegalArgumentException("probability must be between 0.0 and 1.0 inclusive.");
-        if (mti >= N) // generate N words at one time
+        if (this.mti >= N) // generate N words at one time
         {
             int kk;
 
             for (kk = 0; kk < N - M; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
             for (; kk < N - 1; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
-            y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-            mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
+            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
-            mti = 0;
+            this.mti = 0;
         }
 
-        y = mt[mti++];
+        y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
         y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
         y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
         y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
 
-        if (mti >= N) // generate N words at one time
+        if (this.mti >= N) // generate N words at one time
         {
             int kk;
 
             for (kk = 0; kk < N - M; kk++)
             {
-                z = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + M] ^ (z >>> 1) ^ mag01[z & 0x1];
+                z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + M] ^ (z >>> 1) ^ this.mag01[z & 0x1];
             }
             for (; kk < N - 1; kk++)
             {
-                z = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + (M - N)] ^ (z >>> 1) ^ mag01[z & 0x1];
+                z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + (M - N)] ^ (z >>> 1) ^ this.mag01[z & 0x1];
             }
-            z = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-            mt[N - 1] = mt[M - 1] ^ (z >>> 1) ^ mag01[z & 0x1];
+            z = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+            this.mt[N - 1] = this.mt[M - 1] ^ (z >>> 1) ^ this.mag01[z & 0x1];
 
-            mti = 0;
+            this.mti = 0;
         }
 
-        z = mt[mti++];
+        z = this.mt[this.mti++];
         z ^= z >>> 11; // TEMPERING_SHIFT_U(z)
         z ^= (z << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(z)
         z ^= (z << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(z)
@@ -504,27 +504,27 @@ public class MersenneTwisterFast implements Serializable
     {
         int y;
 
-        if (mti >= N) // generate N words at one time
+        if (this.mti >= N) // generate N words at one time
         {
             int kk;
 
             for (kk = 0; kk < N - M; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
             for (; kk < N - 1; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
-            y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-            mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
+            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
-            mti = 0;
+            this.mti = 0;
         }
 
-        y = mt[mti++];
+        y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
         y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
         y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
@@ -539,27 +539,27 @@ public class MersenneTwisterFast implements Serializable
 
         for (int x = 0; x < bytes.length; x++)
         {
-            if (mti >= N) // generate N words at one time
+            if (this.mti >= N) // generate N words at one time
             {
                 int kk;
 
                 for (kk = 0; kk < N - M; kk++)
                 {
-                    y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                    mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
+                    y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                    this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
                 }
                 for (; kk < N - 1; kk++)
                 {
-                    y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                    mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+                    y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                    this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
                 }
-                y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-                mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+                this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
-                mti = 0;
+                this.mti = 0;
             }
 
-            y = mt[mti++];
+            y = this.mt[this.mti++];
             y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
             y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
             y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
@@ -574,53 +574,53 @@ public class MersenneTwisterFast implements Serializable
         int y;
         int z;
 
-        if (mti >= N) // generate N words at one time
+        if (this.mti >= N) // generate N words at one time
         {
             int kk;
 
             for (kk = 0; kk < N - M; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
             for (; kk < N - 1; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
-            y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-            mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
+            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
-            mti = 0;
+            this.mti = 0;
         }
 
-        y = mt[mti++];
+        y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
         y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
         y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
         y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
 
-        if (mti >= N) // generate N words at one time
+        if (this.mti >= N) // generate N words at one time
         {
             int kk;
 
             for (kk = 0; kk < N - M; kk++)
             {
-                z = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + M] ^ (z >>> 1) ^ mag01[z & 0x1];
+                z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + M] ^ (z >>> 1) ^ this.mag01[z & 0x1];
             }
             for (; kk < N - 1; kk++)
             {
-                z = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + (M - N)] ^ (z >>> 1) ^ mag01[z & 0x1];
+                z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + (M - N)] ^ (z >>> 1) ^ this.mag01[z & 0x1];
             }
-            z = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-            mt[N - 1] = mt[M - 1] ^ (z >>> 1) ^ mag01[z & 0x1];
+            z = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+            this.mt[N - 1] = this.mt[M - 1] ^ (z >>> 1) ^ this.mag01[z & 0x1];
 
-            mti = 0;
+            this.mti = 0;
         }
 
-        z = mt[mti++];
+        z = this.mt[this.mti++];
         z ^= z >>> 11; // TEMPERING_SHIFT_U(z)
         z ^= (z << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(z)
         z ^= (z << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(z)
@@ -634,53 +634,53 @@ public class MersenneTwisterFast implements Serializable
         int y;
         int z;
 
-        if (mti >= N) // generate N words at one time
+        if (this.mti >= N) // generate N words at one time
         {
             int kk;
 
             for (kk = 0; kk < N - M; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
             for (; kk < N - 1; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
-            y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-            mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
+            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
-            mti = 0;
+            this.mti = 0;
         }
 
-        y = mt[mti++];
+        y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
         y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
         y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
         y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
 
-        if (mti >= N) // generate N words at one time
+        if (this.mti >= N) // generate N words at one time
         {
             int kk;
 
             for (kk = 0; kk < N - M; kk++)
             {
-                z = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + M] ^ (z >>> 1) ^ mag01[z & 0x1];
+                z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + M] ^ (z >>> 1) ^ this.mag01[z & 0x1];
             }
             for (; kk < N - 1; kk++)
             {
-                z = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + (M - N)] ^ (z >>> 1) ^ mag01[z & 0x1];
+                z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + (M - N)] ^ (z >>> 1) ^ this.mag01[z & 0x1];
             }
-            z = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-            mt[N - 1] = mt[M - 1] ^ (z >>> 1) ^ mag01[z & 0x1];
+            z = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+            this.mt[N - 1] = this.mt[M - 1] ^ (z >>> 1) ^ this.mag01[z & 0x1];
 
-            mti = 0;
+            this.mti = 0;
         }
 
-        z = mt[mti++];
+        z = this.mt[this.mti++];
         z ^= z >>> 11; // TEMPERING_SHIFT_U(z)
         z ^= (z << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(z)
         z ^= (z << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(z)
@@ -692,10 +692,10 @@ public class MersenneTwisterFast implements Serializable
 
     public final double nextGaussian()
     {
-        if (haveNextNextGaussian)
+        if (this.haveNextNextGaussian)
         {
-            haveNextNextGaussian = false;
-            return nextNextGaussian;
+            this.haveNextNextGaussian = false;
+            return this.nextNextGaussian;
         }
         else
         {
@@ -707,105 +707,105 @@ public class MersenneTwisterFast implements Serializable
                 int a;
                 int b;
 
-                if (mti >= N) // generate N words at one time
+                if (this.mti >= N) // generate N words at one time
                 {
                     int kk;
 
                     for (kk = 0; kk < N - M; kk++)
                     {
-                        y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                        mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
+                        y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                        this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
                     }
                     for (; kk < N - 1; kk++)
                     {
-                        y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                        mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+                        y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                        this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
                     }
-                    y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-                    mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
+                    y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+                    this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
-                    mti = 0;
+                    this.mti = 0;
                 }
 
-                y = mt[mti++];
+                y = this.mt[this.mti++];
                 y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
                 y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
                 y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
                 y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
 
-                if (mti >= N) // generate N words at one time
+                if (this.mti >= N) // generate N words at one time
                 {
                     int kk;
 
                     for (kk = 0; kk < N - M; kk++)
                     {
-                        z = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                        mt[kk] = mt[kk + M] ^ (z >>> 1) ^ mag01[z & 0x1];
+                        z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                        this.mt[kk] = this.mt[kk + M] ^ (z >>> 1) ^ this.mag01[z & 0x1];
                     }
                     for (; kk < N - 1; kk++)
                     {
-                        z = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                        mt[kk] = mt[kk + (M - N)] ^ (z >>> 1) ^ mag01[z & 0x1];
+                        z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                        this.mt[kk] = this.mt[kk + (M - N)] ^ (z >>> 1) ^ this.mag01[z & 0x1];
                     }
-                    z = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-                    mt[N - 1] = mt[M - 1] ^ (z >>> 1) ^ mag01[z & 0x1];
+                    z = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+                    this.mt[N - 1] = this.mt[M - 1] ^ (z >>> 1) ^ this.mag01[z & 0x1];
 
-                    mti = 0;
+                    this.mti = 0;
                 }
 
-                z = mt[mti++];
+                z = this.mt[this.mti++];
                 z ^= z >>> 11; // TEMPERING_SHIFT_U(z)
                 z ^= (z << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(z)
                 z ^= (z << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(z)
                 z ^= (z >>> 18); // TEMPERING_SHIFT_L(z)
 
-                if (mti >= N) // generate N words at one time
+                if (this.mti >= N) // generate N words at one time
                 {
                     int kk;
 
                     for (kk = 0; kk < N - M; kk++)
                     {
-                        a = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                        mt[kk] = mt[kk + M] ^ (a >>> 1) ^ mag01[a & 0x1];
+                        a = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                        this.mt[kk] = this.mt[kk + M] ^ (a >>> 1) ^ this.mag01[a & 0x1];
                     }
                     for (; kk < N - 1; kk++)
                     {
-                        a = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                        mt[kk] = mt[kk + (M - N)] ^ (a >>> 1) ^ mag01[a & 0x1];
+                        a = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                        this.mt[kk] = this.mt[kk + (M - N)] ^ (a >>> 1) ^ this.mag01[a & 0x1];
                     }
-                    a = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-                    mt[N - 1] = mt[M - 1] ^ (a >>> 1) ^ mag01[a & 0x1];
+                    a = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+                    this.mt[N - 1] = this.mt[M - 1] ^ (a >>> 1) ^ this.mag01[a & 0x1];
 
-                    mti = 0;
+                    this.mti = 0;
                 }
 
-                a = mt[mti++];
+                a = this.mt[this.mti++];
                 a ^= a >>> 11; // TEMPERING_SHIFT_U(a)
                 a ^= (a << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(a)
                 a ^= (a << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(a)
                 a ^= (a >>> 18); // TEMPERING_SHIFT_L(a)
 
-                if (mti >= N) // generate N words at one time
+                if (this.mti >= N) // generate N words at one time
                 {
                     int kk;
 
                     for (kk = 0; kk < N - M; kk++)
                     {
-                        b = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                        mt[kk] = mt[kk + M] ^ (b >>> 1) ^ mag01[b & 0x1];
+                        b = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                        this.mt[kk] = this.mt[kk + M] ^ (b >>> 1) ^ this.mag01[b & 0x1];
                     }
                     for (; kk < N - 1; kk++)
                     {
-                        b = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                        mt[kk] = mt[kk + (M - N)] ^ (b >>> 1) ^ mag01[b & 0x1];
+                        b = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                        this.mt[kk] = this.mt[kk + (M - N)] ^ (b >>> 1) ^ this.mag01[b & 0x1];
                     }
-                    b = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-                    mt[N - 1] = mt[M - 1] ^ (b >>> 1) ^ mag01[b & 0x1];
+                    b = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+                    this.mt[N - 1] = this.mt[M - 1] ^ (b >>> 1) ^ this.mag01[b & 0x1];
 
-                    mti = 0;
+                    this.mti = 0;
                 }
 
-                b = mt[mti++];
+                b = this.mt[this.mti++];
                 b ^= b >>> 11; // TEMPERING_SHIFT_U(b)
                 b ^= (b << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(b)
                 b ^= (b << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(b)
@@ -826,8 +826,8 @@ public class MersenneTwisterFast implements Serializable
             }
             while (s >= 1 || s == 0);
             double multiplier = Math.sqrt(-2 * Math.log(s) / s);
-            nextNextGaussian = v2 * multiplier;
-            haveNextNextGaussian = true;
+            this.nextNextGaussian = v2 * multiplier;
+            this.haveNextNextGaussian = true;
             return v1 * multiplier;
         }
     }
@@ -836,27 +836,27 @@ public class MersenneTwisterFast implements Serializable
     {
         int y;
 
-        if (mti >= N) // generate N words at one time
+        if (this.mti >= N) // generate N words at one time
         {
             int kk;
 
             for (kk = 0; kk < N - M; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
             for (; kk < N - 1; kk++)
             {
-                y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
             }
-            y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-            mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
+            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
-            mti = 0;
+            this.mti = 0;
         }
 
-        y = mt[mti++];
+        y = this.mt[this.mti++];
         y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
         y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
         y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
@@ -876,27 +876,27 @@ public class MersenneTwisterFast implements Serializable
         {
             int y;
 
-            if (mti >= N) // generate N words at one time
+            if (this.mti >= N) // generate N words at one time
             {
                 int kk;
 
                 for (kk = 0; kk < N - M; kk++)
                 {
-                    y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                    mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
+                    y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                    this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
                 }
                 for (; kk < N - 1; kk++)
                 {
-                    y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                    mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+                    y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                    this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
                 }
-                y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-                mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+                this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
-                mti = 0;
+                this.mti = 0;
             }
 
-            y = mt[mti++];
+            y = this.mt[this.mti++];
             y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
             y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
             y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
@@ -910,27 +910,27 @@ public class MersenneTwisterFast implements Serializable
         {
             int y;
 
-            if (mti >= N) // generate N words at one time
+            if (this.mti >= N) // generate N words at one time
             {
                 int kk;
 
                 for (kk = 0; kk < N - M; kk++)
                 {
-                    y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                    mt[kk] = mt[kk + M] ^ (y >>> 1) ^ mag01[y & 0x1];
+                    y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                    this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
                 }
                 for (; kk < N - 1; kk++)
                 {
-                    y = (mt[kk] & UPPER_MASK) | (mt[kk + 1] & LOWER_MASK);
-                    mt[kk] = mt[kk + (M - N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+                    y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
+                    this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
                 }
-                y = (mt[N - 1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-                mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ mag01[y & 0x1];
+                y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+                this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
-                mti = 0;
+                this.mti = 0;
             }
 
-            y = mt[mti++];
+            y = this.mt[this.mti++];
             y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
             y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
             y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)

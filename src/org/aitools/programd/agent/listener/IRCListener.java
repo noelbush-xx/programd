@@ -98,11 +98,11 @@ public class IRCListener extends Listener implements ShellCommandable
     /**
      *  Creates a new IRCListener chat listener for a given bot.
      *
-     *  @param bot	the bot for whom to listen
+     *  @param botToListen	the bot for whom to listen
      */
-    public IRCListener(Bot bot)
+    public IRCListener(Bot botToListen)
     {
-        super(bot, "IRCListener", new String[][] { { "host", "" }, {
+        super(botToListen, "IRCListener", new String[][] { { "host", "" }, {
                 "port", "6667" }, {
                 "nick", "" }, {
                 "channel", "" }
@@ -112,35 +112,35 @@ public class IRCListener extends Listener implements ShellCommandable
     public boolean checkParameters()
     {
         // Get parameters.
-        host = (String) parameters.get("host");
+        this.host = (String) this.parameters.get("host");
         try
         {
-            port = Integer.parseInt((String) parameters.get("port"));
+            this.port = Integer.parseInt((String) this.parameters.get("port"));
         }
         catch (NumberFormatException e)
         {
             logMessage("Invalid port specification (try a number!); aborting.");
             return false;
         }
-        nick = (String) parameters.get("nick");
-        channel = (String) parameters.get("channel");
+        this.nick = (String) this.parameters.get("nick");
+        this.channel = (String) this.parameters.get("channel");
 
         // Check parameters.
-        if (host.length() == 0)
+        if (this.host.length() == 0)
         {
             logMessage("No host specified; aborting.");
             return false;
         }
-        if (port <= 0)
+        if (this.port <= 0)
         {
             logMessage("Invalid port; aborting.");
         }
-        if (nick.length() == 0)
+        if (this.nick.length() == 0)
         {
             logMessage("No nick specified; aborting.");
             return false;
         }
-        if (channel.length() == 0)
+        if (this.channel.length() == 0)
         {
             logMessage("No channel specified; aborting.");
             return false;
@@ -158,7 +158,7 @@ public class IRCListener extends Listener implements ShellCommandable
      */
     public void run()
     {
-        logMessage("Starting for \"" + botID + "\".");
+        logMessage("Starting for \"" + this.botID + "\".");
         processMessageCommandClient("CONNECT", this.host + " " + this.port);
         processMessage("/NICK " + this.nick);
         processMessage("/JOIN " + this.channel);
@@ -218,46 +218,46 @@ public class IRCListener extends Listener implements ShellCommandable
      */
     private void connect()
     {
-        if (clientStatus == NOTCONNECTED)
+        if (this.clientStatus == NOTCONNECTED)
         {
-            clientStatus = CONNECTING;
+            this.clientStatus = CONNECTING;
             logMessage("Contacting " + this.host + ":" + this.port);
 
             try
             {
-                socket = new Socket(this.host, this.port);
+                this.socket = new Socket(this.host, this.port);
                 logMessage("Connected to " + this.host + ":" + this.port);
 
             }
             catch (UnknownHostException e0)
             {
                 logMessage("Cannot connect; unknown server.");
-                clientStatus = NOTCONNECTED;
+                this.clientStatus = NOTCONNECTED;
             }
             catch (IOException e1)
             {
                 logMessage("Cannot connect; the server is down or not responding.");
-                clientStatus = NOTCONNECTED;
+                this.clientStatus = NOTCONNECTED;
             }
             // If we didn't have any problems connecting
-            if (clientStatus == CONNECTING)
+            if (this.clientStatus == CONNECTING)
             {
                 try
                 {
-                    reader =
+                    this.reader =
                         new BufferedReader(
-                            new InputStreamReader(socket.getInputStream()));
-                    writer = new PrintWriter(socket.getOutputStream(), true);
-                    clientStatus = CONNECTED;
+                            new InputStreamReader(this.socket.getInputStream()));
+                    this.writer = new PrintWriter(this.socket.getOutputStream(), true);
+                    this.clientStatus = CONNECTED;
                 }
                 catch (IOException e0)
                 {
                     logMessage("Cannot connect: I/O error.");
-                    clientStatus = DISCONNECTING;
+                    this.clientStatus = DISCONNECTING;
 
                     try
                     {
-                        socket.close();
+                        this.socket.close();
                     }
                     catch (IOException e1)
                     {
@@ -265,15 +265,15 @@ public class IRCListener extends Listener implements ShellCommandable
                     }
                     finally
                     {
-                        socket = null;
-                        clientStatus = NOTCONNECTED;
+                        this.socket = null;
+                        this.clientStatus = NOTCONNECTED;
                     }
                 }
             }
         }
         else
         {
-            switch (clientStatus)
+            switch (this.clientStatus)
             {
                 case CONNECTED :
                     logMessage("Cannot connect again; already connected.");
@@ -288,7 +288,7 @@ public class IRCListener extends Listener implements ShellCommandable
                     break;
 
                 default :
-                    logMessage("Got unknown clientStatusCode: " + clientStatus);
+                    logMessage("Got unknown clientStatusCode: " + this.clientStatus);
                     break;
             }
         }
@@ -299,12 +299,12 @@ public class IRCListener extends Listener implements ShellCommandable
      */
     private void disconnect()
     {
-        if (clientStatus == CONNECTED)
+        if (this.clientStatus == CONNECTED)
         {
-            clientStatus = DISCONNECTING;
+            this.clientStatus = DISCONNECTING;
             try
             {
-                socket.close();
+                this.socket.close();
             }
             catch (IOException e)
             {
@@ -312,15 +312,15 @@ public class IRCListener extends Listener implements ShellCommandable
             }
             finally
             {
-                reader = null;
-                writer = null;
+                this.reader = null;
+                this.writer = null;
                 logMessage("Connection closed.");
-                clientStatus = NOTCONNECTED;
+                this.clientStatus = NOTCONNECTED;
             }
         }
         else
         {
-            switch (clientStatus)
+            switch (this.clientStatus)
             {
                 case NOTCONNECTED :
                     logMessage("Cannot close connection; not connected.");
@@ -335,7 +335,7 @@ public class IRCListener extends Listener implements ShellCommandable
                     break;
 
                 default :
-                    logMessage("Got unknown clientStatusCode: " + clientStatus);
+                    logMessage("Got unknown clientStatusCode: " + this.clientStatus);
                     break;
             }
         }
@@ -365,12 +365,15 @@ public class IRCListener extends Listener implements ShellCommandable
 
                 if (processMessageCommand(command, message))
                 {
+                    // Please document this.
                 }
                 else if (processMessageCommandClient(command, message))
                 {
+                    // Please document this.
                 }
                 else if (processMessageCommandDebug(command, message) && DEBUG)
                 {
+                    // Please document this.
                 }
                 else
                 {
@@ -379,23 +382,23 @@ public class IRCListener extends Listener implements ShellCommandable
             }
             else
             {
-                if (clientStatus == CONNECTED)
+                if (this.clientStatus == CONNECTED)
                 {
-                    if (channel.length() > 0)
+                    if (this.channel.length() > 0)
                     {
-                        sendMessage(NONE, "[" + nick + "] " + message);
+                        sendMessage(NONE, "[" + this.nick + "] " + message);
                         logMessage(
-                            "Got a message from [" + nick + "]: " + message);
+                            "Got a message from [" + this.nick + "]: " + message);
                         sendServerMessage(
-                            "/MSG " + " " + channel + " :" + message);
+                            "/MSG " + " " + this.channel + " :" + message);
 
                         // WARNING: Currently uses response from ANY bot!!!!!!
                         String[] botResponse =
                             XMLKit.breakLinesAtTags(
                                 Multiplexor.getResponse(
                                     message,
-                                    nick + "_IRC",
-                                    botID,
+                                    this.nick + "_IRC",
+                                    this.botID,
                                     new TextResponder()));
                         if (botResponse.length > 0)
                         {
@@ -405,7 +408,7 @@ public class IRCListener extends Listener implements ShellCommandable
                             {
                                 processMessage(
                                     "/PRVMSG "
-                                        + nick
+                                        + this.nick
                                         + " "
                                         + botResponse[line]);
                             }
@@ -431,7 +434,7 @@ public class IRCListener extends Listener implements ShellCommandable
         }
 
         // Process command.
-        if (clientStatus == CONNECTED)
+        if (this.clientStatus == CONNECTED)
         {
             if (command.equalsIgnoreCase("AWAY"))
             {
@@ -442,7 +445,7 @@ public class IRCListener extends Listener implements ShellCommandable
             {
                 if (params.length() > 0)
                 {
-                    sendServerMessage("INVITE " + params + " " + channel);
+                    sendServerMessage("INVITE " + params + " " + this.channel);
                 }
                 processed = true;
             }
@@ -456,7 +459,7 @@ public class IRCListener extends Listener implements ShellCommandable
                     {
                         sendServerMessage(
                             "KICK "
-                                + channel
+                                + this.channel
                                 + " "
                                 + params.substring(0, secondindex)
                                 + " :"
@@ -464,7 +467,7 @@ public class IRCListener extends Listener implements ShellCommandable
                     }
                     catch (StringIndexOutOfBoundsException eMSG)
                     {
-                        sendServerMessage("KICK " + channel + " " + params);
+                        sendServerMessage("KICK " + this.channel + " " + params);
                     }
                 }
                 processed = true;
@@ -473,7 +476,7 @@ public class IRCListener extends Listener implements ShellCommandable
             {
                 if (params.length() == 0)
                 {
-                    sendServerMessage("LIST " + channel);
+                    sendServerMessage("LIST " + this.channel);
                 }
                 else
                 {
@@ -486,7 +489,7 @@ public class IRCListener extends Listener implements ShellCommandable
                 // Check the channel.
                 if (params.length() == 0)
                 {
-                    if (channel.length() == 0)
+                    if (this.channel.length() == 0)
                     {
                         sendMessage(SIRCMESSAGE, "You're not in a channel.");
                     }
@@ -494,23 +497,23 @@ public class IRCListener extends Listener implements ShellCommandable
                     {
                         sendMessage(
                             SIRCMESSAGE,
-                            "You're currently in: " + channel + ".");
+                            "You're currently in: " + this.channel + ".");
                     }
                 }
                 // Join a new channel.
-                else if (channel.length() == 0)
+                else if (this.channel.length() == 0)
                 {
                     sendServerMessage("JOIN " + params);
                 }
                 // Leave the channel.
                 else if (params.equals("0"))
                 {
-                    sendServerMessage("PART " + channel);
+                    sendServerMessage("PART " + this.channel);
                 }
                 // Change channels.
                 else
                 {
-                    sendServerMessage("PART " + channel);
+                    sendServerMessage("PART " + this.channel);
                     sendServerMessage("JOIN " + params);
                 }
                 processed = true;
@@ -519,7 +522,7 @@ public class IRCListener extends Listener implements ShellCommandable
             {
                 if (params.length() > 0)
                 {
-                    sendServerMessage("MODE " + channel + " " + params);
+                    sendServerMessage("MODE " + this.channel + " " + params);
                 }
                 processed = true;
             }
@@ -548,7 +551,7 @@ public class IRCListener extends Listener implements ShellCommandable
             {
                 if (params.length() == 0)
                 {
-                    sendServerMessage("NAMES " + channel);
+                    sendServerMessage("NAMES " + this.channel);
                 }
                 else
                 {
@@ -581,13 +584,13 @@ public class IRCListener extends Listener implements ShellCommandable
                     sendServerMessage("QUIT :" + params);
                 }
 
-                channel = NONE;
+                this.channel = NONE;
                 disconnect();
                 processed = true;
             }
             else if (command.equalsIgnoreCase("TOPIC"))
             {
-                if (channel.length() == 0)
+                if (this.channel.length() == 0)
                 {
                     sendMessage(
                         SIRCMESSAGE,
@@ -597,11 +600,11 @@ public class IRCListener extends Listener implements ShellCommandable
                 {
                     if (params.length() == 0)
                     {
-                        sendServerMessage("TOPIC " + channel);
+                        sendServerMessage("TOPIC " + this.channel);
                     }
                     else
                     {
-                        sendServerMessage("TOPIC " + channel + " :" + params);
+                        sendServerMessage("TOPIC " + this.channel + " :" + params);
                     }
                 }
                 processed = true;
@@ -690,13 +693,13 @@ public class IRCListener extends Listener implements ShellCommandable
             {
                 connect();
 
-                if (clientStatus == CONNECTED)
+                if (this.clientStatus == CONNECTED)
                 {
                     sendServerMessage(
                         "USER "
                             + this.nick
                             + " "
-                            + socket.getInetAddress().getHostName()
+                            + this.socket.getInetAddress().getHostName()
                             + " server :"
                             + this.nick);
                     sendServerMessage("NICK " + this.nick);
@@ -708,13 +711,13 @@ public class IRCListener extends Listener implements ShellCommandable
                 {
                     connect();
 
-                    if (clientStatus == CONNECTED)
+                    if (this.clientStatus == CONNECTED)
                     {
                         sendServerMessage(
                             "USER "
                                 + this.nick
                                 + " "
-                                + socket.getInetAddress().getHostName()
+                                + this.socket.getInetAddress().getHostName()
                                 + " server :"
                                 + this.nick);
                         sendServerMessage("NICK " + this.nick);
@@ -731,7 +734,7 @@ public class IRCListener extends Listener implements ShellCommandable
         }
         else if (command.equalsIgnoreCase("EXIT"))
         {
-            if (clientStatus == CONNECTED)
+            if (this.clientStatus == CONNECTED)
             {
                 disconnect();
             }
@@ -822,10 +825,10 @@ public class IRCListener extends Listener implements ShellCommandable
         else if (command.equals("debug"))
         {
             Trace.devinfo("- - - - - - - - - - - - - - - - - - - - ");
-            Trace.devinfo("clientStatus=" + clientStatus);
-            Trace.devinfo("socket=" + socket);
-            Trace.devinfo("reader=" + reader);
-            Trace.devinfo("writer=" + writer);
+            Trace.devinfo("clientStatus=" + this.clientStatus);
+            Trace.devinfo("socket=" + this.socket);
+            Trace.devinfo("reader=" + this.reader);
+            Trace.devinfo("writer=" + this.writer);
             Trace.devinfo("- - - - - - - - - - - - - - - - - - - - ");
             processed = true;
         }
@@ -981,7 +984,7 @@ public class IRCListener extends Listener implements ShellCommandable
                     sendMessage(
                         SERVERPREFIX,
                         "You're now on " + channelx + ".");
-                    channel = channelx;
+                    this.channel = channelx;
                 }
                 else
                 {
@@ -1018,7 +1021,7 @@ public class IRCListener extends Listener implements ShellCommandable
                                 + " ("
                                 + kickcomment
                                 + ").");
-                        channel = NONE;
+                        this.channel = NONE;
                     }
                     else
                     {
@@ -1048,7 +1051,7 @@ public class IRCListener extends Listener implements ShellCommandable
                                 + " by "
                                 + targetnick
                                 + ".");
-                        channel = NONE;
+                        this.channel = NONE;
                     }
                     else
                     {
@@ -1090,7 +1093,7 @@ public class IRCListener extends Listener implements ShellCommandable
                     sendMessage(
                         SERVERPREFIX,
                         "You've just left " + params + ".");
-                    channel = NONE;
+                    this.channel = NONE;
                 }
                 else
                 {
@@ -1118,7 +1121,7 @@ public class IRCListener extends Listener implements ShellCommandable
                             Multiplexor.getResponse(
                                 gitter,
                                 targetnick + "_IRC",
-                                botID,
+                                this.botID,
                                 new TextResponder()));
                     if (botResponse.length > 0)
                     {
@@ -1173,6 +1176,7 @@ public class IRCListener extends Listener implements ShellCommandable
             }
             else
             {
+                // Please document this.
             }
         }
     }
@@ -1222,9 +1226,9 @@ public class IRCListener extends Listener implements ShellCommandable
      */
     private void sendServerMessage(String message)
     {
-        if (clientStatus == CONNECTED)
+        if (this.clientStatus == CONNECTED)
         {
-            writer.println(message);
+            this.writer.println(message);
         }
     }
 
@@ -1235,16 +1239,16 @@ public class IRCListener extends Listener implements ShellCommandable
     {
         String line;
 
-        while (clientStatus == CONNECTED)
+        while (this.clientStatus == CONNECTED)
         {
             try
             {
-                line = reader.readLine();
+                line = this.reader.readLine();
                 processServerMessage(line);
             }
             catch (IOException e)
             {
-                // !
+                // Please document this.
             }
         }
 

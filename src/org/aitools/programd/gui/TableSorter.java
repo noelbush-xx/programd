@@ -40,24 +40,24 @@ public class TableSorter extends TableMap
 
     public TableSorter()
     {
-        indexes = new int[0];
+        this.indexes = new int[0];
     }
 
-    public TableSorter(TableModel model)
+    public TableSorter(TableModel modelToSet)
     {
-        setModel(model);
+        setModel(modelToSet);
     }
 
-    public void setModel(TableModel model)
+    public void setModel(TableModel modelToSet)
     {
-        super.setModel(model);
+        super.setModel(modelToSet);
         reallocateIndexes();
     }
 
     public int compareRowsByColumn(int row1, int row2, int column)
     {
-        Class type = model.getColumnClass(column);
-        TableModel data = model;
+        Class type = this.model.getColumnClass(column);
+        TableModel data = this.model;
 
         // Check for nulls.
         Object o1 = data.getValueAt(row1, column);
@@ -192,14 +192,14 @@ public class TableSorter extends TableMap
 
     public int compare(int row1, int row2)
     {
-        compares++;
-        for (int level = 0; level < sortingColumns.size(); level++)
+        this.compares++;
+        for (int level = 0; level < this.sortingColumns.size(); level++)
         {
-            Integer column = (Integer) sortingColumns.elementAt(level);
+            Integer column = (Integer) this.sortingColumns.elementAt(level);
             int result = compareRowsByColumn(row1, row2, column.intValue());
             if (result != 0)
             {
-                return ascending ? result : -result;
+                return this.ascending ? result : -result;
             }
         }
         return 0;
@@ -207,18 +207,18 @@ public class TableSorter extends TableMap
 
     public void reallocateIndexes()
     {
-        int rowCount = model.getRowCount();
+        int rowCount = this.model.getRowCount();
 
         /*
             Set up a new array of indexes with the right number of elements
             for the new data model.
         */
-        indexes = new int[rowCount];
+        this.indexes = new int[rowCount];
 
         // Initialise with the identity mapping.
         for (int row = 0; row < rowCount; row++)
         {
-            indexes[row] = row;
+            this.indexes[row] = row;
         }
     }
 
@@ -230,7 +230,7 @@ public class TableSorter extends TableMap
 
     public void checkModel()
     {
-        if (indexes.length != model.getRowCount())
+        if (this.indexes.length != this.model.getRowCount())
         {
             Trace.devinfo("Sorter not informed of a change in model.");
         }
@@ -240,8 +240,8 @@ public class TableSorter extends TableMap
     {
         checkModel();
 
-        compares = 0;
-        shuttlesort((int[]) indexes.clone(), indexes, 0, indexes.length);
+        this.compares = 0;
+        shuttlesort((int[]) this.indexes.clone(), this.indexes, 0, this.indexes.length);
     }
 
     public void n2sort()
@@ -250,7 +250,7 @@ public class TableSorter extends TableMap
         {
             for (int j = i + 1; j < getRowCount(); j++)
             {
-                if (compare(indexes[i], indexes[j]) == -1)
+                if (compare(this.indexes[i], this.indexes[j]) == -1)
                 {
                     swap(i, j);
                 }
@@ -320,9 +320,9 @@ public class TableSorter extends TableMap
 
     public void swap(int i, int j)
     {
-        int tmp = indexes[i];
-        indexes[i] = indexes[j];
-        indexes[j] = tmp;
+        int tmp = this.indexes[i];
+        this.indexes[i] = this.indexes[j];
+        this.indexes[j] = tmp;
     }
 
     // The mapping only affects the contents of the data rows.
@@ -331,13 +331,13 @@ public class TableSorter extends TableMap
     public Object getValueAt(int aRow, int aColumn)
     {
         checkModel();
-        return model.getValueAt(indexes[aRow], aColumn);
+        return this.model.getValueAt(this.indexes[aRow], aColumn);
     }
 
     public void setValueAt(Object aValue, int aRow, int aColumn)
     {
         checkModel();
-        model.setValueAt(aValue, indexes[aRow], aColumn);
+        this.model.setValueAt(aValue, this.indexes[aRow], aColumn);
     }
 
     public void sortByColumn(int column)
@@ -345,11 +345,11 @@ public class TableSorter extends TableMap
         sortByColumn(column, true);
     }
 
-    public void sortByColumn(int column, boolean ascending)
+    public void sortByColumn(int column, boolean ascendingSetting)
     {
-        this.ascending = ascending;
-        sortingColumns.removeAllElements();
-        sortingColumns.addElement(new Integer(column));
+        this.ascending = ascendingSetting;
+        this.sortingColumns.removeAllElements();
+        this.sortingColumns.addElement(new Integer(column));
         sort(this);
         super.tableChanged(new TableModelEvent(this));
     }
@@ -372,8 +372,7 @@ public class TableSorter extends TableMap
                 if (e.getClickCount() == 1 && column != -1)
                 {
                     int shiftPressed = e.getModifiers() & InputEvent.SHIFT_MASK;
-                    boolean ascending = (shiftPressed == 0);
-                    sorter.sortByColumn(column, ascending);
+                    sorter.sortByColumn(column, (shiftPressed == 0));
                 }
             }
         };

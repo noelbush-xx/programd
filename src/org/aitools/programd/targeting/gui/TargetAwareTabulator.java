@@ -32,20 +32,20 @@ abstract public class TargetAwareTabulator extends Tabulator
      *
      *  @param columnNames  the column names
      */
-    public TargetAwareTabulator(String[] columnNames, TargetingGUI guiparent)
+    public TargetAwareTabulator(String[] columnNames, TargetingGUI guiparentToUse)
     {
         super(columnNames);
-        this.guiparent = guiparent;
-        table.addMouseListener(new TargetOpener(this));
+        this.guiparent = guiparentToUse;
+        this.table.addMouseListener(new TargetOpener(this));
     }
 
     private class TargetOpener extends MouseAdapter
     {
-        private Tabulator parent;
+        private TargetAwareTabulator parent;
         
-        public TargetOpener(Tabulator parent)
+        public TargetOpener(TargetAwareTabulator parentToUse)
         {
-            this.parent = parent;
+            this.parent = parentToUse;
         }
         
         public void mouseClicked(MouseEvent me)
@@ -53,18 +53,18 @@ abstract public class TargetAwareTabulator extends Tabulator
             if (me.getClickCount() == 2)
             {
                 Target target =
-                    (Target) parent.getSorterTableModel().getValueAt(
-                        parent.getTable().rowAtPoint(me.getPoint()),
-                        parent.getColumnCount() - 2);
+                    (Target) this.parent.getSorterTableModel().getValueAt(
+                            this.parent.getTable().rowAtPoint(me.getPoint()),
+                            this.parent.getColumnCount() - 2);
                 int input =
-                    ((Integer) parent.getSorterTableModel()
+                    ((Integer) this.parent.getSorterTableModel()
                         .getValueAt(
-                            parent.getTable().rowAtPoint(me.getPoint()),
-                            parent.getColumnCount() - 1))
+                                this.parent.getTable().rowAtPoint(me.getPoint()),
+                                this.parent.getColumnCount() - 1))
                         .intValue();
-                guiparent.targetPanel.setTarget(target);
-                guiparent.targetPanel.scrollToInput(input);
-                guiparent.viewTargets();
+                this.parent.guiparent.targetPanel.setTarget(target);
+                this.parent.guiparent.targetPanel.scrollToInput(input);
+                this.parent.guiparent.viewTargets();
             }
         }
     }

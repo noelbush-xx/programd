@@ -70,7 +70,7 @@ public class TargetingGUI extends JPanel
     private static final Object[] HELP_MESSAGE =
         {
             "AIML Targeting Tool",
-            "Program D version " + targetingTool.VERSION,
+            "Program D version " + TargetingTool.VERSION,
             "http://aitools.org" };
 
     private static ImageIcon logo;
@@ -101,71 +101,71 @@ public class TargetingGUI extends JPanel
 
     public void start()
     {
-        frame = new JFrame();
+        this.frame = new JFrame();
         updateTitle();
-        frame.getContentPane().add(this);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setJMenuBar(menuBar);
-        frame.pack();
-        frame.setLocation(50, 50);
-        frame.setIconImage(icon.getImage());
-        frame.setVisible(true);
+        this.frame.getContentPane().add(this);
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.frame.setJMenuBar(menuBar);
+        this.frame.pack();
+        this.frame.setLocation(50, 50);
+        this.frame.setIconImage(icon.getImage());
+        this.frame.setVisible(true);
 
         // Go to the next (first) target.
-        targetPanel.nextTarget();
+        this.targetPanel.nextTarget();
     }
 
-    public TargetingGUI(TargetingTool targetingTool)
+    public TargetingGUI(TargetingTool targetingToolToUse)
     {
-        this.targetingTool = targetingTool;
+        TargetingGUI.targetingTool = targetingToolToUse;
 
         // Create and configure the targetPanel.
-        targetPanel = new TargetPanel(this);
-        targetPanel.setMinimumSize(minDimension);
-        targetPanel.setPreferredSize(prefDimension);
-        targetPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        this.targetPanel = new TargetPanel(this);
+        this.targetPanel.setMinimumSize(minDimension);
+        this.targetPanel.setPreferredSize(prefDimension);
+        this.targetPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Create and configure the inputPanel.
-        inputPanel = new InputPanel(this);
-        inputPanel.setMinimumSize(minDimension);
-        inputPanel.setPreferredSize(prefDimension);
-        inputPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        this.inputPanel = new InputPanel(this);
+        this.inputPanel.setMinimumSize(minDimension);
+        this.inputPanel.setPreferredSize(prefDimension);
+        this.inputPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Create and configure the categoryPanel.
-        categoryPanel = new CategoryPanel(this);
-        categoryPanel.setMinimumSize(minDimension);
-        categoryPanel.setPreferredSize(prefDimension);
-        categoryPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        this.categoryPanel = new CategoryPanel(this);
+        this.categoryPanel.setMinimumSize(minDimension);
+        this.categoryPanel.setPreferredSize(prefDimension);
+        this.categoryPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Create the status bar.
-        statusBar = new JLabel();
-        statusBar.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        statusBar.setHorizontalAlignment(SwingConstants.RIGHT);
-        statusBar.setFont(new Font("Fixedsys", Font.PLAIN, 12));
-        statusBar.setForeground(Color.black);
-        statusBar.setMinimumSize(new Dimension(MIN_WIDTH, 14));
-        statusBar.setPreferredSize(new Dimension(PREF_WIDTH, 14));
-        statusBar.setMaximumSize(new Dimension(Short.MAX_VALUE, 14));
+        this.statusBar = new JLabel();
+        this.statusBar.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        this.statusBar.setHorizontalAlignment(SwingConstants.RIGHT);
+        this.statusBar.setFont(new Font("Fixedsys", Font.PLAIN, 12));
+        this.statusBar.setForeground(Color.black);
+        this.statusBar.setMinimumSize(new Dimension(MIN_WIDTH, 14));
+        this.statusBar.setPreferredSize(new Dimension(PREF_WIDTH, 14));
+        this.statusBar.setMaximumSize(new Dimension(Short.MAX_VALUE, 14));
 
         // Create and configure the tabbed pane.
-        tabbedPane = new JTabbedPane();
-        tabbedPane.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        tabbedPane.setMinimumSize(new Dimension(MIN_WIDTH, PREF_HEIGHT));
-        tabbedPane.setPreferredSize(new Dimension(PREF_WIDTH, PREF_HEIGHT));
-        tabbedPane.setMaximumSize(
+        this.tabbedPane = new JTabbedPane();
+        this.tabbedPane.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        this.tabbedPane.setMinimumSize(new Dimension(MIN_WIDTH, PREF_HEIGHT));
+        this.tabbedPane.setPreferredSize(new Dimension(PREF_WIDTH, PREF_HEIGHT));
+        this.tabbedPane.setMaximumSize(
             new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
-        tabbedPane.setFont(new Font("Fixedsys", Font.PLAIN, 12));
-        tabbedPane.setTabPlacement(SwingConstants.BOTTOM);
+        this.tabbedPane.setFont(new Font("Fixedsys", Font.PLAIN, 12));
+        this.tabbedPane.setTabPlacement(SwingConstants.BOTTOM);
 
         // Add the panels to the tabbed pane.
-        tabbedPane.add("Targets", targetPanel);
-        tabbedPane.add("Inputs", inputPanel);
-        tabbedPane.add("Categories", categoryPanel);
+        this.tabbedPane.add("Targets", this.targetPanel);
+        this.tabbedPane.add("Inputs", this.inputPanel);
+        this.tabbedPane.add("Categories", this.categoryPanel);
 
         // Add the tabbed pane and the status bar to the main panel.
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(tabbedPane);
-        add(statusBar);
+        add(this.tabbedPane);
+        add(this.statusBar);
 
         // Create the File menu.
         menuBar = new JMenuBar();
@@ -334,25 +334,25 @@ public class TargetingGUI extends JPanel
 
         JMenuItem discard = new JMenuItem("Discard target");
         discard.setFont(new Font("Fixedsys", Font.PLAIN, 12));
-        discard.addActionListener(targetPanel.new DiscardTarget());
+        discard.addActionListener(this.targetPanel.new DiscardTarget(this.targetPanel));
 
         JMenuItem discardAll = new JMenuItem("Discard all targets");
         discardAll.setFont(new Font("Fixedsys", Font.PLAIN, 12));
-        discardAll.addActionListener(targetPanel.new DiscardAllTargets());
+        discardAll.addActionListener(this.targetPanel.new DiscardAllTargets());
 
         JMenuItem save = new JMenuItem("Save new category from target");
         save.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         save.setMnemonic(KeyEvent.VK_S);
         save.setAccelerator(
             KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK));
-        save.addActionListener(targetPanel.new SaveTarget());
+        save.addActionListener(this.targetPanel.new SaveTarget());
 
         JMenuItem next = new JMenuItem("Get next target");
         next.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         next.setMnemonic(KeyEvent.VK_N);
         next.setAccelerator(
             KeyStroke.getKeyStroke(KeyEvent.VK_N, Event.CTRL_MASK));
-        next.addActionListener(targetPanel.new NextTarget());
+        next.addActionListener(this.targetPanel.new NextTarget());
 
         actionsMenu.add(save);
         actionsMenu.add(next);
@@ -387,7 +387,7 @@ public class TargetingGUI extends JPanel
 
     public void shutdown()
     {
-        targetingTool.shutdown();
+        TargetingTool.shutdown();
         System.exit(0);
     }
 
@@ -406,18 +406,18 @@ public class TargetingGUI extends JPanel
     protected void includeIncompleteThats(boolean b)
     {
         targetingTool.includeIncompleteThats(b);
-        if (!targetPanel.hasTarget())
+        if (!this.targetPanel.hasTarget())
         {
-            targetPanel.nextTarget();
+            this.targetPanel.nextTarget();
         }
     }
 
     protected void includeIncompleteTopics(boolean b)
     {
         targetingTool.includeIncompleteTopics(b);
-        if (!targetPanel.hasTarget())
+        if (!this.targetPanel.hasTarget())
         {
-            targetPanel.nextTarget();
+            this.targetPanel.nextTarget();
         }
     }
 
@@ -496,7 +496,7 @@ public class TargetingGUI extends JPanel
             JOptionPane.PLAIN_MESSAGE);
         setStatus("Loading targets data....");
         targetingTool.changeTargetsDataPath((String) response);
-        targetPanel.nextTarget();
+        this.targetPanel.nextTarget();
         setStatus("");
         updateTitle();
     }
@@ -531,7 +531,7 @@ public class TargetingGUI extends JPanel
                 JOptionPane.PLAIN_MESSAGE);
             setStatus("Loading targets data....");
             targetingTool.changeTargetsDataPath(newPath);
-            targetPanel.nextTarget();
+            this.targetPanel.nextTarget();
             setStatus("");
             updateTitle();
         }
@@ -548,31 +548,31 @@ public class TargetingGUI extends JPanel
 
     public void setStatus(String status)
     {
-        statusBar.setText(status);
+        this.statusBar.setText(status);
         Trace.devinfo(status);
     }
 
     private void updateTitle()
     {
-        frame.setTitle(
+        this.frame.setTitle(
             "AIML Targeting Tool, Program D version "
-                + targetingTool.VERSION
+                + TargetingTool.VERSION
                 + " - "
                 + targetingTool.getTargetsDataPath());
     }
 
     public void viewTargets()
     {
-        tabbedPane.setSelectedIndex(0);
+        this.tabbedPane.setSelectedIndex(0);
     }
 
     public void viewInputs()
     {
-        tabbedPane.setSelectedIndex(1);
+        this.tabbedPane.setSelectedIndex(1);
     }
 
     public void viewCategories()
     {
-        tabbedPane.setSelectedIndex(2);
+        this.tabbedPane.setSelectedIndex(2);
     }
 }
