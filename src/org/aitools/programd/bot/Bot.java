@@ -29,6 +29,7 @@ import org.aitools.programd.util.logging.XMLLog;
  * Describes all of the properties of a bot.
  * 
  * @author Noel Bush
+ * @author Eion Robb
  * @since 4.1.5
  */
 public class Bot
