@@ -11,8 +11,8 @@ package org.aitools.programd.bot;
 
 import java.util.HashMap;
 import java.util.Iterator;
-
-import org.aitools.programd.util.Trace;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Controls processes that run in separate threads and need to be shut down
@@ -70,15 +70,14 @@ public class BotProcesses
      */
     public static void shutdownAll()
     {
-        Trace.userinfo("Shutting down all BotProcesses.");
-        Iterator iterator = registry.values().iterator();
-        while (iterator.hasNext())
+        Logger logger = Logger.getLogger("programd");
+        logger.log(Level.INFO, "Shutting down all BotProcesses.");
+        for (BotProcess process : registry.values())
         {
-            BotProcess process = (BotProcess) iterator.next();
-            Trace.userinfo("Shutting down " + process);
+            logger.log(Level.FINE, "Shutting down " + process);
             process.shutdown();
         } 
-        Trace.userinfo("Finished shutting down BotProcesses.");
+        logger.log(Level.INFO, "Finished shutting down BotProcesses.");
     } 
 
     /**

@@ -1,8 +1,8 @@
 package org.aitools.programd.interpreter;
 
-import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.aitools.programd.util.logging.Log;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
@@ -11,7 +11,8 @@ import org.mozilla.javascript.Scriptable;
  * that handles server-side JavaScript using the Rhino package.
  * 
  * @author Jon Baer
- * @version 1.0
+ * @author Noel Bush
+ * @version 4.2
  */
 public class RhinoInterpreter implements Interpreter
 {
@@ -20,10 +21,16 @@ public class RhinoInterpreter implements Interpreter
 
     /** An empty string. */
     private static final String EMPTY_STRING = "";
+    
+    /** The system line separator. */
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    
+    /** The logger. */
+    private static final Logger LOGGER = Logger.getLogger("programd.interpreter");
 
     public String evaluate(String expression)
     {
-        Log.log("evaluate: \"" + expression + "\"", Log.INTERPRETER);
+        LOGGER.log(Level.FINE, "evaluate: \"" + expression + "\"");
         Context context = Context.enter();
         Scriptable scope = context.initStandardObjects(null);
 
@@ -34,13 +41,8 @@ public class RhinoInterpreter implements Interpreter
         } 
         catch (Exception e)
         {
-            Log.userinfo("JavaScript exception (see interpreter log).", Log.ERROR);
-            Log.log(e, Log.INTERPRETER);
-            StringTokenizer lines = new StringTokenizer(expression, System.getProperty("line.separator"));
-            while (lines.hasMoreTokens())
-            {
-                Log.log(lines.nextToken(), Log.INTERPRETER);
-            } 
+            Logger.getLogger("programd.error").log(Level.WARNING, "JavaScript exception (see interpreter log).");
+            LOGGER.log(Level.WARNING, "Got exception:" + LINE_SEPARATOR + e + LINE_SEPARATOR + "when processing:" + LINE_SEPARATOR + expression);
         } 
         Context.exit();
         if (result != null)
@@ -48,7 +50,7 @@ public class RhinoInterpreter implements Interpreter
             return result.toString();
         } 
         // (otherwise...)
-        Log.userinfo("JavaScript returned null!", Log.INTERPRETER);
+        LOGGER.log(Level.INFO, "JavaScript returned null!");
         return EMPTY_STRING;
     } 
 }

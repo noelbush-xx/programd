@@ -10,27 +10,30 @@
 package org.aitools.programd.bot;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
 
 import org.aitools.programd.graph.Nodemapper;
+import org.aitools.programd.logging.XMLChatLogFormatter;
 import org.aitools.programd.multiplexor.PredicateInfo;
 import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.Globals;
 import org.aitools.programd.util.InputNormalizer;
 import org.aitools.programd.util.Substituter;
-import org.aitools.programd.util.XMLResourceSpec;
-import org.aitools.programd.util.logging.XMLLog;
+import org.aitools.programd.util.UserError;
 
 /**
- * Describes all of the properties of a bot.
+ * Handles all of the properties of a bot.
  * 
  * @author Noel Bush
  * @author Eion Robb
  * @since 4.1.5
+ * @version 4.2
  */
 public class Bot
 {
@@ -65,23 +68,35 @@ public class Bot
     private Map<String, Map<String, Object>> predicateCache = Collections.synchronizedMap(new HashMap<String, Map<String, Object>>());
 
     /** The predicate empty default. */
-    protected String PREDICATE_EMPTY_DEFAULT = Globals.getPredicateEmptyDefault();
+    protected String predicateEmptyDefault;
+
+    /** The XML chat logger for this bot. */
+    private Logger logger;
 
     /** An empty string. */
     private static final String EMPTY_STRING = "";
 
-    /** The resource spec for logs from this bot. */
-    protected XMLResourceSpec chatlogSpec;
 
     /**
-     * Creates a new Bot with the given id. The bot's chat log spec is also set.
+     * Creates a new Bot with the given id. The bot's chat log is also set up.
      */
-    public Bot(String botID)
+    public Bot(String botID, String predicateEmptyDefaultToUse, String chatlogDirectory)
     {
         this.id = botID;
-        this.chatlogSpec = XMLLog.getChatlogSpecClone();
-        this.chatlogSpec.path = Globals.getProperty("programd.logging.xml.chat.log-directory", "./logs")
-                + File.separator + this.id + File.separator + "chat.xml";
+        this.predicateEmptyDefault = predicateEmptyDefaultToUse;
+
+        this.logger = Logger.getLogger("programd.chat." + this.id);
+        FileHandler chatLogFileHandler;
+        try
+        {
+            chatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id + File.separator + "chat.xml", 1024, 10);
+        }
+        catch (IOException e)
+        {
+            throw new UserError("Could not create XML chat log for bot \"" + this.id + "\" in \"" + chatlogDirectory + "\"!");
+        }
+        chatLogFileHandler.setFormatter(new XMLChatLogFormatter());
+        this.logger.addHandler(chatLogFileHandler);
     } 
 
     /**
@@ -92,7 +107,15 @@ public class Bot
     public String getID()
     {
         return this.id;
-    } 
+    }
+    
+    /**
+     * @return the XML chat logger for this bot
+     */
+    public Logger getLogger()
+    {
+        return this.logger;
+    }
 
     /**
      * Returns a map of the files loaded by this bot.
@@ -143,7 +166,7 @@ public class Bot
         // Don't bother with empty property names.
         if (name.equals(EMPTY_STRING))
         {
-            return this.PREDICATE_EMPTY_DEFAULT;
+            return this.predicateEmptyDefault;
         } 
 
         // Retrieve the contents of the property.
@@ -153,7 +176,7 @@ public class Bot
             return value;
         } 
         // (otherwise...)
-        return this.PREDICATE_EMPTY_DEFAULT;
+        return this.predicateEmptyDefault;
     } 
 
     /**
@@ -342,10 +365,5 @@ public class Bot
     public String applyInputSubstitutions(String input)
     {
         return Substituter.applySubstitutions(this.inputSubstitutions, input);
-    } 
-
-    public XMLResourceSpec getChatlogSpec()
-    {
-        return this.chatlogSpec;
     } 
 }

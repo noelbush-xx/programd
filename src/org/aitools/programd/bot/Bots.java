@@ -20,19 +20,17 @@ import org.aitools.programd.util.DeveloperError;
  * 
  * @author Noel Bush
  * @since 4.1.5
+ * @version 4.2
  */
 public class Bots
 {
-    /** Part of the singleton pattern. */
-    private static final Bots myself = new Bots();
-    
     /** The private HashMap that is used by this. */
     private HashMap<String, Bot> hashmap;
 
     /**
      * <code>Bots</code> cannot be instantiated except by itself.
      */
-    private Bots()
+    public Bots()
     {
         this.hashmap = new HashMap<String, Bot>();
     } 
@@ -42,9 +40,9 @@ public class Bots
      * 
      * @return whether the loaded bots include one with the given id
      */
-    public static boolean include(String botid)
+    public boolean include(String botid)
     {
-        return !(myself.hashmap.get(botid) == null);
+        return !(this.hashmap.get(botid) == null);
     }
 
     /**
@@ -56,9 +54,9 @@ public class Bots
      * @param bot
      *            the bot to add
      */
-    public static void addBot(String botid, Bot bot)
+    public void addBot(String botid, Bot bot)
     {
-        myself.hashmap.put(botid, bot);
+        this.hashmap.put(botid, bot);
     } 
 
     /**
@@ -68,12 +66,12 @@ public class Bots
      *            the id of the bot to return
      * @return the bot with the given id
      */
-    public static Bot getBot(String botid)
+    public Bot getBot(String botid)
     {
         Bot wanted;
         try
         {
-            wanted = myself.hashmap.get(botid);
+            wanted = this.hashmap.get(botid);
         } 
         catch (ClassCastException e)
         {
@@ -91,11 +89,11 @@ public class Bots
      * 
      * @return any bot (probably the last one loaded)
      */
-    public static Bot getABot()
+    public Bot getABot()
     {
-        if (myself.hashmap.size() > 0)
+        if (this.hashmap.size() > 0)
         {
-            return myself.hashmap.values().iterator().next();
+            return this.hashmap.values().iterator().next();
         } 
         // (otherwise...)
         return null;
@@ -106,9 +104,9 @@ public class Bots
      * 
      * @return the number of bots (the size)
      */
-    public static int getCount()
+    public int getCount()
     {
-        return myself.hashmap.size();
+        return this.hashmap.size();
     } 
 
     /**
@@ -116,14 +114,14 @@ public class Bots
      * 
      * @return a nicely-formatted list of the bots
      */
-    public static String getNiceList()
+    public String getNiceList()
     {
-        if (myself.hashmap.size() == 0)
+        if (this.hashmap.size() == 0)
         {
             return "";
         } 
         StringBuffer result = new StringBuffer();
-        Iterator iterator = myself.hashmap.keySet().iterator();
+        Iterator iterator = this.hashmap.keySet().iterator();
         while (iterator.hasNext())
         {
             if (result.length() > 0)
@@ -140,9 +138,9 @@ public class Bots
      * 
      * @return the IDs (the key set)
      */
-    public static Set<String> getIDs()
+    public Set<String> getIDs()
     {
-        return myself.hashmap.keySet();
+        return this.hashmap.keySet();
     } 
 
     /**
@@ -150,9 +148,9 @@ public class Bots
      * 
      * @return an iterator over the key set
      */
-    public static Iterator keysIterator()
+    public Iterator keysIterator()
     {
-        return myself.hashmap.keySet().iterator();
+        return this.hashmap.keySet().iterator();
     } 
 
     /**
@@ -161,9 +159,9 @@ public class Bots
      * @param filename
      * @return whether any bots have loaded the given file(name)
      */
-    public static boolean haveLoaded(String filename)
+    public boolean haveLoaded(String filename)
     {
-        Iterator bots = myself.hashmap.values().iterator();
+        Iterator bots = this.hashmap.values().iterator();
         while (bots.hasNext())
         {
             if (((Bot) bots.next()).hasLoaded(filename))
