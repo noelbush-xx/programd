@@ -19,7 +19,7 @@ import org.mortbay.util.OutputStreamLogSink;
  *
  *  @author Noel Bush
  */
-public class JettyWrapper implements AliceCompatibleHttpServer
+public class JettyWrapper implements ProgramDCompatibleHttpServer
 {
 
     /** A private reference to the Jetty server. */
