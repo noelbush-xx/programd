@@ -15,7 +15,7 @@ import java.util.Hashtable;
 /**
  * Registers classes with aliases.
  */
-abstract public class ClassRegistry extends Hashtable
+abstract public class ClassRegistry<K,V> extends Hashtable<K,V>
 {
     /** The version of the content type for which this registry is intended. */
     protected static String version;
@@ -43,7 +43,7 @@ abstract public class ClassRegistry extends Hashtable
         ClassRegistry.baseClassName = baseClassNameToUse;
 
         // Get a handle on the base class.
-        Class baseClass = null;
+        Class<?> baseClass = null;
         try
         {
             baseClass = Class.forName(baseClassName);
@@ -115,5 +115,18 @@ abstract public class ClassRegistry extends Hashtable
                 throw new DeveloperError("Tried to register class with null label!");
             } 
         } 
-    } 
+    }
+    
+    
+    /**
+     * Overrides the put method so that String and Class are expected.
+     * 
+     * @param key   the String to put
+     * @param value the Class to put
+     * @return Class
+     */
+    public synchronized Class put(String key, Class value)
+    {
+        return this.put(key, value);
+    }
 }

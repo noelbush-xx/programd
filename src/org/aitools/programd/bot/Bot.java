@@ -38,31 +38,31 @@ public class Bot
     private String id;
 
     /** The files loaded for the bot. */
-    private HashMap loadedFiles = new HashMap();
+    private HashMap<Object, HashSet<Nodemapper>> loadedFiles = new HashMap<Object, HashSet<Nodemapper>>();
 
     /** The bot's properties. */
-    private HashMap properties = new HashMap();
+    private HashMap<String, String> properties = new HashMap<String, String>();
 
     /** The bot's predicate infos. */
-    private HashMap predicatesInfo = new HashMap();
+    private HashMap<String, PredicateInfo> predicatesInfo = new HashMap<String, PredicateInfo>();
 
     /** The bot's input substitutions map. */
-    private HashMap inputSubstitutions = new HashMap();
+    private HashMap<String, String> inputSubstitutions = new HashMap<String, String>();
 
     /** The bot's person substitutions map. */
-    private HashMap personSubstitutions = new HashMap();
+    private HashMap<String, String> personSubstitutions = new HashMap<String, String>();
 
     /** The bot's person2 substitutions map. */
-    private HashMap person2Substitutions = new HashMap();
+    private HashMap<String, String> person2Substitutions = new HashMap<String, String>();
 
     /** The bot's gender substitutions map. */
-    private HashMap genderSubstitutions = new HashMap();
+    private HashMap<String, String> genderSubstitutions = new HashMap<String, String>();
 
     /** The bot's sentence splitter map. */
-    private ArrayList sentenceSplitters = new ArrayList();
+    private ArrayList<String> sentenceSplitters = new ArrayList<String>();
 
     /** Holds cached predicates, keyed by userid. */
-    private Map predicateCache = Collections.synchronizedMap(new HashMap());
+    private Map<String, Map<String, Object>> predicateCache = Collections.synchronizedMap(new HashMap<String, Map<String, Object>>());
 
     /** The predicate empty default. */
     protected String PREDICATE_EMPTY_DEFAULT = Globals.getPredicateEmptyDefault();
@@ -99,7 +99,7 @@ public class Bot
      * 
      * @return a map of the files loaded by this bot
      */
-    public HashMap getLoadedFilesMap()
+    public HashMap<Object, HashSet<Nodemapper>> getLoadedFilesMap()
     {
         return this.loadedFiles;
     } 
@@ -124,7 +124,7 @@ public class Bot
      */
     public void addToFilenameMap(String filename, Nodemapper nodemapper)
     {
-        HashSet nodemappers = (HashSet) this.loadedFiles.get(filename);
+        HashSet<Nodemapper> nodemappers = this.loadedFiles.get(filename);
         if (nodemappers != null)
         {
             nodemappers.add(nodemapper);
@@ -147,7 +147,7 @@ public class Bot
         } 
 
         // Retrieve the contents of the property.
-        String value = (String) this.properties.get(name);
+        String value = this.properties.get(name);
         if (value != null)
         {
             return value;
@@ -181,7 +181,7 @@ public class Bot
         return this.properties;
     } 
 
-    public void setProperties(HashMap map)
+    public void setProperties(HashMap<String, String> map)
     {
         this.properties = map;
     } 
@@ -233,20 +233,20 @@ public class Bot
      * 
      * @param userid
      */
-    public Map predicatesFor(String userid)
+    public Map<String, Object> predicatesFor(String userid)
     {
-        Map userPredicates;
+        Map<String, Object> userPredicates;
 
         // Find out if any predicates for this userid are cached.
         if (!this.predicateCache.containsKey(userid))
         {
             // Create them if not.
-            userPredicates = Collections.synchronizedMap(new HashMap());
+            userPredicates = Collections.synchronizedMap(new HashMap<String, Object>());
             this.predicateCache.put(userid, userPredicates);
         } 
         else
         {
-            userPredicates = (Map) this.predicateCache.get(userid);
+            userPredicates = this.predicateCache.get(userid);
             if (userPredicates == null)
             {
                 // This should never happen!
@@ -287,7 +287,7 @@ public class Bot
      * @param replace
      *            the string with which to replace the found string
      */
-    private void addSubstitution(HashMap substitutionMap, String find, String replace)
+    private void addSubstitution(HashMap<String, String> substitutionMap, String find, String replace)
     {
         if (find != null && replace != null)
         {
@@ -309,32 +309,32 @@ public class Bot
         } 
     } 
 
-    public HashMap getInputSubstitutionsMap()
+    public HashMap<String, String> getInputSubstitutionsMap()
     {
         return this.inputSubstitutions;
     } 
 
-    public HashMap getGenderSubstitutionsMap()
+    public HashMap<String, String> getGenderSubstitutionsMap()
     {
         return this.genderSubstitutions;
     } 
 
-    public HashMap getPersonSubstitutionsMap()
+    public HashMap<String, String> getPersonSubstitutionsMap()
     {
         return this.personSubstitutions;
     } 
 
-    public HashMap getPerson2SubstitutionsMap()
+    public HashMap<String, String> getPerson2SubstitutionsMap()
     {
         return this.person2Substitutions;
     } 
 
-    public ArrayList getSentenceSplitters()
+    public ArrayList<String> getSentenceSplitters()
     {
         return this.sentenceSplitters;
     } 
 
-    public ArrayList sentenceSplit(String input)
+    public ArrayList<String> sentenceSplit(String input)
     {
         return InputNormalizer.sentenceSplit(this.sentenceSplitters, input);
     } 

@@ -109,30 +109,30 @@ public class Substituter
      *            the string on which to perform the replacement
      * @return the input with substitutions applied
      */
-    public static String applySubstitutions(HashMap substitutionMap, String input)
+    public static String applySubstitutions(HashMap<String, String> substitutionMap, String input)
     {
         // This will contain all pieces of the input untouched by substitution.
-        LinkedList untouchedPieces = new LinkedList();
+        LinkedList<String> untouchedPieces = new LinkedList<String>();
 
         // Pad the input with spaces.
         untouchedPieces.add(SPACE + input + SPACE);
 
         // This will contain all replacements to be inserted in the result.
-        LinkedList replacements = new LinkedList();
+        LinkedList<String> replacements = new LinkedList<String>();
 
         // Iterate over all substitutions.
-        Iterator substitutions = substitutionMap.keySet().iterator();
+        Iterator<String> substitutions = substitutionMap.keySet().iterator();
 
         while (substitutions.hasNext())
         {
-            String find = (String) substitutions.next();
+            String find = substitutions.next();
 
             // Iterate through all untouched pieces of the inputs.
-            ListIterator untouchedIterator = untouchedPieces.listIterator(0);
+            ListIterator<String> untouchedIterator = untouchedPieces.listIterator(0);
             while (untouchedIterator.hasNext())
             {
                 // Is the find string in the untouched input?
-                String untouchedTest = (String) untouchedIterator.next();
+                String untouchedTest = untouchedIterator.next();
                 int startIndex = untouchedTest.toUpperCase().indexOf(find.toUpperCase());
 
                 if (startIndex >= 0 && startIndex < untouchedTest.length())
@@ -142,7 +142,7 @@ public class Substituter
                     untouchedIterator.set(untouchedTest.substring(0, startIndex));
 
                     // put the replacement text into the replacements list,
-                    String replacement = (String) substitutionMap.get(find);
+                    String replacement = substitutionMap.get(find);
                     replacements.add(untouchedIterator.nextIndex() - 1, replacement);
 
                     // and put the remainder of the untouched input into the

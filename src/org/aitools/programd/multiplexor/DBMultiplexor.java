@@ -44,7 +44,7 @@ public class DBMultiplexor extends Multiplexor
     /** A manager for database access. */
     private static DbAccessRefsPoolMgr dbManager;
 
-    private static HashMap userCacheForBots = new HashMap();
+    private static HashMap<String, HashMap<String, String>> userCacheForBots = new HashMap<String, HashMap<String, String>>();
 
     /** The string &quot;UTF-8&quot; (for character encoding conversion). */
     private static final String ENC_UTF8 = "UTF-8";
@@ -236,13 +236,13 @@ public class DBMultiplexor extends Multiplexor
         // Look first to see if the user is already in the cache.
         if (!userCacheForBots.containsKey(botid))
         {
-            userCacheForBots.put(botid, new HashMap());
+            userCacheForBots.put(botid, new HashMap<String, String>());
         } 
-        HashMap userCache = (HashMap) userCacheForBots.get(botid);
+        HashMap<String, String> userCache = userCacheForBots.get(botid);
         if (userCache.containsKey(userid))
         {
             // If so, check against stored password.
-            if (((String) userCache.get(userid)).equals(password))
+            if ((userCache.get(userid)).equals(password))
             {
                 return true;
             } 
@@ -367,9 +367,10 @@ public class DBMultiplexor extends Multiplexor
         catch (SQLException e)
         {
             throw new UserError("Database error.", e);
-        } 
-        userCacheForBots.remove(userid);
-        userCacheForBots.put(userid, password);
+        }
+        HashMap<String, String> userCache = userCacheForBots.get(botid);
+        userCache.remove(userid);
+        userCache.put(userid, password);
         return true;
     } 
 

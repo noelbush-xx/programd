@@ -32,7 +32,7 @@ public class FileManager
     private static String rootPath;
 
     /** The current working directory. */
-    private static Stack workingDirectory = new Stack();
+    private static Stack<String> workingDirectory = new Stack<String>();
     static
     {
         workingDirectory.push(System.getProperty("user.dir"));
@@ -345,7 +345,7 @@ public class FileManager
      */
     public static String[] glob(String path) throws FileNotFoundException
     {
-        return glob(path, (String) workingDirectory.peek());
+        return glob(path, workingDirectory.peek());
     } 
 
     /**
@@ -463,6 +463,6 @@ public class FileManager
      */
     public static String getWorkingDirectory()
     {
-        return (String) workingDirectory.peek();
+        return workingDirectory.peek();
     } 
 }

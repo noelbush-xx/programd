@@ -39,9 +39,9 @@ public class InputNormalizer
      *            the input to split
      * @return the input split into sentences
      */
-    public static ArrayList sentenceSplit(ArrayList sentenceSplitters, String input)
+    public static ArrayList<String> sentenceSplit(ArrayList sentenceSplitters, String input)
     {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
 
         int inputLength = input.length();
         if (inputLength == 0)
@@ -51,7 +51,7 @@ public class InputNormalizer
         } 
 
         // This will hold the indices of all splitters in the input.
-        ArrayList splitterIndices = new ArrayList();
+        ArrayList<Integer> splitterIndices = new ArrayList<Integer>();
 
         // This will iterate over the splitters.
         Iterator splitters = sentenceSplitters.iterator();

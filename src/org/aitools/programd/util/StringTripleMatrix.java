@@ -22,18 +22,18 @@ import java.util.Vector;
  */
 public class StringTripleMatrix
 {
-    private LinkedList[] vertical;
+    private LinkedList<String>[] vertical;
 
-    private LinkedList horizontal;
+    private LinkedList<StringTriple> horizontal;
 
     public StringTripleMatrix()
     {
         this.vertical = new LinkedList[]
-            { new LinkedList(), new LinkedList(), new LinkedList() } ;
-        this.horizontal = new LinkedList();
+            { new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>() } ;
+        this.horizontal = new LinkedList<StringTriple>();
     } 
 
-    public LinkedList getAll()
+    public LinkedList<StringTriple> getAll()
     {
         return this.horizontal;
     } 
@@ -53,17 +53,17 @@ public class StringTripleMatrix
         return this.horizontal.contains(tuple);
     } 
 
-    public LinkedList getFirsts()
+    public LinkedList<String> getFirsts()
     {
         return this.vertical[0];
     } 
 
-    public LinkedList getSeconds()
+    public LinkedList<String> getSeconds()
     {
         return this.vertical[1];
     } 
 
-    public LinkedList getThirds()
+    public LinkedList<String> getThirds()
     {
         return this.vertical[2];
     } 
@@ -107,12 +107,12 @@ public class StringTripleMatrix
         } 
         for (int index = 3; --index >= 0;)
         {
-            Vector newVertical = new Vector(this.vertical[index]);
+            Vector<String> newVertical = new Vector<String>(this.vertical[index]);
             newVertical.setSize(size);
-            this.vertical[index] = new LinkedList(newVertical);
+            this.vertical[index] = new LinkedList<String>(newVertical);
         } 
-        Vector newHorizontal = new Vector(this.horizontal);
+        Vector<StringTriple> newHorizontal = new Vector<StringTriple>(this.horizontal);
         newHorizontal.setSize(size);
-        this.horizontal = new LinkedList(newHorizontal);
+        this.horizontal = new LinkedList<StringTriple>(newHorizontal);
     } 
 }

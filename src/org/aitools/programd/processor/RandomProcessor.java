@@ -62,7 +62,7 @@ public class RandomProcessor extends AIMLProcessor
      * The map in which MersenneTwisterFast random number generators will be
      * stored for each unique botid + userid + random element.
      */
-    private static final LRUCache generators = new LRUCache(100);
+    private static final LRUCache<String, MersenneTwisterFast> generators = new LRUCache<String, MersenneTwisterFast>(100);
 
     public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
@@ -79,7 +79,7 @@ public class RandomProcessor extends AIMLProcessor
             String identifier = parser.getBotID() + parser.getUserID() + tag.toString();
 
             // Does the generators map already contain this one?
-            MersenneTwisterFast generator = (MersenneTwisterFast) generators.get(identifier);
+            MersenneTwisterFast generator = generators.get(identifier);
             if (generator == null)
             {
                 generator = new MersenneTwisterFast(System.currentTimeMillis());

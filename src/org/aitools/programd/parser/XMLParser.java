@@ -73,7 +73,7 @@ public class XMLParser
      *            the list to which to add the parsed XML
      * @return a linear linked list of the parsed XML
      */
-    public LinkedList XMLRead(String input, LinkedList XMLList)
+    public LinkedList<XMLNode> XMLRead(String input, LinkedList<XMLNode> XMLList)
     {
         /*
          * XML decoding Finite State Machine Internal States
@@ -87,7 +87,7 @@ public class XMLParser
         final int Q_PI = 6;
 
         // Linked List local iterator
-        ListIterator xmlIterator;
+        ListIterator<XMLNode> xmlIterator;
 
         // Buffer and processing variables
 
@@ -379,7 +379,7 @@ public class XMLParser
      *            the trie to modify and return
      * @return a trie representation of the parsed XML
      */
-    public LinkedList scan(ListIterator xmlIterator, LinkedList xmlList, LinkedList trie)
+    public LinkedList<XMLNode> scan(ListIterator<XMLNode> xmlIterator, LinkedList<XMLNode> xmlList, LinkedList<XMLNode> trie)
     {
         /*
          * A tokenized representation of the XML stream is held in one linear
@@ -392,7 +392,7 @@ public class XMLParser
         while (xmlIterator.hasNext())
         {
             // Retrieve a node from the Linked List.
-            node = (XMLNode) xmlIterator.next();
+            node = xmlIterator.next();
 
             // Only process valid references.
             if (node != null)
@@ -406,7 +406,7 @@ public class XMLParser
                         child.XMLType = node.XMLType;
                         child.XMLData = node.XMLData;
                         child.XMLAttr = node.XMLAttr;
-                        child.XMLChild = new LinkedList();
+                        child.XMLChild = new LinkedList<XMLNode>();
                         child.XMLChild = scan(xmlIterator, xmlList, child.XMLChild);
                         trie.add(child);
                         break;
@@ -459,10 +459,10 @@ public class XMLParser
      */
     public LinkedList load(String buffer)
     {
-        LinkedList linearList = new LinkedList();
-        LinkedList trie = new LinkedList();
+        LinkedList<XMLNode> linearList = new LinkedList<XMLNode>();
+        LinkedList<XMLNode> trie = new LinkedList<XMLNode>();
 
-        ListIterator listIterator;
+        ListIterator<XMLNode> listIterator;
 
         /*
          * Process the XML tags in the buffer string and return one token (text

@@ -21,7 +21,7 @@ import org.aitools.programd.util.Trace;
 public class BotProcesses
 {
     /** The registry of all bot processes. */
-    private static HashMap registry = new HashMap();
+    private static HashMap<String, BotProcess> registry = new HashMap<String, BotProcess>();
 
     /**
      * Adds a process to the registry and starts it.
@@ -62,7 +62,7 @@ public class BotProcesses
      */
     public static BotProcess get(String name)
     {
-        return (BotProcess) registry.get(name);
+        return registry.get(name);
     } 
 
     /**

@@ -29,7 +29,7 @@ public class XMLLog
     private static final String ENC_UTF8 = "UTF-8";
 
     /** Keeps a count of entries made in a log file. */
-    private static HashMap entryCounts = new HashMap();
+    private static HashMap<XMLResourceSpec, Integer> entryCounts = new HashMap<XMLResourceSpec, Integer>();
 
     /** Base URL for resources (stylesheets, etc.). */
     private static final String RESOURCE_BASE = Globals.getProperty("programd.logging.xml.resource-base",

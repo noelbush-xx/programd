@@ -35,7 +35,7 @@ public class InputPanel extends TargetAwareTabulator
     {
         List targets = TargetingTool.getSortedTargets();
         Iterator targetIterator = targets.iterator();
-        ArrayList rows = new ArrayList();
+        ArrayList<Object[]> rows = new ArrayList<Object[]>();
 
         while (targetIterator.hasNext())
         {
@@ -47,7 +47,7 @@ public class InputPanel extends TargetAwareTabulator
 
             ListIterator inputIterator = target.getInputTexts().listIterator();
 
-            ArrayList inputTexts = new ArrayList();
+            ArrayList<String> inputTexts = new ArrayList<String>();
 
             while (inputIterator.hasNext())
             {
@@ -64,7 +64,7 @@ public class InputPanel extends TargetAwareTabulator
             } 
         } 
         Object[][] newData = new Object[][] {} ;
-    newData = (Object[][]) rows.toArray(newData);
+    newData = rows.toArray(newData);
     if (newData.length > 0)
     {
         reloadData(newData);

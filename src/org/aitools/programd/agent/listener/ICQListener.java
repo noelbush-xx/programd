@@ -100,14 +100,14 @@ public class ICQListener extends Listener
         // Get parameters.
         try
         {
-            this.uin = Integer.parseInt((String) this.parameters.get("number"));
+            this.uin = Integer.parseInt(this.parameters.get("number"));
         } 
         catch (NumberFormatException e)
         {
             logMessage("Invalid user number (try a number!); aborting.");
             return false;
         } 
-        this.pass = (String) this.parameters.get("password");
+        this.pass = this.parameters.get("password");
 
         // Check parameters.
         if (this.uin <= 0)

@@ -18,7 +18,7 @@ import java.util.Map;
  * 
  * @author Noel Bush
  */
-public class LRUCache extends LinkedHashMap
+public class LRUCache<K,V> extends LinkedHashMap<K,V>
 {
     private static int maxEntries;
 

@@ -29,12 +29,13 @@ import org.aitools.programd.util.Trace;
  * 
  * @version 1.5 12/17/97
  * @author Philip Milne
+ * @author Noel Bush
  */
 public class TableSorter extends TableMap
 {
     int indexes[];
 
-    Vector sortingColumns = new Vector();
+    Vector<Integer> sortingColumns = new Vector<Integer>();
 
     boolean ascending = true;
 
@@ -196,7 +197,7 @@ public class TableSorter extends TableMap
         this.compares++;
         for (int level = 0; level < this.sortingColumns.size(); level++)
         {
-            Integer column = (Integer) this.sortingColumns.elementAt(level);
+            Integer column = this.sortingColumns.elementAt(level);
             int result = compareRowsByColumn(row1, row2, column.intValue());
             if (result != 0)
             {

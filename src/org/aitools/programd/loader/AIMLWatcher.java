@@ -38,7 +38,7 @@ public class AIMLWatcher
     private Timer timer;
 
     /** Used for storing information about file changes. */
-    protected HashMap watchMaps = new HashMap();
+    protected HashMap<String, HashMap<File, Long>> watchMaps = new HashMap<String, HashMap<File, Long>>();
 
     /**
      * Prevents anyone but itself from constructing an AIMLWatcher.
@@ -112,9 +112,9 @@ public class AIMLWatcher
         {
             if (!myself.watchMaps.containsKey(botid))
             {
-                myself.watchMaps.put(botid, new HashMap());
+                myself.watchMaps.put(botid, new HashMap<File, Long>());
             } 
-            ((HashMap) myself.watchMaps.get(botid)).put(theFile, new Long(theFile.lastModified()));
+            myself.watchMaps.get(botid).put(theFile, new Long(theFile.lastModified()));
         } 
     } 
 
@@ -129,7 +129,7 @@ public class AIMLWatcher
             while (mapsIterator.hasNext())
             {
                 String botid = (String) mapsIterator.next();
-                HashMap watchMap = (HashMap) myself.watchMaps.get(botid);
+                HashMap<File, Long> watchMap = myself.watchMaps.get(botid);
                 Iterator iterator = watchMap.keySet().iterator();
 
                 while (iterator.hasNext())
@@ -144,7 +144,7 @@ public class AIMLWatcher
                         // Try again next time.
                         return;
                     } 
-                    Long previousTime = (Long) watchMap.get(theFile);
+                    Long previousTime = watchMap.get(theFile);
                     if (previousTime == null)
                     {
                         watchMap.put(theFile, new Long(theFile.lastModified()));

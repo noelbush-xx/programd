@@ -30,7 +30,7 @@ public abstract class Listener implements BotProcess
     private String name;
 
     /** The parameters that can be set for this listener. */
-    protected HashMap parameters = new HashMap();
+    protected HashMap<String, String> parameters = new HashMap<String, String>();
 
     /**
      * Creates a new listener with name <code>name</code>.

@@ -27,25 +27,25 @@ public class TemplateParser extends GenericParser
      * The values captured from the input by wildcards in the
      * <code>pattern</code>.
      */
-    private ArrayList inputStars = new ArrayList();
+    private ArrayList<String> inputStars = new ArrayList<String>();
 
     /**
      * The values captured from the input path by wildcards in the
      * <code>that</code>.
      */
-    private ArrayList thatStars = new ArrayList();
+    private ArrayList<String> thatStars = new ArrayList<String>();
 
     /**
      * The values captured from the input path by wildcards in the
      * <code>topic</code>.
      */
-    private ArrayList topicStars = new ArrayList();
+    private ArrayList<String> topicStars = new ArrayList<String>();
 
     /**
      * The input that matched the <code>pattern</code> associated with this
      * template (helps to avoid endless loops).
      */
-    private ArrayList inputs = new ArrayList();
+    private ArrayList<String> inputs = new ArrayList<String>();
 
     /** The userid for which this parser is used. */
     private String userid;
@@ -192,7 +192,7 @@ public class TemplateParser extends GenericParser
      *            values captured from the input path by wildcards in the
      *            <code>pattern</code>
      */
-    public void setInputStars(ArrayList stars)
+    public void setInputStars(ArrayList<String> stars)
     {
         this.inputStars = stars;
     } 
@@ -204,7 +204,7 @@ public class TemplateParser extends GenericParser
      *            values captured from the input path by wildcards in the
      *            <code>that</code>
      */
-    public void setThatStars(ArrayList stars)
+    public void setThatStars(ArrayList<String> stars)
     {
         this.thatStars = stars;
     } 
@@ -216,7 +216,7 @@ public class TemplateParser extends GenericParser
      *            captured from the input path by wildcards in the
      *            <code>topic name</code>
      */
-    public void setTopicStars(ArrayList stars)
+    public void setTopicStars(ArrayList<String> stars)
     {
         this.topicStars = stars;
     } 

@@ -15,6 +15,7 @@ import javax.swing.table.TableModel;
  * 
  * @version 1.4 12/17/97
  * @author Philip Milne
+ * @author Noel Bush
  */
 public class TableMap extends AbstractTableModel implements TableModelListener
 {
@@ -59,7 +60,7 @@ public class TableMap extends AbstractTableModel implements TableModelListener
         return this.model.getColumnName(aColumn);
     } 
 
-    public Class getColumnClass(int aColumn)
+    public Class<?> getColumnClass(int aColumn)
     {
         return this.model.getColumnClass(aColumn);
     } 

@@ -55,7 +55,7 @@ public class XMLNode
     public String XMLAttr;
 
     /** Pointer to a child trie structure (only for tags, otherwise null). */
-    public LinkedList XMLChild;
+    public LinkedList<XMLNode> XMLChild;
 
     /** An empty string. */
     private static final String EMPTY_STRING = "";

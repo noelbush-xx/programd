@@ -34,7 +34,7 @@ public class GenderProcessor extends AIMLProcessor
     public static final String label = "gender";
 
     /** The map of substitutions to be performed on an input. */
-    private static HashMap substitutionMap = new HashMap();
+    private static HashMap<String, String> substitutionMap = new HashMap<String, String>();
 
     public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {

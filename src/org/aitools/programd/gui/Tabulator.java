@@ -145,7 +145,7 @@ abstract public class Tabulator extends JPanel
             return this.data[row][col];
         } 
 
-        public Class getColumnClass(int c)
+        public Class<?> getColumnClass(int c)
         {
             return getValueAt(0, c).getClass();
         } 

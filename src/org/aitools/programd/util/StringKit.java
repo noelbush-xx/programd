@@ -205,9 +205,9 @@ public class StringKit
      *            the input to split
      * @return the input split into sentences
      */
-    public static ArrayList wordSplit(String input)
+    public static ArrayList<String> wordSplit(String input)
     {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
 
         int inputLength = input.length();
         if (inputLength == 0)

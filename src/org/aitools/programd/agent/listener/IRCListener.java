@@ -113,18 +113,18 @@ public class IRCListener extends Listener implements ShellCommandable
     public boolean checkParameters()
     {
         // Get parameters.
-        this.host = (String) this.parameters.get("host");
+        this.host = this.parameters.get("host");
         try
         {
-            this.port = Integer.parseInt((String) this.parameters.get("port"));
+            this.port = Integer.parseInt(this.parameters.get("port"));
         } 
         catch (NumberFormatException e)
         {
             logMessage("Invalid port specification (try a number!); aborting.");
             return false;
         } 
-        this.nick = (String) this.parameters.get("nick");
-        this.channel = (String) this.parameters.get("channel");
+        this.nick = this.parameters.get("nick");
+        this.channel = this.parameters.get("channel");
 
         // Check parameters.
         if (this.host.length() == 0)

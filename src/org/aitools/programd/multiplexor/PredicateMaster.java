@@ -49,7 +49,7 @@ public class PredicateMaster
 
     /**
      * The preferred minimum value for the cache (starts at half of
-     * {@link #CACHE_MAX} , may be adjusted).
+     * {@link #CACHE_MAX}, may be adjusted).
      */
     private static int cacheMin = Math.max(CACHE_MAX / 2, 1);
 
@@ -103,7 +103,7 @@ public class PredicateMaster
     public static String set(String name, String value, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        Map userPredicates = Bots.getBot(botid).predicatesFor(userid);
+        Map<String, Object> userPredicates = Bots.getBot(botid).predicatesFor(userid);
 
         // Put the new value into the predicate.
         userPredicates.put(name, value);
@@ -139,10 +139,10 @@ public class PredicateMaster
     public synchronized static String set(String name, int index, String value, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        Map userPredicates = Bots.getBot(botid).predicatesFor(userid);
+        Map<String, Object> userPredicates = Bots.getBot(botid).predicatesFor(userid);
 
         // Get, load or create the list of values.
-        ArrayList values = getLoadOrCreateValueList(name, userPredicates, userid, botid);
+        ArrayList<String> values = getLoadOrCreateValueList(name, userPredicates, userid, botid);
 
         // Try to set the predicate value at the index (minus one -- no 0 in
         // AIML index).
@@ -185,10 +185,10 @@ public class PredicateMaster
     public synchronized static String push(String name, String value, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        Map userPredicates = Bots.getBot(botid).predicatesFor(userid);
+        Map<String, Object> userPredicates = Bots.getBot(botid).predicatesFor(userid);
 
         // Get, load or create the list of values.
-        ArrayList values = getLoadOrCreateValueList(name, userPredicates, userid, botid);
+        ArrayList<String> values = getLoadOrCreateValueList(name, userPredicates, userid, botid);
 
         // Push the new value onto the indexed predicate list.
         pushOnto(values, value);
@@ -220,7 +220,7 @@ public class PredicateMaster
         String value;
 
         // Get existing or new predicates map for userid.
-        Map userPredicates = Bots.getBot(botid).predicatesFor(userid);
+        Map<String, Object> userPredicates = Bots.getBot(botid).predicatesFor(userid);
 
         // Try to get the predicate value from the cache.
         Object valueObject = userPredicates.get(name);
@@ -296,7 +296,7 @@ public class PredicateMaster
     public synchronized static String get(String name, int index, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        Map userPredicates = Bots.getBot(botid).predicatesFor(userid);
+        Map<String, Object> userPredicates = Bots.getBot(botid).predicatesFor(userid);
 
         String value = null;
 
@@ -346,14 +346,14 @@ public class PredicateMaster
 
     /**
      * Pushes a value onto the front of a list, and pops off any values at the
-     * end of the list so that the list size is no more than {@link #MAX_INDEX} .
+     * end of the list so that the list size is no more than {@link #MAX_INDEX}.
      * 
      * @param values
      *            the list onto which to push
      * @param value
      *            the value to push onto the list
      */
-    private static void pushOnto(ArrayList values, Object value)
+    private static void pushOnto(ArrayList<String> values, String value)
     {
         values.add(0, value);
         while (values.size() > MAX_INDEX)
@@ -378,52 +378,48 @@ public class PredicateMaster
      * @throws NoSuchPredicateException
      *             if no values are assigned to the <code>name</code>
      */
-    private static ArrayList getValueList(String name, Map userPredicates) throws NoSuchPredicateException
+    private static ArrayList<String> getValueList(String name, Map<String, Object> userPredicates) throws NoSuchPredicateException
     {
-        ArrayList values;
-
         if (userPredicates.size() > 0 && userPredicates.containsKey(name))
         {
-            Object valueObject = userPredicates.get(name);
-
-            if (valueObject instanceof String)
-            {
-                // The predicate is not currently an indexed predicate.
-                if (valueObject != null)
-                {
-                    values = createValueList(name, userPredicates);
-                    values.add(valueObject);
-                } 
-                else
-                {
-                    // This should never, ever happen!
-                    throw new DeveloperError("Null String found as value in predicates!");
-                } 
-            } 
-            else if (valueObject instanceof ArrayList)
-            {
-                if (valueObject != null)
-                {
-                    values = (ArrayList) valueObject;
-                } 
-                else
-                {
-                    // This should never, ever happen!
-                    throw new DeveloperError("Null ArrayList found as value in predicates!");
-                } 
-            } 
-            else
-            {
-                throw new DeveloperError("Something other than a String or ArrayList found in predicates!");
-            } 
-        } 
+            return getValueListFromValueObject(name, userPredicates, userPredicates.get(name));
+        }
         // If the predicate is not found, throw an exception.
-        else
+        throw new NoSuchPredicateException(name);
+
+     }
+    
+    
+    private static ArrayList<String> getValueListFromValueObject(String name, Map<String, Object> userPredicates, String valueObject)
+    {
+        // The predicate is not currently an indexed predicate.
+        if (valueObject != null)
         {
-            throw new NoSuchPredicateException(name);
+            ArrayList<String> values = createValueList(name, userPredicates);
+            values.add(valueObject);
+            return values;
         } 
-        return values;
+        // This should never, ever happen!
+        throw new DeveloperError("Null String found as value in predicates!");
+    }
+    
+    
+    private static ArrayList<String> getValueListFromValueObject(String name, Map<String, Object> userPredicates, ArrayList<String> valueObject)
+    {
+        if (valueObject != null)
+        {
+            return valueObject;
+        } 
+        // This should never, ever happen!
+        throw new DeveloperError("Null ArrayList found as value in predicates!");
+    }
+
+    
+    private static ArrayList<String> getValueListFromValueObject(String name, Map<String, Object> userPredicates, Object valueObject)
+    {
+        throw new DeveloperError("Something other than a String or ArrayList found in predicates!");
     } 
+
 
     /**
      * Tries to load a predicate with <code>name</code> for
@@ -445,7 +441,7 @@ public class PredicateMaster
      * @throws NullPointerException
      *             if <code>userPredicates</code> is null
      */
-    private static ArrayList loadValueList(String name, Map userPredicates, String userid, String botid)
+    private static ArrayList<String> loadValueList(String name, Map<String, Object> userPredicates, String userid, String botid)
             throws NoSuchPredicateException, NullPointerException
     {
         // Prevent this from being called with a null predicates map.
@@ -467,7 +463,7 @@ public class PredicateMaster
         } 
 
         // If this succeeded, create the new values list in the predicates.
-        ArrayList values = createValueList(name, userPredicates);
+        ArrayList<String> values = createValueList(name, userPredicates);
 
         // Add the first value that was found.
         values.add(value);
@@ -501,10 +497,10 @@ public class PredicateMaster
      *            the predicates map to which to add the list
      * @return the new list
      */
-    private static ArrayList createValueList(String name, Map userPredicates)
+    private static ArrayList<String> createValueList(String name, Map<String, Object> userPredicates)
     {
         // Create the new list.
-        ArrayList values = new ArrayList();
+        ArrayList<String> values = new ArrayList<String>();
         userPredicates.put(name, values);
         return values;
     } 
@@ -523,9 +519,9 @@ public class PredicateMaster
      * @return a value list in <code>userPredicates</code> for
      *         <code>name</code> for <code>userid</code>
      */
-    private static ArrayList getLoadOrCreateValueList(String name, Map userPredicates, String userid, String botid)
+    private static ArrayList<String> getLoadOrCreateValueList(String name, Map<String, Object> userPredicates, String userid, String botid)
     {
-        ArrayList values;
+        ArrayList<String> values;
 
         try
         {

@@ -33,7 +33,7 @@ public class Target
 
     private TargetExtensions extensions = new TargetExtensions();
 
-    private LinkedList replies = new LinkedList();
+    private LinkedList<String> replies = new LinkedList<String>();
 
     private Category newCategory = new Category();
 
@@ -478,7 +478,7 @@ public class Target
      */
     public String getFirstReply()
     {
-        return (String) this.replies.getFirst();
+        return this.replies.getFirst();
     } 
 
     /**
@@ -488,7 +488,7 @@ public class Target
      */
     public String getLastReply()
     {
-        return (String) this.replies.getLast();
+        return this.replies.getLast();
     } 
 
     /**
@@ -500,7 +500,7 @@ public class Target
      */
     public String getNthReply(int n)
     {
-        return (String) this.replies.get(n);
+        return this.replies.get(n);
     } 
 
     /**

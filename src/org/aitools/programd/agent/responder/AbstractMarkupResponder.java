@@ -47,13 +47,13 @@ abstract public class AbstractMarkupResponder implements Responder
     // Instance variables.
 
     /** The header part of a chat response. */
-    protected LinkedList header = new LinkedList();
+    protected LinkedList<Object> header = new LinkedList<Object>();
 
     /** The reply part of a chat response. */
-    protected LinkedList replyPart = new LinkedList();
+    protected LinkedList<Object> replyPart = new LinkedList<Object>();
 
     /** The footer part of a chat response. */
-    protected LinkedList footer = new LinkedList();
+    protected LinkedList<Object> footer = new LinkedList<Object>();
 
     /** An entire bot response. */
     protected StringBuffer response = new StringBuffer();
@@ -328,7 +328,7 @@ abstract public class AbstractMarkupResponder implements Responder
         char aChar;
         StringBuffer buffer = new StringBuffer();
         StringBuffer tag = new StringBuffer();
-        List currentList = this.header;
+        List<Object> currentList = this.header;
 
         while ((index = file.read()) != -1)
         {
@@ -389,7 +389,7 @@ abstract public class AbstractMarkupResponder implements Responder
     protected static LinkedList loadTemplate(String path)
     {
         String templateLine;
-        LinkedList template = new LinkedList();
+        LinkedList<String> template = new LinkedList<String>();
 
         FileReader freader = null;
 
@@ -436,7 +436,7 @@ abstract public class AbstractMarkupResponder implements Responder
     protected static HashMap registerTemplates(String directoryName, SuffixFilenameFilter filter)
     {
         File directory = FileManager.getFile(directoryName);
-        HashMap result = new HashMap();
+        HashMap<String, String> result = new HashMap<String, String>();
         if (directory.isDirectory())
         {
             String[] templateFilenames = directory.list(filter);

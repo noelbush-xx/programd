@@ -85,13 +85,13 @@ public class TargetingTool extends Targeting implements Runnable
     private static XMLResourceSpec AIML_RESOURCE;
 
     /** The &quot;live&quot; targets. */
-    private static HashMap liveTargets = new HashMap();
+    private static HashMap<Integer, Target> liveTargets = new HashMap<Integer, Target>();
 
     /** Targets which have been saved. */
-    private static HashMap savedTargets = new HashMap();
+    private static HashMap<Integer, Target> savedTargets = new HashMap<Integer, Target>();
 
     /** Targets which have been discarded. */
-    private static HashMap discardedTargets = new HashMap();
+    private static HashMap<Integer, Target> discardedTargets = new HashMap<Integer, Target>();
 
     /** The index of the next live target to serve (via {@link #nextTarget} ). */
     private static int nextTargetToServe = 0;
@@ -402,7 +402,7 @@ public class TargetingTool extends Targeting implements Runnable
             Integer hashCode = new Integer(target.hashCode());
             if (!discardedOrSaved(hashCode))
             {
-                Target alreadyKnown = (Target) liveTargets.get(hashCode);
+                Target alreadyKnown = liveTargets.get(hashCode);
                 if (alreadyKnown != null)
                 {
                     alreadyKnown.merge(target);
@@ -686,9 +686,9 @@ public class TargetingTool extends Targeting implements Runnable
      * 
      * @return the live target set
      */
-    public static List getSortedTargets()
+    public static ArrayList<Target> getSortedTargets()
     {
-        List sort = new ArrayList(liveTargets.values());
+        ArrayList<Target> sort = new ArrayList<Target>(liveTargets.values());
         Collections.sort(sort, new TargetActivationsComparator());
         Collections.reverse(sort);
         return sort;

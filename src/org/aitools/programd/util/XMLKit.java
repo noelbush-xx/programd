@@ -90,10 +90,10 @@ public class XMLKit
     private static final String SYSTEM_ENCODING = System.getProperty("file.encoding", "UTF-8");
 
     /** The actual Map used to store prohibited-to-escaped mappings. */
-    private static HashMap xmlProhibited;
+    private static HashMap<String, String> xmlProhibited;
 
     /** The actual Map used to store escaped-to-prohibited mappings. */
-    private static HashMap xmlEscapes;
+    private static HashMap<String, String> xmlEscapes;
 
     /**
      * <p>
@@ -123,7 +123,7 @@ public class XMLKit
          */
         if (xmlEscapes == null)
         {
-            xmlEscapes = new HashMap(XML_ESCAPES.length);
+            xmlEscapes = new HashMap<String, String>(XML_ESCAPES.length);
             for (int index = XML_ESCAPES.length; --index >= 0;)
             {
                 xmlEscapes.put(XML_ESCAPES[index][0], XML_ESCAPES[index][1]);
@@ -160,7 +160,7 @@ public class XMLKit
          */
         if (xmlProhibited == null)
         {
-            xmlProhibited = new HashMap(XML_ESCAPES.length);
+            xmlProhibited = new HashMap<String, String>(XML_ESCAPES.length);
             for (int index = XML_ESCAPES.length; --index >= 0;)
             {
                 xmlProhibited.put(XML_ESCAPES[index][1], XML_ESCAPES[index][0]);
@@ -587,7 +587,7 @@ public class XMLKit
         int inputLength = input.length();
 
         // Results will be delivered by calling toArray() on this Vector.
-        Vector result = new Vector();
+        Vector<String> result = new Vector<String>();
 
         // Break lines at tags.
         while ((tagStart > -1) && (tagEnd > -1))
@@ -615,7 +615,7 @@ public class XMLKit
             // Add the remainder as the final line.
             result.addElement(input.substring(lastEnd).trim());
         } 
-        return (String[]) result.toArray(new String[] {} );
+        return result.toArray(new String[] {} );
     } 
 
     /**

@@ -21,10 +21,10 @@ import org.aitools.programd.util.DeveloperError;
  * @author Noel Bush
  * @since 4.1.5
  */
-public class Bots extends HashMap
+public class Bots<K,V> extends HashMap<K,V>
 {
     /** Part of the singleton pattern. */
-    private static final Bots myself = new Bots();
+    private static final Bots<String, Bot> myself = new Bots<String, Bot>();
 
     /**
      * <code>Bots</code> cannot be instantiated except by itself.
@@ -42,7 +42,7 @@ public class Bots extends HashMap
     public static boolean include(String botid)
     {
         return !(myself.get(botid) == null);
-    } 
+    }
 
     /**
      * Adds the given bot with the given id. No check is made to see whether a
@@ -70,7 +70,7 @@ public class Bots extends HashMap
         Bot wanted;
         try
         {
-            wanted = (Bot) myself.get(botid);
+            wanted = myself.get(botid);
         } 
         catch (ClassCastException e)
         {
@@ -92,7 +92,7 @@ public class Bots extends HashMap
     {
         if (myself.size() > 0)
         {
-            return (Bot) myself.values().iterator().next();
+            return myself.values().iterator().next();
         } 
         // (otherwise...)
         return null;
@@ -137,7 +137,7 @@ public class Bots extends HashMap
      * 
      * @return the IDs (the key set)
      */
-    public static Set getIDs()
+    public static Set<String> getIDs()
     {
         return myself.keySet();
     } 

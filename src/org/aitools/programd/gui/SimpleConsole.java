@@ -606,7 +606,7 @@ public class SimpleConsole extends JPanel
 
     protected void chooseBot()
     {
-        String[] botIDs = (String[]) Bots.getIDs().toArray(new String[] {} );
+        String[] botIDs = Bots.getIDs().toArray(new String[] {} );
         ListDialog.initialize(this.frame, botIDs, "Choose a bot", "Choose the bot with whom you want to talk.");
         String choice = ListDialog.showDialog(null, this.shell.getCurrentBotID());
         if (choice != null)

@@ -41,7 +41,7 @@ public class Nodemaster implements Nodemapper
 
     protected Object value;
 
-    protected HashMap Hidden;
+    protected HashMap<String, Object> Hidden;
 
     /**
      * The minimum number of words needed to reach a leaf node from here.
@@ -69,25 +69,25 @@ public class Nodemaster implements Nodemapper
         } 
         else if (this.size == 1)
         {
-            this.Hidden = new HashMap();
+            this.Hidden = new HashMap<String, Object>();
             this.Hidden.put(this.key, this.value);
             this.size = 2;
             if (valueToPut instanceof String)
             {
-                return this.Hidden.put(keyToPut.toUpperCase().intern(), valueToPut);
+                return this.Hidden.put(keyToPut.toUpperCase().intern(), ((String)valueToPut).intern());
             }
             // otherwise...
-            return this.Hidden.put(keyToPut.toUpperCase().intern(), ((String)valueToPut).intern());
+            return this.Hidden.put(keyToPut.toUpperCase().intern(), valueToPut);
         } 
         else
         {
             this.size++;
             if (valueToPut instanceof String)
             {
-                return this.Hidden.put(keyToPut.toUpperCase().intern(), valueToPut);
+                return this.Hidden.put(keyToPut.toUpperCase().intern(), ((String)valueToPut).intern());
             }
             // otherwise...
-            return this.Hidden.put(keyToPut.toUpperCase().intern(), ((String)valueToPut).intern());
+            return this.Hidden.put(keyToPut.toUpperCase().intern(), valueToPut);
         } 
     } 
 
@@ -125,7 +125,7 @@ public class Nodemaster implements Nodemapper
                 this.Hidden.remove(keyToRemove);
                 // Set the last item in HashMap to be the primary value/key for
                 // this Nodemapper.
-                this.key = (String) this.Hidden.keySet().iterator().next();
+                this.key = this.Hidden.keySet().iterator().next();
                 this.value = this.Hidden.remove(this.key);
                 // Remove the empty HashMap to save space.
                 this.Hidden = null;
@@ -165,7 +165,7 @@ public class Nodemaster implements Nodemapper
     {
         if (this.size <= 1)
         {
-            Set result = new HashSet();
+            Set<String> result = new HashSet<String>();
             if (this.key != null)
             {
                 result.add(this.key);
@@ -182,14 +182,11 @@ public class Nodemaster implements Nodemapper
         {
             return false;
         } 
-        else if (this.size <= 1)
+        else if (this.size == 1)
         {
             return (keyToCheck.equalsIgnoreCase(this.key));
         } 
-        else
-        {
-            return this.Hidden.containsKey(keyToCheck.toUpperCase());
-        } 
+        return this.Hidden.containsKey(keyToCheck.toUpperCase());
     } 
 
     public int size()

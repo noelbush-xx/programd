@@ -22,16 +22,16 @@ public class Match
     // Instance variables.
 
     /** The portions of the input captured by wildcards. */
-    private ArrayList inputStars = new ArrayList();
+    private ArrayList<String> inputStars = new ArrayList<String>();
 
     /** The portions of the &lt;that/&gt; captured by wildcards. */
-    private ArrayList thatStars = new ArrayList();
+    private ArrayList<String> thatStars = new ArrayList<String>();
 
     /**
      * The portions of the &lt;topic/&gt; <code>name</code> captured by
      * wildcards.
      */
-    private ArrayList topicStars = new ArrayList();
+    private ArrayList<String> topicStars = new ArrayList<String>();
 
     /** The <code>pattern</code> part of the matched path. */
     private String pattern;
@@ -228,7 +228,7 @@ public class Match
      * 
      * @return the input stars
      */
-    public ArrayList getInputStars()
+    public ArrayList<String> getInputStars()
     {
         return this.inputStars;
     } 
@@ -238,7 +238,7 @@ public class Match
      * 
      * @return the &lt;that/&gt; stars
      */
-    public ArrayList getThatStars()
+    public ArrayList<String> getThatStars()
     {
         return this.thatStars;
     } 
@@ -248,7 +248,7 @@ public class Match
      * 
      * @return the &lt;topic/&gt; stars
      */
-    public ArrayList getTopicStars()
+    public ArrayList<String> getTopicStars()
     {
         return this.topicStars;
     } 

@@ -15,16 +15,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashSet;
+//import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
+//import java.util.Set;
 
 import org.aitools.programd.agent.responder.Responder;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.graph.Match;
-import org.aitools.programd.graph.Nodemapper;
+//import org.aitools.programd.graph.Nodemapper;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.parser.TemplateParserException;
 import org.aitools.programd.processor.ProcessorException;
@@ -170,7 +170,7 @@ abstract public class Multiplexor
     private static Multiplexor proxy;
 
     /** Will hold a set of Pulses. */
-    private static ArrayList pulses = new ArrayList();
+    private static ArrayList<Pulse> pulses = new ArrayList<Pulse>();
 
     /**
      * Initializes the <code>Multiplexor</code>, creating the secret key that
@@ -319,7 +319,7 @@ abstract public class Multiplexor
     private static ArrayList getReplies(ArrayList sentenceList, String userid, String botid)
     {
         // All replies will be assembled in this ArrayList.
-        ArrayList replies = new ArrayList(sentenceList.size());
+        ArrayList<String> replies = new ArrayList<String>(sentenceList.size());
 
         // Get the requested bot.
         Bot bot = Bots.getBot(botid);
@@ -373,13 +373,15 @@ abstract public class Multiplexor
         } 
 
         // Invoke targeting if appropriate.
+        /*
         if (responseCount % TARGET_SKIP == 0)
         {
             if (USE_TARGETING)
             {
                 Graphmaster.checkpoint();
             } 
-        } 
+        }
+        */
 
         // If no replies, return an empty string.
         if (replies.size() == 0)
@@ -478,7 +480,7 @@ abstract public class Multiplexor
         } 
 
         // Create a case-insensitive pattern-fitted version of the input.
-        String inputIgnoreCase = InputNormalizer.patternFitIgnoreCase(input);
+        //String inputIgnoreCase = InputNormalizer.patternFitIgnoreCase(input);
 
         Match match = null;
 
@@ -504,7 +506,7 @@ abstract public class Multiplexor
             Trace.userinfo(LABEL_FILENAME + QUOTE_MARK + match.getFileName() + QUOTE_MARK);
         } 
 
-        ArrayList stars = match.getInputStars();
+        ArrayList<String> stars = match.getInputStars();
         if (stars.size() > 0)
         {
             parser.setInputStars(stars);
@@ -540,6 +542,7 @@ abstract public class Multiplexor
 
         // Record activation, if targeting is in use.
         // Needs review in light of multi-bot update
+        /*
         if (USE_TARGETING)
         {
             Nodemapper matchNodemapper = match.getNodemapper();
@@ -549,10 +552,10 @@ abstract public class Multiplexor
             } 
             else
             {
-                Set activations = (Set) matchNodemapper.get(Graphmaster.ACTIVATIONS);
+                Set<Object> activations = (Set<Object>) matchNodemapper.get(Graphmaster.ACTIVATIONS);
                 if (activations == null)
                 {
-                    activations = new HashSet();
+                    activations = new HashSet<Object>();
                 } 
                 String path = match.getPath() + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + inputIgnoreCase + SPACE
                         + Graphmaster.PATH_SEPARATOR + SPACE + that + SPACE + Graphmaster.PATH_SEPARATOR + SPACE
@@ -565,7 +568,8 @@ abstract public class Multiplexor
                     Graphmaster.activatedNode(match.getNodemapper());
                 } 
             } 
-        } 
+        }
+        */
         return reply;
     } 
 

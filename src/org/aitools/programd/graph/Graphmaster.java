@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
-import java.util.StringTokenizer;
+//import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import org.aitools.programd.bot.Bot;
@@ -33,7 +33,7 @@ import org.aitools.programd.loader.AIMLLoader;
 import org.aitools.programd.loader.AIMLWatcher;
 import org.aitools.programd.multiplexor.PredicateMaster;
 import org.aitools.programd.parser.AIMLReader;
-import org.aitools.programd.targeting.TargetMaster;
+//import org.aitools.programd.targeting.TargetMaster;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.Globals;
 import org.aitools.programd.util.NoMatchException;
@@ -142,7 +142,7 @@ public class Graphmaster
     private static int TOTAL_CATEGORIES = 0;
 
     /** The pattern vocabulary. */
-    private static TreeSet patternVocabulary = new TreeSet();
+    private static TreeSet<String> patternVocabulary = new TreeSet<String>();
 
     /** Load time marker. */
     private static boolean loadtime = true;
@@ -153,7 +153,7 @@ public class Graphmaster
     // Constants used by targeting.
 
     /** Set of activated nodes. */
-    private static Set ACTIVATED_NODES = new HashSet();
+    private static Set<Nodemapper> ACTIVATED_NODES = new HashSet<Nodemapper>();
 
     /** Activations marker. */
     public static final String ACTIVATIONS = "<activations>";
@@ -195,7 +195,7 @@ public class Graphmaster
      */
     public static Nodemapper add(String pattern, String that, String topic, String botid)
     {
-        ArrayList path = StringKit.wordSplit(pattern);
+        ArrayList<String> path = StringKit.wordSplit(pattern);
         path.add(THAT);
         path.addAll(StringKit.wordSplit(that));
         path.add(TOPIC);
@@ -302,7 +302,7 @@ public class Graphmaster
     public static Match match(String input, String that, String topic, String botid) throws NoMatchException
     {
         // Compose the input path. Fill in asterisks for empty values.
-        ArrayList inputPath;
+        ArrayList<String> inputPath;
 
         // Input text part.
         if (input.length() > 0)
@@ -311,7 +311,7 @@ public class Graphmaster
         } 
         else
         {
-            inputPath = new ArrayList();
+            inputPath = new ArrayList<String>();
             inputPath.add(ASTERISK);
         } 
 
@@ -698,6 +698,7 @@ public class Graphmaster
      * Sends new targeting data to
      * {@link org.aitools.programd.targeting.TargetMaster} .
      */
+    /*
     public static void checkpoint()
     {
         // Log this checkpoint event.
@@ -729,7 +730,8 @@ public class Graphmaster
                 activationsIterator.remove();
             } 
         } 
-    } 
+    }
+    */
 
     /**
      * Loads the <code>Graphmaster</code> with the contents of a given path.
@@ -908,7 +910,7 @@ public class Graphmaster
             return true;
         } 
 
-        HashMap loadedFiles = bot.getLoadedFilesMap();
+        HashMap<Object, HashSet<Nodemapper>> loadedFiles = bot.getLoadedFilesMap();
 
         if (loadedFiles.keySet().contains(path))
         {
@@ -922,7 +924,7 @@ public class Graphmaster
         } 
         else
         {
-            loadedFiles.put(path, new HashSet());
+            loadedFiles.put(path, new HashSet<Nodemapper>());
         } 
         return true;
     } 
@@ -936,7 +938,7 @@ public class Graphmaster
      */
     public static void unload(Object path, Bot bot)
     {
-        HashSet nodemappers = (HashSet) bot.getLoadedFilesMap().get(path);
+        HashSet<Nodemapper> nodemappers = bot.getLoadedFilesMap().get(path);
         Iterator nodemapperIterator = nodemappers.iterator();
 
         while (nodemapperIterator.hasNext())

@@ -34,7 +34,7 @@ public class CategoryPanel extends TargetAwareTabulator
     {
         List targets = TargetingTool.getSortedTargets();
         Iterator targetIterator = targets.iterator();
-        ArrayList rows = new ArrayList();
+        ArrayList<Object[]> rows = new ArrayList<Object[]>();
 
         while (targetIterator.hasNext())
         {
@@ -44,7 +44,7 @@ public class CategoryPanel extends TargetAwareTabulator
                         target.getMatchTopic(), target, new Integer(1) } );
         } 
         Object[][] newData = new Object[][] {} ;
-    newData = (Object[][]) rows.toArray(newData);
+    newData = rows.toArray(newData);
     if (newData.length > 0)
     {
         reloadData(newData);

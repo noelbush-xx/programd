@@ -218,6 +218,8 @@ public class AIMListener extends Listener
     /**
      * Constructs a new <code>AIMListener</code> listener and sets up
      * parameters.
+     * 
+     * @param botToListen   the bot to listen to
      */
     public AIMListener(Bot botToListen)
     {
@@ -233,17 +235,20 @@ public class AIMListener extends Listener
                 { "buddies", "" } } );
     } 
 
+    /**
+     * @return whether the configured parameters are valid
+     */
     public boolean checkParameters()
     {
         // Get parameters.
-        this.owner = (String) this.parameters.get("owner");
-        this.name = (String) this.parameters.get("screenname");
-        this.pass = (String) this.parameters.get("password");
-        this.bgcolor = (String) this.parameters.get("bgcolor");
-        this.fontface = (String) this.parameters.get("fontface");
-        this.fontsize = (String) this.parameters.get("fontsize");
-        this.fontcolor = (String) this.parameters.get("fontcolor");
-        this.buddies = (String) this.parameters.get("buddies");
+        this.owner = this.parameters.get("owner");
+        this.name = this.parameters.get("screenname");
+        this.pass = this.parameters.get("password");
+        this.bgcolor = this.parameters.get("bgcolor");
+        this.fontface = this.parameters.get("fontface");
+        this.fontsize = this.parameters.get("fontsize");
+        this.fontcolor = this.parameters.get("fontcolor");
+        this.buddies = this.parameters.get("buddies");
 
         // Check parameters.
         if (this.owner.length() == 0)
@@ -361,11 +366,20 @@ public class AIMListener extends Listener
         signoff(FOUR);
     } 
 
+    /**
+     * Shuts down the listener.
+     */
     public void shutdown()
     {
         signoff(FOUR);
     } 
 
+    /**
+     * Sends the given frame.
+     * 
+     * @param toBeSent  the frame to send
+     * @throws IOException
+     */
     public void frameSend(String toBeSent) throws IOException
     {
         this.out.writeByte(42);
@@ -661,6 +675,7 @@ public class AIMListener extends Listener
      * 
      * @param pass
      *            the password to encode
+     * @return the result of this operation.
      */
     public static String imRoast(String pass)
     {

@@ -20,6 +20,7 @@ import org.aitools.programd.util.ClassRegistry;
  */
 public class ListenerRegistry extends ClassRegistry
 {
+
     /** The version of Program D in which these listeners are included. */
     private static final String VERSION = Graphmaster.VERSION;
 
@@ -39,6 +40,11 @@ public class ListenerRegistry extends ClassRegistry
         super(VERSION, PROCESSOR_LIST, PROCESSOR_BASE_CLASS_NAME);
     } 
 
+    /**
+     * Returns the ListenerRegistry's singelton self.
+     * 
+     * @return ListenerRegistry
+     */
     public static ListenerRegistry getSelf()
     {
         return self;

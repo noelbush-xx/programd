@@ -18,10 +18,10 @@ public abstract class ObjectPool
     private long lastCheckOut;
 
     /** The objects that are locked by this pool. */
-    private Hashtable locked;
+    private Hashtable<Object, Long> locked;
 
     /** The objects that are unlocked in this pool. */
-    private Hashtable unlocked;
+    private Hashtable<Object, Long> unlocked;
 
     /** The thread that manages pool cleanup. */
     private CleanUpThread cleaner;
@@ -34,8 +34,8 @@ public abstract class ObjectPool
         // Default = 1 hour
         this.expirationTime = (1000 * 60 * 60);
 
-        this.locked = new Hashtable();
-        this.unlocked = new Hashtable();
+        this.locked = new Hashtable<Object, Long>();
+        this.unlocked = new Hashtable<Object, Long>();
 
         this.lastCheckOut = System.currentTimeMillis();
 
@@ -112,7 +112,7 @@ public abstract class ObjectPool
         {
             object = e.nextElement();
 
-            if ((now - ((Long) this.unlocked.get(object)).longValue()) > this.expirationTime)
+            if ((now - this.unlocked.get(object).longValue()) > this.expirationTime)
             {
                 this.unlocked.remove(object);
                 expire(object);

@@ -114,7 +114,7 @@ public class SystemProcessor extends AIMLProcessor
                 if (useArrayExecForm)
                 {
                     child = Runtime.getRuntime().exec(
-                            (String[]) StringKit.wordSplit(response).toArray(new String[] {} ), null, directory);
+                            StringKit.wordSplit(response).toArray(new String[] {} ), null, directory);
                 } 
                 else
                 {

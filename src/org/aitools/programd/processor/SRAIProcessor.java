@@ -45,7 +45,7 @@ public class SRAIProcessor extends AIMLProcessor
             // Check for infinite loops.
             if (tag.XMLChild.size() == 1)
             {
-                XMLNode sraiChild = (XMLNode) tag.XMLChild.get(0);
+                XMLNode sraiChild = tag.XMLChild.get(0);
 
                 if (sraiChild.XMLType == XMLNode.DATA)
                 {

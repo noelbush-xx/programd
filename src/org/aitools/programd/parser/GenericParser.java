@@ -494,17 +494,17 @@ abstract public class GenericParser
          * this class to process it normally (as if it came from the original
          * AIML in this form.
          */
-        LinkedList list = new LinkedList();
+        LinkedList<XMLNode> list = new LinkedList<XMLNode>();
 
         // Prepare the list to receive inserts.
-        ListIterator iterator = list.listIterator(0);
+        ListIterator<XMLNode> iterator = list.listIterator(0);
 
         /*
          * Process child tags (if any). Clearly, the root tag cannot have an
          * empty type, and the children must exist.
          */
         XMLNode nodeChild = new XMLNode();
-        LinkedList childList = new LinkedList();
+        LinkedList<XMLNode> childList = new LinkedList<XMLNode>();
         if ((rootType == XMLNode.TAG) && (!childTag.equals(EMPTY_STRING))
                 && ((childType == XMLNode.EMPTY) || (childType == XMLNode.DATA)))
         {
@@ -530,7 +530,7 @@ abstract public class GenericParser
             } 
 
             // Insert the child tag into the child trie.
-            ListIterator childListIterator = childList.listIterator(0);
+            ListIterator<XMLNode> childListIterator = childList.listIterator(0);
 
             childListIterator.add(nodeChild);
 
