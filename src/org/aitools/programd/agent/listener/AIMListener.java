@@ -30,7 +30,7 @@ import org.aitools.programd.util.logging.Log;
 /**
  *  This code is from the Everybuddy Java Project
  *  by Chris Carlin (http://EBJava.sourceforge.net/)
- *  modified to work with an Alicebot server.
+ *  modified to work with a Program D server.
  *
  *  @author Jon Baer
  *  @author Sandy McArthur
@@ -217,10 +217,10 @@ public class AIMListener extends Listener
     private static final String EMPTY_STRING = "";
 
     /** The label (as required by the registration scheme). */
-    public static final String label = "AliceAIM";
+    public static final String label = "ProgramD-AIM";
 
     /** The message label. */
-    private static final String MSG = "AliceAIM: ";
+    private static final String MSG = "ProgramD-AIM: ";
 
     /**
      *  Constructs a new <code>AIMListener</code> listener
@@ -316,7 +316,7 @@ public class AIMListener extends Listener
                     + name
                     + " "
                     + imRoast(pass)
-                    + " english alicebot\0");
+                    + " english programdbot\0");
 
             in.skip(4);
             length = in.readShort();

@@ -17,7 +17,7 @@ import org.aitools.programd.parser.XMLNode;
 
 /**
  *  Handles an
- *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-id">id</a></code>
+ *  <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-id">id</a></code>
  *  element.
  *
  *  @version    4.1.3

@@ -18,7 +18,7 @@ import org.aitools.programd.parser.XMLNode;
 /**
  *  The <code>person</code> element is a container
  *  for definitions of 
- *  <a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-person">person</a> substitutions
+ *  <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-person">person</a> substitutions
  *  to be performed on a string.
  */
 public class PersonProcessor extends StartupElementProcessor

@@ -21,7 +21,7 @@ import org.aitools.programd.util.UserError;
 /**
  *  The <code>predicates</code> element is a container
  *  for specifying characteristics of some
- *  <a href="http://alicebot.org/TR/2001/WD-aiml/#section-aiml-predicates">predicates</a>.
+ *  <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-aiml-predicates">predicates</a>.
  */
 public class PredicatesProcessor extends StartupElementProcessor
 {

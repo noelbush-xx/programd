@@ -17,7 +17,7 @@ import org.aitools.programd.parser.XMLNode;
 
 /**
  *  Handles a
- *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-sentence">sentence</a></code>
+ *  <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-sentence">sentence</a></code>
  *  element.
  *
  *  @version    4.1.3

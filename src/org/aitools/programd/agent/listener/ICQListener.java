@@ -30,7 +30,7 @@ import org.aitools.programd.util.logging.Log;
 /**
  *  This code is from the Everybuddy Java Project
  *  by Chris Carlin (http://EBJava.sourceforge.net/)
- *  modified to work with an Alicebot server.
+ *  modified to work with a Program D server.
  *
  *  @author Chris Carlin
  *  @author Jon Baer
@@ -81,10 +81,10 @@ public class ICQListener extends Listener
     private int clientport;
 
     /** Please document. */
-    public static final String label = "AliceICQ";
+    public static final String label = "ProgramD-ICQ";
 
     /** Please document. */
-    private static final String MSG = "AliceICQ: ";
+    private static final String MSG = "ProgramD-ICQ: ";
 
     /**
      *  Creates a new ICQListener chat listener for a given bot.
@@ -197,7 +197,7 @@ public class ICQListener extends Listener
 
             toICQ(new byte[] {(byte) 0x4c, (byte) 0x4 });
 
-            AliceICQKeepAlive keepAlive = new AliceICQKeepAlive(this);
+            ProgramDICQKeepAlive keepAlive = new ProgramDICQKeepAlive(this);
             keepAlive.setDaemon(true);
             logMessage("Starting for \"" + botID + "\".");
             keepAlive.start();
@@ -493,11 +493,11 @@ public class ICQListener extends Listener
     }
 }
 
-class AliceICQKeepAlive extends Thread
+class ProgramDICQKeepAlive extends Thread
 {
     ICQListener parent;
 
-    public AliceICQKeepAlive(ICQListener parent)
+    public ProgramDICQKeepAlive(ICQListener parent)
     {
         this.parent = parent;
     }

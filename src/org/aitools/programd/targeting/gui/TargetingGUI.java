@@ -71,31 +71,31 @@ public class TargetingGUI extends JPanel
         {
             "AIML Targeting Tool",
             "Program D version " + targetingTool.VERSION,
-            "(c) A.L.I.C.E. AI Foundation (http://alicebot.org)" };
+            "http://aitools.org" };
 
-    private static ImageIcon aliceLogo;
+    private static ImageIcon logo;
     static
     {
         try
         {
-            aliceLogo = new ImageIcon(ClassLoader.getSystemResource("org/alicebot/gui/icons/aliceLogo.jpg"));
+            logo = new ImageIcon(ClassLoader.getSystemResource("org/aitools/programd/gui/icons/logo.jpg"));
         }
         catch (NullPointerException e)
         {
-            Trace.userinfo("The ALICE logo is missing from available resources.");
+            Trace.userinfo("The logo is missing from available resources.");
         }
     }
 
-    private static ImageIcon aliceIcon;
+    private static ImageIcon icon;
     static
     {
         try
         {
-            aliceIcon = new ImageIcon(ClassLoader.getSystemResource("org/alicebot/gui/icons/aliceIcon.jpg"));
+            icon = new ImageIcon(ClassLoader.getSystemResource("org/aitools/programd/gui/icons/icon.jpg"));
         }
         catch (NullPointerException e)
         {
-            Trace.userinfo("The ALICE icon is missing from available resources.");
+            Trace.userinfo("The icon is missing from available resources.");
         }
     }
 
@@ -108,7 +108,7 @@ public class TargetingGUI extends JPanel
         frame.setJMenuBar(menuBar);
         frame.pack();
         frame.setLocation(50, 50);
-        frame.setIconImage(aliceIcon.getImage());
+        frame.setIconImage(icon.getImage());
         frame.setVisible(true);
 
         // Go to the next (first) target.
@@ -428,7 +428,7 @@ public class TargetingGUI extends JPanel
             HELP_MESSAGE,
             "About",
             JOptionPane.INFORMATION_MESSAGE,
-            aliceLogo);
+            logo);
     }
 
     protected void showSetReloadFrequencyBox()

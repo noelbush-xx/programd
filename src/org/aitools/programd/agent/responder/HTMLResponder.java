@@ -161,10 +161,10 @@ public class HTMLResponder extends AbstractMarkupResponder
     // Convenience constants.
 
     /** The user id cookie name. */
-    public static final String USER_COOKIE_NAME = "alicebot_user";
+    public static final String USER_COOKIE_NAME = "programd_user";
 
     /** The password cookie name. */
-    public static final String PASSWORD_COOKIE_NAME = "alicebot_password";
+    public static final String PASSWORD_COOKIE_NAME = "programd_password";
 
     // Instance variables.
 
@@ -606,7 +606,7 @@ public class HTMLResponder extends AbstractMarkupResponder
             }
         }
 
-        // If user has all clear, set the alicebot_user session attribute and return null.
+        // If user has all clear, set the programd_user session attribute and return null.
         if ((state & GO_USER) == GO_USER)
         {
             session.setAttribute(USER_COOKIE_NAME, this.user);
@@ -615,7 +615,7 @@ public class HTMLResponder extends AbstractMarkupResponder
         // If a process was successful (should have exited by now otherwise)
         else if ((state & PROCESS_OK) == PROCESS_OK)
         {
-            // Successful login?  Set alicebot_user session attribute and return null.
+            // Successful login?  Set programd_user session attribute and return null.
             if ((state & LOGIN) == LOGIN)
             {
                 session.setAttribute(USER_COOKIE_NAME, this.user);

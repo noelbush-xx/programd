@@ -18,7 +18,7 @@ import org.aitools.programd.util.logging.Log;
 /**
  *  This code is from the sIRC project and was written
  *  by Chris Knight <a href="http://www.chrisknight.com/sirc/">http://www.chrisknight.com/sirc/</a>
- *  and modified to work with an Alicebot server.
+ *  and modified to work with a Program D server.
  *
  *  @author  Chris Knight
  *  @author  Jon Baer
@@ -90,10 +90,10 @@ public class IRCListener extends Listener implements ShellCommandable
     private int port;
 
     /** Please document. */
-    private static final String MSG = "AliceIRC: ";
+    private static final String MSG = "ProgramD-IRC: ";
 
     /** Please document. */
-    public static final String label = "AliceIRC";
+    public static final String label = "ProgramD-IRC";
 
     /**
      *  Creates a new IRCListener chat listener for a given bot.

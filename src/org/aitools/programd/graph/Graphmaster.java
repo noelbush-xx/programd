@@ -47,17 +47,16 @@ import org.aitools.programd.util.logging.Log;
 
 /**
  *  <p>
- *  The <code>Graphmaster</code> is the &quot;brain&quot; of an Alicebot.  
+ *  The <code>Graphmaster</code> is the &quot;brain&quot; of a Program D bot.  
  *  It consists of a collection of nodes called <code>Nodemapper</code>s.
  *  These <code>Nodemapper</code>s map the branches from each node.
  *  The branches are either single words or wildcards.
  *  </p>
  *  <p>
  *  The root of the <code>Graphmaster</code> is a <code>Nodemapper</code>
- *  with many branches, one for each of the first words of all the patterns
- *  (40,000 in the case of the A.L.I.C.E. brain). The number of leaf nodes
- *  in the graph is equal to the number of categories, and each leaf node
- *  contains the &lt;template&gt; tag.
+ *  with many branches, one for each of the first words of all the patterns.
+ *  The number of leaf nodes in the graph is equal to the number of
+ *  categories, and each leaf node contains the &lt;template&gt; tag.
  *  </p>
  *
  *  @author Richard Wallace, Jon Baer
@@ -71,10 +70,9 @@ public class Graphmaster
     // Public access informational constants.
 
     /** Copyright notice. */
-    public static final String[] COPYRIGHT =
+    public static final String[] COPYLEFT =
         {
-            "Alicebot Program D (c) 1995-2002 A.L.I.C.E. AI Foundation",
-            "All Rights Reserved.",
+            "Program D",
             "This program is free software; you can redistribute it and/or",
             "modify it under the terms of the GNU General Public License",
             "as published by the Free Software Foundation; either version 2",
@@ -677,8 +675,8 @@ public class Graphmaster
         }
 
         // Always print the copyright, regardless of console settings.
-        Trace.insist(COPYRIGHT);
-        Log.userinfo("Alicebot Program D version " + VERSION + " Build [" + BUILD + "]", Log.STARTUP);
+        Trace.insist(COPYLEFT);
+        Log.userinfo("Program D version " + VERSION + " Build [" + BUILD + "]", Log.STARTUP);
     }
 
     /**

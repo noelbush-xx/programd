@@ -29,7 +29,7 @@ import org.aitools.programd.util.logging.Log;
 /**
  *  <p>
  *  Handles a
- *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-system">system</a></code>
+ *  <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-system">system</a></code>
  *  element.
  *  </p>
  *  <p>

@@ -17,7 +17,7 @@ import org.aitools.programd.parser.XMLNode;
 
 /**
  *  Processes a
- *  <a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-template-side-that">template-side <code>that</code></a>
+ *  <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-template-side-that">template-side <code>that</code></a>
  *  element.
  *
  *  @version    4.1.3

@@ -20,7 +20,7 @@ import org.aitools.programd.util.logging.Log;
 
 /**
  *  Handles a
- *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-javascript">javascript</a></code>
+ *  <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-javascript">javascript</a></code>
  *  element.
  *
  *  @version    4.1.3

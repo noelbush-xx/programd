@@ -20,13 +20,13 @@ import org.aitools.programd.util.XMLKit;
 /**
  *  <p>
  *  Handles a
- *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-set">set</a></code>
+ *  <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-set">set</a></code>
  *  element.
  *  </p>
  *  <p>
  *  This is currently <i>not</i> AIML 1.0.1-compliant, because it
  *  fails to account for
- *  &quot;<a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-aiml-predicate-behaviors">return-name-when-set</a>&quot;
+ *  &quot;<a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-aiml-predicate-behaviors">return-name-when-set</a>&quot;
  *  predicates.
  *  </p>
  */

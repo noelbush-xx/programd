@@ -17,7 +17,7 @@ import org.aitools.programd.parser.XMLNode;
 
 /**
  *  Processes an
- *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-input">input</a></code>
+ *  <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-input">input</a></code>
  *  element.
  *
  *  @version    4.1.3

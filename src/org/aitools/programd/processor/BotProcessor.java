@@ -19,7 +19,7 @@ import org.aitools.programd.util.XMLKit;
 
 /**
  *  Handles a
- *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-bot">bot</a></code>
+ *  <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-bot">bot</a></code>
  *  element.
  *
  *  @see AIMLProcessor

@@ -25,7 +25,7 @@ import org.aitools.programd.util.XMLKit;
 
 /**
  *  Handles a
- *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-condition">condition</a></code>
+ *  <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-condition">condition</a></code>
  *  element.
  *
  *  @version    4.1.4

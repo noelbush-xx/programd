@@ -28,7 +28,7 @@ import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  A server-based Alicebot.
+ *  A server-based Program D.
  *
  *  @author Jon Baer
  *  @author Noel Bush
@@ -80,7 +80,7 @@ public class ProgramDServer
             if (Globals.showConsole())
             {
                 Log.userinfo(
-                    "Starting Alicebot Program D version "
+                    "Starting Program D version "
                         + Globals.getVersion(),
                     Log.STARTUP);
                 Log.userinfo(

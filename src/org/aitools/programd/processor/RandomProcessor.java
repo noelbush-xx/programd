@@ -20,7 +20,7 @@ import org.aitools.programd.util.MersenneTwisterFast;
 /**
  *  <p>
  *  Handles a
- *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-random">random</a></code>
+ *  <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-random">random</a></code>
  *  element.
  *  </p>
  *  <p>

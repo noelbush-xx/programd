@@ -98,10 +98,10 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
      *  Processes an indexed predicate whose values are stored in
      *  the supplied <code>predicates</code> ArrayList.  Currently supports
      *  <i>only</i> a 1-dimensional index (for handling
-     *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-star">star</a></code>,
-     *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-thatstar">thatstar</a></code>,
+     *  <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-star">star</a></code>,
+     *  <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-thatstar">thatstar</a></code>,
      *  and
-     *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-topicstar">topicstar</a></code>
+     *  <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-topicstar">topicstar</a></code>
      *  elements).
      *
      *  @param predicates   predicate values

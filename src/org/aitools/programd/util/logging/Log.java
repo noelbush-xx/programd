@@ -25,7 +25,7 @@ import org.aitools.programd.util.Trace;
 import org.aitools.programd.util.UserError;
 
 /**
- *  Notifies of logging of Alicebot events to log files.
+ *  Notifies of logging of Program D events to log files.
  *
  *  @author Jon Baer
  *  @author Thomas Ringate, Pedro Colla

@@ -19,7 +19,7 @@ import org.aitools.programd.util.XMLKit;
 /**
  *  The <code>predicate</code> element specifies
  *  for specifying characteristics of a
- *  <a href="http://alicebot.org/TR/2001/WD-aiml/#section-aiml-predicates">predicate</a>.
+ *  <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-aiml-predicates">predicate</a>.
  */
 public class PredicateProcessor extends StartupElementProcessor
 {

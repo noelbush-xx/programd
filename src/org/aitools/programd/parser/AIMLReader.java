@@ -24,12 +24,12 @@ import org.aitools.programd.util.logging.Log;
 /**
  *  <p>
  *  <code>AIMLReader</code> reads an AIML file, searching for
- *  <a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-topic"><code>topic</code></a>,
- *  <a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-category"><code>category</code></a>,
- *  <a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-pattern"><code>pattern</code></a>,
- *  <a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-pattern-side-that">pattern-side <code>that</code></a>
+ *  <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-topic"><code>topic</code></a>,
+ *  <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-category"><code>category</code></a>,
+ *  <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-pattern"><code>pattern</code></a>,
+ *  <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-pattern-side-that">pattern-side <code>that</code></a>
  *  and
- *  <a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-template"><code>template</code></a>
+ *  <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-template"><code>template</code></a>
  *  elements. The expected occurence of these elements is described in {@link #read}, which is the
  *  main method of this class.  If the elements occur in the correct sequence/structure, their contents
  *  are delivered to the {@link AIMLReaderListener.newCategory newCategory} method of whatever

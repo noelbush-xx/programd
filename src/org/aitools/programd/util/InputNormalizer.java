@@ -21,7 +21,7 @@ import java.util.ListIterator;
 /**
  *  <code>InputNormalizer</code> replaces <code>Substituter</code>
  *  as the utility class for performing various stages of
- *  <a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-input-normalization">input normalization</a>.
+ *  <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-input-normalization">input normalization</a>.
  *  Substitutions of other types are now handled independently
  *  by their respective processors.
  *
@@ -127,7 +127,7 @@ public class InputNormalizer
     /**
      *  <p>
      *  Performs
-     *  <a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-pattern-fitting-normalizations">pattern-fitting</a>
+     *  <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-pattern-fitting-normalizations">pattern-fitting</a>
      *  normalization on an input.
      *  </p>
      *  <p>
@@ -174,7 +174,7 @@ public class InputNormalizer
     /**
      *  <p>
      *  Performs a partial
-     *  <a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-pattern-fitting-normalizations">pattern-fitting</a>
+     *  <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-pattern-fitting-normalizations">pattern-fitting</a>
      *  normalization on an input -- partial because it
      *  does <i>not</i> convert letters to uppercase.
      *  </p>

@@ -22,7 +22,7 @@ import org.aitools.programd.util.Substituter;
 /**
  *  <p>
  *  Handles a
- *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-person2">person2</a></code>
+ *  <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-person2">person2</a></code>
  *  element.
  *  </p>
  *  <p>

@@ -453,7 +453,7 @@ abstract public class GenericParser
      *  </p>
      *  <p>
      *  This method is used mostly to map certain tags as combinations
-     *  of other tags (as in <a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-short-cut-elements">short-cut elements</a>),
+     *  of other tags (as in <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-short-cut-elements">short-cut elements</a>),
      *  as well as various &quot;AIML 0.9&quot; tags.
      *  </p>
      *

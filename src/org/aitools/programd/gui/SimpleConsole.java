@@ -97,29 +97,29 @@ public class SimpleConsole extends JPanel
 
     private static JMenuBar menuBar;
 
-    private static ImageIcon aliceLogo;
+    private static ImageIcon logo;
     static
     {
         try
         {
-            aliceLogo = new ImageIcon(ClassLoader.getSystemResource("org/alicebot/gui/icons/aliceLogo.jpg"));
+            logo = new ImageIcon(ClassLoader.getSystemResource("org/aitools/programd/gui/icons/logo.jpg"));
         }
         catch (NullPointerException e)
         {
-            Trace.userinfo("The ALICE logo is missing from available resources.");
+            Trace.userinfo("The logo is missing from available resources.");
         }
     }
 
-    private static ImageIcon aliceIcon;
+    private static ImageIcon icon;
     static
     {
         try
         {
-            aliceIcon = new ImageIcon(ClassLoader.getSystemResource("org/alicebot/gui/icons/aliceIcon.jpg"));
+            icon = new ImageIcon(ClassLoader.getSystemResource("org/aitools/programd/gui/icons/icon.jpg"));
         }
         catch (NullPointerException e)
         {
-            Trace.userinfo("The ALICE icon is missing from available resources.");
+            Trace.userinfo("The icon is missing from available resources.");
         }
     }
 
@@ -639,7 +639,7 @@ public class SimpleConsole extends JPanel
             HELP_MESSAGE,
             "About",
             JOptionPane.INFORMATION_MESSAGE,
-            aliceLogo);
+            logo);
     }
 
     public static void main(String[] args)

@@ -18,7 +18,7 @@ import org.aitools.programd.parser.XMLNode;
 /**
  *  The <code>input</code> element is a container
  *  for definitions of 
- *  <a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-substitution-normalizations">substitution normalizations</a>
+ *  <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-substitution-normalizations">substitution normalizations</a>
  *  to be performed on an input.
  */
 public class InputProcessor extends StartupElementProcessor

@@ -21,7 +21,7 @@ import org.aitools.programd.util.logging.XMLLog;
 
 /**
  *  Handles a
- *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-gossip">gossip</a></code>
+ *  <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-gossip">gossip</a></code>
  *  element.
  *
  *  @version    4.1.3
