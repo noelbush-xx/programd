@@ -1,31 +1,52 @@
 package org.alicebot.server.sql.pool;
-	
-import java.util.Enumeration;
-import java.util.Hashtable;
+    
 
+/**
+ *  Calls the cleanup method of an {@link ObjectPool}
+ *  at a period determined by its {@link #sleepTime}.
+ *
+ *  @author Cristian Mircioiu
+ */
 class CleanUpThread extends Thread
 {
-	private ObjectPool pool;
-	private long sleepTime;
-	
-	CleanUpThread( ObjectPool pool, long sleepTime )
-	{
-		this.pool = pool;
-		this.sleepTime = sleepTime;
-	}
-	public void run()
-	{
-		while( true )
-		{
-			try
-			{
-				sleep( sleepTime );
-			}
-			catch( InterruptedException e )
-			{
-				// ignore it
-			}		  
-			pool.cleanUp();
-		}
-	}
+    /** The object pool that this will clean up. */
+    private ObjectPool pool;
+    
+    /** The period (in milliseconds) to wait before cleaning up. */
+    private long sleepTime;
+    
+
+    /**
+     *  Creates a new <code>CleanUpThread</code> for a given
+     *  object pool and with a given sleep time.
+     *
+     *  @param pool         the object pool to clean up
+     *  @param sleepTime    the period (in milliseconds) to wait before cleaning up
+     */
+    public CleanUpThread(ObjectPool pool, long sleepTime)
+    {
+        this.pool = pool;
+        this.sleepTime = sleepTime;
+    }
+
+
+    /**
+     *  Cleans up the object pool at the period
+     *  determined by {@link #sleepTime}.
+     */
+    public void run()
+    {
+        while(true)
+        {
+            try
+            {
+                sleep(sleepTime);
+            }
+            catch(InterruptedException e)
+            {
+                // ignore it
+            }          
+            pool.cleanUp();
+        }
+    }
 }

@@ -1,27 +1,35 @@
 #!/bin/sh
-#
-# This is a shell script for starting Alicebot.Net Server. Currently, this
+# This is a shell script for starting Alicebot Program D. Currently,this
 # script must be run from the server directory containing the
-# SERVER.properties file.  See <http://www.alicebot.net> for more information.
+# server.properties file.  See http://alicebot.org for more information.
 #
-echo "Starting Alicebot.Net 4.1.0 Reference Server ..."
+# ==========================================================================
+# Alicebot Program D
+# Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+# 
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+# USA.
+# ==========================================================================
 
-ALICE_HOME="."
+echo Starting Alicebot Program D.
+ALICE_HOME=.
+SERVLET_LIB=lib/servlet.jar
+ALICE_LIB=lib/aliceserver.jar
+JS_LIB=lib/js.jar
 
-XML_LIB=./lib/xml.jar
-SQL_LIB=./lib/sql.jar
-MAIL_LIB=./lib/mail.jar
-POP3_LIB=./lib/pop3.jar
-SMTP_LIB=./lib/smtp.jar
-IMAP_LIB=./lib/imap.jar
-ACTIVATION_LIB=./lib/activation.jar
-SERVLET_LIB=./lib/servlet.jar
-ALICE_LIB=./lib/aliceserver.jar
-JS_LIB=./lib/js.jar
-JXTA_LIB=./lib/jxta.jar
-JXTA_SHELL_LIB=./lib/jxtashell.jar
-JAVA_NQL_LIB=./lib/nql.jar
+# Set SQL_LIB to the location of your database driver.
+SQL_LIB=lib/mysql_comp.jar
 
-CLASSPATH=$ALICE_HOME:$XML_LIB:$SQL_LIB:$MAIL_LIB:$POP3_LIB:$SMTP_LIB:$IMAP_LIB:$ACTIVATION_LIB:$SERVLET_LIB:$ALICE_LIB:$JS_LIB:$JXTA_LIB:$JXTA_SHELL_LIB:$JAVA_NQL_LIB
+# These are for Jetty; you will want to change these if you are using a different http server.
+HTTP_SERVER_LIBS=lib/org.mortbay.jetty.jar:lib/com.sun.net.ssl.jar:lib/javax.servlet.jar:lib/javax.xml.jaxp.jar:lib/org.apache.crimson.jar
 
-java -classpath $CLASSPATH -Xms64m -Xmx64m org.alicebot.server.net.AliceServer
+PROGRAMD_CLASSPATH=$SERVLET_LIB:$ALICE_LIB:$JS_LIB:$SQL_LIB:$HTTP_SERVER_LIBS
+java -classpath $PROGRAMD_CLASSPATH -Xms64m -Xmx64m org.alicebot.server.net.AliceServer $1
+

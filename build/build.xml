@@ -5,17 +5,17 @@
 	<!-- =================================================================== -->
 	<target name="init">
 		<tstamp/>
-		<property name="Name" value="Alicebot.Net"/>
+		<property name="Name" value="Alicebot Program D"/>
 		<property name="name" value="aliceserver"/>
-		<property name="version" value="4.1 reference"/>
+		<property name="version" value="4.1.3 reference"/>
 		<property name="year" value="2001"/>
 		
-		<echo message="*********** Building ${Name} ${version} by Jon Baer &amp; Alicebot ***********"/>
+		<echo message="Building ${Name} ${version}...."/>
 		
 		<property name="build.compiler" value="classic"/>
 		<property name="debug" value="off"/>
 		<property name="optimize" value="off"/>
-		<property name="deprecation" value="off"/>
+		<property name="deprecation" value="on"/>
 		
 		<property name="src.dir" value="../src"/>
 		<property name="lib.dir" value="../lib"/>
@@ -40,7 +40,7 @@
 	<target name="usage">
 		<echo message=""/>
 		<echo message=""/>
-		<echo message="Alicebot.Net Build System"/>
+		<echo message="Alicebot Program D Build System"/>
 		<echo message="-------------------------------------------------------------"/>
 		<echo message=""/>
 		<echo message=" Available targets are:"/>
@@ -50,7 +50,7 @@
 		<echo message="   javadoc  --> generates the API documentation"/>
 		<echo message="   clean    --> cleans up the directory"/>
 		<echo message=""/>
-		<echo message=" See the comments inside the BUILD.xml file for more details."/>
+		<echo message=" See the comments inside the build.xml file for more details."/>
 		<echo message="-------------------------------------------------------------"/>
 		<echo message=""/>
 		<echo message=""/>
@@ -87,6 +87,7 @@
 		<javac srcdir="${build.src}"
 			destdir="${build.dest}"
 			debug="${debug}"
+			deprecation="${deprecation}"
 			optimize="${optimize}"/>
 	</target>
 	
@@ -117,7 +118,7 @@
 			noindex="false"
 			windowtitle="${Name} API"
 			doctitle="${Name} API"
-			bottom="Copyright &#169; ${year} Jon Baer. All Rights Reserved."
+			bottom="Copyright &#169; ${year} A.L.I.C.E. AI Foundation. All Rights Reserved."
 			/>
 	</target>
 	
@@ -126,8 +127,6 @@
 	<!-- =================================================================== -->
 	<target name="clean" depends="init">
 		<delete dir="${build.dir}"/>
-		<delete file="${docs.dir}/CHANGES.xml"/>
-		<delete file="${docs.dir}/TODO.xml"/>
 	</target>
 	
 	<target name="distclean" depends="clean">

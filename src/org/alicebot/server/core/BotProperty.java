@@ -1,24 +1,29 @@
-package org.alicebot.server.core;
+/*
+    Alicebot Program D
+    Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+    
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+    USA.
+ */
 
-/**
-Alice Program D
-Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-USA.
-
-@author  Thomas Ringate/Pedro Colla
-@version 4.1.2
+/*
+    Code cleanup (4.1.3 [00] - October 2001, Noel Bush)
+    - formatting cleanup
+    - general grammar fixes
+    - complete javadoc
+    - removed useless imports
+    - added empty string constant
 */
 
-import java.io.*;
+package org.alicebot.server.core;
+
 import java.util.Vector;
 import java.util.StringTokenizer;
 import java.util.ResourceBundle;
@@ -26,80 +31,89 @@ import java.util.Properties;
 import java.util.Locale;
 import java.util.Hashtable;
 
-import org.alicebot.server.core.*;
-import org.alicebot.server.core.node.*;
-import org.alicebot.server.core.parser.*;
-import org.alicebot.server.core.util.*;
-
 /**
- * The Properties class represents the bot static properties definitions
- * They should be created thru the usage of <property name="property" value="value"/>
- * tags in the startup.aiml file.
- * Since this is not an AIML compliant tag it will only be used for
- * configuration purposes and made active during load time.
+ *  <p>
+ *  The <code>BotProperty</code> object stores the static values of bot predicates.
+ *  </p>
+ *  <p>
+ *  Confusion about the words &quot;predicate&quot; and predciates abounds;
+ *  these items are properly called &quot;predicates&quot;, but the name of this
+ *  class and its associated misnamed tag (&lt;predicate/&gt;) will stand (for now).
+ *  </p>
  *
- * @author Thomas Ringate/Pedro Colla
- * @version 4.1.1
+ *  @author Thomas Ringate/Pedro Colla
+ *  @version 4.1.3
  */
+public class BotProperty
+{
 
-public class BotProperty {
+    /** Storage for all bot predicates. */
+    public static Hashtable botPredicates = null;
 
-        public static Hashtable PropertyList = null;
+    /** An empty string. */
+    private static final String EMPTY_STRING = "";
 
-        public BotProperty() {
-           PropertyList = new Hashtable();
-	}
+    public BotProperty()
+    {
+        botPredicates = new Hashtable();
+    }
 
-        /** Get a Bot Property **/
-        public static String get(String propertyname) {
 
-           /**
-             Some property set already?
-           */
-           if (PropertyList == null) {
-              return Globals.EmptyDefault; //4.1.2 b2
-           }
-
-           /**
-             Verify the property name is valid
-           */
-
-           if (propertyname.equals("")) {
-              return Globals.EmptyDefault;  //4.1.2 b2
-           }
-
-           /**
-             Retrieve the content of the property
-           */
-           String propertyvalue = (String)PropertyList.get(propertyname);
-           if (propertyvalue != null) {
-              return propertyvalue;
-           } else {
-              return Globals.EmptyDefault;
-           }
+    /**
+     *  Retrieves the value of a named bot predicate.
+     *
+     *  @param predicate    the name of the bot predicate to get
+     *
+     *  @return the value of the bot predicate
+     */
+    public static String getPredicateValue(String name)
+    {
+        // If no predicates have been set, don't bother looking.
+        if (botPredicates == null)
+        {
+            return Globals.getBotPredicateEmptyDefault();
         }
 
-        /** Set a Bot Property **/
-        public static void set(String propertyname, String propertyvalue) {
-
-            /**
-             The property name must be informed
-            */
-            if (propertyname.equals("")) {
-               return;
-            }
-
-            /**
-             If the bot property structure (hashtable) not defined yet
-             this is the first attempt to create a property
-            */
-            if (PropertyList == null) {
-               PropertyList = new Hashtable();
-            }
-
-            /**
-             Store the property on the hashtable
-            */
-            PropertyList.put(propertyname,new String(propertyvalue));
+        // Don't bother with empty predicate names.
+        if (name.equals(EMPTY_STRING))
+        {
+            return Globals.getBotPredicateEmptyDefault();
         }
+
+        // Retrieve the contents of the predicate.
+        String value = (String)botPredicates.get(name);
+        if (value != null)
+        {
+            return value;
+        }
+        else
+        {
+            return Globals.getBotPredicateEmptyDefault();
+        }
+    }
+
+
+    /**
+     *  Sets the value of a bot predicate.
+     *
+     *  @param predicate    the name of the bot predicate to set
+     */
+    public static void setPredicateValue(String name, String value)
+    {
+
+        // Predicate name must not be empty.
+        if (name.equals(EMPTY_STRING))
+        {
+           return;
+        }
+
+        // Ensure that the Hashtable is initialized (this really looks like overkill).
+        if (botPredicates == null)
+        {
+            botPredicates = new Hashtable();
+        }
+
+        // Store the predicate.
+        botPredicates.put(name, new String(value));
+    }
 }

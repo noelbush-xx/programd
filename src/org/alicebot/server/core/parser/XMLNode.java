@@ -45,22 +45,22 @@ public class XMLNode extends Object {
         */
 
         /** TAG = XML Tag <tag>*/
-        static final int TAG     = 0;
+        public static final int TAG     = 0;
 
         /** EMPTY = XML Empty <tag/> */
-        static final int EMPTY   = 1;
+        public static final int EMPTY   = 1;
 
         /** DATA = Text */
-        static final int DATA    = 2;
+        public static final int DATA    = 2;
 
         /** CDATA = Block of Data */
-        static final int CDATA   = 3;
+        public static final int CDATA   = 3;
 
         /** COMMENT = XML Comment */
-        static final int COMMENT = 4;
+        public static final int COMMENT = 4;
 
         /** ENDTAG </tag> */
-        static final int ENDTAG  = 5;
+        public static final int ENDTAG  = 5;
 
         /**
          XMLNode

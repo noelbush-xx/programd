@@ -1,166 +1,270 @@
 package org.alicebot.server.sql.pool;
 
-/** 
-* DbAccess.java
-*
-* @author Cristian Mircioiu, 1999. 
-*/
-
-	// java specific imports:		 
-import java.sql.*;
-import java.io.PrintStream;
-import java.util.Vector;
-import java.util.Hashtable;
-import java.util.Enumeration;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
-* 
-* Object containing all connection details to a DBMS and allows for getiing the input/output streams.
-* 
-* It has support for different DBMS and the coding does not rely on a certain one.
-* For use with another DBMS one should change the classname for the Java Driver and the specific URL.
-* Sample:  
-* <pre>
-*  driver class name : "oracle.jdbc.dnlddriver.OracleDriver"
-*  specific URL : "dbc:oracle:dnldthin:@ora.doxa.ro:1526:ORCL".
-* </pre>
-*
-* @author Cristian Mircioiu, 1999
-*/
+ *  <p>
+ *  Represents all connection details to a DBMS and allows
+ *  for getting the input/output streams.
+ *  </p>
+ *  <p>
+ *  Uses JDBC so as to support any DBMS with a JDBS driver.
+ *  For use with another DBMS one should change the classname
+ *  for the Java Driver and the specific URL.
+ *  </p>
+ *  <p>
+ *  Sample:
+ *  </p>
+ *  <pre>
+ *  driver class name : "oracle.jdbc.dnlddriver.OracleDriver"
+ *  specific URL : "dbc:oracle:dnldthin:@ora.doxa.ro:1526:ORCL".
+ *  </pre>
+ *
+ *  @author Cristian Mircioiu
+ */
 public class DbAccess
 {
-	protected Connection conn;
-	protected Statement stmt = null;
-	protected String driver;
-	protected String url;
-	protected String user;
-	protected String password;
-	private Vector srs;
+    /** The Connection used by this object. */
+    protected Connection connection;
 
-	public DbAccess()
-	{
-		srs = new Vector(2);
-	}
-	/**
-	* One type of constructor.
-	*
-	*
-	* @param driver the name of the class representing the Driver to be used by the Driver manager.
-	* @param url the location of a data source name(dsn).
-	* @param user the user.
-	* @param password his password.
-	* @return
-	* @exception java.sql.SQLException
-	* 
-	* @author Cristian Mircioiu, 1999
-	*/
-	public DbAccess(String driver, String url, String user, String password)
-		throws SQLException, ClassNotFoundException
-	{
-		srs = new Vector(2);
-		this.driver = driver;
-		this.url = url;
-		this.user = user;
-		this.password = password;
-		connect();
-	}
-	public DbAccess(Connection conn)
-	{
-		srs = new Vector(2);
-		this.conn = conn;
-	}
-	public void connect()
-		throws SQLException, ClassNotFoundException
-	{
-		if (conn == null)
-		{
-			Class.forName(driver);
-			if (user == null || password == null)
-				conn = DriverManager.getConnection(url);
-			else
-				conn = DriverManager.getConnection(url, user, password);
-				// creates the statement to be used in queries or updates
-			stmt = conn.createStatement();
-		}
-	}
-	public ResultSet executeQuery(String query)
-		throws SQLException
-	{
-	    return stmt.executeQuery(query);
-	}
-	public int executeUpdate(String sql) throws SQLException
-	{
-		return stmt.executeUpdate(sql);
-	}
-	public Connection getConnection()
-	{
-		return conn;
-	}
-	public String getDriver()
-	{
-		return driver;
-	}
-	public String getPassword()
-	{
-		return password;
-	}
-	public Statement getStatement()
-	{
-		return stmt;
-	}
-	public String getUrl()
-	{
-		return url;
-	}
-	public String getUser()
-	{
-		return user;
-	}
-	public static void main(String args[])
-	{
-		try
-		{
-			ResultSet rs=null;
-			DbAccess dba = new DbAccess("sun.jdbc.odbc.JdbcOdbcDriver",
-										"jdbc:odbc:efinance",
-										"crimir", "crimir");
-			try{
-				rs = dba.executeQuery("select country.feedback_email from country ");
-				while(rs.next()){
-					Debug.println(rs.getString(1));	   
-				}
-				
-				
-			}catch(SQLException w ){
-				 Debug.println(w.toString());	
-				 if (w.getMessage().equals("Exhausted Resultset")) 
-					Debug.println("query returned no data !!");
-				throw new SQLException(w.toString() + " the query could have returned no data: \n");		
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-	public void setConnection(Connection conn)
-	{
-		this.conn = conn;
-	}
-	public void setDriver(String driver)
-	{
-		this.driver = driver;
-	}
-	public void setPassword(String password)
-	{
-		this.password = password;
-	}
-	public void setUrl(String url)
-	{
-		this.url = url;
-	}
-	public void setUser(String user)
-	{
-		this.user = user;
-	}
+    /** The statement used by this object. */
+    protected Statement statement = null;
+
+    /** The name of the driver used by this object. */
+    protected String driver;
+
+    /** The URL string used by this object. */
+    protected String url;
+
+    /** The user name used by this object. */
+    protected String user;
+
+    /** The password used by this object. */
+    protected String password;
+
+
+    /**
+     *  Constructs a <code>DbAccess</code> object given
+     *  a driver, url, user name and password.
+     *
+     *  @param driver   name of the class representing the Driver to be used by the Driver manager
+     *  @param url      location of a data source name (dsn)
+     *  @param user     user name
+     *  @param password password for user
+     *
+     *  @throws SQLException if a connection cannot be established
+     *  @throws ClassNotFoundException if the driver class cannot be found
+     */
+    public DbAccess(String driver, String url, String user, String password) throws SQLException, ClassNotFoundException
+    {
+        this.driver = driver;
+        this.url = url;
+        this.user = user;
+        this.password = password;
+        connect();
+    }
+
+
+    /**
+     *  Constructs a <code>DbAccess</code> object
+     *  given a {@link java.sql.Connection} object.
+     *
+     *  @param connection   the {@link java.sql.Connection} object
+     *                      from which to construct the <code>DbAccess</code> object
+     */
+    public DbAccess(Connection connection)
+    {
+        this.connection = connection;
+    }
+
+
+    /**
+     *  Connects to the database using the values of the
+     *  fields already set in this object.
+     *
+     *  @throws SQLException if the connection cannot be made
+     *  @throws ClassNotFoundException if the driver class cannot be found
+     */
+    public void connect() throws SQLException, ClassNotFoundException
+    {
+        if (connection == null)
+        {
+            Class.forName(driver);
+            if (user == null || password == null)
+            {
+                connection = DriverManager.getConnection(url);
+            }
+            else
+            {
+                connection = DriverManager.getConnection(url, user, password);
+            }
+                // creates the statement to be used in queries or updates
+            statement = connection.createStatement();
+        }
+    }
+
+
+    /**
+     *  Returns the {@link java.sql.ResultSet ResultSet}
+     *  from executing a given query.
+     *
+     *  @param query    the query to execute
+     *
+     *  @return the {@link java.sql.ResultSet ResultSet} from executing a given query
+     *
+     *  @throws SQLException if executing the query results in an error
+     */
+    public ResultSet executeQuery(String query) throws SQLException
+    {
+        return statement.executeQuery(query);
+    }
+
+
+    /**
+     *  Returns the {@link java.sql.ResultSet ResultSet}
+     *  from executing a given update.
+     *
+     *  @param update   the update to execute
+     *
+     *  @return the row count resulting from executing a given update
+     *
+     *  @throws SQLException if executing the update results in an error
+     */
+    public int executeUpdate(String update) throws SQLException
+    {
+        return statement.executeUpdate(update);
+    }
+
+
+    /**
+     *  Returns the {@link java.sql.Connection}
+     *  object used by this object.
+     *
+     *  @return the Connection object used by this object.
+     */
+    public Connection getConnection()
+    {
+        return connection;
+    }
+
+
+    /**
+     *  Returns the name of the driver used by this object.
+     *
+     *  @return the name of the driver used by this object.
+     */
+    public String getDriver()
+    {
+        return driver;
+    }
+
+
+    /**
+     *  Returns the password used by this object.
+     *
+     *  @return the password used by this object.
+     */
+    public String getPassword()
+    {
+        return password;
+    }
+
+
+    /**
+     *  Returns the {@link java.sql.Statement}
+     *  object used by this object.
+     *
+     *  @return the Statement object used by this object.
+     */
+    public Statement getStatement()
+    {
+        return statement;
+    }
+
+
+    /**
+     *  Returns the URL string used by this object.
+     *
+     *  @return the URL string used by this object.
+     */
+    public String getUrl()
+    {
+        return url;
+    }
+
+
+    /**
+     *  Returns the user name used by this object.
+     *
+     *  @return the user name used by this object.
+     */
+    public String getUser()
+    {
+        return user;
+    }
+
+
+
+    /**
+     *  Sets the {@link java.sql.Connection}
+     *  object used by this object.
+     *
+     *  @param connection   the Connection object to be used
+     */
+    public void setConnection(Connection connection)
+    {
+        this.connection = connection;
+    }
+
+
+    /**
+     *  Sets the name of the driver to be
+     *  used by this object.
+     *
+     *  @param driver   the name of the driver to be used
+     */
+    public void setDriver(String driver)
+    {
+        this.driver = driver;
+    }
+
+
+    /**
+     *  Sets the password to be
+     *  used by this object.
+     *
+     *  @param password the password to be used
+     */
+    public void setPassword(String password)
+    {
+        this.password = password;
+    }
+
+
+    /**
+     *  Sets the URL string to be
+     *  used by this object.
+     *
+     *  @param url  the URL string to be used
+     */
+    public void setUrl(String url)
+    {
+        this.url = url;
+    }
+
+
+    /**
+     *  Sets the user name to be
+     *  used by this object.
+     *
+     *  @param user the user name to be used
+     */
+    public void setUser(String user)
+    {
+        this.user = user;
+    }
 }

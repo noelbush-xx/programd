@@ -1,277 +1,641 @@
+/*
+    Alicebot Program D
+    Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+    
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+    USA.
+*/
+
+/*
+    Code cleanup (4.1.3 [00] - October 2001, Noel Bush)
+    - formatting cleanup
+    - general grammar fixes
+    - complete javadoc
+    - made all imports explicit
+    - made constants private (enforce use of get/set methods!)
+    - removed unused globals constant
+    - constant name changes:
+        _serverProps --> serverProperties
+        _botName --> botName
+        categoryCount --> categoryCount
+        version --> version
+    - enhanced fromFile to set private field values from properties file
+      (avoid reparsing the value each time)
+    - changed fromFile method to load, and made it load from a given Properties instead of a file
+    - added set & get methods for any properties that need type-checking,
+      as well as some others (to define defaults here)
+    - changed all file path handling to expect/use canonical
+*/
+
+/*
+    Further fixes and optimizations (4.1.3 [01] - November 2001, Noel Bush)
+    - removed setBotPredicateValue() and getBotPredicateValue()
+      (can be handled in BotProperty)
+*/
+
+/*
+    More fixes (4.1.3 [02] - November 2001, Noel Bush)
+    - comment changes
+    - changed many server property names
+    - added support for preventing <system> and <javascript> tags
+*/
+
 package org.alicebot.server.core;
 
-
-/**
-Alice Program D
-Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-USA.
-
-@author  Richard Wallace
-@author  Jon Baer
-@author  Thomas Ringate/Pedro Colla
-@version 4.1.2
-*/
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Vector;
 import java.util.StringTokenizer;
-import java.util.ResourceBundle;
 import java.util.Properties;
-import java.util.Locale;
 
+import org.alicebot.server.core.logging.Log;
+import org.alicebot.server.core.processor.AIMLProcessorRegistry;
+import org.alicebot.server.core.processor.loadtime.StartupElementProcessorRegistry;
 
-import org.alicebot.server.core.*;
-import org.alicebot.server.core.node.*;
-import org.alicebot.server.core.parser.*;
-import org.alicebot.server.core.util.*;
 
 /**
- * The Globals class represents the loaded bot's static predicate values.
- * These are always stored inside a file called BOT.properties from the loaded bot.
+ *  <p>
+ *  <code>Globals</code> gives access to the server
+ *  properties used when starting the bot.
+ *  </p>
  *
- * Also note that it is a ResourceBundle so it uses i18n notations for internationalization.
- * Examples: BOT_es.properties, BOT_fr.properties, etc.
- *
- * @author Richard Wallace, Jon Baer
- * @author Thomas Ringate/Pedro Colla
- * @version 4.1.1
+ *  @author Richard Wallace
+ *  @author Jon Baer
+ *  @author Thomas Ringate/Pedro Colla
+ *  @version 4.1.3
  */
+public class Globals
+{
+    /** Whether Globals is loaded. */
+    private static boolean isLoaded = false;
 
-public class Globals {
+    /** The server properties. */
+    private static Properties serverProperties;
 
-	public static ResourceBundle _globals;
-	public static Properties _serverProps;
-	public static String _bot;
+    /** The predicate in which to find the name of the bot. */
+    private static String botNamePredicate;
 
-//Add 4.0.3 b4 PEC 09-2001
-        public static String _size;
-        public static String _version;
-//EAdd
+    /** The bot id. */
+    private static String botID = null;
 
-//Add 4.1.1 bx PEC 09-2001
-        public static int  MAX_LLC         = 25;
-        public static int  MAX_INDEX_DEPTH = 5;
-//EAdd
+    /** The name of the bot. */
+    private static String botName;
 
-//Add 4.1.2 b2 PEC 09-2001
-        public static String EmptyDefault  = "";
-//EAdd
+    /** The predicate in which to find the name of the client. */
+    private static String clientNamePredicate;
 
-	public Globals() {
-	}
+    /** The version of the software. */
+    private static String version;
 
-//Add 4.0.3 b4 PEC 09-2001 Methods for version and size
+    /** The default value to return if a bot predicate is not defined. */
+    private static String botPredicateEmptyDefault;
 
-        /** Get Bot Version **/
-        public static String getversion() {
-          return _version;
-        }
+    /** Whether use of the <system> tag is allowed. */
+    private static boolean osAccessAllowed;
 
-        /** Get Bot Size **/
-        public static String getsize() {
-          return _size + " categories";
-        }
-//Eadd
-        /** Load SERVER.properties configuration from file. */
-	public static void fromFile(String bot) {
-		_bot = bot;
-                //?_globals = ResourceBundle.getBundle("bots." + getBotName() + ".BOT");
-		try {
-		_serverProps = new Properties();
-		_serverProps.load(new FileInputStream("SERVER.properties"));
+    /** Whether use of the <javascript> tag is allowed. */
+    private static boolean jsAccessAllowed;
 
-		} catch (IOException e) {
-		// Error loading properties
-		System.out.println("Could not find SERVER.properties!");
-		System.out.println("Exiting...");
-		System.exit(0);
-		}
-	}
+    /** Whether to support deprecated &quot;AIML 0.9&quot; tags. */
+    private static boolean supportDeprecatedTags;
 
-	/** Return the Bot's Name */
-	public static String getBotName() {
-		return _bot;
-	}
+    /** Whether to warn about deprecated &quot;AIML 0.9&quot; tags. */
+    private static boolean warnAboutDeprecatedTags;
 
-        /*Add 4.1.2 b2 PEC 09-2001 Definition of system default when a
-          variable or property has not been declared
-        */
-        public static void getEmptyDefault() {
+    /** Whether to require namespace qualification of non-AIML tags. */
+    private static boolean nonAIMLRequireNamespaceQualification;
 
-                EmptyDefault = "";
-                EmptyDefault = _serverProps.getProperty("server.engine.emptydefault");
-                if (EmptyDefault.equals("")) {
-                   return;
-                }
+    /** A hard-coded limit on the number of wildcards that can be indexed (should be handled better). */
+    private static int MAX_INDEX_DEPTH = 5;
 
-                if ( (EmptyDefault.startsWith("\"")) &&
-                     (EmptyDefault.endsWith("\""))   &&
-                     (EmptyDefault.length() > 2)  ) {
-                     EmptyDefault = EmptyDefault.substring(1,EmptyDefault.length()-1);
-                } else {
-                  EmptyDefault = "";
-                }
-                return;
-        }
+    /** The path to the bot startup file. */
+    private static String startupFilePath;
 
-        /**
-          Return whether trace messages should show off at the local
-          console or not
-        */
-	public static boolean showConsole() {
-		return Boolean.valueOf(_serverProps.getProperty("server.engine.console")).booleanValue();
-	}
+    /** The path to the file where targeting data should be written. */
+    private static String targetsDataPath;
 
-        /**
-          Return if the file Watcher is active or not, the watcher reloads
-          AIML files when a change is detected
-        */
-        public static boolean isWatcherActive() {
-                return Boolean.valueOf(_serverProps.getProperty("server.engine.watcher")).booleanValue();
-	}
+    /** The path to the file where generated targets should be written. */
+    private static String targetsAIMLPath;
+
+    /** The interval at which the user should be notified of how many targets have been loaded. */
+    private static int categoryLoadNotifyInterval;
+
+    /** The merge policy for this server. */
+    private static String mergePolicy;
+
+    /** Whether to show the console. */
+    private static boolean showConsole;
+
+    /** Whether to show a match trace. */
+    private static boolean showMatchTrace;
+
+    /** Whether to show the &quot;shell&quot;. */
+    private static boolean useShell;
+
+    /** Whether to use the AIML Watcher. */
+    private static boolean useWatcher;
+
+    /** Number of responses to wait before invoking targeting. */
+    private static int targetSkip;
+
+    /** Whether to use targeting. */
+    private static boolean useTargeting;
+
+    /** The host name. */
+    private static String hostName;
+
+    /** The port on which the http server is listening. */
+    private static int httpPort;
+
+    /** An empty string, for convenience. */
+    private static final String EMPTY_STRING = "";
+
+    /** The AIML processor registry. */
+    private static AIMLProcessorRegistry aimlProcessorRegistry;
+
+    /** The startup element processor registry. */
+    private static StartupElementProcessorRegistry startupElementProcessorRegistry;
 
 
-	public static boolean showShell() {
-		return Boolean.valueOf(_serverProps.getProperty("server.engine.shell")).booleanValue();
-	}
+    /**
+     *  Creates a new <code>Globals</code> object.
+     */
+    public Globals()
+    {
+    }
 
-        /**
-          Return the current merge policy, merge=true means that
-          duplicate categories will be merged otherwise the duplicate
-          will be rejected
-        */
 
-	public static String getMergePolicy() {
-		return _serverProps.getProperty("server.engine.merge");
-	}
+    /**
+     *  @return the AIMLProcessorRegistry
+     */
+    public static AIMLProcessorRegistry getAIMLProcessorRegistry()
+    {
+        return aimlProcessorRegistry;
+    }
 
-	public static Properties getServerProps() {
-		return _serverProps;
-	}
 
-	/** Return the default Locale for this bot. */
-	public static String getDefaultLocale() {
-		return Locale.getDefault().getLanguage();
-	}
+    /**
+     *  @return the StartupElementProcessorRegistry
+     */
+    public static StartupElementProcessorRegistry getStartupElementProcessorRegistry()
+    {
+        return startupElementProcessorRegistry;
+    }
 
-	/** Return a list of the bot's languages. */
-	public static String[] getBotLanguages() {
-		Vector languages = new Vector();
-		String _bot_language = getValue("LANGUAGE");
-		StringTokenizer _st = new StringTokenizer(_bot_language, ",");
-		while (_st.hasMoreTokens()) {
-			languages.add((String)_st.nextToken());
-		}
-		return (String[])languages.toArray();
-	}
-/**Remove 4.1.2 b5 PEC 09-2001
-	public static boolean getSpeak() {
-		return Boolean.valueOf(_serverProps.getProperty("server.engine.speak")).booleanValue();
-	}
-*/
 
-	/** Get the startup file for this bot. */
-	public static String getBotFile() {
-		return "bots" +
-			System.getProperty("file.separator") +
-			getBotName() +
-			System.getProperty("file.separator") +
-			_serverProps.getProperty("server.engine.startup");
-	}
-        /** Get the targets file for this bot
-        */
-	public static String getTargetFile() {
-		return "targets/TARGETS.aiml";
-	}
+    /**
+     *  Loads some global values from a properties object.
+     *
+     *  @param properties   the properties object
+     */
+    public static void load(Properties properties)
+    {
+        // Globals is the only home for this properties; we don't pass it around.
+        serverProperties = properties;
 
-	/**
-         * Set a property value for this bot. Could be only set thru a
-         * <property name="property" value="value"/> which is a non-AIML
-         * compliant tag and thus could only be used at configuration and
-         * load time.
-	 */
+        // Whether to use the watcher; default false.
+        useWatcher = Boolean.valueOf(serverProperties.getProperty("programd.watcher", "false")).booleanValue();
 
-        public static void setValue(String property, String propertyvalue) {
-            if (Globals.showConsole()) {
-               System.out.println("*** BOT PROPERTY(" + property + ") SET WITH VALUE("+propertyvalue+") ***");
-            }
-            try {
+        // Whether to use the shell; default true.
+        useShell = Boolean.valueOf(serverProperties.getProperty("programd.shell", "true")).booleanValue();
 
-              /*
-               Ensure the property name is meaningful and no case problems exists
-              */
-              property = property.trim();
-              property = property.toLowerCase();
-              if (property.equals("")) {
-                 return;
-              }
-              /*
-               Set the bot property with the value provided
-              */
-              BotProperty.set(property,propertyvalue);
-            } catch (Exception e) {
-              System.out.println("*** ERROR WHILE SETTING PROPERTY " + property + " ***");
-            }
-            return;
-        }
+        // Whether to show the console; default true.
+        showConsole = Boolean.valueOf(serverProperties.getProperty("programd.console", "true")).booleanValue();
 
-	/**
-	 * Get a value for this bot.  This is usually called via AIML tags as such:
-         * <bot name="property"/>
-	 */
-	public static String getValue(String property) {
+        // Whether to show the match trace; default true.
+        showMatchTrace = showConsole ? Boolean.valueOf(serverProperties.getProperty("programd.console.match-trace", "true")).booleanValue() : false;
 
-		String value = "";
-                /*
-                  Ensure the property is meaningful
-                */
-                property = property.trim();
-                property = property.toLowerCase();
-                if (property.equals("")) {
-                   return "";
-                }
+        // Whether to use targeting; default true.
+        useTargeting = Boolean.valueOf(serverProperties.getProperty("programd.targeting", "true")).booleanValue();
 
-                /*
-                  Recover it from the bot properties structure
-                */
-		try {
-                    value = BotProperty.get(property);
-                    return value;
-		} catch (Exception e) {
-                    System.out.println("*** NO BOT PROPERTY NAMED > " + property + " ***");
-		}
+        // AIML targets file path; default ./targets/targets.aiml.
+        targetsAIMLPath = serverProperties.getProperty("programd.targeting.aimlpath", "./targets/targets.aiml");
 
-                /*
-                 If the gathering of the bot property failed return {property}
-                */
-                value = Globals.EmptyDefault;   //4.1.2 b2
-		return value;
-	}
+        // AIML targets file path; default ./targets/targets.aiml.
+        targetsDataPath = serverProperties.getProperty("programd.targeting.datapath", "./targets/targets.xml");
 
-        /**
-         * **MA** 07/10/2001
-         *
-         * Return a property string by name.  Used by other java methods to
-         * read server properties.
-         */
-        public static String getProperty(String propname)
+        // Target skip
+        try
         {
-          return _serverProps.getProperty(propname);
+            targetSkip = Integer.parseInt(serverProperties.getProperty("programd.targeting.targetskip", "1"));
         }
+        catch (NumberFormatException e)
+        {
+            targetSkip = 1;
+        }
+
+        // Don't let targetSkip be less than 1.
+        targetSkip = targetSkip < 1 ? 1 : targetSkip;
+
+        // The merge policy: default generic "true".
+        mergePolicy = serverProperties.getProperty("programd.merge", "true");
+
+        // The bot predicate in which to find the bot's name; default is "name".
+        botNamePredicate = serverProperties.getProperty("programd.console.bot-name-predicate", "name");
+
+        // The predicate in which to find the client's name; default is "name".
+        clientNamePredicate = serverProperties.getProperty("programd.console.client-name-predicate", "name");
+
+        // Default for predicates with no defined values; default is empty string.
+        botPredicateEmptyDefault = serverProperties.getProperty("programd.emptydefault", "");
+
+        // Whether to allow use of <system> tag; default false.
+        osAccessAllowed = Boolean.valueOf(serverProperties.getProperty("programd.os-access-allowed", "false")).booleanValue();
+
+        // Whether to allow use of <javascript> tag; default false.
+        jsAccessAllowed = Boolean.valueOf(serverProperties.getProperty("programd.javascript-allowed", "false")).booleanValue();
+
+        // Whether to support deprecated tags; default false.
+        supportDeprecatedTags = Boolean.valueOf(serverProperties.getProperty("programd.deprecated-tags-support", "false")).booleanValue();
+
+        // Whether to warn about deprecated tags; default false.
+        warnAboutDeprecatedTags = supportDeprecatedTags ? Boolean.valueOf(serverProperties.getProperty("programd.deprecated-tags-warn", "false")).booleanValue() : false;
+
+        // Whether to require namespace qualifiers on non-AIML tags; default false.
+        nonAIMLRequireNamespaceQualification = Boolean.valueOf(serverProperties.getProperty("programd.non-aiml-require-namespace-qualifiers", "false")).booleanValue();
+
+        
+        // Get the category load notify interval.
+        try
+        {
+            categoryLoadNotifyInterval =
+                Integer.parseInt(serverProperties.getProperty("programd.console.category-load-notify-interval", "1000"));
+        }
+        catch (NumberFormatException e)
+        {
+            categoryLoadNotifyInterval = 1000;
+        }
+
+        // Make sure the startup file actually exists.
+        try
+        {
+            startupFilePath =
+                new File(serverProperties.getProperty("programd.startup",
+                                                      "startup.xml")).getCanonicalPath();
+        }
+        catch (IOException e)
+        {
+            String error = "Startup file does not exist (check server properties).";
+            Log.log(error, Log.ERROR);
+            Log.userfail(error, Log.STARTUP);
+        }
+
+        // Version comes from Graphmaster.
+        version = Graphmaster.VERSION;
+
+        // Initialize the processor registries.
+        aimlProcessorRegistry = new AIMLProcessorRegistry();
+        startupElementProcessorRegistry = new StartupElementProcessorRegistry();
+
+        // Try to set the hostname.
+        try
+        {
+            hostName = InetAddress.getLocalHost().getHostName();
+        }
+        catch (UnknownHostException e)
+        {
+            hostName = "unknown-host";
+        }
+        isLoaded = true;
+    }
+
+
+    /**
+     *  Returns whether Globals is loaded.
+     *
+     *  @return whether Globals is loaded
+     */
+    public static boolean isLoaded()
+    {
+        return isLoaded;
+    }
+
+
+    /**
+     *  Returns the version string.
+     *
+     *  @return the version string
+     */
+    public static String getVersion()
+    {
+        return version;
+    }
+
+
+    /**
+     *  Returns the bot's name (temporary).
+     *
+     *  @return the bot's name (temporary)
+     */
+    public static String getBotName()
+    {
+        return botName;
+    }
+
+
+    /**
+     *  Sets the bot's name (temporary).
+     */
+    public static void setBotName()
+    {
+        botName = BotProperty.getPredicateValue(botNamePredicate);
+    }
+
+
+    /**
+     *  Returns the bot's id (temporary).
+     *
+     *  @return the bot's id (temporary)
+     */
+    public static String getBotID()
+    {
+        return botID;
+    }
+
+
+    /**
+     *  Sets the bot's id (temporary).
+     *
+     *  @param id   the id to set
+     */
+    public static void setBotID(String id)
+    {
+        botID = id;
+    }
+
+
+    /**
+     *  Returns the startup file path.
+     *
+     *  @return the startup file path
+     */
+    public static String getStartupFilePath()
+    {
+        return startupFilePath;
+    }
+
+
+    /**
+     *  Returns the predicate name with which the client's name is associated.
+     *
+     *  @return the predicate name with which the client's name is associated
+     */
+    public static String getClientNamePredicate()
+    {
+        return clientNamePredicate;
+    }
+
+
+    /**
+     *  Returns the default value for undefined bot predicate values.
+     *
+     *  @return the default value for undefined bot predicate values
+     */
+    public static String getBotPredicateEmptyDefault()
+    {
+        return botPredicateEmptyDefault;
+    }
+
+
+    /**
+     *  Returns whether to show the console.
+     *
+     *  @return whether to show the console
+     */
+    public static boolean showConsole()
+    {
+        return showConsole;
+    }
+
+    
+    /**
+     *  Returns whether to show match trace messages on the console.
+     *
+     *  @return whether to show trace messages on console
+     */
+    public static boolean showMatchTrace()
+    {
+        return showMatchTrace;
+    }
+
+    
+    /**
+     *  Returns whether the {@link org.alicebot.server.core.loader.AIMLWatcher AIML Watcher} is active.
+     *
+     *  @return whether the {@link org.alicebot.server.core.loader.AIMLWatcher AIML Watcher} is active
+     */
+    public static boolean isWatcherActive()
+    {
+        return useWatcher;
+    }
+
+
+    /**
+     *  Returns whether to use the command-line shell.
+     *
+     *  @return whether to use the command-line shell
+     */
+    public static boolean useShell()
+    {
+        return useShell;
+    }
+
+
+    /**
+     *  Returns the merge policy.
+     *
+     *  @return the merge policy String
+     */
+    public static String getMergePolicy()
+    {
+        return mergePolicy;
+    }
+
+
+    /**
+     *  Returns the maximum index depth.
+     *
+     *  @return the maximum index depth
+     */
+    public static int getMaxIndexDepth()
+    {
+        return MAX_INDEX_DEPTH;
+    }
+
+
+    /**
+     *  Returns whether to use targeting.
+     *
+     *  @return whether to use targeting
+     */
+    public static boolean useTargeting()
+    {
+        return useTargeting;
+    }
+
+
+    /**
+     *  Returns the path to the targets file for dumping generated AIML.
+     *
+     *  @return the path to the targets file for dumping generated AIML
+     */
+    public static String getTargetsAIMLPath()
+    {
+        return targetsAIMLPath;
+    }
+
+
+    /**
+     *  Returns the path to the data file for dumping targeting data.
+     *
+     *  @return the path to the data file for dumping targeting data
+     */
+    public static String getTargetsDataPath()
+    {
+        return targetsDataPath;
+    }
+
+
+    /**
+     *  Returns the response period for invoking targeting.
+     *
+     *  @return the response period for invoking targeting
+     */
+    public static int getTargetSkip()
+    {
+        return targetSkip;
+    }
+
+
+    /**
+     *  @return the category load notify interval
+     */
+    public static int getCategoryLoadNotifyInterval()
+    {
+        return categoryLoadNotifyInterval;
+    }
+
+
+    /**
+     *  Sets the http port number.
+     *
+     *  @param port the port number
+     */
+    public static void setHttpPort(int port)
+    {
+        httpPort = port;
+    }
+
+
+    /**
+     *  Returns the http port number.
+     *
+     *  @return http port number
+     */
+    public static int getHttpPort()
+    {
+        return httpPort;
+    }
+
+
+    /**
+     *  Returns the host name.
+     *
+     *  @return the host name
+     */
+    public static String getHostName()
+    {
+        return hostName;
+    }
+
+
+    /**
+     *  Returns whether to support deprecated &quot;AIML 0.9&quot; tags.
+     *
+     *  @return whether to support deprecated &quot;AIML 0.9&quot; tags
+     */
+    public static boolean supportDeprecatedTags()
+    {
+        return supportDeprecatedTags;
+    }
+
+
+    /**
+     *  Returns whether to warn about deprecated &quot;AIML 0.9&quot; tags.
+     *
+     *  @return whether to warn about deprecated &quot;AIML 0.9&quot; tags
+     */
+    public static boolean warnAboutDeprecatedTags()
+    {
+        return warnAboutDeprecatedTags;
+    }
+
+
+    /**
+     *  Returns whether to require namespace qualifiers on non-AIML tags.
+     *
+     *  @return whether to require namespace qualifiers on non-AIML tags
+     */
+    public static boolean nonAIMLRequireNamespaceQualification()
+    {
+        return nonAIMLRequireNamespaceQualification;
+    }
+
+    /**
+     *  Returns whether the <code>system</code> tag is allowed.
+     *
+     *  @return whether the <code>system</code> tag is allowed
+     */
+    public static boolean osAccessAllowed()
+    {
+        return osAccessAllowed;
+    }
+
+
+    /**
+     *  Returns whether the <code>javascript</code> tag is allowed.
+     *
+     *  @return whether the <code>javascript</code> tag is allowed
+     */
+    public static boolean jsAccessAllowed()
+    {
+        return jsAccessAllowed;
+    }
+
+
+    /**
+     *  Returns the value of a property string.
+     *
+     *  @param propertyName the name of the property whose value is wanted
+     *
+     *  @return the value of the named property
+     */
+    public static String getProperty(String propertyName)
+    {
+        return serverProperties.getProperty(propertyName);
+    }
+
+
+    /**
+     *  Returns the value of a property string (allows specifying a default).
+     *
+     *  @param propertyName the name of the property whose value is wanted
+     *  @param the default if no value is defined for the property
+     *
+     *  @return the value of the named property
+     */
+    public static String getProperty(String propertyName, String defaultValue)
+    {
+        return serverProperties.getProperty(propertyName, defaultValue);
+    }
 }
-
-
-
-
-
-
-

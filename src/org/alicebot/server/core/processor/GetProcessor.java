@@ -1,59 +1,76 @@
+/*
+    Alicebot Program D
+    Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+    
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+    USA.
+*/
+
+/*
+    Code cleanup (4.1.3 [00] - October 2001, Noel Bush)
+    - formatting cleanup
+    - complete javadoc
+    - made all imports explicit
+*/
+
+/*
+    More fixes (4.1.3 [02] - November 2001, Noel Bush)
+    - added handling of NoSuchPredicateExpression
+*/
+
 package org.alicebot.server.core.processor;
 
-/**
-Alice Program D
-Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+import org.alicebot.server.core.ActiveMultiplexor;
+import org.alicebot.server.core.Globals;
+import org.alicebot.server.core.NoSuchPredicateException;
+import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.XMLNode;
+import org.alicebot.server.core.util.Toolkit;
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-USA.
-
-@author  Richard Wallace
-@author  Jon Baer
-@author  Thomas Ringate/Pedro Colla
-@version 4.1.1
-*/
-
-//import java.util.*;
-import java.lang.*;
-import java.net.*;
-import java.io.*;
-
-import org.alicebot.server.core.*;
-import org.alicebot.server.core.util.*;
-import org.alicebot.server.core.parser.*;
 
 /**
- GetProcessor is the responsible to handle the GET tag
- @version 4.1.1
- @author  Thomas Ringate/Pedro Colla
-*/
-public class GetProcessor implements AIMLProcessor, Serializable {
-        public String processAIML(int level, String ip, XMLNode tag, AIMLParser p) {
+ *  Handles a
+ *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-get">get</a></code>
+ *  element.
+ *
+ *  @version    4.1.3
+ *  @author     Jon Baer
+ *  @author     Thomas Ringate, Pedro Colla
+ */
+public class GetProcessor extends AIMLProcessor
+{
+    public static final String label = "get";
 
-         String varname  = p.getArg("name",tag.XMLAttr);
-         if (varname.equals("")) {
-            return "";
-         }
-         String response = Classifier.getValue(varname,ip);
 
-         /*
-          If the result is nothing and the tag is in the form
-          <get></get> return the evaluation of the content (which
-          could be empty itself)
-         */
-         if ( ( (response.equals("")) || (response.equals(Globals.EmptyDefault))) &&
-                (tag.XMLChild != null) ) {
-            response = p.evaluate(level++,ip,tag.XMLChild);
-         }
-
-         return response;
-	}
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    {
+        if (tag.XMLType == XMLNode.EMPTY)
+        {
+            String name = Toolkit.getAttributeValue(NAME, tag.XMLAttr);
+            if (name.equals(EMPTY_STRING))
+            {
+                throw new InvalidAIMLException("<get/> must have a non-empty name attribute.");
+            }
+            try
+            {
+                return ActiveMultiplexor.StaticSelf.getPredicateValue(name, userid);
+            }
+            catch (NoSuchPredicateException e)
+            {
+                return EMPTY_STRING;
+            }
+        }
+        else
+        {
+            throw new InvalidAIMLException("<get/> cannot have content!");
+        }
+    }
 }
 

@@ -1,9 +1,0 @@
-Alicebot.Net 4.0 Beta
-Release Notes by Jon Baer
-==================================
-
-
-==================================
-Copyright(C) 2001 - Jon Baer
-Alice AI Foundation
-http://www.alicebot.org

@@ -21,34 +21,26 @@ Execute the build.bat file.  The compile should end with a successful build.  If
 it does not, then stop right here, and solve the problem.
 
 STEP 5.
-Create a directory in the .\bot directory for your bot.  An example would be
-"md c:\ProgramD\bot\standard".  This is the directory where you will place all
-of your AIML files.
+There is already a subdirectory in the "./bots" directory called "standard".  This
+directory contains one file called "startup.xml".
 
 STEP 6.
-In your ProgramD root directory, edit the file "server.properties" to make sure
-the line server.engine.bot= points to the directory you created
-in STEP 5.  My example was "standard".
+In your ProgramD root directory, the file "server.properties" to make sure
+points programd.startup= points to "./bots/standard/startup.xml".  The startup.xml
+file, in turn, is set to load any aiml files that are in the "./bots/standard"
+subdirectory.  You can keep this setting, or create your own subdirectory in "./bots",
+copy the "startup.xml" file there.
 
 STEP 7.
-Now download an AIML set, and place it into this directory.
+Download an AIML set (such as the Standard AIML set) and place it into "./bots/standard",
+or into the new subdirectory of "./bots" that you created.
 
 STEP 8.
-Edit the "startup.xml" file to personalize your bot.  This file is found in the
-standard AIML set.  As a convenience, a copy of this file is also included in
-the .\bot directory.  If you are using your own AIML files, you may want to
-copy this file into your AIML directory, and edit it to point to your initial,
-main, startup AIML file.
-
-The <property> tag is not an AIML 1.0 tag, it is a bot implementation specific
-tag used by ProgramD.  It is only valid in the startup.xml file, and must come
-before any <learn> tags.
-With release 4.1.2 the bot has it's personality established with this XML
-<property> tag.
+Edit the "startup.xml" file to personalize your bot, if desired.
 
 STEP 9.
-Start your bot by executing the "server.bat", or "run.bat" file, and enjoy.
+Start your bot by executing "run.bat" (Windows) or "server.sh" (*nix), and enjoy.
 
 
 Thomas Ringate
-
+(amendments by Noel Bush)

@@ -1,0 +1,2 @@
+create table users (userid varchar(128), index userid (userid), password varchar(128));
+create table predicates (userid varchar(128), index userid (userid), name varchar(128), value blob);

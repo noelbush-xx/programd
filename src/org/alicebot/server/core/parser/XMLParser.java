@@ -1,37 +1,30 @@
-package org.alicebot.server.core.parser;
-
-/**
-Alice Program D
-Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-USA.
-
-@author  Richard Wallace
-@author  Jon Baer
-@author  Thomas Ringate/Pedro Colla
-@version 4.1.2
+/*
+    Alicebot Program D
+    Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+    
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+    USA.
 */
 
-import org.alicebot.server.core.*;
-import org.alicebot.server.core.util.*;
-import org.alicebot.server.core.parser.*;
-import org.alicebot.server.core.processor.*;
+/*
+    Code cleanup (4.1.3 [00] - October 2001, Noel Bush)
+    - made all imports explicit
+*/
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.net.*;
-//import java.util.*;
+package org.alicebot.server.core.parser;
 
-import javax.swing.*;
+import java.util.StringTokenizer;
+
+import org.alicebot.server.core.logging.Log;
+import org.alicebot.server.core.util.LinkedList;
+import org.alicebot.server.core.util.LinkedListItr;
 
 /**
   This class represent a simple XML Parser used by AIMLParser.java
@@ -476,8 +469,7 @@ public class XMLParser extends Object {
                          /*
                           This option shouldn't really never be exercised
                          */
-
-                         System.out.println("*** ERROR: INVALID TAG FORMAT ***");
+                         Log.userinfo("Invalid tag format.", Log.ERROR);
                          return null;
              }
 
@@ -629,8 +621,9 @@ public class XMLParser extends Object {
                     default     :
                                   break;
                    }
-                } else {
-                   System.out.println("*** ERROR: XML element is null ***");
+                } else
+                {
+                    Log.userinfo("XML element is null.", Log.ERROR);
                 }
                 llItr.advance();
              }
@@ -664,7 +657,15 @@ public class XMLParser extends Object {
              ll.makeEmpty();
              ll = XMLRead(XMLBuff,ll);
 
-             if (ll == null) {
+             if (ll == null)
+             {
+                Log.userinfo("Invalid XML:", Log.ERROR);
+                StringTokenizer lines = new StringTokenizer(XMLBuff, System.getProperty("line.separator"));
+                while (lines.hasMoreTokens())
+                {
+                    Log.userinfo(lines.nextToken(), Log.ERROR);
+                }
+
                 System.out.println("*** ERROR Invalid XML("+XMLBuff+") ***");
                 return null;
              }

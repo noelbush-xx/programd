@@ -1,50 +1,80 @@
+/*
+    Alicebot Program D
+    Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+    
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+    USA.
+*/
+
+/*
+    Code cleanup (4.1.3 [00] - October 2001, Noel Bush)
+    - formatting cleanup
+    - complete javadoc
+    - made all imports explicit
+*/
+
+/*
+    Further fixes and optimizations (4.1.3 [01] - November 2001, Noel Bush)
+    - moved method from Substituter to here
+*/
+
 package org.alicebot.server.core.processor;
 
-/**
-Alice Program D
-Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-USA.
-
-@author  Richard Wallace
-@author  Jon Baer
-@author  Thomas Ringate/Pedro Colla
-@version 4.1.2
-*/
-
 import java.util.StringTokenizer;
-import java.lang.*;
-import java.net.*;
-import java.io.*;
 
-import org.alicebot.server.core.*;
-import org.alicebot.server.core.util.*;
-import org.alicebot.server.core.parser.*;
+import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.XMLNode;
+
 
 /**
- FormalProcessor is the responsible to evaluate the FORMAL tag by
- evaluating the tags beneath it and turning the first letter of the
- result into uppercase.
- @version 4.1.1
- @author  Thomas Ringate/Pedro Colla
-*/
-public class FormalProcessor implements AIMLProcessor, Serializable {
-        public String processAIML(int level, String ip, XMLNode tag, AIMLParser p) {
+ *  Handles a
+ *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-formal">formal</a></code>
+ *  element.
+ *
+ *  @version    4.1.3
+ *  @author     Jon Baer
+ */
+public class FormalProcessor extends AIMLProcessor
+{
+    public static final String label = "formal";
 
-         String response = p.evaluate(level++,ip,tag.XMLChild);
-         if (response.equals("")) {
-            return response;
-         }
-         response = Substituter.formal(response);
-         return response;
-	}
+    // Convenience constants.
+    private static final String SPACE = " ";
+
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    {
+        if (tag.XMLType == XMLNode.TAG)
+        {
+            // We use a temporary variable here to avoid an unnecessary call to Substituter.formal().
+            String response = parser.evaluate(level++, userid, tag.XMLChild);
+            if (response.equals(EMPTY_STRING))
+            {
+                return response;
+            }
+            StringTokenizer tokenizer = new StringTokenizer(response, SPACE);
+            StringBuffer result = new StringBuffer(response.length());  
+            while (tokenizer.hasMoreTokens())
+            {
+                String word = tokenizer.nextToken();
+                if (result.length() > 0)
+                {
+                    result.append(SPACE);
+                }
+                result.append(word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase());
+            }
+            return result.toString();
+        }
+        else
+        {
+            throw new InvalidAIMLException("<formal></formal> must have content!");
+        }
+    }
 }
 

@@ -1,702 +1,904 @@
-package org.alicebot.server.core;
-
-/**
-Alice Program D
-Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-USA.
-
-@author  Richard Wallace
-@author  Jon Baer
-@author  Thomas Ringate/Pedro Colla
-@version 4.1.2
+/*
+    Alicebot Program D
+    Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+    
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+    USA.
 */
 
-import java.util.*;
-import java.text.*;
-import java.lang.*;
-import java.net.*;
-import java.io.*;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+/*
+    Code cleanup (4.1.3 [00] - October 2001, Noel Bush)
+    - formatting cleanup
+    - general grammar fixes
+    - complete javadoc
+    - made all imports explicit
+    - removed/commented out all unused constants
+    - removed code fragments whose results weren't being used
+    - put some constants into action
+    - removed restart method
+    - replaced some uses of String with StringBuffers (in checkpoint)
+    - renamed single-letter variables with more informative names
+    - removed debugging messages (even those commented out!)
+    - deprecated inefficient add methods and inserted a new one for future use
+    - changed class to implement Runnable rather than extend Thread (since it does
+      not significantly implement new behavior for Thread)
+    - changed all file path handling to expect/use canonical
+    - removed note about http server (doesn't belong here -- went to AliceServer)
+    - removed loading from here (went to AliceServer)
+*/
 
-import org.alicebot.server.core.loader.*;
-import org.alicebot.server.core.node.*;
-import org.alicebot.server.core.parser.*;
-import org.alicebot.server.core.responder.*;
-import org.alicebot.server.core.util.*;
+/*
+    Further fixes and optimizations (4.1.3 [01] - November 2001, Noel Bush)
+    - fixed bug in which values matched by _ failed to be captured
+    - removed MASTER_MATCH (and corresponding dependencies elsewhere)
+    - sorted constants better
+    - removed HNAME, UNDEFINED, SUBGRAPH, TERMINAL,
+      TOTAL_NODE_COUNT, TERMINAL_COUNT, FILENAME_SET, CURRENT_TOPIC (unused)
+    - removed deprecated methods already
+    - cleaned up match state tracking (use one int set to a state constant
+      instead of three booleans!!!)
+    - more adjustment of variables: now only actual constants are public
+    - added getTotalCategories() method (otherwise could have been changed outside)
+    - reworked load() to (hopefully) do a better job with paths
+*/
+
+/*
+    More fixes (4.1.3 [02] - November 2001, Noel Bush
+    - made match() ensure no empty that or topic
+    - added use of NoMatchException
+    - removed notice of AIMLWatcher status from here (to AliceServer)
+    - load method now adds file to AIMLWatcher
+*/
+
+/*
+    Targeting re-integration (4.1.3 [04] - December 2001, Noel Bush)
+*/
+
+package org.alicebot.server.core;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.TreeSet;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import org.alicebot.server.core.ActiveMultiplexor;
+import org.alicebot.server.core.loader.AIMLLoader;
+import org.alicebot.server.core.loader.AIMLWatcher;
+import org.alicebot.server.core.logging.Log;
+import org.alicebot.server.core.logging.Trace;
+import org.alicebot.server.core.node.Nodemapper;
+import org.alicebot.server.core.node.Nodemaster;
+import org.alicebot.server.core.parser.AIMLReader;
+import org.alicebot.server.core.responder.TextResponder;
+import org.alicebot.server.core.targeting.TargetMaster;
+import org.alicebot.server.core.util.Match;
+import org.alicebot.server.core.util.NoMatchException;
+import org.alicebot.server.core.util.Substituter;
+import org.alicebot.server.core.util.Toolkit;
 
 
 /**
- * The Graphmaster is the "brain" of ALICE.  
- * It holds all the patterns and subpatterns and its associated templates.
+ *  <p>
+ *  The <code>Graphmaster</code> is the &quot;brain&quot; of an Alicebot.  
+ *  It consists of a collection of nodes called <code>Nodemapper</code>s.
+ *  These <code>Nodemapper</code>s map the branches from each node.
+ *  The branches are either single words or wildcards.
+ *  </p>
+ *  <p>
+ *  The root of the <code>Graphmaster</code> is a <code>Nodemapper</code>
+ *  with many branches, one for each of the first words of all the patterns
+ *  (40,000 in the case of the A.L.I.C.E. brain). The number of leaf nodes
+ *  in the graph is equal to the number of categories, and each leaf node
+ *  contains the &lt;template&gt; tag.
+ *  </p>
  *
  * @author Richard Wallace, Jon Baer
  * @author Thomas Ringate/Pedro Colla
- * @version 4.1.1
+ * @version 4.1.2
  */
+public class Graphmaster implements Runnable
+{
+    // Public access informational constants.
 
-public class Graphmaster extends Thread implements Serializable {
-	
-	/** An undefined. */
-	public static final String UNDEFINED="UNDEFINED"; 
-	
-	/** An unknown. */
-	public static final String UNKNOWN = "unknown";
-	
-	/** A terminal. */
-	public static final String TERMINAL = "<terminal>";
-	
-	/** A subgraph. */
-	public static final String SUBGRAPH = "<subgraph>";
-	
-	/** A pattern. */
-	public static final String PATTERN = "<pattern>";
-	
-	/** A template. */
-	public static final String TEMPLATE = "<template>";
-	
-	/** A that. */
-	public static final String THAT = "<that>";
-	
-	/** A topic. */
-	public static final String TOPIC = "<topic>";
-	
-	/** A star (*). */
-	public static final String STAR = "<star>";
-	
-	/** A type (*). */
-	public static final String TYPE = "<type>";
-	
-	/** The filename. */
-	public static final String FILENAME = "<filename>";
-	
-	/** True string literal. */
-	public static final String TRUE = "true";
-	
-	/** The "*" used in matching. */
-	public static final String ASTERICK = "*";
-	
-	/** The "_" used in matching. */
-	public static final String UNDERSCORE = "_";
-	
-	/** The "" used in matching. */
-	public static final String EMPTY = "";
-	
-	/** A spaced used in production of string literals. */
-	public static final String SPACE = " ";
-	
-	/** The root nodemaster. */
-	public static Nodemapper ROOT = new Nodemaster(); 
-	
-	/** The total number of categories read. */
-	public static int TOTAL_CATEGORIES = 0; 
-	
-	/** The total number of nodes in the Graphmaster. */
-	public static int TOTAL_NODE_COUNT = 0; 
-	
-	/** The total number of terminal nodes in the Graphmaster. */
-	public static int TERMINAL_COUNT = 0; 
-	
-	/** The max depth allowed in the Graphmaster. */
-	public static int MAX_DEPTH = 24; 
-	
-	/** The number of branches at each depth. */
-	public static int BRANCH_COUNT[] = new int[MAX_DEPTH];
-	
-	/** The number of nodes at each depth. */
-	public static int NODE_COUNT[] = new int[MAX_DEPTH];
+    /** Copyright notice. */
+    public static final String[] COPYRIGHT = {"Alicebot Program D (c) 2001 A.L.I.C.E. AI Foundation",
+                                              "All Rights Reserved.",
+                                              "This program is free software; you can redistribute it and/or",
+                                              "modify it under the terms of the GNU General Public License",
+                                              "as published by the Free Software Foundation; either version 2",
+                                              "of the License, or (at your option) any later version."};
 
-	public static String THAT_PATTERN;
-	public static String INPUT_PATTERN;
-	public static String TOPIC_PATTERN;
+    /** Version of this package. */
+    public static final String VERSION = "4.1.3";
 
-        /**
-          Multiple stars on INPUT detected during the last match
-        */
-        public static Vector INPUT_STAR = null;
+    /** Build Number of this package (internal regression test control). */
+    public static final String BUILD = "04";
 
-        /**
-          Multiple stars on THAT detected during the last match
-        */
-        public static Vector THAT_STAR  = null;
+    /** The maximum depth allowed in the <code>Graphmaster</code>. */
+    public static int MAX_DEPTH = 24; 
 
-        /**
-          Multiple stars on TOPIC detected during the last match
-        */
-        public static Vector TOPIC_STAR = null;
 
-        /**
-          Match object to store the results of the last match
-          performed
-        */
-        public static Match  MASTER_MATCH = null;
+    // Public access convenience constants.
 
-	/** The input type. */
-	public static String INPUT_TYPE;
-	
-	/** The filename set. */
-	public static StringSet FILENAME_SET;
-	
-	/** The host name. */
-	public static String HNAME;
-	
-	/** The that nodemapper hashtable. */
-	public static Hashtable THAT_NODEMAPPER = new Hashtable();
-	
-	/** The targets. */
-	public static StringVoter TARGETS;
-	
-	/** The activations. */
-	public static StringVoter ACTIVATIONS;
-	
-	/** The max targets for checkpoint. */
-	public static final int MAX_TARGETS = 1000; 
-	
-	/** The target size (due to memory limits). */
-	public static final int TARGET_SIZE = 100000; 
-	
-	/** The branch count. */
-	public static String THE_BRANCH_COUNT;
-	
-	/** The mode to run the Graphmaster in. */
-	public static int MODE;
+    /** A template marker. */
+    public static final String TEMPLATE = "<template>";
 
-        /** The current Topic of the conversation */  //4.1.1 b5 PEC 09-2001
-        public static String CURRENT_TOPIC = "";
-	
-	/** Server mode. */
-	public static final int SERVER = 1;
-	
-	/** Console mode. */
-	public static final int CONSOLE = 2;
+    /** A that marker. */
+    public static final String THAT = "<that>";
 
-//Add (4.0.3 b1) PEC 09-2001 Version & Build Global Values
+    /** A topic marker. */
+    public static final String TOPIC = "<topic>";
 
-        /** Version of this package */
-        public static final String VERSION = "4.1.2";
+    /** A filename marker. */
+    public static final String FILENAME = "<filename>";
 
-        /** Build Number of this package (internal regression test control) */
-        public static final String BUILD = "06";
+    /** The <code>*</code> wildcard. */
+    public static final String ASTERISK = "*";
 
-        /** CopyRight Notice */
-        public static final String COPYRIGHT = "AliceBot Server (c) 2001 A.L.I.C.E. A.I Foundation";
+    /** The <code>_</code> wildcard. */
+    public static final String UNDERSCORE = "_";
 
-        /** Load Time Marker */
-        public static boolean loadtime = true;
-//EAdd
+    /** A path separator. */
+    public static final String PATH_SEPARATOR = ":";
+    
+    /** An empty string. */
+    public static final String EMPTY_STRING = "";
 
-	public Graphmaster() {}
-	
-	public Graphmaster(int mode) {
-		this.MODE = mode;
-	}
+    /** The start of a marker. */
+    public static final String MARKER_START = "<";
 
-        /** Add a new path topic-that-pattern to the Graphmaster */
-	public static Nodemapper
-		add(String pattern, String that, String topic) {
-		/////////////////////////////////////////////
-		String inPattern = "";
-		char[] c = (new String(pattern)).toCharArray();
-		for (int x = 0; x < c.length; x++) {
-			inPattern = inPattern + Character.getNumericValue(c[x]);
-		}
-		/////////////////////////////////////////////
+    /** The end of a marker. */
+    public static final String MARKER_END = ">";
 
-		String path = pattern+" <that> "+that+" <topic> "+topic;
-                //System.out.println("*** GRAPHMASTER ADD: Pattern("+path+") ***");
-		Nodemapper node = add(path, ROOT, 0);
-		return(node);
-	} 
+    /** A space. */
+    public static final String SPACE = " ";
 
-        /** Add a child node to the Graphmaster */
-	public static Nodemapper
-		add(String sentence, Nodemapper parent, int depth) {
-		StringTokenizer st = new StringTokenizer(sentence);
-		int count = st.countTokens();
-		return add(st, parent, count, depth, sentence);
-	} // Graphmaster.add 3-args
-	
-	public static Nodemapper
-		add(StringTokenizer st, Nodemapper parent, int count, int depth, String sentence) {
-		if (count == 0) {
-			return parent;
-		} // if (count == 0)
-		else {
-			String word = st.nextToken();
-			Nodemapper d;
-			if (parent.containsKey(word)) 
-				d = (Nodemapper)parent.get(word);
-			else {
-				d = new Nodemaster();
-				parent.put(word, d);
-			}
-			return add(st, d, count-1, depth+1, sentence);
-		} 
-	} 
-/* =========================================================================*/
-/** match
-    Are the methods involved in the pattern matching process
-    Adapted from ProgramB code excerpt provided by Dr. R.Wallace,
-    targetting has been removed from this version since it will be
-    updated by Dr. R.Wallace when the new version become released
-*/
 
-        /*=====================================================
-          High Level Prototype of the method
-          Used for external access
-          =====================================================*/
-        public static Match match(String input, String that, String topic) {
+    // State constants
 
-         Match M;
+    /** Match state: in <code>input</code> portion of path. */
+    private static final int S_INPUT = 0;
 
-         /*
-          Adapt the input to be conforming with the way paths are
-          stored in the Graphmaster
-              {input} <that> {that} <topic> {topic}
-         */
-         String path  = input+" <that> "+that+" <topic> "+topic;
-         CURRENT_TOPIC= topic.trim();
-         //System.out.println("*** GRAPHMASTER START: Path("+path+") Current Topic("+CURRENT_TOPIC+") ***");
+    /** Match state: in <code>that</code> portion of path. */
+    private static final int S_THAT  = 1;
 
-         /*
-          Perform the actual matching
-         */
-         M = match(ROOT, ROOT, path, "", "",true,false,false);
+    /** Match state: in <code>topic</code> portion of path. */
+    private static final int S_TOPIC = 2;
 
-         /*
-          Format the path
-         */
-         path = Substituter.replace("<that>",":",path);
-         path = Substituter.replace("<topic>",":",path);
-         M.path = M.inputPattern + " : " + M.thatPattern + " : " +
-                  M.topicPattern + " : " + path;
 
-         return M;
+    // Class variables.
+
+    /** The root {@link Nodemaster}. */
+    private static Nodemapper ROOT = new Nodemaster(); 
+
+    /** The total number of categories read. */
+    private static int TOTAL_CATEGORIES = 0; 
+
+    /** The number of branches at each depth. */
+    private static int BRANCH_COUNT[] = new int[MAX_DEPTH];
+
+    /** The number of nodes at each depth. */
+    private static int NODE_COUNT[] = new int[MAX_DEPTH];
+
+    /** The &lt;that/&gt; {@link Nodemapper Nodemapper} Hashtable. */
+    private static Hashtable THAT_NODEMAPPER = new Hashtable();
+
+    /** The branch count. */
+    private static String THE_BRANCH_COUNT;
+
+    /** Load time marker. */
+    private static boolean loadtime = true;
+
+    /** Set of files loaded. */
+    private static HashSet loadedFiles = new HashSet();
+
+    /** Default name of the local host. */
+    private static final String HOSTNAME = Globals.getHostName();
+
+    /** Generic client name. */
+    public static final String GENERIC_CLIENT_NAME = "unknown client";
+
+    /** Message displayed after loading. */
+    private static String loadMessage;
+
+    /** The current working directory (used by load). */
+    private static String workingDirectory = System.getProperty("user.dir");
+
+
+    // Constants used by targeting.
+
+    /** Set of activated nodes. */
+    private static Set ACTIVATED_NODES = new HashSet();
+
+    /** Targets filename. */
+    private static final String TARGETS_DATA_PATH = Globals.getTargetsDataPath();
+
+    /** The string &quot;undefined&quot;. */
+    private static final String UNDEFINED = "undefined";
+
+    /** Activations marker. */
+    private static final String ACTIVATIONS = "<activations>";
+
+
+    /**
+     *  Creates a new <code>Graphmaster</code>.
+     */
+    public Graphmaster()
+    {
+    }
+
+
+    /**
+     *  Creates a new <code>Graphmaster</code>
+     *  with a special message that will be displayed
+     *  after loading.
+     *
+     *  @param
+     */
+    public Graphmaster(String message)
+    {
+        this.loadMessage = message;
+    }
+
+
+    /**
+     *  Adds a new pattern-that-topic path to the <code>Graphmaster</code> root.
+     *
+     *  @param pattern  &lt;pattern/&gt; path component
+     *  @param that     &lt;that/&gt; path component
+     *  @param topic    &lt;topic/&gt; path component
+     *
+     *  @return <code>Nodemapper</code> which is the result of adding the path.
+     */
+    public static Nodemapper add(String pattern, String that, String topic)
+    {
+        Nodemapper node = add(new StringTokenizer(pattern + SPACE +
+                                                  THAT + SPACE + that + SPACE +
+                                                  TOPIC + SPACE + topic), ROOT);
+        return(node);
+    } 
+
+
+    /**
+     *  Adds a new path to the <code>Graphmaster</code> at a given node.
+     *
+     *  @since  4.1.3
+     *
+     *  @param path     the path to add
+     *  @param parent   the <code>Nodemapper</code> parent to which the child should be appended
+     *
+     *  @return <code>Nodemapper</code> which is the result of adding the node
+     */
+    public static Nodemapper add(StringTokenizer tokenizer, Nodemapper parent)
+    {
+        // If there are no words in the path, return the parent node
+        if (tokenizer.countTokens() == 0)
+        {
+            return parent;
+        }
+        else
+        {
+            // Otherwise, for each word,
+            String word = tokenizer.nextToken();
+            Nodemapper node;
+
+            // if the parent contains this word, get the node with the word
+            if (parent.containsKey(word))
+            {
+                node = (Nodemapper)parent.get(word);
+            }
+            // otherwise create a new node with this word
+            else
+            {
+                node = new Nodemaster();
+                parent.put(word, node);
+            }
+
+            // Return the result of adding the new node to the parent.
+            return add(tokenizer, node);
+        } 
+    } 
+
+    
+    /**
+     *  <p>
+     *  Searches for a match in the <code>Graphmaster</code> to a given path.
+     *  </p>
+     *  <p>
+     *  This is a high-level prototype, used for external access.
+     *  </p>
+     *
+     *  @see #match(Nodemapper, Nodemapper, String, String, String, boolean, boolean, boolean)
+     *
+     *  @param pattern  &lt;pattern/&gt; path component
+     *  @param that     &lt;that/&gt; path component
+     *  @param topic    &lt;topic/&gt; path component
+     *
+     *  @return the resulting <code>Match</code> object
+     *
+     *  @throws NoMatchException if no match was found
+     */
+    public static Match match(String input, String that, String topic) throws NoMatchException
+    {
+        Match match;
+
+        // No path component should be empty.
+        if (input.length() < 1)
+        {
+            input = ASTERISK;
+        }
+        if (that.length() < 1)
+        {
+            that = ASTERISK;
+        }
+        if (topic.length() < 1)
+        {
+            topic = ASTERISK;
         }
 
-        /*=====================================================
-          Low Level Prototype of the method, used for internal
-          recursion.
-          Extracted from ProgramB, interface modified to allow
-          the capture of THATSTAR and TOPICSTAR
-          =====================================================*/
-        public static Match match(Nodemapper node, Nodemapper parent,
-                String input, String star, String path, boolean insideInput, boolean insideThat, boolean insideTopic) {
-		
-		StringTokenizer st = new StringTokenizer(input);
-		int count = st.countTokens();
-		Match M;
-		if (count == 0) {
-			if (node.containsKey("<template>")) {
-                           M = new Match();
-                           M.topicStar.push(star.trim());
-                           M.topicPattern=path.trim();
-                           M.node = node;
-                           return M;
-			} // if
-			else return null;
-		} // if
-		String word = st.nextToken(); String tail = "";
-		if (st.hasMoreTokens())
-			tail = input.substring(word.length()+1, input.length());
-		if (node.containsKey("_")) {
-                        M = match((Nodemapper)node.get("_"), node, tail, word, path+" _",insideInput,insideThat,insideTopic);
-			if (M != null) return M;
-		} // if
-		
-		if (node.containsKey(word)) {
-                        if (word.startsWith("<")) {
+        /*  Adapt the input to conform with the way paths are
+            stored in the Graphmaster:
+                {input} <that> {that} <topic> {topic}
+        */
+        String inputPath = input + SPACE + THAT + SPACE + that + SPACE + TOPIC + SPACE + topic;
 
-                           /* Define which part of the path we're working with */
+        //  Perform the actual matching (start inside input)
+        match = match(ROOT, ROOT, inputPath, EMPTY_STRING, EMPTY_STRING, S_INPUT);
 
-                           if (word.compareTo("<that>") == 0) {
-                              insideInput= false;
-                              insideThat = true;
-                              insideTopic= false;
-                           } else {
-                             if (word.compareTo("<topic>") == 0) {
-                                insideInput = false;
-                                insideThat  = false;
-                                insideTopic = true;
-                             }
-                           }
-
-                           M = match((Nodemapper)node.get(word), node, tail, "", "",insideInput,insideThat,insideTopic);
-                        } else {
-                           M = match((Nodemapper)node.get(word), node, tail, star, path+" "+word,insideInput,insideThat,insideTopic);
-                        }
-			
-			if (M != null) {
-				if (word.compareTo("<that>")==0) {
-					insideInput = false;
-                                        insideThat  = true;
-                                        insideTopic = false;
-					M.inputStar.push(star.trim());
-					M.inputPattern = path.trim();
-				} // if
-				else if (word.compareTo("<topic>")==0) {
-                                        //System.out.println("*** GRAPHMASTER THAT END/TOPIC START: PUSH Star("+star+") Path("+path+") ***");
-					insideInput = false;
-                                        insideThat  = false;
-                                        insideTopic = true;
-					M.thatStar.push(star.trim());
-					M.thatPattern = path.trim();
-				} else {
-					//
-				}
-				return M;
-			} // if
-			
-		} // if node contains word
-         
-		if (node.containsKey("*")) {
-                        M = match((Nodemapper)node.get("*"), node, tail, word, path+" *",insideInput,insideThat,insideTopic);
-			if (M != null) {
-
-                                //System.out.println("*** GRAPHMASTER (*): Path("+path+" *) FLAGS insideInput("+insideInput+") insideThat("+insideThat+") insideTopic("+insideTopic+") ***");
-
-                                /* Capture and push intermediate stars for INPUT, THAT, TOPIC */
-				if (insideInput) {
-                                   if (star.length() > 0) {
-                                      //System.out.println("*** GRAPHMASTER (*): PUSH INPUTStar("+star+") Path("+path+") ***");
-                                      M.inputStar.push(star.trim());
-                                   }
-                                } else {
-                                  if (insideThat) {
-                                     if (star.length() > 0) {
-                                        //System.out.println("*** GRAPHMASTER (*): PUSH THATStar("+star+") Path("+path+") ***");
-                                        M.thatStar.push(star.trim());
-                                     }
-                                  } else {
-                                    if (insideTopic) {
-                                       if (star.length() > 0) {
-                                          //System.out.println("*** GRAPHMASTER (*): PUSH TOPICStar("+star+") Path("+path+") ***");
-                                          M.topicStar.push(star.trim());
-                                       }
-                                    }
-                                  }
-                                }
-                                //System.out.println("*** GRAPHMASTER (*): Star("+star+") Path("+path+") ***");
-				return M;
-			}
-		} // if node contains *
-                if (node.equals(parent.get("*")) || node.equals(parent.get("_"))) {
-                        //System.out.println("*** GRAPHMASTER (Parent *): Star("+star+") Path("+path+") ***");
-                        return match(node, parent, tail, star+" "+word, path,insideInput,insideThat,insideTopic);
+        if (match != null)
+        {
+            // Record activation, if targeting is in use.
+            if (Globals.useTargeting())
+            {
+                Nodemapper matchNodemapper = match.getNodemapper();
+                if (matchNodemapper == null)
+                {
+                    Trace.devinfo("match nodemapper is null");
                 }
-		
-		return null;
-	} // match
-
-    public static int activationCount = 0;
-
-
-/* =========================================================================*/
-
-	
-	public static boolean remove(String pattern, String that, String topic) {
-		/////////////////////////////////////////////
-		String inPattern = "";
-		char[] c = (new String(pattern)).toCharArray();
-		for (int x = 0; x < c.length; x++) {
-			inPattern = inPattern + Character.getNumericValue(c[x]);
-		}
-		/////////////////////////////////////////////
-		String path = pattern+" <that> "+that+" <topic> "+topic;
-		boolean p = remove(path, ROOT, 0);
-		return(p);
-	} 
-	
-	public static boolean remove(String sentence, Nodemapper parent, int depth) {
-		StringTokenizer st = new StringTokenizer(sentence);
-		int count = st.countTokens();
-		return remove(st, parent, count, depth, sentence);
-	} 
-	
-	public static boolean remove(StringTokenizer st, Nodemapper parent, int count, int depth, String sentence) {
-		if (count == 0) {
-			return true;
-		} // if (count == 0)
-		else {
-			String word = st.nextToken();
-			Nodemapper d;
-			if (parent.containsKey(word))
-				d = (Nodemapper)parent.get(word);
-			else {
-				return false; // the sentence was not in the graph
-			} // else
-			boolean p = remove(st, d, count-1, depth+1, sentence);
-			if (p && d.keySet().size()==1)
-				parent.put(word, null);  // should be parent.remove(word);
-			return p;
-		} 
-	} 
-	
-	/**
-	 * <p>
-	 * The main entry into the Graphmaster thread.
-	 * You must feed it with the initial startup file (Startup.aiml).
-	 * </p>
-	 */
-
-	public void run() {
-                Globals._version = VERSION + " Build("+BUILD+")";  //4.0.3 b4
-
-		Graphmaster.load(Globals.getBotFile());
-		Graphmaster.load(Globals.getTargetFile());
-                Globals._size    = String.valueOf(Graphmaster.TOTAL_CATEGORIES); //4.0.3 b4
-
-                System.out.println(COPYRIGHT+" Version "+Globals.getversion()); //4.1.1 b3
-
-//4.1.1 b14     System.out.println(Globals.getBotName() + " is thinking with " + Globals.getsize() + "."); //4.0.3 b4 
-                System.out.println(Globals.getValue("name") + " is thinking with " + Globals.getsize() + "."); //4.0.3 b4 
-
-
-                loadtime = false; //4.1.1 b8 PEC 09-2001 Mark the end of the Load Time
-
-                /*Remove 4.0.3 b2 PEC 09-2001
-		System.out.println("Try http://localhost:2001 for server");
-                */
-		//System.out.println("Try http://localhost:2002 for admin");
-		try {
-                        System.out.println("Try http://" + InetAddress.getLocalHost().getHostAddress() +":2001"); //Change 4.0.3 b2
-		} catch (Exception e) {}
-
-                //Clean up all previous topics on startup (4.1.1 b4 PEC 09-2001)
-                Classifier.cleanValue("topic","");
-
-                if (Globals.isWatcherActive()) {  //4.1.2 b1 Watcher is optional
-                   // This is a simple Alice shell that is useful for debugging your AIML
-                   AIMLWatcher watcher = new AIMLWatcher();
-                   watcher.start();
+                else
+                {
+                    Set activations = (Set)matchNodemapper.get(ACTIVATIONS);
+                    if (activations == null)
+                    {
+                        activations = new HashSet();
+                    }
+                    String path = match.getPath() + SPACE + PATH_SEPARATOR + SPACE +
+                                  Substituter.replace(Graphmaster.TOPIC, Graphmaster.PATH_SEPARATOR,
+                                      Substituter.replace(Graphmaster.THAT, Graphmaster.PATH_SEPARATOR, inputPath));
+                    if (!activations.contains(path))
+                    {
+                        activations.add(path);
+                        match.getNodemapper().put(ACTIVATIONS, activations);
+                        ACTIVATED_NODES.add(match.getNodemapper());
+                    }
                 }
-
-		if (Globals.showShell()) {
-			
-			System.out.println("Type 'exit' to shutdown server");
-					
-			try {
-				// 02-Sep-01: NB: Replaced deprecated DataInputStream with BufferedInputStream
-				//DataInputStream din = new DataInputStream(System.in);
-                                BufferedReader din = new BufferedReader(new InputStreamReader(System.in));
-				
-				String name = Substituter.formal(Classifier.getValue("name", "localhost"));
-				
-				if (name.equals("") || name.equals("?")) name = "localhost";
-				
-				System.out.print(name + "> ");
-				
-				while (true) {
-					
-					String theLine = din.readLine();
-                                        /* Remove 4.0.3 b2 PEC 09-2001
-					System.out.println("theLine is " + theLine);
-                                        */
-					String response = "";
-					
-					if (theLine == null) break;  // end of stream
-					
-					if (theLine.toLowerCase().equals("exit") || theLine.toLowerCase().equals("bye") || theLine.toLowerCase().equals("shutdown")) System.exit(0); // . on line by itself
-					
-					if (theLine.toLowerCase().equals("startup")) break;
-					
-					if (theLine.toLowerCase().equals("connect to localhost")) Classifier.setValue("connect", "localhost", "localhost");
-					
-					String connection = Classifier.getValue("connect", "localhost");
-					
-					connection = Substituter.replace("-", ".", connection);
-					
-                                        if ( (connection.equals("") ) ||
-                                             (connection.equals("localhost")) ||
-                                             (connection.equals(Globals.EmptyDefault)) ) {  //4.1.2 b2
-						
-						// ask local alicebot
-						response = Classifier.doResponse(theLine, "localhost", new TextResponder());
-						
-					} else {
-						
-						// ask remote alicebot
-						
-					}
-					
-                                        //4.1.1 b14 --> System.out.print(Globals.getBotName()+ "> " + response + "\n");
-
-                                        /**
-                                          Add a little filter to remove the annoying <br /> tag
-                                          from the console. A more elegant address for the issue should
-                                          be to handle the tag at the parser, but it's not AIML and
-                                          that would broke HTML responses so it's implemented as a
-                                          quick hack here. 4.1.1 b14 */
-                                        if (!Globals.showConsole()) {
-                                           response = Toolkit.fixBR(response);
-                                        }
-                                        System.out.print(Globals.getValue("name")+ "> " + response + "\n");  
-
-
-					// Synthesizer.speak(response);
-					
-					name = Substituter.formal(Classifier.getValue("name", "localhost"));
-					
-					if (name.equals("") || name.equals("?")) name = "localhost";
-					
-					System.out.print(name + "> ");
-					
-				}    
-				
-			}
-			
-			catch (IOException e) {
-				
-				System.err.println(e);   
-				
-			}
-			
-		}
-		
-	}
-	
-	public static Set ACTIVATED_NODES = new HashSet();
-	
-	public static void checkpoint() {
-		try {
-			PrintStream ps = new PrintStream(new FileOutputStream("targets/TARGETS.data"), true);
-			Iterator x = ACTIVATED_NODES.iterator();
-			Set Z = new TreeSet();
-			while (x.hasNext()) {
-				Nodemapper n = (Nodemapper)x.next();
-				String template = (String)n.get("<template>");
-				if (template.indexOf("<sr") < 0 || template.indexOf("FIND") >= 0)
-				{
-					Set S = (Set)n.get("<activations>");
-					Iterator y = S.iterator();
-					while (y.hasNext()) {
-						String path = (String)y.next();
-						String pattern = path.substring(0, path.indexOf(":")-1);
-        					pattern = pattern.trim();
-						if (pattern.indexOf("*") >= 0) {
-							String input = path;
-							while (input.indexOf(":") >= 0) {
-								input = input.substring(input.indexOf(":")+1);
-							}
-							input = input.substring(0, input.indexOf("<")-1);
-							input = input.trim();
-							StringTokenizer st = new StringTokenizer(pattern);
-							StringTokenizer ut = new StringTokenizer(input);
-							String target="";
-							while (st.hasMoreTokens()) {
-								String s = st.nextToken();
-								String u = ut.nextToken();
-								target = target + " " +u;
-							}
-							if (ut.hasMoreTokens()) target = target + " *";
-							target = target.trim();
-							if (!pattern.startsWith("FIND ") &&
-								!pattern.startsWith("MY NAME IS ")
-								)
-								Z.add(target);
-						} 
-					}
-				} 
-			} 
-			x = Z.iterator();
-			StringBuffer buffer = new StringBuffer();
-			while (x.hasNext()) ps.println(x.next());
-			ps.close();
-			
-			if (Z.size() > 10000) {
-				x = ACTIVATED_NODES.iterator();
-				while (x.hasNext()) {
-					Nodemapper n = (Nodemapper)x.next();
-					n.put("<activations>", null);
-				}
-				ACTIVATED_NODES = new TreeSet();
-				
-			} 
-		} catch (Exception e) { System.out.println("CHECKPOINT "+e); }
-	}
-	
-	public void restart() {
-		ROOT = new Nodemaster();
-		System.gc();
-		TOTAL_CATEGORIES = 0;
-		load("*");
-	}
-	
-	public static void unload(String fname) {
-		// To do
-	}
-
-        /**
-        This method loads the Graphmaster with the content of the supplied
-        file parsing the AIML content of it */
-
-	public static void load(String fname) {
-
-		if (fname.equals("*")) {
-			
-			File dir = new File(fname = "bots" + System.getProperty("file.separator") + Globals.getBotName());
-			String[] allFiles = dir.list();
-			
-			for (int x = 0; x < allFiles.length; x++) {
-				if (allFiles[x].endsWith(".aiml") && !allFiles[x].equals(Globals.getServerProps().getProperty("server.engine.startup"))) {
-                                   load(allFiles[x]);
-                                 }
-			}
-			
-			return;
-			
-		}
-		
-		BufferedReader br = null;
-		
-		try {
-                        boolean fload = true;
-
-			if (fname.startsWith("http:") || fname.startsWith("Http:"))
-			{
-				URL url = new URL(fname);
-				br = new BufferedReader(new InputStreamReader(url.openStream()));
-			} else {
-                                //Fix 4.0.3 b2 PEC 09-2001 Verify if the file exists, could be read
-                                //and have a length > 0
-                                //Fix 4.0.3 b8 moved here not to break remote loading
-                                File AIMLFile = new File(fname);
-                                if ((AIMLFile.length()   >  0   ) &&
-                                    (AIMLFile.exists()   == true) &&
-                                    (AIMLFile.canRead()  == true)) {
-
-                                    // File is alright to load
-                                    FileInputStream fis = new FileInputStream(fname); 
-                                    InputStreamReader isr = new InputStreamReader(fis);
-                                    br = new BufferedReader(isr);
-
-                                } else {
-                                  System.out.println("*** FILE("+fname+") can not be opened, ignored");
-                                  fload = false;
-                                }
-                                AIMLFile = null;
-                                //End of Fix
-			}
-
-//Fix 4.0.3 b8 PEC 09-2001
-                        if ( fload == true ) {
-                           AIMLReader alice = new AIMLReader(fname, br, new AIMLLoader(fname));
-                           alice.read();
-                        }
-//End of Fix
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-		}	
-		
+            }
+            return match;
         }
+        else
+        {
+            throw new NoMatchException(inputPath);
+        }
+    }
+
+
+    /**
+     *  <p>
+     *  Searches for a match in the <code>Graphmaster</code> to a given path.
+     *  </p>
+     *  <p>
+     *  This is a low-level prototype, used for internal recursion.
+     *  </p>
+     *
+     *  @see #match(String, String, String)
+     *
+     *  @param nodemapper   the nodemapper where we start matching
+     *  @param parent       the parent of the nodemapper where we start matching
+     *  @param input        the whole input as a String
+     *  @param star         contents absorbed by a wildcard
+     *  @param path         the whole path as a String
+     *  @param matchState   state variable tracking which part of the path we're in
+     *
+     *  @return the resulting <code>Match</code> object
+     */
+    public static Match match(Nodemapper nodemapper, Nodemapper parent,
+                              String input, String star, String path, int matchState)
+    {
+        // Tokenize the input (on whitespace).
+        StringTokenizer tokenizer = new StringTokenizer(input);
+
+        // The match object that will be returned.
+        Match match;
+
+        // If no tokens in the input, see if this is a template.
+        if (tokenizer.countTokens() == 0)
+        {
+            // If so, the star is from the topic, and the path component is the topic.
+            if (nodemapper.containsKey(TEMPLATE))
+            {
+                match = new Match();
+                match.pushTopicStar(star.trim());
+                match.setTopic(path.trim());
+                match.setNodemapper(nodemapper);
+                return match;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        String word = tokenizer.nextToken();
+        String tail = EMPTY_STRING;
+
+        if (tokenizer.hasMoreTokens())
+        {
+            tail = input.substring(word.length() + 1, input.length());
+        }
+
+        // Process _ wildcards.
+        if (nodemapper.containsKey(UNDERSCORE))
+        {
+            match = match((Nodemapper)nodemapper.get(UNDERSCORE), nodemapper, tail, word,
+                          path + SPACE + UNDERSCORE, matchState);
+
+            if (match != null)
+            {
+                // Capture and push intermediate stars for INPUT, THAT, TOPIC
+                switch (matchState)
+                {
+                    case S_INPUT :
+                        if (star.length() > 0)
+                        {
+                            match.pushInputStar(star.trim());
+                        }
+                        break;
+                    
+                    case S_THAT :
+                        if (star.length() > 0)
+                        {
+                            match.pushThatStar(star.trim());
+                        }
+                        break;
+
+                    case S_TOPIC :
+                        if (star.length() > 0)
+                        {
+                            match.pushTopicStar(star.trim());
+                        }
+                        break;
+                }
+                return match;
+            }
+        }
+
+        // Process normal words.
+        if (nodemapper.containsKey(word))
+        {
+            if (word.startsWith(MARKER_START))
+            {
+
+                // Define which part of the path we're working with
+                if (word.compareToIgnoreCase(THAT) == 0)
+                {
+                    matchState = S_THAT;
+                }
+                else if (word.compareToIgnoreCase(TOPIC) == 0)
+                {
+                    matchState = S_TOPIC;
+                }
+
+                match = match((Nodemapper)nodemapper.get(word), nodemapper, tail, EMPTY_STRING,
+                              EMPTY_STRING, matchState);
+            }
+            else
+            {
+                match = match((Nodemapper)nodemapper.get(word), nodemapper, tail, star,
+                              path + SPACE + word, matchState);
+            }
+            
+            if (match != null)
+            {
+                if (word.compareToIgnoreCase(THAT)==0)
+                {
+                    matchState = S_THAT;
+                    match.pushInputStar(star.trim());
+                    match.setPattern(path.trim());
+                }
+                else if (word.compareToIgnoreCase(TOPIC)==0)
+                {
+                    matchState = S_TOPIC;
+                    match.pushThatStar(star.trim());
+                    match.setThat(path.trim());
+                }
+                return match;
+            }
+            
+        }
+        
+        // Process * wildcards.
+        if (nodemapper.containsKey(ASTERISK))
+        {
+            match = match((Nodemapper)nodemapper.get(ASTERISK), nodemapper, tail, word,
+                           path + SPACE + ASTERISK, matchState);
+            if (match != null)
+            {
+                // Capture and push intermediate stars for INPUT, THAT, TOPIC
+                switch (matchState)
+                {
+                    case S_INPUT :
+                        if (star.length() > 0)
+                        {
+                            match.pushInputStar(star.trim());
+                        }
+                        break;
+
+                    case S_THAT :
+                        if (star.length() > 0)
+                        {
+                            match.pushThatStar(star.trim());
+                        }
+                        break;
+
+                    case S_TOPIC :
+                        if (star.length() > 0)
+                        {
+                            match.pushTopicStar(star.trim());
+                        }
+                        break;
+                }
+                return match;
+            }
+        }
+
+        // if nodemapper contains wildcard
+        if (nodemapper.equals(parent.get(ASTERISK)) || nodemapper.equals(parent.get(UNDERSCORE)))
+        {
+            return match(nodemapper, parent, tail, star + SPACE + word, path, matchState);
+        }
+        return null;
+    }
+
+
+
+    /**
+     *  Removes a pattern-that-topic path from the <code>Graphmaster</code> root.
+     *
+     *  @param pattern  &lt;pattern/&gt; path component
+     *  @param that     &lt;that/&gt; path component
+     *  @param topic    &lt;topic/&gt; path component
+     *
+     *  @return whether the removal was successful
+     */
+    public static boolean remove(String pattern, String that, String topic)
+    {
+        String path = pattern + SPACE + THAT + SPACE + that + SPACE + TOPIC + SPACE + topic;
+        boolean success = remove(new StringTokenizer(path), ROOT);
+        return success;
+    } 
+    
+
+    /**
+     *  <p>
+     *  Removes a child node from the <code>Graphmaster</code>.
+     *  </p>
+     *  <p>
+     *  This method just takes a path as one String and tokenizes it, then passes to the
+     *  {@link #remove(StringTokenizer, Nodemapper)} version
+     *  of <code>Graphmaster.remove</code>, so
+     *  you may want to use the other version directly.
+     *  </p>
+     *  
+     *  @see #remove(StringTokenizer, Nodemapper, int, int, String)
+     *
+     *  @param sentence the node in sentence form
+     *  @param parent   the <code>Nodemapper</code> parent from which the child should be removed
+     *
+     *  @return whether the removal was successful
+     */
+    public static boolean remove(String sentence, Nodemapper parent) {
+        StringTokenizer tokenizer = new StringTokenizer(sentence);
+        return remove(tokenizer, parent);
+    } 
+    
+
+    /**
+     *  Removes a child node from the <code>Graphmaster</code>.
+     *
+     *  @param tokenizer    the sentence to remove
+     *  @param parent       the <code>Nodemapper</code> parent from which the child should be removed
+     *
+     *  @return whether the removal was successful
+     */
+    public static boolean remove(StringTokenizer tokenizer, Nodemapper parent)
+    {
+        String word = tokenizer.nextToken();
+        Nodemapper node;
+        if (parent.containsKey(word))
+        {
+            node = (Nodemapper)parent.get(word);
+        }
+        else
+        {
+            return false;
+        }
+        boolean success = remove(tokenizer, node);
+        if (success && node.keySet().size() == 1)
+        {
+            parent.remove(word);
+        }
+        return success;
+    } 
+
+
+    /**
+     *  Starts the <code>Graphmaster</code>, marking the end
+     *  of loadtime.  Depending on settings in {@link Globals},
+     *  starts up the {@link org.alicebot.server.core.loader.AIMLWatcher AIMLWatcher},
+     *  displays various trace information on the console,
+     *  writes startup information to the log, and runs
+     *  a simple &quot;shell&quot; for testing the bot.
+     */
+    public void run()
+    {
+        // Mark the end of the load time.
+        loadtime = false;
+
+        // Set the bot name in globals.
+        Globals.setBotName();
+
+        // Display some console information (if set).
+        if (Globals.showConsole())
+        {
+            // Give number of loaded categories.
+            Log.userinfo("\"" + Globals.getBotName() + "\" is thinking with " + TOTAL_CATEGORIES + " categories.", Log.STARTUP);
+
+            // Provide load message, if it was set via the constructor.
+            if (loadMessage != null)
+            {
+                Trace.userinfo(loadMessage);
+            }
+        }
+
+        // Always print the copyright, regardless of console settings.
+        Trace.insist(COPYRIGHT);
+        Log.userinfo("Alicebot Program D version " + VERSION + " Build [" + BUILD + "]", Log.STARTUP);
+
+        // This is a simple Alice shell that is useful for debugging your AIML (could be more useful)
+        if (Globals.useShell())
+        {
+            Trace.userinfo("Type \"exit\" to shutdown.");
+            String botName = Globals.getBotName();
+            BufferedReader console = null;
+            while (true)
+            {
+                try
+                {
+                    console = Trace.console(ActiveMultiplexor.StaticSelf.getPredicateValue(Globals.getClientNamePredicate(), HOSTNAME));
+                }
+                catch (NoSuchPredicateException e)
+                {
+                    console = Trace.console(GENERIC_CLIENT_NAME, HOSTNAME);
+                }
+                String theLine = null;
+                try
+                {
+                    theLine = console.readLine();
+                }
+                catch (IOException e)
+                {
+                    Log.userinfo("Cannot read from console!", Log.ERROR);
+                    return;
+                }
+                if (theLine == null)
+                {
+                    break;
+                }
+                Trace.gotLine();
+                if (theLine.toLowerCase().equals("exit"))
+                {
+                    Log.userinfo("Exiting at user request.", Log.STARTUP);
+                    System.exit(0);
+                }
+                Trace.console(botName,
+                              Toolkit.breakLines(
+                              ActiveMultiplexor.StaticSelf.getResponse(theLine, HOSTNAME, new TextResponder())));
+            }
+        }
+    }
+    
+
+    /**
+     *  Sends new targeting data to
+     *  {@link org.alicebot.server.core.util.Targets Targets}.
+     */
+    public synchronized static void checkpoint()
+    {
+        if (!Globals.useTargeting())
+        {
+            return;
+        }
+
+        // Log this checkpoint event.
+        Log.log("Targeting checkpoint.", Log.TARGETING);
+
+        Iterator activatedNodesIterator = ACTIVATED_NODES.iterator();
+        while (activatedNodesIterator.hasNext())
+        {
+            Nodemapper nodemapper = (Nodemapper)activatedNodesIterator.next();
+            Set activations = (Set)nodemapper.get("<activations>");
+            Iterator activationsIterator = activations.iterator();
+            while (activationsIterator.hasNext())
+            {
+                String path = (String)activationsIterator.next();
+                StringTokenizer pathTokenizer = new StringTokenizer(path, PATH_SEPARATOR);
+                int tokenCount = pathTokenizer.countTokens();
+                if (tokenCount == 6)
+                {
+                    String matchPattern = pathTokenizer.nextToken().trim();
+                    String matchThat = pathTokenizer.nextToken().trim();
+                    String matchTopic = pathTokenizer.nextToken().trim();
+                    String matchTemplate = (String)nodemapper.get(TEMPLATE);
+                    String inputText = pathTokenizer.nextToken().trim();
+                    String inputThat = pathTokenizer.nextToken().trim();
+                    String inputTopic = pathTokenizer.nextToken().trim();
+                    TargetMaster.add(matchPattern, matchThat, matchTopic, matchTemplate, inputText, inputThat, inputTopic);
+                }
+            } 
+        }
+    }
+    
+
+    /**
+     *  Loads the <code>Graphmaster</code> with the contents of a given path.
+     *
+     *  @param path path to the file(s) to load
+     */
+    public static void load(String path)
+    {
+        // Check for obviously invalid paths of zero length.
+        if (path.length() < 1)
+        {
+            Log.userinfo("Cannot open a file whose name has zero length.", Log.ERROR);
+        }
+
+        // This BufferedReader will be passed to AIMLReader to read the file.
+        BufferedReader buffReader = null;
+
+        // Guess if this is a URL.
+        if (path.indexOf("://") != -1)
+        {
+            // Try to create this as a URL.
+            URL url = null;
+
+            try
+            {
+                url = new URL(path);
+            }
+            catch (MalformedURLException e)
+            {
+                Log.userinfo("Malformed URL: \"" + path + "\"", Log.ERROR);
+            }
+
+            try
+            {
+                String encoding = Toolkit.getDeclaredXMLEncoding(url.openStream());
+                buffReader = new BufferedReader(new InputStreamReader(url.openStream(), encoding));
+            }
+            catch (IOException e)
+            {
+                Log.userinfo("I/O error trying to read \"" + path + "\"", Log.ERROR);
+            }
+        }
+
+        // Handle paths which are apparently files.
+        else
+        {
+            if (path.indexOf(ASTERISK) != -1)
+            {
+                String[] files = null;
+
+                try
+                {
+                    files = Toolkit.glob(path, workingDirectory);
+                }
+                catch (FileNotFoundException e)
+                {
+                    Log.userinfo(e.getMessage(), Log.ERROR);
+                }
+                if (files != null)
+                {
+                    for (int index = 0; index < files.length; index++)
+                    {
+                        load(files[index]);
+                    }
+                    return;
+                }
+            }
+
+            File toRead = new File(path);
+
+            if (toRead.isAbsolute())
+            {
+                workingDirectory = toRead.getParent();
+            }
+
+            // At load time, don't load an already-loaded file.
+            if (loadedFiles.contains(toRead))
+            {
+                if (loadtime)
+                {
+                    return;
+                }
+            }
+            else
+            {
+                loadedFiles.add(toRead);
+            }
+
+            if (toRead.exists() && !toRead.isDirectory())
+            {
+                try
+                {
+                    String encoding =
+                        Toolkit.getDeclaredXMLEncoding(new FileInputStream(path));
+                    buffReader = new BufferedReader(
+                                    new InputStreamReader(
+                                        new FileInputStream(path), encoding));
+                }
+                catch (IOException e)
+                {
+                    Log.userinfo("I/O error trying to read \"" + path + "\"", Log.ERROR);
+                    return;
+                }
+                // Add it to the AIMLWatcher, if active.
+                if (Globals.isWatcherActive())
+                {
+                    AIMLWatcher.addWatchFile(path);
+                }
+            }
+        }
+        new AIMLReader(path, buffReader, new AIMLLoader(path)).read();
+    }
+
+
+    /**
+     *  Returns the number of categories presently loaded.
+     *
+     *  @return the number of categories presently loaded
+     */
+    public static int getTotalCategories()
+    {
+        return TOTAL_CATEGORIES;
+    }
+
+
+    /**
+     *  Increments the total categories.
+     *
+     *  @return the number of categories presently loaded
+     */
+    public static int incrementTotalCategories()
+    {
+        return TOTAL_CATEGORIES++;
+    }
 }

@@ -20,6 +20,10 @@ USA.
 @version 4.1.1
 */
 
+/*
+    - added initialize method and made implementation of AliceChatListener
+    - changed some server property names
+*/
 
 /**
  * Alicebot Jabber Chat Listener
@@ -29,47 +33,65 @@ USA.
  */
 
 import java.io.*;
+import java.util.Properties;
 
-public class AliceJAB extends Thread {
-	
-	private String server, nickname, password;
-	private int port;
-	private boolean connected = false;
-	private BufferedReader reader;
-	
-	public AliceJAB(String server, String port, String nickname, String password) {
-		this.server = server;
-		this.port = Integer.parseInt(port);
-		this.nickname = nickname;
-		this.password = password;
-		start();
-	}
-	
-	public void run()
-	{
-		String line;
-		
-		while(connected = true)
-		{
-			try
-			{
-				line = reader.readLine();
-				processServerMessage(line);
-			}
-			catch (IOException e)
-			{
-				// !
-			}
-		}
-		
-	}
-	
-	public void processServerMessage(String input) {
-		
-	}
-	
-	public void processClientMessage(String output) {
-		
-	}
+public class AliceJAB implements Runnable, AliceChatListener
+{
+    
+    private String server, nickname, password;
+    private int port;
+    private boolean connected = false;
+    private BufferedReader reader;
+
+    public void initialize(Properties properties)
+    {
+        if (properties.getProperty("programd.listeners.jabber.host") != null)
+        {
+            AliceJAB jab = new AliceJAB(properties.getProperty("programd.listeners.jabber.host"), 
+                                        properties.getProperty("programd.listeners.jabber.port"), 
+                                        properties.getProperty("programd.listeners.jabber.jid"), 
+                                        properties.getProperty("programd.listeners.jabber.password"));
+        }
+    }
+
+    public AliceJAB()
+    {
+
+    }
+    
+    public AliceJAB(String server, String port, String nickname, String password) {
+        this.server = server;
+        this.port = Integer.parseInt(port);
+        this.nickname = nickname;
+        this.password = password;
+        new Thread(this).start();
+    }
+    
+    public void run()
+    {
+        String line;
+        
+        while(connected = true)
+        {
+            try
+            {
+                line = reader.readLine();
+                processServerMessage(line);
+            }
+            catch (IOException e)
+            {
+                // !
+            }
+        }
+        
+    }
+    
+    public void processServerMessage(String input) {
+        
+    }
+    
+    public void processClientMessage(String output) {
+        
+    }
 
 }

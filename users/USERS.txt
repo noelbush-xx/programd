@@ -1,2 +1,0 @@
-admin:changeme,server-administrator,content-administrator
-jonbaer:changeme

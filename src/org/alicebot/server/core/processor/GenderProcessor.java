@@ -1,69 +1,121 @@
+/*
+    Alicebot Program D
+    Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+    
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+    USA.
+*/
+
+/*
+    Code cleanup (4.1.3 [00] - October 2001, Noel Bush)
+    - formatting cleanup
+    - complete javadoc
+    - made all imports explicit
+*/
+
 package org.alicebot.server.core.processor;
 
-/**
-Alice Program D
-Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+import java.util.HashMap;
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
+import org.alicebot.server.core.Globals;
+import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.XMLNode;
+import org.alicebot.server.core.util.Substituter;
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-USA.
-
-@author  Richard Wallace
-@author  Jon Baer
-@author  Thomas Ringate/Pedro Colla
-@version 4.1.1
-*/
-
-//import java.util.*;
-import java.lang.*;
-import java.net.*;
-import java.io.*;
-
-import org.alicebot.server.core.*;
-import org.alicebot.server.core.util.*;
-import org.alicebot.server.core.parser.*;
 
 /**
- GenderProcesor is the responsible to handle the GENDER tag (do not
- confuse with the GENDER empty tag from AIML 0.9) which performs a
- gender transformation. The tags beneath it are processed into a
- result which in turn is changed in gender by simple transformations
- contained in the gender method of Substituter.
- @version 4.1.1
- @author  Thomas Ringate/Pedro Colla
-*/
-public class GenderProcessor implements AIMLProcessor, Serializable {
-        public String processAIML(int level, String ip, XMLNode tag, AIMLParser p) {
+ *  <p>
+ *  Handles a
+ *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-gender">gender</a></code>
+ *  element.
+ *  </p>
+ *  <p>
+ *  Currently does not permit definition of gender substitutions
+ *  in an external file (they are hard-coded in {@link Substituter#gender}.
+ *  </p>
+ *
+ *  @version    4.1.3
+ *  @author     Jon Baer
+ *  @author     Thomas Ringate, Pedro Colla
+ */
+public class GenderProcessor extends AIMLProcessor
+{
+    public static final String label = "gender";
 
-         /*
-           Evaluate the underlying template structure first
-         */
-         String response = p.evaluate(level++,ip,tag.XMLChild);
-
-         /*
-           Now perform the gender substitutions
-         */
-         //System.out.println("*** GENDERPROCESSOR: IN("+response+") ***");
-         response = Substituter.gender(response);
-         //System.out.println("*** GENDERPROCESSOR: OUT("+response+") ***");
+    /** The map of substitutions to be performed on an input. */
+    private static HashMap substitutionMap = new HashMap();
 
 
-         /*
-           This might well be regarded as an overkill, but we want to
-           keep the capability to resolve AIML tags on the substitutions
-           so handle it just like a template on itself.
-           Most of the time it won't imply a serious performance
-           degradation.
-         */
-         response = p.processResponse(ip,response);
-         return response;
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    {
+        if (tag.XMLType == XMLNode.TAG)
+        {
+            // This looks ugly, but completely avoids a temporary variable.
+            try
+            {
+                return parser.processResponse(userid, applySubstitutions(parser.evaluate(level++,userid,tag.XMLChild)));
+            }
+            catch (ProcessorException e)
+            {
+                throw (InvalidAIMLException)e;
+            }
+        }
+        else if (tag.XMLType == XMLNode.EMPTY)
+        {
+            if (!Globals.supportDeprecatedTags())
+            {
+                return parser.shortcutTag(level, userid, label,
+                                          tag.TAG, EMPTY_STRING, "star", tag.EMPTY);
+            }
+            else
+            {
+                return parser.shortcutTag(level, userid, BotProcessor.label,
+                                               tag.EMPTY, "name=\"gender\"", EMPTY_STRING, tag.EMPTY);
+            }
+        }
+        else
+        {
+            throw new InvalidAIMLException("Invalid gender element!");
+        }
+    }
 
-	}
+
+    /**
+     *  Applies substitutions as defined in the {@link #substitutionMap}.
+     *  Comparisons are case-insensitive.
+     *
+     *  @param  input   the input on which to perform substitutions
+     *
+     *  @return the input with substitutions performed
+     */
+    public static String applySubstitutions(String input)
+    {
+        return Substituter.applySubstitutions(substitutionMap, input);
+    }
+    
+
+    /**
+     *  Adds a substitution to the substitutions map.  The
+     *  <code>find</code> parameter is stored in uppercase,
+     *  to do case-insensitive comparisons.  The <code>replace</code>
+     *  parameter is stored as is.
+     *
+     *  @param find     the string to find in the input
+     *  @param replace  the string with which to replace the found string
+     */
+    public static void addSubstitution(String find, String replace)
+    {
+        if (find != null && replace != null)
+        {
+            substitutionMap.put(find.toUpperCase(), replace);
+        }
+    }
 }
 

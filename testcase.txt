@@ -6,15 +6,24 @@ testget
 testsetx
 testalter
 testsettopic
-test6
 test6a
+test6b
 testsimplecondition
 testsimpleconditiona
+testsimpleconditionmatch
 testconditionlist
+testconditionlistmatch
 testconditionlistdefault
 testconditionlistname
-teststar test passed
-teststar test passed one test passed two test passed three test passed
+testconditionlistnamematch
+teststar Test passed
+teststar Test passed one and Test passed two and Test passed three and Test passed four
+testunderscore Test passed one and Test passed two and Test passed three and Test passed four
+testrandom
+testrandom
+testrandom
+testrandom
+testrandom
 testrandom
 testwordformat
 testnestedwordformat
@@ -33,10 +42,10 @@ testnestedcondition2
 testsetcondition
 testversion
 testsrai
-testsr sraifailed
+testsr sraisucceeded
 testnestedsrai
 testthinksrai
-teststarset test passed
+teststarset Test passed
 testidsizedate
 testgossip
 testname
@@ -44,7 +53,21 @@ testinput
 testinput1
 testinput2
 testinput3
-testgender
+testgender he
+testgender she
+testgender to him
+testgender for him
+testgender with him
+testgender on him
+testgender in him
+testgender to her
+testgender for her
+testgender with her
+testgender on her
+testgender in her
+testgender his
+testgender her
+testgender him
 testthatstar
 testthatstar1
 testmultithatstar
@@ -55,5 +78,32 @@ testmultitopicstar
 test35
 testoldtopic
 test36
-testextreamsrai
+testextremesrai
+testperson i was
+testperson he was
+testperson she was
+testperson i am
+testperson i
+testperson me
+testperson my
+testperson myself
+testperson mine
+testperson2 with you
+testperson2 with me
+testperson2 to you
+testperson2 to me
+testperson2 of you
+testperson2 of me
+testperson2 for you
+testperson2 for me
+testperson2 give you
+testperson2 give me
+testperson2 giving you
+testperson2 giving me
+testperson2 gave you
+testperson2 gave me
+testperson2 make you
+testperson2 make me
+testperson2 made you
+testperson2 made me
 exit

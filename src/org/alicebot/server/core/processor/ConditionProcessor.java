@@ -1,105 +1,381 @@
+/*
+    Alicebot Program D
+    Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+    
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+    USA.
+*/
+
+/*
+    Code cleanup (4.1.3 [00] - October 2001, Noel Bush)
+    - formatting cleanup
+    - complete javadoc
+    - made all imports explicit
+*/
+
+/*
+    Further optimizations {4.1.3 [01] - November 2001, Noel Bush)
+    - changed to extend (not implement) AIMLProcessor (latter is now an abstract class)
+      (includes necessary public field "label")
+    - removed use of AIML10Tag (was removed)
+    - removed lots of uses of String.toLowerCase() (XML *is* case-sensitive!!!)
+*/
+
+/*
+    More fixes (4.1.3 [02] - November 2001, Noel Bush)
+    - changed "predicate" to "name" in most places
+    - added catches of NoSuchPredicateException
+*/
+
+/*
+    Further fixes (4.1.3 [03] - December 2001, Noel Bush)
+    - now uses PatternArbiter.matches() instead of String.equals() for
+      comparing condition/li value attributes to predicate values
+*/
+
 package org.alicebot.server.core.processor;
 
-/**
-Alice Program D
-Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+import org.alicebot.server.core.ActiveMultiplexor;
+import org.alicebot.server.core.NoSuchPredicateException;
+import org.alicebot.server.core.logging.Trace;
+import org.alicebot.server.core.parser.AIMLParser;
+import org.alicebot.server.core.parser.XMLNode;
+import org.alicebot.server.core.util.LinkedList;
+import org.alicebot.server.core.util.LinkedListItr;
+import org.alicebot.server.core.util.NotAnAIMLPatternException;
+import org.alicebot.server.core.util.PatternArbiter;
+import org.alicebot.server.core.util.Toolkit;
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-USA.
-
-@author  Richard Wallace
-@author  Jon Baer
-@author  Thomas Ringate/Pedro Colla
-@version 4.1.1
-*/
-
-//import java.util.*;
-import java.lang.*;
-import java.net.*;
-import java.io.*;
-
-import org.alicebot.server.core.*;
-import org.alicebot.server.core.util.*;
-import org.alicebot.server.core.parser.*;
 
 /**
- ConditionProcessor is the one handling the many mutations of the CONDITION
- tag. First the variant at hand is detected and then the evaluation
- of the listitems below is triggered with that information. The way
- it's recursed allows for unlimited nesting to occur and to be executed
- in the proper order.
- @version 4.1.1
- @author  Thomas Ringate/Pedro Colla
-*/
-public class ConditionProcessor implements AIMLProcessor, Serializable {
-        public String processAIML(int level, String ip, XMLNode tag, AIMLParser p) {
+ *  <p>
+ *  Handles a
+ *  <code><a href="http://www.alicebot.org/TR/2001/WD-aiml/#section-condition">condition</a></code>
+ *  element.
+ *  </p>
+ *  <p>
+ *  This implementation is currently <i>not</i> AIML 1.0.1-compliant,
+ *  because it implements simple String.equals() matching for
+ *  value attributes to predicates, rather than real AIML pattern
+ *  matching.
+ *  </p>
+ *
+ *  @version    4.1.3
+ *  @author     Jon Baer
+ *  @author     Thomas Ringate, Pedro Colla
+ */
+public class ConditionProcessor extends AIMLProcessor
+{
+    // Public constants.
 
-        if (tag.XMLChild == null) {
-           return "";
+    /** A nameValueListItem in a &lt;condition/&gt;. */
+    public static final int NAME_VALUE_LI      = 1;
+
+    /** A defaultListItem in a &lt;condition/&gt;. */
+    public static final int DEFAULT_LI         = 2;
+
+    /** A valueOnlyListItem in a &lt;condition/&gt;. */
+    public static final int VALUE_ONLY_LI      = 3;
+    
+    public static final String label = "condition";
+
+    // Convenience constants.
+
+    /** The string &quot;li&quot;. */
+    private static final String LI = "li";
+
+
+    public String process(int level, String userid, XMLNode tag, AIMLParser parser) throws InvalidAIMLException
+    {
+        if (tag.XMLType == XMLNode.TAG)
+        {
+            if (tag.XMLChild == null)
+            {
+                return EMPTY_STRING;
+            }
+
+            String name  = Toolkit.getAttributeValue(NAME, tag.XMLAttr);
+            String value = Toolkit.getAttributeValue(VALUE, tag.XMLAttr);
+
+            /*
+                Process a multiPredicateCondition:
+                <condition>
+                    <li name="xxx" value="xxx">...</li>
+                    <li>...</li>
+                </condition>
+            */
+            if ( (tag.XMLAttr.indexOf(NAME_EQUALS, 0)  < 0) &&
+                 (tag.XMLAttr.indexOf(VALUE_EQUALS, 0) < 0) )
+            {
+                return processListItem(level, userid, parser, tag.XMLChild,
+                                              NAME_VALUE_LI, name, value);
+            }
+
+
+            /*
+                Process a blockCondition:
+                <condition name="xxx" value="yyy">
+                    ...
+                </condition>
+            */
+            if ( (tag.XMLAttr.indexOf(NAME_EQUALS,0)  >= 0) &&
+                 (tag.XMLAttr.indexOf(VALUE_EQUALS,0) >= 0) )
+            {
+                try
+                {
+                    if (PatternArbiter.matches(value, ActiveMultiplexor.StaticSelf.getPredicateValue(name, userid), true))
+                    {
+                        return processListItem(level, userid, parser, tag.XMLChild,
+                                                      DEFAULT_LI, EMPTY_STRING, EMPTY_STRING);
+                    }
+                }
+                catch (NoSuchPredicateException e)
+                {
+                    Trace.devinfo(e.getMessage());
+                    return EMPTY_STRING;
+                }
+                catch (NotAnAIMLPatternException e)
+                {
+                    Trace.devinfo(e.getMessage());
+                    return EMPTY_STRING;
+                }
+                return EMPTY_STRING;
+            }
+
+            /*
+                Process a singlePredicateCondition:
+                <condition name="xxx">
+                    <li value="yyy">...</li>
+                    <li>...</li>
+                </condition>
+            */
+            if ( (tag.XMLAttr.indexOf(NAME_EQUALS,0)  >= 0) &&
+                 (tag.XMLAttr.indexOf(VALUE_EQUALS,0) <  0) )
+            {
+                return processListItem(level, userid, parser, tag.XMLChild,
+                                       VALUE_ONLY_LI, name, EMPTY_STRING);
+            }
+
+            // In other cases, return an empty string.
+            return EMPTY_STRING;
+        }
+        else
+        {
+            throw new InvalidAIMLException("<condition></condition> must have content!");
+        }
+    }
+
+
+    /**
+     *  Evaluates an &lt;li/&gt; element inside a &lt;condition/&gt;.
+     *
+     *  @param level        the level we're at in the XML trie
+     *  @param userid       the user identifier
+     *  @param parser       the AIMLParser object responsible for this
+     *  @param list         the XML trie
+     *  @param listItemType one of {@link NAME_VALUE_LI}, {@link DEFAULT_LI} or {@link VALUE_ONLY_LI}
+     *  @param name         the name attribute of the &lt;li/&gt; (if applicable)
+     *  @param value        the value attribute of the &lt;li/&gt; (if applicable)
+     *
+     *  @return the result of processing this &lt;li/&gt;
+     */
+    public String processListItem(int level, String userid, AIMLParser parser, LinkedList list, int listItemType, String name, String value)
+    {
+        String         response = EMPTY_STRING;
+        LinkedListItr  iterator;
+        XMLNode        node;
+
+        // Verify there is something to work with.
+        if (list == null)
+        {
+            return EMPTY_STRING;
         }
 
-        String response= "";
+        // Point to the start of the XML trie to parse.
+        iterator = list.zeroth();
+        iterator.advance();
 
-        String nameval = p.getArg("name",tag.XMLAttr);
-        String valueval= p.getArg("value",tag.XMLAttr);
-        //System.out.println("*** CONDITION: name("+nameval+") value("+valueval+") ***");
+        String predicateValue = EMPTY_STRING;
+        String livalue  = EMPTY_STRING;
+        String liname   = EMPTY_STRING;
 
         /*
-          First form of condition <condition>
-                                    <li name="xxx" value="xxx"></li>
-                                    <li></li>
-                                  </condition>
+            For <code>valueOnlyListItem</code>s, look at the parent
+            &lt;condition/&gt; to get the predicate <code>name</code>.
         */
-
-        if ( (tag.XMLAttr.toLowerCase().indexOf("name=",0)  < 0) &&
-             (tag.XMLAttr.toLowerCase().indexOf("value=",0) < 0) ) {
-
-           //System.out.println("*** CONDITION: name==() value==() ***");
-           response = p.ProcessListItem(level,ip,tag.XMLChild,1,nameval,valueval);
-           return response;
+        try
+        {
+            if (listItemType == VALUE_ONLY_LI)
+            {
+                predicateValue = ActiveMultiplexor.StaticSelf.getPredicateValue(name, userid);
+            }
+        }
+        catch (NoSuchPredicateException e)
+        {
+            return EMPTY_STRING;
         }
 
+        // Navigate through this entire level.
+        while (!iterator.isPastEnd())
+        {
+            node = (XMLNode)iterator.retrieve();
+            if (node != null)
+            {
+                switch(node.XMLType)
+                {
+                    // If text, just append to the response.
+                    case XMLNode.DATA  :
+                    case XMLNode.CDATA :
+                        response = response + node.XMLData;
+                        break;
 
-        /*
-          Second form of condition <condition name="xxx" value="yyy">
-                                   </condition>
+                    case XMLNode.EMPTY :
+                        try
+                        {
+                            response = response + parser.processTag(level++, userid, node);
+                        }
+                        catch (InvalidAIMLException e)
+                        {
+                            // Do nothing.
+                        }
+                        break;
 
-        */
+                    // Collect and process listitems
+                    case XMLNode.TAG :
+                        // Only &lt;li&gt;&lt;/li&gt; structures allowed
+                        if (!node.XMLData.equals(LI))
+                        {
+                            try
+                            {
+                                response = response + parser.processTag(level++, userid, node);
+                            }
+                            catch (InvalidAIMLException e)
+                            {
+                                // Do nothing.
+                            }
+                            break;
+                        }
 
-        if ( (tag.XMLAttr.toLowerCase().indexOf("name=",0)  >= 0) &&
-             (tag.XMLAttr.toLowerCase().indexOf("value=",0) >= 0) ) {
+                        /*
+                            Now decide what to do based on the listItemType,
+                            which indicates what to expect from the parent &lt;condition/&gt;.
+                        */
+                        switch (listItemType)
+                        {
+                            // Evaluate listitems with both name and value attributes.
+                            case NAME_VALUE_LI :
+                                /*
+                                    Look for tokens in the XML attributes for
+                                    name and value.  If none are present, this is
+                                    an unqualified &lt;li/&gt; (defaultListItem)
+                                    and gets evaluated. (Strange.) Processing will
+                                    continue even after this case, so the defaultListItem
+                                    may be anywhere under &lt;condition/&gt;, not necessarily
+                                    at the end. This is a violation of strict AIML 1.0.1.
+                                */
+                                if ( (node.XMLAttr.indexOf(NAME_EQUALS, 0)  < 0) &&
+                                     (node.XMLAttr.indexOf(VALUE_EQUALS, 0) < 0) )
+                                {
+                                    response = response + parser.evaluate(level++, userid, node.XMLChild);
+                                    break;
+                                }
 
-           String varname = Classifier.getValue(nameval,ip);
-           //System.out.println("*** CONDITION: name("+nameval+") value("+varname+") ***");
-           if (varname.toLowerCase().equals(valueval.toLowerCase())) { //4.1.1 b12 case insensitive comparisson
-              response = p.ProcessListItem(level,ip,tag.XMLChild,2,"","");
-           }
+                                // Ignore if there is not a name and a value.
+                                if ( (node.XMLAttr.indexOf(NAME_EQUALS,0) < 0) ||
+                                     (node.XMLAttr.indexOf(VALUE_EQUALS,0)< 0))
+                                {
+                                    break;
+                                }
 
-           return response;
+                                // Recover the values of the name and value attributes.
+                                liname = Toolkit.getAttributeValue(NAME, node.XMLAttr);
+                                livalue= Toolkit.getAttributeValue(VALUE, node.XMLAttr);
+
+                                // Get the current value of the predicate named.
+                                try
+                                {
+                                    predicateValue = ActiveMultiplexor.StaticSelf.getPredicateValue(liname, userid);
+                                }
+                                catch (NoSuchPredicateException e)
+                                {
+                                    predicateValue = EMPTY_STRING;
+                                }
+
+                                /*
+                                    If the value of the predicate matches the value in the value
+                                    attribute, process the response, otherwise skip.
+                                */
+                                try
+                                {
+                                    if (PatternArbiter.matches(predicateValue, livalue, true))
+                                    {
+                                        response = response + parser.evaluate(level++, userid, node.XMLChild);
+                                        return response;
+                                    }
+                                }
+                                catch (NotAnAIMLPatternException e)
+                                {
+                                    Trace.devinfo(e.getMessage());
+                                }
+                                break;
+
+                            // Evaluate listitems that are designated &quot;defaultListItem&quot; types.
+                            case DEFAULT_LI :
+                                response = response + parser.evaluate(level++, userid, node.XMLChild);
+                                break;
+
+                            // Evaluate valueOnlyListItems.
+                            case VALUE_ONLY_LI :
+                                // If there is a value attribute, get it.
+                                if (node.XMLAttr.indexOf(VALUE_EQUALS, 0) >= 0)
+                                {
+                                    livalue = Toolkit.getAttributeValue(VALUE, node.XMLAttr);
+                                    /*
+                                        If the value of the predicate equals the value in the value
+                                        attribute, process the response, otherwise skip.
+                                    */
+                                    try
+                                    {
+                                        if (PatternArbiter.matches(predicateValue, livalue, true))
+                                        {
+                                            response = response + parser.evaluate(level++, userid, node.XMLChild);
+                                            return response;
+                                        }
+                                    }
+                                    catch (NotAnAIMLPatternException e)
+                                    {
+                                        Trace.devinfo(e.getMessage());
+                                    }
+                                }
+                                /*
+                                    When there is no value attribute, we actually got the wrong li type,
+                                    but process as a defaultListItem anyway (probably a bad idea).
+                                */
+                                else
+                                {
+                                    response = response + parser.evaluate(level++, userid, node.XMLChild);
+                                    return response;
+                                }
+                                break;
+
+                                default :
+                                    break;
+                        }
+                        default :
+                            break;
+                }
+            }
+            iterator.advance();
         }
+        return response;
+    }
 
-        /*
-          Third  form of condition <condition name="xxx">
-                                     <li value="yyy"></li>
-                                     <li></li>
-                                   </condition>
-        */
-        if ( (tag.XMLAttr.toLowerCase().indexOf("name=",0)  >= 0) &&
-             (tag.XMLAttr.toLowerCase().indexOf("value=",0) <  0) ) {
-
-           //System.out.println("*** CONDITION: name!=() value==() ***");
-           response = p.ProcessListItem(level,ip,tag.XMLChild,3,nameval,"");
-           return response;
-        }
-
-
-         return "";
-	}
 }
+

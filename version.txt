@@ -1,3 +1,39 @@
+#########
+# 4.1.3 #
+###############################################################################
+Major cleanup and optimization work by Noel Bush.  User authentication
+implementation sponsored by Artificial Solutions AB.
+
+Here are the major improvements to functionality:
+* User authentication for HTTP introduced
+* Re-integration of targeting and minimal targeting tool (from Program dB)
+* Ability to use Program D *without* a database
+* much closer to AIML 1.0.x compliance, and additions to test cases to verify same
+* Ability to specify substitutions (including those for person, person2
+  and gender) externally
+* XML logging of chat conversations
+* Ability to use different templates for Responders
+* better handling of character encodings for AIML files, HTML templates and http servlet
+* Proper support of patterns in condition/li value attributes
+* Big speed improvement for AIML loading, and for matching
+* Logging format regularized (and used more than before)
+* Much more configurable (see server properties)
+* Ability to prohibit use of <system> and/or <javascript> tags
+* Ability to deny support of deprecated AIML 0.9 tags
+* Potential to use http server of choice
+
+Here are the major improvements to code:
+* Source code cleanup (all but a few files)
+  * formatting standardized, grammar fixed
+  * imports made explicit and cryptic variables renamed
+  * complete javadoc on nearly all classes & variables
+* some design improvements (more use of interfaces, less duplicated code)
+* less fixed dependence on non-GPL code (Jetty is removed to a jar file, no
+longer mixed in with org.alicebot code)
+* some improvements to AIMLReader -- still not a "real" XML parser, but
+  it's faster than anything else -- now there's less duplicated code
+* similar comment for AIMLParser -- it also has "pluggable" processors
+
 #############
 # 4.1.2 ref #
 ###############################################################################

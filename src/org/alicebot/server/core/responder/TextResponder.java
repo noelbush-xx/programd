@@ -1,85 +1,121 @@
+/*
+    Alicebot Program D
+    Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+    
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+    USA.
+*/
+
+/*
+    Code cleanup (4.1.3 [00] - October 2001, Noel Bush)
+    - formatting cleanup
+    - general grammar fixes
+    - complete javadoc
+    - made all imports explicit
+    - added an overloaded log method that takes userid as parameter;
+      this should become part of the Responder interface
+    - better formatting of multi-line inputs and responses
+      (esp. for logs)
+*/
+
+/*
+    Further cleanup (4.1.3 [01] - November 2001, Noel Bush)
+    - caused logging to use client's name (via client name predicate get)
+*/
+
+/*
+    More fixes (4.1.3 [02] - November 2001, Noel Bush)
+    - made append insert spaces between multiple replies
+    - removed logging-related stuff and made this a subclass of
+      StandardLoggingResponder
+*/
+
 package org.alicebot.server.core.responder;
 
-/**
-Alice Program D
-Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-USA.
-
-@author  Richard Wallace
-@author  Jon Baer
-@author  Thomas Ringate/Pedro Colla
-@version 4.1.2
-*/
-
-
-import java.util.*;
-import java.net.*;
-import java.io.*;
-
-import org.alicebot.server.core.*;
-import org.alicebot.server.core.logging.*;
-import org.alicebot.server.core.util.*;
+import org.alicebot.server.core.ActiveMultiplexor;
+import org.alicebot.server.core.Globals;
+import org.alicebot.server.core.logging.Log;
+import org.alicebot.server.core.logging.Trace;
+import org.alicebot.server.core.util.Toolkit;
 
 /**
-  TextResponder is the responsible to create the output for the local
-  console as well as the chat log.
-  @version 4.1.1
-  @author  Richard S. Wallace
-  @author  Jon Baer
-  @author  Thomas Ringate/Pedro Colla
-*/
-public class TextResponder implements Responder,Serializable {
-	
-	public TextResponder() {
-	}
-	
-	public String pre_process(String input, String hname) {
-		return input;
-	}
-	public void log(String input, String response, String hname) {
+ *  Logs output of all chat.
+ *
+ *  @author Jon Baer
+ *  @author Thomas Ringate, Pedro Colla
+ */
+public class TextResponder implements Responder
+{
+    // Class variables.
+
+    /** A space, for convenience. */
+    protected static final String SPACE       = " ";
 
 
-                //System.out.println("*** LOG: input("+input+") response("+response+") hname("+hname+") ***");
+    /**
+     *  Creates a new <code>TextResponder</code>
+     *  using encoding for {@link System#in}.
+     */
+    public TextResponder()
+    {
+    }
+    
 
-                /**
-                  Added current bot name and user name 4.1.1 b14 PEC 09-2001
-                */
-                String username = Classifier.getValue("name",hname);
-                if (username.equals("")) {
-                   username = hname;
-                }
-                input = Toolkit.filterSpaces(input.trim());         //4.1.1 b15
-                response = Toolkit.filterSpaces(response.trim());   //4.1.1 b15
-                input = Toolkit.filterLF(input);                    //4.1.1 b15
-                response = Toolkit.filterLF(response);              //4.1.1 b15
+    /**
+     *  Returns the input, converted into Unicode from the request encoding.
+     *
+     *  @param input    the input
+     *  @param hostname not used
+     *
+     *  @return the input
+     */
+    public String preprocess(String input, String hostname)
+    {
+        return input;
+    }
 
-                Log.log(username + " > [" + input + "]", Log.CHAT); //Modify 4.0.3 b5
-                response = Toolkit.filterLF(response); //4.1.1 b14 PEC 09-2001
-                if ( (!response.equalsIgnoreCase("\n")) && (!response.equalsIgnoreCase("")) ) {  //Modify 4.0.3 b6
-                   Log.log(Globals.getValue("name")+" > [" + response + "]", Log.CHAT);        //Modify 4.0.3 b5
-                }
-	}
-	public String append(String input, String response, String scroll) {
-                return scroll + Toolkit.filterLF(response);
-	}
-	
-	public String post_process(String reply) {
-                reply = Toolkit.filterLF(reply);
-		StringTokenizer st = new StringTokenizer(reply);
-		StringBuffer buffer = new StringBuffer();
-		while (st.hasMoreTokens()) {
-			buffer.append(st.nextToken());
-			if (st.hasMoreTokens()) buffer.append(" ");
-		}
-		return buffer.toString();
-	}
+
+    /**
+     *  Simply appends the response to <code>appendTo</code>.
+     */
+    public String append(String input, String response, String appendTo)
+    {
+        if (appendTo.length() > 0)
+        {
+            return appendTo + SPACE + response;
+        }
+        else
+        {
+            return appendTo + response;
+        }
+    }
+    
+
+    public void log(String input, String reply, String hostname, String userid, String botid)
+    {
+        ResponderXMLLogger.log(input, reply, hostname, userid, botid);
+    }
+    
+
+    /**
+     *  Simply returns the reply.
+     *
+     *  @param reply    the reply from the bot to be processed
+     *
+     *  @return the reply
+     */
+    public String postprocess(String reply)
+    {
+        return reply;
+    }
 } 
