@@ -1,5 +1,6 @@
 package org.alicebot.server.net;
 
+
 /**
 Alice Program D
 Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
@@ -17,7 +18,7 @@ USA.
 @author  Richard Wallace
 @author  Jon Baer
 @author  Thomas Ringate/Pedro Colla
-@version 4.1.1
+@version 4.1.2
 */
 
 import org.alicebot.server.core.*;
@@ -49,10 +50,17 @@ public class AliceServer extends Object {
 	
 	/** The current bot. */
 	private static String bot;
-	
+
+
+        /* -------------------------------------------------------------- */
+        /**
+          AliceServer
+          This is the constructor for the class AliceServer
+          the bot configuration is retrieved and the operation is
+          started here. Startup is finalized with the start() method.
+        */
+
 	public AliceServer() {
-
-
 
 		// Load server properties - must be in root!
 		try {
@@ -128,14 +136,38 @@ public class AliceServer extends Object {
 		try {
 			// Load globals 
 			Globals.fromFile(bot);
-			
+
 			// Load Classifier (include serverProps)
 			Classifier.load(serverProps);
-			
+
+
 			// The almighty Graphmaster (main core)
 			graphmaster = new Graphmaster();
 
                         System.out.println("Starting AliceBot Server Version "+graphmaster.VERSION);
+
+                        //Verify if the log directory do exists 4.1.2 b0
+                        File f = new File(org.alicebot.server.core.logging.Log.LOGPATH);
+                        if (!f.exists()) {
+                           f.mkdirs();
+                           if (Globals.showConsole()) {
+                              System.out.println("*** LOG DIRECTORY CREATED ***");
+                           }
+                        }
+                        f = null;
+
+                        // Set & Print EmptyDefault if console enabled
+                        try {
+                          Globals.getEmptyDefault();
+                          if (Globals.showConsole()) {
+                             System.out.println("*** GLOBAL EMPTY DEFAULT("+Globals.EmptyDefault+") ***");
+                          }
+                        } catch (Exception e)
+                        {
+                          Globals.EmptyDefault = "";
+                          System.out.println("*** GLOBAL EMPTY DEFAULT NOT FOUND, SET TO () ***");
+                        }
+
 
 			graphmaster.setPriority(Thread.MAX_PRIORITY-1);
 			graphmaster.start();
@@ -144,23 +176,6 @@ public class AliceServer extends Object {
 			Server server = new Server("conf/SERVER.xml");
 			server.start();
 
-/*Remove 4.0.3 b1 PEC 09-2001
-			// Should we also run an admin server?
-			if (serverProps.getProperty("server.engine.admin").equals("true")) {
-				HttpServer admin = new HttpServer();
-				HashUserRealm realm= new HashUserRealm("Alicebot AliceServer", "users/USERS.properties");
-				admin.addRealm(realm);
-				SocketListener listener = (SocketListener)admin.addListener(new org.alicebot.server.net.http.util.InetAddrPort("2002"));
-				listener.setMaxIdleTimeMs(60000);
-				listener.setMaxReadTimeMs(60000);
-				HandlerContext context=admin.addContext(null,"/");
-				context.setRealm("Alicebot AliceServer");
-				context.addAuthConstraint("/","server-administrator");
-				context.addServlet("Admin","/","org.alicebot.server.net.servlet.Admin");
-				admin.start();
-			}
-
-*/
 		} catch (Exception e) {
 			System.out.println(e);
 		}

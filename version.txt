@@ -1,12 +1,82 @@
 #############
+# 4.1.2 ref #
+###############################################################################
+Finally it's here - the final reference version of Program D! Big thanks to
+Tom and Pedro, who have taken upon themselves the difficult task of bringing
+the reference implementation as close to the AIML 1.0 specification as 
+possible.
+Their work has finished now - the server is fully under the GPL, and you can 
+safely use version 4.1.2 as a reference base for further development. If it's
+good, your work may even be incorporated into the next release!
+-Kim, Tom and Pedro
+
+* Targetting has been temporarily disabled 
+* Code changes/fixes
+  * Cleaned up the logs directory
+  * Removed unused classes from server.* scripts
+  * AIMLWatcher now optional
+  * Multiple wildcards support in pattern matching
+  * Fixed topic bug from 4.1.1
+* Tag changes/fixes
+  * <topicstar> <thatstar> and <star> support multiple wildcards too
+  * <get> can now optionaly return a default value in case the variable is not 
+    set
+  * removed <if> tag
+  * removed 'src' attribute from <gossip> tag
+* server.engine.emtpydefault="" specifies the 'default' default return value for
+  undefined bot properties and variables
+* bot loading/startup has been modified & moved to a simple xml file:
+  *  recognized tags for startup.xml
+     * <xml></xml>
+     *<learn></learn>
+     * <property/>  
+  * ONLY ONE TAG per line please
+* Logging of empty user inputs added
+
+#############
 # 4.1.1 ref #
 ###############################################################################
 Another update of the reference version by Thomas Ringate and Pedro E. Colla.
 It features a rewrite of the template parser, support for stack variables, 
 re-added some lost features (scripting, substitutions). The way bot properties
-are andled also changed. For full details on the changes, see buglist.txt.
+are handled also changed.
 For instructions on how to set up the server, see _readme.txt.
 - Kim, Tom and Pedro
+
+* Code changes/fixes
+  * Parser rewritten (AIMLParser.java), now fully recursive
+* License text provided by Noel Bush on all modified code.
+* Official Copyright notice added.
+* Server starting message (previously in SERVER.BAT).
+* Tag changes/fixes
+  * <if></if> full implementation ---> according with archcomm discussions
+  * <person> <person2> <gender> substitutions
+  * <javascript> implemented (like <script> in ProgramD baseline).
+  * Normalize the arguments before <srai> on them.
+  * Solved sequencing problem at load time that prevented the simultaneous
+    usage of the <learn></learn> and <load filename="XXX"/> forms.
+  * Some template tags are processed at load time, rather than just at 
+    processing time
+  * Bot properties are now defined as <property name="property" value="value"/>,
+    the previous mechanism of <pattern>BOT propertyname</pattern> categories
+    has been removed
+  * Fixed a bug where AIML tags inside a <condition> were evaluated only
+    when enclosed in <li></li> and otherwise ignored.
+  * Made the value comparisson of <if>, <condition> and <li> case insensitive.
+* Variable handling
+  * Stack variables
+    * <input index="N"/> implemented up to 5 levels of depth.
+    * <that index="N,M"/> implemented up to 5 levels of depth.
+      The 2nd index M is ignored
+  * When the bot is started all TOPIC properties of all IP's are set to the
+    default one ("").
+* Change the name of the bot from the directory where the AIML is into
+  the property name (<bot name="name"/>).
+  * Modified legend on HTML template
+* Logging & output
+  * Remove the <br/> on console output (replace it by CRLF) if debug=false
+  * Normalization of eol (LF vs. CRLF) on chat.log (blank lines with WordPad).
+  * Blank lines removed from chat.log logging.
 
 #############
 # 4.1.0 ref #

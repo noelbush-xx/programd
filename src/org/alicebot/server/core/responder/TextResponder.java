@@ -17,7 +17,7 @@ USA.
 @author  Richard Wallace
 @author  Jon Baer
 @author  Thomas Ringate/Pedro Colla
-@version 4.1.1
+@version 4.1.2
 */
 
 
@@ -50,9 +50,6 @@ public class TextResponder implements Responder,Serializable {
 
                 //System.out.println("*** LOG: input("+input+") response("+response+") hname("+hname+") ***");
 
-        /*Remove 4.0.3 b5 PEC 9-2001
-		Date dt = new Date();
-        */
                 /**
                   Added current bot name and user name 4.1.1 b14 PEC 09-2001
                 */

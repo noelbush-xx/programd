@@ -15,7 +15,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
 USA.
 
 @author  Thomas Ringate/Pedro Colla
-@version 4.1.1
+@version 4.1.2
 */
 
 import java.io.*;
@@ -28,7 +28,7 @@ import java.util.Hashtable;
 
 import org.alicebot.server.core.*;
 import org.alicebot.server.core.node.*;
-import org.alicebot.server.core.AIMLparser.*;
+import org.alicebot.server.core.parser.*;
 import org.alicebot.server.core.util.*;
 
 /**
@@ -57,7 +57,7 @@ public class BotProperty {
              Some property set already?
            */
            if (PropertyList == null) {
-              return "";
+              return Globals.EmptyDefault; //4.1.2 b2
            }
 
            /**
@@ -65,7 +65,7 @@ public class BotProperty {
            */
 
            if (propertyname.equals("")) {
-              return "";
+              return Globals.EmptyDefault;  //4.1.2 b2
            }
 
            /**
@@ -75,7 +75,7 @@ public class BotProperty {
            if (propertyvalue != null) {
               return propertyvalue;
            } else {
-              return "";
+              return Globals.EmptyDefault;
            }
         }
 

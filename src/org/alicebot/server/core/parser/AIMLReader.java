@@ -1,5 +1,6 @@
 package org.alicebot.server.core.parser;
 
+
 /**
 Alice Program D
 Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
@@ -17,7 +18,7 @@ USA.
 @author  Richard Wallace
 @author  Jon Baer
 @author  Thomas Ringate/Pedro Colla
-@version 4.1.1
+@version 4.1.2
 */
 
 	
@@ -48,10 +49,10 @@ public class  AIMLReader implements Serializable {
   final int       S_TEMPLATE  = 5; // Inside a  <template> </template> set
   final int 	  S_DESCRIPTION = 6; // Inside a <description> </description> set
 
-  AIMLReaderListener aListener   = null;
+  AIMLReaderListener  aListener   = null;
   BufferedReader      bReader     = null;
   String              strBuff     = "";
-  String       		  fileName    = "";
+  String              fileName    = "";
   int                 intLineNum  = 0;
   final int           maxtagsize  = 11;
 
@@ -65,14 +66,18 @@ public class  AIMLReader implements Serializable {
   public void read(){
     boolean   done           = false;
     boolean   bSearching     = false;
+    boolean   inXML          = false;
+
     int       state          = 0;
     int       intTagStart    = 0;
     int       intStartSearch = 0;
+
     String    strIn          = null;
     String    strPattern     = null;
     String    strThat        = null;
     String    strTopic       = null;
     String    strTemplate    = null;
+    String    localhost      = "localhost"; //4.1.2 b3
 
     /* ------ AIML tag format ---------------------------------/
       <aiml>
@@ -131,14 +136,53 @@ public class  AIMLReader implements Serializable {
     }
 //End of Fix
 
-
-
       if(intTagStart<0){
         done = true;
         continue;
       }
       else
         intStartSearch = intTagStart;
+
+      /*
+       Ability to parse <learn></learn> and <property/> outside the
+       context of a category as long as they are on a XML file and not
+       in a AIML file and not within any category structure
+       4.1.2 b3 PEC 09-2001
+      */
+      if( (inXML == true) && (state == S_NONE) ) {
+
+        if(strBuff.regionMatches(intTagStart,"<learn>",0,7)) {
+
+          int intLearnEnd = strBuff.indexOf("</learn>",intTagStart);
+          if ((intLearnEnd >= 0) && (intLearnEnd > intTagStart)) {
+             intLearnEnd     = intLearnEnd + 8;
+             String strLearn = strBuff.substring(intTagStart,intLearnEnd);
+             strBuff         = strBuff.substring(intLearnEnd++);
+             AIMLParser p    = new AIMLParser();
+             String dummy    = p.processResponse(localhost,strLearn);
+             intStartSearch = 0;
+             intTagStart    = -1;
+          }
+
+        }
+        if(strBuff.regionMatches(intTagStart,"<property",0,9)) {
+
+          int intPropEnd = strBuff.indexOf("/>",intTagStart);
+          if ((intPropEnd >= 0) && (intPropEnd > intTagStart)) {
+             intPropEnd         = intPropEnd + 2;
+             String strProperty = strBuff.substring(intTagStart,intPropEnd);
+             strBuff            = strBuff.substring(intPropEnd++);
+             AIMLParser p    = new AIMLParser();
+             String dummy    = p.processResponse(localhost,strProperty);
+             intStartSearch = 0;
+             intTagStart    = -1;
+
+          }
+
+        }
+
+      }
+      /* ======================{End of Patch}=============================== */
 
       //- Differentiate tags, check for validity in syntax, get phrase if applicable
       //- Note: the order here just puts the more frequent tags at the front
@@ -372,9 +416,39 @@ public class  AIMLReader implements Serializable {
           done = true;
         }
       }
-      else{
-        // matched no tags, not an AIML tag.
-        intStartSearch= intTagStart + 1;
+      else {
+
+        /*
+         Patch to allow a very primitive handling of generic XML
+         files in order to allow the bot to be bootstrapped
+         from a regular XML file. Only two tags will be recognized
+         in such scenario <learn></learn> and <property/>
+         This is a kludge, the most reasonable action should be
+         to replace this entire method by a standard XML parser.
+         4.1.2 b3 PEC 09-2001
+        */
+
+        if(strBuff.regionMatches(intTagStart,"<xml",0,4)) {
+
+          System.out.println("*** Processing XML("+fileName+") ***");
+          int intTagEnd = strBuff.indexOf(">",intTagStart);
+          intStartSearch= intTagEnd;
+          intStartSearch++;
+          inXML         = true;
+
+        } else {
+          if(strBuff.regionMatches(intTagStart,"</xml>",0,6)) {
+            intStartSearch=intTagStart+7;
+            inXML        =false;
+            done         =true;
+          } else {
+
+        //End of Add
+
+          // matched no tags, not an AIML tag.
+             intStartSearch= intTagStart + 1;
+          }
+        }
       }
 
    }// end while

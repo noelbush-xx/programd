@@ -1,109 +1,105 @@
 package org.alicebot.server.core.processor;
 
 /**
+Alice Program D
+Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
 
-ALICEBOT.NET Artificial Intelligence Project
-This version is Copyright (C) 2000 Jon Baer.
-jonbaer@digitalanywhere.com
-All rights reserved.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+USA.
 
-1. Redistributions of source code must retain the above copyright
-notice, this list of conditions, and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions, and the disclaimer that follows 
-these conditions in the documentation and/or other materials 
-provided with the distribution.
-
-3. The name "ALICEBOT.NET" must not be used to endorse or promote products
-derived from this software without prior written permission.  For
-written permission, please contact license@alicebot.org.
-
-4. Products derived from this software may not be called "ALICEBOT.NET",
-nor may "ALICEBOT.NET" appear in their name, without prior written permission
-from the ALICEBOT.NET Project Management (jonbaer@alicebot.net).
-
-In addition, we request (but do not require) that you include in the 
-end-user documentation provided with the redistribution and/or in the 
-software itself an acknowledgement equivalent to the following:
-"This product includes software developed by the
-ALICEBOT.NET Project (http://www.alicebot.net)."
-Alternatively, the acknowledgment may be graphical using the logos 
-available at http://www.alicebot.org/images/logos.
-
-THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED.  IN NO EVENT SHALL THE ALICE SOFTWARE FOUNDATION OR
-ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
-
-This software consists of voluntary contributions made by many 
-individuals on behalf of the A.L.I.C.E. Nexus and ALICEBOT.NET Project
-and was originally created by Dr. Richard Wallace <drwallace@alicebot.net>.
-
-This version was created by Jon Baer <jonbaer@alicebot.net>.
-
-http://www.alicebot.org
-http://www.alicebot.net
-
-This version contains open-source technologies from:
-Netscape, Apache, HypersonicSQL, JDOM, Jetty, Chris Carlin, IBM
-
+@author  Richard Wallace
+@author  Jon Baer
+@author  Thomas Ringate/Pedro Colla
+@version 4.1.1
 */
 
-
-import java.util.*;
+//import java.util.*;
 import java.lang.*;
 import java.net.*;
 import java.io.*;
 
 import org.alicebot.server.core.*;
-import org.alicebot.server.core.parser.*;
 import org.alicebot.server.core.util.*;
+import org.alicebot.server.core.parser.*;
 
-//Reviewed 4.0.3 b6 PEC 09-2001
-
-public class ConditionProcessor implements TagProcessor,Serializable {
-	public String processAIML(String ip, String mid,  AIMLParser p) {
-		String choice = new String("");
-		while (mid.indexOf("<li") >= 0) {
-			int m = mid.indexOf("<li");
-			mid = (m+3 >= mid.length()) ? "" : mid.substring(m+3, mid.length());
-			m = mid.indexOf(">");
-			choice = new String(mid.substring(m+1, mid.length()));
-			choice = choice.substring(0,  choice.indexOf("</li>"));
-			if (m == 0) return p.processResponse(ip, choice);      
-			if (m > 0) {
-				String predname = AIMLParser.getArg("name", mid);
-				String pattern = AIMLParser.getArg("value", mid);
-/*Remove 4.0.3 b6 PEC 09-2001
-				String contains = AIMLParser.getArg("contains", mid);
+/**
+ ConditionProcessor is the one handling the many mutations of the CONDITION
+ tag. First the variant at hand is detected and then the evaluation
+ of the listitems below is triggered with that information. The way
+ it's recursed allows for unlimited nesting to occur and to be executed
+ in the proper order.
+ @version 4.1.1
+ @author  Thomas Ringate/Pedro Colla
 */
-				String predvalue = Classifier.getValue(predname, ip);
-				if (pattern.length() > 0) {
+public class ConditionProcessor implements AIMLProcessor, Serializable {
+        public String processAIML(int level, String ip, XMLNode tag, AIMLParser p) {
 
-                                        if (predvalue.equalsIgnoreCase(pattern)) {
-                                         return p.processResponse(ip, choice);
-                                        }            
-				}
-/*Remove 4.0.3 b6 PEC 09-2001
-				if (contains.length() > 0) {
-					if (predvalue.indexOf(contains) >= 0) return p.processResponse(ip, choice);
-				}
-*/
-			}
-		}
-		return "";
+        if (tag.XMLChild == null) {
+           return "";
+        }
+
+        String response= "";
+
+        String nameval = p.getArg("name",tag.XMLAttr);
+        String valueval= p.getArg("value",tag.XMLAttr);
+        //System.out.println("*** CONDITION: name("+nameval+") value("+valueval+") ***");
+
+        /*
+          First form of condition <condition>
+                                    <li name="xxx" value="xxx"></li>
+                                    <li></li>
+                                  </condition>
+        */
+
+        if ( (tag.XMLAttr.toLowerCase().indexOf("name=",0)  < 0) &&
+             (tag.XMLAttr.toLowerCase().indexOf("value=",0) < 0) ) {
+
+           //System.out.println("*** CONDITION: name==() value==() ***");
+           response = p.ProcessListItem(level,ip,tag.XMLChild,1,nameval,valueval);
+           return response;
+        }
+
+
+        /*
+          Second form of condition <condition name="xxx" value="yyy">
+                                   </condition>
+
+        */
+
+        if ( (tag.XMLAttr.toLowerCase().indexOf("name=",0)  >= 0) &&
+             (tag.XMLAttr.toLowerCase().indexOf("value=",0) >= 0) ) {
+
+           String varname = Classifier.getValue(nameval,ip);
+           //System.out.println("*** CONDITION: name("+nameval+") value("+varname+") ***");
+           if (varname.toLowerCase().equals(valueval.toLowerCase())) { //4.1.1 b12 case insensitive comparisson
+              response = p.ProcessListItem(level,ip,tag.XMLChild,2,"","");
+           }
+
+           return response;
+        }
+
+        /*
+          Third  form of condition <condition name="xxx">
+                                     <li value="yyy"></li>
+                                     <li></li>
+                                   </condition>
+        */
+        if ( (tag.XMLAttr.toLowerCase().indexOf("name=",0)  >= 0) &&
+             (tag.XMLAttr.toLowerCase().indexOf("value=",0) <  0) ) {
+
+           //System.out.println("*** CONDITION: name!=() value==() ***");
+           response = p.ProcessListItem(level,ip,tag.XMLChild,3,nameval,"");
+           return response;
+        }
+
+
+         return "";
 	}
-} 
+}

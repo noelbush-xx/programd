@@ -1,80 +1,155 @@
 package org.alicebot.server.core.processor;
 
 /**
+Alice Program D
+Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
 
-ALICEBOT.NET Artificial Intelligence Project
-This version is Copyright (C) 2000 Jon Baer.
-jonbaer@digitalanywhere.com
-All rights reserved.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+USA.
 
-1. Redistributions of source code must retain the above copyright
-notice, this list of conditions, and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions, and the disclaimer that follows 
-these conditions in the documentation and/or other materials 
-provided with the distribution.
-
-3. The name "ALICEBOT.NET" must not be used to endorse or promote products
-derived from this software without prior written permission.  For
-written permission, please contact license@alicebot.org.
-
-4. Products derived from this software may not be called "ALICEBOT.NET",
-nor may "ALICEBOT.NET" appear in their name, without prior written permission
-from the ALICEBOT.NET Project Management (jonbaer@alicebot.net).
-
-In addition, we request (but do not require) that you include in the 
-end-user documentation provided with the redistribution and/or in the 
-software itself an acknowledgement equivalent to the following:
-"This product includes software developed by the
-ALICEBOT.NET Project (http://www.alicebot.net)."
-Alternatively, the acknowledgment may be graphical using the logos 
-available at http://www.alicebot.org/images/logos.
-
-THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED.  IN NO EVENT SHALL THE ALICE SOFTWARE FOUNDATION OR
-ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
-
-This software consists of voluntary contributions made by many 
-individuals on behalf of the A.L.I.C.E. Nexus and ALICEBOT.NET Project
-and was originally created by Dr. Richard Wallace <drwallace@alicebot.net>.
-
-This version was created by Jon Baer <jonbaer@alicebot.net>.
-
-http://www.alicebot.org
-http://www.alicebot.net
-
-This version contains open-source technologies from:
-Netscape, Apache, HypersonicSQL, JDOM, Jetty, Chris Carlin, IBM
-
+@author  Richard Wallace
+@author  Jon Baer
+@author  Thomas Ringate/Pedro Colla
+@version 4.1.1
 */
 
-
-import java.util.*;
+//import java.util.*;
 import java.lang.*;
 import java.net.*;
 import java.io.*;
 
 import org.alicebot.server.core.*;
-import org.alicebot.server.core.parser.*;
 import org.alicebot.server.core.util.*;
-	
-public class IfProcessor implements TagProcessor, Serializable {
-	public String processAIML(String ip, String mid,  AIMLParser p) {
-		return mid;
-	} 
-} 
+import org.alicebot.server.core.parser.*;
 
+/**
+ IfProcessor manages the IF tag and the variances on the inner THEN/ELSE
+ tags.
+ The condition is first validated and the THEN or ELSE clause is evaluated
+ as appropriate. A special provision is made for the THEN clause not to
+ be required if the condition is true and there are no ELSE structures
+ present.
+ @version 4.1.1
+ @author  Thomas Ringate/Pedro Colla
+*/
+public class IfProcessor implements AIMLProcessor, Serializable {
+      public String processAIML(int level, String ip, XMLNode tag, AIMLParser p) {
+
+        /*
+          Somehow this is an empty tag that got so far as here...
+        */
+
+        if (tag.XMLChild == null) {
+           return "";
+        }
+
+        /*
+          No attributes --> don't waste time
+        */
+
+        if (tag.XMLAttr.trim().equals("")) {
+           return "";
+        }
+
+        /*
+          Both the name= and value= tokens must be present
+        */
+
+        if ( (tag.XMLAttr.toLowerCase().indexOf("name=",0) < 0) ||
+             (tag.XMLAttr.toLowerCase().indexOf("value=",0) < 0) ) {
+           return "";
+        }
+
+        String response= "";
+
+        /*
+          Get the values for the arguments of the tag
+        */
+
+        String nameval = p.getArg("name",tag.XMLAttr);
+        String valueval= p.getArg("value",tag.XMLAttr);
+        //System.out.println("*** IF: name("+nameval+") value("+valueval+") ***");
+
+        /*
+          Now get the current value for the variable pointed by the tag
+        */
+
+        String varvalue= Classifier.getValue(nameval,ip);
+
+
+        if (varvalue.toLowerCase().equals(valueval.toLowerCase())) { //4.1.1 b12 case insensitive comparisson
+
+           /*
+             variable value matches tag value, now get a pointer to
+             the first THEN
+           */
+           //System.out.println("*** IF: MATCH (THEN) ***");
+           XMLNode n = p.getnode(AIML10Tag.THEN,tag.XMLChild,1);
+
+           /*
+             the THEN is optional if there is no else, so it might
+             not be there.
+           */
+
+           if (n == null) {
+
+              //System.out.println("*** IF: THEN TAG NOT FOUND ***");
+
+              /*
+                Verify there are tags beneath and there is no ELSE
+                tag in sight.
+              */
+
+              if ( (tag.XMLChild != null) &&
+                   (p.getnode(AIML10Tag.ELSE,tag.XMLChild,1) == null) ) {
+
+                   //System.out.println("*** IF: NO THEN && NO ELSE ***");
+                   n = tag;
+
+              } else {
+
+                //System.out.println("*** IF: INVALID TAG FORMAT ***");
+                return "";
+              }
+           }
+
+           /*
+             the pointer n held the root of the structure to evaluate,
+             so evaluate the childs of it
+           */
+
+           response = response + p.evaluate(level++,ip,n.XMLChild);
+
+        } else {
+
+           /*
+             variable value does not matches tag value, so get a pointer
+             to the ELSE tag
+           */
+
+           XMLNode n = p.getnode(AIML10Tag.ELSE,tag.XMLChild,1);
+
+           /*
+             the ELSE tag is mandatory, so if there is none just leave
+           */
+
+           if (n == null) {
+              return "";
+           }
+
+           /*
+             Otherwise evaluate the child tags
+           */
+
+           response = response + p.evaluate(level++,ip,n.XMLChild);
+        }
+        return response;
+      }
+}

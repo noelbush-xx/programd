@@ -29,12 +29,8 @@ import java.io.*;
 import org.alicebot.server.core.*;
 import org.alicebot.server.core.loader.*;
 import org.alicebot.server.core.node.*;
-import org.alicebot.server.core.parser.AIMLReader;
-import org.alicebot.server.core.parser.AIMLTag;
-import org.alicebot.server.core.parser.AIMLPatternFinder;
-import org.alicebot.server.core.parser.AIMLPatternSaver;
-import org.alicebot.server.core.AIMLparser.*;
-import org.alicebot.server.core.AIMLprocessor.*;
+import org.alicebot.server.core.parser.*;
+import org.alicebot.server.core.processor.*;
 
 /** 
  * The GraphmasterUtility is responsible for various tasks on the Graphmaster. 
@@ -178,55 +174,15 @@ public class Toolkit {
         }
 
 	/**
-	 * <p>
 	 * Loads any AIML Files that appear in the &lt;template&gt;.
-	 * </p>
 	 */
 	public static void process_load_tags(String filename, String templ) {
 
-             if (filename.indexOf(Globals.getServerProps().getProperty("server.engine.startup")) < 0) {
-                return;
-             }
 
-             AIMLParser p = new AIMLParser(1);
+             AIMLParser p    = new AIMLParser(1);
              String ip       = "127.0.0.1";
              String response = p.processResponse(ip, templ);
              return;
-
-/*Removed 4.1.1 b8 PEC 09-2001
-
-		int n;
-		
-		if (filename.indexOf(Globals.getServerProps().getProperty("server.engine.startup"))> 0) {
-                   System.out.println("*** LOAD_TAGS: File("+Globals.getServerProps().getProperty("server.engine.startup")+") ***");
-			while ((n = templ.indexOf("<load filename=\"")) >= 0) {
-				templ = templ.substring(n+"<load filename=\"".length(), templ.length());
-				int m = templ.indexOf("\"/>");
-				if (m >= 0) {
-					String line = templ;
-					templ = (m+3 >= templ.length()) ? "" : templ.substring(m+3, templ.length());
-					line = line.substring(0, m);
-					line = line.trim();
-                                        System.out.println("*** LOAD: File("+line+") ***");
-					load_aiml_file(line);
-				}
-			}
-			
-			while ((n = templ.indexOf("<learn>")) >= 0) {
-				templ = templ.substring(n+"<learn>".length(), templ.length());
-				int m = templ.indexOf("</learn>");
-				if (m >= 0) {
-					String line = templ;
-					templ = (m+3 >= templ.length()) ? "" : templ.substring(m+3, templ.length());
-					line = line.substring(0, m);
-					line = line.trim();
-                                        System.out.println("*** LEARN: File("+line+") ***");
-					load_aiml_file(line);
-				}
-			}
-		}
-
-*/
 		
 	} 
 
@@ -578,12 +534,35 @@ public class Toolkit {
 							Graphmaster.THAT_NODEMAPPER.put(Graphmaster.HNAME, Graphmaster.UNDEFINED);
 						String that = (String)Graphmaster.THAT_NODEMAPPER.get(Graphmaster.HNAME);
 						String topic = new String(Graphmaster.UNDEFINED);
+
+                                                /*Remove 4.1.2 b1 PEC 09-2001 reflect the change
+                                                  introduced in the match method interface
+
 						Nodemapper node = Graphmaster.match(line, that, topic);
 						String thatpattern = Graphmaster.THAT_PATTERN;
 						String pattern = Graphmaster.INPUT_PATTERN;
+                                                */
+
+
+                                                /*Add 4.1.2 b1 PEC 09-2001 functional equivalent of
+                                                  the above replaced lines under the new interface
+                                                */
+
+                                                Match M = Graphmaster.match(line,that,topic);
+                                                if (M == null) {
+                                                   return;
+                                                }
+                                                Nodemapper node    = M.node;
+                                                String thatpattern = M.thatPattern;
+                                                String pattern     = M.inputPattern;
+
+                                                /*-->End of Add*/
+
 						String input = line;
+
 						String templ = (node.get(Graphmaster.TEMPLATE) == null) ? "" : (String)node.get(Graphmaster.TEMPLATE);
 						String gname = (node.get(Graphmaster.FILENAME) == null) ? "" : (String)node.get(Graphmaster.FILENAME);
+
 						if (templ.indexOf("<sr") < 0) {
 							vote(fname, that, input, thatpattern, pattern);
 						} // if

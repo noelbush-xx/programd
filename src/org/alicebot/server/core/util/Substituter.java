@@ -851,24 +851,6 @@ public class Substituter extends Object implements Serializable {
 		return(input);
 	} // deperiodize
 
-/*Removed 4.1.1 b1 PEC 09-2001
-	
-	public static String person(String input, String bot) {
-		String botname = Globals.getBotName();
-		for (int i = 0; i < person_subst.length; i++) {
-		for (int j = 0; j < 2; j++) {
-		if (person_subst[i][j].indexOf("<name/>") >= 0) {
-                   person_subst[i][j] = Substituter.replace("<name/>",botname,
-                   person_subst[i][j]);
-		}
-		}
-		}
-		return(replace(person_subst, input));
-		return Globals.getBotName();
-	} // person
-
-End of Removal */
-
 //Add 4.1.1 b1 PEC 09-2001
         /**
          person
@@ -945,17 +927,6 @@ End of Removal */
 
 //End of Add
 
-
-/*Removed 4.1.1 b1 PEC 09-2001
-
-	// Convert to 2nd person
-	//
-	public static String person2(String input, String bot) {
-		//  return(replace(person2_subst, input));
-		return Globals.getBotName();
-	} // person2
-
-End of Removal */
 
         /** pretty "Pretty-fy" the output
         */

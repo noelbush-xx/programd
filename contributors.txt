@@ -1,12 +1,10 @@
-Ing. Pedro E. Colla develop ProgramD reference program AIML 1.0 complient
-Thomas Ringate develop ProgramD reference program AIML 1.0 complient
-Kim Sullivan cleaned AIML and code and wrote a new HTML responder
 Alain Agostini developed some AIML for Pickup.aiml
 Diana Andreacchio wrote a help document for Windows users that became part of this FAQ.
 An anonymous contributor provided AIML content no longer used.
 Anonymous contributors created the VBScript interface to MS Agent.
 David Bacon wrote the SETL compiler used to prototype the early versions of ALICE.
 Jacco Bikker wrote an AIML interpreter in C and corrected much of the original AIML content.
+Ing. Pedro E. Colla made ProgramD reference AIML 1.0 compliant
 Ace Craig contributed the the AIML "web search" markup.
 Kris Drent has provided significant contributions to the Program B application, Applet and Servlet. He created the <topic> tag. Kris also wrote a fast, small-footprint XML parser tuned for AIML files.
 Christian Drossmann provided the German language AIML module.
@@ -26,13 +24,15 @@ Terence Parr provided a parser no longer used.
 Yiannis Paschalidis improved Bawt.java and StringSorter.add().
 Andrew Phillips wrote some content for Knowledge.aiml.
 Andrew Potgieter wrote a text wrapper and created the <think> tag.
+Thomas Ringate made ProgramD reference AIML 1.0 compliant
 Timothy F. Rohaly proofread the Java code and suggested numerous improvements.
 Karolyn Schalk contributed content to Knowledge.aiml.
 Karlheinz Schuhmacher modified Substiter.replace() to prevent endless loops.
 Gregory Skourge made the package org.alicebot.
 Jack Spies contribued much to the Mac documentation.
+Kim Sullivan cleaned AIML and code and wrote a new HTML responder
 Anthony Taylor made Jacco's C/C++ a platform-independent program.
 Stan Wallace wrote some content for Knowledge.aiml.
 Additional graphics were created by Sage Greco, Darren Langley and Larry Hauser.
 
-We gratefully acknowledge these contributions and the programmers who created them.
+We gratefully acknowledge these contributions and the people who made them.

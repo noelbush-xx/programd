@@ -18,7 +18,7 @@ USA.
 @author  Richard Wallace
 @author  Jon Baer
 @author  Thomas Ringate/Pedro Colla
-@version 4.1.1
+@version 4.1.2
 */
 
 import java.lang.ref.*;
@@ -60,8 +60,6 @@ public class AIMLTag
 	public static final String CATEGORY = "<category>";
 	public static final String CATEGORY_OPEN = "<category ";
 	public static final String CATEGORY_CLOSE = "</category>";
-
-
 	
 	// AIML 1.0 Template Side
 	public static final String LOGIN = "<login/>";
@@ -169,48 +167,6 @@ public class AIMLTag
         public static final String SETTOPIC_OPEN = "<settopic>"; //New 4.0.3 b2
         public static final String SETTOPIC_CLOSE = "</settopic>"; //New 4.0.3 b2
 
-
-/*Removed 4.0.3 b2 Experimental Tags Removed
-
-	public static final String TYPEOF = "<typeof_";
-	public static final String EVENT = "<event>";
-	public static final String EVENT_OPEN = "<event ";
-	public static final String EVENT_CLOSE = "</event>";
-	public static final String ERROR = "<error>";
-	public static final String ERROR_OPEN = "<error ";
-	public static final String ERROR_CLOSE = "</error>";
-	public static final String LISTEN = "<listen>";
-	public static final String LISTEN_OPEN = "<listen ";
-	public static final String LISTEN_CLOSE = "</listen>";
-	public static final String ENCODE = "<encode>";
-	public static final String ENCODE_CLOSE = "</encode>";
-	public static final String DECODE = "<decode>";
-	public static final String DECODE_CLOSE = "</decode>";
-	public static final String OS = "<os/>";
-	public static final String LOG = "<log>";
-	public static final String LOG_CLOSE = "</log>";
-	public static final String TIMER = "<timer>";
-	public static final String TIMER_OPEN = "<timer ";
-	public static final String TIMER_CLOSE = "</timer>";
-	public static final String NQL = "<nql>";
-	public static final String NQL_OPEN = "<nql ";
-	public static final String NQL_CLOSE = "</nql>";
-	public static final String FACE = "<face>";
-	public static final String FACE_OPEN = "<face ";
-	public static final String FACE_CLOSE = "</face>";
-	public static final String DISPLAY = "<display>";
-	public static final String DISPLAY_OPEN = "<display ";
-	public static final String DISPLAY_CLOSE = "</display>";
-	public static final String ALICE_IN = "<alice_in/>";
-	public static final String ALICE_OUT = "<alice_out/>";
-	public static final String FORGET = "<forget>";
-	public static final String FORGET_CLOSE = "</forget>";
-	public static final String ADD_OPEN = "<add_";
-	public static final String ADD_CLOSE = "</add_";
-	public static final String RND_OPEN = "<random_";
-	public static final String RND_CLOSE = "</random_";
-
-*/
 
 }
 

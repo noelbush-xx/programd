@@ -17,7 +17,7 @@ USA.
 @author  Richard Wallace
 @author  Jon Baer
 @author  Thomas Ringate/Pedro Colla
-@version 4.1.1
+@version 4.1.2
 */
 
 import org.alicebot.server.core.*;
@@ -130,48 +130,6 @@ public class AIMLLoader implements AIMLReaderListener {
 			pattern = Substituter.replace("<li>" + mid + "</li>", "", pattern);
 		}
 
-/* Remove 4.0.3 b4 PEC 09-2001
-
-		while (pattern.indexOf("<typeof_") >= 0) {
-			
-			// First, located the type we are looking for...
-			StringTokenizer st = new StringTokenizer(pattern, "_");
-			String type = "";
-			while (st.hasMoreTokens()) {
-				String token = st.nextToken().trim();
-				if (token.endsWith("<typeof")) {
-					type = (new StringTokenizer(st.nextToken(), "/>")).nextToken();
-					// System.out.println("*** TYPEOF: " + type + " ***");
-				}
-			}
-			
-			// Get the values from the Graphmaster
-			String values = (String)Graphmaster.match("TYPEOF " + type.toUpperCase(), "*", "*").get(Graphmaster.TEMPLATE);
-			// System.out.println("*** VALUES: " + values + " ***");
-			
-			StringTokenizer v = new StringTokenizer(values, ",");
-			while (v.hasMoreTokens()) {
-				String newPattern = Substituter.replace("<typeof_" + type + "/>", v.nextToken(), pattern);
-				if (newPattern.indexOf("<typeof_") >= 0) {
-					// Recurse this pattern if we need to
-					newCategory(newPattern, that, topic, template);
-				} else {
-					// Otherwise drop this pattern into the Graphmaster
-					newPattern = Substituter.normalize(newPattern);
-					// System.out.println("*** ADDING: " + newPattern + " ***");
-					Nodemapper node = Graphmaster.add(newPattern, that, topic);
-					node.put(Graphmaster.FILENAME, filename);
-					node.put(Graphmaster.TEMPLATE, template);
-				}
-			}
-			
-			pattern = "*";
-			process = false;
-			
-		}
-
-*/
-
 		if (process) {
 			Nodemapper node = Graphmaster.add(pattern, that, topic);
 			if (node.get(Graphmaster.TEMPLATE) != null && !policy.equals("true")) {
@@ -194,6 +152,5 @@ public class AIMLLoader implements AIMLReaderListener {
 		Toolkit.process_load_tags(filename, template);
 		
 	} 
-	
 }
 

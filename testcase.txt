@@ -1,3 +1,4 @@
+my name is client
 testatomic
 testdisplayset
 testhide
@@ -5,17 +6,15 @@ testget
 testsetx
 testalter
 testsettopic
-testblab
-testblab
-testsettopic
-test
-test
+test6
+test6a
 testsimplecondition
 testsimpleconditiona
 testconditionlist
 testconditionlistdefault
 testconditionlistname
 teststar test passed
+teststar test passed one test passed two test passed three test passed
 testrandom
 testwordformat
 testnestedwordformat
@@ -38,10 +37,6 @@ testsr sraifailed
 testnestedsrai
 testthinksrai
 teststarset test passed
-testifvalue
-testifelse
-testifthenelse
-testifelsethen
 testidsizedate
 testgossip
 testname
@@ -55,9 +50,10 @@ testthatstar1
 testmultithatstar
 testmultithatstar1
 testtopicstar
-test
+test34
 testmultitopicstar
-test
+test35
 testoldtopic
-test
+test36
+testextreamsrai
 exit

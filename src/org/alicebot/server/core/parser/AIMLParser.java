@@ -1,167 +1,90 @@
 package org.alicebot.server.core.parser;
+
 /**
+Alice Program D
+Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
 
-$Id: AIMLParser.java,v 1.6.2.4 2001/09/13 00:04:57 tringate Exp $
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
-ALICEBOT.NET Artificial Intelligence Project
-This version is Copyright (C) 2000 Jon Baer.
-jonbaer@digitalanywhere.com
-All rights reserved.
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+USA.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
-1. Redistributions of source code must retain the above copyright
-notice, this list of conditions, and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions, and the disclaimer that follows
-these conditions in the documentation and/or other materials
-provided with the distribution.
-
-3. The name "ALICEBOT.NET" must not be used to endorse or promote products
-derived from this software without prior written permission.  For
-written permission, please contact license@alicebot.org.
-
-4. Products derived from this software may not be called "ALICEBOT.NET",
-nor may "ALICEBOT.NET" appear in their name, without prior written permission
-from the ALICEBOT.NET Project Management (jonbaer@alicebot.net).
-
-In addition, we request (but do not require) that you include in the
-end-user documentation provided with the redistribution and/or in the
-software itself an acknowledgement equivalent to the following:
-"This product includes software developed by the
-ALICEBOT.NET Project (http://www.alicebot.net)."
-Alternatively, the acknowledgment may be graphical using the logos
-available at http://www.alicebot.org/images/logos.
-
-THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED.  IN NO EVENT SHALL THE ALICE SOFTWARE FOUNDATION OR
-ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
-
-This software consists of voluntary contributions made by many
-individuals on behalf of the A.L.I.C.E. Nexus and ALICEBOT.NET Project
-and was originally created by Dr. Richard Wallace <drwallace@alicebot.net>.
-
-This version was created by Jon Baer <jonbaer@alicebot.net>.
-
-http://www.alicebot.org
-http://www.alicebot.net
-
-This version contains open-source technologies from:
-Netscape, Apache, HypersonicSQL, JDOM, Jetty, Chris Carlin, IBM
-
+@author  Richard Wallace
+@author  Jon Baer
+@author  Thomas Ringate/Pedro Colla
+@version 4.1.2
 */
-
-
-import java.util.*;
-import java.lang.*;
-import java.net.*;
-import java.io.*;
-
-
-import org.alicebot.server.core.*;
-import org.alicebot.server.core.logging.*;
-import org.alicebot.server.core.processor.*;
-import org.alicebot.server.core.util.*;
 import org.alicebot.server.core.parser.*;
+import org.alicebot.server.core.*;
+import org.alicebot.server.core.util.*;
+import org.alicebot.server.core.responder.*;
+import org.alicebot.server.core.processor.*;
 
-/**
- * The AIMLParser class interprets the right-hand side template expressions.
- *
- * The primary method of the AIMLParser class is the processResponse() that
- * controls the parsing and interpretation process.
- *
- * IMPORTANT!!! This AIMLParser will be superceded by a new one in the future.
- * It is provided as a platform testing parser to finalize and debug certain
- * tag sets.  Please do not edit it, instead send feature requests to the Alicebot
- * list (alicebot-subscribe@listbot.com) and voice your opinion.
- *
- * @author Richard Wallace
- * @author Kris Drent
- * @author Jon Baer
- * @version 1.0
- */
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.net.*;
+import java.util.Vector;
 
-public class AIMLParser {
-	public int length;
-	public int depth;
+import javax.swing.*;
 
-	public Globals globals;
+
+public class AIMLParser extends Object {
+
+        public int         length;
+        public int         depth;
+
+        public Globals     globals;
 	public Interpreter interpreter;
-	public Classifier classifier;
+        public Classifier  classifier;
 	public Graphmaster graphmaster;
-	public String bot;
+        public String      bot;
+        public Vector      INPUT_STAR;
+        public Vector      THAT_STAR;
+        public Vector      TOPIC_STAR;
 
-	/**
+        /**
 	 * The AIML Parser.
-	 */
+         * This is the class responsible to interpret and execute
+         * templates producing actual responses out of them.
+         * @version 4.1.1
+         * @author  Thomas Ringate/Pedro Colla
+         */
 	public AIMLParser()  {
 		length = 0;
-		depth = 0;
+                depth  = 0;
 	}
 
-	/**
+        /**
 	 * The AIML Parser (with depth known).
-	 */
+         */
 	public AIMLParser(int depth)  {
 		this();
 		this.depth = depth;
 	}
 
-	/**
+        /**
 	 * AIML Parser (with depth known and a given interpreter).
-	 */
+         */
 	public AIMLParser(int depth, Interpreter interpreter)  {
 		this();
-		this.depth = depth;
+                this.depth       = depth;
 		this.interpreter = interpreter;
 	}
-
-	/**
-	 * Method to process an AIML tag set.
-	 */
-	public String processTag(String ip, String stag, String etag, String response, TagProcessor tp) {
-		while (response.indexOf(stag) >= 0) {
-			int start = response.indexOf(stag);
-			int end = indexOfEndTag(stag, etag, response);
-			if (end <= start) response = Substituter.replace(stag," ",response);
-			else {
-				String head = response.substring(0, start);
-				String mid = response.substring(start+stag.length(), end);
-				String tail =
-					(end+etag.length() < response.length()) ? response.substring(end+etag.length()) : "";
-				mid = tp.processAIML(ip, mid, this);
-				tail = processResponse(ip, tail);
-				response = head + mid + tail;
-			}
-		}
-		return response;
-	}
-
-
-	public String processElse(String elseString) {
-		if (elseString.indexOf("<else/>") < 0) {
-			return "";
-		} else {
-			int start = elseString.indexOf("<else/>") + 7;
-			return elseString.substring(start, elseString.length());
-		}
-	}
-
-	/**
-	 * A utility method to grab arguements of a tag set.
-	 */
+        /**
+          getArg
+          A utility method to grab arguments of a tag by name.
+          The method looks in the supplied argument string and parses
+          the argument name looking for the structure argname= and
+          returns whatever is after the = till the next blank or the
+          end of the string.
+          It is used mostly to extract attributes out of AIML tags
+         */
 	public static String getArg(String argname, String args) {
 		int m;
 		String argvalue="";
@@ -176,1184 +99,1346 @@ public class AIMLParser {
 		}
 		return (argvalue);
 	}
-
-
-	/**
-	 * This is either a bug or a feature that restricts the
-	 * XML grammar somewhat.  The assumption of
-	 * indexOfEndTag is that the "etag" matching "stag" is
-	 * the NEXT etag in the input.  This prohibits recursive
-	 * constructs like <srai><srai>...</srai></srai>, but the
-	 * semantics of those expressions are unclear anyway.
-	 * The language DOES permit <srai>X</srai><srai>Y</srai>.
-	 */
-
-	public int indexOfEndTag(String stag, String etag, String input) {
-		int index = input.indexOf(etag);
-		return (index);
-	}
-
-//Add 4.0.3 b6 PEC 09-2001
         /**
-        This method process <li></li> within a <condition></condition> tag
+         This method evaluates recursively the XML trie holding the
+         template tags. Both the level and the ip of the client is
+         carried thru recursion.
         */
+        public String evaluate(int level, String ip,LinkedList lt) {
 
-        public String processLI(String ip, String predname, String response) {
+             String         response = "";
+             LinkedListItr  ltItr;
+             XMLNode        n;
 
-                //System.out.println("*** PROCESSLI ENTRY: (" + response + ") ***");
-                boolean hit = false;
+             /*
+               Verify we have something to work with
+             */
+              
+             if (lt == null) {
+                return "";
+             }
 
-                while (response.indexOf(AIMLTag.LISTITEM_OPEN) >= 0) {
+             /*
+               Point to the start of the XML trie to parse
+             */
 
-                   //System.out.println("*** LISTITEM("+response+") ***");
+             ltItr = lt.zeroth();
+             //ltItr.advance();
 
-                   //Extract start and end of the <li> tag
-                   int start   = response.indexOf(AIMLTag.LISTITEM_OPEN);
-                   int end     = response.indexOf(AIMLTag.LISTITEM_CLOSE,start);
-                   String head = response.substring(0, start);
-                   String tail = response.substring(end+AIMLTag.LISTITEM_CLOSE.length());
-                   //System.out.println("*** LISTITEM HEAD("+head+") ***");
-                   //System.out.println("*** LISTITEM TAIL("+tail+") ***");
+             /*
+               Navigate thru the entire level of it
+             */
 
+             while (!ltItr.isPastEnd()) {
 
-                   //Extract the opening <li> tag plus attributes
-                   int index        = start;
-                   String predicate = "";
-                   while ( (!predicate.endsWith(">"))  && (index < end)) {
-                      predicate = predicate+(String.valueOf(response.charAt(index)));
-                      index++;
-                   }
+               n = (XMLNode)ltItr.retrieve();
+               if (n != null) {
+                  switch(n.XMLType) {
 
-                   //System.out.println("*** LISTITEM("+predicate+") ***");
+                   /*
+                     Collect and process tags
+                   */
 
-                   //Extract content between open and close <li> tags
-                   String mid = "";
-                   index      = start+predicate.length();
-                   while (index < end) {
-                      mid = mid+(String.valueOf(response.charAt(index)));
-                      index++;
-                   }
+                   case n.TAG   :
+                   case n.EMPTY :
+                               /**
+                                If it is during load time only certain
+                                tags could be evaluated.
+                               */
+                               if (Graphmaster.loadtime == true) {
+                                  n.XMLData = n.XMLData.toLowerCase();
 
-                   //System.out.println("*** LISTITEM MID: ("+mid+") ***");
+                               /**
+                                 If not LEARN or LOAD bypass it during load
+                               */
+                                  if ( (!n.XMLData.equals(AIML10Tag.LEARN))    &&
+                                       (!n.XMLData.equals(AIML10Tag.PROPERTY)) &&
+                                       (!n.XMLData.equals(AIML10Tag.LOAD)) ) {
+                                     break;
+                                  }
+                               }
 
-                   //Extract arguments from the open <li> tag
-                   String args = "";
-                   StringTokenizer st = new StringTokenizer(predicate, " ");
-                   while (st.hasMoreTokens()) {
-                     String token = st.nextToken();
-                     if (!token.endsWith("<li")) {
-                        if (token.endsWith(">")) {
-                           token = token.substring(0,token.length()-1);
-                        }
-                        if (args.equals("")) {
-                           args = token;
-                        } else {
-                           args = args + " " + token;
-                        }
-                     }
-                   }
-                   //System.out.println("*** ARGS: ("+args+") ***");
+                               /**
+                                 Outside loadtime the full tagset must
+                                 be explored
+                               */
 
-                   //Now process the content between li tags
-                   String predvalue="";
+                               response = response + processtag(level,ip,n);
+                               break;
 
-                   predvalue= getArg("value",args);
-                   predvalue= Substituter.normalize(predvalue);
-
-                   String sx = "";
-                   response  = "";
-
-                   //<li> with value informed
-                   if (!predvalue.equals("")) {   
-
-                      sx = Classifier.getValue(predname, ip);
-                      //System.out.println("*** LISTITEM PREDICATE VALUE: "+sx+" ***");
-                      sx = Substituter.normalize(sx);
-
-                      if (!sx.equals(predvalue)) {
-                        response = "";
-                      } else {
-                        response = mid;
-                        hit      = true;
-                        System.out.println("*** LISTITEM HIT VALUE: "+sx+" ***");
-
-                      }
-                   }
-
-                   //if the evaluation was false response is ""
-                   //if the evaluation was true response is the child of <li>
-                   response = head + response + tail;
-                }
-
-                //All <li> with values processed already, now process the
-                //ones without them, only need to process if no hit were
-                //found in the previous block, still need to extract it
-                //from the string.
-
-                while (response.indexOf(AIMLTag.LISTITEM) >= 0) {
-
-                   //System.out.println("*** LISTITEM("+response+") ***");
-
-                   //Extract start and end of the <li> tag
-                   int start   = response.indexOf(AIMLTag.LISTITEM);
-                   int end     = response.indexOf(AIMLTag.LISTITEM_CLOSE,start);
-                   String head = response.substring(0, start);
-                   String tail = response.substring(end+AIMLTag.LISTITEM_CLOSE.length());
-                   //System.out.println("*** LISTITEM HEAD("+head+") ***");
-                   //System.out.println("*** LISTITEM TAIL("+tail+") ***");
-
-                   //if previous block yield a hit then just nullify
-                   if (hit == true) {
-                      response = head + tail;
-                   } else {
-
-                      //Extract content between open and close <li> tags
-                      String mid = "";
-                      int index  = start+AIMLTag.LISTITEM.length();
-                      while (index < end) {
-                         mid = mid+(String.valueOf(response.charAt(index)));
-                         index++;
-                      }
-
-                      //if previous block didn't yield a hit then return content
-                      response = head + mid + tail;
-                   }
-
-                }
-
-               return response;
+                   /*
+                     Text chunks just add them to the response
+                   */
+                   case n.DATA  :
+                   case n.CDATA :
+                               response = response + n.XMLData ;
+                               break;
+                   default    :
+                               break;
+                  }
+               }
+               ltItr.advance();
+             }
+             return response;
         }
-//End of Add
+        /**
+         formattag
+         This method format a tag out of a XML node into pure AIML,
+         it is used mostly when a tag can not be evaluated and then
+         literally included in the output.
+        */
+        public String formattag (int level, String ip, XMLNode tag) {
 
-	/**
-	 * The method processResponse: the Program Formerly Known as Hello.
-	 * This method interprets the AIML template and constucts the reply.
-	 * Pfkh is normally called by the Classifier method respond().
-	 * If the Template contains an <sr> or <srai> function, then the
-	 * processResponse() executes a recursive call back to the Classifier method respond().
-	 * Note that respond may create another instance of this class AIMLParser.
-	 * These recursions create the possibility of infinite loops, so the
-	 * Botmaster should take care not to allow loops in AIML.
-	 */
+          /*
+            This is a recursive beast, but a given level always
+            starts with an empty answer.
+          */
 
-	public String processResponse(String ip, String response) {
+          String response = "";
 
-		TagProcessor tp;
-		String templ = response;
-		int n;
-		String stag, etag;
+          /*
+            Format according with the XML element type, handling of
+            text has been added for generality since no text will
+            ever be passed under the main usage of the method.
+          */
 
-                //System.out.println("*** PROCESSRESPONSE ENTRY: (" + response + ") ***");
+          switch(tag.XMLType) {
 
-                while (response.indexOf(AIMLTag.INPUT_VALUE) >= 0) {
-                        String sx = Classifier.getValue("input", ip);
-                        response = Substituter.replace(AIMLTag.INPUT_VALUE,sx,response);
-		}
+             case tag.TAG    :
+                               /* This is a XML tag, so it potentially
+                                  might have childs. Format the head
+                               */
+                               response = response + "<" + tag.XMLData ;
 
-                while (response.indexOf(AIMLTag.INPUT_OPEN) >= 0) {
-                        //System.out.println("*** PROCESSING INPUT: (" + response + ") ***");
-			String bPredicate = "";
-			String bReplace = "";
-                        StringTokenizer st = new StringTokenizer(response, " ");
-			while (st.hasMoreTokens()) {
-				String token = st.nextToken();
-                                if (token.endsWith("<input")) {
-					bPredicate = (new StringTokenizer(st.nextToken(), "/")).nextToken();
-                                        bReplace = "<input " + bPredicate + "/>";
-				}
-			}
-                        String bIndex = getArg("index",bPredicate);
-                        String sx     = "";
-                        //System.out.println("*** PROCESSING INPUT PREDICATE: (" + bPredicate + ") ***");
-                        //System.out.println("*** PROCESSING INPUT INDEX: (" + bIndex + ") ***");
-                        if (bIndex.equalsIgnoreCase("1")) {
-                           sx = Classifier.getValue("input", ip);
-                        } else {
-                          if (bIndex.equalsIgnoreCase("2")) {
-                             sx = Classifier.getValue("justthat", ip);
-                         } else {
-                           if (bIndex.equalsIgnoreCase("3")) {
-                              sx = Classifier.getValue("beforethat", ip);
-                           } else {
-                             sx = "";
-                           }
-                         }
-                        }
-                        //System.out.println("*** PROCESSING INPUT RESULT: (" + sx + ") ***");
-                        response = Substituter.replace(bReplace,sx,response);
-		}
+                               /*
+                                  Include any attribute present
+                               */
+                               if (!tag.XMLAttr.equals("")) {
+                                  response = response + tag.XMLAttr;
+                               }
+                               /*
+                                  Close the head
+                               */
+                               response = response + ">";
 
-//End of Add
+                               /*
+                                  If any child present resolve it
+                                  recursively.
+                               */
+                               if (tag.XMLChild != null) {
+                                  response = response + evaluate(level++,ip, tag.XMLChild);
+                               }
 
-		while (response.indexOf(AIMLTag.STAR_VALUE) >= 0) {
-			String sx = Substituter.pretty(graphmaster.INPUT_STAR);
-			response = Substituter.replace(AIMLTag.STAR_VALUE,sx,response);
-		}
+                               /*
+                                  Format now the end tag
+                               */
+                               response = response + "</" + tag.XMLData + ">" ;
+                               break;
+             case tag.EMPTY  :
+                               /* Same as in the case of TAG but no
+                                  child recursion this time.
+                               */
+                               response = response + "<" + tag.XMLData ;
+                               if (!tag.XMLAttr.equals("")) {
+                                  response = response + tag.XMLAttr;
+                               }
+                               response = response + "/>";
+                               break;
+             case tag.DATA   :
+             case tag.CDATA  :
+                               /*
+                                 Format text
+                               */
+                               response = response + tag.XMLData;
+                               break;
 
-//Add 4.0.3 b5 Support for <star index="N"/>
-                while (response.indexOf(AIMLTag.STAR_NEW) >= 0) {
-                        //System.out.println("*** PROCESSING STAR: (" + response + ") ***");
-			String bPredicate = "";
-			String bReplace = "";
-                        StringTokenizer st = new StringTokenizer(response, " ");
-			while (st.hasMoreTokens()) {
-				String token = st.nextToken();
-                                if (token.endsWith("<star")) {
-					bPredicate = (new StringTokenizer(st.nextToken(), "/")).nextToken();
-                                        bReplace = "<star " + bPredicate + "/>";
-				}
-			}
-                        String bIndex = getArg("index",bPredicate);
-                        String sx     = "";
-                        //System.out.println("*** PROCESSING STAR PREDICATE: (" + bPredicate + ") ***");
-                        //System.out.println("*** PROCESSING STAR INDEX: (" + bIndex + ") ***");
-                        if (bIndex.equalsIgnoreCase("1")) {
-                           sx = Substituter.pretty(graphmaster.INPUT_STAR);
-                        } else {
-                           sx = "";
-                        }
-                        //System.out.println("*** PROCESSING STAR RESULT: (" + sx + ") ***");
-                        response = Substituter.replace(bReplace,sx,response);
-		}
+             default     :
+                               break;
 
-//End of Add
-
-//Add 4.0.3 b5 Support for <thatstar index="N"/>
-
-                while (response.indexOf(AIMLTag.THATSTAR_NEW) >= 0) {
-                        //System.out.println("*** PROCESSING THATSTAR: (" + response + ") ***");
-			String bPredicate = "";
-			String bReplace = "";
-                        StringTokenizer st = new StringTokenizer(response, " ");
-			while (st.hasMoreTokens()) {
-				String token = st.nextToken();
-                                if (token.endsWith("<thatstar")) {
-					bPredicate = (new StringTokenizer(st.nextToken(), "/")).nextToken();
-                                        bReplace = "<thatstar " + bPredicate + "/>";
-				}
-			}
-                        String bIndex = getArg("index",bPredicate);
-                        String sx     = "";
-                        //System.out.println("*** PROCESSING THATSTAR PREDICATE: (" + bPredicate + ") ***");
-                        //System.out.println("*** PROCESSING THATSTAR INDEX: (" + bIndex + ") ***");
-                        if (bIndex.equalsIgnoreCase("1")) {
-                           sx = Substituter.pretty(graphmaster.THAT_STAR);
-                        } else {
-                           sx = "";
-                        }
-                        //System.out.println("*** PROCESSING THATSTAR RESULT: (" + sx + ") ***");
-                        response = Substituter.replace(bReplace,sx,response);
-		}
+          }
+          return response;
 
 
-//End of Add
+        }
 
+        /**
+         countnode
+         Method to count the number of nodes of a given type at a
+         particular level of the XML trie.
+         It is used mostly in connection with the random tag in order to
+         see how many candidate listitem structures are beneath it and
+         to set the upperlimit of the random number roll
+        */
+        public int countnode( String tagname, LinkedList lt, boolean allnodes) {
 
-//Add 4.0.3 b5 Support for <topicstar index="N"/>
+             String         response = "";
+             LinkedListItr  ltItr;
+             XMLNode        n;
+             int            numbernodes = 0;
 
-                while (response.indexOf(AIMLTag.TOPICSTAR_NEW) >= 0) {
-                        //System.out.println("*** PROCESSING TOPICSTAR: (" + response + ") ***");
-			String bPredicate = "";
-			String bReplace = "";
-                        StringTokenizer st = new StringTokenizer(response, " ");
-			while (st.hasMoreTokens()) {
-				String token = st.nextToken();
-                                if (token.endsWith("<topicstar")) {
-					bPredicate = (new StringTokenizer(st.nextToken(), "/")).nextToken();
-                                        bReplace = "<topicstar " + bPredicate + "/>";
-				}
-			}
-                        String bIndex = getArg("index",bPredicate);
-                        String sx     = "";
-                        //System.out.println("*** PROCESSING TOPICSTAR PREDICATE: (" + bPredicate + ") ***");
-                        //System.out.println("*** PROCESSING TOPICSTAR INDEX: (" + bIndex + ") ***");
-                        if (bIndex.equalsIgnoreCase("1")) {
-                           sx = Substituter.pretty(graphmaster.TOPIC_STAR);
-                        } else {
-                           sx = "";
-                        }
-                        //System.out.println("*** PROCESSING TOPICSTAR RESULT: (" + sx + ") ***");
-                        response = Substituter.replace(bReplace,sx,response);
-		}
+             /*
+               Verify we have something to work with
+             */
+              
+             if (lt == null) {
+                return 0;
+             }
 
+             /*
+               Point to the start of the XML trie to parse
+             */
 
-//End of Add
+             ltItr = lt.zeroth();
+             ltItr.advance();
 
-		while (response.indexOf(AIMLTag.THATSTAR_VALUE) >= 0) {
-			String sx = Substituter.pretty(graphmaster.THAT_STAR);
-			response = Substituter.replace(AIMLTag.THATSTAR_VALUE,sx,response);
-		}
-		while (response.indexOf(AIMLTag.TOPICSTAR_VALUE) >= 0) {
-			String sx = Substituter.pretty(graphmaster.TOPIC_STAR);
-			response = Substituter.replace(AIMLTag.TOPICSTAR_VALUE,sx,response);
-		}
+             /*
+               Navigate thru the entire level of it
+             */
 
-		while (response.indexOf(AIMLTag.THAT_VALUE) >= 0) {
-			String sx = Classifier.getValue("that", ip);
-			sx = sx.toLowerCase();
-			response = Substituter.replace(AIMLTag.THAT_VALUE,sx,response);
-		}
+             while (!ltItr.isPastEnd()) {
 
-		while (response.indexOf(AIMLTag.JUSTTHAT_VALUE) >= 0) {
-			String sx = Classifier.getValue("justthat", ip);
-			sx = sx.toLowerCase();
-			response = Substituter.replace(AIMLTag.JUSTTHAT_VALUE,sx,response);
-		}
+               n = (XMLNode)ltItr.retrieve();
+               if (n != null) {
 
-		while (response.indexOf(AIMLTag.BEFORETHAT_VALUE) >= 0) {
-			String sx = Classifier.getValue("beforethat", ip);
-			sx = sx.toLowerCase();
-			response = Substituter.replace(AIMLTag.BEFORETHAT_VALUE,sx,response);
-		}
+                  switch(n.XMLType) {
 
-//Add 4.0.3 b5 PEC 09-2001 Support for <that index="N"/>
-                while (response.indexOf(AIMLTag.THAT_NEW) >= 0) {
-                        System.out.println("*** PROCESSING THAT: (" + response + ") ***");
-			String bPredicate = "";
-			String bReplace = "";
-                        StringTokenizer st = new StringTokenizer(response, " ");
-			while (st.hasMoreTokens()) {
-				String token = st.nextToken();
-                                if (token.endsWith("<that")) {
-					bPredicate = (new StringTokenizer(st.nextToken(), "/")).nextToken();
-                                        bReplace = "<that " + bPredicate + "/>";
-				}
-			}
-                        String bIndex = getArg("index",bPredicate);
-                        String sx     = "";
-                        StringTokenizer ix = new StringTokenizer(bIndex, ",");
-                        if (ix.hasMoreTokens()) {
-                          bIndex = ix.nextToken();
-                        } else {
-                          bIndex = "1";
-                        }
+                   /*
+                     Collect and process only tag elements and empty tags
+                   */
 
-                        System.out.println("*** PROCESSING THAT PREDICATE: (" + bPredicate + ") ***");
-                        System.out.println("*** PROCESSING THAT INDEX: (" + bIndex + ") ***");
+                   case n.TAG   :
+                   case n.EMPTY :
 
-                        if (bIndex.equalsIgnoreCase("1")) {
-                           sx = Classifier.getValue("that", ip);
-                           sx = sx.toLowerCase();  //Fix 4.0.3 b6 THAT Uppercase
-                        } else {
-                          if (bIndex.equalsIgnoreCase("2")) {
-                             sx = Classifier.getValue("justbeforethat", ip);
-                             sx = sx.toLowerCase();
-                          } else {
-                            sx = "";
+                          /*
+                            Only the desired one
+                          */
+
+                          n.XMLData = n.XMLData.toLowerCase();
+
+                          if ( (!n.XMLData.equals(tagname)) &&
+                               (allnodes == false) ) {
+                                break;
                           }
-                        }
-                        System.out.println("*** PROCESSING THAT RESULT: (" + sx + ") ***");
-                        response = Substituter.replace(bReplace,sx,response);
-		}
-
-//End of Add
-
-
-
-		while (response.indexOf(AIMLTag.JUSTBEFORETHAT_VALUE) >= 0) {
-			String sx = Classifier.getValue("justbeforethat", ip);
-			sx = sx.toLowerCase();
-			response = Substituter.replace(AIMLTag.JUSTBEFORETHAT_VALUE,sx,response);
-		}
-
-
-		while (response.indexOf(AIMLTag.IP) >= 0) {
-			String sx = ip;
-			response = Substituter.replace(AIMLTag.IP,sx,response);
-		}
-
-/*Remove 4.0.3 b2 
-		while (response.indexOf(AIMLTag.OS) >= 0) {
-			String sx = System.getProperty("os.name");
-			response = Substituter.replace(AIMLTag.OS,sx,response);
-		}
-*/
-
-/*Remove 4.0.3 b6 PEC 09-2001
-
-		// Login first if needed
-		while (response.indexOf("<login ") >= 0) {
-			tp = new LoginProcessor();
-			response = tp.processAIML(ip, response, this);
-		}
-
-		// Logout first if needed
-		while (response.indexOf("<logout ") >= 0) {
-			tp = new LogoutProcessor();
-			response = tp.processAIML(ip, response, this);
-		}
-
-		while (response.indexOf("<register ") >= 0) {
-			tp = new RegisterProcessor();
-			response = tp.processAIML(ip, response, this);
-		}
-
-End of Remove */
-
-		stag = "<ip>"; etag = "</ip>";
-		tp = new IPProcessor();
-		response = processTag(ip,  stag, etag, response, tp);
-
-		stag = "<connect>"; etag = "</connect>";
-		tp = new ConnectProcessor();
-		response = processTag(ip,  stag, etag, response, tp);
-
-/*Remove 4.0.3 b2 
-		while (response.indexOf(AIMLTag.TYPEOF) >= 0) {
-			StringTokenizer typeOf = new StringTokenizer(response, "_");
-			String type = "";
-			//this loop sets type=xxx from <typeof_xxx/>
-			while (typeOf.hasMoreTokens()) {
-				String token = typeOf.nextToken();
-				if (token.endsWith("<typeof")) {
-					type = (new StringTokenizer(typeOf.nextToken(), "/>")).nextToken();
-					// System.out.println("*** TYPEOF: " + type + " ***");
-				}
-			}
-			String template = (String)Graphmaster.match("TYPEOF " + type.toUpperCase(), "*", "*").get(Graphmaster.TEMPLATE);
-			// System.out.println("*** VALUES: " + template + " ***");
-			StringTokenizer values = new StringTokenizer(template, ",");
-			boolean found = false;
-			while (values.hasMoreTokens()) {
-				String value = values.nextToken().toLowerCase().trim();
-				String input = Classifier.getValue("input", ip).toLowerCase().trim();
-				if (input.indexOf(value) >= 0) {
-					// System.out.println("*** RESPONSE: " + response + " ***");
-					// System.out.println("*** COMPARING: " + value + " ***");
-					response = Substituter.replace("<typeof_" + type + "/>", value, response);
-					found = true;
-					break;
-				}
-			}
-			if (!found) response = Substituter.replace("<typeof_" + type + "/>", type, response);
-
-		}
-*/
-
-                while (response.indexOf(AIMLTag.RANDOM) >= 0)
-                {
-		  stag = AIMLTag.RANDOM; etag = AIMLTag.RANDOM_CLOSE;
-        	  tp = new RandomProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-
-		stag = AIMLTag.IF_OPEN;
-		etag = AIMLTag.IF_CLOSE;
-		while (response.indexOf(stag) >= 0) {
-			// System.out.println("*** ENTERING A IF CONDITION ***");
-			String predname="";
-			String predvalue="";
-			String predcontains = "";
-			String predstartswith = "";
-			String predendswith = "";
-			String predexists = "";
-			String elsestring = "";
-			String expr = "";
-			String sx = "";
-			String head = "";
-			String mid = "";
-			String tail = "";
-			int start = response.indexOf(stag);
-			int end = indexOfEndTag(stag, etag, response);
-			head = response.substring(0, start);
-			mid = response.substring(start+stag.length(), end);
-			int m = mid.indexOf(">");
-			if (m >= 0) {
-				String args = mid.substring(0, m);
-				mid = (m+1 >= mid.length()) ? "" : mid.substring(m+1, mid.length());
-				predname = getArg("name", args);
-				predvalue = getArg("value", args);
-				expr = getArg("expr", args);
-				predcontains = getArg("contains", args);
-				predstartswith = getArg("startswith", args);
-				predendswith = getArg("endswith", args);
-				predexists = getArg("exists", args);
-			}
-			if (expr.length() == 0) {
-				if (predname.equals("*")) {
-					sx = graphmaster.INPUT_STAR;
-				} else {
-					sx = Classifier.getValue(predname, ip);
-				}
-				// System.out.println("*** EVALUATING: " + predname + " AGAINST: " + sx + " ***");
-				while (true) {
-/*Mod 4.0.3 b6 Kim 09-2001
-					if (predexists != "" && sx != "") {
-						break;
-					} else {
-						mid = processElse(mid);
-					}
-*/
-
-/*Void 4.0.3 b8 New patch from Kim
-//Add 4.0.3 b6 Kim 09-2001
-
-					if (predexists != "") 
-						if (sx!=""){
-							break;
-						} else {
-							mid = processElse(mid);
-							break;
-						}
-
-//End of Add
-End of Void */
-
-
-/*void 4.0.3 b9 duplicate patch from Kim removed
-//Add 4.0.3 b8 Kim 09-2001
-                                      //System.out.println("*** EVALUATING: " + predname + " AGAINST: " + sx + " ***");
-                                        if (predexists != "") {
-                                           if (sx=="") {
-                                              mid = processElse(mid);
-                                           }
-                                           break;
-                                        }
-
-//End of Add
-*/
-
-					if (!predvalue.equals("")) {
-						if (!sx.toLowerCase().equals(predvalue.toLowerCase())) mid = processElse(mid);
-						break;
-					}
-					if (!predcontains.equals("")) {
-						if (sx.toLowerCase().indexOf(predcontains.toLowerCase()) < 0) mid = processElse(mid);
-						break;
-					}
-					if (!predstartswith.equals("")) {
-						if (!sx.toLowerCase().startsWith(predstartswith.toLowerCase())) mid = processElse(mid);
-						break;
-					}
-					if (!predendswith.equals("")) {
-						if (!sx.toLowerCase().endsWith(predendswith.toLowerCase())) mid = processElse(mid);
-						break;
-					}
-					break;
-				}
-			} else {
-				String result = Interpreter.evaluate(ip, expr);
-				if (!result.equals("true")) { mid = processElse(mid); }
-			}
-
-			tail = (end+etag.length() < response.length()) ? response.substring(end+etag.length()) : "";
-
-			if (mid.indexOf(AIMLTag.ELSE) >= 0) {
-				mid = mid.substring(0, mid.indexOf(AIMLTag.ELSE));
-			}
-
-			response = head + mid + tail;
-		}
-
-                while (response.indexOf(AIMLTag.CONDITION) >= 0)
-                {
-		  stag = AIMLTag.CONDITION; etag = AIMLTag.CONDITION_CLOSE;
-		  tp = new ConditionProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-
-//Add 4.0.3 b6 <condition name="varname" value="valuename"></condition>
-
-                while (response.indexOf(AIMLTag.CONDITION_OPEN) >= 0) {
-
-                   //System.out.println("*** CONDITION("+response+") ***");
-
-                   //Extract start and end of the <condition> tag
-                   int start   = response.indexOf(AIMLTag.CONDITION_OPEN);
-                   int end     = response.indexOf(AIMLTag.CONDITION_CLOSE,start);
-                   String head = response.substring(0, start);
-                   String tail = response.substring(end+AIMLTag.CONDITION_CLOSE.length());
-
-                   //Extract the opening <condition> tag plus attributes
-                   int index        = start;
-                   String predicate = "";
-                   while ( (!predicate.endsWith(">"))  && (index < end)) {
-                      predicate = predicate+(String.valueOf(response.charAt(index)));
-                      index++;
-                   }
-
-                   //System.out.println("*** CONDITION("+predicate+") ***");
-
-                   //Extract content between open and close <condition> tags
-                   String mid = "";
-                   index      = start+predicate.length();
-                   while (index < end) {
-                      mid = mid+(String.valueOf(response.charAt(index)));
-                      index++;
-                   }
-
-                   //System.out.println("*** MID: ("+mid+") ***");
-
-                   //Extract arguments from the open <condition> tag
-                   String args = "";
-                   StringTokenizer st = new StringTokenizer(predicate, " ");
-                   while (st.hasMoreTokens()) {
-                     String token = st.nextToken();
-                     if (!token.endsWith("<condition")) {
-                        if (token.endsWith(">")) {
-                           token = token.substring(0,token.length()-1);
-                        }
-                        if (args.equals("")) {
-                           args = token;
-                        } else {
-                           args = args + " " + token;
-                        }
-                     }
-                   }
-                   //System.out.println("*** ARGS: ("+args+") ***");
-
-                   //Now process the content between condition tags
-                   String predname="";
-                   String predvalue="";
-
-                   predname = getArg("name",args);
-                   predvalue= getArg("value",args);
-                   predvalue= Substituter.normalize(predvalue);
-
-                   String sx = "";
-
-                   //<condition> with name and value informed
-                   if ((!predvalue.equals("")) && (!predname.equals("")) ) {   
-
-                      sx = Classifier.getValue(predname, ip);
-                      //System.out.println("*** PREDICATE VALUE: "+sx+" ***");
-                      sx = Substituter.normalize(sx);
-
-                      if (!sx.equals(predvalue)) {
-                        response = "";
-                      } else {
-                        response = mid;
-                      }
-
-                   } else {
-
-                     //<condition with name but not value
-                     if ((predvalue.equals("")) && (!predname.equals("")) ) {
-
-                        response = processLI(ip , predname, mid);
-
-                     } else {
-                       //malformed <condition> tag, no name included
-                       response = "";
-                     }
-                   }
-
-                   response    = head + response + tail;
-                }
-
-/* Remove 4.0.3 b4 PEC 09-2001
-
-		stag = AIMLTag.CONDITION_OPEN;
-		etag = AIMLTag.CONDITION_CLOSE;
-		while (response.indexOf(stag) > 0) {
-                        System.out.println("*** ENTERING A CONDITION ***");
-			String predname="";
-			String predvalue="";
-			int start = response.indexOf(stag);
-			int end = indexOfEndTag(stag, etag, response);
-			if (end <= start) response = Substituter.replace(stag,"",response);
-			else {
-				String head = response.substring(0, start);
-				String mid = response.substring(start+stag.length(), end);
-				int m = mid.indexOf(">");
-				if (m >= 0) {
-					String args = mid.substring(0, m);
-					mid = (m+1 >= mid.length()) ? "" : mid.substring(m+1, mid.length());
-					predname = getArg("name", args);
-					predvalue = getArg("value", args);
-				} // m >= 0
-                                System.out.println("*** PREDICATE NAME: "+predname+" ***");
-                                System.out.println("*** CONDITION VALUE: "+predvalue+" ***");
-				String sx = Classifier.getValue(predname, ip);
-                                System.out.println("*** PREDICATE VALUE: "+sx+" ***");
-				sx = Substituter.normalize(sx);
-				predvalue = Substituter.normalize(predvalue);
-				if (!sx.equals(predvalue)) mid = "";
-				String tail =
-					(end+etag.length() < response.length()) ? response.substring(end+etag.length()) : "";
-				response = head + mid + tail;
-                                System.out.println("*** NEW CONDITION: " + response + " ***");
-			}
-		}
-  
-*/
-
-                while (response.indexOf(AIMLTag.THINK) >= 0)
-                {
-		  stag = AIMLTag.THINK; etag = AIMLTag.THINK_CLOSE;
-		  tp = new ThinkProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-
-//Add 4.0.3 b4 PEC 09-2001 support for <id/>,<size/>,<version/>,<date/>
-
-                while (response.indexOf(AIMLTag.ID_VALUE) >= 0) {
-			String sx = ip;
-                        response = Substituter.replace(AIMLTag.ID_VALUE,sx,response);
-
-		}
-
-                while (response.indexOf(AIMLTag.SIZE_VALUE) >= 0) {
-                        String sx = Globals.getsize();
-                        response = Substituter.replace(AIMLTag.SIZE_VALUE,sx,response);
-		}
-
-                while (response.indexOf(AIMLTag.VERSION_VALUE) >= 0) {
-                        String sx = Globals.getversion();
-                        response = Substituter.replace(AIMLTag.VERSION_VALUE,sx,response);
-		}
-
-                while (response.indexOf(AIMLTag.DATE_VALUE) >= 0) {
-                        Date    t = new Date();
-                        String sx = t.toString();
-                        response = Substituter.replace(AIMLTag.DATE_VALUE,sx,response);
-		}
-
-//EAdd
-
-                while (response.indexOf(AIMLTag.UPPERCASE) >= 0)
-                {
-		  stag = AIMLTag.UPPERCASE; etag = AIMLTag.UPPERCASE_CLOSE;
-		  tp = new UppercaseProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-
-                while (response.indexOf(AIMLTag.LOWERCASE) >= 0)
-                {
-		  stag = AIMLTag.LOWERCASE; etag = AIMLTag.LOWERCASE_CLOSE;
-		  tp = new LowercaseProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-
-                while (response.indexOf(AIMLTag.FORMAL) >= 0)
-                {
-		  stag = AIMLTag.FORMAL; etag = AIMLTag.FORMAL_CLOSE;
-		  tp = new FormalProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-
-                while (response.indexOf(AIMLTag.SENTENCE) >= 0)
-                {
-		  stag = AIMLTag.SENTENCE; etag = AIMLTag.SENTENCE_CLOSE;
-		  tp = new SentenceProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-
-                while (response.indexOf(AIMLTag.GOSSIP) >= 0)
-                {
-		  stag = AIMLTag.GOSSIP; etag = AIMLTag.GOSSIP_CLOSE;
-		  tp = new GossipProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-
-                while (response.indexOf(AIMLTag.LEARN) >= 0)
-                {
-		  stag = AIMLTag.LEARN; etag = AIMLTag.LEARN_CLOSE;
-		  tp = new LearnProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-
-/*Remove 4.0.3 b2 
-                while (response.indexOf(AIMLTag.FORGET) >= 0)
-                {
-		  stag = AIMLTag.FORGET; etag = AIMLTag.FORGET_CLOSE;
-		  tp = new ForgetProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-*/
-
-/*Remove 4.0.3 b2
-                while (response.indexOf(AIMLTag.DISPLAY_OPEN) >= 0)
-                {
-		  stag = AIMLTag.DISPLAY_OPEN;
-		  etag = AIMLTag.DISPLAY_CLOSE;
-		  while (response.indexOf(stag) >= 0) {
-			String target="";
-			String head = "";
-			String mid = "";
-			String tail = "";
-			String height = "";
-			String width = "";
-			String status = "";
-			// System.out.println("*** ENTERING A DISPLAY ***");
-			int start = response.indexOf(stag);
-			int end = indexOfEndTag(stag, etag, response);
-			head = response.substring(0, start);
-			mid = response.substring(start+stag.length(), end);
-			int m = mid.indexOf(">");
-			if (m >= 0) {
-				String args = mid.substring(0, m);
-				mid = (m+1 >= mid.length()) ? "" : mid.substring(m+1, mid.length());
-				target = getArg("target", args);
-				height = getArg("height", args);
-				width = getArg("width", args);
-				status = getArg("status", args);
-				// System.out.println("*** URL: " + mid + " ***");
-				// // System.out.println("*** TARGET: " + target + " ***");
-			}
-			boolean displayed = false;
-			String newDisplay = "<script language=\"javascript\">function display() { ";
-			if (target.equals("blank")) newDisplay = newDisplay + "win = window.open('" + mid + "'); win.focus();"; displayed = true;
-			if (target.equals("sized")) newDisplay = newDisplay + "win = window.open('" + mid + "','alicebot','height=" + height + ",width=" + width + ",status=" + status + "'); win.focus()"; displayed = true;
-			if (!displayed) newDisplay = newDisplay + "top." + target + ".document.location = '" + mid + "';"; displayed = true;
-			newDisplay = newDisplay + "} display(); </script>";
-			mid = newDisplay;
-			tail = (end+etag.length() < response.length()) ? response.substring(end+etag.length()) : "";
-			response = head + mid + tail;
-		  }
-                }
-*/
-
-/*Remove 4.0.3 b2
-		while (response.indexOf(AIMLTag.FACE_OPEN) > -1) {
-			String value = getArg("value", response);
-			if (value.endsWith(".gif") || value.endsWith(".jpg") || value.endsWith(".png")) {
-				response = Substituter.replace("<face value=\"" + value + "\"/>", "<script language=\"javascript\">faceValue=\"" + value + "\";</script>", response);
-			}
-		}
-*/
-
-//Add 4.0.3 b2 PEC 09-2001 Implementation of <bot/>
-                while (response.indexOf(AIMLTag.BOT_NEW_OPEN) >= 0) {
-                        //System.out.println("*** PROCESSING BOT PREDICATE: " + response + " ***");
-			String bPredicate = "";
-			String bReplace = "";
-                        StringTokenizer st = new StringTokenizer(response, " ");
-			while (st.hasMoreTokens()) {
-				String token = st.nextToken();
-                                if (token.endsWith("<bot")) {
-					bPredicate = (new StringTokenizer(st.nextToken(), "/")).nextToken();
-                                        bReplace = "<bot " + bPredicate + "/>";
-				}
-			}
-                        bPredicate = getArg("name",bPredicate);
-                        //System.out.println("*** BOT PREDICATE: " + bPredicate + " ***");
-                        //System.out.println("*** REPLACING: " + bReplace + " ***");
-			response = Substituter.replace(bReplace,Globals.getValue(bPredicate),response);
-		}
-
-
-
-//End of Add
-		while (response.indexOf(AIMLTag.BOT_OPEN) >= 0) {
-			// System.out.println("*** PROCESSING BOT PREDICATE: " + response + " ***");
-			String bPredicate = "";
-			String bReplace = "";
-			StringTokenizer st = new StringTokenizer(response, "_");
-			while (st.hasMoreTokens()) {
-				String token = st.nextToken();
-				if (token.endsWith("<bot")) {
-					bPredicate = (new StringTokenizer(st.nextToken(), "/")).nextToken();
-					bReplace = "<bot_" + bPredicate + "/>";
-				}
-			}
-			// System.out.println("*** BOT PREDICATE: " + bPredicate + " ***");
-			// System.out.println("*** REPLACING: " + bReplace + " ***");
-			response = Substituter.replace(bReplace,Globals.getValue(bPredicate),response);
-		}
-
-		while (response.indexOf(AIMLTag.SET_OPEN) >=0 && response.indexOf(AIMLTag.SET_CLOSE) >=0) {
-			// System.out.println("*** PROCESSING CUSTOM PREDICATE (SET): " + response + " ***");
-			String sPredicate = "";
-			String sContent = "";
-			String sReplace = "";
-			StringTokenizer st = new StringTokenizer(response, "_");
-			while (st.hasMoreTokens()) {
-				String token = st.nextToken();
-				if (token.endsWith("<set")) {
-					sPredicate = (new StringTokenizer(st.nextToken(), ">")).nextToken();
-					String begin = "<set_" + sPredicate + ">";
-					String end = "</set_" + sPredicate + ">";
-
-                                        // ** MA ** 07/12/2001
-                                        // sanity check - make sure we have both tags
-
-                                        // missing begin tag
-                                        if ( response.indexOf(begin) < 0)
-                                        {
-                                          sContent = "";
-					  sReplace = "</set_" + sPredicate + ">";
-                                        }
-                                        else
-                                        // missing end tag
-                                        if ( response.indexOf(end) < 0)
-                                        {
-                                          sContent = "";
-					  sReplace = "<set_" + sPredicate + ">";
-                                        }
-                                        else
-                                        {
-                                          // we have both tags - process normally
-					  sContent = response.substring(
-						response.indexOf(begin) + begin.length(),
-						response.indexOf(end));
-					  sReplace = "<set_" + sPredicate + ">" + sContent + "</set_" + sPredicate + ">";
-                                        }
-//					sReplace = "<set_" + sPredicate + ">" + sContent + "</set_" + sPredicate + ">";
-				}
-			}
-			 //System.out.println("*** CUSTOM PREDICATE: " + sPredicate + " ***");
-			 //System.out.println("*** CUSTOM PREDICATE VALUE: " + sContent + " ***");
-			 //System.out.println("*** REPLACING: " + sReplace + " ***");
-
-			Classifier.setValue(sPredicate, ip, sContent);
-			response = Substituter.replace(sReplace,sContent,response);
-		}
-
-//New 4.0.3 b2 PEC 09-2001 Placeholder for tag
-//Mod 4.0.3 b3 PEC 09-2001 Implementation of Tag
-//Fix 4.0.10 b10 PEC 09-2001 Fix on parsing logic (substring out of index trap)
-
-                while (response.indexOf(AIMLTag.SET_NEW_OPEN) >=0 && response.indexOf(AIMLTag.SET_NEW_CLOSE) >=0) {
-
-                   //Extract start and end of the <set> tag
-                   int start   = response.indexOf(AIMLTag.SET_NEW_OPEN);
-                   int end     = response.indexOf(AIMLTag.SET_NEW_CLOSE,start);
-                   String head = response.substring(0, start);
-                   String tail = response.substring(end+AIMLTag.SET_NEW_CLOSE.length());
-
-                   //Extract the opening <set> tag plus attributes
-                   int index        = start;
-                   String predicate = "";
-                   while ( (!predicate.endsWith(">"))  && (index < end)) {
-                      predicate = predicate+(String.valueOf(response.charAt(index)));
-                      index++;
-                   }
-
-                   //System.out.println("*** SET PREDICATE("+predicate+") ***");
-
-                   //Extract content between open and close <condition> tags
-                   String mid = "";
-                   index      = start+predicate.length();
-                   while (index < end) {
-                      mid = mid+(String.valueOf(response.charAt(index)));
-                      index++;
-                   }
-
-                   //System.out.println("*** SET CONTENT: ("+mid+") ***");
-
-                   //Extract arguments from the open <set> tag
-                   String args = "";
-                   StringTokenizer st = new StringTokenizer(predicate, " ");
-                   while (st.hasMoreTokens()) {
-                     String token = st.nextToken();
-                     if (!token.endsWith("<set")) {
-                        if (token.endsWith(">")) {
-                           token = token.substring(0,token.length()-1);
-                        }
-                        if (args.equals("")) {
-                           args = token;
-                        } else {
-                           args = args + " " + token;
-                        }
-                     }
-                   }
-                   //System.out.println("*** SET ARGS: ("+args+") ***");
-                   predicate = getArg("name",predicate);
-                   //System.out.println("*** VARNAME: " + predicate + " ***");
-                   Classifier.setValue(predicate, ip, mid);
-                   //4.0.3 b3      Added trim to content ----------VVVVVVV
-                   response = head + mid + tail;
-		}
-
-//End of Add
-
-/*Remove 4.0.3 b2
-		while (response.indexOf(AIMLTag.ADD_OPEN) >=0 && response.indexOf(AIMLTag.ADD_CLOSE) >=0) {
-			// System.out.println("*** PROCESSING CUSTOM PREDICATE (ADD): " + response + " ***");
-			String aPredicate = "";
-			String aContent = "";
-			String aReplace = "";
-			StringTokenizer st = new StringTokenizer(response, "_");
-			while (st.hasMoreTokens()) {
-				String token = st.nextToken();
-				if (token.endsWith("<add")) {
-					aPredicate = (new StringTokenizer(st.nextToken(), ">")).nextToken();
-					String begin = "<add_" + aPredicate + ">";
-					String end = "</add_" + aPredicate + ">";
-					aContent = response.substring(
-						response.indexOf(begin) + begin.length(),
-						response.indexOf(end));
-					aReplace = "<add_" + aPredicate + ">" + aContent + "</add_" + aPredicate + ">";
-				}
-			}
-			// System.out.println("*** CUSTOM PREDICATE: " + aPredicate + " ***");
-			// System.out.println("*** CUSTOM PREDICATE VALUE: " + aContent + " ***");
-			// System.out.println("*** REPLACING: " + aReplace + " ***");
-			Classifier.addValue(aPredicate, ip, aContent);
-			response = Substituter.replace(aReplace,"",response);
-		}
-
-*/
-		while (response.indexOf(AIMLTag.GET_CLOSE) >=0) {
-			// System.out.println("*** PROCESSING CUSTOM PREDICATE (GET): " + response + " ***");
-			String ggPredicate = "";
-			String ggContent = "";
-			String ggReplace = "";
-			StringTokenizer st = new StringTokenizer(response, "_");
-			while (st.hasMoreTokens()) {
-				String token = st.nextToken();
-				if (token.endsWith("<get")) {
-					ggPredicate = (new StringTokenizer(st.nextToken(), ">")).nextToken();
-					String begin = "<get_" + ggPredicate + ">";
-					String end = "</get_" + ggPredicate + ">";
-					ggContent = response.substring(
-						response.indexOf(begin) + begin.length(),
-						response.indexOf(end));
-					ggReplace = "<get_" + ggPredicate + ">" + ggContent + "</get_" + ggPredicate + ">";
-				}
-			}
-			// System.out.println("*** CUSTOM PREDICATE: " + ggPredicate + " ***");
-			// System.out.println("*** CUSTOM DEFAULT VALUE: " + ggContent + " ***");
-			// System.out.println("*** REPLACING: " + ggReplace + " ***");
-			String ggValue = Classifier.getValue(ggPredicate, ip);
-			if (ggPredicate.equals("name")) ggValue = Substituter.capitalizeWords(ggValue);
-			if (ggValue.equals("unknown") || ggValue.equals("") || ggValue.equals("?")) {
-				response = Substituter.replace(ggReplace, ggContent, response);
-			} else {
-				response = Substituter.replace(ggReplace, ggValue, response);
-			}
-		}
-
-		while (response.indexOf(AIMLTag.GET_OPEN) >= 0) {
-			// System.out.println("*** PROCESSING CUSTOM PREDICATE (GET): " + response + " ***");
-			String gPredicate = "";
-			String gReplace = "";
-			StringTokenizer st = new StringTokenizer(response, "_");
-			while (st.hasMoreTokens()) {
-				String token = st.nextToken();
-				if (token.endsWith("<get")) {
-					gPredicate = (new StringTokenizer(st.nextToken(), "/")).nextToken();
-					gReplace = "<get_" + gPredicate + "/>";
-				}
-			}
-			// System.out.println("*** CUSTOM PREDICATE: " + gPredicate + " ***");
-			// System.out.println("*** REPLACING: " + gReplace + " ***");
-			String gValue = Classifier.getValue(gPredicate,ip);
-			if (gPredicate.equals("name")) gValue = Substituter.capitalizeWords(gValue);
-			response = Substituter.replace(gReplace, gValue ,response);
-		}
-//Add 4.0.3 b2 PEC 09-2001
-                while (response.indexOf(AIMLTag.GET_VALUE) >= 0) {
-                        //System.out.println("*** PROCESSING <GET/> PREDICATE: " + response + " ***");
-			String bPredicate = "";
-			String bReplace = "";
-                        StringTokenizer st = new StringTokenizer(response, " ");
-			while (st.hasMoreTokens()) {
-				String token = st.nextToken();
-                                if (token.endsWith("<get")) {
-					bPredicate = (new StringTokenizer(st.nextToken(), "/")).nextToken();
-                                        bReplace = "<get " + bPredicate + "/>";
-				}
-			}
-                        bPredicate = getArg("name",bPredicate);
-                        //System.out.println("*** GET PREDICATE: " + bPredicate + " ***");
-                        //System.out.println("*** REPLACING: " + bReplace + " ***");
-                        String bValue = Classifier.getValue(bPredicate,ip);
-                        //System.out.println("*** VALUE: " + bValue + " ***");
-                        response = Substituter.replace(bReplace,bValue,response);
-		}
-
-//End of Add
-
-/*Remove 4.0.3 b2 
-		while (response.indexOf(AIMLTag.RND_OPEN) >= 0) {
-			// System.out.println("*** PROCESSING CUSTOM PREDICATE (GET)(RANDOM): " + response + " ***");
-			String rPredicate = "";
-			String rReplace = "";
-			StringTokenizer st = new StringTokenizer(response, "_");
-			while (st.hasMoreTokens()) {
-				String token = st.nextToken();
-				if (token.endsWith("<random")) {
-					rPredicate = (new StringTokenizer(st.nextToken(), "/")).nextToken();
-					rReplace = "<random_" + rPredicate + "/>";
-				}
-			}
-			// System.out.println("*** CUSTOM PREDICATE: " + rPredicate + " ***");
-			// System.out.println("*** REPLACING: " + rReplace + " ***");
-			String rValue = Classifier.getRandomValue(rPredicate,ip);
-			if (rPredicate.equals("name")) rValue = Substituter.capitalizeWords(rValue);
-			response = Substituter.replace(rReplace, rValue ,response);
-		}
-/*
-
-/*Remove 4.0.3 b2 
-                while (response.indexOf(AIMLTag.ENCODE) >= 0)
-                {
-		  stag = AIMLTag.ENCODE; etag = AIMLTag.ENCODE_CLOSE;
-		  tp = new EncodeProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-
-                while (response.indexOf(AIMLTag.DECODE) >= 0)
-                {
-		  stag = AIMLTag.DECODE; etag = AIMLTag.DECODE_CLOSE;
-		  tp = new DecodeProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-*/
-
-                while (response.indexOf(AIMLTag.SYSTEM) >= 0)
-                {
-		  stag = AIMLTag.SYSTEM; etag = AIMLTag.SYSTEM_CLOSE;
-		  tp = new SystemProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-
-
-/*Remove 4.0.3 b2
-                while (response.indexOf(AIMLTag.LOG) >= 0)
-                {
-		  stag = AIMLTag.LOG; etag = AIMLTag.LOG_CLOSE;
-		  tp = new LogProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-*/
-
-/*Remove 4.0.3 b2
-                while (response.indexOf(AIMLTag.TIMER_OPEN) >= 0)
-                {
-		  stag = AIMLTag.TIMER_OPEN; etag = AIMLTag.TIMER_CLOSE;
-		  tp = new TimerProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-*/
-
-/*Remove 4.0.3 b2
-                while (response.indexOf(AIMLTag.NQL) >= 0)
-                {
-		  stag = AIMLTag.NQL; etag = AIMLTag.NQL_CLOSE;
-		  tp = new NQLProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-*/
-
-                while (response.indexOf(AIMLTag.SCRIPT) >= 0)
-                {
-		  stag = AIMLTag.SCRIPT; etag = AIMLTag.SCRIPT_CLOSE;
-		  tp = new ScriptProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-
-/*Remove 4.0.3 b2
-                while (response.indexOf(AIMLTag.EVENT) >= 0)
-                {
-		  stag = AIMLTag.EVENT; etag = AIMLTag.EVENT_CLOSE;
-		  tp = new EventProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-*/
-
-		response = Substituter.replace(AIMLTag.SR,AIMLTag.SR_STAR,response);
-
-                while (response.indexOf(AIMLTag.SRAI) >= 0)
-                {
-                  //System.out.println("*** SRAI: " + response + " ***");
-		  stag = AIMLTag.SRAI; etag = AIMLTag.SRAI_CLOSE;
-		  tp = new SraiProcessor();
-		  response = processTag(ip,  stag, etag, response, tp);
-                }
-
-		return response;
+
+                          numbernodes++;
+                          break;
+
+
+                   /*
+                     just ignore everything else
+                   */
+                   default      :
+                                 break;
+                  }
+               }
+               ltItr.advance();
+             }
+          return numbernodes;
+
+
+        }
+
+        /**
+         getnode
+         Method to retrieve the ordernode-th node of a given tag on a
+         particular level of the XML trie.
+         It is used typically to find out specific tags beneath a given
+         tag being evaluated (i.e. a THEN/ELSE tag beneath a IF, a given
+         LI tag beneath RANDOM, etc.
+        */
+        public XMLNode getnode( String tagname, LinkedList lt, int ordernode) {
+
+             String         response = "";
+             LinkedListItr  ltItr;
+             XMLNode        n;
+
+             /*
+               Verify we have something to work with
+             */
+              
+             if (lt == null) {
+                return null;
+             }
+
+             /*
+               Point to the start of the XML trie to parse
+             */
+
+             ltItr = lt.zeroth();
+             ltItr.advance();
+
+             /*
+               Navigate thru the entire level of it
+             */
+
+             while (!ltItr.isPastEnd()) {
+
+               n = (XMLNode)ltItr.retrieve();
+               if (n != null) {
+
+                  switch(n.XMLType) {
+
+                   /*
+                     Collect and process only tag elements and empty tags
+                   */
+
+                   case n.TAG   :
+                   case n.EMPTY :
+
+                          /*
+                            Only the desired one
+                          */
+
+                          n.XMLData = n.XMLData.toLowerCase();
+                          if ( !n.XMLData.equals(tagname)) {
+                                break;
+                          }
+
+                          ordernode--;
+
+                          /*
+                            we've found the one we're looking for when
+                            ordernode is zero
+                          */
+
+                          if (ordernode == 0) {
+                             return n;
+                          }
+
+                          /*
+                            otherwise continue
+                          */
+
+                          break;
+
+
+                   /*
+                     just ignore everything else
+                   */
+                   default      :
+                                 break;
+                  }
+               }
+               ltItr.advance();
+             }
+          return null;
+        }
+
+        /**
+         ProcessListItem
+         method to evaluate LI (ListItem) under
+         CONDITION; this method is called from the ConditionProcessor
+         The ListItemType would define which type of structure has to
+         be expected indide the condition
+           (1) the LI contains both the name and value.
+           (2) the LI does not contains either name nor value
+           (3) the LI does not contains the name but contains value
+        */
+        public String ProcessListItem(int level, String ip, LinkedList lt, int ListItemType, String nameval, String valueval) {
+
+             String         response = "";
+             LinkedListItr  ltItr;
+             XMLNode        n;
+
+             /*
+               Verify we have something to work with
+             */
+              
+             if (lt == null) {
+                return "";
+             }
+
+             /*
+               Point to the start of the XML trie to parse
+             */
+
+             ltItr = lt.zeroth();
+             ltItr.advance();
+
+             String varvalue = "";
+             String livalue  = "";
+             String liname   = "";
+
+             /*
+               The variable is on the parent <condition> tag, so evaluate
+               only once the current value of it.
+             */
+
+             if (ListItemType == 3) {
+                varvalue = Classifier.getValue(nameval,ip);
+             }
+
+             /*
+               Navigate thru the entire level of it
+             */
+
+             while (!ltItr.isPastEnd()) {
+
+               n = (XMLNode)ltItr.retrieve();
+               if (n != null) {
+
+                  switch(n.XMLType) {
+
+                   /*
+                     if plain text just pass it, how free floating under
+                     a condition has to be handled is actually undefined
+                     in the AIML 1.0 spec; I'm choosing to process it.
+                   */
+
+                   case n.DATA  :
+                   case n.CDATA :
+                          response = response + n.XMLData;
+                          break;
+
+                   case n.EMPTY :
+                          response = response + processtag(level++,ip,n);
+                          break;
+                   /*
+                     Collect and process <LI> tags
+                   */
+
+                   case n.TAG   :
+
+                          /*
+                            Only <li></li> structures allowed
+                          */
+
+                          n.XMLData = n.XMLData.toLowerCase();
+                          if (!n.XMLData.equals(AIML10Tag.LI)) {
+                             response = response + processtag(level++,ip,n);
+                             break;
+                          }
+
+                          /*-----
+                           Now operate based on the ListItemType which
+                           defines what underlying listitem structure
+                           has to be expected based on the parent condition
+                          ------*/
+                          switch(ListItemType) {
+                            case 1 : // First form  <li name="xx" value="yy"></li>
+
+                                 /*
+                                   Look for tokens in the XML attributes for name and
+                                   value, if none are present this is an unqualified
+                                   <li> and gets evaluated. The processing of the
+                                   structure continues after it so the <li> tag could
+                                   be anywhere under <condition> and not necessarily
+                                   at the end.
+                                 */
+                                 if ( (n.XMLAttr.toLowerCase().indexOf("name=",0)  < 0) &&
+                                      (n.XMLAttr.toLowerCase().indexOf("value=",0) < 0) ) {
+                                    response = response + evaluate(level++,ip,n.XMLChild);
+                                    break;
+                                 }
+
+                                 /*
+                                   If either the name or the value has not been indicated just
+                                   ignore the tag.
+                                 */
+
+                                 if ( (n.XMLAttr.toLowerCase().indexOf("name=",0) < 0) ||
+                                      (n.XMLAttr.toLowerCase().indexOf("value=",0)< 0)) {
+                                    break;
+                                 }
+
+                                 /*
+                                   Now recover the actual values of the attributes name
+                                   and value.
+                                 */
+
+                                 liname = getArg("name",n.XMLAttr);
+                                 livalue= getArg("value",n.XMLAttr);
+
+                                 /*
+                                   Get the current value of the variable pointed by name
+                                 */
+
+                                 varvalue = Classifier.getValue(liname,ip);
+
+                                 /*
+                                  If the value of the variable equals the value stated
+                                  in the <li> tag then process, otherwise skip.
+                                 */
+
+                                 if (livalue.toLowerCase().equals(varvalue.toLowerCase())) {    //4.1.1 b12 case insensitive comparisson
+                                    response = response + evaluate(level++,ip,n.XMLChild);
+                                    return response;
+                                 }
+                                 break;
+
+                                 /*-----
+                                   Second form <li></li> unqualified
+                                 -------*/
+
+                            case 2 : //2nd form <li *></li>
+
+                                 /*
+                                   Unconditionally evaluate as long as it is a
+                                   <li></li> structure.
+                                 */
+                                 response = response + evaluate(level++,ip,n.XMLChild);
+                                 break;
+
+                                 /*-----
+                                   Third form <li value="yyy"></li>
+                                 ------*/
+
+                            case 3 : //3rd form <li value="yy"></li>
+
+                                 /*
+                                   If the value token is found compare with the actual
+                                   contents of the variable pointed by condition,
+                                   otherwise evaluate inconditionally. Hits on either
+                                   will stop the current evaluation.
+                                 */
+                                 if (n.XMLAttr.toLowerCase().indexOf("value=",0) >= 0) {
+                                    livalue= getArg("value",n.XMLAttr);
+
+                                    if (livalue.toLowerCase().equals(varvalue.toLowerCase())) { //4.1.1 b12 case insensitive comparisson
+                                       response = response + evaluate(level++,ip,n.XMLChild);
+                                       return response;
+                                    }
+                                 } else {
+                                   response = response + evaluate(level++,ip,n.XMLChild);
+                                   return response;
+                                 }
+
+                                 break;
+                            default :
+                                 break;
+                                 }
+                   default      :
+                                 break;
+                  }
+               }
+               ltItr.advance();
+             }
+             return response;
+        }
+        /**
+          virtualTag
+          This is a method to create a mini template with a given tag
+          and an optional child tag, once created it's evaluated
+          recursively.
+          This method is used mostly to map certain tags as combinations
+          of other tags avoiding to write specific evaluation code for
+          them. Extensively used to map AIML 0.9 tags into their AIML 1.0
+          equivalents and also to solve non-primitive AIML 1.0 tags.
+        */
+        public String virtualTag (int level, String ip, String roottag,int roottype,  String rootattr, String childtag, int childtype) {
+
+          String response = "";
+          /*
+            if the root tag is empty there is no point in continuing
+          */
+
+          if (roottag.equals("")) {
+             return "";
+          }
+
+          /*
+            Create an AIML node on the fly with the content of the root
+            tag to virtualize, including attributes.
+          */
+
+          XMLNode n = new XMLNode();
+
+          n.XMLType = roottype;
+          n.XMLData = roottag;
+          n.XMLAttr = rootattr;
+
+          /*
+            Create a XML trie for that tag in order to be able to process
+            it with normal methods of this class like a template coming
+            from a pattern matching.
+          */
+
+          LinkedList lt = new LinkedList();
+          lt.makeEmpty();
+
+          /*
+            Prepare the list to receive inserts, but don't do them yet
+          */
+
+          LinkedListItr ltItr;
+          ltItr = lt.zeroth();
+
+          /*
+            Now, process the child tag if any.
+            Obviously the root tag can not be of empty type and something
+            has to be informed on the tag itself
+          */
+
+          XMLNode nchild = new XMLNode();
+          LinkedList ltchild = new LinkedList();
+
+          if ( ( roottype  == n.TAG) &&
+               (!childtag.equals(""))  &&
+              ((childtype  == n.EMPTY) || (childtype == n.DATA)) ) {
+
+             /*
+               Create a XML node for the child tag now, note the
+               child tag is assumed to be an empty one with no
+               attributes (reasonable assumption?), it's functional
+               for AIML 1.0 anyway.
+             */
+
+             switch(childtype) {
+
+               case n.EMPTY    :  
+                                 nchild.XMLType = nchild.EMPTY;
+                                 nchild.XMLData = childtag;
+                                 nchild.XMLAttr = "";
+                                 break;
+               case n.DATA     :
+               case n.CDATA    :
+                                 nchild.XMLType = nchild.DATA;
+                                 nchild.XMLData = childtag;
+                                 nchild.XMLAttr = "";
+                                 break;
+             }
+
+             /*
+               Insert the child tag on the child trie, please note
+               we're still holding the root tag
+             */
+
+             LinkedListItr ltchildItr;
+             ltchildItr = ltchild.zeroth();
+
+             ltchild.insert( nchild, ltchildItr );
+             ltchildItr.advance();
+
+             /*
+               And this is because the root tag must point to the
+               child tag, so make that reference now
+             */
+
+             n.XMLChild = ltchild;
+
+          }
+
+          /*
+            Now insert the root tag
+          */
+
+          lt.insert( n, ltItr );
+          ltItr.advance();
+
+          /*
+            We have now a XML trie just like the one we got from
+            parsing raw templates out of the pattern matching process,
+            so evaluate it
+          */
+
+
+          response = response + evaluate(level++,ip,lt);
+
+          /*
+            De-reference all the dynamic fiesta, just to expedite the
+            garbage processor.
+          */
+
+          nchild   = null;
+          ltchild  = null;
+          n        = null;
+          lt       = null;
+
+          return response;
+
+        }
+        /**
+         processtag
+         This method process recursively tags, the processing order
+         if from top to bottom and from inside out in nesting.
+         The actual tag to be processed is driven by the evaluate
+         method so a strict sequencing is performed. For each valid
+         tag detected the associated processor, resolution code or
+         virtualtag processor is activated.
+         If the tag is not catched by the method it's resolved back
+         into XML and included literally on the output
+        */
+        public String processtag(int level, String ip, XMLNode tag) {
+
+          AIMLProcessor p;
+          String        response = "";
+
+          /*
+           Tags are explored sequentially now until all the tagset
+           is addressed. Please note the sequence of exploration has
+           performance implications (often used tags should be
+           handled first) but the actual sequence within the template
+           is preserved since it's driven by the caller method
+           (usually evaluate) and not by the order in which the tags
+           are solved.
+          */
+
+           /*
+             Is it a valid tag object?
+           */
+
+           if (tag == null) {
+              return "";
+           }
+
+           /*
+             Normalize it for processing
+           */
+             tag.XMLData = tag.XMLData.toLowerCase();
+
+           /*--------------------------------------------------------*/
+           /*                Tag Dispatcher                          */
+           /*--------------------------------------------------------*/
+
+           /**
+            An optimization is performed here, at load time only certain
+            tags could be evaluated, so evaluate them first both for
+            AIML 1.0 and AIML 0.9
+           */
+
+           /*
+             <learn></learn>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.LEARN)) && (tag.XMLType == tag.TAG) ) {
+                p = new LearnProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <load filename="xxxx"/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.LOAD)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.LEARN,tag.TAG,"",getArg("filename",tag.XMLAttr),tag.DATA);
+             }
+
+           /*
+             <property name="property" value="value"/>
+             This tag is non-standard AIML and it's allowed to be used ONLY
+             during load time.
+           */
+
+             if ( (tag.XMLData.equals(AIML10Tag.PROPERTY)) &&
+                  (tag.XMLType == tag.EMPTY)               &&
+                  (Graphmaster.loadtime == true) ) {
+
+                p = new PropertyProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /**
+             If it happens to be load time then the rest of the dispatcher
+             is not enabled yet
+           */
+
+             if (Graphmaster.loadtime == true) {
+                return "";
+             }
+
+           /*********************************************************
+            *AIML 1.0 Official AIML Tagset                          *
+            *Each tag get associated with it's own processor unless *
+            *the resolution is really trivial and made inline.      *
+            *********************************************************/
+
+           /**
+            Tags are evaluated in roughly the priority dictated by the  
+            current usage of them in the AIML standard set in order 
+            to minimize the search latency for the most frequently used
+           */
+
+           /*
+             <srai></srai>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.SRAI)) && (tag.XMLType == tag.TAG) ) {
+                p = new SRAIProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <star index="N"/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.STAR)) && (tag.XMLType == tag.EMPTY) ) {
+                p = new StarProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+
+           /*
+             <set name="varname"></set>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.SET)) && (tag.XMLType == tag.TAG) ) {
+                p = new SetProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <think></think>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.THINK)) && (tag.XMLType == tag.TAG) ) {
+                p = new ThinkProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <get name="varname"/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.GET)) ) {  //4.1.2 b1 Support for <get/> & <get></get>
+                p = new GetProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <person></person>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.PERSON)) && (tag.XMLType == tag.TAG) ) {
+                p = new PersonProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <random></random>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.RANDOM)) && (tag.XMLType == tag.TAG) ) {
+                p = new RandomProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <bot name="property"/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.BOT)) && (tag.XMLType == tag.EMPTY) ) {
+                p = new BotProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <that index="N,M"/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.THAT)) && (tag.XMLType == tag.EMPTY) ) {
+                p = new ThatProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <condition></condition>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.CONDITION)) && (tag.XMLType == tag.TAG) ) {
+                p = new ConditionProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+
+           /* ---> Removed by AIML Archcomm decission 09-2001
+             <if></if>
+             if ( (tag.XMLData.equals(AIML10Tag.IF)) && (tag.XMLType == tag.TAG) ) {
+                p = new IfProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+           */
+
+           /*
+             <formal></formal>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.FORMAL)) && (tag.XMLType == tag.TAG) ) {
+                p = new FormalProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <input index="N"/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.INPUT)) && (tag.XMLType == tag.EMPTY) ) {
+                p = new InputProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <id/> (see comment on processor IdProcessor.java)
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.ID)) && (tag.XMLType == tag.EMPTY) ) {
+                p = new IdProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <sentence></sentence>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.SENTENCE)) && (tag.XMLType == tag.TAG) ) {
+                p = new SentenceProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <version/>  (no way I'll use a processor to return a constant!)
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.VERSION)) && (tag.XMLType == tag.EMPTY) ) {
+                return Globals.getversion();
+             }
+
+           /*
+             <gossip src="gossipfile"></gossip>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.GOSSIP)) && (tag.XMLType == tag.TAG) ) {
+                p = new GossipProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <uppercase></uppercase>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.UPPERCASE)) && (tag.XMLType == tag.TAG) ) {
+                p = new UpperCaseProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <lowercase></lowercase>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.LOWERCASE)) && (tag.XMLType == tag.TAG) ) {
+                p = new LowerCaseProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <date/> (see comment on processor DateProcessor.java)
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.DATE)) && (tag.XMLType == tag.EMPTY) ) {
+                p = new DateProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <system></system>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.SYSTEM)) && (tag.XMLType == tag.TAG) ) {
+                p = new SystemProcessor();
+                System.out.println("*** SYSTEM: TAG TO BE EXECUTED ***");
+                response = p.processAIML(level++,ip,tag,this);
+                System.out.println("*** SYSTEM: TAG EXECUTED RESULT("+response+") ***");
+                return response;
+             }
+
+           /*
+             <javascript></javascript>  (not implemented yet)
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.JAVASCRIPT)) && (tag.XMLType == tag.TAG) ) {
+                p = new JavaScriptProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <size/> 
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.SIZE)) && (tag.XMLType == tag.EMPTY) ) {
+                return Globals.getsize();
+             }
+
+
+
+
+
+           /*
+             <person2></person2>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.PERSON2)) && (tag.XMLType == tag.TAG) ) {
+                p = new Person2Processor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <gender></gender>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.GENDER)) && (tag.XMLType == tag.TAG) ) {
+                p = new GenderProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <thatstar index="N"/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.THATSTAR)) && (tag.XMLType == tag.EMPTY) ) {
+                p = new ThatStarProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*
+             <topicstar index="N"/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.TOPICSTAR)) && (tag.XMLType == tag.EMPTY) ) {
+                p = new TopicStarProcessor();
+                return p.processAIML(level++,ip,tag,this);
+             }
+
+           /*********************************************************
+            *Virtual Tags                                           *
+            *The following tags aren't real but just implemented as *
+            *the combination of other tags, so they lack a processor*
+            *on their own.                                          *
+            *********************************************************/
+
+           /*
+             <sr/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.SR)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.SRAI,tag.TAG,"",AIML10Tag.STAR,tag.EMPTY);
+             }
+
+           /*
+             <person/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.PERSON)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.PERSON,tag.TAG,"",AIML10Tag.STAR,tag.EMPTY);
+             }
+
+           /*
+             <person2/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.PERSON2)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.PERSON2,tag.TAG,"",AIML10Tag.STAR,tag.EMPTY);
+             }
+
+           /*********************************************************
+            *AIML 0.9 (deprecated) tags                             *
+            *The AIML 0.9 set is implemented as virtual tags mostly *
+            *********************************************************/
+           /*
+             <name/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.NAME)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"name\"","",tag.EMPTY);
+             }
+
+           /*
+             <justbeforethat/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.JUSTBEFORETHAT)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.THAT,tag.EMPTY,"index=\"2,1\"","",tag.EMPTY);
+             }
+
+           /*
+             <justthat/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.JUSTTHAT)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.INPUT,tag.EMPTY,"index=\"2\"","",tag.EMPTY);
+             }
+
+           /*
+             <beforethat/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.BEFORETHAT)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.INPUT,tag.EMPTY,"index=\"3\"","",tag.EMPTY);
+             }
+
+           /*
+             <getname/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.GETNAME)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.GET,tag.EMPTY,"name=\"name\"","",tag.EMPTY);
+             }
+
+           /*
+             <getsize/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.GETSIZE)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.SIZE,tag.EMPTY,"","",tag.EMPTY);
+             }
+
+           /*
+             <gettopic/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.GETTOPIC)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.GET,tag.EMPTY,"name=\"topic\"","",tag.EMPTY);
+             }
+
+           /*
+             <getversion/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.GETVERSION)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.VERSION,tag.EMPTY,"","",tag.EMPTY);
+             }
+
+           /*
+             <getversion/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.GETVERSION)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.VERSION,tag.EMPTY,"","",tag.EMPTY);
+             }
+
+           /*
+             <get_ip/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.GET_IP)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.ID,tag.EMPTY,"","",tag.EMPTY);
+             }
+
+           /*
+             <settopic></settopic>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.SETTOPIC)) && (tag.XMLType == tag.TAG) ) {
+                response = evaluate(level,ip,tag.XMLChild);
+                return virtualTag(level,ip,AIML10Tag.SET,tag.TAG,"name=\"topic\"",response,tag.DATA);
+             }
+
+           /*
+             <setname></setname>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.SETNAME)) && (tag.XMLType == tag.TAG) ) {
+                response = evaluate(level,ip,tag.XMLChild);
+                return virtualTag(level,ip,AIML10Tag.SET,tag.TAG,"name=\"name\"",response,tag.DATA);
+             }
+
+
+           /*
+             <set_varname></set_varname>
+             This is a special transformation between the old (deprecated)
+             way <set_varname> into the newer <set name="varname">
+           */
+             int dashpos = tag.XMLData.indexOf("_",0);
+
+             if ( (tag.XMLData.indexOf(AIML10Tag.SET_OLD,0) >= 0) &&
+                  (tag.XMLType == tag.TAG) ) {
+
+                String start = tag.XMLData.substring(0,dashpos-1);
+                String end   = tag.XMLData.substring(dashpos+1,tag.XMLData.length());
+                response = evaluate(level,ip,tag.XMLChild);
+                // System.out.println("*** <set_xxx>: var("+end+") content("+response+") ***");
+
+                response = virtualTag(level,ip,AIML10Tag.SET,tag.TAG,"name=\""+end+"\"",response,tag.DATA);
+
+                //System.out.println("*** <set_xxx>: Result("+response+") ***");
+                return response;
+             }
+
+           /*
+             <get_varname/>
+             This is a special transformation between the old (deprecated)
+             way <get_varname/> into the newer <get name="varname">
+           */
+             if ( (tag.XMLData.indexOf(AIML10Tag.GET_OLD,0) >= 0) &&
+                  (tag.XMLType == tag.EMPTY) ) {
+
+                String start = tag.XMLData.substring(0,dashpos-1);
+                String end   = tag.XMLData.substring(dashpos+1,tag.XMLData.length());
+                // System.out.println("*** <get_xxx>: var("+end+") ***");
+                response = virtualTag(level,ip,AIML10Tag.GET,tag.EMPTY,"name=\""+end+"\"","",tag.DATA);
+                // System.out.println("*** <set_xxx>: Result("+response+") ***");
+                return response;
+             }
+
+
+
+           /*********************************************************
+            *AIML 0.9 (deprecated) custom bot properties            *
+            *Implemented as virtual tags using <bot/>               *
+            *********************************************************/
+
+           /*
+             <birthday/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.BIRTHDAY)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"birthday\"","",tag.EMPTY);
+             }
+
+           /*
+             <birthplace/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.BIRTHPLACE)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"birthplace\"","",tag.EMPTY);
+             }
+
+           /*
+             <boyfriend/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.BOYFRIEND)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"boyfriend\"","",tag.EMPTY);
+             }
+
+           /*
+             <favoriteband/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.FAVORITEBAND)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"favoriteband\"","",tag.EMPTY);
+             }
+
+           /*
+             <favoritebook/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.FAVORITEBOOK)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"favoritebook\"","",tag.EMPTY);
+             }
+
+           /*
+             <favoritecolor/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.FAVORITECOLOR)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"favoritecolor\"","",tag.EMPTY);
+             }
+
+           /*
+             <favoritefood/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.FAVORITEFOOD)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"favoritefood\"","",tag.EMPTY);
+             }
+
+           /*
+             <favoritemovie/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.FAVORITEMOVIE)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"favoritemovie\"","",tag.EMPTY);
+             }
+
+           /*
+             <favoritesong/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.FAVORITESONG)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"favoritesong\"","",tag.EMPTY);
+             }
+
+           /*
+             <for_fun/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.FOR_FUN)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"forfun\"","",tag.EMPTY);
+             }
+
+           /*
+             <friends/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.FRIENDS)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"friends\"","",tag.EMPTY);
+             }
+
+           /*
+             <gender/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.GENDER)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"gender\"","",tag.EMPTY);
+             }
+
+           /*
+             <girlfriend/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.GIRLFRIEND)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"girlfriend\"","",tag.EMPTY);
+             }
+
+           /*
+             <kind_music/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.KIND_MUSIC)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"kindmusic\"","",tag.EMPTY);
+             }
+
+           /*
+             <location/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.LOCATION)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"location\"","",tag.EMPTY);
+             }
+
+           /*
+             <look_like/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.LOOK_LIKE)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"looklike\"","",tag.EMPTY);
+             }
+
+           /*
+             <botmaster/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.BOTMASTER)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"master\"","",tag.EMPTY);
+             }
+
+           /*
+             <question/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.QUESTION)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"question\"","",tag.EMPTY);
+             }
+
+           /*
+             <sign/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.SIGN)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"sign\"","",tag.EMPTY);
+             }
+
+           /*
+             <talk_about/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.TALK_ABOUT)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"talkabout\"","",tag.EMPTY);
+             }
+
+           /*
+             <wear/>
+           */
+             if ( (tag.XMLData.equals(AIML10Tag.WEAR)) && (tag.XMLType == tag.EMPTY) ) {
+                return virtualTag(level,ip,AIML10Tag.BOT,tag.EMPTY,"name=\"wear\"","",tag.EMPTY);
+             }
+
+          /*
+           If the tag wasn't catched up to this point it's because is
+           an unknown tag. Then just expand it into text.
+          */
+          response = formattag(level,ip,tag);
+          return response;
+        }
+        /**
+         processResponse
+         This method receives a string with the Template expressed
+         as a XML coded string and returns the full evaluation of
+         it. This method is the one invoked from external classes
+         when a given template is required to be evaluated.
+        */
+        public String processResponse(String ip, String template) {
+
+             LinkedList     lt;
+             XMLParser      xml;
+             int            level    = 0;
+             String         response = "";
+
+             /*
+              A XML parser object instance is created and the XML string
+              of the template is loaded into it.
+             */
+
+             xml= new XMLParser();
+             lt = xml.XMLLoad(template);
+
+             /*
+              If something went really wrong with the XML processing
+              just return error and produce a console message
+             */
+             if (lt == null) {
+                System.out.println("*** ERROR: INVALID TEMPLATE ("+template+") ***");
+                return "{aiml error}";
+             }
+
+             /*
+              Now evaluate the template starting from the first token
+              of it. The method will recurse itself to explore the full trie
+             */
+
+             response = evaluate(level,ip,lt);
+
+             /*
+              Might be unnecessary but a controlled clean-up is performed
+             */
+             lt = xml.XMLFree(lt);
+
+             return response;
+        }
+
+
+        /**
+          Main method as a placeholder for debug
+        */
+	public static void main(String[] args)
+	{
+                System.out.println("*** AIMLParser main() ***");
 	}
+	
 }

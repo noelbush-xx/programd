@@ -17,7 +17,7 @@ USA.
 @author  Richard Wallace
 @author  Jon Baer
 @author  Thomas Ringate/Pedro Colla
-@version 4.1.1
+@version 4.1.2
 */
 
 import java.util.*;
@@ -114,30 +114,34 @@ public class Graphmaster extends Thread implements Serializable {
 	
 	/** The number of nodes at each depth. */
 	public static int NODE_COUNT[] = new int[MAX_DEPTH];
-	
-	/** The that pattern. */
+
 	public static String THAT_PATTERN;
-	
-	/** The input pattern. */
 	public static String INPUT_PATTERN;
-	
-	/** The topic pattern. */
 	public static String TOPIC_PATTERN;
-	
-	/** The that star. */
-	public static String THAT_STAR;
-	
-	/** The input star. */
-	public static String INPUT_STAR;
-	
+
+        /**
+          Multiple stars on INPUT detected during the last match
+        */
+        public static Vector INPUT_STAR = null;
+
+        /**
+          Multiple stars on THAT detected during the last match
+        */
+        public static Vector THAT_STAR  = null;
+
+        /**
+          Multiple stars on TOPIC detected during the last match
+        */
+        public static Vector TOPIC_STAR = null;
+
+        /**
+          Match object to store the results of the last match
+          performed
+        */
+        public static Match  MASTER_MATCH = null;
+
 	/** The input type. */
 	public static String INPUT_TYPE;
-	
-	/** The input soundex. */
-	public static String INPUT_SOUNDEX;
-	
-	/** The topic star. */
-	public static String TOPIC_STAR;
 	
 	/** The filename set. */
 	public static StringSet FILENAME_SET;
@@ -176,11 +180,12 @@ public class Graphmaster extends Thread implements Serializable {
 	public static final int CONSOLE = 2;
 
 //Add (4.0.3 b1) PEC 09-2001 Version & Build Global Values
+
         /** Version of this package */
-        public static final String VERSION = "4.1.1";
+        public static final String VERSION = "4.1.2";
 
         /** Build Number of this package (internal regression test control) */
-        public static final String BUILD = "15";
+        public static final String BUILD = "06";
 
         /** CopyRight Notice */
         public static final String COPYRIGHT = "AliceBot Server (c) 2001 A.L.I.C.E. A.I Foundation";
@@ -237,101 +242,166 @@ public class Graphmaster extends Thread implements Serializable {
 			return add(st, d, count-1, depth+1, sentence);
 		} 
 	} 
+/* =========================================================================*/
+/** match
+    Are the methods involved in the pattern matching process
+    Adapted from ProgramB code excerpt provided by Dr. R.Wallace,
+    targetting has been removed from this version since it will be
+    updated by Dr. R.Wallace when the new version become released
+*/
 
-        /** Perform the match between a normalized input for a particular
-            path topic-that */
-	public static Nodemapper match(String input, String that, String topic) {
-		/////////////////////////////////////////////
-		String inPattern = "";
-		char[] c = (new String(input)).toCharArray();
-		for (int x = 0; x < c.length; x++) {
-			inPattern = inPattern + Character.getNumericValue(c[x]);
-		}
-		/////////////////////////////////////////////
-		String path = input+" <that> "+that+" <topic> "+topic;
-                CURRENT_TOPIC = topic.trim();
-		Nodemapper node;
-                //System.out.println("*** MATCH: Path("+path+") ***");
-		node = match(ROOT, ROOT, path, "", "");
-		path = INPUT_PATTERN + " : " + THAT_PATTERN + " : " + TOPIC_PATTERN + " : " + path;
-		Set S = (Set)node.get("<activations>");
-		if (S==null) S = new TreeSet();
-		S.add(path);
-		node.put("<activations>", S);
-		ACTIVATED_NODES.add(node);
-		checkpoint();
-		return node;
-	}
+        /*=====================================================
+          High Level Prototype of the method
+          Used for external access
+          =====================================================*/
+        public static Match match(String input, String that, String topic) {
 
-        /** Perform the match for child nodes of the Graphmaster */
-	public static Nodemapper
-		match(Nodemapper node, Nodemapper parent,
-		String input, String star, String path) {
+         Match M;
+
+         /*
+          Adapt the input to be conforming with the way paths are
+          stored in the Graphmaster
+              {input} <that> {that} <topic> {topic}
+         */
+         String path  = input+" <that> "+that+" <topic> "+topic;
+         CURRENT_TOPIC= topic.trim();
+         //System.out.println("*** GRAPHMASTER START: Path("+path+") Current Topic("+CURRENT_TOPIC+") ***");
+
+         /*
+          Perform the actual matching
+         */
+         M = match(ROOT, ROOT, path, "", "",true,false,false);
+
+         /*
+          Format the path
+         */
+         path = Substituter.replace("<that>",":",path);
+         path = Substituter.replace("<topic>",":",path);
+         M.path = M.inputPattern + " : " + M.thatPattern + " : " +
+                  M.topicPattern + " : " + path;
+
+         return M;
+        }
+
+        /*=====================================================
+          Low Level Prototype of the method, used for internal
+          recursion.
+          Extracted from ProgramB, interface modified to allow
+          the capture of THATSTAR and TOPICSTAR
+          =====================================================*/
+        public static Match match(Nodemapper node, Nodemapper parent,
+                String input, String star, String path, boolean insideInput, boolean insideThat, boolean insideTopic) {
+		
 		StringTokenizer st = new StringTokenizer(input);
 		int count = st.countTokens();
+		Match M;
 		if (count == 0) {
 			if (node.containsKey("<template>")) {
-                           /**
-                             If the current topic is the default one or
-                             the matched topic is the current the result
-                             is accepted; rejected otherwise, this prevents
-                             hits on atomic categories without watching the
-                             proper THAT/TOPIC match.
-                           */
-                           if ( (CURRENT_TOPIC.equals("*")) || (path.trim().equals(CURRENT_TOPIC)) ) { //Fix 4.1.1 b4 
-				TOPIC_STAR=star.trim();
-				TOPIC_PATTERN=path.trim();
-				return node;
-                           } else {
-                             return null;
-                           }
+                           M = new Match();
+                           M.topicStar.push(star.trim());
+                           M.topicPattern=path.trim();
+                           M.node = node;
+                           return M;
 			} // if
 			else return null;
 		} // if
 		String word = st.nextToken(); String tail = "";
-                if (st.hasMoreTokens()) {
+		if (st.hasMoreTokens())
 			tail = input.substring(word.length()+1, input.length());
-                }
-		Nodemapper rec;
-                               
 		if (node.containsKey("_")) {
-			rec = match((Nodemapper)node.get("_"), node, tail, word, path+" _");
-                        if (rec != null) {
-                           return rec;
-                        }
+                        M = match((Nodemapper)node.get("_"), node, tail, word, path+" _",insideInput,insideThat,insideTopic);
+			if (M != null) return M;
 		} // if
-  
+		
 		if (node.containsKey(word)) {
-                        //System.out.println("*** MATCH (W): CONTAINS WORD("+word+") ***");
                         if (word.startsWith("<")) {
-                           rec = match((Nodemapper)node.get(word), node, tail, "", "");
+
+                           /* Define which part of the path we're working with */
+
+                           if (word.compareTo("<that>") == 0) {
+                              insideInput= false;
+                              insideThat = true;
+                              insideTopic= false;
+                           } else {
+                             if (word.compareTo("<topic>") == 0) {
+                                insideInput = false;
+                                insideThat  = false;
+                                insideTopic = true;
+                             }
+                           }
+
+                           M = match((Nodemapper)node.get(word), node, tail, "", "",insideInput,insideThat,insideTopic);
                         } else {
-                           rec = match((Nodemapper)node.get(word), node, tail, star, path+" "+word);
+                           M = match((Nodemapper)node.get(word), node, tail, star, path+" "+word,insideInput,insideThat,insideTopic);
                         }
-			if (rec != null) {
+			
+			if (M != null) {
 				if (word.compareTo("<that>")==0) {
-					INPUT_STAR = star.trim();
-					INPUT_PATTERN = path.trim();
+					insideInput = false;
+                                        insideThat  = true;
+                                        insideTopic = false;
+					M.inputStar.push(star.trim());
+					M.inputPattern = path.trim();
 				} // if
 				else if (word.compareTo("<topic>")==0) {
-					THAT_STAR = star.trim();
-					THAT_PATTERN = path.trim();
+                                        //System.out.println("*** GRAPHMASTER THAT END/TOPIC START: PUSH Star("+star+") Path("+path+") ***");
+					insideInput = false;
+                                        insideThat  = false;
+                                        insideTopic = true;
+					M.thatStar.push(star.trim());
+					M.thatPattern = path.trim();
+				} else {
+					//
 				}
-				return rec;
-			}
-		}
-
+				return M;
+			} // if
+			
+		} // if node contains word
+         
 		if (node.containsKey("*")) {
-			rec = match((Nodemapper)node.get("*"), node, tail, word, path+" *");
-                        if (rec != null) {
-                           return rec;
-                        }
-		}
+                        M = match((Nodemapper)node.get("*"), node, tail, word, path+" *",insideInput,insideThat,insideTopic);
+			if (M != null) {
+
+                                //System.out.println("*** GRAPHMASTER (*): Path("+path+" *) FLAGS insideInput("+insideInput+") insideThat("+insideThat+") insideTopic("+insideTopic+") ***");
+
+                                /* Capture and push intermediate stars for INPUT, THAT, TOPIC */
+				if (insideInput) {
+                                   if (star.length() > 0) {
+                                      //System.out.println("*** GRAPHMASTER (*): PUSH INPUTStar("+star+") Path("+path+") ***");
+                                      M.inputStar.push(star.trim());
+                                   }
+                                } else {
+                                  if (insideThat) {
+                                     if (star.length() > 0) {
+                                        //System.out.println("*** GRAPHMASTER (*): PUSH THATStar("+star+") Path("+path+") ***");
+                                        M.thatStar.push(star.trim());
+                                     }
+                                  } else {
+                                    if (insideTopic) {
+                                       if (star.length() > 0) {
+                                          //System.out.println("*** GRAPHMASTER (*): PUSH TOPICStar("+star+") Path("+path+") ***");
+                                          M.topicStar.push(star.trim());
+                                       }
+                                    }
+                                  }
+                                }
+                                //System.out.println("*** GRAPHMASTER (*): Star("+star+") Path("+path+") ***");
+				return M;
+			}
+		} // if node contains *
                 if (node.equals(parent.get("*")) || node.equals(parent.get("_"))) {
-			return match(node, parent, tail, star+" "+word, path);
+                        //System.out.println("*** GRAPHMASTER (Parent *): Star("+star+") Path("+path+") ***");
+                        return match(node, parent, tail, star+" "+word, path,insideInput,insideThat,insideTopic);
                 }
+		
 		return null;
-	} 
+	} // match
+
+    public static int activationCount = 0;
+
+
+/* =========================================================================*/
+
 	
 	public static boolean remove(String pattern, String that, String topic) {
 		/////////////////////////////////////////////
@@ -404,11 +474,11 @@ public class Graphmaster extends Thread implements Serializable {
                 //Clean up all previous topics on startup (4.1.1 b4 PEC 09-2001)
                 Classifier.cleanValue("topic","");
 
-		// This is a simple Alice shell that is useful for debugging your AIML
-		
-		AIMLWatcher watcher = new AIMLWatcher();
-
-		watcher.start();
+                if (Globals.isWatcherActive()) {  //4.1.2 b1 Watcher is optional
+                   // This is a simple Alice shell that is useful for debugging your AIML
+                   AIMLWatcher watcher = new AIMLWatcher();
+                   watcher.start();
+                }
 
 		if (Globals.showShell()) {
 			
@@ -417,7 +487,7 @@ public class Graphmaster extends Thread implements Serializable {
 			try {
 				// 02-Sep-01: NB: Replaced deprecated DataInputStream with BufferedInputStream
 				//DataInputStream din = new DataInputStream(System.in);
-                BufferedReader din = new BufferedReader(new InputStreamReader(System.in));
+                                BufferedReader din = new BufferedReader(new InputStreamReader(System.in));
 				
 				String name = Substituter.formal(Classifier.getValue("name", "localhost"));
 				
@@ -445,7 +515,9 @@ public class Graphmaster extends Thread implements Serializable {
 					
 					connection = Substituter.replace("-", ".", connection);
 					
-					if (connection.equals("") || connection.equals("localhost")) {
+                                        if ( (connection.equals("") ) ||
+                                             (connection.equals("localhost")) ||
+                                             (connection.equals(Globals.EmptyDefault)) ) {  //4.1.2 b2
 						
 						// ask local alicebot
 						response = Classifier.doResponse(theLine, "localhost", new TextResponder());

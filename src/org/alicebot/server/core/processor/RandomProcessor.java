@@ -1,94 +1,82 @@
 package org.alicebot.server.core.processor;
 
 /**
+Alice Program D
+Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
 
-ALICEBOT.NET Artificial Intelligence Project
-This version is Copyright (C) 2000 Jon Baer.
-jonbaer@digitalanywhere.com
-All rights reserved.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+USA.
 
-1. Redistributions of source code must retain the above copyright
-notice, this list of conditions, and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions, and the disclaimer that follows 
-these conditions in the documentation and/or other materials 
-provided with the distribution.
-
-3. The name "ALICEBOT.NET" must not be used to endorse or promote products
-derived from this software without prior written permission.  For
-written permission, please contact license@alicebot.org.
-
-4. Products derived from this software may not be called "ALICEBOT.NET",
-nor may "ALICEBOT.NET" appear in their name, without prior written permission
-from the ALICEBOT.NET Project Management (jonbaer@alicebot.net).
-
-In addition, we request (but do not require) that you include in the 
-end-user documentation provided with the redistribution and/or in the 
-software itself an acknowledgement equivalent to the following:
-"This product includes software developed by the
-ALICEBOT.NET Project (http://www.alicebot.net)."
-Alternatively, the acknowledgment may be graphical using the logos 
-available at http://www.alicebot.org/images/logos.
-
-THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED.  IN NO EVENT SHALL THE ALICE SOFTWARE FOUNDATION OR
-ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
-
-This software consists of voluntary contributions made by many 
-individuals on behalf of the A.L.I.C.E. Nexus and ALICEBOT.NET Project
-and was originally created by Dr. Richard Wallace <drwallace@alicebot.net>.
-
-This version was created by Jon Baer <jonbaer@alicebot.net>.
-
-http://www.alicebot.org
-http://www.alicebot.net
-
-This version contains open-source technologies from:
-Netscape, Apache, HypersonicSQL, JDOM, Jetty, Chris Carlin, IBM
-
+@author  Richard Wallace
+@author  Jon Baer
+@author  Thomas Ringate/Pedro Colla
+@version 4.1.1
 */
 
-import java.util.*;
+//import java.util.*;
 import java.lang.*;
 import java.net.*;
 import java.io.*;
 
 import org.alicebot.server.core.*;
-import org.alicebot.server.core.parser.*;
 import org.alicebot.server.core.util.*;
+import org.alicebot.server.core.parser.*;
 
-public class RandomProcessor implements TagProcessor,Serializable {
-	public String processAIML(String ip, String mid,  AIMLParser p) {
-		Vector v = new Vector();
-		String choice;
-		while (mid.indexOf("<li>") >= 0) {
-			mid = new String(mid.substring(mid.indexOf("<li>")+"<li>".length(), mid.length()));
-			choice = mid.substring(0,  mid.indexOf("</li>"));
-			if (choice.length() > 0) {
-				v.addElement(new String(choice));
-			}
-		}
-		// select a random element of v:
-		// public static Random RNG = new Random();
-		double r = Classifier.RNG.nextDouble();
-		int random_amt = (int)((double)(v.size())*r);        
-		mid = (String)(v.elementAt(random_amt));
-		mid = p.processResponse(ip, new String(mid));
-		return mid;
-	}
+/**
+ RandomProcessor is the responsible to manage the RANDOM tag, the number
+ of ListItem structures  bellow (at the level inmediately beneath) are
+ counted and based on a random pick one of them is choosen. The
+ selected ListItem structure is then evaluated, recursion on evaluation
+ allows other conditional structures to be processed there as needed.
+ @version 4.1.1
+ @author  Thomas Ringate/Pedro Colla
+*/
+public class RandomProcessor implements AIMLProcessor, Serializable {
+      public String processAIML(int level, String ip, XMLNode tag, AIMLParser p) {
+
+        /*
+          Somehow this is an empty tag that got so far as here...
+        */
+
+        if (tag.XMLChild == null) {
+           return "";
+        }
+
+        String response= "";
+        int numbernodes = p.countnode(AIML10Tag.LI,tag.XMLChild,false);
+
+        if (numbernodes == 0) {
+           return "";
+        }
+
+        XMLNode n = null;
+        if (numbernodes == 1) {
+           n = p.getnode(AIML10Tag.LI,tag.XMLChild,1);
+           response = response + p.evaluate(level++,ip,n.XMLChild);
+           return response;
+        }
+
+        /*
+          select a random elemento of the listitem
+        */
+        double r          = 0.0;
+        int    random_amt = 0;
+
+        while ( (random_amt < 1) || (random_amt > numbernodes) ) {
+          r = Classifier.RNG.nextDouble();
+          r = r + 0.05;
+          random_amt = (int)( (double)(numbernodes) * r );
+        }
+        n = p.getnode(AIML10Tag.LI,tag.XMLChild,random_amt);
+        response = response + p.evaluate(level++,ip,n.XMLChild);
+
+        return response;
+      }
 }
-

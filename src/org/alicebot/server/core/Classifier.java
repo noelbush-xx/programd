@@ -17,7 +17,7 @@ USA.
 @author  Richard Wallace
 @author  Jon Baer
 @author  Thomas Ringate/Pedro Colla
-@version 4.1.1
+@version 4.1.2
 */
 
 import java.util.*;
@@ -36,11 +36,8 @@ import org.alicebot.server.sql.pool.*;
 
 import org.alicebot.server.core.logging.*;
 import org.alicebot.server.core.node.*;
-//--(old parser)-->import org.alicebot.server.core.parser.*;
-import org.alicebot.server.core.AIMLparser.*;
+import org.alicebot.server.core.parser.*;
 import org.alicebot.server.core.responder.*;
-//--(old)--import org.alicebot.server.core.soundex.*;
-
 import org.alicebot.server.core.util.*;
 
 /**
@@ -112,41 +109,6 @@ public class Classifier implements Serializable {
 		}
 		return result;
 	}
-/*Remove 4.0.3 b4 PEC 09-2001
-
-	////////////////////////// INCREASE_VARIABLE ///////////////////////////////
-	
-	public static synchronized void increaseValue(String property, String ip, String value) {
-		value = value.trim();
-		value = URLEncoder.encode(value.trim());
-		org.alicebot.server.core.logging.Log.log("*** DATABASE INCREASE: " + property + " > " + ip + " > " + value + " ***", org.alicebot.server.core.logging.Log.DATABASE);
-		try {
-			DbAccess dba = mgr.takeDbaRef();
-			dba.executeUpdate("insert into properties values ('" + Globals.getBotName() + "','" + ip + "', null, null, null, null, '" + property + "','" + value + "')");
-			mgr.returnDbaRef(dba);
-		} catch (Exception e) {
-			org.alicebot.server.core.logging.Log.log("*** DATABASE ERROR: " + e + " ***", org.alicebot.server.core.logging.Log.ERROR);
-		}
-		
-	}
-	
-	////////////////////////// DECREASE_VARIABLE ///////////////////////////////
-	
-	public static synchronized void decreaseValue(String property, String ip, String value) {
-		value = value.trim();
-		value = URLEncoder.encode(value.trim());
-		org.alicebot.server.core.logging.Log.log("*** DATABASE DECREASE: " + property + " > " + ip + " > " + value + " ***", org.alicebot.server.core.logging.Log.DATABASE);
-		try {
-			DbAccess dba = mgr.takeDbaRef();
-			dba.executeUpdate("insert into properties values ('" + Globals.getBotName() + "','" + ip + "', null, null, null, null, '" + property + "','" + value + "')");
-			mgr.returnDbaRef(dba);
-		} catch (Exception e) {
-			org.alicebot.server.core.logging.Log.log("*** DATABASE ERROR: " + e + " ***", org.alicebot.server.core.logging.Log.ERROR);
-		}
-		
-	}
-
-*/
 	////////////////////////// ADD_VARIABLE ///////////////////////////////
 	
 	public static synchronized void addValue(String property, String ip, String value) {
@@ -278,13 +240,16 @@ public class Classifier implements Serializable {
 	}
 	
 	public static synchronized String getValue(String property, String ip, String conjunction) {
-		String result = "";
+
+                String result = "";
 		ip = ip.trim().toLowerCase();
+                boolean varfound = false;
 		try {
 			DbAccess dba = mgr.takeDbaRef();
 			ResultSet rs = dba.executeQuery("select value from properties where ip = '" + ip + "' and bot = '" + Globals.getBotName() + "' and property = '" + property + "'");
 			int returnCount = 0;
 			while (rs.next()) {
+                                varfound = true;
 				returnCount++;
 				if (returnCount > 1) result = result + " " + conjunction + " "; 
 				result = result + rs.getString("value");
@@ -296,38 +261,17 @@ public class Classifier implements Serializable {
 		}
 		catch (Exception e) {
 			org.alicebot.server.core.logging.Log.log("*** DATABASE ERROR: " + e + " ***", org.alicebot.server.core.logging.Log.ERROR);
+                        result = Globals.EmptyDefault;
+                        return result; //4.1.2 b2
 		}
+                if (varfound == false) {  //4.1.2 b2
+                   result = Globals.EmptyDefault;
+                   return result;
+                }
+
 		return result.trim();
 	}
 	
-	////////////////////////// GET_VARIABLE ///////////////////////////////
-	
-	public static String getRandomValue(String property, String ip) {
-		String result = "";
-		Vector results = new Vector();
-		try {
-			DbAccess dba = mgr.takeDbaRef();
-			ResultSet rs = dba.executeQuery("select value from properties where ip = '" + ip + "' and bot = '" + Globals.getBotName() + "' and property = '" + property + "'");
-			int returnCount = 0;
-			while (rs.next()) {
-				returnCount++;
-				result = result + rs.getString("value");
-				result = result.trim();
-				result = URLDecoder.decode(result.trim());
-				results.add(result);
-			}
-			rs.close();
-			mgr.returnDbaRef(dba);
-			double r = Classifier.RNG.nextDouble();
-			int random_amt = (int)((double)(results.size())*r);        
-			result = (String)(results.elementAt(random_amt));
-		}
-		catch (Exception e) {
-			org.alicebot.server.core.logging.Log.log("*** DATABASE ERROR: " + e + " ***", org.alicebot.server.core.logging.Log.ERROR);
-		}
-		return result;
-	}
-
         /*-----------------------------------------------------------------
           Stack Variable Management Methods (4.1.1 b0 PEC 09-2001)
           Patch to support the new group of index based AIML 1.0 tags
@@ -448,8 +392,12 @@ public class Classifier implements Serializable {
 
           }
 
-	////////////////////////// DO RESPOND ///////////////////////////////
-	
+        /* ---------------------------------------------------------------- */
+        /**
+          doRespond
+          This method obtains the reply to a given input, also take care
+          of using the proper context values for THAT/TOPIC
+        */
 	public static String doRespond(String input, String ip, int depth) {
 		
 		String response="";
@@ -457,81 +405,75 @@ public class Classifier implements Serializable {
                 String nthat  = getValue("that", ip);
 		String ntopic = getValue("topic", ip);
 
-		if (nthat.equals("")) nthat = "*";
-		if (ntopic.equals("")) ntopic = "*";
+                if (nthat.equals("") || nthat.equals(Globals.EmptyDefault) ) nthat = "*";    //4.1.2 b2
+                if (ntopic.equals("") || ntopic.equals(Globals.EmptyDefault) ) ntopic = "*"; //4.1.2 b2
 
                 nthat  = Substituter.deperiodize(nthat);
                 nthat  = Substituter.normalize(nthat);
 		ntopic = Substituter.deperiodize(ntopic);
 		ntopic = Substituter.normalize(ntopic);
 
-                /*Fix 4.1.1 b5 PEC 09-2001
-                  The pattern matching is a controlled loop now.
-                  If a NullPointerException is produced (no response)
-                  and the topic is != "" (specific topic) the topic is
-                  forced to the default one and the pattern matching
-                  re-attempted.
-                  This is to prevent and endless loop when the topic
-                  is set to a bogus one.
-                */
+                try {
+                      //System.out.println("*** DORESPOND: Input("+input+") that("+nthat+") topic("+ntopic+") ***");
 
-                boolean parseloop = true;
-                while (parseloop == true) {
-                  try {
-                        //System.out.println("*** DORESPOND: Input("+input+") that("+nthat+") topic("+ntopic+") ***");
-			Nodemapper rec = Graphmaster.match(input, nthat, ntopic);
-			response = (String)rec.get(Graphmaster.TEMPLATE);
-			response = response.trim();
-                        parseloop= false;
-			if (Globals.showConsole()) System.out.println(depth+". "+ Graphmaster.INPUT_PATTERN+" : "+ Graphmaster.THAT_PATTERN+" : "+ Graphmaster.TOPIC_PATTERN+" star="+ Graphmaster.INPUT_STAR+" ["+ (String)rec.get(Graphmaster.FILENAME)+"]");
+                      /*
+                      Call the Graphmaster pattern matching method to get
+                      a matching pattern, recover the template
+                      */
+                      Graphmaster.MASTER_MATCH = Graphmaster.match(input,nthat,ntopic);
+                      response     = (String)Graphmaster.MASTER_MATCH.getTemplate();
+                      response = response.trim();
+                      if (Globals.showConsole()) {
+                         System.out.println(depth+". "+ Graphmaster.MASTER_MATCH.inputPattern+" : "+ Graphmaster.MASTER_MATCH.thatPattern+" : "+ Graphmaster.MASTER_MATCH.topicPattern+" ["+ (String)Graphmaster.MASTER_MATCH.node.get(Graphmaster.FILENAME)+"]");
+                      }
                   }   catch (NullPointerException e) {
 
-                      /*4.1.1 b00 All sorts of nasty outcomes from this line...
-			response = "<srai>NOT FOUND</srai>";
-                      */
-
-                      /**
-                        If the current topic isn't the default ("") and
-                        the pattern matching yield an exception (no match)
-                        an attempt is made with the default topic.
-                        This will prevent a topic to be erroneously set
-                        and the flow of the dialog to be trapped there.
-                        4.1.1 b5 PEC 09-2001
-                      */
-                        String strTopic = getValue("topic",ip);
-                        strTopic = strTopic.trim();
-                        if (strTopic.equals(""))  {
-                           parseloop = false;
-                           System.out.println("*** PATTERN MATCH ERROR: Null Pointer Response("+response+") ***");
-                           response = "";
-                        } else {
-                           //System.out.println("*** SWITCH TOPIC BACK TO DEFAULT ***");
-                           setValue("topic",ip,"");
-                           ntopic = "*";
-                        }
+                        System.out.println("*** NO PATTERN MATCH INPUT("+input+") ***");
+                        response = "";
+                        return response;
 
                   }   catch (Exception e) {
-                        parseloop = false;
 			System.out.println(e);
+                        response = "";
+                        return response;
                   }
+
+                /*
+                 Retrieve multistar structures produced by the match
+                */
+                if (Graphmaster.MASTER_MATCH == null) {
+                   return "";
                 }
-		AIMLParser p = new AIMLParser(depth+1);
-		response = p.processResponse(ip, response);
-		response = Substituter.capitalize(response);
 
-/*Remove 4.0.3 b4 PEC 09-2001
+                Graphmaster.INPUT_STAR = Graphmaster.MASTER_MATCH.getInputStars();
+                Graphmaster.THAT_STAR  = Graphmaster.MASTER_MATCH.getThatStars();
+                Graphmaster.TOPIC_STAR = Graphmaster.MASTER_MATCH.getTopicStars();
 
-		// Experimental replacement methods
-		while (response.indexOf(" my ") > 0 && input.indexOf(" MY ") > 0) {
-			response = Substituter.replace(" my ", " your ", response);
-		}
+                AIMLParser p   = new AIMLParser(depth+1);
+                /*
+                 This will make the template parser work with a local
+                 copy of the star vectors structure in order to support
+                 recursion and to ensure a single extraction since the
+                 getInputStars/getThatStars/getTopicStars methods are
+                 destructive (could be called once).
+                */
+                p.INPUT_STAR   = Graphmaster.INPUT_STAR;
+                p.THAT_STAR    = Graphmaster.THAT_STAR;
+                p.TOPIC_STAR   = Graphmaster.TOPIC_STAR;
 
-*/
+                response       = p.processResponse(ip, response);
+                response       = Substituter.capitalize(response);
 		return response;
 	} 
-
-	////////////////////////// DO RESPONSE ///////////////////////////////
-	
+        /* ---------------------------------------------------------------- */
+        /**
+          doResponse
+          This method prepares the user input with a normalization and
+          deperioditization process and then seek the response of the
+          bot to that input.
+          Both the input and the reply are stored in a stack for later
+          usage
+        */
 	public static synchronized String doResponse(String input, String ip, Responder robot) {
 		input = robot.pre_process(input, ip);
 		input = Substituter.deperiodize(input);
@@ -548,17 +490,16 @@ public class Classifier implements Serializable {
 			sentence = sentence.replace('*',' ');
 			String norm = Substituter.normalize(sentence);
 			if (norm.length() > 0) {
-				setValue("beforethat", ip, getValue("justthat", ip)); 
-				setValue("justthat", ip, getValue("input", ip)); 
-				setValue("input", ip, sentence);
+
                                 pushValueIndex("input",ip,sentence); //4.1.1 b1
 				reply = doRespond(norm, ip, 1);
-                                if (!reply.trim().equals("")) {
+                                if ( (!reply.trim().equals("")) || (!norm.trim().equals("")) ) { //4.1.2 b6 Log inputs even if there is no output
                                    robot.log(norm, reply, ip);
                                 }
                                 String botreply = Substituter.deperiodize(reply); //Add 4.0.3 b7 09-2001 PEC
-				setValue("justbeforethat", ip, getValue("that", ip));
+
                                 setValue("that",ip, botreply);
+
                                 pushValueIndex("that",ip,botreply); //4.1.1 b1
 				if (i > 0) reply = " " + reply;
 

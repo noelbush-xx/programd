@@ -17,7 +17,7 @@ USA.
 @author  Richard Wallace
 @author  Jon Baer
 @author  Thomas Ringate/Pedro Colla
-@version 4.1.1
+@version 4.1.2
 */
 
 
@@ -132,18 +132,6 @@ public class SmartResponder {
 				this.serviceOutputStream.println(this.botResponse);
 				// System.out.println("*** DETECTED UNKNOWN DEVICE ***");
 				break;
-/*Removed 4.1.1 b0                         
-			case ServiceType.PALM:
-				this.serviceResponse.setContentType("text/html");
-				this.botResponse = Classifier.doResponse(this.userRequest, this.userID,  new PalmVIIResponder());
-				this.serviceOutputStream.println(this.botResponse);
-				// System.out.println("*** DETECTED PALM DEVICE ***");
-				break;
-				
-			case ServiceType.GRAPHMASTER:
-				// Not implemented
-				break;
-*/                         
 			case ServiceType.PLAIN_TEXT:
 				this.serviceResponse.setContentType("text/plain");
 				this.botResponse = Classifier.doResponse(this.userRequest, this.userID,  new TextResponder());
@@ -171,61 +159,6 @@ public class SmartResponder {
 				this.serviceOutputStream.println(this.botResponse);
 				// System.out.println("*** DETECTED FLASH DEVICE ***");
 				break;
-/*Removed 4.1.1 b0                         
-			case ServiceType.IMODE:
-				this.serviceResponse.setContentType("text/html");
-				this.botResponse = Classifier.doResponse(this.userRequest, this.userID,  new iModeResponder());
-				this.serviceOutputStream.println(this.botResponse);
-				// System.out.println("*** DETECTED I-MODE DEVICE ***");
-				break;
-				
-			case ServiceType.HDML:
-				this.serviceResponse.setContentType("text/x-hdml");
-				this.botResponse = Classifier.doResponse(this.userRequest, this.userID,  new HDMLResponder());
-				this.serviceOutputStream.println(this.botResponse);
-				// System.out.println("*** DETECTED HDML DEVICE ***");
-				break;
-				
-			case ServiceType.TELLME:
-				this.serviceResponse.setContentType("text/xml");
-				this.botResponse = Classifier.doResponse(this.userRequest, this.userID,  new TellmeResponder());
-				this.serviceOutputStream.println(this.botResponse);
-				// System.out.println("*** DETECTED TELLME DEVICE ***");
-				break;
-				
-			case ServiceType.BEVOCAL:
-				this.serviceResponse.setContentType("text/xml");
-				this.botResponse = Classifier.doResponse(this.userRequest, this.userID,  new BeVocalResponder());
-				this.serviceOutputStream.println(this.botResponse);
-				break;
-				
-			case ServiceType.WML:
-				this.serviceResponse.setContentType("text/vnd.wap.wml");
-				this.botResponse = Classifier.doResponse(this.userRequest, this.userID,  new WMLResponder());
-				this.serviceOutputStream.println(this.botResponse);
-				break;
-				
-			case ServiceType.SPEAK:
-				this.serviceResponse.setContentType("text/html");
-				this.botResponse = Classifier.doResponse(this.userRequest, this.userID,  new SpeakResponder());
-				this.serviceOutputStream.println(this.botResponse);
-				// System.out.println("*** DETECTED SPEECH DEVICE ***");
-				break;
-				
-			case ServiceType.MSAGENT:
-				this.serviceResponse.setContentType("text/html");
-				this.botResponse = Classifier.doResponse(this.userRequest, this.userID,  new MSAgentResponder());
-				this.serviceOutputStream.println(this.botResponse);
-				// System.out.println("*** DETECTED MSAGENT DEVICE ***");
-				break;
-				
-			case ServiceType.ACTOR:
-				this.serviceResponse.setContentType("text/html");
-				this.botResponse = Classifier.doResponse(this.userRequest, this.userID,  new LivingActorResponder());
-				this.serviceOutputStream.println(this.botResponse);
-				// System.out.println("*** DETECTED LIVING ACTOR DEVICE ***");
-				break;
-*/
 
 			}
 			

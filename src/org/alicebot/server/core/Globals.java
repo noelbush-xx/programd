@@ -1,5 +1,6 @@
 package org.alicebot.server.core;
 
+
 /**
 Alice Program D
 Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
@@ -17,7 +18,7 @@ USA.
 @author  Richard Wallace
 @author  Jon Baer
 @author  Thomas Ringate/Pedro Colla
-@version 4.1.1
+@version 4.1.2
 */
 
 import java.io.*;
@@ -61,6 +62,9 @@ public class Globals {
         public static int  MAX_INDEX_DEPTH = 5;
 //EAdd
 
+//Add 4.1.2 b2 PEC 09-2001
+        public static String EmptyDefault  = "";
+//EAdd
 
 	public Globals() {
 	}
@@ -77,7 +81,7 @@ public class Globals {
           return _size + " categories";
         }
 //Eadd
-	/** Load it from file. */
+        /** Load SERVER.properties configuration from file. */
 	public static void fromFile(String bot) {
 		_bot = bot;
                 //?_globals = ResourceBundle.getBundle("bots." + getBotName() + ".BOT");
@@ -98,8 +102,41 @@ public class Globals {
 		return _bot;
 	}
 
+        /*Add 4.1.2 b2 PEC 09-2001 Definition of system default when a
+          variable or property has not been declared
+        */
+        public static void getEmptyDefault() {
+
+                EmptyDefault = "";
+                EmptyDefault = _serverProps.getProperty("server.engine.emptydefault");
+                if (EmptyDefault.equals("")) {
+                   return;
+                }
+
+                if ( (EmptyDefault.startsWith("\"")) &&
+                     (EmptyDefault.endsWith("\""))   &&
+                     (EmptyDefault.length() > 2)  ) {
+                     EmptyDefault = EmptyDefault.substring(1,EmptyDefault.length()-1);
+                } else {
+                  EmptyDefault = "";
+                }
+                return;
+        }
+
+        /**
+          Return whether trace messages should show off at the local
+          console or not
+        */
 	public static boolean showConsole() {
 		return Boolean.valueOf(_serverProps.getProperty("server.engine.console")).booleanValue();
+	}
+
+        /**
+          Return if the file Watcher is active or not, the watcher reloads
+          AIML files when a change is detected
+        */
+        public static boolean isWatcherActive() {
+                return Boolean.valueOf(_serverProps.getProperty("server.engine.watcher")).booleanValue();
 	}
 
 
@@ -108,7 +145,9 @@ public class Globals {
 	}
 
         /**
-          Return the debug configuration (true/false)
+          Return the current merge policy, merge=true means that
+          duplicate categories will be merged otherwise the duplicate
+          will be rejected
         */
 
 	public static String getMergePolicy() {
@@ -134,10 +173,11 @@ public class Globals {
 		}
 		return (String[])languages.toArray();
 	}
-
+/**Remove 4.1.2 b5 PEC 09-2001
 	public static boolean getSpeak() {
 		return Boolean.valueOf(_serverProps.getProperty("server.engine.speak")).booleanValue();
 	}
+*/
 
 	/** Get the startup file for this bot. */
 	public static String getBotFile() {
@@ -147,7 +187,8 @@ public class Globals {
 			System.getProperty("file.separator") +
 			_serverProps.getProperty("server.engine.startup");
 	}
-
+        /** Get the targets file for this bot
+        */
 	public static String getTargetFile() {
 		return "targets/TARGETS.aiml";
 	}
@@ -204,13 +245,6 @@ public class Globals {
                 */
 		try {
                     value = BotProperty.get(property);
-
-                    /*
-                      If the returned value is empty return {property} instead
-                    */
-                    if (value.equals("")) {
-                       value = "{"+property+"}";
-                    }
                     return value;
 		} catch (Exception e) {
                     System.out.println("*** NO BOT PROPERTY NAMED > " + property + " ***");
@@ -219,24 +253,8 @@ public class Globals {
                 /*
                  If the gathering of the bot property failed return {property}
                 */
-                value = "{"+property+"}";
+                value = Globals.EmptyDefault;   //4.1.2 b2
 		return value;
-
-
-            /*Removed 4.1.1 b10 PEC 09-2001
-              this way to store properties in the Graphmaster is abandoned
-              now properties has to be set thru the <property/> tag
-              during configuration and will be stored on a hashtable
-
-		String value = "";
-		try {
-			value = Classifier.doRespond("BOT " + Substituter.normalize(property), "127.0.0.1", 1);
-			return value;
-		} catch (Exception e) {
-			System.out.println("*** NO BOT PROPERTY NAMED > " + property + " ***");
-		}
-		return value;
-            ---(end of removal)---*/
 	}
 
         /**

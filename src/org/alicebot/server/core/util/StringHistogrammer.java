@@ -16,7 +16,6 @@ USA.
 
 @author  Richard Wallace
 @author  Jon Baer
-@author  Thomas Ringate/Pedro Colla
 @version 4.1.1
 */
 

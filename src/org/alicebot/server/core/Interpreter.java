@@ -1,5 +1,6 @@
 package org.alicebot.server.core;
 
+
 /**
 Alice Program D
 Copyright (C) 1995-2001, A.L.I.C.E. AI Foundation
@@ -17,11 +18,10 @@ USA.
 @author  Richard Wallace
 @author  Jon Baer
 @author  Thomas Ringate/Pedro Colla
-@version 4.1.1
+@version 4.1.2
 */
 
-//-->(old parser) import org.alicebot.server.core.parser.*;
-import org.alicebot.server.core.AIMLparser.*;
+import org.alicebot.server.core.parser.*;
 import org.alicebot.server.core.logging.*;
 
 import org.mozilla.javascript.*;
