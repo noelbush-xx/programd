@@ -1,22 +1,19 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.util;
 
 /**
- *  Contains three Strings.
- *
- *  @author Noel Bush
- *  @since  4.1.5
+ * Contains three Strings.
+ * 
+ * @author Noel Bush
+ * @since 4.1.5
  */
 public class StringTriple
 {
@@ -74,8 +71,7 @@ public class StringTriple
         {
             return false;
         }
-        return (tuple.getFirst().equals(this.first))
-            & (tuple.getSecond().equals(this.second))
-            & (tuple.getThird().equals(this.third));
+        return (tuple.getFirst().equals(this.first)) & (tuple.getSecond().equals(this.second))
+                & (tuple.getThird().equals(this.third));
     }
 }

@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.gui;
 
@@ -53,10 +50,10 @@ import org.aitools.programd.util.Trace;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  Provides a very simple console for the bot.
- *
- *  @author Noel Bush
- *  @since 4.1.5
+ * Provides a very simple console for the bot.
+ * 
+ * @author Noel Bush
+ * @since 4.1.5
  */
 public class SimpleConsole extends JPanel
 {
@@ -80,20 +77,16 @@ public class SimpleConsole extends JPanel
     private PrintStream displayStream = new PrintStream(this.consoleDisplay);
 
     /** The stream to which console prompt will be directed. */
-    private PrintStream promptStream =
-        new PrintStream(new ConsolePromptStream(this));
+    private PrintStream promptStream = new PrintStream(new ConsolePromptStream(this));
 
     /** The stream which will receive console input. */
     protected ConsoleInputStream inStream = new ConsoleInputStream();
 
     /** For convenience, the system line separator. */
-    protected static final String LINE_SEPARATOR =
-        System.getProperty("line.separator", "\n");
+    protected static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
 
     private static final Object[] HELP_MESSAGE =
-        {
-            "Simple Console for",
-            "Program D version " + Graphmaster.VERSION };
+        { "Simple Console for", "Program D version " + Graphmaster.VERSION };
 
     private static JMenuBar menuBar;
 
@@ -124,7 +117,7 @@ public class SimpleConsole extends JPanel
     }
 
     /**
-     *  Constructs a new simple console gui with a new shell.
+     * Constructs a new simple console gui with a new shell.
      */
     public SimpleConsole()
     {
@@ -164,8 +157,7 @@ public class SimpleConsole extends JPanel
             }
         });
 
-        JMenuItem loadAIMLFilePath =
-            new JMenuItem("Load AIML from file path...");
+        JMenuItem loadAIMLFilePath = new JMenuItem("Load AIML from file path...");
         loadAIMLFilePath.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         loadAIMLFilePath.setMnemonic(KeyEvent.VK_P);
         loadAIMLFilePath.addActionListener(new ActionListener()
@@ -203,7 +195,7 @@ public class SimpleConsole extends JPanel
         {
             public void actionPerformed(ActionEvent ae)
             {
-                ((SimpleConsole)this.parent).consoleDisplay.togglePause();
+                ((SimpleConsole) this.parent).consoleDisplay.togglePause();
             }
         });
 
@@ -225,7 +217,7 @@ public class SimpleConsole extends JPanel
         {
             public void actionPerformed(ActionEvent ae)
             {
-                ((SimpleConsole)this.parent).shell.listBotFiles();
+                ((SimpleConsole) this.parent).shell.listBotFiles();
             }
         });
 
@@ -236,7 +228,7 @@ public class SimpleConsole extends JPanel
         {
             public void actionPerformed(ActionEvent ae)
             {
-                ((SimpleConsole)this.parent).shell.showBotList();
+                ((SimpleConsole) this.parent).shell.showBotList();
             }
         });
 
@@ -247,7 +239,7 @@ public class SimpleConsole extends JPanel
         {
             public void actionPerformed(ActionEvent ae)
             {
-                ((SimpleConsole)this.parent).shell.rollTargets();
+                ((SimpleConsole) this.parent).shell.rollTargets();
             }
         });
 
@@ -271,7 +263,7 @@ public class SimpleConsole extends JPanel
         {
             public void actionPerformed(ActionEvent ae)
             {
-                ((SimpleConsole)this.parent).shell.help();
+                ((SimpleConsole) this.parent).shell.help();
             }
         });
         JMenuItem about = new JMenuItem("About Simple Console...");
@@ -304,10 +296,11 @@ public class SimpleConsole extends JPanel
     }
 
     /**
-     *  Starts the simple console and an ProgramDServer,
-     *  given the path to a properties file.
-     *
-     *  @param propertiesPath   the path to the server properties file
+     * Starts the simple console and an ProgramDServer, given the path to a
+     * properties file.
+     * 
+     * @param propertiesPath
+     *            the path to the server properties file
      */
     public void start(String propertiesPath)
     {
@@ -325,7 +318,8 @@ public class SimpleConsole extends JPanel
         {
             ProgramDServer.shutdown();
         }
-        // Let the user exit, in case termination was abnormal or messages are otherwise interesting.
+        // Let the user exit, in case termination was abnormal or messages are
+        // otherwise interesting.
     }
 
     class InputPanel extends JPanel
@@ -335,13 +329,13 @@ public class SimpleConsole extends JPanel
 
         /** The console input field. */
         protected JTextField input;
-        
+
         protected SimpleConsole parent;
 
         public InputPanel(SimpleConsole parentToUse)
         {
             this.parent = parentToUse;
-            
+
             this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
             this.prompt = new JLabel();
@@ -388,24 +382,25 @@ public class SimpleConsole extends JPanel
             {
                 super(parentToUse);
             }
-            
+
             public void actionPerformed(ActionEvent ae)
             {
                 String inputText = ae.getActionCommand();
-                ((InputPanel)this.parent).parent.display.append(((InputPanel)this.parent).prompt.getText() + inputText + LINE_SEPARATOR);
-                ((InputPanel)this.parent).parent.inStream.receive(inputText);
-                ((InputPanel)this.parent).input.setText(null);
+                ((InputPanel) this.parent).parent.display.append(((InputPanel) this.parent).prompt.getText()
+                        + inputText + LINE_SEPARATOR);
+                ((InputPanel) this.parent).parent.inStream.receive(inputText);
+                ((InputPanel) this.parent).input.setText(null);
             }
         }
     }
 
     /**
-     *  Extends OutputStream to direct all output to the display textarea.
+     * Extends OutputStream to direct all output to the display textarea.
      */
     public class ConsoleDisplayStream extends OutputStream
     {
         private boolean paused = false;
-        
+
         protected SimpleConsole parent;
 
         public ConsoleDisplayStream(SimpleConsole parentToUse)
@@ -455,12 +450,12 @@ public class SimpleConsole extends JPanel
     }
 
     /**
-     *  Extends OutputStream to direct all output to the prompt field.
+     * Extends OutputStream to direct all output to the prompt field.
      */
     public class ConsolePromptStream extends OutputStream
     {
         protected SimpleConsole parent;
-        
+
         public ConsolePromptStream(SimpleConsole parentToUse)
         {
             super();
@@ -480,8 +475,7 @@ public class SimpleConsole extends JPanel
 
     public class ConsoleInputStream extends InputStream
     {
-        byte[] content = new byte[] {
-        };
+        byte[] content = new byte[] {};
 
         private int mark = 0;
 
@@ -513,12 +507,7 @@ public class SimpleConsole extends JPanel
             {
                 throw new NullPointerException();
             }
-            else if (
-                (off < 0)
-                    || (off > b.length)
-                    || (len < 0)
-                    || ((off + len) > b.length)
-                    || ((off + len) < 0))
+            else if ((off < 0) || (off > b.length) || (len < 0) || ((off + len) > b.length) || ((off + len) < 0))
             {
                 throw new IndexOutOfBoundsException();
             }
@@ -567,7 +556,7 @@ public class SimpleConsole extends JPanel
             {
                 return this.content[this.mark++];
             }
-//          (otherwise...)
+            //          (otherwise...)
             return -1;
         }
 
@@ -575,15 +564,8 @@ public class SimpleConsole extends JPanel
 
     protected void loadAIMLURLBox()
     {
-        Object response =
-            JOptionPane.showInputDialog(
-                null,
-                "Enter the URL from which to load.",
-                "Load AIML from URL",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                null,
-                null);
+        Object response = JOptionPane.showInputDialog(null, "Enter the URL from which to load.", "Load AIML from URL",
+                JOptionPane.PLAIN_MESSAGE, null, null, null);
         if (response == null)
         {
             return;
@@ -591,13 +573,8 @@ public class SimpleConsole extends JPanel
 
         int categories = Graphmaster.getTotalCategories();
         Graphmaster.load((String) response, this.shell.getCurrentBotID());
-        Log.userinfo(
-            Graphmaster.getTotalCategories()
-                - categories
-                + " categories loaded from \""
-                + (String) response
-                + "\".",
-            Log.LEARN);
+        Log.userinfo(Graphmaster.getTotalCategories() - categories + " categories loaded from \"" + (String) response
+                + "\".", Log.LEARN);
     }
 
     protected void loadAIMLFilePathChooser()
@@ -616,31 +593,21 @@ public class SimpleConsole extends JPanel
             }
             catch (IOException e)
             {
-                Trace.userinfo(
-                    "I/O error trying to access \"" + newPath + "\".");
+                Trace.userinfo("I/O error trying to access \"" + newPath + "\".");
                 return;
             }
             int categories = Graphmaster.getTotalCategories();
             Graphmaster.load(newPath, this.shell.getCurrentBotID());
             Log.userinfo(
-                Graphmaster.getTotalCategories()
-                    - categories
-                    + " categories loaded from \""
-                    + newPath
-                    + "\".",
-                Log.LEARN);
+                    Graphmaster.getTotalCategories() - categories + " categories loaded from \"" + newPath + "\".",
+                    Log.LEARN);
         }
     }
 
     protected void chooseBot()
     {
-        String[] botIDs = (String[]) Bots.getIDs().toArray(new String[] {
-        });
-        ListDialog.initialize(
-                this.frame,
-            botIDs,
-            "Choose a bot",
-            "Choose the bot with whom you want to talk.");
+        String[] botIDs = (String[]) Bots.getIDs().toArray(new String[] {});
+        ListDialog.initialize(this.frame, botIDs, "Choose a bot", "Choose the bot with whom you want to talk.");
         String choice = ListDialog.showDialog(null, this.shell.getCurrentBotID());
         if (choice != null)
         {
@@ -650,12 +617,7 @@ public class SimpleConsole extends JPanel
 
     protected void showAboutBox()
     {
-        JOptionPane.showMessageDialog(
-            null,
-            HELP_MESSAGE,
-            "About",
-            JOptionPane.INFORMATION_MESSAGE,
-            logo);
+        JOptionPane.showMessageDialog(null, HELP_MESSAGE, "About", JOptionPane.INFORMATION_MESSAGE, logo);
     }
 
     public static void main(String[] args)

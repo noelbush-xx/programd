@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.processor.loadtime;
 
@@ -29,8 +26,8 @@ import org.aitools.programd.util.XMLKit;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  The <code>listener</code> element is a container
- *  for defining parameters of a listener.
+ * The <code>listener</code> element is a container for defining parameters of
+ * a listener.
  */
 public class ListenerProcessor extends StartupElementProcessor
 {
@@ -50,8 +47,7 @@ public class ListenerProcessor extends StartupElementProcessor
     /** The string &quot; : &quot;. */
     private static final String SEPARATOR = " : ";
 
-    public String process(int level, XMLNode tag, StartupFileParser parser)
-        throws InvalidStartupElementException
+    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
     {
         // Does it have an href attribute?
         String href = getHref(tag);
@@ -60,8 +56,7 @@ public class ListenerProcessor extends StartupElementProcessor
         {
             try
             {
-                return parser.processResponse(
-                    FileManager.getFileContents(href));
+                return parser.processResponse(FileManager.getFileContents(href));
             }
             catch (ProcessorException e)
             {
@@ -80,18 +75,14 @@ public class ListenerProcessor extends StartupElementProcessor
         Class listenerClass = (Class) ListenerRegistry.getSelf().get(type);
         if (listenerClass == null)
         {
-            throw new UserError(
-                "You specified an unknown listener \"" + type + "\".");
+            throw new UserError("You specified an unknown listener \"" + type + "\".");
         }
 
         // Does it have an enabled attribute?
         String enabled = XMLKit.getAttributeValue(ENABLED, tag.XMLAttr);
         if (enabled == null)
         {
-            throw new UserError(
-                "<listener type=\""
-                    + type
-                    + "\"> is missing an enabled attribute.");
+            throw new UserError("<listener type=\"" + type + "\"> is missing an enabled attribute.");
         }
 
         // Is the enabled attribute true?
@@ -107,49 +98,33 @@ public class ListenerProcessor extends StartupElementProcessor
         Listener listener;
         try
         {
-            listener =
-                (Listener) listenerClass.getConstructor(
-                    new Class[] { Bot.class }).newInstance(
-                    new Object[] { bot });
+            listener = (Listener) listenerClass.getConstructor(new Class[]
+                { Bot.class }).newInstance(new Object[]
+                { bot });
         }
         catch (IllegalAccessException e)
         {
-            throw new DeveloperError(
-                "The constructor for the \""
-                    + type
-                    + "\" listener class is inaccessible.");
+            throw new DeveloperError("The constructor for the \"" + type + "\" listener class is inaccessible.");
         }
         catch (IllegalArgumentException e)
         {
-            throw new DeveloperError(
-                "The constructor for the \""
-                    + type
-                    + "\" listener class is incorrectly specifed.");
+            throw new DeveloperError("The constructor for the \"" + type + "\" listener class is incorrectly specifed.");
         }
         catch (InstantiationException e)
         {
-            throw new DeveloperError(
-                "The \"" + type + "\" listener class is abstract.");
+            throw new DeveloperError("The \"" + type + "\" listener class is abstract.");
         }
         catch (NoSuchMethodException e)
         {
-            throw new DeveloperError(
-                "The constructor for the \""
-                    + type
-                    + "\" listener class is incorrectly specifed.");
+            throw new DeveloperError("The constructor for the \"" + type + "\" listener class is incorrectly specifed.");
         }
         catch (InvocationTargetException e)
         {
-            throw new DeveloperError(
-                "The constructor for the \""
-                    + type
-                    + "\" listener class threw an exception.",
-                e);
+            throw new DeveloperError("The constructor for the \"" + type + "\" listener class threw an exception.", e);
         }
 
         // Count the parameters
-        int parameterCount =
-            parser.nodeCount(PARAMETER, tag.XMLChild, true);
+        int parameterCount = parser.nodeCount(PARAMETER, tag.XMLChild, true);
 
         // Set each parameter for the listener.
         for (int index = parameterCount; index > 0; index--)
@@ -158,8 +133,7 @@ public class ListenerProcessor extends StartupElementProcessor
             if (node.XMLType == XMLNode.EMPTY)
             {
                 String name = XMLKit.getAttributeValue(NAME, node.XMLAttr);
-                String value =
-                    XMLKit.getAttributeValue(VALUE, node.XMLAttr);
+                String value = XMLKit.getAttributeValue(VALUE, node.XMLAttr);
                 if (name != null && value != null)
                 {
                     listener.setParameter(name, value);
@@ -167,19 +141,14 @@ public class ListenerProcessor extends StartupElementProcessor
             }
             else
             {
-                throw new InvalidStartupElementException(
-                    "<" + node.XMLData + "/> cannot have content!");
+                throw new InvalidStartupElementException("<" + node.XMLData + "/> cannot have content!");
             }
         }
 
         // Check the parameters for the listener.
         if (!listener.checkParameters())
         {
-            Log.userinfo(
-                "Listener \""
-                    + type
-                    + "\" is incorrectly configured; will not be started.",
-                Log.STARTUP);
+            Log.userinfo("Listener \"" + type + "\" is incorrectly configured; will not be started.", Log.STARTUP);
             return EMPTY_STRING;
         }
 
@@ -188,13 +157,7 @@ public class ListenerProcessor extends StartupElementProcessor
 
         if (Globals.showConsole())
         {
-            Log.userinfo(
-                "Started \""
-                    + type
-                    + "\" listener for bot \""
-                    + bot.getID()
-                    + "\".",
-                Log.STARTUP);
+            Log.userinfo("Started \"" + type + "\" listener for bot \"" + bot.getID() + "\".", Log.STARTUP);
         }
         return EMPTY_STRING;
     }

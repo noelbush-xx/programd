@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.gui;
 
@@ -24,17 +21,20 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 /**
- *  A generic panel that displays a sortable, loadable table.
- *
- *  @author Richard Wallace
- *  @author Noel Bush
+ * A generic panel that displays a sortable, loadable table.
+ * 
+ * @author Richard Wallace
+ * @author Noel Bush
  */
 abstract public class Tabulator extends JPanel
 {
     /** The table displayed by the Tabulator. */
     protected JTable table;
 
-    /** The number of columns of data managed by the Tabulator (may be more than the number of visible columns!). */
+    /**
+     * The number of columns of data managed by the Tabulator (may be more than
+     * the number of visible columns!).
+     */
     protected int columnCount;
 
     /** The number of visible columns in the table. */
@@ -47,9 +47,10 @@ abstract public class Tabulator extends JPanel
     private TableSorter sorterTableModel;
 
     /**
-     *  Creates a new <code>Tabulator</code> with the given column names.
-     *
-     *  @param columnNames  the column names
+     * Creates a new <code>Tabulator</code> with the given column names.
+     * 
+     * @param columnNames
+     *            the column names
      */
     public Tabulator(String[] columnNames)
     {
@@ -70,9 +71,10 @@ abstract public class Tabulator extends JPanel
     }
 
     /**
-     *  Reloads the table with given data.
-     *
-     *  @param data the data to load
+     * Reloads the table with given data.
+     * 
+     * @param data
+     *            the data to load
      */
     public void reloadData(Object[][] data)
     {
@@ -94,29 +96,12 @@ abstract public class Tabulator extends JPanel
         for (int index = 0; index < this.visibleColumnCount; index++)
         {
             column = this.table.getColumnModel().getColumn(index);
-            component =
-                this.table
-                    .getTableHeader()
-                    .getDefaultRenderer()
-                    .getTableCellRendererComponent(
-                    null,
-                    column.getHeaderValue(),
-                    false,
-                    false,
-                    0,
-                    0);
+            component = this.table.getTableHeader().getDefaultRenderer().getTableCellRendererComponent(null,
+                    column.getHeaderValue(), false, false, 0, 0);
             headerWidth = component.getPreferredSize().width;
 
-            component =
-                this.table
-                    .getDefaultRenderer(this.sorterTableModel.getColumnClass(index))
-                    .getTableCellRendererComponent(
-                            this.table,
-                        longestRow[index],
-                        false,
-                        false,
-                        0,
-                        index);
+            component = this.table.getDefaultRenderer(this.sorterTableModel.getColumnClass(index))
+                    .getTableCellRendererComponent(this.table, longestRow[index], false, false, 0, index);
 
             cellWidth = component.getPreferredSize().width;
             column.setPreferredWidth(Math.max(headerWidth, cellWidth));
@@ -186,24 +171,23 @@ abstract public class Tabulator extends JPanel
                 {
                     rowLength += this.data[row][column].toString().length();
                 }
-                longestLength =
-                    rowLength > longestLength ? rowLength : longestLength;
+                longestLength = rowLength > longestLength ? rowLength : longestLength;
                 longestRow = rowLength > longestLength ? row : longestRow;
             }
             return this.data[longestRow];
         }
     }
-    
+
     public TableSorter getSorterTableModel()
     {
         return this.sorterTableModel;
     }
-    
+
     public int getColumnCount()
     {
         return this.columnCount;
     }
-    
+
     public JTable getTable()
     {
         return this.table;

@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.util;
 
@@ -18,23 +15,21 @@ import java.util.ListIterator;
 import java.util.Vector;
 
 /**
- *  Manages a matrix of {@link StringTriple}s.
- *
- *  @author Noel Bush
- *  @since  4.1.5
+ * Manages a matrix of {@link StringTriple}s.
+ * 
+ * @author Noel Bush
+ * @since 4.1.5
  */
 public class StringTripleMatrix
 {
     private LinkedList[] vertical;
+
     private LinkedList horizontal;
 
     public StringTripleMatrix()
     {
-        this.vertical =
-            new LinkedList[] {
-                new LinkedList(),
-                new LinkedList(),
-                new LinkedList()};
+        this.vertical = new LinkedList[]
+            { new LinkedList(), new LinkedList(), new LinkedList() };
         this.horizontal = new LinkedList();
     }
 
@@ -92,8 +87,8 @@ public class StringTripleMatrix
     public int size()
     {
         if (!((this.vertical[0].size() == this.vertical[1].size())
-            && (this.vertical[1].size() == this.vertical[2].size())
-            && (this.vertical[2].size() == this.horizontal.size())))
+                && (this.vertical[1].size() == this.vertical[2].size()) && (this.vertical[2].size() == this.horizontal
+                .size())))
         {
             Trace.devinfo("vertical[0].size(): " + this.vertical[0].size());
             Trace.devinfo("vertical[1].size(): " + this.vertical[1].size());

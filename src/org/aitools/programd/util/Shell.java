@@ -310,9 +310,6 @@ public class Shell
      * <p>
      * Displays a message (no prompt) in an interactive console.
      * </p>
-     * <p>
-     * Currently uses hard-coded {@link java.lang.System.in System.in}.
-     * </p>
      * 
      * @param message
      *            the message to display
@@ -441,7 +438,7 @@ public class Shell
             while (iterator.hasNext())
             {
                 File iteratorFile = (File) iterator.next(); //paths stored in
-                                                            // hashmap as Files
+                // hashmap as Files
                 if (iteratorFile.getAbsolutePath().equals(path))
                 {
                     fileToUnload = iteratorFile;

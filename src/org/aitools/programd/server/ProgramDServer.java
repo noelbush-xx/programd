@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.server;
 
@@ -28,14 +25,15 @@ import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  A server-based Program D.
- *
- *  @author Jon Baer
- *  @author Noel Bush
+ * A server-based Program D.
+ * 
+ * @author Jon Baer
+ * @author Noel Bush
  */
 public class ProgramDServer
 {
     private Shell shell;
+
     private String propertiesPath;
 
     private ProgramDServer(String propertiesPathToUse)
@@ -50,8 +48,8 @@ public class ProgramDServer
     }
 
     /**
-     *  Tries to register any listeners in the classpath,
-     *  starts the http server, and then starts a Graphmaster.
+     * Tries to register any listeners in the classpath, starts the http server,
+     * and then starts a Graphmaster.
      */
     public void startup()
     {
@@ -66,8 +64,7 @@ public class ProgramDServer
             this.shell = new Shell();
         }
         String className = Globals.getProperty("programd.httpserver.classname");
-        String configParameter =
-            Globals.getProperty("programd.httpserver.config");
+        String configParameter = Globals.getProperty("programd.httpserver.config");
 
         // Fail if http server class name is not specified.
         if (className == null)
@@ -79,31 +76,14 @@ public class ProgramDServer
         {
             if (Globals.showConsole())
             {
-                Log.userinfo(
-                    "Starting Program D version "
-                        + Globals.getVersion(),
-                    Log.STARTUP);
-                Log.userinfo(
-                    "Using Java VM "
-                        + System.getProperty("java.vm.version")
-                        + " from "
-                        + System.getProperty("java.vendor"),
-                    Log.STARTUP);
-                Log.userinfo(
-                    "On "
-                        + System.getProperty("os.name")
-                        + " version "
-                        + System.getProperty("os.version")
-                        + " ("
-                        + System.getProperty("os.arch")
-                        + ")",
-                    Log.STARTUP);
+                Log.userinfo("Starting Program D version " + Globals.getVersion(), Log.STARTUP);
+                Log.userinfo("Using Java VM " + System.getProperty("java.vm.version") + " from "
+                        + System.getProperty("java.vendor"), Log.STARTUP);
+                Log.userinfo("On " + System.getProperty("os.name") + " version " + System.getProperty("os.version")
+                        + " (" + System.getProperty("os.arch") + ")", Log.STARTUP);
 
-                Log.userinfo(
-                    "Predicates with no values defined will return: \""
-                        + Globals.getPredicateEmptyDefault()
-                        + "\".",
-                    Log.STARTUP);
+                Log.userinfo("Predicates with no values defined will return: \"" + Globals.getPredicateEmptyDefault()
+                        + "\".", Log.STARTUP);
             }
 
             // Start the http server.
@@ -116,12 +96,7 @@ public class ProgramDServer
             }
             ActiveMultiplexor.getInstance().initialize();
 
-            String serverAddress =
-                serverAddress =
-                    "http://"
-                        + Globals.getHostName()
-                        + ":"
-                        + Globals.getHttpPort();
+            String serverAddress = serverAddress = "http://" + Globals.getHostName() + ":" + Globals.getHttpPort();
 
             // Index the start time before loading.
             long time = new Date().getTime();
@@ -144,11 +119,8 @@ public class ProgramDServer
             {
                 // Give load time statistics.
                 Log.userinfo(
-                    Graphmaster.getTotalCategories()
-                        + " categories loaded in "
-                        + time / 1000.00
-                        + " seconds.",
-                    Log.STARTUP);
+                        Graphmaster.getTotalCategories() + " categories loaded in " + time / 1000.00 + " seconds.",
+                        Log.STARTUP);
 
                 // Describe whether AIMLWatcher is running.
                 if (Globals.isWatcherActive())
@@ -158,27 +130,20 @@ public class ProgramDServer
                 }
                 else
                 {
-                    Log.userinfo(
-                        "The AIML Watcher is not active.",
-                        Log.STARTUP);
+                    Log.userinfo("The AIML Watcher is not active.", Log.STARTUP);
                 }
 
                 // Give server info.
-                Log.userinfo(
-                    "HTTP server listening at " + serverAddress,
-                    Log.STARTUP);
+                Log.userinfo("HTTP server listening at " + serverAddress, Log.STARTUP);
             }
 
             // If configured, start up a browser with the address.
-            String browserCommand =
-                Globals.getProperty("programd.browser-launch");
-            if (browserCommand != null
-                && !serverAddress.equals("unknown address"))
+            String browserCommand = Globals.getProperty("programd.browser-launch");
+            if (browserCommand != null && !serverAddress.equals("unknown address"))
             {
                 try
                 {
-                    Runtime.getRuntime().exec(
-                        browserCommand + " " + serverAddress);
+                    Runtime.getRuntime().exec(browserCommand + " " + serverAddress);
                 }
                 catch (IOException e)
                 {
@@ -206,9 +171,7 @@ public class ProgramDServer
             {
                 if (Globals.showConsole())
                 {
-                    Log.userinfo(
-                        "Interactive shell disabled.  Awaiting interrupt to shut down.",
-                        Log.STARTUP);
+                    Log.userinfo("Interactive shell disabled.  Awaiting interrupt to shut down.", Log.STARTUP);
                 }
                 while (true)
                 {
@@ -226,9 +189,7 @@ public class ProgramDServer
         catch (DeveloperError e)
         {
             Log.devfail(e);
-            Log.userfail(
-                "Exiting abnormally due to developer error.",
-                Log.ERROR);
+            Log.userfail("Exiting abnormally due to developer error.", Log.ERROR);
             System.exit(1);
         }
         catch (UserError e)
@@ -239,31 +200,21 @@ public class ProgramDServer
         }
         catch (RuntimeException e)
         {
-            Log.userfail(
-                "Exiting abnormally due to unforeseen runtime exception.",
-                e,
-                Log.ERROR);
+            Log.userfail("Exiting abnormally due to unforeseen runtime exception.", e, Log.ERROR);
             System.exit(1);
         }
         catch (Exception e)
         {
-            Log.userfail(
-                "Exiting abnormally due to unforeseen exception.",
-                e,
-                Log.ERROR);
+            Log.userfail("Exiting abnormally due to unforeseen exception.", e, Log.ERROR);
             System.exit(1);
         }
     }
 
     /**
-     *  Tries to instantiate
-     *  an http server of unpredetermined type.
-     *  We wish to be compatible with any server, not
-     *  just the choix du jour.
+     * Tries to instantiate an http server of unpredetermined type. We wish to
+     * be compatible with any server, not just the choix du jour.
      */
-    private static void startHttpServer(
-        String className,
-        String configParameter)
+    private static void startHttpServer(String className, String configParameter)
     {
         // First, see if the http server class can be found.
         Class serverClass;
@@ -273,48 +224,39 @@ public class ProgramDServer
         }
         catch (ClassNotFoundException e)
         {
-            throw new UserError(
-                "Could not find http server \"" + className + "\".");
+            throw new UserError("Could not find http server \"" + className + "\".");
         }
 
         // Now, try to get an instance of the server.
         ProgramDCompatibleHttpServer server;
 
         /*
-            Any http server must implement ProgramDCompatibleHttpServer.
-            The interface itself is very trivial, and is just a way
-            for us to isolate dependencies on particular http servers
-            (non-GPL) to a single wrapper class.
-        */
+         * Any http server must implement ProgramDCompatibleHttpServer. The
+         * interface itself is very trivial, and is just a way for us to isolate
+         * dependencies on particular http servers (non-GPL) to a single wrapper
+         * class.
+         */
         try
         {
             server = (ProgramDCompatibleHttpServer) serverClass.newInstance();
         }
         catch (InstantiationException e)
         {
-            throw new UserError(
-                "Couldn't instantiate http server \"" + className + "\".");
+            throw new UserError("Couldn't instantiate http server \"" + className + "\".");
         }
         catch (IllegalAccessException e)
         {
-            throw new DeveloperError(
-                "The constructor for \""
-                    + className
-                    + "\" or the class itself is not available.");
+            throw new DeveloperError("The constructor for \"" + className + "\" or the class itself is not available.");
         }
         catch (ClassCastException e)
         {
-            throw new DeveloperError(
-                "\""
-                    + className
-                    + "\" is not an implementation ofProgramDCompatibleHttpServerr.");
+            throw new DeveloperError("\"" + className + "\" is not an implementation ofProgramDCompatibleHttpServerr.");
         }
 
         /*
-            If the server config parameter was defined, and if
-            the http server is an implementation of ProgramDCompatibleHttpServer,
-            configure it.
-        */
+         * If the server config parameter was defined, and if the http server is
+         * an implementation of ProgramDCompatibleHttpServer, configure it.
+         */
         if (configParameter != null)
         {
             try
@@ -323,8 +265,7 @@ public class ProgramDServer
             }
             catch (IOException e)
             {
-                throw new UserError(
-                    "Could not find \"" + configParameter + "\".");
+                throw new UserError("Could not find \"" + configParameter + "\".");
             }
         }
 
@@ -359,8 +300,8 @@ public class ProgramDServer
     }
 
     /**
-     *  Performs all necessary shutdown tasks.
-     *  Shuts down the Graphmaster and all BotProcesses.
+     * Performs all necessary shutdown tasks. Shuts down the Graphmaster and all
+     * BotProcesses.
      */
     public static void shutdown()
     {

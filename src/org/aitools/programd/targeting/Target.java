@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.targeting;
 
@@ -24,7 +21,7 @@ import org.aitools.programd.util.StringTriple;
 import org.aitools.programd.util.StringTripleMatrix;
 
 /**
- *  Represents an individial target.
+ * Represents an individial target.
  */
 public class Target
 {
@@ -44,66 +41,65 @@ public class Target
     private int activations = 1;
 
     /**
-     *  Creates a new Target object.
-     *
-     *  @param matchPattern         the <code>pattern</code> part of the matched path
-     *  @param matchThat            the <code>that</code> part of the matched path
-     *  @param matchTopic           the <code>topic</code> part of the matched path
-     *  @param matchTemplate        the <code>template</code> associated with the matched path
-     *  @param inputText            the input text that was matched
-     *  @param inputThat            the value of the <code>that</code> predicate when the input was received
-     *  @param inputTopic           the value of the <code>topic</code> predicate when the input was received
-     *  @param reply             the reply that the bot provided
+     * Creates a new Target object.
+     * 
+     * @param matchPattern
+     *            the <code>pattern</code> part of the matched path
+     * @param matchThat
+     *            the <code>that</code> part of the matched path
+     * @param matchTopic
+     *            the <code>topic</code> part of the matched path
+     * @param matchTemplate
+     *            the <code>template</code> associated with the matched path
+     * @param inputText
+     *            the input text that was matched
+     * @param inputThat
+     *            the value of the <code>that</code> predicate when the input
+     *            was received
+     * @param inputTopic
+     *            the value of the <code>topic</code> predicate when the input
+     *            was received
+     * @param reply
+     *            the reply that the bot provided
      */
-    public Target(
-        String matchPattern,
-        String matchThat,
-        String matchTopic,
-        String matchTemplate,
-        String inputText,
-        String inputThat,
-        String inputTopic,
-        String reply)
+    public Target(String matchPattern, String matchThat, String matchTopic, String matchTemplate, String inputText,
+            String inputThat, String inputTopic, String reply)
     {
-        this.match =
-            new Category(matchPattern, matchThat, matchTopic, matchTemplate);
+        this.match = new Category(matchPattern, matchThat, matchTopic, matchTemplate);
         this.inputs = new TargetInputs(inputText, inputThat, inputTopic);
         this.replies.add(reply);
     }
 
     /**
-     *  Returns a hash code representing the target.
-     *
-     *  @return a hash code representing the target
+     * Returns a hash code representing the target.
+     * 
+     * @return a hash code representing the target
      */
     public int hashCode()
     {
-        return (this.match.getPattern() + this.match.getThat() + this.match.getTopic())
-            .hashCode();
+        return (this.match.getPattern() + this.match.getThat() + this.match.getTopic()).hashCode();
     }
 
     /**
-     *  Returns a hash code that would be generated for
-     *  a target with the given parameters.
-     *
-     *  @param matchPattern
-     *  @param matchThat
-     *  @param matchTopic
-     *
-     *  @return a hash code that would be generated for a target with the given parameters
+     * Returns a hash code that would be generated for a target with the given
+     * parameters.
+     * 
+     * @param matchPattern
+     * @param matchThat
+     * @param matchTopic
+     * @return a hash code that would be generated for a target with the given
+     *         parameters
      */
-    public static int generateHashCode(
-        String matchPattern,
-        String matchThat,
-        String matchTopic)
+    public static int generateHashCode(String matchPattern, String matchThat, String matchTopic)
     {
         return (matchPattern + matchThat + matchTopic).hashCode();
     }
 
     /**
-     *  Merges input and extension values from one target to this one.
-     *
-     *  @param target   the target whose inputs will be added
+     * Merges input and extension values from one target to this one.
+     * 
+     * @param target
+     *            the target whose inputs will be added
      */
     public void merge(Target target)
     {
@@ -126,7 +122,8 @@ public class Target
             }
             catch (NoSuchElementException e)
             {
-                // It's okay if the target being merged does not have an exception.
+                // It's okay if the target being merged does not have an
+                // exception.
             }
 
             String nextReply = (String) replyIterator.next();
@@ -150,9 +147,9 @@ public class Target
     }
 
     /**
-     *  Returns the match <code>pattern</code>.
-     *
-     *  @return the match <code>pattern</code>
+     * Returns the match <code>pattern</code>.
+     * 
+     * @return the match <code>pattern</code>
      */
     public String getMatchPattern()
     {
@@ -160,9 +157,9 @@ public class Target
     }
 
     /**
-     *  Returns the match <code>that</code>.
-     *
-     *  @return the match <code>that</code>
+     * Returns the match <code>that</code>.
+     * 
+     * @return the match <code>that</code>
      */
     public String getMatchThat()
     {
@@ -170,9 +167,9 @@ public class Target
     }
 
     /**
-     *  Returns the match <code>topic</code>.
-     *
-     *  @return the match <code>topic</code>
+     * Returns the match <code>topic</code>.
+     * 
+     * @return the match <code>topic</code>
      */
     public String getMatchTopic()
     {
@@ -180,9 +177,9 @@ public class Target
     }
 
     /**
-     *  Returns the match <code>template</code>.
-     *
-     *  @return the match <code>template</code>
+     * Returns the match <code>template</code>.
+     * 
+     * @return the match <code>template</code>
      */
     public String getMatchTemplate()
     {
@@ -190,9 +187,9 @@ public class Target
     }
 
     /**
-     *  Returns the inputs.
-     *
-     *  @return the inputs
+     * Returns the inputs.
+     * 
+     * @return the inputs
      */
     public StringTripleMatrix getInputs()
     {
@@ -200,9 +197,9 @@ public class Target
     }
 
     /**
-     *  Returns the input texts.
-     *
-     *  @return the input texts
+     * Returns the input texts.
+     * 
+     * @return the input texts
      */
     public LinkedList getInputTexts()
     {
@@ -210,9 +207,9 @@ public class Target
     }
 
     /**
-     *  Returns the input <code>that</code>s.
-     *
-     *  @return the input <code>that</code>s
+     * Returns the input <code>that</code>s.
+     * 
+     * @return the input <code>that</code> s
      */
     public LinkedList getInputThats()
     {
@@ -220,9 +217,9 @@ public class Target
     }
 
     /**
-     *  Returns the input <code>topic</code>s.
-     *
-     *  @return the input <code>topic</code>s
+     * Returns the input <code>topic</code>s.
+     * 
+     * @return the input <code>topic</code> s
      */
     public LinkedList getInputTopics()
     {
@@ -230,9 +227,9 @@ public class Target
     }
 
     /**
-     *  Returns the first input text.
-     *
-     *  @return the first input text
+     * Returns the first input text.
+     * 
+     * @return the first input text
      */
     public String getFirstInputText()
     {
@@ -240,9 +237,9 @@ public class Target
     }
 
     /**
-     *  Returns the first input <code>that</code>.
-     *
-     *  @return the first input <code>that</code>
+     * Returns the first input <code>that</code>.
+     * 
+     * @return the first input <code>that</code>
      */
     public String getFirstInputThat()
     {
@@ -250,9 +247,9 @@ public class Target
     }
 
     /**
-     *  Returns the first input <code>topic</code>.
-     *
-     *  @return the first input <code>topic</code>
+     * Returns the first input <code>topic</code>.
+     * 
+     * @return the first input <code>topic</code>
      */
     public String getFirstInputTopic()
     {
@@ -260,9 +257,9 @@ public class Target
     }
 
     /**
-     *  Returns the last input text.
-     *
-     *  @return the last input text
+     * Returns the last input text.
+     * 
+     * @return the last input text
      */
     public String getLastInputText()
     {
@@ -270,9 +267,9 @@ public class Target
     }
 
     /**
-     *  Returns the last input <code>that</code>.
-     *
-     *  @return the last input <code>that</code>
+     * Returns the last input <code>that</code>.
+     * 
+     * @return the last input <code>that</code>
      */
     public String getLastInputThat()
     {
@@ -280,9 +277,9 @@ public class Target
     }
 
     /**
-     *  Returns the last input <code>topic</code>.
-     *
-     *  @return the last input <code>topic</code>
+     * Returns the last input <code>topic</code>.
+     * 
+     * @return the last input <code>topic</code>
      */
     public String getLastInputTopic()
     {
@@ -290,11 +287,11 @@ public class Target
     }
 
     /**
-     *  Returns the <code>n</code>th input text.
-     *
-     *  @param n    the index of the desired input text
-     *
-     *  @return the <code>n</code>th input text
+     * Returns the <code>n</code> th input text.
+     * 
+     * @param n
+     *            the index of the desired input text
+     * @return the <code>n</code> th input text
      */
     public String getNthInputText(int n)
     {
@@ -302,11 +299,11 @@ public class Target
     }
 
     /**
-     *  Returns the <code>n</code>th input <code>that</code>.
-     *
-     *  @param n    the index of the desired input that
-     *
-     *  @return the <code>n</code>th input <code>that</code>
+     * Returns the <code>n</code> th input <code>that</code>.
+     * 
+     * @param n
+     *            the index of the desired input that
+     * @return the <code>n</code> th input <code>that</code>
      */
     public String getNthInputThat(int n)
     {
@@ -314,11 +311,11 @@ public class Target
     }
 
     /**
-     *  Returns the <code>n</code>th input <code>topic</code>.
-     *
-     *  @param n    the index of the desired input topic
-     *
-     *  @return the <code>n</code>th input <code>topic</code>
+     * Returns the <code>n</code> th input <code>topic</code>.
+     * 
+     * @param n
+     *            the index of the desired input topic
+     * @return the <code>n</code> th input <code>topic</code>
      */
     public String getNthInputTopic(int n)
     {
@@ -326,9 +323,9 @@ public class Target
     }
 
     /**
-     *  Returns the extensions.
-     *
-     *  @return the extensions
+     * Returns the extensions.
+     * 
+     * @return the extensions
      */
     public StringTripleMatrix getExtensions()
     {
@@ -336,9 +333,9 @@ public class Target
     }
 
     /**
-     *  Returns the extension <code>pattern</code>s.
-     *
-     *  @return the extension <code>pattern</code>s
+     * Returns the extension <code>pattern</code>s.
+     * 
+     * @return the extension <code>pattern</code> s
      */
     public LinkedList getExtensionPatterns()
     {
@@ -346,9 +343,9 @@ public class Target
     }
 
     /**
-     *  Returns the extension <code>that</code>s.
-     *
-     *  @return the extension <code>that</code>s
+     * Returns the extension <code>that</code>s.
+     * 
+     * @return the extension <code>that</code> s
      */
     public LinkedList getExtensionThats()
     {
@@ -356,9 +353,9 @@ public class Target
     }
 
     /**
-     *  Returns the extension <code>topic</code>s.
-     *
-     *  @return the extension <code>topic</code>s
+     * Returns the extension <code>topic</code>s.
+     * 
+     * @return the extension <code>topic</code> s
      */
     public LinkedList getExtensionTopics()
     {
@@ -366,9 +363,9 @@ public class Target
     }
 
     /**
-     *  Returns the first extension <code>pattern</code>.
-     *
-     *  @return the first extension <code>pattern</code>
+     * Returns the first extension <code>pattern</code>.
+     * 
+     * @return the first extension <code>pattern</code>
      */
     public String getFirstExtensionPattern()
     {
@@ -376,9 +373,9 @@ public class Target
     }
 
     /**
-     *  Returns the first extension <code>that</code>.
-     *
-     *  @return the first extension <code>that</code>
+     * Returns the first extension <code>that</code>.
+     * 
+     * @return the first extension <code>that</code>
      */
     public String getFirstExtensionThat()
     {
@@ -386,9 +383,9 @@ public class Target
     }
 
     /**
-     *  Returns the first extension <code>topic</code>.
-     *
-     *  @return the first extension <code>topic</code>
+     * Returns the first extension <code>topic</code>.
+     * 
+     * @return the first extension <code>topic</code>
      */
     public String getFirstExtensionTopic()
     {
@@ -396,9 +393,9 @@ public class Target
     }
 
     /**
-     *  Returns the last extension <code>pattern</code>.
-     *
-     *  @return the last extension <code>pattern</code>
+     * Returns the last extension <code>pattern</code>.
+     * 
+     * @return the last extension <code>pattern</code>
      */
     public String getLastExtensionPattern()
     {
@@ -406,9 +403,9 @@ public class Target
     }
 
     /**
-     *  Returns the last extension <code>that</code>.
-     *
-     *  @return the last extension <code>that</code>
+     * Returns the last extension <code>that</code>.
+     * 
+     * @return the last extension <code>that</code>
      */
     public String getLastExtensionThat()
     {
@@ -416,9 +413,9 @@ public class Target
     }
 
     /**
-     *  Returns the last extension <code>topic</code>.
-     *
-     *  @return the last extension <code>topic</code>
+     * Returns the last extension <code>topic</code>.
+     * 
+     * @return the last extension <code>topic</code>
      */
     public String getLastExtensionTopic()
     {
@@ -426,11 +423,11 @@ public class Target
     }
 
     /**
-     *  Returns the <code>n</code>th extension pattern.
-     *
-     *  @param n    the index of the desired extension pattern
-     *
-     *  @return the <code>n</code>th extension pattern
+     * Returns the <code>n</code> th extension pattern.
+     * 
+     * @param n
+     *            the index of the desired extension pattern
+     * @return the <code>n</code> th extension pattern
      */
     public String getNthExtensionPattern(int n)
     {
@@ -439,11 +436,11 @@ public class Target
     }
 
     /**
-     *  Returns the <code>n</code>th extension <code>that</code>.
-     *
-     *  @param n    the index of the desired extension that
-     *
-     *  @return the <code>n</code>th extension <code>that</code>
+     * Returns the <code>n</code> th extension <code>that</code>.
+     * 
+     * @param n
+     *            the index of the desired extension that
+     * @return the <code>n</code> th extension <code>that</code>
      */
     public String getNthExtensionThat(int n)
     {
@@ -452,11 +449,11 @@ public class Target
     }
 
     /**
-     *  Returns the <code>n</code>th extension <code>topic</code>.
-     *
-     *  @param n    the index of the desired extension topic
-     *
-     *  @return the <code>n</code>th extension <code>topic</code>
+     * Returns the <code>n</code> th extension <code>topic</code>.
+     * 
+     * @param n
+     *            the index of the desired extension topic
+     * @return the <code>n</code> th extension <code>topic</code>
      */
     public String getNthExtensionTopic(int n)
     {
@@ -465,9 +462,9 @@ public class Target
     }
 
     /**
-     *  Returns the <code>reply</code>s.
-     *
-     *  @return the <code>reply</code>s
+     * Returns the <code>reply</code>s.
+     * 
+     * @return the <code>reply</code> s
      */
     public LinkedList getReplies()
     {
@@ -475,9 +472,9 @@ public class Target
     }
 
     /**
-     *  Returns the first <code>reply</code>.
-     *
-     *  @return the first <code>reply</code>
+     * Returns the first <code>reply</code>.
+     * 
+     * @return the first <code>reply</code>
      */
     public String getFirstReply()
     {
@@ -485,9 +482,9 @@ public class Target
     }
 
     /**
-     *  Returns the last <code>reply</code>.
-     *
-     *  @return the last <code>reply</code>
+     * Returns the last <code>reply</code>.
+     * 
+     * @return the last <code>reply</code>
      */
     public String getLastReply()
     {
@@ -495,11 +492,11 @@ public class Target
     }
 
     /**
-     *  Returns the <code>n</code>th reply
-     *
-     *  @param n    the index of the desired reply
-     *
-     *  @return the <code>n</code>th reply
+     * Returns the <code>n</code> th reply
+     * 
+     * @param n
+     *            the index of the desired reply
+     * @return the <code>n</code> th reply
      */
     public String getNthReply(int n)
     {
@@ -507,9 +504,9 @@ public class Target
     }
 
     /**
-     *  Returns the new <code>pattern</code>.
-     *
-     *  @return the new <code>pattern</code>
+     * Returns the new <code>pattern</code>.
+     * 
+     * @return the new <code>pattern</code>
      */
     public String getNewPattern()
     {
@@ -517,9 +514,9 @@ public class Target
     }
 
     /**
-     *  Returns the new <code>that</code>.
-     *
-     *  @return the new <code>that</code>
+     * Returns the new <code>that</code>.
+     * 
+     * @return the new <code>that</code>
      */
     public String getNewThat()
     {
@@ -527,9 +524,9 @@ public class Target
     }
 
     /**
-     *  Returns the new <code>topic</code>.
-     *
-     *  @return the new <code>topic</code>
+     * Returns the new <code>topic</code>.
+     * 
+     * @return the new <code>topic</code>
      */
     public String getNewTopic()
     {
@@ -537,9 +534,9 @@ public class Target
     }
 
     /**
-     *  Returns the new <code>template</code>.
-     *
-     *  @return the new <code>template</code>
+     * Returns the new <code>template</code>.
+     * 
+     * @return the new <code>template</code>
      */
     public String getNewTemplate()
     {
@@ -547,9 +544,10 @@ public class Target
     }
 
     /**
-     *  Sets the new <code>pattern</code>.
-     *
-     *  @param pattern  the new <code>pattern</code>
+     * Sets the new <code>pattern</code>.
+     * 
+     * @param pattern
+     *            the new <code>pattern</code>
      */
     public void setNewPattern(String pattern)
     {
@@ -557,9 +555,10 @@ public class Target
     }
 
     /**
-     *  Sets the new <code>that</code>.
-     *
-     *  @param that the new <code>that</code>
+     * Sets the new <code>that</code>.
+     * 
+     * @param that
+     *            the new <code>that</code>
      */
     public void setNewThat(String that)
     {
@@ -567,9 +566,10 @@ public class Target
     }
 
     /**
-     *  Sets the new <code>topic</code>.
-     *
-     *  @param topic    the new <code>topic</code>
+     * Sets the new <code>topic</code>.
+     * 
+     * @param topic
+     *            the new <code>topic</code>
      */
     public void setNewTopic(String topic)
     {
@@ -577,9 +577,10 @@ public class Target
     }
 
     /**
-     *  Sets the new <code>template</code>.
-     *
-     *  @param template the new <code>template</code>
+     * Sets the new <code>template</code>.
+     * 
+     * @param template
+     *            the new <code>template</code>
      */
     public void setNewTemplate(String template)
     {
@@ -587,9 +588,9 @@ public class Target
     }
 
     /**
-     *  Returns the activations count.
-     *
-     *  @return the activations count
+     * Returns the activations count.
+     * 
+     * @return the activations count
      */
     public int getActivations()
     {
@@ -597,7 +598,7 @@ public class Target
     }
 
     /**
-     *  Generates extension patterns for all inputs.
+     * Generates extension patterns for all inputs.
      */
     public void extend()
     {
@@ -608,10 +609,9 @@ public class Target
     }
 
     /**
-     *  Generates extension patterns for the target,
-     *  at a given input index.
-     *
-     *  @param index
+     * Generates extension patterns for the target, at a given input index.
+     * 
+     * @param index
      */
     private void extend(int index)
     {
@@ -628,44 +628,40 @@ public class Target
         try
         {
             // Try to extend the match-pattern using the input-text.
-            extensionPattern =
-                InputNormalizer.patternFit(
-                    extend(this.match.getPattern(), inputText));
+            extensionPattern = InputNormalizer.patternFit(extend(this.match.getPattern(), inputText));
 
             /*
-                If successful (no exception),
-                set target -that and -topic to match -that and -topic.
-            */
+             * If successful (no exception), set target -that and -topic to
+             * match -that and -topic.
+             */
             extensionThat = InputNormalizer.patternFit(this.match.getThat());
             extensionTopic = InputNormalizer.patternFit(this.match.getTopic());
         }
         catch (CannotExtendException e0)
         {
-            // Couldn't extend the match-pattern, so set target-pattern to match-pattern.
+            // Couldn't extend the match-pattern, so set target-pattern to
+            // match-pattern.
             extensionPattern = InputNormalizer.patternFit(this.match.getPattern());
             try
             {
                 // Try to extend the match-that using the input-that.
-                extensionThat =
-                    InputNormalizer.patternFit(
-                        extend(this.match.getThat(), inputThat));
+                extensionThat = InputNormalizer.patternFit(extend(this.match.getThat(), inputThat));
 
                 /*
-                    If successful (no exception),
-                    set target-topic to match-topic.
-                */
+                 * If successful (no exception), set target-topic to
+                 * match-topic.
+                 */
                 extensionTopic = InputNormalizer.patternFit(this.match.getTopic());
             }
             catch (CannotExtendException e1)
             {
-                // Couldn't extend the match-that, so set target-that to match-that.
+                // Couldn't extend the match-that, so set target-that to
+                // match-that.
                 extensionThat = InputNormalizer.patternFit(this.match.getThat());
                 try
                 {
                     // Try to extend the match-topic using the input-topic.
-                    extensionTopic =
-                        InputNormalizer.patternFit(
-                            extend(this.match.getTopic(), inputTopic));
+                    extensionTopic = InputNormalizer.patternFit(extend(this.match.getTopic(), inputTopic));
                 }
                 catch (CannotExtendException e2)
                 {
@@ -680,18 +676,18 @@ public class Target
     }
 
     /**
-     *  Creates a new target pattern, by extending a pattern using an input.
-     *
-     *  @param pattern  the pattern part of the target
-     *  @param input    the input part of the target
-     *
-     *  @return a new target
-     *
-     *  @throws CannotExtendException if the pattern-token length
-     *                                is greater than or equal to the input-token length
+     * Creates a new target pattern, by extending a pattern using an input.
+     * 
+     * @param pattern
+     *            the pattern part of the target
+     * @param input
+     *            the input part of the target
+     * @return a new target
+     * @throws CannotExtendException
+     *             if the pattern-token length is greater than or equal to the
+     *             input-token length
      */
-    private static String extend(String pattern, String input)
-        throws CannotExtendException
+    protected static String extend(String pattern, String input) throws CannotExtendException
     {
         // If the pattern does not contain wildcards, it cannot be extended.
         if ((pattern.indexOf('*') == -1) && (pattern.indexOf('_') == -1))
@@ -717,14 +713,12 @@ public class Target
 
         boolean hitWildcard = false;
 
-        // Until hitting a wildcard in the pattern (or the end of the input), append words from the input.
-        for (int index = 0;
-            (index < patternTokenCount && !hitWildcard);
-            index++)
+        // Until hitting a wildcard in the pattern (or the end of the input),
+        // append words from the input.
+        for (int index = 0; (index < patternTokenCount && !hitWildcard); index++)
         {
             String patternToken = patternTokenizer.nextToken();
-            if (patternToken.equals(Graphmaster.ASTERISK)
-                || patternToken.equals(Graphmaster.UNDERSCORE))
+            if (patternToken.equals(Graphmaster.ASTERISK) || patternToken.equals(Graphmaster.UNDERSCORE))
             {
                 hitWildcard = true;
             }
@@ -744,8 +738,9 @@ public class Target
 }
 
 /**
- *  An exception thrown by {@link #extend(String, String)}.
+ * An exception thrown by {@link Target#extend(String, String)}.
  */
+
 class CannotExtendException extends Exception
 {
     public CannotExtendException()

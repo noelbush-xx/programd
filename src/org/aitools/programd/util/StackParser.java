@@ -5,33 +5,35 @@ import java.io.StringWriter;
 import java.util.StringTokenizer;
 
 /**
- *  Parses the stack trace.
- *  This code was adapted from a Usenet post
- *  by Simeon Fitch.
- *
- *  @author Simeon Fitch sfitch@swri.org
- *  @see <a href="http://groups.google.com/groups?hl=en&threadm=37F455F1.E490748%40mf.uni-lj.si&rnum=2&prev=/groups%3Fq%3Djava%2B%2522get%2Bmethod%2522%2Bcalled%2Bmethod%26hl%3Den%26sa%3DN%26tab%3Dwg">reference</a>
+ * Parses the stack trace. This code was adapted from a Usenet post by Simeon
+ * Fitch.
+ * 
+ * @author Simeon Fitch sfitch@swri.org
+ * @see <a
+ *      href="http://groups.google.com/groups?hl=en&threadm=37F455F1.E490748%40mf.uni-lj.si&rnum=2&prev=/groups%3Fq%3Djava%2B%2522get%2Bmethod%2522%2Bcalled%2Bmethod%26hl%3Den%26sa%3DN%26tab%3Dwg">reference
+ *      </a>
  */
 public class StackParser
 {
     /** &quot;at &quot;. */
     private static final String AT = "at ";
 
-    /** 
-     *  Private constructor prevents instantiating this class.
+    /**
+     * Private constructor prevents instantiating this class.
      */
     private StackParser()
     {
         // Nothing to do.
     }
 
-    /** 
-     *  Gets the name of the method in the stack the given number
-     *  of levels down (not including call to {@link getMethodInStack}).
+    /**
+     * Gets the name of the method in the stack the given number of levels down.
      * 
-     *  @param throwable throwable from which to get stack trace
-     *  @param level     number of stack frames to go down.
-     *  @return method name if found, null otherwise
+     * @param throwable
+     *            throwable from which to get stack trace
+     * @param level
+     *            number of stack frames to go down.
+     * @return method name if found, null otherwise
      */
     public static String getStackMethod(Throwable throwable, int level)
     {
@@ -56,12 +58,12 @@ public class StackParser
         return method;
     }
 
-    /** 
-     *  Gets the name of the method in the stack the given number
-     *  of levels down (not including call to {@link getMethodInStack}).
+    /**
+     * Gets the name of the method in the stack the given number of levels down.
      * 
-     *  @param level Number of stack frames to go.
-     *  @return Method name if found, null otherwise.
+     * @param level
+     *            Number of stack frames to go.
+     * @return Method name if found, null otherwise.
      */
     public static String getStackMethod(int level)
     {
@@ -72,12 +74,12 @@ public class StackParser
     }
 
     /**
-     *  Gets the name of the most recent method in the stack
-     *  that does not include the given search string.
-     *  If <code>prettify</code> is true, also removes
-     *  whatever looks like a package name from the result.
-     *
-     *  @param search   the string which, if found in the method name, disqualifies it
+     * Gets the name of the most recent method in the stack that does not
+     * include the given search string. If <code>prettify</code> is true, also
+     * removes whatever looks like a package name from the result.
+     * 
+     * @param search
+     *            the string which, if found in the method name, disqualifies it
      */
     public static String getStackMethodBefore(String search, boolean prettify)
     {
@@ -90,8 +92,7 @@ public class StackParser
 
         if (prettify)
         {
-            int nextToLastDot =
-                method.lastIndexOf('.', method.lastIndexOf('.') - 1);
+            int nextToLastDot = method.lastIndexOf('.', method.lastIndexOf('.') - 1);
             if (nextToLastDot != -1)
             {
                 return method.substring(nextToLastDot + 1);
@@ -103,11 +104,12 @@ public class StackParser
         return method;
     }
 
-    /** 
-     * Creates a string containing the stack backtrace of the given
-     * Throwable object.
+    /**
+     * Creates a string containing the stack backtrace of the given Throwable
+     * object.
      * 
-     * @param throwable source of backtrace
+     * @param throwable
+     *            source of backtrace
      * @return String containing backtrace
      */
     public static String getStackString(Throwable throwable)
@@ -118,12 +120,10 @@ public class StackParser
     }
 
     /**
-     *  Returns the backtrace of a given throwable as an enumeration of lines.
+     * Returns the backtrace of a given throwable as an enumeration of lines.
      */
     public static StringTokenizer getStackTraceFor(Throwable throwable)
     {
-        return new StringTokenizer(
-            getStackString(throwable),
-            System.getProperty("line.separator"));
+        return new StringTokenizer(getStackString(throwable), System.getProperty("line.separator"));
     }
 }

@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.util;
 
@@ -18,12 +15,11 @@ import java.util.TimerTask;
 import org.aitools.programd.multiplexor.Multiplexor;
 
 /**
- *  A Heart beats.  At a configurable interval, it
- *  calls pulse() methods on some objects (currently only
- *  the parent static Multiplexor) in order to provide assurance
- *  that the bot server is alive.
- *
- *  @author	Noel Bush
+ * A Heart beats. At a configurable interval, it calls pulse() methods on some
+ * objects (currently only the parent static Multiplexor) in order to provide
+ * assurance that the bot server is alive.
+ * 
+ * @author Noel Bush
  */
 public class Heart
 {
@@ -34,7 +30,7 @@ public class Heart
     private static final Heart self = new Heart();
 
     /**
-     *  Do not allow anyone to create a Heart.
+     * Do not allow anyone to create a Heart.
      */
     private Heart()
     {
@@ -42,7 +38,7 @@ public class Heart
     }
 
     /**
-     *  Do not allow anyone to clone a Heart.
+     * Do not allow anyone to clone a Heart.
      */
     protected Object clone() throws CloneNotSupportedException
     {
@@ -50,17 +46,14 @@ public class Heart
     }
 
     /**
-     *  Starts the heart (if the pulse is greater than zero).
+     * Starts the heart (if the pulse is greater than zero).
      */
     public static void start()
     {
         int pulse = 0;
         try
         {
-            pulse =
-                60000
-                    / Integer.parseInt(
-                        Globals.getProperty("programd.heart.pulserate"));
+            pulse = 60000 / Integer.parseInt(Globals.getProperty("programd.heart.pulserate"));
         }
         catch (NumberFormatException e)
         {
@@ -73,9 +66,10 @@ public class Heart
     }
 
     /**
-     *  Starts the heart beating with a specified pulse.
-     *
-     *  @param pulse	the period in milliseconds
+     * Starts the heart beating with a specified pulse.
+     * 
+     * @param pulse
+     *            the period in milliseconds
      */
     private void startBeating(int pulse)
     {

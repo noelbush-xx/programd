@@ -1,21 +1,18 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.targeting;
 
 /**
- *  Contains constants used by targeting.
- *
- *  @author Noel Bush
+ * Contains constants used by targeting.
+ * 
+ * @author Noel Bush
  */
 abstract public class Targeting
 {
@@ -98,8 +95,7 @@ abstract public class Targeting
     public static final String INDENT = "    ";
 
     /** The system line separator string. */
-    public static final String LINE_SEPARATOR =
-        System.getProperty("line.separator", "\n");
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
 
     /** A space. */
     public static final String SPACE = " ";

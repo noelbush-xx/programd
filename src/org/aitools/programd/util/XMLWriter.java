@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.util;
 
@@ -22,20 +19,19 @@ import java.util.Date;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  <p>
- *  Provides a simplistic XML file writing facility.
- *  </p>
- *  <p>
- *  The facility is simplistic because it does not use any
- *  XML libraries; instead, it just has a hard-coded root element
- *  for each document type, and each time it gets some text,
- *  it looks at the end of a file for the closing tag,
- *  deletes it, appends the text, and then re-adds the closing
- *  tag.  Yuck! :-)
- *  </p>
- *
- *  @author Noel Bush
- *  @version 4.1.3
+ * <p>
+ * Provides a simplistic XML file writing facility.
+ * </p>
+ * <p>
+ * The facility is simplistic because it does not use any XML libraries;
+ * instead, it just has a hard-coded root element for each document type, and
+ * each time it gets some text, it looks at the end of a file for the closing
+ * tag, deletes it, appends the text, and then re-adds the closing tag. Yuck!
+ * :-)
+ * </p>
+ * 
+ * @author Noel Bush
+ * @version 4.1.3
  */
 public class XMLWriter
 {
@@ -45,19 +41,16 @@ public class XMLWriter
     private static final String ENC_UTF8 = "UTF-8";
 
     /** An XML processing instruction header. */
-    private static final String XML_PI_START =
-        "<?xml version=\"1.0\" encoding=\"";
+    private static final String XML_PI_START = "<?xml version=\"1.0\" encoding=\"";
 
     /** The start of an XML stylesheet processing instruction. */
-    private static final String STYLESHEET_PI_START =
-        "<?xml-stylesheet type=\"text/xsl\" href=\"";
+    private static final String STYLESHEET_PI_START = "<?xml-stylesheet type=\"text/xsl\" href=\"";
 
     /** The end of a processing instruction. */
     private static final String PI_END = "\"?>";
 
     /** The system line separator string. */
-    private static final String LINE_SEPARATOR =
-        System.getProperty("line.separator", "\n");
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
 
     /** The starting character of an element opening tag. */
     private static final String OPEN_MARKER_START = "<";
@@ -90,10 +83,12 @@ public class XMLWriter
     private static final String STARTTIME_DATE_FORMAT = "yyyy-MM-dd H:mm:ss";
 
     /**
-     *  Writes a message to an XML file.
-     *
-     *  @param message  the text of the log event
-     *  @param spec     provides information about the XML resource to which to write
+     * Writes a message to an XML file.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param spec
+     *            provides information about the XML resource to which to write
      */
     public static void write(String message, XMLResourceSpec spec)
     {
@@ -115,9 +110,7 @@ public class XMLWriter
         }
         catch (FileNotFoundException e)
         {
-            Log.userinfo(
-                "Can't write to file \"" + spec.path + "\".",
-                Log.ERROR);
+            Log.userinfo("Can't write to file \"" + spec.path + "\".", Log.ERROR);
             return;
         }
 
@@ -129,23 +122,17 @@ public class XMLWriter
         }
         catch (IOException e)
         {
-            Log.userinfo(
-                "Error reading file \"" + spec.path + "\".",
-                Log.ERROR);
+            Log.userinfo("Error reading file \"" + spec.path + "\".", Log.ERROR);
         }
 
         // Create the root close marker string.
-        String rootCloseMarker =
-            CLOSE_MARKER_START
-                + spec.root
-                + NONATOMIC_MARKER_END
-                + LINE_SEPARATOR;
+        String rootCloseMarker = CLOSE_MARKER_START + spec.root + NONATOMIC_MARKER_END + LINE_SEPARATOR;
 
         /*
-            If the file has just been created, write the starting
-            XML processing instructions, entity declarations,
-            and root element opening and closing tags.
-        */
+         * If the file has just been created, write the starting XML processing
+         * instructions, entity declarations, and root element opening and
+         * closing tags.
+         */
         if (fileLength == 0)
         {
             try
@@ -165,11 +152,7 @@ public class XMLWriter
                 // Write the stylesheet pi if a stylesheet is defined.
                 if (spec.stylesheet != null)
                 {
-                    file.writeBytes(
-                        STYLESHEET_PI_START
-                            + spec.stylesheet
-                            + PI_END
-                            + LINE_SEPARATOR);
+                    file.writeBytes(STYLESHEET_PI_START + spec.stylesheet + PI_END + LINE_SEPARATOR);
                 }
 
                 // Write the DTD, if defined.
@@ -184,26 +167,23 @@ public class XMLWriter
                 // Insert a backlink attribute if available.
                 if (spec.backlink != null)
                 {
-                    file.writeBytes(
-                        BACKLINK_EQUALS + spec.backlink + QUOTE_MARK);
+                    file.writeBytes(BACKLINK_EQUALS + spec.backlink + QUOTE_MARK);
                 }
                 // Insert a starttime attribute if available.
                 if (spec.starttime != null)
                 {
-                    file.writeBytes(
-                        STARTTIME_EQUALS + spec.starttime + QUOTE_MARK);
+                    file.writeBytes(STARTTIME_EQUALS + spec.starttime + QUOTE_MARK);
                 }
                 file.writeBytes(NONATOMIC_MARKER_END + LINE_SEPARATOR);
             }
             catch (IOException e)
             {
-                Log.userinfo(
-                    "Error writing to \"" + spec.path + "\".",
-                    Log.ERROR);
+                Log.userinfo("Error writing to \"" + spec.path + "\".", Log.ERROR);
                 return;
             }
         }
-        // Otherwise, try to find the root element closing tag at the end of the file.
+        // Otherwise, try to find the root element closing tag at the end of the
+        // file.
         else
         {
             long closeMarkerStart = fileLength - (rootCloseMarker.length());
@@ -219,9 +199,9 @@ public class XMLWriter
         }
 
         /*
-            Now write the message and the root element closing tag
-            to the file, and close the file.
-        */
+         * Now write the message and the root element closing tag to the file,
+         * and close the file.
+         */
         try
         {
             if (spec.encoding == null)
@@ -237,19 +217,17 @@ public class XMLWriter
         }
         catch (IOException e)
         {
-            Log.userinfo(
-                "Error writing to \"" + spec.encoding + "\".",
-                Log.ERROR);
+            Log.userinfo("Error writing to \"" + spec.encoding + "\".", Log.ERROR);
             return;
         }
     }
 
     /**
-     *  Rolls over a spec (renames current file designated
-     *  by a spec, and creates a new one with starttime
-     *  and backlink set to the previous one).
-     *
-     *  @param spec describes the resource
+     * Rolls over a spec (renames current file designated by a spec, and creates
+     * a new one with starttime and backlink set to the previous one).
+     * 
+     * @param spec
+     *            describes the resource
      */
     public static void rollover(XMLResourceSpec spec)
     {
@@ -270,20 +248,14 @@ public class XMLWriter
         String dateTime = new SimpleDateFormat(LINK_DATE_FORMAT).format(starts);
         if (dot > 0)
         {
-            spec.backlink =
-                namePart.substring(0, dot)
-                    + "-end-"
-                    + dateTime
-                    + namePart.substring(dot);
+            spec.backlink = namePart.substring(0, dot) + "-end-" + dateTime + namePart.substring(dot);
         }
         else
         {
             spec.backlink = namePart + "-end-" + dateTime;
         }
-        spec.starttime =
-            new SimpleDateFormat(STARTTIME_DATE_FORMAT).format(starts);
-        File rollover =
-            FileManager.getFile(parentPart + File.separator + spec.backlink);
+        spec.starttime = new SimpleDateFormat(STARTTIME_DATE_FORMAT).format(starts);
+        File rollover = FileManager.getFile(parentPart + File.separator + spec.backlink);
         FileManager.getFile(spec.path).renameTo(rollover);
     }
 }

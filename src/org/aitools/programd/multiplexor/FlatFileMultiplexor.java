@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.multiplexor;
 
@@ -25,18 +22,17 @@ import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.Globals;
 
 /**
- *  <p>
- *  Presently more a proof-of-concept than anything else,
- *  for checking the new {@link Multiplexor}
- *  architecture.
- *  </p>
- *  <p>
- *  Uses &quot;flat-file&quot; Java properties files,
- *  as in Program B, to store predicate data.
- *  </p>
- *
- *  @author Noel Bush
- *  @version 4.1.3
+ * <p>
+ * Presently more a proof-of-concept than anything else, for checking the new
+ * {@link Multiplexor}architecture.
+ * </p>
+ * <p>
+ * Uses &quot;flat-file&quot; Java properties files, as in Program B, to store
+ * predicate data.
+ * </p>
+ * 
+ * @author Noel Bush
+ * @version 4.1.3
  */
 public class FlatFileMultiplexor extends Multiplexor
 {
@@ -44,8 +40,7 @@ public class FlatFileMultiplexor extends Multiplexor
     private static Hashtable predicateSets;
 
     /** The name of the subdirectory for the predicate files. */
-    private static final String FFM_DIR_NAME =
-        Globals.getProperty("programd.multiplexor.ffm-dir", "ffm");
+    private static final String FFM_DIR_NAME = Globals.getProperty("programd.multiplexor.ffm-dir", "ffm");
 
     /** The suffix for a predicates storage file. */
     private static final String PREDICATES_SUFFIX = ".predicates";
@@ -54,8 +49,8 @@ public class FlatFileMultiplexor extends Multiplexor
     private static final String FFM_FILE_LABEL = "FlatFileMultiplexor predicates file";
 
     /**
-     *  Always returns true (FlatFileMultiplexor currently
-     *  does not support authentication).
+     * Always returns true (FlatFileMultiplexor currently does not support
+     * authentication).
      */
     public boolean checkUser(String userid, String password, String secretKey, String botid)
     {
@@ -63,8 +58,8 @@ public class FlatFileMultiplexor extends Multiplexor
     }
 
     /**
-     *  Always returns true (FlatFileMultiplexor currently
-     *  does not support authentication).
+     * Always returns true (FlatFileMultiplexor currently does not support
+     * authentication).
      */
     public boolean createUser(String userid, String password, String secretKey, String botid)
     {
@@ -72,20 +67,16 @@ public class FlatFileMultiplexor extends Multiplexor
     }
 
     /**
-     *  Always returns true (FlatFileMultiplexor currently
-     *  does not support authentication).
+     * Always returns true (FlatFileMultiplexor currently does not support
+     * authentication).
      */
-    public boolean changePassword(
-        String userid,
-        String password,
-        String secretKey,
-        String botid)
+    public boolean changePassword(String userid, String password, String secretKey, String botid)
     {
         return true;
     }
 
     /**
-     *  Saves a predicate to disk.
+     * Saves a predicate to disk.
      */
     public void savePredicate(String name, String value, String userid, String botid)
     {
@@ -105,10 +96,9 @@ public class FlatFileMultiplexor extends Multiplexor
     }
 
     /**
-     *  Loads the value of a predicate from disk.
+     * Loads the value of a predicate from disk.
      */
-    public String loadPredicate(String name, String userid, String botid)
-        throws NoSuchPredicateException
+    public String loadPredicate(String name, String userid, String botid) throws NoSuchPredicateException
     {
         // Test whether predicateSets is intialized.
         if (predicateSets == null)
@@ -129,17 +119,16 @@ public class FlatFileMultiplexor extends Multiplexor
     }
 
     /**
-     *  Loads the predicates file for a given userid.
-     *  Ensures that the directory exists.
-     *
-     *  @param userid
+     * Loads the predicates file for a given userid. Ensures that the directory
+     * exists.
+     * 
+     * @param userid
      */
     private static Properties loadPredicates(String userid, String botid)
     {
         Properties predicates = new Properties();
 
-        String fileName =
-            FFM_DIR_NAME + File.separator + botid + File.separator + userid + PREDICATES_SUFFIX;
+        String fileName = FFM_DIR_NAME + File.separator + botid + File.separator + userid + PREDICATES_SUFFIX;
 
         File predicateFile = FileManager.checkOrCreate(fileName, FFM_FILE_LABEL);
         if (predicateFile.canRead())
@@ -157,15 +146,14 @@ public class FlatFileMultiplexor extends Multiplexor
     }
 
     /**
-     *  Saves the predicates file for a given userid.
-     *  Ensures that the directory exists.
-     *
-     *  @param userid
+     * Saves the predicates file for a given userid. Ensures that the directory
+     * exists.
+     * 
+     * @param userid
      */
     private static void savePredicates(Properties predicates, String userid, String botid)
     {
-        String fileName =
-            FFM_DIR_NAME + File.separator + botid + File.separator + userid + PREDICATES_SUFFIX;
+        String fileName = FFM_DIR_NAME + File.separator + botid + File.separator + userid + PREDICATES_SUFFIX;
         FileManager.checkOrCreate(fileName, FFM_FILE_LABEL);
         FileOutputStream outputStream;
         try
@@ -174,8 +162,7 @@ public class FlatFileMultiplexor extends Multiplexor
         }
         catch (FileNotFoundException e)
         {
-            throw new DeveloperError(
-                "Could not locate just-created file: \"" + fileName + "\".");
+            throw new DeveloperError("Could not locate just-created file: \"" + fileName + "\".");
         }
 
         try

@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.parser;
 
@@ -19,15 +16,16 @@ import java.util.StringTokenizer;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  <p>
- *  A simple XML parser.
- *  </p>
- *  <p>
- *  Author Pedro Colla describes it as a
- *  &quot;poor man's XML non-validating parser&quot;.
- *  </p>
- *  @version 4.1.4
- *  @author  Thomas Ringate/Pedro Colla
+ * <p>
+ * A simple XML parser.
+ * </p>
+ * <p>
+ * Author Pedro Colla describes it as a &quot;poor man's XML non-validating
+ * parser&quot;.
+ * </p>
+ * 
+ * @version 4.1.4
+ * @author Thomas Ringate/Pedro Colla
  */
 public class XMLParser
 {
@@ -67,20 +65,19 @@ public class XMLParser
     public static final String EMPTY_STRING = "";
 
     /**
-     *  Parses an input string containing an XML structure
-     *  into its XML elements.
-     *
-     *  @param input    the input string
-     *  @param XMLList  the list to which to add the parsed XML
-     *
-     *  @return a linear linked list of the parsed XML
+     * Parses an input string containing an XML structure into its XML elements.
+     * 
+     * @param input
+     *            the input string
+     * @param XMLList
+     *            the list to which to add the parsed XML
+     * @return a linear linked list of the parsed XML
      */
     public LinkedList XMLRead(String input, LinkedList XMLList)
     {
         /*
-            XML decoding Finite State Machine
-            Internal States
-        */
+         * XML decoding Finite State Machine Internal States
+         */
         final int Q_TEXT = 0;
         final int Q_TAG = 1;
         final int Q_ENDTAG = 2;
@@ -121,7 +118,7 @@ public class XMLParser
             switch (state)
             {
                 // Initial state: parse text.
-                case Q_TEXT :
+                case Q_TEXT:
                     // See if an XML construct begins with "<".
                     if (token.equals(MARKER_START))
                     {
@@ -149,8 +146,8 @@ public class XMLParser
                     }
                     break;
 
-                    // XML state: XML just detected
-                case Q_XML :
+                // XML state: XML just detected
+                case Q_XML:
                     // See if this is a comment.
                     if (input.indexOf(COMMENT_START, index) - index == 0)
                     {
@@ -178,15 +175,16 @@ public class XMLParser
                     // Otherwise, just a normal tag.
                     state = Q_TAG;
 
-                    // State: normal/empty tag
-                case Q_TAG :
+                // State: normal/empty tag
+                case Q_TAG:
                     // Compute start and end of tag and extract it.
                     start = index;
                     end = input.indexOf(MARKER_END, start);
                     tag = input.substring(start, end);
                     tagArguments = EMPTY_STRING;
 
-                    // If the last character is a slash, this is an "empty tag", otherwise not.
+                    // If the last character is a slash, this is an "empty tag",
+                    // otherwise not.
                     int tagLastIndex = tag.length() - 1;
                     if (tag.charAt(tagLastIndex) == '/')
                     {
@@ -202,8 +200,7 @@ public class XMLParser
                     if (spaceIndex > 0)
                     {
                         tagData = tag.substring(0, spaceIndex);
-                        tagArguments =
-                            SPACE + tag.substring(spaceIndex + 1, tag.length());
+                        tagArguments = SPACE + tag.substring(spaceIndex + 1, tag.length());
                     }
                     else
                     {
@@ -211,9 +208,9 @@ public class XMLParser
                         tagArguments = EMPTY_STRING;
                     }
                     /*
-                        Mark the input buffer as processed up to the closing
-                        ">" and reset the state to Q_TEXT.
-                    */
+                     * Mark the input buffer as processed up to the closing ">"
+                     * and reset the state to Q_TEXT.
+                     */
                     index = end;
                     state = Q_TEXT;
                     text = new StringBuffer();
@@ -231,8 +228,8 @@ public class XMLParser
                     }
                     break;
 
-                    // State: end tag
-                case Q_ENDTAG :
+                // State: end tag
+                case Q_ENDTAG:
                     // Extract the tag.
                     start = index;
                     end = input.indexOf(MARKER_END, start);
@@ -243,8 +240,7 @@ public class XMLParser
                     if (spaceIndex > 0)
                     {
                         tagData = tag.substring(0, spaceIndex);
-                        tagArguments =
-                            SPACE + tag.substring(spaceIndex + 1, tag.length());
+                        tagArguments = SPACE + tag.substring(spaceIndex + 1, tag.length());
                     }
                     else
                     {
@@ -264,17 +260,17 @@ public class XMLParser
                     }
 
                     /*
-                        Mark the input buffer as processed up to the closing
-                        ">" and reset the state to Q_TEXT.
-                    */
+                     * Mark the input buffer as processed up to the closing ">"
+                     * and reset the state to Q_TEXT.
+                     */
                     index = end;
                     state = Q_TEXT;
                     text = new StringBuffer();
 
                     break;
 
-                    // State: CDATA
-                case Q_CDATA :
+                // State: CDATA
+                case Q_CDATA:
                     // Skip the CDATA leading header
                     start = index + 7;
 
@@ -296,14 +292,15 @@ public class XMLParser
                         xmlIterator.add(node);
                     }
 
-                    // Mark the input buffer to continue after the tag; reset to text mode.
+                    // Mark the input buffer to continue after the tag; reset to
+                    // text mode.
                     index = end + 2;
                     state = Q_TEXT;
 
                     break;
 
-                    // State: comment
-                case Q_COMMENT :
+                // State: comment
+                case Q_COMMENT:
                     // Skip the comment leading header.
                     start = index + 2;
 
@@ -324,28 +321,30 @@ public class XMLParser
                         xmlIterator.add(node);
                     }
 
-                    // Mark the input buffer to continue after the tag; reset to text mode.
+                    // Mark the input buffer to continue after the tag; reset to
+                    // text mode.
                     index = end + 2;
                     state = Q_TEXT;
 
                     break;
 
-                    // State: XML processing instruction.
-                case Q_PI :
+                // State: XML processing instruction.
+                case Q_PI:
                     start = index;
 
                     // Extract the processing instruction
                     end = input.indexOf(PI_END, start);
                     tag = input.substring(start, end);
 
-                    // Mark the input buffer to continue after the tag; reset to text mode.
+                    // Mark the input buffer to continue after the tag; reset to
+                    // text mode.
                     index = end + 1;
                     state = Q_TEXT;
 
                     break;
 
-                    // Invalid construct.
-                default :
+                // Invalid construct.
+                default:
                     Log.userinfo("Invalid tag format.", Log.ERROR);
                     return null;
             }
@@ -355,10 +354,9 @@ public class XMLParser
         }
 
         /*
-            If the buffer ended while processing a text chunk,
-            this chunk will be left unprocessed in the buffer
-            and should be added as DATA.
-        */
+         * If the buffer ended while processing a text chunk, this chunk will be
+         * left unprocessed in the buffer and should be added as DATA.
+         */
         if ((text.length() > 0) && (state == Q_TEXT))
         {
             node = new XMLNode();
@@ -371,25 +369,23 @@ public class XMLParser
     }
 
     /**
-     *  Converts a linear linked list with parsed XML
-     *  into a trie.
-     *
-     *  @param xmlIterator  an iterator on the XML linear linked list
-     *  @param xmlList      the parsed XML as a linear linked list
-     *  @param trie         the trie to modify and return
-     *
-     *  @return a trie representation of the parsed XML
+     * Converts a linear linked list with parsed XML into a trie.
+     * 
+     * @param xmlIterator
+     *            an iterator on the XML linear linked list
+     * @param xmlList
+     *            the parsed XML as a linear linked list
+     * @param trie
+     *            the trie to modify and return
+     * @return a trie representation of the parsed XML
      */
-    public LinkedList scan(
-        ListIterator xmlIterator,
-        LinkedList xmlList,
-        LinkedList trie)
+    public LinkedList scan(ListIterator xmlIterator, LinkedList xmlList, LinkedList trie)
     {
         /*
-            A tokenized representation of the XML stream is held in
-            one linear single Linked List (xmlIterator), which is scanned and
-            transformed into a trie (trie & descendants) using recursion.
-        */
+         * A tokenized representation of the XML stream is held in one linear
+         * single Linked List (xmlIterator), which is scanned and transformed
+         * into a trie (trie & descendants) using recursion.
+         */
         XMLNode node;
         XMLNode child;
 
@@ -403,19 +399,19 @@ public class XMLParser
             {
                 switch (node.XMLType)
                 {
-                    case XMLNode.TAG :
-                        // Create a node in the trie and recurse for its children.
+                    case XMLNode.TAG:
+                        // Create a node in the trie and recurse for its
+                        // children.
                         child = new XMLNode();
                         child.XMLType = node.XMLType;
                         child.XMLData = node.XMLData;
                         child.XMLAttr = node.XMLAttr;
                         child.XMLChild = new LinkedList();
-                        child.XMLChild =
-                            scan(xmlIterator, xmlList, child.XMLChild);
+                        child.XMLChild = scan(xmlIterator, xmlList, child.XMLChild);
                         trie.add(child);
                         break;
 
-                    case XMLNode.EMPTY :
+                    case XMLNode.EMPTY:
                         // Create a new node; no need to recurse.
                         child = new XMLNode();
                         child.XMLType = node.XMLType;
@@ -424,10 +420,11 @@ public class XMLParser
                         trie.add(child);
                         break;
 
-                    case XMLNode.DATA :
-                    case XMLNode.CDATA :
+                    case XMLNode.DATA:
+                    case XMLNode.CDATA:
 
-                        // Handle both equally by adding a node with no attributes, type DATA.
+                        // Handle both equally by adding a node with no
+                        // attributes, type DATA.
                         child = new XMLNode();
                         child.XMLType = XMLNode.DATA;
                         child.XMLData = node.XMLData;
@@ -435,12 +432,13 @@ public class XMLParser
                         trie.add(child);
                         break;
 
-                    case XMLNode.ENDTAG :
+                    case XMLNode.ENDTAG:
 
-                        // This method is already recursing, or the XML is unbalanced.
+                        // This method is already recursing, or the XML is
+                        // unbalanced.
                         return trie;
 
-                    default :
+                    default:
                         break;
                 }
             }
@@ -453,12 +451,11 @@ public class XMLParser
     }
 
     /**
-     *  Returns the full evaluation of a string containing
-     *  an XML segment.
-     *
-     *  @param buffer   the XML segment
-     *
-     *  @return trie representation of the XML
+     * Returns the full evaluation of a string containing an XML segment.
+     * 
+     * @param buffer
+     *            the XML segment
+     * @return trie representation of the XML
      */
     public LinkedList load(String buffer)
     {
@@ -468,19 +465,15 @@ public class XMLParser
         ListIterator listIterator;
 
         /*
-            Process the XML tags in the buffer string and return
-            one token (text or tag) per linked list node
-            (linear representation).
-        */
+         * Process the XML tags in the buffer string and return one token (text
+         * or tag) per linked list node (linear representation).
+         */
         linearList = XMLRead(buffer, linearList);
 
         if (linearList == null)
         {
             Log.userinfo("Invalid XML:", Log.ERROR);
-            StringTokenizer lines =
-                new StringTokenizer(
-                    buffer,
-                    System.getProperty("line.separator"));
+            StringTokenizer lines = new StringTokenizer(buffer, System.getProperty("line.separator"));
             while (lines.hasMoreTokens())
             {
                 Log.userinfo(lines.nextToken(), Log.ERROR);
@@ -492,10 +485,10 @@ public class XMLParser
         listIterator = linearList.listIterator(0);
 
         /*
-            Since the linear list is not so useful with a recursive
-            parser, transform it into a trie that captures the
-            parent-child relationships among elements in the list.
-        */
+         * Since the linear list is not so useful with a recursive parser,
+         * transform it into a trie that captures the parent-child relationships
+         * among elements in the list.
+         */
         trie = scan(listIterator, linearList, trie);
 
         // Dispose of the linearList.

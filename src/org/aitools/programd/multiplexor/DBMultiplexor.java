@@ -1,13 +1,10 @@
-/*    
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
- 
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
- USA.
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 package org.aitools.programd.multiplexor;
@@ -27,19 +24,20 @@ import org.aitools.programd.util.sql.DbAccess;
 import org.aitools.programd.util.sql.DbAccessRefsPoolMgr;
 
 /**
- *  <p>
- *  A database-oriented {@link Multiplexor}. Uses a database for storage
- *  and retrieval of predicates.
- *  </p>
- *  <p>
- *  This is adapted from {@link Classifier}, to use a better database
- *  structure and to support user authentication.
- *  </p>
- *
- *  @author Richard Wallace, Jon Baer
- *  @author Thomas Ringate/Pedro Colla
- *  @author Noel Bush
- *  @version 4.1.3
+ * <p>
+ * A database-oriented {@link Multiplexor}. Uses a database for storage and
+ * retrieval of predicates.
+ * </p>
+ * <p>
+ * This is adapted from <a
+ * href="http://cvs.aitools.org/cgi-bin/viewcvs.cgi/ProgramD/src/org/alicebot/server/core/Attic/Classifier.java?rev=1.1&only_with_tag=v4_1_0&content-type=text/vnd.viewcvs-markup">Classifier
+ * </a>, to use a better database structure and to support user authentication.
+ * </p>
+ * 
+ * @author Richard Wallace, Jon Baer
+ * @author Thomas Ringate/Pedro Colla
+ * @author Noel Bush
+ * @version 4.1.3
  */
 public class DBMultiplexor extends Multiplexor
 {
@@ -52,7 +50,7 @@ public class DBMultiplexor extends Multiplexor
     private static final String ENC_UTF8 = "UTF-8";
 
     /**
-     *  Loads the database properties from the server configuration.
+     * Loads the database properties from the server configuration.
      */
     public void initialize()
     {
@@ -72,13 +70,13 @@ public class DBMultiplexor extends Multiplexor
     }
 
     /**
-     *  Saves a predicate in a database.
+     * Saves a predicate in a database.
      */
     public void savePredicate(String name, String value, String userid, String botid)
     {
         /*
-         URLEncoder conveniently escapes things that
-         would otherwise be problematic.
+         * URLEncoder conveniently escapes things that would otherwise be
+         * problematic.
          */
         String encodedValue;
         try
@@ -97,13 +95,13 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (Exception e)
         {
-            throw new UserError("Could not get database reference when setting predicate name \"" + name + "\" to value \"" + value
-                    + "\" for \"" + userid + "\" as known to \"" + botid + "\".", e);
+            throw new UserError("Could not get database reference when setting predicate name \"" + name
+                    + "\" to value \"" + value + "\" for \"" + userid + "\" as known to \"" + botid + "\".", e);
         }
         try
         {
-            ResultSet records = dbaRef.executeQuery("select value from predicates where botid = '" + botid + "' and userid = '" + userid
-                    + "' and name = '" + name + "'");
+            ResultSet records = dbaRef.executeQuery("select value from predicates where botid = '" + botid
+                    + "' and userid = '" + userid + "' and name = '" + name + "'");
             int count = 0;
             while (records.next())
             {
@@ -111,13 +109,13 @@ public class DBMultiplexor extends Multiplexor
             }
             if (count > 0)
             {
-                dbaRef.executeUpdate("update predicates set value = '" + encodedValue + "' where botid = '" + botid + "' and userid= '"
-                        + userid + "' and name = '" + name + "'");
+                dbaRef.executeUpdate("update predicates set value = '" + encodedValue + "' where botid = '" + botid
+                        + "' and userid= '" + userid + "' and name = '" + name + "'");
             }
             else
             {
-                dbaRef.executeUpdate("insert into predicates (userid, botid, name, value) values ('" + userid + "', '" + botid + "' , '"
-                        + name + "','" + encodedValue + "')");
+                dbaRef.executeUpdate("insert into predicates (userid, botid, name, value) values ('" + userid + "', '"
+                        + botid + "' , '" + name + "','" + encodedValue + "')");
             }
             records.close();
             dbManager.returnDbaRef(dbaRef);
@@ -130,7 +128,7 @@ public class DBMultiplexor extends Multiplexor
     }
 
     /**
-     *  Loads the value of a predicate from a database.
+     * Loads the value of a predicate from a database.
      */
     public String loadPredicate(String name, String userid, String botid) throws NoSuchPredicateException
     {
@@ -142,13 +140,13 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (Exception e)
         {
-            throw new UserError("Could not get database reference when getting value for predicate name \"" + name + "\" for \"" + userid
-                    + "\" as known to \"" + botid + "\".", e);
+            throw new UserError("Could not get database reference when getting value for predicate name \"" + name
+                    + "\" for \"" + userid + "\" as known to \"" + botid + "\".", e);
         }
         try
         {
-            ResultSet records = dbaRef.executeQuery("select value from predicates where botid = '" + botid + "' and userid = '" + userid
-                    + "' and name = '" + name + "'");
+            ResultSet records = dbaRef.executeQuery("select value from predicates where botid = '" + botid
+                    + "' and userid = '" + userid + "' and name = '" + name + "'");
             int returnCount = 0;
             while (records.next())
             {
@@ -179,10 +177,8 @@ public class DBMultiplexor extends Multiplexor
     }
 
     /**
-     *  Creates a userid with a given password.  If the
-     *  userid already exists, returns false.
-     *
-     *  @see {@link Multiplexor#createUser}
+     * Creates a userid with a given password. If the userid already exists,
+     * returns false.
      */
     public boolean createUser(String userid, String password, String secretKey, String botid)
     {
@@ -200,12 +196,13 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (Exception e)
         {
-            throw new UserError("Could not get database reference when creating user \"" + userid + "\" with password \"" + password
-                    + "\" and secret key \"" + secretKey + "\".", e);
+            throw new UserError("Could not get database reference when creating user \"" + userid
+                    + "\" with password \"" + password + "\" and secret key \"" + secretKey + "\".", e);
         }
         try
         {
-            ResultSet rs = dba.executeQuery("select * from users where userid = '" + userid + "' and botid = '" + botid + "'");
+            ResultSet rs = dba.executeQuery("select * from users where userid = '" + userid + "' and botid = '" + botid
+                    + "'");
             int returnCount = 0;
             while (rs.next())
             {
@@ -217,8 +214,8 @@ public class DBMultiplexor extends Multiplexor
                     return false;
                 }
             }
-            dba.executeUpdate("insert into users (userid, password, botid) values ('" + userid + "' , '" + password + "' , '" + botid
-                    + "')");
+            dba.executeUpdate("insert into users (userid, password, botid) values ('" + userid + "' , '" + password
+                    + "' , '" + botid + "')");
             rs.close();
         }
         catch (SQLException e)
@@ -263,12 +260,13 @@ public class DBMultiplexor extends Multiplexor
     }
 
     /**
-     *  Checks a userid/password combination in the database.
-     *
-     *  @param userid       the userid to check
-     *  @param password     the password to check
-     *
-     *  @return whether the userid and password combination is valid
+     * Checks a userid/password combination in the database.
+     * 
+     * @param userid
+     *            the userid to check
+     * @param password
+     *            the password to check
+     * @return whether the userid and password combination is valid
      */
     private boolean checkUserInDB(String userid, String password, String botid)
     {
@@ -283,12 +281,13 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (Exception e)
         {
-            throw new UserError("Could not get database reference when checking user \"" + userid + "\" with password \"" + password
-                    + "\".", e);
+            throw new UserError("Could not get database reference when checking user \"" + userid
+                    + "\" with password \"" + password + "\".", e);
         }
         try
         {
-            ResultSet rs = dbaRef.executeQuery("select * from users where userid = '" + userid + "' and botid = '" + botid + "'");
+            ResultSet rs = dbaRef.executeQuery("select * from users where userid = '" + userid + "' and botid = '"
+                    + botid + "'");
             int returnCount = 0;
             while (rs.next())
             {
@@ -342,12 +341,13 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (Exception e)
         {
-            throw new UserError("Could not get database reference when changing password to \"" + password + "\" for \"" + userid
-                    + "\" as known to \"" + botid + "\".", e);
+            throw new UserError("Could not get database reference when changing password to \"" + password
+                    + "\" for \"" + userid + "\" as known to \"" + botid + "\".", e);
         }
         try
         {
-            ResultSet rs = dbaRef.executeQuery("select * from users where userid = '" + userid + "' and botid = '" + botid + "'");
+            ResultSet rs = dbaRef.executeQuery("select * from users where userid = '" + userid + "' and botid = '"
+                    + botid + "'");
             int returnCount = 0;
             while (rs.next())
             {
@@ -359,8 +359,8 @@ public class DBMultiplexor extends Multiplexor
                 dbManager.returnDbaRef(dbaRef);
                 return (false);
             }
-            dbaRef.executeUpdate("update users set password = '" + password + "' where userid = '" + userid + "' and botid = '" + botid
-                    + "'");
+            dbaRef.executeUpdate("update users set password = '" + password + "' where userid = '" + userid
+                    + "' and botid = '" + botid + "'");
             rs.close();
             dbManager.returnDbaRef(dbaRef);
         }

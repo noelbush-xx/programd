@@ -1,13 +1,10 @@
-/*    
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
- 
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
- USA.
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 package org.aitools.programd.graph;
@@ -21,20 +18,21 @@ import java.util.Set;
 import org.aitools.programd.util.DeveloperError;
 
 /**
- *  <p>
- *  This non-trivial implementation of {@link Nodemapper Nodemapper}
- *  uses a {@link java.util.TreeMap TreeMap} internally, but only
- *  allocates it when the number of keys is two or more.
- *  </p>
- *  <p>
- *  The <code>Nodemaster</code> saves space when many of the
- *  {@link Nodemapper Nodemappers} have only one branch, as is
- *  often the case in a real-world @{link Graphmaster Graphmaster}.
- *  </p>
- *
- *  @author Richard Wallace
- *  @author	Noel Bush
- *  @author Eion Robb
+ * <p>
+ * This non-trivial implementation of {@link Nodemapper Nodemapper}uses a
+ * {@link java.util.TreeMap TreeMap}internally, but only allocates it when the
+ * number of keys is two or more.
+ * </p>
+ * <p>
+ * The <code>Nodemaster</code> saves space when many of the
+ * {@link Nodemapper Nodemappers}have only one branch, as is often the case in
+ * a real-world
+ * 
+ * @{link Graphmaster Graphmaster}.
+ *        </p>
+ * @author Richard Wallace
+ * @author Noel Bush
+ * @author Eion Robb
  */
 public class Nodemaster implements Nodemapper
 {
@@ -46,7 +44,10 @@ public class Nodemaster implements Nodemapper
 
     protected HashMap Hidden;
 
-    /** The minimum number of words needed to reach a leaf node from here. Defaults to zero. */
+    /**
+     * The minimum number of words needed to reach a leaf node from here.
+     * Defaults to zero.
+     */
     protected int height = 0;
 
     protected Nodemapper parent;
@@ -80,9 +81,9 @@ public class Nodemaster implements Nodemapper
         {
             // Find the key for this value.
             Object keyToRemove = null;
-            for (Iterator  iterator = this.Hidden.entrySet().iterator(); iterator.hasNext(); )
+            for (Iterator iterator = this.Hidden.entrySet().iterator(); iterator.hasNext();)
             {
-                Map.Entry item = (Map.Entry)iterator.next();
+                Map.Entry item = (Map.Entry) iterator.next();
                 if (item.getValue().equals(valueToRemove))
                 {
                     // Found it.
@@ -97,7 +98,8 @@ public class Nodemaster implements Nodemapper
             }
             if (this.size > 2)
             {
-                // Remove the value from the HashMap (ignore the primary value/key pair).
+                // Remove the value from the HashMap (ignore the primary
+                // value/key pair).
                 this.Hidden.remove(keyToRemove);
                 this.size--;
             }
@@ -105,11 +107,12 @@ public class Nodemaster implements Nodemapper
             {
                 // Remove this item from the HashMap.
                 this.Hidden.remove(keyToRemove);
-                // Set the last item in HashMap to be the primary value/key for this Nodemapper.
-                this.key = (String)this.Hidden.keySet().iterator().next();
+                // Set the last item in HashMap to be the primary value/key for
+                // this Nodemapper.
+                this.key = (String) this.Hidden.keySet().iterator().next();
                 this.value = this.Hidden.remove(this.key);
                 // Remove the empty HashMap to save space.
-                this.Hidden = null;                
+                this.Hidden = null;
                 this.size = 1;
             }
         }
@@ -199,12 +202,12 @@ public class Nodemaster implements Nodemapper
     }
 
     /**
-     *  Sets the <code>height</code> of this
-     *  <code>Nodemaster</code> to <code>height</code>,
-     *  and calls <code>fillInHeight()</code> on
-     *  its parent (if not null) with a height <code>height + 1</code>.
-     *
-     *  @param height	the height for this node
+     * Sets the <code>height</code> of this <code>Nodemaster</code> to
+     * <code>height</code>, and calls <code>fillInHeight()</code> on its
+     * parent (if not null) with a height <code>height + 1</code>.
+     * 
+     * @param heightToFillIn
+     *            the height for this node
      */
     private void fillInHeight(int heightToFillIn)
     {

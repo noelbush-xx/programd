@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.bot;
 
@@ -19,10 +16,10 @@ import java.util.Set;
 import org.aitools.programd.util.DeveloperError;
 
 /**
- *  Contains all descriptions of bots.
- *
- *  @author Noel Bush
- *  @since 4.1.5
+ * Contains all descriptions of bots.
+ * 
+ * @author Noel Bush
+ * @since 4.1.5
  */
 public class Bots extends HashMap
 {
@@ -30,18 +27,17 @@ public class Bots extends HashMap
     private static final Bots myself = new Bots();
 
     /**
-     *  <code>Bots</code> cannot be instantiated except by itself.
+     * <code>Bots</code> cannot be instantiated except by itself.
      */
     private Bots()
     {
         super();
     }
-    
+
     /**
-     *  Returns whether the loaded bots include one
-     *  with the given id.
-     *
-     *  @return whether the loaded bots include one with the given id
+     * Returns whether the loaded bots include one with the given id.
+     * 
+     * @return whether the loaded bots include one with the given id
      */
     public static boolean include(String botid)
     {
@@ -49,12 +45,13 @@ public class Bots extends HashMap
     }
 
     /**
-     *  Adds the given bot with the given id.
-     *  No check is made to see whether a bot is
-     *  already loaded with the given id!
-     *
-     *  @param botid    the id to use for the bot
-     *  @param bot      the bot to add
+     * Adds the given bot with the given id. No check is made to see whether a
+     * bot is already loaded with the given id!
+     * 
+     * @param botid
+     *            the id to use for the bot
+     * @param bot
+     *            the bot to add
      */
     public static void addBot(String botid, Bot bot)
     {
@@ -62,11 +59,11 @@ public class Bots extends HashMap
     }
 
     /**
-     *  Returns the bot with the given id.
-     *
-     *  @param botid    the id of the bot to return
-     *
-     *  @return the bot with the given id
+     * Returns the bot with the given id.
+     * 
+     * @param botid
+     *            the id of the bot to return
+     * @return the bot with the given id
      */
     public static Bot getBot(String botid)
     {
@@ -81,16 +78,15 @@ public class Bots extends HashMap
         }
         if (wanted == null)
         {
-            throw new DeveloperError(
-                "Tried to get unknown bot \"" + botid + "\".");
+            throw new DeveloperError("Tried to get unknown bot \"" + botid + "\".");
         }
         return wanted;
     }
 
     /**
-     *  Returns any bot (probably the last one loaded).
-     *
-     *  @return any bot (probably the last one loaded)
+     * Returns any bot (probably the last one loaded).
+     * 
+     * @return any bot (probably the last one loaded)
      */
     public static Bot getABot()
     {
@@ -103,9 +99,9 @@ public class Bots extends HashMap
     }
 
     /**
-     *  Returns the number of bots (the size)
-     *
-     *  @return the number of bots (the size)
+     * Returns the number of bots (the size)
+     * 
+     * @return the number of bots (the size)
      */
     public static int getCount()
     {
@@ -113,9 +109,9 @@ public class Bots extends HashMap
     }
 
     /**
-     *  Returns a nicely-formatted list of the bots.
-     *
-     *  @return a nicely-formatted list of the bots
+     * Returns a nicely-formatted list of the bots.
+     * 
+     * @return a nicely-formatted list of the bots
      */
     public static String getNiceList()
     {
@@ -137,9 +133,9 @@ public class Bots extends HashMap
     }
 
     /**
-     *  Returns the IDs (the key set)
-     *
-     *  @return the IDs (the key set)
+     * Returns the IDs (the key set)
+     * 
+     * @return the IDs (the key set)
      */
     public static Set getIDs()
     {
@@ -147,29 +143,27 @@ public class Bots extends HashMap
     }
 
     /**
-     *  Returns an iterator over the key set
-     *
-     *  @return an iterator over the key set
+     * Returns an iterator over the key set
+     * 
+     * @return an iterator over the key set
      */
     public static Iterator keysIterator()
     {
         return myself.keySet().iterator();
     }
-    
+
     /**
-     *  Returns whether any bots have loaded the
-     *  given file(name).
-     *
-     *  @param filename
+     * Returns whether any bots have loaded the given file(name).
      * 
-     *  @return whether any bots have loaded the given file(name)
+     * @param filename
+     * @return whether any bots have loaded the given file(name)
      */
     public static boolean haveLoaded(String filename)
     {
         Iterator bots = myself.values().iterator();
         while (bots.hasNext())
         {
-            if (((Bot)bots.next()).hasLoaded(filename))
+            if (((Bot) bots.next()).hasLoaded(filename))
             {
                 return true;
             }

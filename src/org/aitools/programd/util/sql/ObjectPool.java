@@ -4,11 +4,10 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 /**
- *  An abstract pool of objects that can be
- *  checked in and locked, checked out and
- *  unlocked.
- *
- *  @author Cristian Mircioiu
+ * An abstract pool of objects that can be checked in and locked, checked out
+ * and unlocked.
+ * 
+ * @author Cristian Mircioiu
  */
 public abstract class ObjectPool
 {
@@ -28,9 +27,7 @@ public abstract class ObjectPool
     private CleanUpThread cleaner;
 
     /**
-     *  Initializes the object pool
-     *  with a default expiration time
-     *  of one hour.
+     * Initializes the object pool with a default expiration time of one hour.
      */
     protected ObjectPool()
     {
@@ -48,9 +45,10 @@ public abstract class ObjectPool
     }
 
     /**
-     *  Checks in and unlocks an object.
-     *
-     *  @param object   the object to check in and unlock.
+     * Checks in and unlocks an object.
+     * 
+     * @param object
+     *            the object to check in and unlock.
      */
     protected void checkIn(Object object)
     {
@@ -62,10 +60,9 @@ public abstract class ObjectPool
     }
 
     /**
-     *  Checks out and locks the next
-     *  available object in the pool.
-     *
-     *  @return the next available object in the pool
+     * Checks out and locks the next available object in the pool.
+     * 
+     * @return the next available object in the pool
      */
     protected Object checkOut()
     {
@@ -101,8 +98,7 @@ public abstract class ObjectPool
     }
 
     /**
-     *  Cleans up the pool by checking
-     *  for expired objects.
+     * Cleans up the pool by checking for expired objects.
      */
     protected void cleanUp()
     {
@@ -116,8 +112,7 @@ public abstract class ObjectPool
         {
             object = e.nextElement();
 
-            if ((now - ((Long) this.unlocked.get(object)).longValue())
-                > this.expirationTime)
+            if ((now - ((Long) this.unlocked.get(object)).longValue()) > this.expirationTime)
             {
                 this.unlocked.remove(object);
                 expire(object);
@@ -128,19 +123,20 @@ public abstract class ObjectPool
     }
 
     /**
-     *  Creates a new object to store in the pool.
+     * Creates a new object to store in the pool.
      */
     protected abstract Object create();
 
     /**
-     *  Expires an object in the pool.
+     * Expires an object in the pool.
      */
     protected abstract void expire(Object object);
 
     /**
-     *  Validates an object in the pool.
-     *
-     *  @param object   the object to validate
+     * Validates an object in the pool.
+     * 
+     * @param object
+     *            the object to validate
      */
     protected abstract boolean validate(Object object);
 }

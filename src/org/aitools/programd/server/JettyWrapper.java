@@ -32,20 +32,17 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
 
     /**
      *  Configures the server and sets the address and port number in
-     *  {@link org.aitools.programd.multiplexor.Globals Globals}
+     *  {@link org.aitools.programd.util.Globals Globals}
      *  (for reference).
      *
      *  @param configFilePath   the config file path to pass to Jetty
-     *
-     *  @return the Jetty server
      */
     public void configure(String configFilePath) throws IOException
     {
         jetty = new Server();
 
         // Add a LogSink to Jetty so it will shut up and not send messages to System.err.
-        OutputStreamLogSink quietJetty =
-            new OutputStreamLogSink("./logs/jetty.log");
+        OutputStreamLogSink quietJetty = new OutputStreamLogSink("./logs/jetty.log");
         org.mortbay.util.Log.instance().add(quietJetty);
 
         jetty.configure(Globals.getRootPath() + configFilePath);
@@ -58,10 +55,7 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
         while (listeners.hasNext())
         {
             Object listener = listeners.next();
-            if (listener
-                .getClass()
-                .getName()
-                .equals("org.mortbay.http.SocketListener"))
+            if (listener.getClass().getName().equals("org.mortbay.http.SocketListener"))
             {
                 port = ((SocketListener) listener).getPort();
             }

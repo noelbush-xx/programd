@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.agent.listener;
 
@@ -28,13 +25,12 @@ import org.aitools.programd.util.XMLKit;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  This code is from the Everybuddy Java Project
- *  by Chris Carlin (http://EBJava.sourceforge.net/)
- *  modified to work with a Program D server.
- *
- *  @author Jon Baer
- *  @author Sandy McArthur
- *  @version 1.0
+ * This code is from the Everybuddy Java Project by Chris Carlin
+ * (http://EBJava.sourceforge.net/) modified to work with a Program D server.
+ * 
+ * @author Jon Baer
+ * @author Sandy McArthur
+ * @version 1.0
  */
 public class AIMListener extends Listener
 {
@@ -220,22 +216,21 @@ public class AIMListener extends Listener
     private static final String MSG = "ProgramD-AIM: ";
 
     /**
-     *  Constructs a new <code>AIMListener</code> listener
-     *  and sets up parameters.
-     *
-     *  @see {@link Listener}
+     * Constructs a new <code>AIMListener</code> listener and sets up
+     * parameters.
      */
     public AIMListener(Bot botToListen)
     {
-        super(botToListen, "AIMListener", new String[][] { { "owner", "" }, {
-                "screenname", "" }, {
-                "password", "" }, {
-                "bgcolor", "White" }, {
-                "fontface", "Verdana,Arial" }, {
-                "fontsize", "2" }, {
-                "fontcolor", "Black" }, {
-                "buddies", "" }
-        });
+        super(botToListen, "AIMListener", new String[][]
+            {
+                { "owner", "" },
+                { "screenname", "" },
+                { "password", "" },
+                { "bgcolor", "White" },
+                { "fontface", "Verdana,Arial" },
+                { "fontsize", "2" },
+                { "fontcolor", "Black" },
+                { "buddies", "" } });
     }
 
     public boolean checkParameters()
@@ -270,7 +265,7 @@ public class AIMListener extends Listener
     }
 
     /**
-     *  Signs on the listener and starts waiting for messages.
+     * Signs on the listener and starts waiting for messages.
      */
     public void run()
     {
@@ -282,9 +277,7 @@ public class AIMListener extends Listener
             this.connection = new Socket(HOST, PORT);
             this.connection.setSoTimeout(10000);
             this.in = new DataInputStream(this.connection.getInputStream());
-            this.out =
-                new DataOutputStream(
-                    new BufferedOutputStream(this.connection.getOutputStream()));
+            this.out = new DataOutputStream(new BufferedOutputStream(this.connection.getOutputStream()));
         }
         catch (Exception e)
         {
@@ -308,11 +301,7 @@ public class AIMListener extends Listener
             this.out.writeBytes(this.name);
             this.out.flush();
 
-            frameSend(
-                "toc_signon login.oscar.aol.com 5190 "
-                    + this.name
-                    + " "
-                    + imRoast(this.pass)
+            frameSend("toc_signon login.oscar.aol.com 5190 " + this.name + " " + imRoast(this.pass)
                     + " english programdbot\0");
 
             this.in.skip(4);
@@ -389,9 +378,10 @@ public class AIMListener extends Listener
     }
 
     /**
-     *  Processes data received from AIM.
-     *
-     *  @param buffer   the data received from AIM
+     * Processes data received from AIM.
+     * 
+     * @param buffer
+     *            the data received from AIM
      */
     public void fromAIM(byte[] buffer)
     {
@@ -404,7 +394,7 @@ public class AIMListener extends Listener
         if (command.equals(IM_IN))
         {
             String from = imNormalize(inToken.nextToken());
-            /*String auto = */
+            /* String auto = */
             inToken.nextToken();
             StringBuffer mesg = new StringBuffer(inToken.nextToken());
             while (inToken.hasMoreTokens())
@@ -426,13 +416,8 @@ public class AIMListener extends Listener
             }
             else
             {
-                String[] botResponse =
-                    XMLKit.breakLinesAtTags(
-                        Multiplexor.getResponse(
-                            request,
-                            from + _AIM,
-                            this.botID,
-                            new AIMResponder()));
+                String[] botResponse = XMLKit.breakLinesAtTags(Multiplexor.getResponse(request, from + _AIM,
+                        this.botID, new AIMResponder()));
                 if (botResponse.length > 0)
                 {
                     for (int line = 0; line < botResponse.length; line++)
@@ -456,13 +441,8 @@ public class AIMListener extends Listener
             String request = XMLKit.removeMarkup(mesg.toString());
             if (request.indexOf(this.name) > 0)
             {
-                String[] botResponse =
-                    XMLKit.breakLinesAtTags(
-                        Multiplexor.getResponse(
-                            request,
-                            from + _AIM,
-                            this.botID,
-                            new AIMResponder()));
+                String[] botResponse = XMLKit.breakLinesAtTags(Multiplexor.getResponse(request, from + _AIM,
+                        this.botID, new AIMResponder()));
                 if (botResponse.length > 0)
                 {
                     for (int line = 0; line < botResponse.length; line++)
@@ -489,20 +469,17 @@ public class AIMListener extends Listener
             }
             if (error.equals(_960))
             {
-                logMessage(
-                    "Sending messages too fast to " + inToken.nextToken());
+                logMessage("Sending messages too fast to " + inToken.nextToken());
                 return;
             }
             if (error.equals(_961))
             {
-                logMessage(
-                    inToken.nextToken() + " sent you too big a message.");
+                logMessage(inToken.nextToken() + " sent you too big a message.");
                 return;
             }
             if (error.equals(_962))
             {
-                logMessage(
-                    inToken.nextToken() + " sent you a message too fast.");
+                logMessage(inToken.nextToken() + " sent you a message too fast.");
                 return;
             }
             if (error.equals(SIGNON_ERR))
@@ -515,33 +492,20 @@ public class AIMListener extends Listener
     }
 
     /**
-     *  Sends a message to a designated recipient.
-     *
-     *  @param to       the recipient
-     *  @param message  the message to send
+     * Sends a message to a designated recipient.
+     * 
+     * @param to
+     *            the recipient
+     * @param message
+     *            the message to send
      */
     public void sendMesg(String to, String message)
     {
-        String text =
-            new StringBuffer(MSG_FMT_0)
-                .append(this.bgcolor)
-                .append(MSG_FMT_1)
-                .append(this.fontsize)
-                .append(MSG_FMT_2)
-                .append(this.fontface)
-                .append(MSG_FMT_3)
-                .append(this.fontcolor)
-                .append(MSG_FMT_4)
-                .append(message)
-                .append(MSG_FMT_5)
-                .toString();
+        String text = new StringBuffer(MSG_FMT_0).append(this.bgcolor).append(MSG_FMT_1).append(this.fontsize).append(
+                MSG_FMT_2).append(this.fontface).append(MSG_FMT_3).append(this.fontcolor).append(MSG_FMT_4).append(
+                message).append(MSG_FMT_5).toString();
 
-        String work =
-            new StringBuffer(TOC_SEND_IM)
-                .append(to)
-                .append(SPACE_QUOTE)
-                .append(imEscape(text))
-                .toString();
+        String work = new StringBuffer(TOC_SEND_IM).append(to).append(SPACE_QUOTE).append(imEscape(text)).toString();
 
         logMessage(message);
         try
@@ -555,18 +519,16 @@ public class AIMListener extends Listener
     }
 
     /**
-     *  Sends a message to a chat room.
-     *
-     *  @param roomID   the room identifier
-     *  @param message  the message to send
+     * Sends a message to a chat room.
+     * 
+     * @param roomID
+     *            the room identifier
+     * @param message
+     *            the message to send
      */
     public void sendChatRoomMesg(String roomID, String message)
     {
-        String work =
-            new StringBuffer(TOC_CHAT_SEND)
-                .append(roomID)
-                .append(SPACE_QUOTE)
-                .append(imEscape(message))
+        String work = new StringBuffer(TOC_CHAT_SEND).append(roomID).append(SPACE_QUOTE).append(imEscape(message))
                 .toString();
 
         logMessage(message);
@@ -581,34 +543,32 @@ public class AIMListener extends Listener
     }
 
     /**
-     *  Escapes a string according to the requirements of AIM.
-     *
-     *  @param string   the string to escape
-     *
-     *  @return the escaped string
+     * Escapes a string according to the requirements of AIM.
+     * 
+     * @param text
+     *            the string to escape
+     * @return the escaped string
      */
     private StringBuffer imEscape(String text)
     {
         StringBuffer work = new StringBuffer();
         StringCharacterIterator iterator = new StringCharacterIterator(text);
-        for (char aChar = iterator.first();
-            aChar != StringCharacterIterator.DONE;
-            aChar = iterator.next())
+        for (char aChar = iterator.first(); aChar != StringCharacterIterator.DONE; aChar = iterator.next())
         {
             switch (aChar)
             {
-                case '$' :
-                case '{' :
-                case '}' :
-                case '[' :
-                case ']' :
-                case '(' :
-                case ')' :
-                case '\"' :
-                case '\\' :
+                case '$':
+                case '{':
+                case '}':
+                case '[':
+                case ']':
+                case '(':
+                case ')':
+                case '\"':
+                case '\\':
                     work.append(BACKSLASH);
                     break;
-                default :
+                default:
                     break;
             }
             work.append(aChar);
@@ -618,9 +578,10 @@ public class AIMListener extends Listener
     }
 
     /**
-     *  Sends an AIM message.  Cannot send a message longer than 2030 bytes.
-     *
-     *  @param buffer   the message
+     * Sends an AIM message. Cannot send a message longer than 2030 bytes.
+     * 
+     * @param buffer
+     *            the message
      */
     public void toAIM(byte[] buffer)
     {
@@ -649,7 +610,7 @@ public class AIMListener extends Listener
     }
 
     /**
-     *  Please document.
+     * Please document.
      */
     public void sendBuddies()
     {
@@ -673,9 +634,9 @@ public class AIMListener extends Listener
     }
 
     /**
-     *  Please document.
-     *
-     *  @param place
+     * Please document.
+     * 
+     * @param place
      */
     public void signoff(String place)
     {
@@ -696,9 +657,10 @@ public class AIMListener extends Listener
     }
 
     /**
-     *  Encodes a password according to AIM's stupid requirement.
-     *
-     *  @param pass the password to encode
+     * Encodes a password according to AIM's stupid requirement.
+     * 
+     * @param pass
+     *            the password to encode
      */
     public static String imRoast(String pass)
     {
@@ -709,8 +671,7 @@ public class AIMListener extends Listener
 
         for (int index = 0; index < passLength; index++)
         {
-            append =
-                Long.toHexString(pass.charAt(index) ^ ROAST.charAt(index % 7));
+            append = Long.toHexString(pass.charAt(index) ^ ROAST.charAt(index % 7));
             if (append.length() < 2)
             {
                 result.append(ZERO);
@@ -721,18 +682,17 @@ public class AIMListener extends Listener
     }
 
     /**
-     *  Removes spaces from a string.
-     *
-     *  @param in   the string from which to remove spaces
-     *
-     *  @return the string without spaces
+     * Removes spaces from a string.
+     * 
+     * @param in
+     *            the string from which to remove spaces
+     * @return the string without spaces
      */
     public static String imNormalize(String in)
     {
         StringBuffer out = new StringBuffer(in);
         int space;
-        while (((space = out.toString().indexOf(SPACE)) >= 0)
-            && out.length() > 0)
+        while (((space = out.toString().indexOf(SPACE)) >= 0) && out.length() > 0)
         {
             out.delete(space, space + 1);
         }
@@ -740,9 +700,10 @@ public class AIMListener extends Listener
     }
 
     /**
-     *  Standard method for logging and notifying of a message.
-     *
-     *  @param message  the message
+     * Standard method for logging and notifying of a message.
+     * 
+     * @param message
+     *            the message
      */
     private void logMessage(String message)
     {

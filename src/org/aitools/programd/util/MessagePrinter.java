@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.util;
 
@@ -19,10 +16,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- *  Provides standard formatting for messages.
- *
- *  @version 4.1.3
- *  @author Noel Bush
+ * Provides standard formatting for messages.
+ * 
+ * @version 4.1.3
+ * @author Noel Bush
  */
 public class MessagePrinter
 {
@@ -33,8 +30,7 @@ public class MessagePrinter
     public static final int LOG = 2;
 
     /** The system line separator. */
-    private static final String LINE_SEPARATOR =
-        System.getProperty("line.separator", "\n");
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
 
     /** A space. */
     private static final String SPACE = " ";
@@ -49,28 +45,26 @@ public class MessagePrinter
     private static final String EMPTY_STRING = "";
 
     /** The timestamp format for logging. */
-    private static final String TIMESTAMP_LOG_FORMAT =
-        Globals.getProperty(
-            "programd.logging.timestamp-format",
+    private static final String TIMESTAMP_LOG_FORMAT = Globals.getProperty("programd.logging.timestamp-format",
             "yyyy-MM-dd H:mm:ss");
 
     /** The timestamp format for console display. */
-    private static final String TIMESTAMP_CONSOLE_FORMAT =
-        Globals.getProperty("programd.console.timestamp-format", "H:mm:ss");
+    private static final String TIMESTAMP_CONSOLE_FORMAT = Globals.getProperty("programd.console.timestamp-format",
+            "H:mm:ss");
 
     /** Whether to show a console timestamp at all. */
-    private static final boolean consoleTimestamp =
-        TIMESTAMP_CONSOLE_FORMAT.length() > 0 ? true : false;
+    private static final boolean consoleTimestamp = TIMESTAMP_CONSOLE_FORMAT.length() > 0 ? true : false;
 
     /** Whether to show a log timestamp at all. */
-    private static final boolean logTimestamp =
-        TIMESTAMP_LOG_FORMAT.length() > 0 ? true : false;
+    private static final boolean logTimestamp = TIMESTAMP_LOG_FORMAT.length() > 0 ? true : false;
 
     /** An error string when cannot write to file. */
-    private static final String FILE_WRITER_ERROR =
-        "Error writing to filewriter ";
+    private static final String FILE_WRITER_ERROR = "Error writing to filewriter ";
 
-    /** An indicator used to keep track of whether we're midline in a console output (i.e., showing a prompt). */
+    /**
+     * An indicator used to keep track of whether we're midline in a console
+     * output (i.e., showing a prompt).
+     */
     private static boolean midLine = false;
 
     /** The last message to the console. */
@@ -83,18 +77,20 @@ public class MessagePrinter
     private static boolean lastLongFormat = false;
 
     /**
-     *  Print a message line with a type flag to a {@link java.io.PrintStream PrintStream}.
-     *
-     *  @param message      the message to print
-     *  @param typeFlag     user-defined
-     *  @param out          (such as @{link java.lang.System.out System.out})
-     *  @param destination  destination flag (for choosing format)
+     * Print a message line with a type flag to a
+     * {@link java.io.PrintStream PrintStream}.
+     * 
+     * @param message
+     *            the message to print
+     * @param typeFlag
+     *            user-defined
+     * @param out
+     *            (such as
+     * @{link java.lang.System.out System.out})
+     * @param destination
+     *            destination flag (for choosing format)
      */
-    public static void println(
-        String message,
-        String typeFlag,
-        PrintStream out,
-        int destination)
+    public static void println(String message, String typeFlag, PrintStream out, int destination)
     {
         if (midLine)
         {
@@ -105,18 +101,20 @@ public class MessagePrinter
     }
 
     /**
-     *  Print a message (no linebreak) with a type flag to a {@link java.io.PrintStream PrintStream}.
-     *
-     *  @param message      the message to print
-     *  @param typeFlag     user-defined
-     *  @param out          (such as @{link java.lang.System.out System.out})
-     *  @param destination  destination flag (for choosing format)
+     * Print a message (no linebreak) with a type flag to a
+     * {@link java.io.PrintStream PrintStream}.
+     * 
+     * @param message
+     *            the message to print
+     * @param typeFlag
+     *            user-defined
+     * @param out
+     *            (such as
+     * @{link java.lang.System.out System.out})
+     * @param destination
+     *            destination flag (for choosing format)
      */
-    public static void print(
-        String message,
-        String typeFlag,
-        PrintStream out,
-        int destination)
+    public static void print(String message, String typeFlag, PrintStream out, int destination)
     {
         if (midLine)
         {
@@ -127,11 +125,14 @@ public class MessagePrinter
     }
 
     /**
-     *  Print a message to a {@link java.io.FileWriter FileWriter}.
-     *
-     *  @param message      the message to print
-     *  @param out          the {@link java.io.FileWriter FileWriter} to use
-     *  @param destination  destination flag (for choosing format)
+     * Print a message to a {@link java.io.FileWriter FileWriter}.
+     * 
+     * @param message
+     *            the message to print
+     * @param out
+     *            the {@link java.io.FileWriter FileWriter}to use
+     * @param destination
+     *            destination flag (for choosing format)
      */
     public static void println(String message, FileWriter out, int destination)
     {
@@ -148,11 +149,11 @@ public class MessagePrinter
     }
 
     /**
-     *  Returns the date & time in a consistent format.
-     *
-     *  @param destination  destination flag (for choosing format)
-     *
-     *  @return timestamp in specified long or short format
+     * Returns the date & time in a consistent format.
+     * 
+     * @param destination
+     *            destination flag (for choosing format)
+     * @return timestamp in specified long or short format
      */
     private static String timestamp(int destination)
     {
@@ -160,11 +161,7 @@ public class MessagePrinter
         {
             if (consoleTimestamp)
             {
-                return LBRACKET
-                    + new SimpleDateFormat(TIMESTAMP_CONSOLE_FORMAT).format(
-                        new Date())
-                    + RBRACKET
-                    + SPACE;
+                return LBRACKET + new SimpleDateFormat(TIMESTAMP_CONSOLE_FORMAT).format(new Date()) + RBRACKET + SPACE;
             }
             // (otherwise...)
             return EMPTY_STRING;
@@ -173,11 +170,7 @@ public class MessagePrinter
         {
             if (logTimestamp)
             {
-                return LBRACKET
-                    + new SimpleDateFormat(TIMESTAMP_LOG_FORMAT).format(
-                        new Date())
-                    + RBRACKET
-                    + SPACE;
+                return LBRACKET + new SimpleDateFormat(TIMESTAMP_LOG_FORMAT).format(new Date()) + RBRACKET + SPACE;
             }
             // (otherwise...)
             return EMPTY_STRING;
@@ -189,7 +182,7 @@ public class MessagePrinter
     }
 
     /**
-     *  Tells the MessagePrinter that we got an input; not midLine anymore.
+     * Tells the MessagePrinter that we got an input; not midLine anymore.
      */
     public static void gotLine()
     {

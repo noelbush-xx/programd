@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.agent.responder;
 
@@ -34,13 +31,11 @@ import org.aitools.programd.util.Trace;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  Responsible for handling requests that
- *  come via HTTP, and delivering the response
- *  via dynamically-generated HTML based on
- *  user-designed templates.
- *
- *  @author  Kim Sullivan
- *  @author  Sergey Zenyuk, Noel Bush, X-31
+ * Responsible for handling requests that come via HTTP, and delivering the
+ * response via dynamically-generated HTML based on user-designed templates.
+ * 
+ * @author Kim Sullivan
+ * @author Sergey Zenyuk, Noel Bush, X-31
  */
 public class HTMLResponder extends AbstractMarkupResponder
 {
@@ -48,47 +43,39 @@ public class HTMLResponder extends AbstractMarkupResponder
     // Class variables.
 
     /** A filename filter for finding html templates. */
-    private static final SuffixFilenameFilter htmlFilenameFilter =
-        new SuffixFilenameFilter(new String[] { ".html", ".htm", ".data", ".php" });
+    private static final SuffixFilenameFilter htmlFilenameFilter = new SuffixFilenameFilter(new String[]
+        { ".html", ".htm", ".data", ".php" });
 
     /** Map of template names to filenames. */
     private static HashMap templates;
 
     /** Location of html templates. */
-    private static final String templatesDirectoryName =
-        Globals.getProperty("programd.responder.html.template.directory", "templates" + File.separator + "html");
+    private static final String templatesDirectoryName = Globals.getProperty(
+            "programd.responder.html.template.directory", "templates" + File.separator + "html");
 
     /** Path to the default chat template. */
-    private static String chatTemplatePath =
-        templatesDirectoryName
-            + File.separator
+    private static String chatTemplatePath = templatesDirectoryName + File.separator
             + Globals.getProperty("programd.responder.html.template.chat-default", "chat.html");
 
     /** Path to the register template. */
-    private static final String registerTemplatePath =
-        templatesDirectoryName
-            + File.separator
+    private static final String registerTemplatePath = templatesDirectoryName + File.separator
             + Globals.getProperty("programd.responder.html.template.register", "register.html");
 
     /** Path to the login template. */
-    private static final String loginTemplatePath =
-        templatesDirectoryName
-            + File.separator
+    private static final String loginTemplatePath = templatesDirectoryName + File.separator
             + Globals.getProperty("programd.responder.html.template.login", "login.html");
 
     /** Path to the change password template. */
-    private static final String changePasswordTemplatePath =
-        templatesDirectoryName
-            + File.separator
+    private static final String changePasswordTemplatePath = templatesDirectoryName + File.separator
             + Globals.getProperty("programd.responder.html.template.change-password", "change-password.html");
 
     /** Whether to require login (regardless of cookie presence or not). */
-    private static boolean requirelogin =
-        Boolean.valueOf(Globals.getProperty("programd.httpserver.requirelogin", "false")).booleanValue();
+    private static boolean requirelogin = Boolean.valueOf(
+            Globals.getProperty("programd.httpserver.requirelogin", "false")).booleanValue();
 
     /** Whether to automatically generate a cookie for each unique visitor. */
-    private static boolean autocookie =
-        Boolean.valueOf(Globals.getProperty("programd.httpserver.autocookie", "true")).booleanValue();
+    private static boolean autocookie = Boolean.valueOf(Globals.getProperty("programd.httpserver.autocookie", "true"))
+            .booleanValue();
 
     /** The registration template. */
     private static LinkedList registerTemplate;
@@ -197,12 +184,13 @@ public class HTMLResponder extends AbstractMarkupResponder
     }
 
     /**
-     *  Loads the registration, login and change password templates.
-     *  Also scans the html templates path for any files ending in &quot;.html&quot;,
-     *  &quot;*.htm&quot;, or &quot;*.data&quot;
-     *  and adds their names (without the suffix) to the list of available templates.
+     * Loads the registration, login and change password templates. Also scans
+     * the html templates path for any files ending in &quot;.html&quot;,
+     * &quot;*.htm&quot;, or &quot;*.data&quot; and adds their names (without
+     * the suffix) to the list of available templates.
      */
-    static {
+    static
+    {
         // Load the register, login and change password templates.
         registerTemplate = loadTemplate(registerTemplatePath);
         loginTemplate = loadTemplate(loginTemplatePath);
@@ -234,7 +222,7 @@ public class HTMLResponder extends AbstractMarkupResponder
     }
 
     /**
-     *    loginRequest with no parameters means unknown username, password
+     * loginRequest with no parameters means unknown username, password
      */
     public static String loginRequest()
     {
@@ -242,10 +230,12 @@ public class HTMLResponder extends AbstractMarkupResponder
     }
 
     /**
-     *  Processes a login request
-     *
-     *  @param user     the username
-     *  @param password the password
+     * Processes a login request
+     * 
+     * @param requestUser
+     *            the username
+     * @param requestPassword
+     *            the password
      */
     public static String loginRequest(String requestUser, String requestPassword)
     {
@@ -280,7 +270,7 @@ public class HTMLResponder extends AbstractMarkupResponder
     }
 
     /**
-     *  Processes a registration request
+     * Processes a registration request
      */
     public static String registerRequest()
     {
@@ -298,7 +288,7 @@ public class HTMLResponder extends AbstractMarkupResponder
     }
 
     /**
-     *  Processes a change password request.
+     * Processes a change password request.
      */
     public static String changePasswordRequest()
     {
@@ -316,43 +306,39 @@ public class HTMLResponder extends AbstractMarkupResponder
     }
 
     /**
-     *    <p>
-     *        Tries to authenticate a user.
-     *        Different things can happen, depending on parameters in the request.
-     *        Here are the meanings of the parameter values:
-     *    </p>
-     *    <ul>
-     *        <li>
-     *            login - if yes, return a login page
-     *        </li>
-     *        <li>
-     *            checkauth - if auth, try to authenticate a username/password combination
-     *        </li>
-     *        <li>
-     *            register - if auth, try to register a username/password combination
-     *        </li>
-     *        <li>
-     *            register - if yes, return a registration page
-     *        </li>
-     *        <li>
-     *            change-password - if yes, try to change a password
-     *        </li>
-     *    </ul>
-     *    <p>
-     *        Most important goal is to get out of here as quickly as possible.  This relies
-     *        on the DBMultiplexor having a quick method to check a user -- ideally not going to
-     *        the database each time.  Also relies on creating as few objects as possible, even
-     *        avoiding Strings if possible, but never checking the same parameter more than once.
-     *        Of course, the order is the most important thing.  We have to first see if there are
-     *        any of the relevant parameters supplied, then check a couple of server properties,
-     *        to know what we have to do.  It's okay if the registration and login steps are a little
-     *        slower, but not okay if each reply is slowed down in a conversation.  That's what we
-     *        tried hard to avoid here.
-     *    </p>
-     *
-     *  @param request      the HttpServletRequest
-     *  @param response     the HttpServletResponse
-     *  @param userid       the userid given with the request (will not be the same as final userid)
+     * <p>
+     * Tries to authenticate a user. Different things can happen, depending on
+     * parameters in the request. Here are the meanings of the parameter values:
+     * </p>
+     * <ul>
+     * <li>login - if yes, return a login page</li>
+     * <li>checkauth - if auth, try to authenticate a username/password
+     * combination</li>
+     * <li>register - if auth, try to register a username/password combination
+     * </li>
+     * <li>register - if yes, return a registration page</li>
+     * <li>change-password - if yes, try to change a password</li>
+     * </ul>
+     * <p>
+     * Most important goal is to get out of here as quickly as possible. This
+     * relies on the DBMultiplexor having a quick method to check a user --
+     * ideally not going to the database each time. Also relies on creating as
+     * few objects as possible, even avoiding Strings if possible, but never
+     * checking the same parameter more than once. Of course, the order is the
+     * most important thing. We have to first see if there are any of the
+     * relevant parameters supplied, then check a couple of server properties,
+     * to know what we have to do. It's okay if the registration and login steps
+     * are a little slower, but not okay if each reply is slowed down in a
+     * conversation. That's what we tried hard to avoid here.
+     * </p>
+     * 
+     * @param request
+     *            the HttpServletRequest
+     * @param servletResponse
+     *            the HttpServletResponse
+     * @param userid
+     *            the userid given with the request (will not be the same as
+     *            final userid)
      */
     public String authenticate(HttpServletRequest request, HttpServletResponse servletResponse, String userid)
     {
@@ -386,7 +372,8 @@ public class HTMLResponder extends AbstractMarkupResponder
             }
         }
 
-        // Get parameters (so we don't do this repeatedly).  Don't care yet if they exist or not.
+        // Get parameters (so we don't do this repeatedly). Don't care yet if
+        // they exist or not.
         String userParam = request.getParameter("user");
         String passwordParam = request.getParameter("password");
         String oldPasswordParam = request.getParameter("oldPassword");
@@ -425,7 +412,8 @@ public class HTMLResponder extends AbstractMarkupResponder
             state = state | QUALIFY;
         }
         // Otherwise user is requesting nothing -- let's get out fast!
-        // If the cookie is set (meaning we have user and password values to test)
+        // If the cookie is set (meaning we have user and password values to
+        // test)
         else if (userCookieSet)
         {
             // If user is known by ActiveMultiplexor
@@ -487,13 +475,16 @@ public class HTMLResponder extends AbstractMarkupResponder
                     {
                         state = state | DO;
                     }
-                    // All such situations which require the repeatPassword param
+                    // All such situations which require the repeatPassword
+                    // param
                     else if (repeatPasswordParam != null)
                     {
-                        // Enough material to try either a register or a change password request
+                        // Enough material to try either a register or a change
+                        // password request
                         if ((state & REGISTER) == REGISTER)
                         {
-                            // PROCESS_OK if password and repeatPassword params match
+                            // PROCESS_OK if password and repeatPassword params
+                            // match
                             if (passwordParam.equals(repeatPasswordParam))
                             {
                                 state = state | DO;
@@ -606,7 +597,8 @@ public class HTMLResponder extends AbstractMarkupResponder
             }
         }
 
-        // If user has all clear, set the programd_user session attribute and return null.
+        // If user has all clear, set the programd_user session attribute and
+        // return null.
         if ((state & GO_USER) == GO_USER)
         {
             session.setAttribute(USER_COOKIE_NAME, this.user);
@@ -615,23 +607,27 @@ public class HTMLResponder extends AbstractMarkupResponder
         // If a process was successful (should have exited by now otherwise)
         else if ((state & PROCESS_OK) == PROCESS_OK)
         {
-            // Successful login?  Set programd_user session attribute and return null.
+            // Successful login? Set programd_user session attribute and return
+            // null.
             if ((state & LOGIN) == LOGIN)
             {
                 session.setAttribute(USER_COOKIE_NAME, this.user);
                 return null;
             }
-            // Successful registration?  Return login form with success message (lets the user see that registration was successful).
+            // Successful registration? Return login form with success message
+            // (lets the user see that registration was successful).
             else if ((state & REGISTER) == REGISTER)
             {
                 return successfulRegistrationMessage + loginRequest(userParam, passwordParam);
             }
-            // Successful password change?  Return login form with success message (lets the user see that password change was successful).
+            // Successful password change? Return login form with success
+            // message (lets the user see that password change was successful).
             else if ((state & CHANGE_PASSWORD) == REGISTER)
             {
                 return successfulPasswordChangeMessage + loginRequest(userParam, passwordParam);
             }
-            // Something strange.  Unclear state.  Notify the console; send a blank login form with a developer error message.
+            // Something strange. Unclear state. Notify the console; send a
+            // blank login form with a developer error message.
             else
             {
                 return developerErrorMessage + loginRequest();
@@ -645,8 +641,8 @@ public class HTMLResponder extends AbstractMarkupResponder
     }
 
     /**
-     *  Convenience method; checks that a parameter
-     *  value is not null before doing equals() comparison.
+     * Convenience method; checks that a parameter value is not null before
+     * doing equals() comparison.
      */
     private static boolean parameterEquals(HttpServletRequest request, String parameterName, String comparisonValue)
     {
@@ -664,16 +660,18 @@ public class HTMLResponder extends AbstractMarkupResponder
     }
 
     /**
-     *  Generates a new username/password cookie pair for a user.
-     *
-     *  @param response the response to which to add the cookies
+     * Generates a new username/password cookie pair for a user.
+     * 
+     * @param servletResponse
+     *            the response to which to add the cookies
      */
     private boolean makeNewCookies(HttpServletResponse servletResponse)
     {
         StringBuffer newusername = new StringBuffer(17);
         StringBuffer newpassword = new StringBuffer(10);
 
-        // Generate the new username as "webuser" + the date in milliseconds + a random five digits, password same
+        // Generate the new username as "webuser" + the date in milliseconds + a
+        // random five digits, password same
         newusername.append("webuser");
         long timeInMillis = System.currentTimeMillis();
         newusername.append(timeInMillis);

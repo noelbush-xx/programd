@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.graph;
 
@@ -17,9 +14,8 @@ import java.util.ArrayList;
 import org.aitools.programd.util.InputNormalizer;
 
 /**
- *  <code>Match</code> implements an object to store the results of
- *  matching, most notably the stacks resulting from multiple input/that/topic
- *  wildcards.
+ * <code>Match</code> implements an object to store the results of matching,
+ * most notably the stacks resulting from multiple input/that/topic wildcards.
  */
 public class Match
 {
@@ -31,7 +27,10 @@ public class Match
     /** The portions of the &lt;that/&gt; captured by wildcards. */
     private ArrayList thatStars = new ArrayList();
 
-    /** The portions of the &lt;topic/&gt; <code>name</code> captured by wildcards. */
+    /**
+     * The portions of the &lt;topic/&gt; <code>name</code> captured by
+     * wildcards.
+     */
     private ArrayList topicStars = new ArrayList();
 
     /** The <code>pattern</code> part of the matched path. */
@@ -61,13 +60,13 @@ public class Match
     public static final String SPACE = " ";
 
     /** The string used to separate path components. */
-    private static final String SPACED_PATH_SEPARATOR =
-        SPACE + Graphmaster.PATH_SEPARATOR + SPACE;
+    private static final String SPACED_PATH_SEPARATOR = SPACE + Graphmaster.PATH_SEPARATOR + SPACE;
 
     /**
-     *  Pushes a new input star onto the input stack.
-     *
-     *  @param string   the string to push onto the input stack
+     * Pushes a new input star onto the input stack.
+     * 
+     * @param string
+     *            the string to push onto the input stack
      */
     public void pushInputStar(String string)
     {
@@ -75,9 +74,10 @@ public class Match
     }
 
     /**
-     *  Pushes a new that star onto the thatstar stack.
-     *
-     *  @param string   the string to push onto the thatstar stack
+     * Pushes a new that star onto the thatstar stack.
+     * 
+     * @param string
+     *            the string to push onto the thatstar stack
      */
     public void pushThatStar(String string)
     {
@@ -85,9 +85,10 @@ public class Match
     }
 
     /**
-     *  Pushes a new topic star onto the topicstar stack.
-     *
-     *  @param string   the string to push onto the topicstar stack
+     * Pushes a new topic star onto the topicstar stack.
+     * 
+     * @param string
+     *            the string to push onto the topicstar stack
      */
     public void pushTopicStar(String string)
     {
@@ -95,9 +96,10 @@ public class Match
     }
 
     /**
-     *  Sets the <code>pattern</code> part of the matched path.
-     *
-     *  @param string   the <code>pattern</code> part of the matched path
+     * Sets the <code>pattern</code> part of the matched path.
+     * 
+     * @param string
+     *            the <code>pattern</code> part of the matched path
      */
     public void setPattern(String string)
     {
@@ -105,9 +107,10 @@ public class Match
     }
 
     /**
-     *  Sets the <code>that</code> part of the matched path.
-     *
-     *  @param string   the <code>that</code> part of the matched path
+     * Sets the <code>that</code> part of the matched path.
+     * 
+     * @param string
+     *            the <code>that</code> part of the matched path
      */
     public void setThat(String string)
     {
@@ -115,9 +118,10 @@ public class Match
     }
 
     /**
-     *  Sets the <code>topic</code> part of the matched path.
-     *
-     *  @param string   the <code>topic</code> part of the matched path
+     * Sets the <code>topic</code> part of the matched path.
+     * 
+     * @param string
+     *            the <code>topic</code> part of the matched path
      */
     public void setTopic(String string)
     {
@@ -125,9 +129,10 @@ public class Match
     }
 
     /**
-     *  Sets the <code>botid</code> part of the matched path.
-     *
-     *  @param string   the <code>botid</code> part of the matched path
+     * Sets the <code>botid</code> part of the matched path.
+     * 
+     * @param string
+     *            the <code>botid</code> part of the matched path
      */
     public void setBotID(String string)
     {
@@ -135,9 +140,10 @@ public class Match
     }
 
     /**
-     *  Set the match-resulting nodemapper.
-     *
-     *  @param nodemapperToSet the match-resulting nodemapper
+     * Set the match-resulting nodemapper.
+     * 
+     * @param nodemapperToSet
+     *            the match-resulting nodemapper
      */
 
     public void setNodemapper(Nodemapper nodemapperToSet)
@@ -146,9 +152,9 @@ public class Match
     }
 
     /**
-     *  Returns the <code>pattern</code> part of the matched path.
-     *
-     *  @return the <code>pattern</code> part of the matched path
+     * Returns the <code>pattern</code> part of the matched path.
+     * 
+     * @return the <code>pattern</code> part of the matched path
      */
     public String getPattern()
     {
@@ -156,9 +162,9 @@ public class Match
     }
 
     /**
-     *  Returns the <code>that</code> part of the matched path.
-     *
-     *  @return the <code>that</code> part of the matched path
+     * Returns the <code>that</code> part of the matched path.
+     * 
+     * @return the <code>that</code> part of the matched path
      */
     public String getThat()
     {
@@ -166,9 +172,9 @@ public class Match
     }
 
     /**
-     *  Returns the <code>topic</code> part of the matched path.
-     *
-     *  @return the <code>topic</code> part of the matched path
+     * Returns the <code>topic</code> part of the matched path.
+     * 
+     * @return the <code>topic</code> part of the matched path
      */
     public String getTopic()
     {
@@ -176,25 +182,20 @@ public class Match
     }
 
     /**
-     *  Returns the match path.
-     *
-     *  @return the match path
+     * Returns the match path.
+     * 
+     * @return the match path
      */
     public String getPath()
     {
-        return InputNormalizer.patternFit(this.pattern)
-            + SPACED_PATH_SEPARATOR
-            + InputNormalizer.patternFit(this.that)
-            + SPACED_PATH_SEPARATOR
-            + InputNormalizer.patternFit(this.topic)
-            + SPACED_PATH_SEPARATOR
-            + this.botid;
+        return InputNormalizer.patternFit(this.pattern) + SPACED_PATH_SEPARATOR + InputNormalizer.patternFit(this.that)
+                + SPACED_PATH_SEPARATOR + InputNormalizer.patternFit(this.topic) + SPACED_PATH_SEPARATOR + this.botid;
     }
 
     /**
-     *  Returns the match-resulting nodemapper.
-     *
-     *  @return the match-resulting nodemapper
+     * Returns the match-resulting nodemapper.
+     * 
+     * @return the match-resulting nodemapper
      */
 
     public Nodemapper getNodemapper()
@@ -203,9 +204,9 @@ public class Match
     }
 
     /**
-     *  Gets the template attached to this node.
-     *
-     *  @return the &lt;template/&gt; attached to this node
+     * Gets the template attached to this node.
+     * 
+     * @return the &lt;template/&gt; attached to this node
      */
     public String getTemplate()
     {
@@ -213,9 +214,9 @@ public class Match
     }
 
     /**
-     *  Gets the filename from which the &lt;template/&gt; originally came.
-     *
-     *  @return the filename from which the &lt;template/&gt; originally came
+     * Gets the filename from which the &lt;template/&gt; originally came.
+     * 
+     * @return the filename from which the &lt;template/&gt; originally came
      */
     public String getFileName()
     {
@@ -223,9 +224,9 @@ public class Match
     }
 
     /**
-     *  Returns the input stars.
-     *
-     *  @return the input stars
+     * Returns the input stars.
+     * 
+     * @return the input stars
      */
     public ArrayList getInputStars()
     {
@@ -233,9 +234,9 @@ public class Match
     }
 
     /**
-     *  Returns the &lt;that/&gt; stars.
-     *
-     *  @return the &lt;that/&gt; stars
+     * Returns the &lt;that/&gt; stars.
+     * 
+     * @return the &lt;that/&gt; stars
      */
     public ArrayList getThatStars()
     {
@@ -243,9 +244,9 @@ public class Match
     }
 
     /**
-     *  Returns the &lt;topic/&gt; stars.
-     *
-     *  @return the &lt;topic/&gt; stars
+     * Returns the &lt;topic/&gt; stars.
+     * 
+     * @return the &lt;topic/&gt; stars
      */
     public ArrayList getTopicStars()
     {

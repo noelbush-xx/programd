@@ -1,22 +1,19 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.util;
 
 /**
- *  This is a simple data type for describing some characteristics
- *  of an XML resource that will be written using XMLWriter.
- *
- *  @author Noel Bush
+ * This is a simple data type for describing some characteristics of an XML
+ * resource that will be written using XMLWriter.
+ * 
+ * @author Noel Bush
  */
 public class XMLResourceSpec implements Cloneable
 {
@@ -39,9 +36,8 @@ public class XMLResourceSpec implements Cloneable
     public String dtd;
 
     /**
-     *  A &quot;back-link&quot; for the XML resource: that is,
-     *  a URI for another resource that should be presented as a
-     *  &quot;previous&quot; link.
+     * A &quot;back-link&quot; for the XML resource: that is, a URI for another
+     * resource that should be presented as a &quot;previous&quot; link.
      */
     public String backlink;
 
@@ -55,33 +51,16 @@ public class XMLResourceSpec implements Cloneable
     public boolean rolloverAtRestart = false;
 
     /** Base URL for resources (stylesheets, etc.). */
-    private static final String RESOURCE_BASE =
-        Globals.getProperty(
-            "programd.logging.xml.resource-base",
+    private static final String RESOURCE_BASE = Globals.getProperty("programd.logging.xml.resource-base",
             "../resources/");
 
     /** A DTD for HTML entities. */
-    public static final String HTML_ENTITIES_DTD =
-        "<!DOCTYPE ALLOW_HTML_ENTITIES ["
-            + " <!ENTITY % HTMLlat1 PUBLIC"
-            + " \"-//W3C//ENTITIES Latin1//EN//HTML\""
-            + "   \""
-            + RESOURCE_BASE
-            + "DTD/xhtml-lat1.ent\">"
-            + " %HTMLlat1;"
-            + " <!ENTITY % HTMLsymbol PUBLIC"
-            + "   \"-//W3C//ENTITIES Symbols//EN//HTML\""
-            + "   \""
-            + RESOURCE_BASE
-            + "DTD/xhtml-symbol.ent\">"
-            + " %HTMLsymbol;"
-            + " <!ENTITY % HTMLspecial PUBLIC"
-            + "   \"-//W3C//ENTITIES Special//EN//HTML\""
-            + "   \""
-            + RESOURCE_BASE
-            + "DTD/xhtml-special.ent\">"
-            + " %HTMLspecial;"
-            + " ]>";
+    public static final String HTML_ENTITIES_DTD = "<!DOCTYPE ALLOW_HTML_ENTITIES [" + " <!ENTITY % HTMLlat1 PUBLIC"
+            + " \"-//W3C//ENTITIES Latin1//EN//HTML\"" + "   \"" + RESOURCE_BASE + "DTD/xhtml-lat1.ent\">"
+            + " %HTMLlat1;" + " <!ENTITY % HTMLsymbol PUBLIC" + "   \"-//W3C//ENTITIES Symbols//EN//HTML\"" + "   \""
+            + RESOURCE_BASE + "DTD/xhtml-symbol.ent\">" + " %HTMLsymbol;" + " <!ENTITY % HTMLspecial PUBLIC"
+            + "   \"-//W3C//ENTITIES Special//EN//HTML\"" + "   \"" + RESOURCE_BASE + "DTD/xhtml-special.ent\">"
+            + " %HTMLspecial;" + " ]>";
 
     public XMLResourceSpec()
     {
@@ -91,19 +70,14 @@ public class XMLResourceSpec implements Cloneable
     public Object clone()
     {
         XMLResourceSpec myClone = new XMLResourceSpec();
-        myClone.description =
-            this.description == null ? null : new String(this.description);
+        myClone.description = this.description == null ? null : new String(this.description);
         myClone.path = this.path == null ? null : new String(this.path);
         myClone.root = this.root == null ? null : new String(this.root);
-        myClone.stylesheet =
-            this.stylesheet == null ? null : new String(this.stylesheet);
-        myClone.encoding =
-            this.encoding == null ? null : new String(this.encoding);
+        myClone.stylesheet = this.stylesheet == null ? null : new String(this.stylesheet);
+        myClone.encoding = this.encoding == null ? null : new String(this.encoding);
         myClone.dtd = this.dtd == null ? null : new String(this.dtd);
-        myClone.backlink =
-            this.backlink == null ? null : new String(this.backlink);
-        myClone.starttime =
-            this.starttime == null ? null : new String(this.starttime);
+        myClone.backlink = this.backlink == null ? null : new String(this.backlink);
+        myClone.starttime = this.starttime == null ? null : new String(this.starttime);
         myClone.rolloverAtMax = this.rolloverAtMax;
         myClone.rolloverAtRestart = this.rolloverAtRestart;
         return myClone;

@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.bot;
 
@@ -18,8 +15,8 @@ import java.util.Iterator;
 import org.aitools.programd.util.Trace;
 
 /**
- *  Controls processes that run in separate threads
- *  and need to be shut down before the bot exits.
+ * Controls processes that run in separate threads and need to be shut down
+ * before the bot exits.
  */
 public class BotProcesses
 {
@@ -27,10 +24,12 @@ public class BotProcesses
     private static HashMap registry = new HashMap();
 
     /**
-     *  Adds a process to the registry and starts it.
-     *
-     *  @param process  the process to add
-     *  @param name     a name by which its thread will be identified
+     * Adds a process to the registry and starts it.
+     * 
+     * @param process
+     *            the process to add
+     * @param name
+     *            a name by which its thread will be identified
      */
     public static void start(BotProcess process, String name)
     {
@@ -45,9 +44,9 @@ public class BotProcesses
     }
 
     /**
-     *  Returns an iterator on the registry.
-     *
-     *  @return an iterator on the registry
+     * Returns an iterator on the registry.
+     * 
+     * @return an iterator on the registry
      */
     public static Iterator getRegistryIterator()
     {
@@ -55,11 +54,11 @@ public class BotProcesses
     }
 
     /**
-     *  Returns a given process.
-     *
-     *  @param name the name of the process
-     *
-     *  @return the process assigned to the name
+     * Returns a given process.
+     * 
+     * @param name
+     *            the name of the process
+     * @return the process assigned to the name
      */
     public static BotProcess get(String name)
     {
@@ -67,7 +66,7 @@ public class BotProcesses
     }
 
     /**
-     *  Shuts down all registered processes.
+     * Shuts down all registered processes.
      */
     public static void shutdownAll()
     {
@@ -83,7 +82,7 @@ public class BotProcesses
     }
 
     /**
-     *  Prevents instantiation of this class.
+     * Prevents instantiation of this class.
      */
     private BotProcesses()
     {

@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.agent.logger;
 
@@ -22,17 +19,17 @@ import org.aitools.programd.util.XMLKit;
 import org.aitools.programd.util.logging.XMLLog;
 
 /**
- *  Provides a logging method that generates XML-formatted exchanges.
- *
- *  @author  Noel Bush
+ * Provides a logging method that generates XML-formatted exchanges.
+ * 
+ * @author Noel Bush
  */
 public class XMLLogger
 {
     // Class variables.
 
     /** The timestamp format for logging. */
-    private static final String TIMESTAMP_LOG_FORMAT =
-        Globals.getProperty("programd.logging.timestamp-format", "yyyy-MM-dd H:mm:ss");
+    private static final String TIMESTAMP_LOG_FORMAT = Globals.getProperty("programd.logging.timestamp-format",
+            "yyyy-MM-dd H:mm:ss");
 
     /** The start of an exchange. */
     private static final String EXCHANGE_START = "<exchange>";
@@ -88,49 +85,12 @@ public class XMLLogger
         String clientName = PredicateMaster.get(Globals.getClientNamePredicate(), userid, botid);
 
         // Log the exchange.
-        XMLLog.log(
-            INDENT
-                + EXCHANGE_START
-                + LINE_SEPARATOR
-                + INDENT
-                + INDENT
-                + TIMESTAMP_START
-                + new SimpleDateFormat(TIMESTAMP_LOG_FORMAT).format(new Date()).trim()
-                + TIMESTAMP_END
-                + LINE_SEPARATOR
-                + INDENT
-                + INDENT
-                + USERID_START
-                + userid
-                + USERID_END
-                + LINE_SEPARATOR
-                + INDENT
-                + INDENT
-                + CLIENTNAME_START
-                + clientName
-                + CLIENTNAME_END
-                + LINE_SEPARATOR
-                + INDENT
-                + INDENT
-                + BOTID_START
-                + botid
-                + BOTID_END
-                + LINE_SEPARATOR
-                + INDENT
-                + INDENT
-                + INPUT_START
-                + XMLKit.escapeXMLChars(input)
-                + INPUT_END
-                + LINE_SEPARATOR
-                + INDENT
-                + INDENT
-                + RESPONSE_START
-                + response
-                + RESPONSE_END
-                + LINE_SEPARATOR
-                + INDENT
-                + EXCHANGE_END
-                + LINE_SEPARATOR,
-            Bots.getBot(botid).getChatlogSpec());
+        XMLLog.log(INDENT + EXCHANGE_START + LINE_SEPARATOR + INDENT + INDENT + TIMESTAMP_START
+                + new SimpleDateFormat(TIMESTAMP_LOG_FORMAT).format(new Date()).trim() + TIMESTAMP_END + LINE_SEPARATOR
+                + INDENT + INDENT + USERID_START + userid + USERID_END + LINE_SEPARATOR + INDENT + INDENT
+                + CLIENTNAME_START + clientName + CLIENTNAME_END + LINE_SEPARATOR + INDENT + INDENT + BOTID_START
+                + botid + BOTID_END + LINE_SEPARATOR + INDENT + INDENT + INPUT_START + XMLKit.escapeXMLChars(input)
+                + INPUT_END + LINE_SEPARATOR + INDENT + INDENT + RESPONSE_START + response + RESPONSE_END
+                + LINE_SEPARATOR + INDENT + EXCHANGE_END + LINE_SEPARATOR, Bots.getBot(botid).getChatlogSpec());
     }
 }

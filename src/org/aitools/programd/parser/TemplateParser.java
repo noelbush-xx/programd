@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.parser;
 
@@ -21,21 +18,33 @@ import org.aitools.programd.util.Globals;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  <code>TemplateParser</code> is still a primitive class, implementing not a
- *  &quot;real&quot; XML parser, but just enough (hopefully) to get the job done.
+ * <code>TemplateParser</code> is still a primitive class, implementing not a
+ * &quot;real&quot; XML parser, but just enough (hopefully) to get the job done.
  */
 public class TemplateParser extends GenericParser
 {
-    /** The values captured from the input by wildcards in the <code>pattern</code>. */
+    /**
+     * The values captured from the input by wildcards in the
+     * <code>pattern</code>.
+     */
     private ArrayList inputStars = new ArrayList();
 
-    /** The values captured from the input path by wildcards in the <code>that</code>. */
+    /**
+     * The values captured from the input path by wildcards in the
+     * <code>that</code>.
+     */
     private ArrayList thatStars = new ArrayList();
 
-    /** The values captured from the input path by wildcards in the <code>topic</code>. */
+    /**
+     * The values captured from the input path by wildcards in the
+     * <code>topic</code>.
+     */
     private ArrayList topicStars = new ArrayList();
 
-    /** The input that matched the <code>pattern</code> associated with this template (helps to avoid endless loops). */
+    /**
+     * The input that matched the <code>pattern</code> associated with this
+     * template (helps to avoid endless loops).
+     */
     private ArrayList inputs = new ArrayList();
 
     /** The userid for which this parser is used. */
@@ -45,16 +54,16 @@ public class TemplateParser extends GenericParser
     private String botid;
 
     /**
-     *  Initializes an <code>TemplateParser</code>.
-     *  The <code>input</code> is a required parameter!
-     *
-     *  @param input    the input that matched the <code>pattern</code>
-     *                  associated with this template (helps to avoid endless loops)
-     *
-     *  @throws TemplateParserException if the <code>input</code> is null
+     * Initializes an <code>TemplateParser</code>. The <code>input</code>
+     * is a required parameter!
+     * 
+     * @param input
+     *            the input that matched the <code>pattern</code> associated
+     *            with this template (helps to avoid endless loops)
+     * @throws TemplateParserException
+     *             if the <code>input</code> is null
      */
-    public TemplateParser(String input, String useridToUse, String botidToUse)
-        throws TemplateParserException
+    public TemplateParser(String input, String useridToUse, String botidToUse) throws TemplateParserException
     {
         if (input == null)
         {
@@ -67,14 +76,15 @@ public class TemplateParser extends GenericParser
     }
 
     /**
-     *  Processes the AIML within and including a given AIML element.
-     *
-     *  @param level    the current level in the XML trie
-     *  @param tag      the tag being evaluated
-     *
-     *  @return the result of processing the tag
-     *
-     *  @throws AIMLProcessorException if the AIML cannot be processed
+     * Processes the AIML within and including a given AIML element.
+     * 
+     * @param level
+     *            the current level in the XML trie
+     * @param tag
+     *            the tag being evaluated
+     * @return the result of processing the tag
+     * @throws AIMLProcessorException
+     *             if the AIML cannot be processed
      */
     public String processTag(int level, XMLNode tag) throws ProcessorException
     {
@@ -90,11 +100,7 @@ public class TemplateParser extends GenericParser
             {
                 try
                 {
-                    return DeprecatedAIMLParser.processTag(
-                        level,
-                        this.userid,
-                        tag,
-                        this);
+                    return DeprecatedAIMLParser.processTag(level, this.userid, tag, this);
                 }
                 catch (UnknownDeprecatedAIMLException e1)
                 {
@@ -107,8 +113,7 @@ public class TemplateParser extends GenericParser
                 // If namespace qualification is required, check for a colon.
                 if (tag.XMLData.indexOf(COLON) == -1)
                 {
-                    throw new AIMLProcessorException(
-                        "Unknown element \"" + tag.XMLData + "\"");
+                    throw new AIMLProcessorException("Unknown element \"" + tag.XMLData + "\"");
                 }
             }
             // But if namespace qualification is not required, don't care.
@@ -116,17 +121,16 @@ public class TemplateParser extends GenericParser
         }
         catch (StackOverflowError e)
         {
-            Log.userinfo(
-                "Stack overflow error processing " + tag.XMLData + " tag.",
-                Log.ERROR);
+            Log.userinfo("Stack overflow error processing " + tag.XMLData + " tag.", Log.ERROR);
             return EMPTY_STRING;
         }
     }
 
     /**
-     *  Adds an input to the inputs list (for avoiding infinite loops).
-     *
-     *  @param input    the input to add
+     * Adds an input to the inputs list (for avoiding infinite loops).
+     * 
+     * @param input
+     *            the input to add
      */
     public void addInput(String input)
     {
@@ -134,9 +138,11 @@ public class TemplateParser extends GenericParser
     }
 
     /**
-     *  Returns the input that matched the <code>pattern</code> associated with this template.
-     *
-     *  @return the input that matched the <code>pattern</code> associated with this template
+     * Returns the input that matched the <code>pattern</code> associated with
+     * this template.
+     * 
+     * @return the input that matched the <code>pattern</code> associated with
+     *         this template
      */
     public ArrayList getInputs()
     {
@@ -144,9 +150,11 @@ public class TemplateParser extends GenericParser
     }
 
     /**
-     *  Returns the values captured from the input path by wildcards in the <code>pattern</code>.
-     *
-     *  @return the values captured from the input path by wildcards in the <code>pattern</code>
+     * Returns the values captured from the input path by wildcards in the
+     * <code>pattern</code>.
+     * 
+     * @return the values captured from the input path by wildcards in the
+     *         <code>pattern</code>
      */
     public ArrayList getInputStars()
     {
@@ -154,9 +162,11 @@ public class TemplateParser extends GenericParser
     }
 
     /**
-     *  Returns the the values captured from the input path by wildcards in the <code>that</code>.
-     *
-     *  @return the values captured from the input path by wildcards in the <code>that</code>
+     * Returns the the values captured from the input path by wildcards in the
+     * <code>that</code>.
+     * 
+     * @return the values captured from the input path by wildcards in the
+     *         <code>that</code>
      */
     public ArrayList getThatStars()
     {
@@ -164,9 +174,11 @@ public class TemplateParser extends GenericParser
     }
 
     /**
-     *  Returns the values captured from the input path by wildcards in the <code>topic name</code>.
-     *
-     *  @return the values captured from the input path by wildcards in the <code>topic name</code>
+     * Returns the values captured from the input path by wildcards in the
+     * <code>topic name</code>.
+     * 
+     * @return the values captured from the input path by wildcards in the
+     *         <code>topic name</code>
      */
     public ArrayList getTopicStars()
     {
@@ -174,9 +186,11 @@ public class TemplateParser extends GenericParser
     }
 
     /**
-     *  Sets the <code>inputStars</code> list.
-     *
-     *  @param  values captured from the input path by wildcards in the <code>pattern</code>
+     * Sets the <code>inputStars</code> list.
+     * 
+     * @param stars
+     *            values captured from the input path by wildcards in the
+     *            <code>pattern</code>
      */
     public void setInputStars(ArrayList stars)
     {
@@ -184,9 +198,11 @@ public class TemplateParser extends GenericParser
     }
 
     /**
-     *  Sets the <code>thatStars</code> list.
-     *
-     *  @param  values captured from the input path by wildcards in the <code>that</code>
+     * Sets the <code>thatStars</code> list.
+     * 
+     * @param stars
+     *            values captured from the input path by wildcards in the
+     *            <code>that</code>
      */
     public void setThatStars(ArrayList stars)
     {
@@ -194,9 +210,11 @@ public class TemplateParser extends GenericParser
     }
 
     /**
-     *  Sets the <code>topicStars</code> Vector.
-     *
-     *  @param  values captured from the input path by wildcards in the <code>topic name</code>
+     * Sets the <code>topicStars</code> Vector.
+     * 
+     * @param stars
+     *            captured from the input path by wildcards in the
+     *            <code>topic name</code>
      */
     public void setTopicStars(ArrayList stars)
     {
@@ -204,9 +222,9 @@ public class TemplateParser extends GenericParser
     }
 
     /**
-     *  Returns the userid.
-     *
-     *  @return the userid
+     * Returns the userid.
+     * 
+     * @return the userid
      */
     public String getUserID()
     {
@@ -214,9 +232,9 @@ public class TemplateParser extends GenericParser
     }
 
     /**
-     *  Returns the botid.
-     *
-     *  @return the botid
+     * Returns the botid.
+     * 
+     * @return the botid
      */
     public String getBotID()
     {

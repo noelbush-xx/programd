@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.loader;
 
@@ -26,12 +23,11 @@ import org.aitools.programd.util.Globals;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  Watches a set of AIML files. Any file changes will be loaded
- *  automatically.
- *
- *  @author Jon Baer
- *  @author Noel Bush
- *  @version 4.1.3
+ * Watches a set of AIML files. Any file changes will be loaded automatically.
+ * 
+ * @author Jon Baer
+ * @author Noel Bush
+ * @version 4.1.3
  */
 public class AIMLWatcher
 {
@@ -45,7 +41,7 @@ public class AIMLWatcher
     protected HashMap watchMaps = new HashMap();
 
     /**
-     *  Prevents anyone but itself from constructing an AIMLWatcher.
+     * Prevents anyone but itself from constructing an AIMLWatcher.
      */
     private AIMLWatcher()
     {
@@ -58,24 +54,21 @@ public class AIMLWatcher
     }
 
     /**
-     *  Initializes the AIMLWatcher timer as a daemon.
-     *  Waits 10 seconds before starting it.
+     * Initializes the AIMLWatcher timer as a daemon. Waits 10 seconds before
+     * starting it.
      */
     private void startTimer()
     {
         if (this.timer == null)
         {
             this.timer = new Timer(true);
-            this.timer.schedule(
-                new CheckAIMLTask(),
-                0,
-                Integer.parseInt(
-                    Globals.getProperty("programd.watcher.timer")));
+            this.timer
+                    .schedule(new CheckAIMLTask(), 0, Integer.parseInt(Globals.getProperty("programd.watcher.timer")));
         }
     }
 
     /**
-     *  Prohibits cloning this class.
+     * Prohibits cloning this class.
      */
     protected Object clone() throws CloneNotSupportedException
     {
@@ -83,10 +76,12 @@ public class AIMLWatcher
     }
 
     /**
-     *  Reloads AIML from a given file.
-     *
-     *  @param file     the file to reload
-     *  @param botid    the bot for whom to reload the file
+     * Reloads AIML from a given file.
+     * 
+     * @param file
+     *            the file to reload
+     * @param botid
+     *            the bot for whom to reload the file
      */
     protected void reload(File file, String botid)
     {
@@ -104,10 +99,11 @@ public class AIMLWatcher
     }
 
     /**
-     *  Adds a file to the watchlist.
-     *
-     *  @param path the path to the file
-     *  @param botid
+     * Adds a file to the watchlist.
+     * 
+     * @param path
+     *            the path to the file
+     * @param botid
      */
     public static void addWatchFile(String path, String botid)
     {
@@ -118,15 +114,12 @@ public class AIMLWatcher
             {
                 myself.watchMaps.put(botid, new HashMap());
             }
-            ((HashMap) myself.watchMaps.get(botid)).put(
-                theFile,
-                new Long(theFile.lastModified()));
+            ((HashMap) myself.watchMaps.get(botid)).put(theFile, new Long(theFile.lastModified()));
         }
     }
 
     /**
-     *  A {@link java.util.TimerTask TimerTask} for checking
-     *  changed AIML files.
+     * A {@link java.util.TimerTask TimerTask}for checking changed AIML files.
      */
     private class CheckAIMLTask extends TimerTask
     {
@@ -168,7 +161,8 @@ public class AIMLWatcher
                     }
                 }
             }
-            // This, unfortunately, seems to be the only way to prevent a memory leak.
+            // This, unfortunately, seems to be the only way to prevent a memory
+            // leak.
             System.gc();
         }
     }

@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.agent.listener;
 
@@ -28,16 +25,14 @@ import org.aitools.programd.util.Trace;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  This code is from the Everybuddy Java Project
- *  by Chris Carlin (http://EBJava.sourceforge.net/)
- *  modified to work with a Program D server.
- *
- *  @author Chris Carlin
- *  @author Jon Baer
- *  @author Noel Bush
- *
- *  @see <a href="http://EBJava.sourceforge.net/">http://EBJava.sourceforge.net/</a>
- *  @version 1.0
+ * This code is from the Everybuddy Java Project by Chris Carlin
+ * (http://EBJava.sourceforge.net/) modified to work with a Program D server.
+ * 
+ * @author Chris Carlin
+ * @author Jon Baer
+ * @author Noel Bush
+ * @see <a href="http://EBJava.sourceforge.net/">Everybuddy </a>
+ * @version 1.0
  */
 public class ICQListener extends Listener
 {
@@ -87,15 +82,17 @@ public class ICQListener extends Listener
     private static final String MSG = "ProgramD-ICQ: ";
 
     /**
-     *  Creates a new ICQListener chat listener for a given bot.
-     *
-     *  @param botToListen	the bot for whom to listen
+     * Creates a new ICQListener chat listener for a given bot.
+     * 
+     * @param botToListen
+     *            the bot for whom to listen
      */
     public ICQListener(Bot botToListen)
     {
-        super(botToListen, "ICQListener", new String[][] { { "number", "" }, {
-                "password", "" }
-        });
+        super(botToListen, "ICQListener", new String[][]
+            {
+                { "number", "" },
+                { "password", "" } });
     }
 
     public boolean checkParameters()
@@ -127,7 +124,7 @@ public class ICQListener extends Listener
     }
 
     /**
-     *  Please document this.
+     * Please document this.
      */
     public void run()
     {
@@ -150,12 +147,7 @@ public class ICQListener extends Listener
             stream.write(toBytes((short) 0x3E));
             stream.write(toBytes(0));
             stream.write(toBytes(0x780000));
-            this.socket.send(
-                new DatagramPacket(
-                    stream.toByteArray(),
-                    stream.size(),
-                    serverAddy,
-                    SERVERPORT));
+            this.socket.send(new DatagramPacket(stream.toByteArray(), stream.size(), serverAddy, SERVERPORT));
             stream.close();
 
             this.buffer = new byte[10];
@@ -184,18 +176,15 @@ public class ICQListener extends Listener
             {
                 if (this.buffer[2] != (byte) 0x0A || this.buffer[3] != (byte) 0x00)
                 {
-                    logMessage(
-                        "No Login Reply: "
-                            + this.buffer[2]
-                            + " "
-                            + this.buffer[3]);
+                    logMessage("No Login Reply: " + this.buffer[2] + " " + this.buffer[3]);
                     return;
                 }
             }
             this.online = true;
             logMessage("Successfully logged on.");
 
-            toICQ(new byte[] {(byte) 0x4c, (byte) 0x4 });
+            toICQ(new byte[]
+                { (byte) 0x4c, (byte) 0x4 });
 
             ProgramDICQKeepAlive keepAlive = new ProgramDICQKeepAlive(this);
             keepAlive.setDaemon(true);
@@ -212,16 +201,12 @@ public class ICQListener extends Listener
                     this.buffer = this.packet.getData();
 
                     if ((this.buffer[0] == (byte) 0x2 && this.buffer[1] == (byte) 0x0)
-                        && !(this.buffer[2] == (byte) 0xA && this.buffer[3] == (byte) 0x0))
+                            && !(this.buffer[2] == (byte) 0xA && this.buffer[3] == (byte) 0x0))
                     {
                         fromICQ(this.buffer);
                         ack(this.buffer[4], this.buffer[5]);
-                        Log.devinfo(
-                            "ICQListener: ICQ Command in: "
-                                + Integer.toHexString(this.buffer[2])
-                                + " "
-                                + Integer.toHexString(this.buffer[3]),
-                            Log.LISTENERS);
+                        Log.devinfo("ICQListener: ICQ Command in: " + Integer.toHexString(this.buffer[2]) + " "
+                                + Integer.toHexString(this.buffer[3]), Log.LISTENERS);
                     }
                 }
                 catch (InterruptedIOException e)
@@ -251,7 +236,7 @@ public class ICQListener extends Listener
     }
 
     /**
-     *  Please document this.
+     * Please document this.
      */
     public void toICQ(byte[] msgBuffer) throws IOException
     {
@@ -262,28 +247,18 @@ public class ICQListener extends Listener
         stream.write(toBytes(this.seqNo));
         stream.write(toBytes(this.uin));
         this.seqNo = (short) ((this.seqNo + 1) & 0xFFFF);
-        Log.devinfo(
-            MSG
-                + "ICQ Command out: "
-                + Integer.toHexString(msgBuffer[0])
-                + " "
-                + Integer.toHexString(msgBuffer[1]),
-            Log.LISTENERS);
+        Log.devinfo(MSG + "ICQ Command out: " + Integer.toHexString(msgBuffer[0]) + " "
+                + Integer.toHexString(msgBuffer[1]), Log.LISTENERS);
         Trace.devinfo("Buffer length: " + msgBuffer.length);
         if (msgBuffer.length > 2)
         {
             stream.write(msgBuffer, 2, msgBuffer.length - 2);
         }
-        this.socket.send(
-            new DatagramPacket(
-                stream.toByteArray(),
-                stream.size(),
-                serverAddy,
-                SERVERPORT));
+        this.socket.send(new DatagramPacket(stream.toByteArray(), stream.size(), serverAddy, SERVERPORT));
     }
 
     /**
-     *  Please document this.
+     * Please document this.
      */
     private void fromICQ(byte[] msgBuffer)
     {
@@ -292,22 +267,18 @@ public class ICQListener extends Listener
 
         if (msgBuffer[2] == (byte) 0x6E && msgBuffer[3] == (byte) 0x00)
         {
-            from =
-                ((msgBuffer[6]) & 0xFF)
-                    + ((msgBuffer[7] << 8) & 0xFF00)
-                    + ((msgBuffer[8] << 16) & 0xFF0000)
+            from = ((msgBuffer[6]) & 0xFF) + ((msgBuffer[7] << 8) & 0xFF00) + ((msgBuffer[8] << 16) & 0xFF0000)
                     + ((msgBuffer[9] << 24) & 0xFF000000);
-            // String ip  = ((int)(buffer[10])&0xFF)+"."+((int)(buffer[11])&0xFF)+"."+((int)(buffer[12])&0xFF)+"."+((int)(buffer[13])&0xFF);
-            // int port = ((buffer[14])&0xFF) + ((buffer[15]<<8)&0xFF00) + ((buffer[16]<<16)&0xFF0000) + ((buffer[17]<<24)&0xFF000000);
+            // String ip =
+            // ((int)(buffer[10])&0xFF)+"."+((int)(buffer[11])&0xFF)+"."+((int)(buffer[12])&0xFF)+"."+((int)(buffer[13])&0xFF);
+            // int port = ((buffer[14])&0xFF) + ((buffer[15]<<8)&0xFF00) +
+            // ((buffer[16]<<16)&0xFF0000) + ((buffer[17]<<24)&0xFF000000);
             // ebnet.updateStat(Integer.toString(uin),"IC",true);
             return;
         }
         else if (msgBuffer[2] == (byte) 0x78 && msgBuffer[3] == (byte) 0x00)
         {
-            from =
-                ((msgBuffer[6]) & 0xFF)
-                    + ((msgBuffer[7] << 8) & 0xFF00)
-                    + ((msgBuffer[8] << 16) & 0xFF0000)
+            from = ((msgBuffer[6]) & 0xFF) + ((msgBuffer[7] << 8) & 0xFF00) + ((msgBuffer[8] << 16) & 0xFF0000)
                     + ((msgBuffer[9] << 24) & 0xFF000000);
             // ebnet.updateStat(Integer.toString(uin),"IC",false);
             return;
@@ -316,7 +287,8 @@ public class ICQListener extends Listener
         {
             try
             {
-                toICQ(new byte[] {(byte) 0x42, (byte) 0x4 });
+                toICQ(new byte[]
+                    { (byte) 0x42, (byte) 0x4 });
             }
             catch (IOException e)
             {
@@ -326,36 +298,23 @@ public class ICQListener extends Listener
         }
         else if (msgBuffer[2] == (byte) 0xDC && msgBuffer[3] == (byte) 0x00)
         {
-            from =
-                ((msgBuffer[6]) & 0xFF)
-                    + ((msgBuffer[7] << 8) & 0xFF00)
-                    + ((msgBuffer[8] << 16) & 0xFF0000)
+            from = ((msgBuffer[6]) & 0xFF) + ((msgBuffer[7] << 8) & 0xFF00) + ((msgBuffer[8] << 16) & 0xFF0000)
                     + ((msgBuffer[9] << 24) & 0xFF000000);
-            short length =
-                (short) (((msgBuffer[18]) & 0xFF) + ((msgBuffer[19] << 8) & 0xFF00));
+            short length = (short) (((msgBuffer[18]) & 0xFF) + ((msgBuffer[19] << 8) & 0xFF00));
             message = new String(msgBuffer, 20, length - 1);
             logMessage("Message from [" + from + "]: " + message);
             return;
         }
         else if (msgBuffer[2] == (byte) 0x04 && msgBuffer[3] == (byte) 0x01)
         {
-            from =
-                ((msgBuffer[6]) & 0xFF)
-                    + ((msgBuffer[7] << 8) & 0xFF00)
-                    + ((msgBuffer[8] << 16) & 0xFF0000)
+            from = ((msgBuffer[6]) & 0xFF) + ((msgBuffer[7] << 8) & 0xFF00) + ((msgBuffer[8] << 16) & 0xFF0000)
                     + ((msgBuffer[9] << 24) & 0xFF000000);
-            short length =
-                (short) (((msgBuffer[12]) & 0xFF) + ((msgBuffer[13] << 8) & 0xFF00));
+            short length = (short) (((msgBuffer[12]) & 0xFF) + ((msgBuffer[13] << 8) & 0xFF00));
             message = new String(msgBuffer, 14, length - 1);
             logMessage("Message from [" + from + "]: " + message);
             if (message != null)
             {
-                String botResponse =
-                    Multiplexor.getResponse(
-                        message,
-                        from + _ICQ,
-                        this.botID,
-                        new TextResponder());
+                String botResponse = Multiplexor.getResponse(message, from + _ICQ, this.botID, new TextResponder());
                 sendMesg(from, botResponse);
             }
             return;
@@ -367,11 +326,11 @@ public class ICQListener extends Listener
     }
 
     /**
-     *  Converts a <code>short</code> to a <code>byte[]</code>.
-     *
-     * 	@param x	the short to convert
-     *
-     * 	@return the short as a byte[]
+     * Converts a <code>short</code> to a <code>byte[]</code>.
+     * 
+     * @param x
+     *            the short to convert
+     * @return the short as a byte[]
      */
     public static byte[] toBytes(short x)
     {
@@ -382,11 +341,11 @@ public class ICQListener extends Listener
     }
 
     /**
-     *  Converts an <code>int</code> to a <code>byte[]</code>.
-     *
-     * 	@param x	the int to convert
-     *
-     * 	@return the int as a byte[]
+     * Converts an <code>int</code> to a <code>byte[]</code>.
+     * 
+     * @param x
+     *            the int to convert
+     * @return the int as a byte[]
      */
     public static byte[] toBytes(int x)
     {
@@ -418,18 +377,12 @@ public class ICQListener extends Listener
         stream.write(a);
         stream.write(b);
         stream.write(toBytes(this.uin));
-        this.socket.send(
-            new DatagramPacket(
-                stream.toByteArray(),
-                stream.size(),
-                serverAddy,
-                SERVERPORT));
+        this.socket.send(new DatagramPacket(stream.toByteArray(), stream.size(), serverAddy, SERVERPORT));
     }
 
     public void send(byte[] msgBuffer) throws IOException
     {
-        this.socket.send(
-            new DatagramPacket(msgBuffer, msgBuffer.length, serverAddy, SERVERPORT));
+        this.socket.send(new DatagramPacket(msgBuffer, msgBuffer.length, serverAddy, SERVERPORT));
     }
 
     public void sendMesg(int to, String mesg)
@@ -465,12 +418,7 @@ public class ICQListener extends Listener
             stream.write(toBytes((short) 0x20));
             stream.write((new String("B_USER_DISCONNECTED\0")).getBytes());
             stream.write(toBytes((short) 0x5));
-            this.socket.send(
-                new DatagramPacket(
-                    stream.toByteArray(),
-                    stream.size(),
-                    serverAddy,
-                    SERVERPORT));
+            this.socket.send(new DatagramPacket(stream.toByteArray(), stream.size(), serverAddy, SERVERPORT));
             stream.close();
             //tcpSocket.close();
         }
@@ -484,9 +432,10 @@ public class ICQListener extends Listener
     }
 
     /**
-     *  Standard method for logging and notifying of a message.
-     *
-     *  @param message	the message
+     * Standard method for logging and notifying of a message.
+     * 
+     * @param message
+     *            the message
      */
     private void logMessage(String message)
     {

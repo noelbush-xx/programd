@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.util.logging;
 
@@ -19,10 +16,10 @@ import org.aitools.programd.util.XMLResourceSpec;
 import org.aitools.programd.util.XMLWriter;
 
 /**
- *  Provides a simplistic XML file writing facility.
- *
- *  @author Noel Bush
- *  @version 4.1.3
+ * Provides a simplistic XML file writing facility.
+ * 
+ * @author Noel Bush
+ * @version 4.1.3
  */
 public class XMLLog
 {
@@ -35,43 +32,34 @@ public class XMLLog
     private static HashMap entryCounts = new HashMap();
 
     /** Base URL for resources (stylesheets, etc.). */
-    private static final String RESOURCE_BASE =
-        Globals.getProperty(
-            "programd.logging.xml.resource-base",
+    private static final String RESOURCE_BASE = Globals.getProperty("programd.logging.xml.resource-base",
             "../resources/");
 
     /** Generic chat log spec. */
     private static final XMLResourceSpec GENERIC_CHAT = new XMLResourceSpec();
-    static {
+    static
+    {
         GENERIC_CHAT.description = "Chat Log";
         GENERIC_CHAT.rolloverAtMax = true;
-        GENERIC_CHAT.rolloverAtRestart =
-            Boolean
-                .valueOf(
-                    Globals.getProperty(
-                        "programd.logging.xml.chat.rollover-at-restart",
-                        "true"))
-                .booleanValue();
+        GENERIC_CHAT.rolloverAtRestart = Boolean.valueOf(
+                Globals.getProperty("programd.logging.xml.chat.rollover-at-restart", "true")).booleanValue();
         GENERIC_CHAT.root = "exchanges";
-        GENERIC_CHAT.stylesheet =
-            Globals.getProperty(
-                "programd.logging.xml.chat.stylesheet-path",
-                RESOURCE_BASE + "logs/view-chat.xsl");
-        GENERIC_CHAT.encoding =
-            Globals.getProperty("programd.logging.xml.chat.encoding", ENC_UTF8);
+        GENERIC_CHAT.stylesheet = Globals.getProperty("programd.logging.xml.chat.stylesheet-path", RESOURCE_BASE
+                + "logs/view-chat.xsl");
+        GENERIC_CHAT.encoding = Globals.getProperty("programd.logging.xml.chat.encoding", ENC_UTF8);
         GENERIC_CHAT.dtd = XMLResourceSpec.HTML_ENTITIES_DTD;
     }
 
-    /** Limits the number of responses written to a log file before it is rolled over. */
+    /**
+     * Limits the number of responses written to a log file before it is rolled
+     * over.
+     */
     private static int ROLLOVER;
-    static {
+    static
+    {
         try
         {
-            ROLLOVER =
-                Integer.parseInt(
-                    Globals.getProperty(
-                        "programd.logging.xml.rollover",
-                        "2000"));
+            ROLLOVER = Integer.parseInt(Globals.getProperty("programd.logging.xml.rollover", "2000"));
         }
         catch (NumberFormatException e)
         {
@@ -80,9 +68,9 @@ public class XMLLog
     }
 
     /**
-     *  Returns a generic chat log spec that can be customized.
-     *
-     *  @return a generic chat log spec that can be customized
+     * Returns a generic chat log spec that can be customized.
+     * 
+     * @return a generic chat log spec that can be customized
      */
     public static XMLResourceSpec getChatlogSpecClone()
     {
@@ -90,16 +78,18 @@ public class XMLLog
     }
 
     /**
-     *  Writes a message to an XML log file.  If the number of entries
-     *  has exceeded {@link #ROLLOVER}, the file will be renamed and a
-     *  new file created.  Note that the approach currently used has an
-     *  important defect: it only counts entries during the runtime of
-     *  the bot; it will not count entries in an existing log file, so
-     *  if the bot is restarted many times and {@link #ROLLOVER} is rather
-     *  large, actual logfiles may exceed the limit significantly.
-     *
-     *  @param message  the text of the log event
-     *  @param spec     the log spec
+     * Writes a message to an XML log file. If the number of entries has
+     * exceeded {@link #ROLLOVER}, the file will be renamed and a new file
+     * created. Note that the approach currently used has an important defect:
+     * it only counts entries during the runtime of the bot; it will not count
+     * entries in an existing log file, so if the bot is restarted many times
+     * and {@link #ROLLOVER}is rather large, actual logfiles may exceed the
+     * limit significantly.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param spec
+     *            the log spec
      */
     public static void log(String message, XMLResourceSpec spec)
     {
@@ -127,7 +117,8 @@ public class XMLLog
             }
         }
 
-        // If there is not an entry count, this means we have just restarted -- roll over if necessary.
+        // If there is not an entry count, this means we have just restarted --
+        // roll over if necessary.
         else if (spec.rolloverAtRestart)
         {
             XMLWriter.rollover(spec);

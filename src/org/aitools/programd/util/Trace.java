@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.util;
 
@@ -16,58 +13,57 @@ import java.io.PrintStream;
 import java.util.StringTokenizer;
 
 /**
- *  Notifies of message formatting to the console for tracing and debugging.
- *  There are a lot of very similar, trivial methods here; the only goal
- *  is to save some typing for the developer.
- *
- *  @version 4.1.3
- *  @author Noel Bush
+ * Notifies of message formatting to the console for tracing and debugging.
+ * There are a lot of very similar, trivial methods here; the only goal is to
+ * save some typing for the developer.
+ * 
+ * @version 4.1.3
+ * @author Noel Bush
  */
 public class Trace
 {
     /*
-        General settings for what to show.
-        Note that in any case one may want to check Globals values in
-        the code to decide whether to perform some extra calculations,
-        but these runtime constants will be used within Trace to decide
-        whether to obey a call.
-    */
+     * General settings for what to show. Note that in any case one may want to
+     * check Globals values in the code to decide whether to perform some extra
+     * calculations, but these runtime constants will be used within Trace to
+     * decide whether to obey a call.
+     */
 
-    /** Whether to MessagePrinter.println general user information to the console (if available). */
+    /**
+     * Whether to MessagePrinter.println general user information to the console
+     * (if available).
+     */
     private static final boolean EMIT_USER_INFO = Globals.showConsole();
 
-    /** Whether to MessagePrinter.println user errors to the console (if available). */
+    /**
+     * Whether to MessagePrinter.println user errors to the console (if
+     * available).
+     */
     private static final boolean EMIT_USER_ERRORS = EMIT_USER_INFO;
 
-    /** Whether to MessagePrinter.println general developer info to the console (if available). */
-    private static final boolean EMIT_DEVELOPER_INFO =
-        EMIT_USER_INFO
-            ? Boolean
-                .valueOf(
-                    Globals.getProperty("programd.console.developer", "false"))
-                .booleanValue()
-            : false;
+    /**
+     * Whether to MessagePrinter.println general developer info to the console
+     * (if available).
+     */
+    private static final boolean EMIT_DEVELOPER_INFO = EMIT_USER_INFO ? Boolean.valueOf(
+            Globals.getProperty("programd.console.developer", "false")).booleanValue() : false;
 
-    /** Whether to print caller method names for <i>all</i> messages (not just dev*). */
-    private static final boolean METHOD_NAMES_ALWAYS =
-        EMIT_DEVELOPER_INFO
-            ? Boolean
-                .valueOf(
-                    Globals.getProperty(
-                        "programd.console.developer.method-names-always",
-                        "false"))
-                .booleanValue()
-            : false;
+    /**
+     * Whether to print caller method names for <i>all </i> messages (not just
+     * dev*).
+     */
+    private static final boolean METHOD_NAMES_ALWAYS = EMIT_DEVELOPER_INFO ? Boolean.valueOf(
+            Globals.getProperty("programd.console.developer.method-names-always", "false")).booleanValue() : false;
 
-    /** Whether to MessagePrinter.println developer errors to the console (if available). */
+    /**
+     * Whether to MessagePrinter.println developer errors to the console (if
+     * available).
+     */
     private static final boolean EMIT_DEVELOPER_ERRORS = EMIT_DEVELOPER_INFO;
 
     /** Whether to use message type flags. */
-    private static final boolean SHOW_MESSAGE_FLAGS =
-        Boolean
-            .valueOf(
-                Globals.getProperty("programd.console.message-flags", "true"))
-            .booleanValue();
+    private static final boolean SHOW_MESSAGE_FLAGS = Boolean.valueOf(
+            Globals.getProperty("programd.console.message-flags", "true")).booleanValue();
 
     /** The package name of this class. */
     private static final String THIS_PACKAGE = "org.aitools.programd.util.";
@@ -75,12 +71,10 @@ public class Trace
     //  Built-in messages.
 
     /** The fatal user error message when user error messages are turned off. */
-    private static final String FATAL_USER_UNINFORMATIVE =
-        "Fatal user error. User error messages are turned off.";
+    private static final String FATAL_USER_UNINFORMATIVE = "Fatal user error. User error messages are turned off.";
 
     /** The fatal user error message when user error messages are turned off. */
-    private static final String FATAL_DEVELOPER_UNINFORMATIVE =
-        "Fatal developer error. Developer error messages are turned off.";
+    private static final String FATAL_DEVELOPER_UNINFORMATIVE = "Fatal developer error. Developer error messages are turned off.";
 
     /** The exiting message. */
     private static final String EXITING = "Exiting.";
@@ -91,8 +85,7 @@ public class Trace
     public static final String NO_FLAG = "";
 
     /** Flag for a program message to the console. */
-    public static final String PROGRAM_MESSAGE =
-        SHOW_MESSAGE_FLAGS ? "P " : NO_FLAG;
+    public static final String PROGRAM_MESSAGE = SHOW_MESSAGE_FLAGS ? "P " : NO_FLAG;
 
     /** Flag for a user info message to the console. */
     public static final String USER_INFO = SHOW_MESSAGE_FLAGS ? "u " : NO_FLAG;
@@ -101,12 +94,10 @@ public class Trace
     public static final String USER_ERROR = SHOW_MESSAGE_FLAGS ? "U " : NO_FLAG;
 
     /** Flag for a developer info message to the console. */
-    public static final String DEVELOPER_INFO =
-        SHOW_MESSAGE_FLAGS ? "d " : NO_FLAG;
+    public static final String DEVELOPER_INFO = SHOW_MESSAGE_FLAGS ? "d " : NO_FLAG;
 
     /** Flag for a developer failure message to the console. */
-    public static final String DEVELOPER_ERROR =
-        SHOW_MESSAGE_FLAGS ? "D " : NO_FLAG;
+    public static final String DEVELOPER_ERROR = SHOW_MESSAGE_FLAGS ? "D " : NO_FLAG;
 
     /** Flag for an insistent message. */
     public static final String INSIST = SHOW_MESSAGE_FLAGS ? "! " : NO_FLAG;
@@ -118,9 +109,9 @@ public class Trace
     private static PrintStream outStream = System.out;
 
     /**
-     *  Changes the output stream.
-     *
-     *  @param stream
+     * Changes the output stream.
+     * 
+     * @param out
      */
     public static void setOut(PrintStream out)
     {
@@ -128,9 +119,9 @@ public class Trace
     }
 
     /**
-     *  Notifies of user failures from which recovery is impossible.
-     *
-     *  @param message
+     * Notifies of user failures from which recovery is impossible.
+     * 
+     * @param message
      */
     public static void userfail(String message)
     {
@@ -142,11 +133,7 @@ public class Trace
             }
             else
             {
-                emit(
-                    StackParser.getStackMethodBefore(THIS_PACKAGE, true)
-                        + COLON_SPACE
-                        + message,
-                    USER_ERROR);
+                emit(StackParser.getStackMethodBefore(THIS_PACKAGE, true) + COLON_SPACE + message, USER_ERROR);
             }
         }
         else
@@ -156,9 +143,9 @@ public class Trace
     }
 
     /**
-     *  Notifies of user failures from which recovery is impossible.
-     *
-     *  @param exception
+     * Notifies of user failures from which recovery is impossible.
+     * 
+     * @param e
      */
     public static void userfail(Throwable e)
     {
@@ -173,9 +160,9 @@ public class Trace
     }
 
     /**
-     *  Prints informative message to user.
-     *
-     *  @param message
+     * Prints informative message to user.
+     * 
+     * @param message
      */
     public static void userinfo(String message)
     {
@@ -187,19 +174,15 @@ public class Trace
             }
             else
             {
-                emit(
-                    StackParser.getStackMethodBefore(THIS_PACKAGE, true)
-                        + COLON_SPACE
-                        + message,
-                    USER_INFO);
+                emit(StackParser.getStackMethodBefore(THIS_PACKAGE, true) + COLON_SPACE + message, USER_INFO);
             }
         }
     }
 
     /**
-     *  Prints multi-line informative message to user.
-     *
-     *  @param message
+     * Prints multi-line informative message to user.
+     * 
+     * @param message
      */
     public static void userinfo(String[] message)
     {
@@ -211,29 +194,21 @@ public class Trace
             }
             else
             {
-                emit(
-                    message,
-                    StackParser.getStackMethodBefore(THIS_PACKAGE, true)
-                        + COLON_SPACE,
-                    USER_INFO);
+                emit(message, StackParser.getStackMethodBefore(THIS_PACKAGE, true) + COLON_SPACE, USER_INFO);
             }
         }
     }
 
     /**
-     *  Handle developer failure from which recovery is impossible.
-     *
-     *  @param message
+     * Handle developer failure from which recovery is impossible.
+     * 
+     * @param message
      */
     public static void devfail(String message)
     {
         if (EMIT_DEVELOPER_ERRORS)
         {
-            emit(
-                StackParser.getStackMethodBefore(THIS_PACKAGE, true)
-                    + COLON_SPACE
-                    + message,
-                DEVELOPER_ERROR);
+            emit(StackParser.getStackMethodBefore(THIS_PACKAGE, true) + COLON_SPACE + message, DEVELOPER_ERROR);
         }
         else
         {
@@ -242,10 +217,10 @@ public class Trace
     }
 
     /**
-     *  Notifies of developer failure from which recovery is impossible.
-     *
-     *  @param message
-     *  @param exception
+     * Notifies of developer failure from which recovery is impossible.
+     * 
+     * @param message
+     * @param e
      */
     public static void devfail(String message, Throwable e)
     {
@@ -261,9 +236,9 @@ public class Trace
     }
 
     /**
-     *  Notifies of developer failure from which recovery is impossible.
-     *
-     *  @param exception
+     * Notifies of developer failure from which recovery is impossible.
+     * 
+     * @param e
      */
     public static void devfail(Throwable e)
     {
@@ -278,26 +253,22 @@ public class Trace
     }
 
     /**
-     *  Prints developer debug messages.
-     *
-     *  @param message
+     * Prints developer debug messages.
+     * 
+     * @param message
      */
     public static void devinfo(String message)
     {
         if (EMIT_DEVELOPER_INFO)
         {
-            emit(
-                StackParser.getStackMethodBefore(THIS_PACKAGE, true)
-                    + COLON_SPACE
-                    + message,
-                DEVELOPER_INFO);
+            emit(StackParser.getStackMethodBefore(THIS_PACKAGE, true) + COLON_SPACE + message, DEVELOPER_INFO);
         }
     }
 
     /**
-     *  Notifies of developer-level exception.
-     *
-     *  @param exception
+     * Notifies of developer-level exception.
+     * 
+     * @param e
      */
     public static void devinfo(Throwable e)
     {
@@ -308,9 +279,9 @@ public class Trace
     }
 
     /**
-     *  Insists on printing a message even if display flags are false.
-     *
-     *  @param message
+     * Insists on printing a message even if display flags are false.
+     * 
+     * @param message
      */
     public static void insist(String message)
     {
@@ -318,9 +289,10 @@ public class Trace
     }
 
     /**
-     *  Insists on printing a message even if display flags are false.
-     *
-     *  @param multi-line message
+     * Insists on printing a message even if display flags are false.
+     * 
+     * @param message
+     *            multi-line message
      */
     public static void insist(String[] message)
     {
@@ -328,61 +300,57 @@ public class Trace
     }
 
     /**
-     *  Emits a message with a given flag.
-     *
-     *  @param message  the message to emit
-     *  @param flag     the flag
+     * Emits a message with a given flag.
+     * 
+     * @param message
+     *            the message to emit
+     * @param flag
+     *            the flag
      */
     private static void emit(String message, String flag)
     {
-        MessagePrinter.println(
-            message,
-            flag,
-            outStream,
-            MessagePrinter.CONSOLE);
+        MessagePrinter.println(message, flag, outStream, MessagePrinter.CONSOLE);
     }
 
     /**
-     *  Emits a multi-line message with a given flag.
-     *
-     *  @param message  the message to emit
-     *  @param flag     the flag
+     * Emits a multi-line message with a given flag.
+     * 
+     * @param message
+     *            the message to emit
+     * @param flag
+     *            the flag
      */
     private static void emit(String[] message, String flag)
     {
         for (int line = 0; line < message.length; line++)
         {
-            MessagePrinter.println(
-                message[line],
-                flag,
-                outStream,
-                MessagePrinter.CONSOLE);
+            MessagePrinter.println(message[line], flag, outStream, MessagePrinter.CONSOLE);
         }
     }
 
     /**
-     *  Emits a prefixed multi-line message with a given flag.
-     *
-     *  @param message  the message to emit
-     *  @param flag     the flag
+     * Emits a prefixed multi-line message with a given flag.
+     * 
+     * @param message
+     *            the message to emit
+     * @param flag
+     *            the flag
      */
     private static void emit(String[] message, String prefix, String flag)
     {
         for (int line = 0; line < message.length; line++)
         {
-            MessagePrinter.println(
-                prefix + message[line],
-                flag,
-                outStream,
-                MessagePrinter.CONSOLE);
+            MessagePrinter.println(prefix + message[line], flag, outStream, MessagePrinter.CONSOLE);
         }
     }
 
     /**
-     *  Emits an exception message with a given flag.
-     *
-     *  @param message  the message to emit
-     *  @param flag     the flag
+     * Emits an exception message with a given flag.
+     * 
+     * @param exception
+     *            the exception
+     * @param flag
+     *            the flag
      */
     private static void emit(Throwable exception, String flag)
     {
@@ -400,11 +368,7 @@ public class Trace
             }
             else
             {
-                emit(
-                    StackParser.getStackMethodBefore(THIS_PACKAGE, true)
-                        + COLON_SPACE
-                        + lines.nextToken(),
-                    flag);
+                emit(StackParser.getStackMethodBefore(THIS_PACKAGE, true) + COLON_SPACE + lines.nextToken(), flag);
             }
         }
     }

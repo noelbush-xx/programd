@@ -134,7 +134,7 @@ public class Bot
     /**
      * Retrieves the value of a named bot property.
      * 
-     * @param property
+     * @param name
      *            the name of the bot property to get
      * @return the value of the bot property
      */
@@ -159,8 +159,10 @@ public class Bot
     /**
      * Sets the value of a bot property.
      * 
-     * @param property
+     * @param name
      *            the name of the bot predicate to set
+     * @param value
+     *            the value to set
      */
     public void setPropertyValue(String name, String value)
     {
@@ -195,9 +197,6 @@ public class Bot
      *            the default value (if any) for the predicate
      * @param returnNameWhenSet
      *            whether the predicate should return its name when set
-     * @param botid
-     *            the bot id for whom to register the predicate this way (not
-     *            yet used)
      */
     public void addPredicateInfo(String name, String defaultValue, boolean returnNameWhenSet)
     {

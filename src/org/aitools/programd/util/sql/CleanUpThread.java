@@ -1,10 +1,10 @@
 package org.aitools.programd.util.sql;
 
 /**
- *  Calls the cleanup method of an {@link ObjectPool}
- *  at a period determined by its {@link #sleepTime}.
- *
- *  @author Cristian Mircioiu
+ * Calls the cleanup method of an {@link ObjectPool}at a period determined by
+ * its {@link #sleepTime}.
+ * 
+ * @author Cristian Mircioiu
  */
 class CleanUpThread extends Thread
 {
@@ -15,11 +15,13 @@ class CleanUpThread extends Thread
     private long sleepTime;
 
     /**
-     *  Creates a new <code>CleanUpThread</code> for a given
-     *  object pool and with a given sleep time.
-     *
-     *  @param pool         the object pool to clean up
-     *  @param sleepTime    the period (in milliseconds) to wait before cleaning up
+     * Creates a new <code>CleanUpThread</code> for a given object pool and
+     * with a given sleep time.
+     * 
+     * @param poolToUse
+     *            the object pool to clean up
+     * @param sleepTimeToUse
+     *            the period (in milliseconds) to wait before cleaning up
      */
     public CleanUpThread(ObjectPool poolToUse, long sleepTimeToUse)
     {
@@ -29,8 +31,7 @@ class CleanUpThread extends Thread
     }
 
     /**
-     *  Cleans up the object pool at the period
-     *  determined by {@link #sleepTime}.
+     * Cleans up the object pool at the period determined by {@link #sleepTime}.
      */
     public void run()
     {

@@ -16,15 +16,14 @@ import org.aitools.programd.util.XMLKit;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  This code is from the sIRC project and was written
- *  by Chris Knight <a href="http://www.chrisknight.com/sirc/">http://www.chrisknight.com/sirc/</a>
- *  and modified to work with a Program D server.
- *
- *  @author  Chris Knight
- *  @author  Jon Baer
- *  @version 4.1.4
- *
- *  @see <a href="http://www.chrisknight.com/sirc/">http://www.chrisknight.com/sirc/</a>
+ * This code is from the sIRC project and was written by Chris Knight <a
+ * href="http://www.chrisknight.com/sirc/">http://www.chrisknight.com/sirc/ </a>
+ * and modified to work with a Program D server.
+ * 
+ * @author Chris Knight
+ * @author Jon Baer
+ * @version 4.1.4
+ * @see <a href="http://www.chrisknight.com/sirc/">sIRC </a>
  */
 
 public class IRCListener extends Listener implements ShellCommandable
@@ -96,17 +95,19 @@ public class IRCListener extends Listener implements ShellCommandable
     public static final String label = "ProgramD-IRC";
 
     /**
-     *  Creates a new IRCListener chat listener for a given bot.
-     *
-     *  @param botToListen	the bot for whom to listen
+     * Creates a new IRCListener chat listener for a given bot.
+     * 
+     * @param botToListen
+     *            the bot for whom to listen
      */
     public IRCListener(Bot botToListen)
     {
-        super(botToListen, "IRCListener", new String[][] { { "host", "" }, {
-                "port", "6667" }, {
-                "nick", "" }, {
-                "channel", "" }
-        });
+        super(botToListen, "IRCListener", new String[][]
+            {
+                { "host", "" },
+                { "port", "6667" },
+                { "nick", "" },
+                { "channel", "" } });
     }
 
     public boolean checkParameters()
@@ -154,7 +155,7 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     *  Connects to the given host and begins listening.
+     * Connects to the given host and begins listening.
      */
     public void run()
     {
@@ -195,16 +196,14 @@ public class IRCListener extends Listener implements ShellCommandable
             return;
         }
         // (otherwise...)
-        processMessageCommand(
-            command.substring(1, space),
-            command.substring(space + 1));
+        processMessageCommand(command.substring(1, space), command.substring(space + 1));
         return;
     }
 
     /**
-     *  Returns the version string.
-     *
-     *  @return the version string
+     * Returns the version string.
+     * 
+     * @return the version string
      */
     public String getVersion()
     {
@@ -212,7 +211,7 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     *  Please document this.
+     * Please document this.
      */
     private void connect()
     {
@@ -242,9 +241,7 @@ public class IRCListener extends Listener implements ShellCommandable
             {
                 try
                 {
-                    this.reader =
-                        new BufferedReader(
-                            new InputStreamReader(this.socket.getInputStream()));
+                    this.reader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
                     this.writer = new PrintWriter(this.socket.getOutputStream(), true);
                     this.clientStatus = CONNECTED;
                 }
@@ -273,19 +270,19 @@ public class IRCListener extends Listener implements ShellCommandable
         {
             switch (this.clientStatus)
             {
-                case CONNECTED :
+                case CONNECTED:
                     logMessage("Cannot connect again; already connected.");
                     break;
 
-                case CONNECTING :
+                case CONNECTING:
                     logMessage("Cannot connect again; already in the process of connecting.");
                     break;
 
-                case DISCONNECTING :
+                case DISCONNECTING:
                     logMessage("Cannot connect now; still trying to disconnect.");
                     break;
 
-                default :
+                default:
                     logMessage("Got unknown clientStatusCode: " + this.clientStatus);
                     break;
             }
@@ -293,7 +290,7 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     *  Please document this.
+     * Please document this.
      */
     private void disconnect()
     {
@@ -320,19 +317,19 @@ public class IRCListener extends Listener implements ShellCommandable
         {
             switch (this.clientStatus)
             {
-                case NOTCONNECTED :
+                case NOTCONNECTED:
                     logMessage("Cannot close connection; not connected.");
                     break;
 
-                case CONNECTING :
+                case CONNECTING:
                     logMessage("Cannot close connection; currently trying to connect.");
                     break;
 
-                case DISCONNECTING :
+                case DISCONNECTING:
                     logMessage("Cannot close connection; currently trying to close it.");
                     break;
 
-                default :
+                default:
                     logMessage("Got unknown clientStatusCode: " + this.clientStatus);
                     break;
             }
@@ -340,7 +337,7 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     *  Please document this.
+     * Please document this.
      */
     protected void processMessage(String message)
     {
@@ -385,30 +382,17 @@ public class IRCListener extends Listener implements ShellCommandable
                     if (this.channel.length() > 0)
                     {
                         sendMessage(NONE, "[" + this.nick + "] " + message);
-                        logMessage(
-                            "Got a message from [" + this.nick + "]: " + message);
-                        sendServerMessage(
-                            "/MSG " + " " + this.channel + " :" + message);
+                        logMessage("Got a message from [" + this.nick + "]: " + message);
+                        sendServerMessage("/MSG " + " " + this.channel + " :" + message);
 
                         // WARNING: Currently uses response from ANY bot!!!!!!
-                        String[] botResponse =
-                            XMLKit.breakLinesAtTags(
-                                Multiplexor.getResponse(
-                                    message,
-                                    this.nick + "_IRC",
-                                    this.botID,
-                                    new TextResponder()));
+                        String[] botResponse = XMLKit.breakLinesAtTags(Multiplexor.getResponse(message, this.nick
+                                + "_IRC", this.botID, new TextResponder()));
                         if (botResponse.length > 0)
                         {
-                            for (int line = 0;
-                                line < botResponse.length;
-                                line++)
+                            for (int line = 0; line < botResponse.length; line++)
                             {
-                                processMessage(
-                                    "/PRVMSG "
-                                        + this.nick
-                                        + " "
-                                        + botResponse[line]);
+                                processMessage("/PRVMSG " + this.nick + " " + botResponse[line]);
                             }
                         }
                     }
@@ -418,7 +402,7 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     *  Please document this.
+     * Please document this.
      */
     private boolean processMessageCommand(String command, String message)
     {
@@ -455,12 +439,7 @@ public class IRCListener extends Listener implements ShellCommandable
                     int secondindex = params.indexOf(' ', (firstindex + 1));
                     try
                     {
-                        sendServerMessage(
-                            "KICK "
-                                + this.channel
-                                + " "
-                                + params.substring(0, secondindex)
-                                + " :"
+                        sendServerMessage("KICK " + this.channel + " " + params.substring(0, secondindex) + " :"
                                 + params.substring((secondindex + 1)));
                     }
                     catch (StringIndexOutOfBoundsException eMSG)
@@ -493,9 +472,7 @@ public class IRCListener extends Listener implements ShellCommandable
                     }
                     else
                     {
-                        sendMessage(
-                            SIRCMESSAGE,
-                            "You're currently in: " + this.channel + ".");
+                        sendMessage(SIRCMESSAGE, "You're currently in: " + this.channel + ".");
                     }
                 }
                 // Join a new channel.
@@ -531,10 +508,7 @@ public class IRCListener extends Listener implements ShellCommandable
                     try
                     {
                         int paramsindex = params.indexOf(' ');
-                        sendServerMessage(
-                            "PRIVMSG "
-                                + params.substring(0, paramsindex)
-                                + " :"
+                        sendServerMessage("PRIVMSG " + params.substring(0, paramsindex) + " :"
                                 + params.substring((paramsindex + 1)));
                     }
                     catch (StringIndexOutOfBoundsException eMSG)
@@ -561,9 +535,7 @@ public class IRCListener extends Listener implements ShellCommandable
             {
                 if (params.length() == 0)
                 {
-                    sendMessage(
-                        SIRCMESSAGE,
-                        "You're currently known as " + this.nick);
+                    sendMessage(SIRCMESSAGE, "You're currently known as " + this.nick);
                 }
                 else
                 {
@@ -590,9 +562,7 @@ public class IRCListener extends Listener implements ShellCommandable
             {
                 if (this.channel.length() == 0)
                 {
-                    sendMessage(
-                        SIRCMESSAGE,
-                        "You must be in a channel to set the topic!");
+                    sendMessage(SIRCMESSAGE, "You must be in a channel to set the topic!");
                 }
                 else
                 {
@@ -615,16 +585,12 @@ public class IRCListener extends Listener implements ShellCommandable
             {
                 if (params.length() == 0)
                 {
-                    sendMessage(
-                        SIRCMESSAGE,
-                        "You're currently known as " + this.nick);
+                    sendMessage(SIRCMESSAGE, "You're currently known as " + this.nick);
                 }
                 else
                 {
                     this.nick = params;
-                    sendMessage(
-                        SIRCMESSAGE,
-                        "You're now known as " + this.nick);
+                    sendMessage(SIRCMESSAGE, "You're now known as " + this.nick);
                 }
                 processed = true;
             }
@@ -633,7 +599,7 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     *  Please document this.
+     * Please document this.
      */
     private boolean processMessageCommandClient(String command, String message)
     {
@@ -653,8 +619,7 @@ public class IRCListener extends Listener implements ShellCommandable
             {
                 index[argc] = message.indexOf(" ", (index[argc - 1] + 1));
             }
-        }
-        while (index[argc] != -1);
+        } while (index[argc] != -1);
 
         // note: we have one extra in index[] at this point (a '-1')
 
@@ -672,20 +637,15 @@ public class IRCListener extends Listener implements ShellCommandable
             }
         }
 
-        if (command.equalsIgnoreCase("SERVER")
-            || command.equalsIgnoreCase("CONNECT"))
+        if (command.equalsIgnoreCase("SERVER") || command.equalsIgnoreCase("CONNECT"))
         {
             if (this.nick.length() == 0)
             {
-                sendMessage(
-                    SIRCMESSAGE,
-                    "You cannot connect to a server unless your NICK is set.");
+                sendMessage(SIRCMESSAGE, "You cannot connect to a server unless your NICK is set.");
             }
             else if (argc == 0)
             {
-                sendMessage(
-                    SIRCMESSAGE,
-                    "Please specify a server to connect to.");
+                sendMessage(SIRCMESSAGE, "Please specify a server to connect to.");
             }
             else if (argc == 1)
             {
@@ -693,13 +653,8 @@ public class IRCListener extends Listener implements ShellCommandable
 
                 if (this.clientStatus == CONNECTED)
                 {
-                    sendServerMessage(
-                        "USER "
-                            + this.nick
-                            + " "
-                            + this.socket.getInetAddress().getHostName()
-                            + " server :"
-                            + this.nick);
+                    sendServerMessage("USER " + this.nick + " " + this.socket.getInetAddress().getHostName()
+                            + " server :" + this.nick);
                     sendServerMessage("NICK " + this.nick);
                 }
             }
@@ -711,21 +666,14 @@ public class IRCListener extends Listener implements ShellCommandable
 
                     if (this.clientStatus == CONNECTED)
                     {
-                        sendServerMessage(
-                            "USER "
-                                + this.nick
-                                + " "
-                                + this.socket.getInetAddress().getHostName()
-                                + " server :"
-                                + this.nick);
+                        sendServerMessage("USER " + this.nick + " " + this.socket.getInetAddress().getHostName()
+                                + " server :" + this.nick);
                         sendServerMessage("NICK " + this.nick);
                     }
                 }
                 catch (NumberFormatException e)
                 {
-                    sendMessage(
-                        SIRCMESSAGE,
-                        "The Port you specified is invalid.");
+                    sendMessage(SIRCMESSAGE, "The Port you specified is invalid.");
                 }
             }
             processed = true;
@@ -739,9 +687,7 @@ public class IRCListener extends Listener implements ShellCommandable
             // messagerelay.exit();
             processed = true;
         }
-        else if (
-            command.equalsIgnoreCase("COMMANDS")
-                || command.equalsIgnoreCase("HELP"))
+        else if (command.equalsIgnoreCase("COMMANDS") || command.equalsIgnoreCase("HELP"))
         {
             sendMessage(NONE, NONE);
             sendMessage(SIRCMESSAGE, "sIRC Commands:");
@@ -769,7 +715,7 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     *  Please document this.
+     * Please document this.
      */
     private boolean processMessageCommandDebug(String command, String message)
     {
@@ -789,8 +735,7 @@ public class IRCListener extends Listener implements ShellCommandable
             {
                 index[argc] = message.indexOf(" ", (index[argc - 1] + 1));
             }
-        }
-        while (index[argc] != -1);
+        } while (index[argc] != -1);
 
         String args[] = new String[MAXARGC];
 
@@ -808,9 +753,7 @@ public class IRCListener extends Listener implements ShellCommandable
 
         if (command.equals("testargs"))
         {
-            StringBuffer teststring =
-                new StringBuffer(
-                    "Test Arguments; argc=" + argc + " command=" + command);
+            StringBuffer teststring = new StringBuffer("Test Arguments; argc=" + argc + " command=" + command);
 
             for (int x = 0; x < argc; x++)
             {
@@ -848,7 +791,7 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     *  Please document this.
+     * Please document this.
      */
     private void processServerMessage(String message)
     {
@@ -903,60 +846,38 @@ public class IRCListener extends Listener implements ShellCommandable
         {
             switch (Integer.parseInt(command))
             {
-                case 001 :
+                case 001:
                     break;
 
-                case 321 :
+                case 321:
                     break;
 
-                case 322 :
-                    {
-                        int firstSpaceIndex = params.indexOf(' ');
-                        int secondSpaceIndex =
-                            params.indexOf(' ', (firstSpaceIndex + 1));
-                        int colonIndex = params.indexOf(':');
-                        sendMessage(
-                            SERVERPREFIX,
-                            params.substring(
-                                (firstSpaceIndex + 1),
-                                secondSpaceIndex)
-                                + ": "
-                                + params.substring(
-                                    (secondSpaceIndex + 1),
-                                    (colonIndex - 1))
-                                + " "
-                                + params.substring((colonIndex + 1)));
-                    }
+                case 322:
+                {
+                    int firstSpaceIndex = params.indexOf(' ');
+                    int secondSpaceIndex = params.indexOf(' ', (firstSpaceIndex + 1));
+                    int colonIndex = params.indexOf(':');
+                    sendMessage(SERVERPREFIX, params.substring((firstSpaceIndex + 1), secondSpaceIndex) + ": "
+                            + params.substring((secondSpaceIndex + 1), (colonIndex - 1)) + " "
+                            + params.substring((colonIndex + 1)));
+                }
                     break;
 
-                case 353 :
-                    {
-                        int colonIndex = params.indexOf(':');
-                        int equalsIndex = params.indexOf('=');
-                        sendMessage(
-                            SERVERPREFIX,
-                            "Users on "
-                                + params.substring(
-                                    (equalsIndex + 2),
-                                    (colonIndex - 1))
-                                + ": "
-                                + params.substring((colonIndex + 1)));
-                    }
+                case 353:
+                {
+                    int colonIndex = params.indexOf(':');
+                    int equalsIndex = params.indexOf('=');
+                    sendMessage(SERVERPREFIX, "Users on " + params.substring((equalsIndex + 2), (colonIndex - 1))
+                            + ": " + params.substring((colonIndex + 1)));
+                }
                     break;
 
-                case 372 :
-                    sendMessage(
-                        SERVERPREFIX,
-                        params.substring((params.indexOf(':') + 1)));
+                case 372:
+                    sendMessage(SERVERPREFIX, params.substring((params.indexOf(':') + 1)));
                     break;
 
-                default :
-                    sendMessage(
-                        SERVERPREFIX,
-                        "("
-                            + command
-                            + ") "
-                            + params.substring((params.indexOf(':') + 1)));
+                default:
+                    sendMessage(SERVERPREFIX, "(" + command + ") " + params.substring((params.indexOf(':') + 1)));
                     break;
             }
         }
@@ -965,13 +886,8 @@ public class IRCListener extends Listener implements ShellCommandable
             if (command.equals("INVITE"))
             {
                 int firstindex = params.indexOf(' ');
-                sendMessage(
-                    SERVERPREFIX,
-                    targetnick
-                        + " has invited you to "
-                        + helpExtractIRCString(
-                            params.substring((firstindex + 1)))
-                        + ".");
+                sendMessage(SERVERPREFIX, targetnick + " has invited you to "
+                        + helpExtractIRCString(params.substring((firstindex + 1))) + ".");
             }
             else if (command.equals("JOIN"))
             {
@@ -979,16 +895,12 @@ public class IRCListener extends Listener implements ShellCommandable
 
                 if (targetnick.equals(this.nick))
                 {
-                    sendMessage(
-                        SERVERPREFIX,
-                        "You're now on " + channelx + ".");
+                    sendMessage(SERVERPREFIX, "You're now on " + channelx + ".");
                     this.channel = channelx;
                 }
                 else
                 {
-                    sendMessage(
-                        SERVERPREFIX,
-                        targetnick + " has joined the channel.");
+                    sendMessage(SERVERPREFIX, targetnick + " has joined the channel.");
                 }
             }
             else if (command.equals("KICK"))
@@ -1004,35 +916,18 @@ public class IRCListener extends Listener implements ShellCommandable
                 {
                     kickchannel = params.substring(0, firstindex);
                     kickuser = params.substring((firstindex + 1), secondindex);
-                    kickcomment =
-                        helpExtractIRCString(
-                            params.substring((secondindex + 1)));
+                    kickcomment = helpExtractIRCString(params.substring((secondindex + 1)));
 
                     if (kickuser.equals(this.nick))
                     {
-                        sendMessage(
-                            SERVERPREFIX,
-                            "You've just been kicked off "
-                                + kickchannel
-                                + " by "
-                                + targetnick
-                                + " ("
-                                + kickcomment
-                                + ").");
+                        sendMessage(SERVERPREFIX, "You've just been kicked off " + kickchannel + " by " + targetnick
+                                + " (" + kickcomment + ").");
                         this.channel = NONE;
                     }
                     else
                     {
-                        sendMessage(
-                            SERVERPREFIX,
-                            kickuser
-                                + " has been kicked off "
-                                + kickchannel
-                                + " by "
-                                + targetnick
-                                + " ("
-                                + kickcomment
-                                + ").");
+                        sendMessage(SERVERPREFIX, kickuser + " has been kicked off " + kickchannel + " by "
+                                + targetnick + " (" + kickcomment + ").");
                     }
                 }
                 catch (StringIndexOutOfBoundsException eKICK)
@@ -1042,25 +937,14 @@ public class IRCListener extends Listener implements ShellCommandable
 
                     if (kickuser.equals(this.nick))
                     {
-                        sendMessage(
-                            SERVERPREFIX,
-                            "You've just been kicked off "
-                                + kickchannel
-                                + " by "
-                                + targetnick
+                        sendMessage(SERVERPREFIX, "You've just been kicked off " + kickchannel + " by " + targetnick
                                 + ".");
                         this.channel = NONE;
                     }
                     else
                     {
-                        sendMessage(
-                            SERVERPREFIX,
-                            targetnick
-                                + " has been kicked off "
-                                + kickchannel
-                                + " by "
-                                + targetnick
-                                + ".");
+                        sendMessage(SERVERPREFIX, targetnick + " has been kicked off " + kickchannel + " by "
+                                + targetnick + ".");
                     }
                 }
             }
@@ -1069,35 +953,24 @@ public class IRCListener extends Listener implements ShellCommandable
                 if (targetnick.equals(this.nick))
                 {
                     String newnick = helpExtractIRCString(params);
-                    sendMessage(
-                        SERVERPREFIX,
-                        "You're now known as " + newnick + ".");
+                    sendMessage(SERVERPREFIX, "You're now known as " + newnick + ".");
                     this.nick = newnick;
                 }
                 else
                 {
-                    sendMessage(
-                        SERVERPREFIX,
-                        targetnick
-                            + " is now known as "
-                            + params.substring(1)
-                            + ".");
+                    sendMessage(SERVERPREFIX, targetnick + " is now known as " + params.substring(1) + ".");
                 }
             }
             else if (command.equals("PART"))
             {
                 if (targetnick.equals(this.nick))
                 {
-                    sendMessage(
-                        SERVERPREFIX,
-                        "You've just left " + params + ".");
+                    sendMessage(SERVERPREFIX, "You've just left " + params + ".");
                     this.channel = NONE;
                 }
                 else
                 {
-                    sendMessage(
-                        SERVERPREFIX,
-                        targetnick + " has left the channel.");
+                    sendMessage(SERVERPREFIX, targetnick + " has left the channel.");
                 }
             }
             else if (command.equals("PING"))
@@ -1114,19 +987,13 @@ public class IRCListener extends Listener implements ShellCommandable
                     sendMessage(NONE, "*" + targetnick + "* " + gitter);
                     logMessage("Request: [" + targetnick + "]: " + gitter);
 
-                    String[] botResponse =
-                        XMLKit.breakLinesAtTags(
-                            Multiplexor.getResponse(
-                                gitter,
-                                targetnick + "_IRC",
-                                this.botID,
-                                new TextResponder()));
+                    String[] botResponse = XMLKit.breakLinesAtTags(Multiplexor.getResponse(gitter, targetnick + "_IRC",
+                            this.botID, new TextResponder()));
                     if (botResponse.length > 0)
                     {
                         for (int line = 0; line < botResponse.length; line++)
                         {
-                            processMessage(
-                                "/MSG " + targetnick + " " + botResponse[line]);
+                            processMessage("/MSG " + targetnick + " " + botResponse[line]);
                         }
                     }
                 }
@@ -1145,31 +1012,19 @@ public class IRCListener extends Listener implements ShellCommandable
                 }
                 else
                 {
-                    sendMessage(
-                        SERVERPREFIX,
-                        targetnick
-                            + " has quit ("
-                            + helpExtractIRCString(params)
-                            + ").");
+                    sendMessage(SERVERPREFIX, targetnick + " has quit (" + helpExtractIRCString(params) + ").");
                 }
             }
             else if (command.equals("TOPIC"))
             {
                 if (targetnick.equals(this.nick))
                 {
-                    sendMessage(
-                        SERVERPREFIX,
-                        "The topic is now: "
-                            + params.substring((params.indexOf(':') + 1)));
+                    sendMessage(SERVERPREFIX, "The topic is now: " + params.substring((params.indexOf(':') + 1)));
                 }
                 else
                 {
-                    sendMessage(
-                        SERVERPREFIX,
-                        targetnick
-                            + " has set the topic to: "
-                            + helpExtractIRCString(
-                                params.substring((params.indexOf(' ') + 1))));
+                    sendMessage(SERVERPREFIX, targetnick + " has set the topic to: "
+                            + helpExtractIRCString(params.substring((params.indexOf(' ') + 1))));
                 }
             }
             else
@@ -1180,7 +1035,7 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     *  Please document this.
+     * Please document this.
      */
     private String helpExtractIRCString(String string)
     {
@@ -1201,9 +1056,10 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     *  Standard method for logging and notifying of a message.
-     *
-     *  @param message	the message
+     * Standard method for logging and notifying of a message.
+     * 
+     * @param message
+     *            the message
      */
     private void logMessage(String message)
     {
@@ -1211,7 +1067,7 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     *  Please document this.
+     * Please document this.
      */
     private void sendMessage(String type, String message)
     {
@@ -1219,7 +1075,7 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     *  Please document this.
+     * Please document this.
      */
     private void sendServerMessage(String message)
     {
@@ -1230,7 +1086,7 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     *  Please document this.
+     * Please document this.
      */
     private void listen()
     {

@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.processor.loadtime;
 
@@ -23,9 +20,8 @@ import org.aitools.programd.util.XMLKit;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  The <code>substitutions</code> element is a container
- *  for definitions of various substitutions performed by
- *  the engine.
+ * The <code>substitutions</code> element is a container for definitions of
+ * various substitutions performed by the engine.
  */
 public class SubstitutionsProcessor extends StartupElementProcessor
 {
@@ -56,8 +52,7 @@ public class SubstitutionsProcessor extends StartupElementProcessor
     /** A person2 substitution. */
     static final int PERSON2 = 3;
 
-    public String process(int level, XMLNode tag, StartupFileParser parser)
-        throws InvalidStartupElementException
+    public String process(int level, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
     {
         // Does it have an href attribute?
         String href = getHref(tag);
@@ -66,8 +61,7 @@ public class SubstitutionsProcessor extends StartupElementProcessor
         {
             try
             {
-                return parser.processResponse(
-                    FileManager.getFileContents(href));
+                return parser.processResponse(FileManager.getFileContents(href));
             }
             catch (ProcessorException e)
             {
@@ -79,19 +73,18 @@ public class SubstitutionsProcessor extends StartupElementProcessor
     }
 
     /**
-     *  Adds substitutions of the specified type.
-     *
-     *  @param type     the type of substitution to add
-     *  @param tag      the container of the &lt;substitute/&gt; elements
-     *  @param parser   the parser handling this
-     *
-     *  @throws InvalidStartupElementException if the element content is bad
+     * Adds substitutions of the specified type.
+     * 
+     * @param type
+     *            the type of substitution to add
+     * @param tag
+     *            the container of the &lt;substitute/&gt; elements
+     * @param parser
+     *            the parser handling this
+     * @throws InvalidStartupElementException
+     *             if the element content is bad
      */
-    static void addSubstitutions(
-        int type,
-        XMLNode tag,
-        StartupFileParser parser)
-        throws InvalidStartupElementException
+    static void addSubstitutions(int type, XMLNode tag, StartupFileParser parser) throws InvalidStartupElementException
     {
         int substituteCount = parser.nodeCount(SUBSTITUTE, tag.XMLChild, true);
 
@@ -103,22 +96,21 @@ public class SubstitutionsProcessor extends StartupElementProcessor
             if (node.XMLType == XMLNode.EMPTY)
             {
                 String find = XMLKit.getAttributeValue(FIND, node.XMLAttr);
-                String replace =
-                    XMLKit.getAttributeValue(REPLACE, node.XMLAttr);
+                String replace = XMLKit.getAttributeValue(REPLACE, node.XMLAttr);
                 if (find != null && replace != null)
                 {
                     switch (type)
                     {
-                        case INPUT :
+                        case INPUT:
                             bot.addInputSubstitution(find, replace);
                             break;
-                        case GENDER :
+                        case GENDER:
                             bot.addGenderSubstitution(find, replace);
                             break;
-                        case PERSON :
+                        case PERSON:
                             bot.addPersonSubstitution(find, replace);
                             break;
-                        case PERSON2 :
+                        case PERSON2:
                             bot.addPerson2Substitution(find, replace);
                             break;
                     }
@@ -126,19 +118,12 @@ public class SubstitutionsProcessor extends StartupElementProcessor
             }
             else
             {
-                throw new InvalidStartupElementException(
-                    "<" + tag.XMLData + "/> cannot have content!");
+                throw new InvalidStartupElementException("<" + tag.XMLData + "/> cannot have content!");
             }
         }
         if (Globals.showConsole())
         {
-            Log.userinfo(
-                "Loaded "
-                    + substituteCount
-                    + " "
-                    + tag.XMLData
-                    + " substitutions.",
-                Log.STARTUP);
+            Log.userinfo("Loaded " + substituteCount + " " + tag.XMLData + " substitutions.", Log.STARTUP);
         }
     }
 }

@@ -7,11 +7,11 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
 /**
- *  An implementation of {@link org.aitools.programd.multiplexor.Interpreter}
- *  that handles server-side JavaScript using the Rhino package.
- *
- *  @author Jon Baer
- *  @version 1.0
+ * An implementation of {@link org.aitools.programd.interpreter.Interpreter}
+ * that handles server-side JavaScript using the Rhino package.
+ * 
+ * @author Jon Baer
+ * @version 1.0
  */
 public class RhinoInterpreter implements Interpreter
 {
@@ -34,14 +34,9 @@ public class RhinoInterpreter implements Interpreter
         }
         catch (Exception e)
         {
-            Log.userinfo(
-                "JavaScript exception (see interpreter log).",
-                Log.ERROR);
+            Log.userinfo("JavaScript exception (see interpreter log).", Log.ERROR);
             Log.log(e, Log.INTERPRETER);
-            StringTokenizer lines =
-                new StringTokenizer(
-                    expression,
-                    System.getProperty("line.separator"));
+            StringTokenizer lines = new StringTokenizer(expression, System.getProperty("line.separator"));
             while (lines.hasMoreTokens())
             {
                 Log.log(lines.nextToken(), Log.INTERPRETER);

@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.loader;
 
@@ -21,22 +18,21 @@ import org.aitools.programd.util.Globals;
 import org.aitools.programd.util.Trace;
 import org.aitools.programd.util.logging.Log;
 
-/** 
- *  A utility class used by the
- *  {@link org.aitools.programd.multiplexor.Graphmaster Graphmaster}
- *  to load AIML files. 
+/**
+ * A utility class used by the
+ * {@link org.aitools.programd.graph.Graphmaster Graphmaster}to load AIML
+ * files.
  * 
- *  @author Richard Wallace
- *  @author Kris Drent
- *  @author Jon Baer
- *  @author Thomas Ringate, Pedro Colla
- *  @version 4.1.3
+ * @author Richard Wallace
+ * @author Kris Drent
+ * @author Jon Baer
+ * @author Thomas Ringate, Pedro Colla
+ * @version 4.1.3
  */
 public class AIMLLoader implements AIMLReaderListener
 {
     /** The interval at which loaded categories should be notified. */
-    private static int NOTIFY_INTERVAL =
-        Globals.getCategoryLoadNotifyInterval();
+    private static int NOTIFY_INTERVAL = Globals.getCategoryLoadNotifyInterval();
 
     /** Whether to show the console. */
     protected static final boolean SHOW_CONSOLE = Globals.showConsole();
@@ -72,7 +68,7 @@ public class AIMLLoader implements AIMLReaderListener
     private static final String LOCALHOST = "localhost";
 
     /**
-     *  Initializes the <code>AIMLLoader</code>.
+     * Initializes the <code>AIMLLoader</code>.
      */
     public AIMLLoader(String filenameToUse, String botidToUse)
     {
@@ -85,11 +81,7 @@ public class AIMLLoader implements AIMLReaderListener
         AIMLLoader.policy = Globals.getMergePolicy();
     }
 
-    public void newCategory(
-        String pattern,
-        String that,
-        String topic,
-        String template)
+    public void newCategory(String pattern, String that, String topic, String template)
     {
         boolean process = true;
 
@@ -113,12 +105,9 @@ public class AIMLLoader implements AIMLReaderListener
 
         if (SHOW_CONSOLE)
         {
-            if (Graphmaster.getTotalCategories() % NOTIFY_INTERVAL == 0
-                && Graphmaster.getTotalCategories() > 0)
+            if (Graphmaster.getTotalCategories() % NOTIFY_INTERVAL == 0 && Graphmaster.getTotalCategories() > 0)
             {
-                Trace.userinfo(
-                    Graphmaster.getTotalCategories()
-                        + " categories loaded so far.");
+                Trace.userinfo(Graphmaster.getTotalCategories() + " categories loaded so far.");
             }
         }
 
@@ -138,14 +127,10 @@ public class AIMLLoader implements AIMLReaderListener
                 {
                     if (Globals.showConsole())
                     {
-                        Log.userinfo(
-                            new String[] {
-                                "Duplicate category:",
-                                pattern + " : " + that + " : " + topic,
-                                " in \"" + filename + "\"",
-                                "conflicts with category already loaded from",
-                                (String) node.get(Graphmaster.FILENAME)},
-                            Log.MERGE);
+                        Log.userinfo(new String[]
+                            { "Duplicate category:", pattern + " : " + that + " : " + topic,
+                                    " in \"" + filename + "\"", "conflicts with category already loaded from",
+                                    (String) node.get(Graphmaster.FILENAME) }, Log.MERGE);
                     }
                 }
                 else

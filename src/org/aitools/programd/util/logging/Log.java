@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.util.logging;
 
@@ -25,93 +22,72 @@ import org.aitools.programd.util.Trace;
 import org.aitools.programd.util.UserError;
 
 /**
- *  Notifies of logging of Program D events to log files.
- *
- *  @author Jon Baer
- *  @author Thomas Ringate, Pedro Colla
- *  @author Noel Bush
- *  @version 4.1.3
+ * Notifies of logging of Program D events to log files.
+ * 
+ * @author Jon Baer
+ * @author Thomas Ringate, Pedro Colla
+ * @author Noel Bush
+ * @version 4.1.3
  */
 public class Log
 {
     // Log name constants.
 
     /** Chat log path. */
-    public static final String CHAT =
-        Globals.getProperty("programd.logging.chat.path", "./logs/chat.log");
+    public static final String CHAT = Globals.getProperty("programd.logging.chat.path", "./logs/chat.log");
 
     /** Listener log path. */
-    public static final String LISTENERS =
-        Globals.getProperty(
-            "programd.logging.listeners.path",
+    public static final String LISTENERS = Globals.getProperty("programd.logging.listeners.path",
             "./logs/listeners.log");
 
     /** Database log path. */
-    public static final String DATABASE =
-        Globals.getProperty(
-            "programd.logging.database.path",
-            "./logs/database.log");
+    public static final String DATABASE = Globals.getProperty("programd.logging.database.path", "./logs/database.log");
 
     /** Error log path. */
-    public static final String ERROR =
-        Globals.getProperty("programd.logging.error.path", "./logs/error.log");
+    public static final String ERROR = Globals.getProperty("programd.logging.error.path", "./logs/error.log");
 
     /** Gossip log path. */
-    public static final String GOSSIP =
-        Globals.getProperty(
-            "programd.logging.gossip.path",
-            "./logs/gossip.log");
+    public static final String GOSSIP = Globals.getProperty("programd.logging.gossip.path", "./logs/gossip.log");
 
     /** Interpreter log path. */
-    public static final String INTERPRETER =
-        Globals.getProperty(
-            "programd.logging.interpreter.path",
+    public static final String INTERPRETER = Globals.getProperty("programd.logging.interpreter.path",
             "./logs/interpreter.log");
 
     /** Learn log path. */
-    public static final String LEARN =
-        Globals.getProperty("programd.logging.learn.path", "./logs/learn.log");
+    public static final String LEARN = Globals.getProperty("programd.logging.learn.path", "./logs/learn.log");
 
     /** Merge log path. */
-    public static final String MERGE =
-        Globals.getProperty("programd.logging.merge.path", "./logs/merge.log");
+    public static final String MERGE = Globals.getProperty("programd.logging.merge.path", "./logs/merge.log");
 
     /** Startup log path. */
-    public static final String STARTUP =
-        Globals.getProperty(
-            "programd.logging.startup.path",
-            "./logs/startup.log");
+    public static final String STARTUP = Globals.getProperty("programd.logging.startup.path", "./logs/startup.log");
 
     /** OS shell use log path. */
-    public static final String SYSTEM =
-        Globals.getProperty(
-            "programd.logging.system.path",
-            "./logs/system.log");
+    public static final String SYSTEM = Globals.getProperty("programd.logging.system.path", "./logs/system.log");
 
     /** Targeting log path. */
-    public static final String TARGETING =
-        Globals.getProperty(
-            "programd.logging.targeting.path",
+    public static final String TARGETING = Globals.getProperty("programd.logging.targeting.path",
             "./logs/targeting.log");
 
     /** General runtime information log path. */
-    public static final String RUNTIME =
-        Globals.getProperty(
-            "programd.logging.runtime.path",
-            "./logs/runtime.log");
+    public static final String RUNTIME = Globals.getProperty("programd.logging.runtime.path", "./logs/runtime.log");
 
     /** The phrase &quot;log file&quot;. */
     private static final String LOGFILE = "log file";
 
     /**
-     *  Writes a message to the appropriate logfile.
-     *
-     *  @param message  the text of the log event
-     *  @param type     the type of the log event
-                    (one of <code>ACCESS</code>, <code>CHAT</code>, <code>DATABASE</code>, 
-                    <code>DEBUG</code>, <code>ERROR</code>, <code>EVENT</code>, 
-                    <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
-                    <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>, <code>TARGETING</code>)
+     * Writes a message to the appropriate logfile.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param type
+     *            the type of the log event (one of <code>ACCESS</code>,
+     *            <code>CHAT</code>,<code>DATABASE</code>,
+     *            <code>DEBUG</code>,<code>ERROR</code>,
+     *            <code>EVENT</code>,<code>GOSSIP</code>,
+     *            <code>INTERPRETER</code>,<code>MERGE</code>,
+     *            <code>SERVLET</code>,<code>STARTUP</code>,
+     *            <code>SYSTEM</code>,<code>TARGETING</code>)
      */
     public static void log(String message, String type)
     {
@@ -140,14 +116,18 @@ public class Log
     }
 
     /**
-     *  Logs an exception to the appropriate logfile.
-     *
-     *  @param exception    the exception
-     *  @param type         the type of the log event
-                    (one of <code>ACCESS</code>, <code>CHAT</code>, <code>DATABASE</code>, 
-                    <code>DEBUG</code>, <code>ERROR</code>, <code>EVENT</code>, 
-                    <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
-                    <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>, <code>TARGETING</code>)
+     * Logs an exception to the appropriate logfile.
+     * 
+     * @param exception
+     *            the exception
+     * @param type
+     *            the type of the log event (one of <code>ACCESS</code>,
+     *            <code>CHAT</code>,<code>DATABASE</code>,
+     *            <code>DEBUG</code>,<code>ERROR</code>,
+     *            <code>EVENT</code>,<code>GOSSIP</code>,
+     *            <code>INTERPRETER</code>,<code>MERGE</code>,
+     *            <code>SERVLET</code>,<code>STARTUP</code>,
+     *            <code>SYSTEM</code>,<code>TARGETING</code>)
      */
     public static void log(Throwable exception, String type)
     {
@@ -173,10 +153,7 @@ public class Log
         StringTokenizer lines = StackParser.getStackTraceFor(exception);
         while (lines.hasMoreElements())
         {
-            MessagePrinter.println(
-                lines.nextToken(),
-                fileWriter,
-                MessagePrinter.LOG);
+            MessagePrinter.println(lines.nextToken(), fileWriter, MessagePrinter.LOG);
         }
         try
         {
@@ -189,14 +166,18 @@ public class Log
     }
 
     /**
-     *  Writes a multiline log message to the appropriate logfile.
-     *
-     *  @param message  the text of the log event
-     *  @param type     the type of the log event
-                    (one of <code>ACCESS</code>, <code>CHAT</code>, <code>DATABASE</code>, 
-                    <code>DEBUG</code>, <code>ERROR</code>, <code>EVENT</code>, 
-                    <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
-                    <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>, <code>TARGETING</code>)
+     * Writes a multiline log message to the appropriate logfile.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param type
+     *            the type of the log event (one of <code>ACCESS</code>,
+     *            <code>CHAT</code>,<code>DATABASE</code>,
+     *            <code>DEBUG</code>,<code>ERROR</code>,
+     *            <code>EVENT</code>,<code>GOSSIP</code>,
+     *            <code>INTERPRETER</code>,<code>MERGE</code>,
+     *            <code>SERVLET</code>,<code>STARTUP</code>,
+     *            <code>SYSTEM</code>,<code>TARGETING</code>)
      */
     public static void log(String[] message, String type)
     {
@@ -208,15 +189,20 @@ public class Log
     }
 
     /**
-     *  Logs a message <i>and</i> prints it to the console as a user info message.
-     *
-     *  @param message  the text of the log event
-     *  @param type     the type of the log event
-                    (one of <code>ACCESS</code>, <code>CHAT</code>, <code>DATABASE</code>, 
-                    <code>DEBUG</code>, <code>ERROR</code>, <code>EVENT</code>, 
-                    <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
-                    <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>)
-    */
+     * Logs a message <i>and </i> prints it to the console as a user info
+     * message.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param type
+     *            the type of the log event (one of <code>ACCESS</code>,
+     *            <code>CHAT</code>,<code>DATABASE</code>,
+     *            <code>DEBUG</code>,<code>ERROR</code>,
+     *            <code>EVENT</code>,<code>GOSSIP</code>,
+     *            <code>INTERPRETER</code>,<code>MERGE</code>,
+     *            <code>SERVLET</code>,<code>STARTUP</code>,
+     *            <code>SYSTEM</code>)
+     */
     public static void userinfo(String message, String type)
     {
         Trace.userinfo(message);
@@ -224,11 +210,13 @@ public class Log
     }
 
     /**
-     *  Same as {@link #userinfo(String, String)}, but
-     *  logs to multiple log files.
-     *
-     *  @param message  the text of the log event
-     *  @param types    the log types
+     * Same as {@link #userinfo(String, String)}, but logs to multiple log
+     * files.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param types
+     *            the log types
      */
     public static void userinfo(String message, String[] types)
     {
@@ -241,15 +229,20 @@ public class Log
     }
 
     /**
-     *  Logs a multiline message <i>and</i> prints it to the console as a user info message.
-     *
-     *  @param message  the text of the log event
-     *  @param type     the type of the log event
-                    (one of <code>ACCESS</code>, <code>CHAT</code>, <code>DATABASE</code>, 
-                    <code>DEBUG</code>, <code>ERROR</code>, <code>EVENT</code>, 
-                    <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
-                    <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>)
-    */
+     * Logs a multiline message <i>and </i> prints it to the console as a user
+     * info message.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param type
+     *            the type of the log event (one of <code>ACCESS</code>,
+     *            <code>CHAT</code>,<code>DATABASE</code>,
+     *            <code>DEBUG</code>,<code>ERROR</code>,
+     *            <code>EVENT</code>,<code>GOSSIP</code>,
+     *            <code>INTERPRETER</code>,<code>MERGE</code>,
+     *            <code>SERVLET</code>,<code>STARTUP</code>,
+     *            <code>SYSTEM</code>)
+     */
     public static void userinfo(String[] message, String type)
     {
         int lineCount = message.length;
@@ -260,11 +253,13 @@ public class Log
     }
 
     /**
-     *  Same as {@link #userinfo(String[], String)}, but
-     *  logs to multiple log files.
-     *
-     *  @param message  the text of the log event
-     *  @param types    the log types
+     * Same as {@link #userinfo(String[], String)}, but logs to multiple log
+     * files.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param types
+     *            the log types
      */
     public static void userinfo(String[] message, String[] types)
     {
@@ -277,15 +272,20 @@ public class Log
     }
 
     /**
-     *  Logs a message <i>and</i> prints it to the console as a user failure message.
-     *
-     *  @param message  the text of the log event
-     *  @param type     the type of the log event
-                    (one of <code>ACCESS</code>, <code>CHAT</code>, <code>DATABASE</code>, 
-                    <code>DEBUG</code>, <code>ERROR</code>, <code>EVENT</code>, 
-                    <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
-                    <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>)
-    */
+     * Logs a message <i>and </i> prints it to the console as a user failure
+     * message.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param type
+     *            the type of the log event (one of <code>ACCESS</code>,
+     *            <code>CHAT</code>,<code>DATABASE</code>,
+     *            <code>DEBUG</code>,<code>ERROR</code>,
+     *            <code>EVENT</code>,<code>GOSSIP</code>,
+     *            <code>INTERPRETER</code>,<code>MERGE</code>,
+     *            <code>SERVLET</code>,<code>STARTUP</code>,
+     *            <code>SYSTEM</code>)
+     */
     public static void userfail(String message, String type)
     {
         Trace.userfail(message);
@@ -293,15 +293,20 @@ public class Log
     }
 
     /**
-     *  Logs a multiline message <i>and</i> prints it to the console as a user failure message.
-     *
-     *  @param message  the text of the log event
-     *  @param type     the type of the log event
-                    (one of <code>ACCESS</code>, <code>CHAT</code>, <code>DATABASE</code>, 
-                    <code>DEBUG</code>, <code>ERROR</code>, <code>EVENT</code>, 
-                    <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
-                    <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>)
-    */
+     * Logs a multiline message <i>and </i> prints it to the console as a user
+     * failure message.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param type
+     *            the type of the log event (one of <code>ACCESS</code>,
+     *            <code>CHAT</code>,<code>DATABASE</code>,
+     *            <code>DEBUG</code>,<code>ERROR</code>,
+     *            <code>EVENT</code>,<code>GOSSIP</code>,
+     *            <code>INTERPRETER</code>,<code>MERGE</code>,
+     *            <code>SERVLET</code>,<code>STARTUP</code>,
+     *            <code>SYSTEM</code>)
+     */
     public static void userfail(String[] message, String type)
     {
         int lastLine = message.length;
@@ -312,11 +317,13 @@ public class Log
     }
 
     /**
-     *  Same as {@link #userfail(String, String)}, but
-     *  logs to multiple log files.
-     *
-     *  @param message  the text of the log event
-     *  @param types    the log types
+     * Same as {@link #userfail(String, String)}, but logs to multiple log
+     * files.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param types
+     *            the log types
      */
     public static void userfail(String message, String[] types)
     {
@@ -329,10 +336,13 @@ public class Log
     }
 
     /**
-     *  Same as {@link #userfail(String, String[])}, but
-     *  logs multi-line messages.
-     *  @param message  the text of the log event
-     *  @param types    the log types
+     * Same as {@link #userfail(String, String[])}, but logs multi-line
+     * messages.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param types
+     *            the log types
      */
     public static void userfail(String[] message, String[] types)
     {
@@ -345,19 +355,21 @@ public class Log
     }
 
     /**
-     *  Logs a message and an exception <i>and</i> prints them to the console as a user failure message.
-     *
-     *  @param message  the text of the log event
-     *  @param type     the type of the log event
-                    (one of <code>ACCESS</code>, <code>CHAT</code>, <code>DATABASE</code>, 
-                    <code>DEBUG</code>, <code>ERROR</code>, <code>EVENT</code>, 
-                    <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
-                    <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>)
-    */
-    public static void userfail(
-        String message,
-        Throwable exception,
-        String type)
+     * Logs a message and an exception <i>and </i> prints them to the console as
+     * a user failure message.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param type
+     *            the type of the log event (one of <code>ACCESS</code>,
+     *            <code>CHAT</code>,<code>DATABASE</code>,
+     *            <code>DEBUG</code>,<code>ERROR</code>,
+     *            <code>EVENT</code>,<code>GOSSIP</code>,
+     *            <code>INTERPRETER</code>,<code>MERGE</code>,
+     *            <code>SERVLET</code>,<code>STARTUP</code>,
+     *            <code>SYSTEM</code>)
+     */
+    public static void userfail(String message, Throwable exception, String type)
     {
         Trace.userfail(message);
         log(message, type);
@@ -366,7 +378,7 @@ public class Log
     }
 
     /**
-     *  Notifies of user error exceptions.
+     * Notifies of user error exceptions.
      */
     public static void userfail(UserError e)
     {
@@ -382,15 +394,20 @@ public class Log
     }
 
     /**
-     *  Logs a message <i>and</i> prints it to the console as a developer info message.
-     *
-     *  @param message  the text of the log event
-     *  @param type     the type of the log event
-                    (one of <code>ACCESS</code>, <code>CHAT</code>, <code>DATABASE</code>, 
-                    <code>DEBUG</code>, <code>ERROR</code>, <code>EVENT</code>, 
-                    <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
-                    <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>)
-    */
+     * Logs a message <i>and </i> prints it to the console as a developer info
+     * message.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param type
+     *            the type of the log event (one of <code>ACCESS</code>,
+     *            <code>CHAT</code>,<code>DATABASE</code>,
+     *            <code>DEBUG</code>,<code>ERROR</code>,
+     *            <code>EVENT</code>,<code>GOSSIP</code>,
+     *            <code>INTERPRETER</code>,<code>MERGE</code>,
+     *            <code>SERVLET</code>,<code>STARTUP</code>,
+     *            <code>SYSTEM</code>)
+     */
     public static void devinfo(String message, String type)
     {
         Trace.devinfo(message);
@@ -398,10 +415,13 @@ public class Log
     }
 
     /**
-     *  Same as {@link #devinfo(String, String)}, but
-     *  logs to multiple log files.
-     *  @param message  the text of the log event
-     *  @param types    the log types
+     * Same as {@link #devinfo(String, String)}, but logs to multiple log
+     * files.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param types
+     *            the log types
      */
     public static void devinfo(String message, String[] types)
     {
@@ -414,15 +434,20 @@ public class Log
     }
 
     /**
-     *  Logs a message <i>and</i> prints it to the console as a developer failure message.
-     *
-     *  @param message  the text of the log event
-     *  @param type     the type of the log event
-                    (one of <code>ACCESS</code>, <code>CHAT</code>, <code>DATABASE</code>, 
-                    <code>DEBUG</code>, <code>ERROR</code>, <code>EVENT</code>, 
-                    <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
-                    <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>)
-    */
+     * Logs a message <i>and </i> prints it to the console as a developer
+     * failure message.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param type
+     *            the type of the log event (one of <code>ACCESS</code>,
+     *            <code>CHAT</code>,<code>DATABASE</code>,
+     *            <code>DEBUG</code>,<code>ERROR</code>,
+     *            <code>EVENT</code>,<code>GOSSIP</code>,
+     *            <code>INTERPRETER</code>,<code>MERGE</code>,
+     *            <code>SERVLET</code>,<code>STARTUP</code>,
+     *            <code>SYSTEM</code>)
+     */
     public static void devfail(String message, String type)
     {
         Trace.devfail(message);
@@ -430,20 +455,23 @@ public class Log
     }
 
     /**
-     *  Logs a message and an exception <i>and</i> prints them to the console as a developer failure message.
-     *
-     *  @param message      the text of the log event
-     *  @param exception    the exception
-     *  @param type         the type of the log event
-                    (one of <code>ACCESS</code>, <code>CHAT</code>, <code>DATABASE</code>, 
-                    <code>DEBUG</code>, <code>ERROR</code>, <code>EVENT</code>, 
-                    <code>GOSSIP</code>, <code>INTERPRETER</code>, <code>MERGE</code>, 
-                    <code>SERVLET</code>, <code>STARTUP</code>, <code>SYSTEM</code>)
-    */
-    public static void devfail(
-        String message,
-        Throwable exception,
-        String type)
+     * Logs a message and an exception <i>and </i> prints them to the console as
+     * a developer failure message.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param exception
+     *            the exception
+     * @param type
+     *            the type of the log event (one of <code>ACCESS</code>,
+     *            <code>CHAT</code>,<code>DATABASE</code>,
+     *            <code>DEBUG</code>,<code>ERROR</code>,
+     *            <code>EVENT</code>,<code>GOSSIP</code>,
+     *            <code>INTERPRETER</code>,<code>MERGE</code>,
+     *            <code>SERVLET</code>,<code>STARTUP</code>,
+     *            <code>SYSTEM</code>)
+     */
+    public static void devfail(String message, Throwable exception, String type)
     {
         Trace.devfail(message);
         log(message, type);
@@ -452,10 +480,13 @@ public class Log
     }
 
     /**
-     *  Same as {@link #devfail(String, String)}, but
-     *  logs to multiple log files.
-     *  @param message  the text of the log event
-     *  @param types    the log types
+     * Same as {@link #devfail(String, String)}, but logs to multiple log
+     * files.
+     * 
+     * @param message
+     *            the text of the log event
+     * @param types
+     *            the log types
      */
     public static void devfail(String message, String[] types)
     {
@@ -468,7 +499,7 @@ public class Log
     }
 
     /**
-     *  Notifies of developer error exceptions.
+     * Notifies of developer error exceptions.
      */
     public static void devfail(DeveloperError e)
     {
@@ -484,7 +515,7 @@ public class Log
     }
 
     /**
-     *  Notifies of runtime exceptions.
+     * Notifies of runtime exceptions.
      */
     public static void devfail(RuntimeException e)
     {

@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.agent.responder;
 
@@ -32,19 +29,18 @@ import org.aitools.programd.util.Tag;
 import org.aitools.programd.util.UserError;
 
 /**
- *  <p>
- *  Contains common methods of template parsing and processing
- *  that are generic for all responders that deal with markup
- *  output, and which use a three-part template,
- *  such as {@link HTMLResponder}, {@link FlashResponder}, etc.
- *  </p>
- *  <p>
- *  Uses a very simple parser that scans a template file and looks
- *  for pseudo-tags with which values can be substituted.
- *  </p>
- *
- *  @author  Kim Sullivan
- *  @author  Noel Bush
+ * <p>
+ * Contains common methods of template parsing and processing that are generic
+ * for all responders that deal with markup output, and which use a three-part
+ * template, such as {@link HTMLResponder},{@link FlashResponder}, etc.
+ * </p>
+ * <p>
+ * Uses a very simple parser that scans a template file and looks for
+ * pseudo-tags with which values can be substituted.
+ * </p>
+ * 
+ * @author Kim Sullivan
+ * @author Noel Bush
  */
 abstract public class AbstractMarkupResponder implements Responder
 {
@@ -97,30 +93,15 @@ abstract public class AbstractMarkupResponder implements Responder
 
     /** Tags to process from the template. */
     protected static String[] tags =
-        {
-            EMPTY_STRING,
-            REPLY_START,
-            REPLY_END,
-            HOSTNAME,
-            USERINPUT,
-            RESPONSE,
-            BOT_NAME_EQUALS };
+        { EMPTY_STRING, REPLY_START, REPLY_END, HOSTNAME, USERINPUT, RESPONSE, BOT_NAME_EQUALS };
 
     /** Whether to log the chat to the database. */
-    private static final boolean LOG_CHAT_TO_DATABASE =
-        Boolean
-            .valueOf(
-                Globals.getProperty(
-                    "programd.logging.to-database.chat",
-                    "false"))
-            .booleanValue();
+    private static final boolean LOG_CHAT_TO_DATABASE = Boolean.valueOf(
+            Globals.getProperty("programd.logging.to-database.chat", "false")).booleanValue();
 
     /** Whether to log the chat to xml text files. */
-    private static final boolean LOG_CHAT_TO_XML =
-        Boolean
-            .valueOf(
-                Globals.getProperty("programd.logging.to-xml.chat", "true"))
-            .booleanValue();
+    private static final boolean LOG_CHAT_TO_XML = Boolean.valueOf(
+            Globals.getProperty("programd.logging.to-xml.chat", "true")).booleanValue();
 
     /** The string &quot;_&quot;. */
     protected static final String UNDERSCORE = "_";
@@ -128,7 +109,7 @@ abstract public class AbstractMarkupResponder implements Responder
     /** A quote mark. */
     protected static final String QUOTE_MARK = "\"";
 
-    /** The string &quot;<&quot;. */
+    /** The string &quot; <&quot;. */
     protected static final String MARKER_START = "<";
 
     /** The string &quot;>&quot;. */
@@ -141,7 +122,7 @@ abstract public class AbstractMarkupResponder implements Responder
     protected static final String SPACE = " ";
 
     /**
-     *  Initializes an AbstractMarkupResponder.
+     * Initializes an AbstractMarkupResponder.
      */
     public AbstractMarkupResponder(String botidToRespond)
     {
@@ -150,9 +131,10 @@ abstract public class AbstractMarkupResponder implements Responder
     }
 
     /**
-     *  Parses a template given a path.
-     *
-     *  @param path the template path
+     * Parses a template given a path.
+     * 
+     * @param path
+     *            the template path
      */
     protected void parseTemplate(String path)
     {
@@ -165,9 +147,7 @@ abstract public class AbstractMarkupResponder implements Responder
         }
         catch (IOException e)
         {
-            throw new UserError(
-                "I/O error trying to read \"" + path + "\".",
-                e);
+            throw new UserError("I/O error trying to read \"" + path + "\".", e);
         }
     }
 
@@ -212,8 +192,7 @@ abstract public class AbstractMarkupResponder implements Responder
                     // This is clunky but fast.
                     if (quote > 10)
                     {
-                        this.response.append(
-                                this.bot.getPropertyValue(tagName.substring(10, quote)));
+                        this.response.append(this.bot.getPropertyValue(tagName.substring(10, quote)));
                     }
                 }
             }
@@ -263,8 +242,7 @@ abstract public class AbstractMarkupResponder implements Responder
                     // This is clunky but fast.
                     if (quote > 10)
                     {
-                        this.response.append(
-                                this.bot.getPropertyValue(tagName.substring(10, quote)));
+                        this.response.append(this.bot.getPropertyValue(tagName.substring(10, quote)));
                     }
                 }
             }
@@ -276,12 +254,7 @@ abstract public class AbstractMarkupResponder implements Responder
         return appendTo + reply;
     }
 
-    public void log(
-        String input,
-        String reply,
-        String hostname,
-        String userid,
-        String botidToLog)
+    public void log(String input, String reply, String hostname, String userid, String botidToLog)
     {
         if (LOG_CHAT_TO_DATABASE)
         {
@@ -330,8 +303,7 @@ abstract public class AbstractMarkupResponder implements Responder
                     // This is clunky but fast.
                     if (quote > 10)
                     {
-                        this.response.append(
-                                this.bot.getPropertyValue(tagName.substring(10, quote)));
+                        this.response.append(this.bot.getPropertyValue(tagName.substring(10, quote)));
                     }
                 }
                 // Host name.
@@ -345,9 +317,10 @@ abstract public class AbstractMarkupResponder implements Responder
     }
 
     /**
-     *  Parses a template into the header, reply part and footer Lists.
-     *
-     *  @param file a FileReader for the chat template.
+     * Parses a template into the header, reply part and footer Lists.
+     * 
+     * @param file
+     *            a FileReader for the chat template.
      */
     protected void parse(FileReader file) throws IOException
     {
@@ -381,19 +354,19 @@ abstract public class AbstractMarkupResponder implements Responder
                 }
                 switch (tagsIndex)
                 {
-                    case 0 :
+                    case 0:
                         buffer.append(MARKER_START + tag + MARKER_END);
                         break;
 
-                    case 1 :
+                    case 1:
                         currentList = this.replyPart;
                         break;
 
-                    case 2 :
+                    case 2:
                         currentList = this.footer;
                         break;
 
-                    default :
+                    default:
                         currentList.add(new Tag(tagString));
                         break;
                 }
@@ -407,11 +380,11 @@ abstract public class AbstractMarkupResponder implements Responder
     }
 
     /**
-     *  Loads a template from a file.
-     *
-     *  @param path the path to the file
-     *
-     *  @return the loaded template
+     * Loads a template from a file.
+     * 
+     * @param path
+     *            the path to the file
+     * @return the loaded template
      */
     protected static LinkedList loadTemplate(String path)
     {
@@ -450,18 +423,17 @@ abstract public class AbstractMarkupResponder implements Responder
     }
 
     /**
-     *  Scans a given directory for templates that match a given
-     *  filename filter and returns a map of template names (filenames minus
-     *  suffixes) to filenames.
-     *
-     *  @param directoryName    the name of the directory to scan
-     *  @param filter           the filename filter to use
-     *
-     *  @return a map of template names (filenames minus suffixes) to filenames.
+     * Scans a given directory for templates that match a given filename filter
+     * and returns a map of template names (filenames minus suffixes) to
+     * filenames.
+     * 
+     * @param directoryName
+     *            the name of the directory to scan
+     * @param filter
+     *            the filename filter to use
+     * @return a map of template names (filenames minus suffixes) to filenames.
      */
-    protected static HashMap registerTemplates(
-        String directoryName,
-        SuffixFilenameFilter filter)
+    protected static HashMap registerTemplates(String directoryName, SuffixFilenameFilter filter)
     {
         File directory = FileManager.getFile(directoryName);
         HashMap result = new HashMap();
@@ -474,11 +446,8 @@ abstract public class AbstractMarkupResponder implements Responder
                 for (int index = templateCount; --index >= 0;)
                 {
                     String templateFilename = templateFilenames[index];
-                    result.put(
-                        templateFilename.substring(
-                            0,
-                            templateFilename.lastIndexOf(PERIOD)),
-                        directoryName + File.separator + templateFilename);
+                    result.put(templateFilename.substring(0, templateFilename.lastIndexOf(PERIOD)), directoryName
+                            + File.separator + templateFilename);
                 }
             }
         }

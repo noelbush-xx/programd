@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.targeting.gui;
 
@@ -44,27 +41,33 @@ import org.aitools.programd.util.InputNormalizer;
 import org.aitools.programd.util.XMLKit;
 
 /**
- *  Presents a panel where users can create new categories from targets.
- *
- *  @author Richard Wallace
- *  @author Noel Bush
+ * Presents a panel where users can create new categories from targets.
+ * 
+ * @author Richard Wallace
+ * @author Noel Bush
  */
 public class TargetPanel extends JPanel
 {
     protected Target selectedTarget = null;
 
     JLabel activationsField;
+
     JLabel countField;
 
     public static Random RNG = new Random();
+
     TargetingGUI guiparent;
 
     InputBar inputBar;
+
     JScrollBar inputScroller;
+
     MatchedBar matchedBar;
+
     TargetBar targetBar;
 
     AIMLTextPane templatePane;
+
     AIMLTextPane replyPane;
 
     ActionButtonsBar actionButtonsBar;
@@ -81,8 +84,7 @@ public class TargetPanel extends JPanel
         PatternsPanel patternsPanel = new PatternsPanel(this);
         patternsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        TemplateAndReplyPanel templateAndReplyPanel =
-            new TemplateAndReplyPanel(this);
+        TemplateAndReplyPanel templateAndReplyPanel = new TemplateAndReplyPanel(this);
         templateAndReplyPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         this.actionButtonsBar = new ActionButtonsBar(this);
@@ -98,11 +100,11 @@ public class TargetPanel extends JPanel
     public class PatternsPanel extends JPanel
     {
         protected TargetPanel parent;
-        
+
         public PatternsPanel(TargetPanel parentToUse)
         {
             this.parent = parentToUse;
-            
+
             this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             this.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 
@@ -143,11 +145,11 @@ public class TargetPanel extends JPanel
     public class TemplateAndReplyPanel extends JPanel
     {
         protected TargetPanel parent;
-        
+
         public TemplateAndReplyPanel(TargetPanel parentToUse)
         {
             this.parent = parentToUse;
-            
+
             this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
             this.setPreferredSize(new Dimension(300, 300));
 
@@ -206,11 +208,11 @@ public class TargetPanel extends JPanel
     class ActionButtonsBar extends JPanel
     {
         protected TargetPanel parent;
-        
+
         public ActionButtonsBar(TargetPanel parentToUse)
         {
             this.parent = parentToUse;
-            
+
             this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
             this.parent.countField = new JLabel();
@@ -241,8 +243,7 @@ public class TargetPanel extends JPanel
             save.setForeground(Color.black);
             save.addActionListener(new SaveTarget());
             save.setAlignmentX(Component.BOTTOM_ALIGNMENT);
-            save.setToolTipText(
-                "Saves a new category using the information you have entered.");
+            save.setToolTipText("Saves a new category using the information you have entered.");
 
             JButton next = new JButton("Next Target");
             next.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -268,7 +269,9 @@ public class TargetPanel extends JPanel
     class CategoryBar extends JPanel
     {
         JTextArea patternField;
+
         JTextArea thatField;
+
         JTextArea topicField;
 
         public void setEditable(boolean b)
@@ -288,12 +291,7 @@ public class TargetPanel extends JPanel
             this.topicField.setCaretPosition(0);
         }
 
-        public CategoryBar(
-            String barLabel,
-            String patternLabel,
-            String thatLabel,
-            String topicLabel,
-            int height)
+        public CategoryBar(String barLabel, String patternLabel, String thatLabel, String topicLabel, int height)
         {
             this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
@@ -313,12 +311,10 @@ public class TargetPanel extends JPanel
             this.patternField.addKeyListener(new PatternFitter(this.patternField));
 
             JScrollPane patternScroll = new JScrollPane(this.patternField);
-            patternScroll.setBorder(
-                BorderFactory.createTitledBorder(patternLabel));
+            patternScroll.setBorder(BorderFactory.createTitledBorder(patternLabel));
             patternScroll.setMinimumSize(new Dimension(200, height));
             patternScroll.setPreferredSize(new Dimension(200, height));
-            patternScroll.setMaximumSize(
-                new Dimension(Short.MAX_VALUE, height));
+            patternScroll.setMaximumSize(new Dimension(Short.MAX_VALUE, height));
             patternScroll.setAlignmentY(Component.CENTER_ALIGNMENT);
 
             this.thatField = new JTextArea();
@@ -370,8 +366,7 @@ public class TargetPanel extends JPanel
                     int caretPosition = this.field.getCaretPosition();
                     if (caretPosition > 0)
                     {
-                        char prevChar =
-                            this.field.getText().charAt(caretPosition - 1);
+                        char prevChar = this.field.getText().charAt(caretPosition - 1);
                         if (prevChar != ' ')
                         {
                             this.field.setText(this.field.getText() + ' ');
@@ -445,6 +440,7 @@ public class TargetPanel extends JPanel
             setEditable(true);
         }
     }
+
     public void setTarget(Target target)
     {
         this.selectedTarget = target;
@@ -452,25 +448,17 @@ public class TargetPanel extends JPanel
         int activations = target.getActivations();
         this.activationsField.setText(activations + " activations");
 
-        this.inputBar.setFields(
-            target.getFirstInputText(),
-            target.getFirstInputThat(),
-            target.getFirstInputTopic());
+        this.inputBar.setFields(target.getFirstInputText(), target.getFirstInputThat(), target.getFirstInputTopic());
 
         this.inputScroller.setMinimum(1);
         this.inputScroller.setMaximum(activations);
         this.inputScroller.setValue(1);
         showInput(1);
 
-        this.matchedBar.setFields(
-            target.getMatchPattern(),
-            target.getMatchThat(),
-            target.getMatchTopic());
+        this.matchedBar.setFields(target.getMatchPattern(), target.getMatchThat(), target.getMatchTopic());
 
-        this.targetBar.setFields(
-            target.getFirstExtensionPattern(),
-            target.getFirstExtensionThat(),
-            target.getFirstExtensionTopic());
+        this.targetBar.setFields(target.getFirstExtensionPattern(), target.getFirstExtensionThat(), target
+                .getFirstExtensionTopic());
 
         this.replyPane.setText(target.getFirstReply());
 
@@ -508,8 +496,7 @@ public class TargetPanel extends JPanel
 
             this.templatePane.setText("");
 
-            this.guiparent.setStatus(
-                "No more targets meet your selection criteria.");
+            this.guiparent.setStatus("No more targets meet your selection criteria.");
             this.hasTarget = false;
         }
         updateCountDisplay();
@@ -518,12 +505,12 @@ public class TargetPanel extends JPanel
     class NextInput implements AdjustmentListener
     {
         protected TargetPanel parent;
-        
+
         public NextInput(TargetPanel parentToUse)
         {
             this.parent = parentToUse;
         }
-        
+
         public void adjustmentValueChanged(AdjustmentEvent ae)
         {
             showInput(this.parent.inputScroller.getValue());
@@ -534,14 +521,10 @@ public class TargetPanel extends JPanel
     {
         if (number > 0 && this.selectedTarget != null)
         {
-            this.inputBar.setFields(
-                    this.selectedTarget.getNthInputText(number - 1),
-                    this.selectedTarget.getNthInputThat(number - 1),
-                    this.selectedTarget.getNthInputTopic(number - 1));
-            this.targetBar.setFields(
-                    this.selectedTarget.getNthExtensionPattern(number - 1),
-                    this.selectedTarget.getNthExtensionThat(number - 1),
-                    this.selectedTarget.getNthExtensionTopic(number - 1));
+            this.inputBar.setFields(this.selectedTarget.getNthInputText(number - 1), this.selectedTarget
+                    .getNthInputThat(number - 1), this.selectedTarget.getNthInputTopic(number - 1));
+            this.targetBar.setFields(this.selectedTarget.getNthExtensionPattern(number - 1), this.selectedTarget
+                    .getNthExtensionThat(number - 1), this.selectedTarget.getNthExtensionTopic(number - 1));
             this.replyPane.setText(this.selectedTarget.getNthReply(number - 1));
         }
     }
@@ -563,10 +546,10 @@ public class TargetPanel extends JPanel
         {
             super(parentToUse);
         }
-        
+
         public void actionPerformed(ActionEvent ae)
         {
-            TargetingTool.discard(((TargetPanel)this.parent).selectedTarget);
+            TargetingTool.discard(((TargetPanel) this.parent).selectedTarget);
             nextTarget();
         }
     }
@@ -582,13 +565,8 @@ public class TargetPanel extends JPanel
 
     public void updateCountDisplay()
     {
-        this.countField.setText(
-            TargetingTool.countLive()
-                + " live, "
-                + TargetingTool.countSaved()
-                + " saved, "
-                + TargetingTool.countDiscarded()
-                + " discarded");
+        this.countField.setText(TargetingTool.countLive() + " live, " + TargetingTool.countSaved() + " saved, "
+                + TargetingTool.countDiscarded() + " discarded");
     }
 
     class SaveTarget implements ActionListener
@@ -609,12 +587,9 @@ public class TargetPanel extends JPanel
         }
         if (this.selectedTarget != null)
         {
-            this.selectedTarget.setNewPattern(
-                InputNormalizer.patternFit(this.targetBar.patternField.getText()));
-            this.selectedTarget.setNewThat(
-                InputNormalizer.patternFit(this.targetBar.thatField.getText()));
-            this.selectedTarget.setNewTopic(
-                InputNormalizer.patternFit(this.targetBar.topicField.getText()));
+            this.selectedTarget.setNewPattern(InputNormalizer.patternFit(this.targetBar.patternField.getText()));
+            this.selectedTarget.setNewThat(InputNormalizer.patternFit(this.targetBar.thatField.getText()));
+            this.selectedTarget.setNewTopic(InputNormalizer.patternFit(this.targetBar.topicField.getText()));
             this.selectedTarget.setNewTemplate(template);
             TargetingTool.saveCategory(this.selectedTarget);
             nextTarget();
@@ -624,49 +599,53 @@ public class TargetPanel extends JPanel
     class TemplateButtons extends JPanel
     {
         private JButton random = new JButton("<random>");
+
         private JButton sr = new JButton("<sr/>");
+
         private JButton srai = new JButton("<srai>");
+
         private JButton think = new JButton("<think>");
+
         private JButton reduce = new JButton("Reduce");
+
         private JButton clear = new JButton("Clear");
-        
+
         protected TargetPanel parent;
 
         public TemplateButtons(TargetPanel parentToUse)
         {
             this.parent = parentToUse;
-            
+
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             this.random.addActionListener(new ParentAwareActionListener(this.parent)
             {
                 public void actionPerformed(ActionEvent ae)
                 {
-                    ((TargetPanel)this.parent).templatePane.setText(
-                        "<random><li>"
-                            + ((TargetPanel)this.parent).templatePane.getText()
-                            + "</li><li></random>");
+                    ((TargetPanel) this.parent).templatePane.setText("<random><li>"
+                            + ((TargetPanel) this.parent).templatePane.getText() + "</li><li></random>");
                 }
             });
             this.think.addActionListener(new ParentAwareActionListener(this.parent)
             {
                 public void actionPerformed(ActionEvent ae)
                 {
-                    ((TargetPanel)this.parent).templatePane.setText(
-                        "<think>" + ((TargetPanel)this.parent).templatePane.getText() + "</think>");
+                    ((TargetPanel) this.parent).templatePane.setText("<think>"
+                            + ((TargetPanel) this.parent).templatePane.getText() + "</think>");
                 }
             });
             this.sr.addActionListener(new ParentAwareActionListener(this.parent)
             {
                 public void actionPerformed(ActionEvent ae)
                 {
-                    ((TargetPanel)this.parent).templatePane.setText(((TargetPanel)this.parent).templatePane.getText() + "<sr/>");
+                    ((TargetPanel) this.parent).templatePane.setText(((TargetPanel) this.parent).templatePane.getText()
+                            + "<sr/>");
                 }
             });
             this.reduce.addActionListener(new ParentAwareActionListener(this.parent)
             {
                 public void actionPerformed(ActionEvent ae)
                 {
-                    String pattern = ((TargetPanel)this.parent).targetBar.patternField.getText();
+                    String pattern = ((TargetPanel) this.parent).targetBar.patternField.getText();
                     StringTokenizer st = new StringTokenizer(pattern);
                     int n = st.countTokens();
                     String newpat = "";
@@ -683,22 +662,23 @@ public class TargetPanel extends JPanel
                     {
                         newpat = "<sr/>";
                     }
-                    ((TargetPanel)this.parent).templatePane.setText(((TargetPanel)this.parent).templatePane.getText() + newpat);
+                    ((TargetPanel) this.parent).templatePane.setText(((TargetPanel) this.parent).templatePane.getText()
+                            + newpat);
                 }
             });
             this.srai.addActionListener(new ParentAwareActionListener(this.parent)
             {
                 public void actionPerformed(ActionEvent ae)
                 {
-                    ((TargetPanel)this.parent).templatePane.setText(
-                        "<srai>" + ((TargetPanel)this.parent).templatePane.getText() + "</srai>");
+                    ((TargetPanel) this.parent).templatePane.setText("<srai>"
+                            + ((TargetPanel) this.parent).templatePane.getText() + "</srai>");
                 }
             });
             this.clear.addActionListener(new ParentAwareActionListener(this.parent)
             {
                 public void actionPerformed(ActionEvent ae)
                 {
-                    ((TargetPanel)this.parent).templatePane.setText("");
+                    ((TargetPanel) this.parent).templatePane.setText("");
                 }
             });
 
@@ -708,8 +688,7 @@ public class TargetPanel extends JPanel
             this.think.setPreferredSize(new Dimension(120, 30));
             this.think.setMaximumSize(new Dimension(120, 30));
             this.think.setAlignmentY(Component.CENTER_ALIGNMENT);
-            this.think.setToolTipText(
-                "Encloses the current template contents in a <think> tag.");
+            this.think.setToolTipText("Encloses the current template contents in a <think> tag.");
 
             this.random.setBackground(Color.orange);
             this.random.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -717,8 +696,7 @@ public class TargetPanel extends JPanel
             this.random.setPreferredSize(new Dimension(120, 30));
             this.random.setMaximumSize(new Dimension(120, 30));
             this.random.setAlignmentY(Component.CENTER_ALIGNMENT);
-            this.random.setToolTipText(
-                "Encloses the current template contents in a <random> tag.");
+            this.random.setToolTipText("Encloses the current template contents in a <random> tag.");
 
             this.sr.setBackground(Color.orange);
             this.sr.setFont(new Font("Fixedsys", Font.PLAIN, 12));
@@ -733,8 +711,7 @@ public class TargetPanel extends JPanel
             this.srai.setPreferredSize(new Dimension(120, 30));
             this.srai.setMaximumSize(new Dimension(120, 30));
             this.srai.setAlignmentY(Component.CENTER_ALIGNMENT);
-            this.srai.setToolTipText(
-                "Encloses the current template contents in a <srai> tag.");
+            this.srai.setToolTipText("Encloses the current template contents in a <srai> tag.");
 
             this.reduce.setBackground(Color.orange);
             this.reduce.setFont(new Font("Fixedsys", Font.PLAIN, 12));

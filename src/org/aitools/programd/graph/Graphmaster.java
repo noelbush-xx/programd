@@ -1,13 +1,10 @@
-/*    
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
- 
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
- USA.
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 package org.aitools.programd.graph;
@@ -46,25 +43,24 @@ import org.aitools.programd.util.XMLKit;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  <p>
- *  The <code>Graphmaster</code> is the &quot;brain&quot; of a Program D bot.  
- *  It consists of a collection of nodes called <code>Nodemapper</code>s.
- *  These <code>Nodemapper</code>s map the branches from each node.
- *  The branches are either single words or wildcards.
- *  </p>
- *  <p>
- *  The root of the <code>Graphmaster</code> is a <code>Nodemapper</code>
- *  with many branches, one for each of the first words of all the patterns.
- *  The number of leaf nodes in the graph is equal to the number of
- *  categories, and each leaf node contains the &lt;template&gt; tag.
- *  </p>
- *
- *  @author Richard Wallace, Jon Baer
- *  @author Thomas Ringate/Pedro Colla
- *  @author Noel Bush
- *  @author Eion Robb
- *
- *  @version 4.1.6
+ * <p>
+ * The <code>Graphmaster</code> is the &quot;brain&quot; of a Program D bot.
+ * It consists of a collection of nodes called <code>Nodemapper</code>s.
+ * These <code>Nodemapper</code> s map the branches from each node. The
+ * branches are either single words or wildcards.
+ * </p>
+ * <p>
+ * The root of the <code>Graphmaster</code> is a <code>Nodemapper</code>
+ * with many branches, one for each of the first words of all the patterns. The
+ * number of leaf nodes in the graph is equal to the number of categories, and
+ * each leaf node contains the &lt;template&gt; tag.
+ * </p>
+ * 
+ * @author Richard Wallace, Jon Baer
+ * @author Thomas Ringate/Pedro Colla
+ * @author Noel Bush
+ * @author Eion Robb
+ * @version 4.1.6
  */
 public class Graphmaster
 {
@@ -177,7 +173,7 @@ public class Graphmaster
     }
 
     /**
-     *  Prevents external creation of a new <code>Graphmaster</code>.
+     * Prevents external creation of a new <code>Graphmaster</code>.
      */
     private Graphmaster()
     {
@@ -185,14 +181,17 @@ public class Graphmaster
     }
 
     /**
-     *  Adds a new pattern-that-topic path to the <code>Graphmaster</code> root.
-     *
-     *  @param pattern  &lt;pattern/&gt; path component
-     *  @param that     &lt;that/&gt; path component
-     *  @param topic    &lt;topic/&gt; path component
-     *  @param botid
-     *
-     *  @return <code>Nodemapper</code> which is the result of adding the path.
+     * Adds a new pattern-that-topic path to the <code>Graphmaster</code>
+     * root.
+     * 
+     * @param pattern
+     *            &lt;pattern/&gt; path component
+     * @param that
+     *            &lt;that/&gt; path component
+     * @param topic
+     *            &lt;topic/&gt; path component
+     * @param botid
+     * @return <code>Nodemapper</code> which is the result of adding the path.
      */
     public static Nodemapper add(String pattern, String that, String topic, String botid)
     {
@@ -210,14 +209,15 @@ public class Graphmaster
     }
 
     /**
-     *  Adds a new path to the <code>Graphmaster</code> at a given node.
-     *
-     *  @since  4.1.3
-     *
-     *  @param pathIterator an iterator over the List containing the elements of the path
-     *  @param parent       the <code>Nodemapper</code> parent to which the child should be appended
-     *
-     *  @return <code>Nodemapper</code> which is the result of adding the node
+     * Adds a new path to the <code>Graphmaster</code> at a given node.
+     * 
+     * @since 4.1.3
+     * @param pathIterator
+     *            an iterator over the List containing the elements of the path
+     * @param parent
+     *            the <code>Nodemapper</code> parent to which the child should
+     *            be appended
+     * @return <code>Nodemapper</code> which is the result of adding the node
      */
     private static Nodemapper add(ListIterator pathIterator, Nodemapper parent)
     {
@@ -253,10 +253,11 @@ public class Graphmaster
     }
 
     /**
-     *  Removes a node, as well as many of its ancestors as
-     *  have no descendants other than this node or its ancestors.
-     *
-     *  @param nodemapper   the mapper for the node to remove
+     * Removes a node, as well as many of its ancestors as have no descendants
+     * other than this node or its ancestors.
+     * 
+     * @param nodemapper
+     *            the mapper for the node to remove
      */
     private static void remove(Nodemapper nodemapper)
     {
@@ -276,23 +277,27 @@ public class Graphmaster
     }
 
     /**
-     *  <p>
-     *  Searches for a match in the <code>Graphmaster</code> to a given path.
-     *  </p>
-     *  <p>
-     *  This is a high-level prototype, used for external access.  It is not synchronized!
-     *  </p>
-     *
-     *  @see #match(Nodemapper, Nodemapper, String, String, String, boolean, boolean, boolean)
-     *
-     *  @param input    &lt;input/&gt; path component
-     *  @param that     &lt;that/&gt; path component
-     *  @param topic    &lt;topic/&gt; path component
-     *  @param botid    &lt;botid/&gt; path component
-     *
-     *  @return the resulting <code>Match</code> object
-     *
-     *  @throws NoMatchException if no match was found
+     * <p>
+     * Searches for a match in the <code>Graphmaster</code> to a given path.
+     * </p>
+     * <p>
+     * This is a high-level prototype, used for external access. It is not
+     * synchronized!
+     * </p>
+     * 
+     * @see #match(Nodemapper, Nodemapper, List, String, StringBuffer, int,
+     *      long)
+     * @param input
+     *            &lt;input/&gt; path component
+     * @param that
+     *            &lt;that/&gt; path component
+     * @param topic
+     *            &lt;topic/&gt; path component
+     * @param botid
+     *            &lt;botid/&gt; path component
+     * @return the resulting <code>Match</code> object
+     * @throws NoMatchException
+     *             if no match was found
      */
     public static Match match(String input, String that, String topic, String botid) throws NoMatchException
     {
@@ -342,7 +347,8 @@ public class Graphmaster
         // Input [directed to] botid.
         inputPath.add(botid);
 
-        // Get the match, starting at the root, with an empty star and path, starting in "in input" mode.
+        // Get the match, starting at the root, with an empty star and path,
+        // starting in "in input" mode.
         Match match = match(ROOT, ROOT, inputPath, EMPTY_STRING, new StringBuffer(), S_INPUT, System
                 .currentTimeMillis()
                 + RESPONSE_TIMEOUT);
@@ -358,24 +364,29 @@ public class Graphmaster
     }
 
     /**
-     *  <p>
-     *  Searches for a match in the <code>Graphmaster</code> to a given path.
-     *  </p>
-     *  <p>
-     *  This is a low-level prototype, used for internal recursion.
-     *  </p>
-     *
-     *  @see #match(String, String, String)
-     *
-     *  @param nodemapper   the nodemapper where we start matching
-     *  @param parent       the parent of the nodemapper where we start matching
-     *  @param input        the input path (possibly a sublist of the original)
-     *  @param star         contents absorbed by a wildcard
-     *  @param path         the path matched so far
-     *  @param matchState   state variable tracking which part of the path we're in
-     *  @param expiration	when this response process expires
-     *
-     *  @return the resulting <code>Match</code> object
+     * <p>
+     * Searches for a match in the <code>Graphmaster</code> to a given path.
+     * </p>
+     * <p>
+     * This is a low-level prototype, used for internal recursion.
+     * </p>
+     * 
+     * @see #match(String, String, String, String)
+     * @param nodemapper
+     *            the nodemapper where we start matching
+     * @param parent
+     *            the parent of the nodemapper where we start matching
+     * @param input
+     *            the input path (possibly a sublist of the original)
+     * @param star
+     *            contents absorbed by a wildcard
+     * @param path
+     *            the path matched so far
+     * @param matchState
+     *            state variable tracking which part of the path we're in
+     * @param expiration
+     *            when this response process expires
+     * @return the resulting <code>Match</code> object
      */
     private static Match match(Nodemapper nodemapper, Nodemapper parent, List input, String star, StringBuffer path,
             int matchState, long expiration)
@@ -398,7 +409,8 @@ public class Graphmaster
         // If no more tokens in the input, see if this is a template.
         if (input.size() == 0)
         {
-            // If so, the star is from the topic, and the path component is the topic.
+            // If so, the star is from the topic, and the path component is the
+            // topic.
             if (nodemapper.containsKey(TEMPLATE))
             {
                 match = new Match();
@@ -417,12 +429,13 @@ public class Graphmaster
         List tail = input.subList(1, input.size());
 
         /*
-         See if this nodemapper has a _ wildcard.
-         _ comes first in the AIML "alphabet".
+         * See if this nodemapper has a _ wildcard. _ comes first in the AIML
+         * "alphabet".
          */
         if (nodemapper.containsKey(UNDERSCORE))
         {
-            // If so, construct a new path from the current path plus a _ wildcard.
+            // If so, construct a new path from the current path plus a _
+            // wildcard.
             StringBuffer newPath = new StringBuffer();
             synchronized (newPath)
             {
@@ -431,14 +444,16 @@ public class Graphmaster
                 newPath.append('_');
             }
 
-            // Try to get a match with the tail and this new path, using the head as the star.
+            // Try to get a match with the tail and this new path, using the
+            // head as the star.
             match = match((Nodemapper) nodemapper.get(UNDERSCORE), nodemapper, tail, head, newPath, matchState,
                     expiration);
 
             // If that did result in a match,
             if (match != null)
             {
-                // capture and push the star content appropriate to the current match state.
+                // capture and push the star content appropriate to the current
+                // match state.
                 switch (matchState)
                 {
                     case S_INPUT:
@@ -468,15 +483,15 @@ public class Graphmaster
         }
 
         /*
-         The nodemapper may have contained a _, but this led to no match.
-         Or it didn't contain a _ at all.
+         * The nodemapper may have contained a _, but this led to no match. Or
+         * it didn't contain a _ at all.
          */
         if (nodemapper.containsKey(head))
         {
             /*
-             Check now whether this is a marker for the <that>,
-             <topic> or <botid> segments of the path.  If it is,
-             set the match state variable accordingly.
+             * Check now whether this is a marker for the <that>, <topic> or
+             * <botid> segments of the path. If it is, set the match state
+             * variable accordingly.
              */
             if (head.startsWith(MARKER_START))
             {
@@ -493,14 +508,16 @@ public class Graphmaster
                     matchState = S_BOTID;
                 }
 
-                // Now try to get a match using the tail and an empty star and empty path.
+                // Now try to get a match using the tail and an empty star and
+                // empty path.
                 match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, EMPTY_STRING, new StringBuffer(),
                         matchState, expiration);
 
                 // If that did result in a match,
                 if (match != null)
                 {
-                    // capture and push the star content appropriate to the *previous* match state.
+                    // capture and push the star content appropriate to the
+                    // *previous* match state.
                     switch (matchState)
                     {
                         case S_THAT:
@@ -536,9 +553,9 @@ public class Graphmaster
                 }
             }
             /*
-             In the case that the nodemapper contained the head,
-             but the head was not a marker, it must be that the
-             head is a regular word.  So try to match the rest of the path.
+             * In the case that the nodemapper contained the head, but the head
+             * was not a marker, it must be that the head is a regular word. So
+             * try to match the rest of the path.
              */
             else
             {
@@ -551,7 +568,8 @@ public class Graphmaster
                     newPath.append(head);
                 }
 
-                // Try to get a match with the tail and this path, using the current star.
+                // Try to get a match with the tail and this path, using the
+                // current star.
                 match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, star, newPath, matchState,
                         expiration);
 
@@ -564,13 +582,14 @@ public class Graphmaster
         }
 
         /*
-         The nodemapper may have contained the head, but this led to no match.
-         Or it didn't contain the head at all.  In any case, check to see if
-         it contains a * wildcard.  * comes last in the AIML "alphabet".
+         * The nodemapper may have contained the head, but this led to no match.
+         * Or it didn't contain the head at all. In any case, check to see if it
+         * contains a * wildcard. * comes last in the AIML "alphabet".
          */
         if (nodemapper.containsKey(ASTERISK))
         {
-            // If so, construct a new path from the current path plus a * wildcard.
+            // If so, construct a new path from the current path plus a *
+            // wildcard.
             StringBuffer newPath = new StringBuffer();
             synchronized (newPath)
             {
@@ -579,14 +598,16 @@ public class Graphmaster
                 newPath.append('*');
             }
 
-            // Try to get a match with the tail and this new path, using the head as the star.
+            // Try to get a match with the tail and this new path, using the
+            // head as the star.
             match = match((Nodemapper) nodemapper.get(ASTERISK), nodemapper, tail, head, newPath, matchState,
                     expiration);
 
             // If that did result in a match,
             if (match != null)
             {
-                // capture and push the star content appropriate to the current match state.
+                // capture and push the star content appropriate to the current
+                // match state.
                 switch (matchState)
                 {
                     case S_INPUT:
@@ -616,10 +637,10 @@ public class Graphmaster
         }
 
         /*
-         The nodemapper has failed to match at all: it contains neither _, nor the head,
-         nor *.  However, if it itself is a wildcard, then the match continues to be
-         valid and can proceed with the tail, the current path, and the star content plus
-         the head as the new star.
+         * The nodemapper has failed to match at all: it contains neither _, nor
+         * the head, nor *. However, if it itself is a wildcard, then the match
+         * continues to be valid and can proceed with the tail, the current
+         * path, and the star content plus the head as the new star.
          */
         if (nodemapper.equals(parent.get(ASTERISK)) || nodemapper.equals(parent.get(UNDERSCORE)))
         {
@@ -627,18 +648,18 @@ public class Graphmaster
         }
 
         /*
-         If we get here, we've hit a dead end; this null match will be passed back up the
-         recursive chain of matches, perhaps even hitting the high-level match method
-         (which will react by throwing a NoMatchException), though this is assumed to be
-         the rarest occurence.
+         * If we get here, we've hit a dead end; this null match will be passed
+         * back up the recursive chain of matches, perhaps even hitting the
+         * high-level match method (which will react by throwing a
+         * NoMatchException), though this is assumed to be the rarest occurence.
          */
         return null;
     }
 
     /**
-     *  Marks the end of loadtime.  Depending on settings in {@link Globals},
-     *  displays various trace information on the console,
-     *  and writes startup information to the log..
+     * Marks the end of loadtime. Depending on settings in {@link Globals},
+     * displays various trace information on the console, and writes startup
+     * information to the log..
      */
     public static void markReady()
     {
@@ -658,8 +679,7 @@ public class Graphmaster
     }
 
     /**
-     *  Tells the PredicateMaster to
-     *  save all predicates.
+     * Tells the PredicateMaster to save all predicates.
      */
     public static void shutdown()
     {
@@ -667,7 +687,7 @@ public class Graphmaster
     }
 
     /**
-     *  Adds a given Nodemapper to the set of activated nodes.
+     * Adds a given Nodemapper to the set of activated nodes.
      */
     public static void activatedNode(Nodemapper nodemapper)
     {
@@ -675,8 +695,8 @@ public class Graphmaster
     }
 
     /**
-     *  Sends new targeting data to
-     *  {@link org.aitools.programd.util.TargetMaster}.
+     * Sends new targeting data to
+     * {@link org.aitools.programd.targeting.TargetMaster}.
      */
     public static void checkpoint()
     {
@@ -712,10 +732,11 @@ public class Graphmaster
     }
 
     /**
-     *  Loads the <code>Graphmaster</code> with the contents of a given path.
-     *
-     *  @param path path to the file(s) to load
-     *  @param botid
+     * Loads the <code>Graphmaster</code> with the contents of a given path.
+     * 
+     * @param path
+     *            path to the file(s) to load
+     * @param botid
      */
     public static void load(String path, String botid)
     {
@@ -833,7 +854,8 @@ public class Graphmaster
                     Log.userinfo("I/O error trying to read \"" + path + "\"", Log.ERROR);
                     return;
                 }
-                // Add it to the AIMLWatcher, if active (and not the startup file).
+                // Add it to the AIMLWatcher, if active (and not the startup
+                // file).
                 if (Globals.isWatcherActive())
                 {
                     if (!path.equals(Globals.getStartupFilePath()))
@@ -871,14 +893,13 @@ public class Graphmaster
     }
 
     /**
-     *  Tracks/checks whether a given path should be loaded, depending
-     *  on whether or not it's currently &quot;loadtime&quot;;
-     *  if the file has already been loaded and is allowed to be
-     *  reloaded, unloads the file first.  A null value for bot
-     *  causes this to return true!!!
-     *
-     *  @param path
-     *  @param botid
+     * Tracks/checks whether a given path should be loaded, depending on whether
+     * or not it's currently &quot;loadtime&quot;; if the file has already been
+     * loaded and is allowed to be reloaded, unloads the file first. A null
+     * value for bot causes this to return true!!!
+     * 
+     * @param path
+     * @param bot
      */
     private static boolean loadCheck(Object path, Bot bot)
     {
@@ -907,10 +928,11 @@ public class Graphmaster
     }
 
     /**
-     *  Removes all nodes associated with a given filename,
-     *  and removes the file from the list of loaded files.
-     *
-     *  @param filename the filename
+     * Removes all nodes associated with a given filename, and removes the file
+     * from the list of loaded files.
+     * 
+     * @param path
+     *            the filename
      */
     public static void unload(Object path, Bot bot)
     {
@@ -925,9 +947,9 @@ public class Graphmaster
     }
 
     /**
-     *  Returns the number of categories presently loaded.
-     *
-     *  @return the number of categories presently loaded
+     * Returns the number of categories presently loaded.
+     * 
+     * @return the number of categories presently loaded
      */
     public static int getTotalCategories()
     {
@@ -935,9 +957,9 @@ public class Graphmaster
     }
 
     /**
-     *  Increments the total categories.
-     *
-     *  @return the number of categories presently loaded
+     * Increments the total categories.
+     * 
+     * @return the number of categories presently loaded
      */
     public static int incrementTotalCategories()
     {
@@ -945,9 +967,9 @@ public class Graphmaster
     }
 
     /**
-     *  Returns the pattern vocabulary size.
-     *
-     *  @return the pattern vocabulary size
+     * Returns the pattern vocabulary size.
+     * 
+     * @return the pattern vocabulary size
      */
     public static int patternVocabularySize()
     {

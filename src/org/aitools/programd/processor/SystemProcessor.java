@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.processor;
 
@@ -27,47 +24,40 @@ import org.aitools.programd.util.StringKit;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  <p>
- *  Handles a
- *  <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-system">system</a></code>
- *  element.
- *  </p>
- *  <p>
- *  No attempt is made to check whether the command passed to the OS interpreter
- *  is harmful.
- *  </p>
- *
- *  @version    4.1.3
- *  @author     Jon Baer
- *  @author     Mark Anacker
- *  @author     Thomas Ringate, Pedro Colla
+ * <p>
+ * Handles a
+ * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-system">system</a></code>
+ * element.
+ * </p>
+ * <p>
+ * No attempt is made to check whether the command passed to the OS interpreter
+ * is harmful.
+ * </p>
+ * 
+ * @version 4.1.3
+ * @author Jon Baer
+ * @author Mark Anacker
+ * @author Thomas Ringate, Pedro Colla
  */
 public class SystemProcessor extends AIMLProcessor
 {
     public static final String label = "system";
 
-    /** Known names of Unix operating systems, which tend to require the array form of Runtime.exec(). */
+    /**
+     * Known names of Unix operating systems, which tend to require the array
+     * form of Runtime.exec().
+     */
     private static final String[] arrayFormOSnames =
-        {
-            "mac os x",
-            "linux",
-            "solaris",
-            "sunos",
-            "mpe",
-            "hp-ux",
-            "pa_risc",
-            "aix",
-            "freebsd",
-            "irix",
-            "unix" };
+        { "mac os x", "linux", "solaris", "sunos", "mpe", "hp-ux", "pa_risc", "aix", "freebsd", "irix", "unix" };
 
     /** Whether to use the array form of Runtime.exec(). */
     private static boolean useArrayExecForm;
 
     /**
-     *  Tries to guess whether to use the array form of Runtime.exec().
+     * Tries to guess whether to use the array form of Runtime.exec().
      */
-    static {
+    static
+    {
         String os = System.getProperty("os.name").toLowerCase();
         for (int index = arrayFormOSnames.length; --index >= 0;)
         {
@@ -78,8 +68,7 @@ public class SystemProcessor extends AIMLProcessor
         }
     }
 
-    public String process(int level, XMLNode tag, TemplateParser parser)
-        throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         // Don't use the system tag if not permitted.
         if (!Globals.osAccessAllowed())
@@ -107,49 +96,33 @@ public class SystemProcessor extends AIMLProcessor
                 File directory = null;
                 if (directoryPath != null)
                 {
-                    Log.log(
-                        "Executing <system> call in \"" + directoryPath + "\"",
-                        Log.SYSTEM);
+                    Log.log("Executing <system> call in \"" + directoryPath + "\"", Log.SYSTEM);
                     directory = FileManager.getFile(directoryPath);
                     if (!directory.isDirectory())
                     {
-                        Log.userinfo(
-                            "programd.interpreter.system.directory (\""
-                                + directoryPath
-                                + "\") does not exist or is not a directory.",
-                            Log.SYSTEM);
+                        Log.userinfo("programd.interpreter.system.directory (\"" + directoryPath
+                                + "\") does not exist or is not a directory.", Log.SYSTEM);
                         return EMPTY_STRING;
                     }
                 }
                 else
                 {
-                    Log.userinfo(
-                        "No programd.interpreter.system.directory defined!",
-                        Log.SYSTEM);
+                    Log.userinfo("No programd.interpreter.system.directory defined!", Log.SYSTEM);
                     return EMPTY_STRING;
                 }
                 Process child;
                 if (useArrayExecForm)
                 {
-                    child =
-                        Runtime
-                            .getRuntime()
-                            .exec(
-                                (String[]) StringKit
-                                .wordSplit(response)
-                                .toArray(new String[] {
-                    }), null, directory);
+                    child = Runtime.getRuntime().exec(
+                            (String[]) StringKit.wordSplit(response).toArray(new String[] {}), null, directory);
                 }
                 else
                 {
-                    child =
-                        Runtime.getRuntime().exec(response, null, directory);
+                    child = Runtime.getRuntime().exec(response, null, directory);
                 }
                 if (child == null)
                 {
-                    Log.userinfo(
-                        "Could not get separate process for <system> command.",
-                        Log.SYSTEM);
+                    Log.userinfo("Could not get separate process for <system> command.", Log.SYSTEM);
                     return EMPTY_STRING;
                 }
 
@@ -159,15 +132,12 @@ public class SystemProcessor extends AIMLProcessor
                 }
                 catch (InterruptedException e)
                 {
-                    Log.userinfo(
-                        "System process interruped; could not complete.",
-                        Log.SYSTEM);
+                    Log.userinfo("System process interruped; could not complete.", Log.SYSTEM);
                     return EMPTY_STRING;
                 }
 
                 InputStream in = child.getInputStream();
-                BufferedReader br =
-                    new BufferedReader(new InputStreamReader(in));
+                BufferedReader br = new BufferedReader(new InputStreamReader(in));
                 String line;
                 while ((line = br.readLine()) != null)
                 {
@@ -179,19 +149,12 @@ public class SystemProcessor extends AIMLProcessor
 
                 response = output;
                 in.close();
-                Log.userinfo(
-                    "System process exit value: " + child.exitValue(),
-                    Log.SYSTEM);
+                Log.userinfo("System process exit value: " + child.exitValue(), Log.SYSTEM);
             }
             catch (IOException e)
             {
-                Log.userinfo(
-                    "Cannot execute <system> command.  Response logged.",
-                    Log.SYSTEM);
-                StringTokenizer lines =
-                    new StringTokenizer(
-                        e.getMessage(),
-                        System.getProperty("line.separator"));
+                Log.userinfo("Cannot execute <system> command.  Response logged.", Log.SYSTEM);
+                StringTokenizer lines = new StringTokenizer(e.getMessage(), System.getProperty("line.separator"));
                 while (lines.hasMoreTokens())
                 {
                     Log.log(lines.nextToken(), Log.SYSTEM);

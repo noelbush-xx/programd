@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.util;
 
@@ -16,12 +13,12 @@ import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 
 /**
- *  Contains various utilities.
- *
- *  @author Richard Wallace
- *  @author Jon Baer
- *  @author Thomas Ringate, Pedro Colla
- *  @author Noel Bush
+ * Contains various utilities.
+ * 
+ * @author Richard Wallace
+ * @author Jon Baer
+ * @author Thomas Ringate, Pedro Colla
+ * @author Noel Bush
  */
 public class StringKit
 {
@@ -35,16 +32,17 @@ public class StringKit
     private static final String TAB = new Character('\u0009').toString();
 
     /** The system line separator. */
-    private static final String LINE_SEPARATOR =
-        System.getProperty("line.separator");
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     /**
-     *  Filters out multiple consecutive instances of a given string.
-     *
-     *  @param input        the string to filter
-     *  @param filterChar   the string to filter out
-     *
-     *  @return the string without multiple consecutive instances of <code>filterChar</code>
+     * Filters out multiple consecutive instances of a given string.
+     * 
+     * @param input
+     *            the string to filter
+     * @param filter
+     *            the string to filter out
+     * @return the string without multiple consecutive instances of
+     *         <code>filterChar</code>
      */
     public static String filterMultipleConsecutive(String input, String filter)
     {
@@ -96,17 +94,18 @@ public class StringKit
         }
         // (otherwise...)
         return input;
-     }
+    }
 
     /**
-     *  Removes all instances of a given string from an input.
-     *
-     *  @param input    the string to filter
-     *  @param filter   the string to remove
-     *
-     *  @return the input with all instances of <code>filter</code> removed
-     *
-     *  @throws StringIndexOutOfBoundsException if there is malformed text in the input.
+     * Removes all instances of a given string from an input.
+     * 
+     * @param input
+     *            the string to filter
+     * @param filter
+     *            the string to remove
+     * @return the input with all instances of <code>filter</code> removed
+     * @throws StringIndexOutOfBoundsException
+     *             if there is malformed text in the input.
      */
     private static String removeAll(String input, String filter)
     {
@@ -140,7 +139,8 @@ public class StringKit
         // Index the input length.
         int inputLength = input.length();
 
-        // filterAddend is the amount to add to the index when comparing a substring of the input to the filter.
+        // filterAddend is the amount to add to the index when comparing a
+        // substring of the input to the filter.
         int filterAddend = filter.length() - 1;
 
         // If the filter does not exist in the input, return the input as-is.
@@ -149,7 +149,8 @@ public class StringKit
             return input;
         }
 
-        // Never look for the filter at an offset greater than inputLength - filterAddend.
+        // Never look for the filter at an offset greater than inputLength -
+        // filterAddend.
         int maxIndex = inputLength - filterAddend;
 
         if (maxIndex > -1)
@@ -169,7 +170,8 @@ public class StringKit
                 // Otherwise, we have found an instance of the filter,
                 else
                 {
-                    // and so do not append anything, but increment index to skip ahead of the filter.
+                    // and so do not append anything, but increment index to
+                    // skip ahead of the filter.
                     index += filterAddend;
                 }
             }
@@ -180,9 +182,10 @@ public class StringKit
     }
 
     /**
-     *  Returns a tab of the specified length.
-     *
-     *  @param length   the length of the tab
+     * Returns a tab of the specified length.
+     * 
+     * @param level
+     *            the level of the tab
      */
     public static String tab(int level)
     {
@@ -195,13 +198,12 @@ public class StringKit
     }
 
     /**
-     *  Splits an input into words, breaking at spaces.
-     *  This method is obviously limited in that it is not
-     *  aware of other word boundaries.
-     *
-     *  @param input    the input to split
-     *
-     *  @return the input split into sentences
+     * Splits an input into words, breaking at spaces. This method is obviously
+     * limited in that it is not aware of other word boundaries.
+     * 
+     * @param input
+     *            the input to split
+     * @return the input split into sentences
      */
     public static ArrayList wordSplit(String input)
     {
@@ -218,9 +220,7 @@ public class StringKit
 
         StringCharacterIterator iterator = new StringCharacterIterator(input);
 
-        for (char aChar = iterator.first();
-            aChar != StringCharacterIterator.DONE;
-            aChar = iterator.next())
+        for (char aChar = iterator.first(); aChar != StringCharacterIterator.DONE; aChar = iterator.next())
         {
             if (aChar == ' ')
             {

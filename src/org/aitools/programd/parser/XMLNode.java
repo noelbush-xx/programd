@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.parser;
 
@@ -16,12 +13,11 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 /**
- *  Implements a node of the XML trie
- *  created by {@link XMLParser}.
- *
- *  @version 4.1.4
- *  @author  Thomas Ringate/Pedro Colla
-*/
+ * Implements a node of the XML trie created by {@link XMLParser}.
+ * 
+ * @version 4.1.4
+ * @author Thomas Ringate/Pedro Colla
+ */
 public class XMLNode
 {
     // XML Types
@@ -47,12 +43,12 @@ public class XMLNode
     // Structure of an XML node
 
     /**
-     * Type of the node ({@link #TAG}, {@link #EMPTY},
-     * {@link #DATA}, {@link #CDATA}, {@link #COMMENT}, or {@link #ENDTAG}).
+     * Type of the node ({@link #TAG},{@link #EMPTY},{@link #DATA},
+     * {@link #CDATA},{@link #COMMENT}, or {@link #ENDTAG}).
      */
     public int XMLType;
 
-    /** Actual data on the node or tag content.  */
+    /** Actual data on the node or tag content. */
     public String XMLData;
 
     /** String of attributes associated (only for tags, otherwise &quot;&quot;) */
@@ -66,7 +62,7 @@ public class XMLNode
 
     /**
      * Initializes the node with empty default values.
-    */
+     */
     XMLNode()
     {
         this.XMLType = 0;
@@ -76,12 +72,11 @@ public class XMLNode
     }
 
     /**
-     *  Produces a simple string representation of this node.
-     *  Any two nodes with unique contents will produce unique
-     *  string representations.  Two nodes with the same content
-     *  will produce identical string representations.
-     *
-     *  @return a string representation of this node
+     * Produces a simple string representation of this node. Any two nodes with
+     * unique contents will produce unique string representations. Two nodes
+     * with the same content will produce identical string representations.
+     * 
+     * @return a string representation of this node
      */
     public String toString()
     {

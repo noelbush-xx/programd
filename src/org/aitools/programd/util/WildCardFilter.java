@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.util;
 
@@ -16,23 +13,28 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 /**
- *  <p>
- *  Implements a simple wildcard file filter.
- *  </p>
- *  <p>
- *  Taken, with gratitude from the <a href="http://sourceforge.net/projects/jmk/">JMK</a>
- *  project.  (Under the GNU LGPL)
- *  </p>
- *
- *  @author John D. Ramsdell, Olivier Refalo
- *  @see <a href="http://sourceforge.net/projects/jmk/">JMK</a>
+ * <p>
+ * Implements a simple wildcard file filter.
+ * </p>
+ * <p>
+ * Taken, with gratitude from the <a
+ * href="http://sourceforge.net/projects/jmk/">JMK </a> project. (Under the GNU
+ * LGPL)
+ * </p>
+ * 
+ * @author John D. Ramsdell, Olivier Refalo
+ * @see <a href="http://sourceforge.net/projects/jmk/">JMK </a>
  */
 public final class WildCardFilter implements FilenameFilter
 {
     private String pattern;
+
     private char wildCard;
+
     private int[] wildIndex;
+
     private String prefix;
+
     private String suffix;
 
     public WildCardFilter(String patternToUse, char wildCardToUse)
@@ -91,7 +93,10 @@ public final class WildCardFilter implements FilenameFilter
             {
                 /* index is the index into wildIndex */
                 /* windex is wildIndex[index - 1] at loop start */
-                /* pattern matched is pattern.substring(windex + 1, wildIndex[index]) */
+                /*
+                 * pattern matched is pattern.substring(windex + 1,
+                 * wildIndex[index])
+                 */
                 int pstart = windex + 1;
                 windex = this.wildIndex[index];
                 int plen = windex - pstart;

@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.parser;
 
@@ -24,9 +21,9 @@ import org.aitools.programd.util.XMLKit;
 import org.aitools.programd.util.logging.Log;
 
 /**
- *  A generic parser.
- *
- *  @since 4.1.3
+ * A generic parser.
+ * 
+ * @since 4.1.3
  */
 abstract public class GenericParser
 {
@@ -60,18 +57,19 @@ abstract public class GenericParser
     protected static final String COLON = ":";
 
     /**
-     *  <p>
-     *  Processes a given XML content string for a given identifier.
-     *  </p>
-     *  <p>
-     *  This is the general access method for external classes.
-     *  </p>
-     *
-     *  @param content      the XML content
-     *
-     *  @return the result of processing the XML content for the given <code>id</code>
-     *
-     *  @throws ProcessorException if the content cannot be processed
+     * <p>
+     * Processes a given XML content string for a given identifier.
+     * </p>
+     * <p>
+     * This is the general access method for external classes.
+     * </p>
+     * 
+     * @param content
+     *            the XML content
+     * @return the result of processing the XML content for the given
+     *         <code>id</code>
+     * @throws ProcessorException
+     *             if the content cannot be processed
      */
     public String processResponse(String content) throws ProcessorException
     {
@@ -87,10 +85,7 @@ abstract public class GenericParser
         if (list == null)
         {
             Log.userinfo("Invalid content:", Log.ERROR);
-            StringTokenizer lines =
-                new StringTokenizer(
-                    content,
-                    System.getProperty("line.separator"));
+            StringTokenizer lines = new StringTokenizer(content, System.getProperty("line.separator"));
             while (lines.hasMoreTokens())
             {
                 Log.userinfo(lines.nextToken(), Log.ERROR);
@@ -99,9 +94,9 @@ abstract public class GenericParser
         }
 
         /*
-            Evaluate the template starting from its first token.
-            The evaluate method will recurse to explore the full trie.
-        */
+         * Evaluate the template starting from its first token. The evaluate
+         * method will recurse to explore the full trie.
+         */
         String response = evaluate(0, list);
 
         // Perhaps unnecessary: a controlled cleanup
@@ -111,14 +106,15 @@ abstract public class GenericParser
     }
 
     /**
-     *  Processes a given XML node for a given identifier.
-     *
-     *  @param level    the current level in the XML trie
-     *  @param tag      the tag being evaluated
-     *
-     *  @return the result of processing the tag
-     *
-     *  @throws ProcessorException if the content cannot be processed
+     * Processes a given XML node for a given identifier.
+     * 
+     * @param level
+     *            the current level in the XML trie
+     * @param tag
+     *            the tag being evaluated
+     * @return the result of processing the tag
+     * @throws ProcessorException
+     *             if the content cannot be processed
      */
     public String processTag(int level, XMLNode tag) throws ProcessorException
     {
@@ -163,36 +159,34 @@ abstract public class GenericParser
         }
         else
         {
-            throw new ProcessorException(
-                "Could not find a processor for \"" + tag.XMLData + "\"!");
+            throw new ProcessorException("Could not find a processor for \"" + tag.XMLData + "\"!");
         }
 
         // Return the results of processing the tag.
         if (processor != null)
         {
-            return XMLKit.filterWhitespace(
-                processor.process(level++, tag, this));
+            return XMLKit.filterWhitespace(processor.process(level++, tag, this));
         }
         // (otherwise...)
         throw new DeveloperError("Corrupt processor set.");
     }
 
     /**
-     *  <p>
-     *  Recursively evaluates an XML trie.;
-     *  Both the <code>level</code> and the client <code>id</code>
-     *  are carried through recursion.
-     *  </p>
-     *  <p>
-     *  Depending on whether the engine is at load-time or run time, determines
-     *  whether or not to process the tag. When the tag is processed, returns the
-     *  result of processing it.
-     *  </p>
-     *
-     *  @param level    the current level in the XML trie
-     *  @param list     the XML trie to parse
-     *
-     *  @return the result of processing the tag
+     * <p>
+     * Recursively evaluates an XML trie.; Both the <code>level</code> and the
+     * client <code>id</code> are carried through recursion.
+     * </p>
+     * <p>
+     * Depending on whether the engine is at load-time or run time, determines
+     * whether or not to process the tag. When the tag is processed, returns the
+     * result of processing it.
+     * </p>
+     * 
+     * @param level
+     *            the current level in the XML trie
+     * @param list
+     *            the XML trie to parse
+     * @return the result of processing the tag
      */
     public String evaluate(int level, LinkedList list)
     {
@@ -218,8 +212,8 @@ abstract public class GenericParser
                 switch (node.XMLType)
                 {
                     // Collect and process tags.
-                    case XMLNode.TAG :
-                    case XMLNode.EMPTY :
+                    case XMLNode.TAG:
+                    case XMLNode.EMPTY:
                         try
                         {
                             response = response + processTag(level, node);
@@ -230,13 +224,13 @@ abstract public class GenericParser
                         }
                         break;
 
-                        // Text chunks should just be added to the response.
-                    case XMLNode.DATA :
-                    case XMLNode.CDATA :
+                    // Text chunks should just be added to the response.
+                    case XMLNode.DATA:
+                    case XMLNode.CDATA:
                         response = response + node.XMLData;
                         break;
 
-                    default :
+                    default:
                         break;
                 }
             }
@@ -245,19 +239,20 @@ abstract public class GenericParser
     }
 
     /**
-     *  <p>
-     *  Formats a tag from an XML node into &quot;pure&quot;
-     *  ????. Mostly used when a tag cannot be evaluated and then
-     *  literally included in the input.
-     *  </p>
-     *  <p>
-     *  THIS WORDING NEEDS TO BE CLARIFIED.
-     *  </p>
-     *
-     *  @param level    index of the current level in the XML trie (just passed through)
-     *  @param tag      the tag to format
-     *
-     *  @return the formatted result
+     * <p>
+     * Formats a tag from an XML node into &quot;pure&quot; ????. Mostly used
+     * when a tag cannot be evaluated and then literally included in the input.
+     * </p>
+     * <p>
+     * THIS WORDING NEEDS TO BE CLARIFIED.
+     * </p>
+     * 
+     * @param level
+     *            index of the current level in the XML trie (just passed
+     *            through)
+     * @param tag
+     *            the tag to format
+     * @return the formatted result
      */
     public String formatTag(int level, XMLNode tag)
     {
@@ -265,14 +260,15 @@ abstract public class GenericParser
         String response = EMPTY_STRING;
 
         /*
-            Format according with the XML element type. Handling of
-            text has been added for generality since no text will
-            ever be passed under the main usage of the method.
-        */
+         * Format according with the XML element type. Handling of text has been
+         * added for generality since no text will ever be passed under the main
+         * usage of the method.
+         */
         switch (tag.XMLType)
         {
-            case XMLNode.TAG :
-                // This is a XML tag, so it might have children. Format the head.
+            case XMLNode.TAG:
+                // This is a XML tag, so it might have children. Format the
+                // head.
                 response = response + OPEN_MARKER_START + tag.XMLData;
 
                 // Include any attributes.
@@ -290,14 +286,10 @@ abstract public class GenericParser
                 }
 
                 // Format the response tag.
-                response =
-                    response
-                        + CLOSE_MARKER_START
-                        + tag.XMLData
-                        + NONATOMIC_MARKER_END;
+                response = response + CLOSE_MARKER_START + tag.XMLData + NONATOMIC_MARKER_END;
                 break;
 
-            case XMLNode.EMPTY :
+            case XMLNode.EMPTY:
                 // Same as for XMLNode.TAG, but no recursion.
                 response = response + OPEN_MARKER_START + tag.XMLData;
                 if (!tag.XMLAttr.equals(EMPTY_STRING))
@@ -307,13 +299,13 @@ abstract public class GenericParser
                 response = response + ATOMIC_MARKER_END;
                 break;
 
-            case XMLNode.DATA :
-            case XMLNode.CDATA :
+            case XMLNode.DATA:
+            case XMLNode.CDATA:
                 // Format text.
                 response = response + tag.XMLData;
                 break;
 
-            default :
+            default:
                 break;
 
         }
@@ -321,21 +313,26 @@ abstract public class GenericParser
     }
 
     /**
-     *  <p>
-     *  Counts the number of nodes of a given type at a
-     *  particular level of the XML trie.
-     *  </p>
-     *  <p>
-     *  Used mostly in connection with the &lt;random/&gt; tag in order
-     *  to see how many candidate listItem structures are beneath it and
-     *  to set the upper limit on the random number roll.
-     *  </p>
-     *
-     *  @param tagname  the name of the tag sought
-     *  @param list     the XML trie
-     *  @param allnodes if false, only count one of the desired type (just see if <i>any</i> are there)
-     *
-     *  @return the number of nodes of the given type at this level (or <code>1</code> if at least one node is present and <code>allnodes</code> is false
+     * <p>
+     * Counts the number of nodes of a given type at a particular level of the
+     * XML trie.
+     * </p>
+     * <p>
+     * Used mostly in connection with the &lt;random/&gt; tag in order to see
+     * how many candidate listItem structures are beneath it and to set the
+     * upper limit on the random number roll.
+     * </p>
+     * 
+     * @param tagname
+     *            the name of the tag sought
+     * @param list
+     *            the XML trie
+     * @param allnodes
+     *            if false, only count one of the desired type (just see if
+     *            <i>any </i> are there)
+     * @return the number of nodes of the given type at this level (or
+     *         <code>1</code> if at least one node is present and
+     *         <code>allnodes</code> is false
      */
     public int nodeCount(String tagname, LinkedList list, boolean allnodes)
     {
@@ -361,19 +358,18 @@ abstract public class GenericParser
                 switch (node.XMLType)
                 {
                     // Collect and process only tag elements and empty tags.
-                    case XMLNode.TAG :
-                    case XMLNode.EMPTY :
+                    case XMLNode.TAG:
+                    case XMLNode.EMPTY:
                         // Only deal with the desired one.
-                        if ((!node.XMLData.equals(tagname))
-                            && (allnodes == false))
+                        if ((!node.XMLData.equals(tagname)) && (allnodes == false))
                         {
                             break;
                         }
                         numbernodes++;
                         break;
 
-                        // Just ignore everything else.
-                    default :
+                    // Just ignore everything else.
+                    default:
                         break;
                 }
             }
@@ -382,20 +378,22 @@ abstract public class GenericParser
     }
 
     /**
-     *  <p>
-     *  Retrieves the ordernode-th node of a given tag at a particular
-     *  level of the XML trie.
-     *  </p>
-     *  <p>
-     *  Typically used to find specific tags beneath a given tag being
-     *  evaluated (e.g., an &lt;li/&gt; beneath a &lt;random/&gt;).
-     *  </p>
-     *
-     *  @param tagname      the name of the tag sought
-     *  @param list         the XML trie
-     *  @param ordernode    index of the node we sought
-     *
-     *  @return the node sought
+     * <p>
+     * Retrieves the ordernode-th node of a given tag at a particular level of
+     * the XML trie.
+     * </p>
+     * <p>
+     * Typically used to find specific tags beneath a given tag being evaluated
+     * (e.g., an &lt;li/&gt; beneath a &lt;random/&gt;).
+     * </p>
+     * 
+     * @param tagname
+     *            the name of the tag sought
+     * @param list
+     *            the XML trie
+     * @param ordernode
+     *            index of the node we sought
+     * @return the node sought
      */
     public XMLNode getNode(String tagname, LinkedList list, int ordernode)
     {
@@ -420,14 +418,15 @@ abstract public class GenericParser
                 switch (node.XMLType)
                 {
                     // Collect and process only tag elements and empty tags.
-                    case XMLNode.TAG :
-                    case XMLNode.EMPTY :
+                    case XMLNode.TAG:
+                    case XMLNode.EMPTY:
                         // Only deal with the desired one.
                         if (!node.XMLData.equals(tagname))
                         {
                             break;
                         }
-                        // We've found the one we're looking for when ordernode is zero (after decrementing).
+                        // We've found the one we're looking for when ordernode
+                        // is zero (after decrementing).
                         if (--ordernode == 0)
                         {
                             return node;
@@ -435,8 +434,8 @@ abstract public class GenericParser
                         // Otherwise, continue.
                         break;
 
-                        // Just ignore everything else.
-                    default :
+                    // Just ignore everything else.
+                    default:
                         break;
                 }
             }
@@ -445,32 +444,33 @@ abstract public class GenericParser
     }
 
     /**
-     *  <p>
-     *  Creates a &quot;mini-template&quot; with a given tag and
-     *  an optional child tag, then evaluates it recursively.
-     *  </p>
-     *  <p>
-     *  This method is used mostly to map certain tags as combinations
-     *  of other tags (as in <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-short-cut-elements">short-cut elements</a>),
-     *  as well as various &quot;AIML 0.9&quot; tags.
-     *  </p>
-     *
-     *  @param level        the current level in the XML trie
-     *  @param rootTag      the name of the root tag
-     *  @param rootType     the type of the root tag
-     *  @param rootAttr     an optional attribute on the root tag (use &quot;&quot; if no attribute)
-     *  @param childTag     the name of the child tag
-     *  @param childType    the type of the child tag
-     *
-     *  @return the result of processing this structure
+     * <p>
+     * Creates a &quot;mini-template&quot; with a given tag and an optional
+     * child tag, then evaluates it recursively.
+     * </p>
+     * <p>
+     * This method is used mostly to map certain tags as combinations of other
+     * tags (as in <a
+     * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-short-cut-elements">short-cut
+     * elements </a>), as well as various &quot;AIML 0.9&quot; tags.
+     * </p>
+     * 
+     * @param level
+     *            the current level in the XML trie
+     * @param rootTag
+     *            the name of the root tag
+     * @param rootType
+     *            the type of the root tag
+     * @param rootAttr
+     *            an optional attribute on the root tag (use &quot;&quot; if no
+     *            attribute)
+     * @param childTag
+     *            the name of the child tag
+     * @param childType
+     *            the type of the child tag
+     * @return the result of processing this structure
      */
-    public String shortcutTag(
-        int level,
-        String rootTag,
-        int rootType,
-        String rootAttr,
-        String childTag,
-        int childType)
+    public String shortcutTag(int level, String rootTag, int rootType, String rootAttr, String childTag, int childType)
     {
         String response = EMPTY_STRING;
 
@@ -481,50 +481,48 @@ abstract public class GenericParser
         }
 
         /*
-            Create a new node for use in evaluation, with the
-            content and attributes of the root tag.
-        */
+         * Create a new node for use in evaluation, with the content and
+         * attributes of the root tag.
+         */
         XMLNode node = new XMLNode();
         node.XMLType = rootType;
         node.XMLData = rootTag;
         node.XMLAttr = rootAttr;
 
         /*
-            Create an XML trie for this tag, so that we can use other
-            methods of this class to process it normally (as if it
-            came from the original AIML in this form.
-        */
+         * Create an XML trie for this tag, so that we can use other methods of
+         * this class to process it normally (as if it came from the original
+         * AIML in this form.
+         */
         LinkedList list = new LinkedList();
 
         // Prepare the list to receive inserts.
         ListIterator iterator = list.listIterator(0);
 
         /*
-            Process child tags (if any). Clearly, the root tag cannot
-            have an empty type, and the children must exist.
-        */
+         * Process child tags (if any). Clearly, the root tag cannot have an
+         * empty type, and the children must exist.
+         */
         XMLNode nodeChild = new XMLNode();
         LinkedList childList = new LinkedList();
-        if ((rootType == XMLNode.TAG)
-            && (!childTag.equals(EMPTY_STRING))
-            && ((childType == XMLNode.EMPTY) || (childType == XMLNode.DATA)))
+        if ((rootType == XMLNode.TAG) && (!childTag.equals(EMPTY_STRING))
+                && ((childType == XMLNode.EMPTY) || (childType == XMLNode.DATA)))
         {
             /*
-                Create an XML node for the child tag. Note that
-                we assume that the child is an empty tag with
-                no attributes.  This is reasonable for AIML 1.0.1, but
-                might not always be.
-            */
+             * Create an XML node for the child tag. Note that we assume that
+             * the child is an empty tag with no attributes. This is reasonable
+             * for AIML 1.0.1, but might not always be.
+             */
             switch (childType)
             {
-                case XMLNode.EMPTY :
+                case XMLNode.EMPTY:
                     nodeChild.XMLType = XMLNode.EMPTY;
                     nodeChild.XMLData = childTag;
                     nodeChild.XMLAttr = EMPTY_STRING;
                     break;
 
-                case XMLNode.DATA :
-                case XMLNode.CDATA :
+                case XMLNode.DATA:
+                case XMLNode.CDATA:
                     nodeChild.XMLType = XMLNode.DATA;
                     nodeChild.XMLData = childTag;
                     nodeChild.XMLAttr = EMPTY_STRING;
@@ -544,10 +542,12 @@ abstract public class GenericParser
         // Insert the root tag.
         iterator.add(node);
 
-        // Now evaluate this XML trie, just as if it came from the original AIML.
+        // Now evaluate this XML trie, just as if it came from the original
+        // AIML.
         response = response + evaluate(level++, list);
 
-        // De-reference the heavy temporary objects created (to expedite garbage collection).
+        // De-reference the heavy temporary objects created (to expedite garbage
+        // collection).
         nodeChild = null;
         childList = null;
         node = null;
@@ -557,20 +557,19 @@ abstract public class GenericParser
     }
 
     /**
-     *  Corrects a tag to use a valid 2-dimensional index,
-     *  and returns the indices. If either index is invalid or
-     *  missing, it is set to 1.
-     *
-     *  @since  4.1.3
-     *
-     *  @param tag  the tag whose 2-dimensional index we want
-     *
-     *  @return a valid 2-dimensional index
+     * Corrects a tag to use a valid 2-dimensional index, and returns the
+     * indices. If either index is invalid or missing, it is set to 1.
+     * 
+     * @since 4.1.3
+     * @param tag
+     *            the tag whose 2-dimensional index we want
+     * @return a valid 2-dimensional index
      */
     public static int[] getValid2dIndex(XMLNode tag)
     {
         String indexValue = XMLKit.getAttributeValue(INDEX, tag.XMLAttr);
-        int[] result = { 1, 1 };
+        int[] result =
+            { 1, 1 };
 
         // Assign the default if the index attribute is empty.
         if (indexValue.equals(EMPTY_STRING))
@@ -614,23 +613,20 @@ abstract public class GenericParser
     }
 
     /**
-     *  Corrects a tag to use a valid 1-dimensional index,
-     *  and returns the index.  If the index is missing or valid,
-     *  1 is returned.
-     *
-     *  @since  4.1.3
-     *
-     *  @param tag  the element whose 1-dimensional index we want
-     *
-     *  @return a valid 1-dimensional index
+     * Corrects a tag to use a valid 1-dimensional index, and returns the index.
+     * If the index is missing or valid, 1 is returned.
+     * 
+     * @since 4.1.3
+     * @param tag
+     *            the element whose 1-dimensional index we want
+     * @return a valid 1-dimensional index
      */
     public static int getValid1dIndex(XMLNode tag)
     {
         // Get a valid 1-dimensional index.
         try
         {
-            return Integer.parseInt(
-                XMLKit.getAttributeValue(INDEX, tag.XMLAttr));
+            return Integer.parseInt(XMLKit.getAttributeValue(INDEX, tag.XMLAttr));
         }
         catch (NumberFormatException e)
         {

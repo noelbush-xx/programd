@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.targeting;
 
@@ -17,15 +14,15 @@ import java.util.LinkedList;
 import org.aitools.programd.util.StringTripleMatrix;
 
 /**
- *  Represents the extensions of a target.
- *
- *  @author Noel Bush
- *  @since  4.1.5
+ * Represents the extensions of a target.
+ * 
+ * @author Noel Bush
+ * @since 4.1.5
  */
 public class TargetExtensions extends StringTripleMatrix
 {
     /**
-     *  Creates a new <code>TargetExtensions</code>.
+     * Creates a new <code>TargetExtensions</code>.
      */
     public TargetExtensions()
     {
@@ -33,9 +30,9 @@ public class TargetExtensions extends StringTripleMatrix
     }
 
     /**
-     *  Returns the extension <code>pattern</code>s
-     *
-     *  @return the extension <code>pattern</code>s
+     * Returns the extension <code>pattern</code> s
+     * 
+     * @return the extension <code>pattern</code> s
      */
     public LinkedList getPatterns()
     {
@@ -43,9 +40,9 @@ public class TargetExtensions extends StringTripleMatrix
     }
 
     /**
-     *  Returns the extension <code>that</code>s
-     *
-     *  @return the extension <code>that</code>s
+     * Returns the extension <code>that</code> s
+     * 
+     * @return the extension <code>that</code> s
      */
     public LinkedList getThats()
     {
@@ -53,9 +50,9 @@ public class TargetExtensions extends StringTripleMatrix
     }
 
     /**
-     *  Returns the extension <code>topic</code>s
-     *
-     *  @return the extension <code>topic</code>s
+     * Returns the extension <code>topic</code> s
+     * 
+     * @return the extension <code>topic</code> s
      */
     public LinkedList getTopics()
     {

@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.processor;
 
@@ -24,14 +21,14 @@ import org.aitools.programd.util.Trace;
 import org.aitools.programd.util.XMLKit;
 
 /**
- *  Handles a
- *  <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-condition">condition</a></code>
- *  element.
- *
- *  @version    4.1.4
- *  @author     Jon Baer
- *  @author     Thomas Ringate, Pedro Colla
- *  @author     Noel Bush
+ * Handles a
+ * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-condition">condition</a></code>
+ * element.
+ * 
+ * @version 4.1.4
+ * @author Jon Baer
+ * @author Thomas Ringate, Pedro Colla
+ * @author Noel Bush
  */
 public class ConditionProcessor extends AIMLProcessor
 {
@@ -53,8 +50,7 @@ public class ConditionProcessor extends AIMLProcessor
     /** The string &quot;li&quot;. */
     private static final String LI = "li";
 
-    public String process(int level, XMLNode tag, TemplateParser parser)
-        throws AIMLProcessorException
+    public String process(int level, XMLNode tag, TemplateParser parser) throws AIMLProcessorException
     {
         if (tag.XMLType == XMLNode.TAG)
         {
@@ -67,51 +63,26 @@ public class ConditionProcessor extends AIMLProcessor
             String value = XMLKit.getAttributeValue(VALUE, tag.XMLAttr);
 
             /*
-                Process a multiPredicateCondition:
-                <condition>
-                    <li name="xxx" value="xxx">...</li>
-                    <li>...</li>
-                </condition>
-            */
-            if ((tag.XMLAttr.indexOf(NAME_EQUALS, 0) < 0)
-                && (tag.XMLAttr.indexOf(VALUE_EQUALS, 0) < 0))
+             * Process a multiPredicateCondition: <condition>
+             * <li name="xxx" value="xxx"> ... </li><li> ... </li> </condition>
+             */
+            if ((tag.XMLAttr.indexOf(NAME_EQUALS, 0) < 0) && (tag.XMLAttr.indexOf(VALUE_EQUALS, 0) < 0))
             {
-                return processListItem(
-                    level,
-                    parser,
-                    tag.XMLChild,
-                    NAME_VALUE_LI,
-                    name,
-                    value);
+                return processListItem(level, parser, tag.XMLChild, NAME_VALUE_LI, name, value);
             }
 
             /*
-                Process a blockCondition:
-                <condition name="xxx" value="yyy">
-                    ...
-                </condition>
-            */
-            if ((tag.XMLAttr.indexOf(NAME_EQUALS, 0) >= 0)
-                && (tag.XMLAttr.indexOf(VALUE_EQUALS, 0) >= 0))
+             * Process a blockCondition: <condition name="xxx" value="yyy"> ...
+             * </condition>
+             */
+            if ((tag.XMLAttr.indexOf(NAME_EQUALS, 0) >= 0) && (tag.XMLAttr.indexOf(VALUE_EQUALS, 0) >= 0))
             {
                 try
                 {
-                    if (PatternArbiter
-                        .matches(
-                            PredicateMaster.get(
-                                name,
-                                parser.getUserID(),
-                                parser.getBotID()),
-                            value,
+                    if (PatternArbiter.matches(PredicateMaster.get(name, parser.getUserID(), parser.getBotID()), value,
                             true))
                     {
-                        return processListItem(
-                            level,
-                            parser,
-                            tag.XMLChild,
-                            DEFAULT_LI,
-                            EMPTY_STRING,
-                            EMPTY_STRING);
+                        return processListItem(level, parser, tag.XMLChild, DEFAULT_LI, EMPTY_STRING, EMPTY_STRING);
                     }
                 }
                 catch (NotAnAIMLPatternException e)
@@ -123,22 +94,12 @@ public class ConditionProcessor extends AIMLProcessor
             }
 
             /*
-                Process a singlePredicateCondition:
-                <condition name="xxx">
-                    <li value="yyy">...</li>
-                    <li>...</li>
-                </condition>
-            */
-            if ((tag.XMLAttr.indexOf(NAME_EQUALS, 0) >= 0)
-                && (tag.XMLAttr.indexOf(VALUE_EQUALS, 0) < 0))
+             * Process a singlePredicateCondition: <condition name="xxx">
+             * <li value="yyy"> ... </li><li> ... </li> </condition>
+             */
+            if ((tag.XMLAttr.indexOf(NAME_EQUALS, 0) >= 0) && (tag.XMLAttr.indexOf(VALUE_EQUALS, 0) < 0))
             {
-                return processListItem(
-                    level,
-                    parser,
-                    tag.XMLChild,
-                    VALUE_ONLY_LI,
-                    name,
-                    EMPTY_STRING);
+                return processListItem(level, parser, tag.XMLChild, VALUE_ONLY_LI, name, EMPTY_STRING);
             }
 
             // In other cases, return an empty string.
@@ -149,24 +110,25 @@ public class ConditionProcessor extends AIMLProcessor
     }
 
     /**
-     *  Evaluates an &lt;li/&gt; element inside a &lt;condition/&gt;.
-     *
-     *  @param level        the level we're at in the XML trie
-     *  @param parser       the TemplateParser object responsible for this
-     *  @param list         the XML trie
-     *  @param listItemType one of {@link NAME_VALUE_LI}, {@link DEFAULT_LI} or {@link VALUE_ONLY_LI}
-     *  @param name         the name attribute of the &lt;li/&gt; (if applicable)
-     *  @param value        the value attribute of the &lt;li/&gt; (if applicable)
-     *
-     *  @return the result of processing this &lt;li/&gt;
+     * Evaluates an &lt;li/&gt; element inside a &lt;condition/&gt;.
+     * 
+     * @param level
+     *            the level we're at in the XML trie
+     * @param parser
+     *            the TemplateParser object responsible for this
+     * @param list
+     *            the XML trie
+     * @param listItemType
+     *            one of {@link #NAME_VALUE_LI},{@link #DEFAULT_LI}or
+     *            {@link #VALUE_ONLY_LI}
+     * @param name
+     *            the name attribute of the &lt;li/&gt; (if applicable)
+     * @param value
+     *            the value attribute of the &lt;li/&gt; (if applicable)
+     * @return the result of processing this &lt;li/&gt;
      */
-    public String processListItem(
-        int level,
-        TemplateParser parser,
-        LinkedList list,
-        int listItemType,
-        String name,
-        String value)
+    public String processListItem(int level, TemplateParser parser, LinkedList list, int listItemType, String name,
+            String value)
     {
         String response = EMPTY_STRING;
         ListIterator iterator;
@@ -187,16 +149,12 @@ public class ConditionProcessor extends AIMLProcessor
         String liname = EMPTY_STRING;
 
         /*
-            For <code>valueOnlyListItem</code>s, look at the parent
-            &lt;condition/&gt; to get the predicate <code>name</code>.
-        */
+         * For <code> valueOnlyListItem </code> s, look at the parent
+         * &lt;condition/&gt; to get the predicate <code> name </code> .
+         */
         if (listItemType == VALUE_ONLY_LI)
         {
-            predicateValue =
-                PredicateMaster.get(
-                    name,
-                    parser.getUserID(),
-                    parser.getBotID());
+            predicateValue = PredicateMaster.get(name, parser.getUserID(), parser.getBotID());
         }
 
         // Navigate through this entire level.
@@ -208,16 +166,15 @@ public class ConditionProcessor extends AIMLProcessor
                 switch (node.XMLType)
                 {
                     // If text, just append to the response.
-                    case XMLNode.DATA :
-                    case XMLNode.CDATA :
+                    case XMLNode.DATA:
+                    case XMLNode.CDATA:
                         response = response + node.XMLData;
                         break;
 
-                    case XMLNode.EMPTY :
+                    case XMLNode.EMPTY:
                         try
                         {
-                            response =
-                                response + parser.processTag(level++, node);
+                            response = response + parser.processTag(level++, node);
                         }
                         catch (ProcessorException e)
                         {
@@ -225,15 +182,14 @@ public class ConditionProcessor extends AIMLProcessor
                         }
                         break;
 
-                        // Collect and process listitems
-                    case XMLNode.TAG :
+                    // Collect and process listitems
+                    case XMLNode.TAG:
                         // Only &lt;li&gt;&lt;/li&gt; structures allowed
                         if (!node.XMLData.equals(LI))
                         {
                             try
                             {
-                                response =
-                                    response + parser.processTag(level++, node);
+                                response = response + parser.processTag(level++, node);
                             }
                             catch (ProcessorException e)
                             {
@@ -243,71 +199,56 @@ public class ConditionProcessor extends AIMLProcessor
                         }
 
                         /*
-                            Now decide what to do based on the listItemType,
-                            which indicates what to expect from the parent &lt;condition/&gt;.
-                        */
+                         * Now decide what to do based on the listItemType,
+                         * which indicates what to expect from the parent
+                         * &lt;condition/&gt;.
+                         */
                         switch (listItemType)
                         {
-                            // Evaluate listitems with both name and value attributes.
-                            case NAME_VALUE_LI :
+                            // Evaluate listitems with both name and value
+                            // attributes.
+                            case NAME_VALUE_LI:
                                 /*
-                                    Look for tokens in the XML attributes for
-                                    name and value.  If none are present, this is
-                                    an unqualified &lt;li/&gt; (defaultListItem)
-                                    and gets evaluated. (Strange.) Processing will
-                                    continue even after this case, so the defaultListItem
-                                    may be anywhere under &lt;condition/&gt;, not necessarily
-                                    at the end. This is a violation of strict AIML 1.0.1.
-                                */
+                                 * Look for tokens in the XML attributes for
+                                 * name and value. If none are present, this is
+                                 * an unqualified &lt;li/&gt; (defaultListItem)
+                                 * and gets evaluated. (Strange.) Processing
+                                 * will continue even after this case, so the
+                                 * defaultListItem may be anywhere under
+                                 * &lt;condition/&gt;, not necessarily at the
+                                 * end. This is a violation of strict AIML
+                                 * 1.0.1.
+                                 */
                                 if ((node.XMLAttr.indexOf(NAME_EQUALS, 0) < 0)
-                                    && (node.XMLAttr.indexOf(VALUE_EQUALS, 0)
-                                        < 0))
+                                        && (node.XMLAttr.indexOf(VALUE_EQUALS, 0) < 0))
                                 {
-                                    response =
-                                        response
-                                            + parser.evaluate(
-                                                level++,
-                                                node.XMLChild);
+                                    response = response + parser.evaluate(level++, node.XMLChild);
                                     break;
                                 }
 
                                 // Ignore if there is not a name and a value.
                                 if ((node.XMLAttr.indexOf(NAME_EQUALS, 0) < 0)
-                                    || (node.XMLAttr.indexOf(VALUE_EQUALS, 0)
-                                        < 0))
+                                        || (node.XMLAttr.indexOf(VALUE_EQUALS, 0) < 0))
                                 {
                                     break;
                                 }
 
-                                // Recover the values of the name and value attributes.
-                                liname =
-                                    XMLKit.getAttributeValue(
-                                        NAME,
-                                        node.XMLAttr);
-                                livalue =
-                                    XMLKit.getAttributeValue(
-                                        VALUE,
-                                        node.XMLAttr);
+                                // Recover the values of the name and value
+                                // attributes.
+                                liname = XMLKit.getAttributeValue(NAME, node.XMLAttr);
+                                livalue = XMLKit.getAttributeValue(VALUE, node.XMLAttr);
 
                                 /*
-                                    If the value of the predicate matches the value in the value
-                                    attribute, process the response, otherwise skip.
-                                */
+                                 * If the value of the predicate matches the
+                                 * value in the value attribute, process the
+                                 * response, otherwise skip.
+                                 */
                                 try
                                 {
-                                    if (PatternArbiter
-                                        .matches(
-                                            PredicateMaster.get(
-                                                liname,
-                                                parser.getUserID(),
-                                                parser.getBotID()),
-                                            livalue,
-                                            true))
+                                    if (PatternArbiter.matches(PredicateMaster.get(liname, parser.getUserID(), parser
+                                            .getBotID()), livalue, true))
                                     {
-                                        return response
-                                            + parser.evaluate(
-                                                level++,
-                                                node.XMLChild);
+                                        return response + parser.evaluate(level++, node.XMLChild);
                                     }
                                 }
                                 catch (NotAnAIMLPatternException e)
@@ -316,39 +257,28 @@ public class ConditionProcessor extends AIMLProcessor
                                 }
                                 break;
 
-                                // Evaluate listitems that are designated &quot;defaultListItem&quot; types.
-                            case DEFAULT_LI :
-                                response =
-                                    response
-                                        + parser.evaluate(level++, node.XMLChild);
+                            // Evaluate listitems that are designated
+                            // &quot;defaultListItem&quot; types.
+                            case DEFAULT_LI:
+                                response = response + parser.evaluate(level++, node.XMLChild);
                                 break;
 
-                                // Evaluate valueOnlyListItems.
-                            case VALUE_ONLY_LI :
+                            // Evaluate valueOnlyListItems.
+                            case VALUE_ONLY_LI:
                                 // If there is a value attribute, get it.
                                 if (node.XMLAttr.indexOf(VALUE_EQUALS, 0) >= 0)
                                 {
-                                    livalue =
-                                        XMLKit.getAttributeValue(
-                                            VALUE,
-                                            node.XMLAttr);
+                                    livalue = XMLKit.getAttributeValue(VALUE, node.XMLAttr);
                                     /*
-                                        If the value of the predicate matches the value in the value
-                                        attribute, process the response, otherwise skip.
-                                    */
+                                     * If the value of the predicate matches the
+                                     * value in the value attribute, process the
+                                     * response, otherwise skip.
+                                     */
                                     try
                                     {
-                                        if (PatternArbiter
-                                            .matches(
-                                                predicateValue,
-                                                livalue,
-                                                true))
+                                        if (PatternArbiter.matches(predicateValue, livalue, true))
                                         {
-                                            response =
-                                                response
-                                                    + parser.evaluate(
-                                                        level++,
-                                                        node.XMLChild);
+                                            response = response + parser.evaluate(level++, node.XMLChild);
                                             return response;
                                         }
                                     }
@@ -358,24 +288,21 @@ public class ConditionProcessor extends AIMLProcessor
                                     }
                                 }
                                 /*
-                                    When there is no value attribute, we actually got the wrong li type,
-                                    but process as a defaultListItem anyway (probably a bad idea).
-                                */
+                                 * When there is no value attribute, we actually
+                                 * got the wrong li type, but process as a
+                                 * defaultListItem anyway (probably a bad idea).
+                                 */
                                 else
                                 {
-                                    response =
-                                        response
-                                            + parser.evaluate(
-                                                level++,
-                                                node.XMLChild);
+                                    response = response + parser.evaluate(level++, node.XMLChild);
                                     return response;
                                 }
                                 break;
 
-                            default :
+                            default:
                                 break;
                         }
-                    default :
+                    default:
                         break;
                 }
             }

@@ -25,29 +25,26 @@ import javax.swing.ListSelectionModel;
 public class ListDialog extends JDialog
 {
     protected static ListDialog dialog;
+
     protected static String value = "";
+
     protected JList list;
 
     /**
-     * Sets up the dialog.  The first argument can be null,
-     * but it really should be a component in the dialog's
-     * controlling frame.
+     * Sets up the dialog. The first argument can be null, but it really should
+     * be a component in the dialog's controlling frame.
      */
-    public static void initialize(
-        Component comp,
-        String[] possibleValues,
-        String title,
-        String labelText)
+    public static void initialize(Component comp, String[] possibleValues, String title, String labelText)
     {
         Frame frame = JOptionPane.getFrameForComponent(comp);
         dialog = new ListDialog(frame, possibleValues, title, labelText);
     }
 
     /**
-     * Show the initialized dialog.  The first argument should
-     * be null if you want the dialog to come up in the center
-     * of the screen.  Otherwise, the argument should be the
-     * component on top of which the dialog should appear.
+     * Show the initialized dialog. The first argument should be null if you
+     * want the dialog to come up in the center of the screen. Otherwise, the
+     * argument should be the component on top of which the dialog should
+     * appear.
      */
     public static String showDialog(Component comp, String initialValue)
     {
@@ -59,8 +56,7 @@ public class ListDialog extends JDialog
         }
         else
         {
-            System.err.println(
-                "ListDialog requires you to call initialize before calling showDialog.");
+            System.err.println("ListDialog requires you to call initialize before calling showDialog.");
         }
         return value;
     }
@@ -71,11 +67,7 @@ public class ListDialog extends JDialog
         this.list.setSelectedValue(value, true);
     }
 
-    private ListDialog(
-        Frame frame,
-        Object[] data,
-        String title,
-        String labelText)
+    private ListDialog(Frame frame, Object[] data, String title, String labelText)
     {
         super(frame, title, true);
 
@@ -92,7 +84,7 @@ public class ListDialog extends JDialog
         {
             public void actionPerformed(ActionEvent e)
             {
-                ListDialog.value = (String) (((ListDialog)this.parent).list.getSelectedValue());
+                ListDialog.value = (String) (((ListDialog) this.parent).list.getSelectedValue());
                 ListDialog.dialog.setVisible(false);
             }
         });
@@ -119,7 +111,7 @@ public class ListDialog extends JDialog
         listScroller.setAlignmentX(LEFT_ALIGNMENT);
 
         //Create a container so that we can add a title around
-        //the scroll pane.  Can't add a title directly to the 
+        //the scroll pane. Can't add a title directly to the
         //scroll pane because its background would be white.
         //Lay out the label and scroll pane from top to button.
         JPanel listPane = new JPanel();

@@ -1,14 +1,11 @@
-/*    
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
-    USA.
-*/
+/*
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version. You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 package org.aitools.programd.targeting.gui;
 
@@ -41,37 +38,43 @@ import javax.swing.SwingConstants;
 import org.aitools.programd.util.Trace;
 
 /**
- *  Implements a demo targeting GUI.
- *
- *  @author Richard Wallace
- *  @author Noel Bush
+ * Implements a demo targeting GUI.
+ * 
+ * @author Richard Wallace
+ * @author Noel Bush
  */
 public class TargetingGUI extends JPanel
 {
     static final int MIN_WIDTH = 600;
+
     static final int MIN_HEIGHT = 400;
+
     static final int PREF_WIDTH = 700;
+
     static final int PREF_HEIGHT = 500;
 
     static final Dimension minDimension = new Dimension(MIN_WIDTH, MIN_HEIGHT);
-    static final Dimension prefDimension =
-        new Dimension(PREF_WIDTH, PREF_HEIGHT);
+
+    static final Dimension prefDimension = new Dimension(PREF_WIDTH, PREF_HEIGHT);
 
     private static TargetingTool targetingTool;
 
     private JFrame frame;
+
     private JTabbedPane tabbedPane;
+
     public TargetPanel targetPanel;
+
     public InputPanel inputPanel;
+
     public CategoryPanel categoryPanel;
+
     private static JMenuBar menuBar;
+
     public JLabel statusBar;
 
     private static final Object[] HELP_MESSAGE =
-        {
-            "AIML Targeting Tool",
-            "Program D version " + TargetingTool.VERSION,
-            "http://aitools.org" };
+        { "AIML Targeting Tool", "Program D version " + TargetingTool.VERSION, "http://aitools.org" };
 
     private static ImageIcon logo;
     static
@@ -152,8 +155,7 @@ public class TargetingGUI extends JPanel
         this.tabbedPane.setAlignmentX(Component.RIGHT_ALIGNMENT);
         this.tabbedPane.setMinimumSize(new Dimension(MIN_WIDTH, PREF_HEIGHT));
         this.tabbedPane.setPreferredSize(new Dimension(PREF_WIDTH, PREF_HEIGHT));
-        this.tabbedPane.setMaximumSize(
-            new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+        this.tabbedPane.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         this.tabbedPane.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         this.tabbedPane.setTabPlacement(SwingConstants.BOTTOM);
 
@@ -184,8 +186,7 @@ public class TargetingGUI extends JPanel
             }
         });
 
-        JMenuItem loadDataFilePath =
-            new JMenuItem("Load targets data from file path...");
+        JMenuItem loadDataFilePath = new JMenuItem("Load targets data from file path...");
         loadDataFilePath.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         loadDataFilePath.setMnemonic(KeyEvent.VK_P);
         loadDataFilePath.addActionListener(new ActionListener()
@@ -276,42 +277,33 @@ public class TargetingGUI extends JPanel
         optionsMenu.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         optionsMenu.setMnemonic(KeyEvent.VK_O);
 
-        JCheckBoxMenuItem includeIncompleteThats =
-            new JCheckBoxMenuItem(
-                "Include incomplete <that>s",
-                targetingTool.includeIncompleteThats());
+        JCheckBoxMenuItem includeIncompleteThats = new JCheckBoxMenuItem("Include incomplete <that>s", targetingTool
+                .includeIncompleteThats());
         includeIncompleteThats.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         includeIncompleteThats.setMnemonic(KeyEvent.VK_I);
-        includeIncompleteThats.setAccelerator(
-            KeyStroke.getKeyStroke(KeyEvent.VK_T, Event.CTRL_MASK));
+        includeIncompleteThats.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Event.CTRL_MASK));
         includeIncompleteThats.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent ae)
             {
-                includeIncompleteThats(
-                    ((JCheckBoxMenuItem) ae.getSource()).getState());
+                includeIncompleteThats(((JCheckBoxMenuItem) ae.getSource()).getState());
             }
         });
 
-        JCheckBoxMenuItem includeIncompleteTopics =
-            new JCheckBoxMenuItem(
-                "Include incomplete <topic>s",
-                targetingTool.includeIncompleteTopics());
+        JCheckBoxMenuItem includeIncompleteTopics = new JCheckBoxMenuItem("Include incomplete <topic>s", targetingTool
+                .includeIncompleteTopics());
         includeIncompleteTopics.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         includeIncompleteTopics.setMnemonic(KeyEvent.VK_N);
-        includeIncompleteTopics.setAccelerator(
-            KeyStroke.getKeyStroke(KeyEvent.VK_P, Event.CTRL_MASK));
+        includeIncompleteTopics.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, Event.CTRL_MASK));
         includeIncompleteTopics.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent ae)
             {
-                includeIncompleteTopics(
-                    ((JCheckBoxMenuItem) ae.getSource()).getState());
+                includeIncompleteTopics(((JCheckBoxMenuItem) ae.getSource()).getState());
             }
         });
 
-        JMenuItem changeReloadFrequency =
-            new JMenuItem("Change reload frequency...");
+        JMenuItem changeReloadFrequency = new JMenuItem("Change reload frequency...");
         changeReloadFrequency.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         changeReloadFrequency.setMnemonic(KeyEvent.VK_R);
         changeReloadFrequency.addActionListener(new ActionListener()
@@ -343,15 +335,13 @@ public class TargetingGUI extends JPanel
         JMenuItem save = new JMenuItem("Save new category from target");
         save.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         save.setMnemonic(KeyEvent.VK_S);
-        save.setAccelerator(
-            KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK));
+        save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK));
         save.addActionListener(this.targetPanel.new SaveTarget());
 
         JMenuItem next = new JMenuItem("Get next target");
         next.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         next.setMnemonic(KeyEvent.VK_N);
-        next.setAccelerator(
-            KeyStroke.getKeyStroke(KeyEvent.VK_N, Event.CTRL_MASK));
+        next.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Event.CTRL_MASK));
         next.addActionListener(this.targetPanel.new NextTarget());
 
         actionsMenu.add(save);
@@ -423,26 +413,14 @@ public class TargetingGUI extends JPanel
 
     protected void showAboutBox()
     {
-        JOptionPane.showMessageDialog(
-            null,
-            HELP_MESSAGE,
-            "About",
-            JOptionPane.INFORMATION_MESSAGE,
-            logo);
+        JOptionPane.showMessageDialog(null, HELP_MESSAGE, "About", JOptionPane.INFORMATION_MESSAGE, logo);
     }
 
     protected void showSetReloadFrequencyBox()
     {
         int currentFrequency = targetingTool.getReloadFrequency();
-        Object response =
-            JOptionPane.showInputDialog(
-                null,
-                "Please input a value in seconds.",
-                "Set Reload Frequency",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                null,
-                new Integer(currentFrequency));
+        Object response = JOptionPane.showInputDialog(null, "Please input a value in seconds.", "Set Reload Frequency",
+                JOptionPane.PLAIN_MESSAGE, null, null, new Integer(currentFrequency));
         if (response == null)
         {
             return;
@@ -455,45 +433,27 @@ public class TargetingGUI extends JPanel
         }
         catch (NumberFormatException e)
         {
-            JOptionPane.showMessageDialog(
-                null,
-                "Invalid entry. Reload frequency unchanged from "
-                    + currentFrequency
-                    + ".",
-                "Invalid entry.",
-                JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Invalid entry. Reload frequency unchanged from " + currentFrequency
+                    + ".", "Invalid entry.", JOptionPane.WARNING_MESSAGE);
             return;
         }
         targetingTool.restartTimer(newFrequency);
-        JOptionPane.showMessageDialog(
-            null,
-            "Reload frequency changed to " + newFrequency + ".",
-            "Frequency changed.",
-            JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Reload frequency changed to " + newFrequency + ".", "Frequency changed.",
+                JOptionPane.PLAIN_MESSAGE);
     }
 
     protected void loadDataURLBox()
     {
         String currentPath = targetingTool.getTargetsDataPath();
-        Object response =
-            JOptionPane.showInputDialog(
-                null,
-                "Enter the targets data URL from which to load.",
-                "Change data URL",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                null,
-                currentPath);
+        Object response = JOptionPane.showInputDialog(null, "Enter the targets data URL from which to load.",
+                "Change data URL", JOptionPane.PLAIN_MESSAGE, null, null, currentPath);
         if (response == null)
         {
             return;
         }
 
-        JOptionPane.showMessageDialog(
-            null,
-            "Targets data URL changed to " + (String) response + ".",
-            "Data path changed.",
-            JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Targets data URL changed to " + (String) response + ".",
+                "Data path changed.", JOptionPane.PLAIN_MESSAGE);
         setStatus("Loading targets data....");
         targetingTool.changeTargetsDataPath((String) response);
         this.targetPanel.nextTarget();
@@ -520,15 +480,11 @@ public class TargetingGUI extends JPanel
             catch (IOException e)
             {
                 showError("I/O error trying to access \"" + newPath + "\".");
-                Trace.userinfo(
-                    "I/O error trying to access \"" + newPath + "\".");
+                Trace.userinfo("I/O error trying to access \"" + newPath + "\".");
                 return;
             }
-            JOptionPane.showMessageDialog(
-                null,
-                "Targets data file path changed to " + newPath + ".",
-                "Data path changed.",
-                JOptionPane.PLAIN_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Targets data file path changed to " + newPath + ".",
+                    "Data path changed.", JOptionPane.PLAIN_MESSAGE);
             setStatus("Loading targets data....");
             targetingTool.changeTargetsDataPath(newPath);
             this.targetPanel.nextTarget();
@@ -539,11 +495,7 @@ public class TargetingGUI extends JPanel
 
     public void showError(String error)
     {
-        JOptionPane.showMessageDialog(
-            null,
-            error,
-            "Error",
-            JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, error, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     public void setStatus(String status)
@@ -554,10 +506,7 @@ public class TargetingGUI extends JPanel
 
     private void updateTitle()
     {
-        this.frame.setTitle(
-            "AIML Targeting Tool, Program D version "
-                + TargetingTool.VERSION
-                + " - "
+        this.frame.setTitle("AIML Targeting Tool, Program D version " + TargetingTool.VERSION + " - "
                 + targetingTool.getTargetsDataPath());
     }
 
