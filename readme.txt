@@ -49,10 +49,8 @@ http://java.sun.com/j2se/1.4/download.html.
 
       0.2. Get Some AIML
 
-This step is optional but highly recommended. If you don't use some
-pre-existing AIML, you'll have to write your own before your bot knows
-anything. Also at http://alicebot.org/downloads/foundation.php, you'll
-find several choices of freely-available AIML. Pick one and download it.
+Also at http://alicebot.org/downloads/foundation.php, you'll find
+several choices of freely-available AIML. Pick one and download it.
 
 
     1. Installation
@@ -103,10 +101,9 @@ We'll refer to the root directory created by the unzip/untar (such as
 
       1.2. AIML
 
-If you downloaded some AIML files, now is a good time to put them
-somewhere. We suggest creating a subdirectory called "aiml" in your
-PROGRAMD directory, and then arranging your AIML files there in a way
-that makes sense to you. You'll need to unzip/untar as above.
+We suggest creating a subdirectory called "aiml" in your PROGRAMD
+directory, and then arranging your AIML files there in a way that makes
+sense to you. You'll need to unzip/untar as above.
 
 Earlier convention called this the "bots" directory and put AIML files
 for different bots in different subdirectories, but we think that

@@ -18,7 +18,7 @@
         <Call name="addServlet">
             <Arg>Alice</Arg>
             <Arg>/</Arg>
-            <Arg>org.alicebot.server.net.servlet.Alice</Arg>
+            <Arg>org.alicebot.server.servlet.Alice</Arg>
         </Call>
     </Call>
     <!--Old method, calling CHAT-->
@@ -27,19 +27,9 @@
         <Call name="addServlet">
             <Arg>Alice</Arg>
             <Arg>/CHAT</Arg>
-            <Arg>org.alicebot.server.net.servlet.Alice</Arg>
+            <Arg>org.alicebot.server.servlet.Alice</Arg>
         </Call>
     </Call>
-    <!--Request Log-->
-    <Set name="RequestLogSink">
-        <New class="org.mortbay.util.OutputStreamLogSink">
-            <Arg><SystemProperty name="jetty.log" default="./logs"/>/yyyy_mm_dd.request.log</Arg>
-            <Set name="RetainDays">90</Set>
-            <Set name="Append">true</Set>
-            <Set name="flushOn">false</Set>
-            <Set name="logDateFormat">dd/MMM/yyyy:HH:mm:ss ZZZ</Set>
-        </New>
-    </Set>
 </Configure>
 
 

@@ -18,18 +18,15 @@ package org.alicebot.gui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Event;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.File;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.StringReader;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -48,17 +45,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
-import org.alicebot.server.core.Bots;
-import org.alicebot.server.core.Globals;
-import org.alicebot.server.core.Graphmaster;
-import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.util.Shell;
-import org.alicebot.server.core.util.Trace;
-import org.alicebot.server.net.AliceServer;
-
+import org.alicebot.bot.Bots;
+import org.alicebot.graph.Graphmaster;
+import org.alicebot.server.AliceServer;
+import org.alicebot.util.Globals;
+import org.alicebot.util.Shell;
+import org.alicebot.util.Trace;
+import org.alicebot.util.logging.Log;
 
 /**
  *  Provides a very simple console for the bot.
@@ -72,15 +67,15 @@ public class SimpleConsole extends JPanel
     private AliceServer server;
 
     /** The Shell used by this console. */
-    private Shell shell;
+    protected Shell shell;
 
     /** Where console messages will be displayed. */
-    private JTextArea display;
+    protected JTextArea display;
 
     /** Contains the input prompt and field. */
-    private InputPanel inputPanel;
+    protected InputPanel inputPanel;
 
-    private ConsoleDisplayStream consoleDisplay = new ConsoleDisplayStream();
+    protected ConsoleDisplayStream consoleDisplay = new ConsoleDisplayStream();
 
     private JFrame frame;
 
@@ -88,26 +83,48 @@ public class SimpleConsole extends JPanel
     private PrintStream displayStream = new PrintStream(consoleDisplay);
 
     /** The stream to which console prompt will be directed. */
-    private PrintStream promptStream = new PrintStream(new ConsolePromptStream());
+    private PrintStream promptStream =
+        new PrintStream(new ConsolePromptStream());
 
     /** The stream which will receive console input. */
-    private ConsoleInputStream inStream = new ConsoleInputStream();
+    protected ConsoleInputStream inStream = new ConsoleInputStream();
 
     /** For convenience, the system line separator. */
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
+    protected static final String LINE_SEPARATOR =
+        System.getProperty("line.separator", "\n");
 
-    private static final Object[] HELP_MESSAGE = {"Simple Console for",
-                                                  "Program D version " + Graphmaster.VERSION,
-                                                  "(c) A.L.I.C.E. AI Foundation (http://alicebot.org)"};
+    private static final Object[] HELP_MESSAGE =
+        {
+            "Simple Console for",
+            "Program D version " + Graphmaster.VERSION };
 
     private static JMenuBar menuBar;
 
-    private static final ImageIcon aliceLogo =
-        new ImageIcon(ClassLoader.getSystemResource("org/alicebot/icons/aliceLogo.jpg"));
+    private static ImageIcon aliceLogo;
+    static
+    {
+        try
+        {
+            aliceLogo = new ImageIcon(ClassLoader.getSystemResource("org/alicebot/gui/icons/aliceLogo.jpg"));
+        }
+        catch (NullPointerException e)
+        {
+            Trace.userinfo("The ALICE logo is missing from available resources.");
+        }
+    }
 
-    private static final ImageIcon aliceIcon =
-        new ImageIcon(ClassLoader.getSystemResource("org/alicebot/icons/aliceIcon.jpg"));
-
+    private static ImageIcon aliceIcon;
+    static
+    {
+        try
+        {
+            aliceIcon = new ImageIcon(ClassLoader.getSystemResource("org/alicebot/gui/icons/aliceIcon.jpg"));
+        }
+        catch (NullPointerException e)
+        {
+            Trace.userinfo("The ALICE icon is missing from available resources.");
+        }
+    }
 
     /**
      *  Constructs a new simple console gui with a new shell.
@@ -143,34 +160,35 @@ public class SimpleConsole extends JPanel
         loadAIMLURL.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         loadAIMLURL.setMnemonic(KeyEvent.VK_U);
         loadAIMLURL.addActionListener(new ActionListener()
-                                          {
-                                              public void actionPerformed(ActionEvent ae)
-                                              {
-                                                  loadAIMLURLBox();
-                                              }
-                                          });
+        {
+            public void actionPerformed(ActionEvent ae)
+            {
+                loadAIMLURLBox();
+            }
+        });
 
-        JMenuItem loadAIMLFilePath = new JMenuItem("Load AIML from file path...");
+        JMenuItem loadAIMLFilePath =
+            new JMenuItem("Load AIML from file path...");
         loadAIMLFilePath.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         loadAIMLFilePath.setMnemonic(KeyEvent.VK_P);
         loadAIMLFilePath.addActionListener(new ActionListener()
-                                               {
-                                                   public void actionPerformed(ActionEvent ae)
-                                                   {
-                                                       loadAIMLFilePathChooser();
-                                                   }
-                                               });
-       
+        {
+            public void actionPerformed(ActionEvent ae)
+            {
+                loadAIMLFilePathChooser();
+            }
+        });
+
         JMenuItem exit = new JMenuItem("Exit");
         exit.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         exit.setMnemonic(KeyEvent.VK_X);
         exit.addActionListener(new ActionListener()
-                                   {
-                                        public void actionPerformed(ActionEvent ae)
-                                        {
-                                            shutdown();
-                                        }
-                                   });
+        {
+            public void actionPerformed(ActionEvent ae)
+            {
+                shutdown();
+            }
+        });
         fileMenu.add(loadAIMLURL);
         fileMenu.add(loadAIMLFilePath);
         fileMenu.addSeparator();
@@ -185,56 +203,56 @@ public class SimpleConsole extends JPanel
         pause.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         pause.setMnemonic(KeyEvent.VK_P);
         pause.addActionListener(new ActionListener()
-                                    {
-                                          public void actionPerformed(ActionEvent ae)
-                                          {
-                                              consoleDisplay.togglePause();
-                                          }
-                                    });
+        {
+            public void actionPerformed(ActionEvent ae)
+            {
+                consoleDisplay.togglePause();
+            }
+        });
 
         JMenuItem talkToBot = new JMenuItem("Talk to bot...");
         talkToBot.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         talkToBot.setMnemonic(KeyEvent.VK_B);
         talkToBot.addActionListener(new ActionListener()
-                                        {
-                                              public void actionPerformed(ActionEvent ae)
-                                              {
-                                                  chooseBot();
-                                              }
-                                        });
+        {
+            public void actionPerformed(ActionEvent ae)
+            {
+                chooseBot();
+            }
+        });
 
         JMenuItem botFiles = new JMenuItem("List bot files");
         botFiles.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         botFiles.setMnemonic(KeyEvent.VK_F);
         botFiles.addActionListener(new ActionListener()
-                                       {
-                                             public void actionPerformed(ActionEvent ae)
-                                             {
-                                                 shell.listBotFiles();
-                                             }
-                                       });
+        {
+            public void actionPerformed(ActionEvent ae)
+            {
+                shell.listBotFiles();
+            }
+        });
 
         JMenuItem listBots = new JMenuItem("List bots");
         listBots.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         listBots.setMnemonic(KeyEvent.VK_L);
         listBots.addActionListener(new ActionListener()
-                                       {
-                                             public void actionPerformed(ActionEvent ae)
-                                             {
-                                                 shell.showBotList();
-                                             }
-                                       });
+        {
+            public void actionPerformed(ActionEvent ae)
+            {
+                shell.showBotList();
+            }
+        });
 
         JMenuItem rollTargets = new JMenuItem("Roll targets");
         rollTargets.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         rollTargets.setMnemonic(KeyEvent.VK_T);
         rollTargets.addActionListener(new ActionListener()
-                                          {
-                                                public void actionPerformed(ActionEvent ae)
-                                                {
-                                                    shell.rollTargets();
-                                                }
-                                          });
+        {
+            public void actionPerformed(ActionEvent ae)
+            {
+                shell.rollTargets();
+            }
+        });
 
         actionsMenu.add(pause);
         actionsMenu.addSeparator();
@@ -253,22 +271,22 @@ public class SimpleConsole extends JPanel
         shellHelp.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         shellHelp.setMnemonic(KeyEvent.VK_H);
         shellHelp.addActionListener(new ActionListener()
-                                    {
-                                        public void actionPerformed(ActionEvent ae)
-                                        {
-                                            shell.help();
-                                        }
-                                    });
+        {
+            public void actionPerformed(ActionEvent ae)
+            {
+                shell.help();
+            }
+        });
         JMenuItem about = new JMenuItem("About Simple Console...");
         about.setFont(new Font("Fixedsys", Font.PLAIN, 12));
         about.setMnemonic(KeyEvent.VK_A);
         about.addActionListener(new ActionListener()
-                                    {
-                                        public void actionPerformed(ActionEvent ae)
-                                        {
-                                            showAboutBox();
-                                        }
-                                    });
+        {
+            public void actionPerformed(ActionEvent ae)
+            {
+                showAboutBox();
+            }
+        });
 
         helpMenu.add(about);
         helpMenu.add(shellHelp);
@@ -288,7 +306,6 @@ public class SimpleConsole extends JPanel
         frame.setVisible(true);
     }
 
-
     /**
      *  Starts the simple console and an AliceServer,
      *  given the path to a properties file.
@@ -305,8 +322,7 @@ public class SimpleConsole extends JPanel
         shutdown();
     }
 
-
-    private void shutdown()
+    protected void shutdown()
     {
         if (server != null)
         {
@@ -315,14 +331,13 @@ public class SimpleConsole extends JPanel
         // Let the user exit, in case termination was abnormal or messages are otherwise interesting.
     }
 
-
     class InputPanel extends JPanel
     {
         /** Where the console prompt will be displayed. */
-        private JLabel prompt;
+        protected JLabel prompt;
 
         /** The console input field. */
-        private JTextField input;
+        protected JTextField input;
 
         public InputPanel()
         {
@@ -366,7 +381,6 @@ public class SimpleConsole extends JPanel
             input.requestFocus();
         }
 
-
         private class InputSender implements ActionListener
         {
             public void actionPerformed(ActionEvent ae)
@@ -379,14 +393,12 @@ public class SimpleConsole extends JPanel
         }
     }
 
-
     /**
      *  Extends OutputStream to direct all output to the display textarea.
      */
     public class ConsoleDisplayStream extends OutputStream
     {
         private boolean paused = false;
-
 
         public ConsoleDisplayStream()
         {
@@ -409,7 +421,6 @@ public class SimpleConsole extends JPanel
             display.setCaretPosition(display.getText().length());
         }
 
-
         public void write(int b)
         {
             while (paused)
@@ -422,17 +433,15 @@ public class SimpleConsole extends JPanel
                 {
                 }
             }
-            display.append(String.valueOf((char)b));
+            display.append(String.valueOf((char) b));
             display.setCaretPosition(display.getText().length());
         }
 
-
-        private void togglePause()
+        protected void togglePause()
         {
             paused = !paused;
         }
     }
-
 
     /**
      *  Extends OutputStream to direct all output to the prompt field.
@@ -449,17 +458,16 @@ public class SimpleConsole extends JPanel
             inputPanel.setPrompt(new String(b, off, len));
         }
 
-
-        public void write (int b)
+        public void write(int b)
         {
-            inputPanel.setPrompt(String.valueOf((char)b));
+            inputPanel.setPrompt(String.valueOf((char) b));
         }
     }
 
-
     public class ConsoleInputStream extends InputStream
     {
-        byte[] content = new byte[] {};
+        byte[] content = new byte[] {
+        };
 
         private int mark = 0;
 
@@ -467,13 +475,11 @@ public class SimpleConsole extends JPanel
         {
         }
 
-
         public void receive(String string)
         {
             content = (string + '\n').getBytes();
             mark = 0;
         }
-
 
         public int read(byte b[], int off, int len) throws IOException
         {
@@ -492,8 +498,12 @@ public class SimpleConsole extends JPanel
             {
                 throw new NullPointerException();
             }
-            else if ((off < 0) || (off > b.length) || (len < 0) ||
-                     ((off + len) > b.length) || ((off + len) < 0))
+            else if (
+                (off < 0)
+                    || (off > b.length)
+                    || (len < 0)
+                    || ((off + len) > b.length)
+                    || ((off + len) < 0))
             {
                 throw new IndexOutOfBoundsException();
             }
@@ -515,12 +525,10 @@ public class SimpleConsole extends JPanel
             return i;
         }
 
-
         public int available() throws IOException
         {
             return content.length - mark - 1;
         }
-
 
         public boolean markSupported()
         {
@@ -550,29 +558,36 @@ public class SimpleConsole extends JPanel
             }
         }
 
-
-
     }
 
-
-    private void loadAIMLURLBox()
+    protected void loadAIMLURLBox()
     {
         Object response =
-            JOptionPane.showInputDialog(null, "Enter the URL from which to load.", "Load AIML from URL",
-                                        JOptionPane.PLAIN_MESSAGE, null, null, null);
+            JOptionPane.showInputDialog(
+                null,
+                "Enter the URL from which to load.",
+                "Load AIML from URL",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                null);
         if (response == null)
         {
             return;
         }
 
         int categories = Graphmaster.getTotalCategories();
-        Graphmaster.load((String)response, shell.getCurrentBotID());
-        Log.userinfo(Graphmaster.getTotalCategories() - categories +
-        " categories loaded from \"" + (String)response + "\".", Log.LEARN);
+        Graphmaster.load((String) response, shell.getCurrentBotID());
+        Log.userinfo(
+            Graphmaster.getTotalCategories()
+                - categories
+                + " categories loaded from \""
+                + (String) response
+                + "\".",
+            Log.LEARN);
     }
 
-
-    private void loadAIMLFilePathChooser()
+    protected void loadAIMLFilePathChooser()
     {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Choose AIML File");
@@ -584,25 +599,35 @@ public class SimpleConsole extends JPanel
             String newPath = null;
             try
             {
-            	newPath = chosen.getCanonicalPath();
+                newPath = chosen.getCanonicalPath();
             }
             catch (IOException e)
             {
-                Trace.userinfo("I/O error trying to access \"" + newPath + "\".");
+                Trace.userinfo(
+                    "I/O error trying to access \"" + newPath + "\".");
                 return;
             }
             int categories = Graphmaster.getTotalCategories();
             Graphmaster.load(newPath, shell.getCurrentBotID());
-            Log.userinfo(Graphmaster.getTotalCategories() - categories +
-            " categories loaded from \"" + newPath + "\".", Log.LEARN);
+            Log.userinfo(
+                Graphmaster.getTotalCategories()
+                    - categories
+                    + " categories loaded from \""
+                    + newPath
+                    + "\".",
+                Log.LEARN);
         }
     }
 
-
-    private void chooseBot()
+    protected void chooseBot()
     {
-        String[] botIDs = (String[])Bots.getIDs().toArray(new String[]{});
-        ListDialog.initialize(frame, botIDs, "Choose a bot", "Choose the bot with whom you want to talk.");
+        String[] botIDs = (String[]) Bots.getIDs().toArray(new String[] {
+        });
+        ListDialog.initialize(
+            frame,
+            botIDs,
+            "Choose a bot",
+            "Choose the bot with whom you want to talk.");
         String choice = ListDialog.showDialog(null, shell.getCurrentBotID());
         if (choice != null)
         {
@@ -610,12 +635,15 @@ public class SimpleConsole extends JPanel
         }
     }
 
-
-    private void showAboutBox()
+    protected void showAboutBox()
     {
-        JOptionPane.showMessageDialog(null, HELP_MESSAGE, "About", JOptionPane.INFORMATION_MESSAGE, aliceLogo);
+        JOptionPane.showMessageDialog(
+            null,
+            HELP_MESSAGE,
+            "About",
+            JOptionPane.INFORMATION_MESSAGE,
+            aliceLogo);
     }
-
 
     public static void main(String[] args)
     {

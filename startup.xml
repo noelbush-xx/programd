@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1251"?>
+<programd-startup>
+    <bots>
+        <bot id="example" enabled="true">
+            <properties href="path/to/your/properties.xml"/>
+            <predicates href="path/to/your/predicates.xml"/>
+            <substitutions href="pat/to/your/substitutions.xml"/>
+            <sentence-splitters href="path/to/your/sentence-splitters.xml"/>
+            <learn>path/to/your/aiml/*.aiml</learn>
+        </bot>
+    </bots>
+</programd-startup>

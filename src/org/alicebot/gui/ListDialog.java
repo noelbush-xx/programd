@@ -1,7 +1,6 @@
 package org.alicebot.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -10,16 +9,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -27,26 +22,25 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
-
 public class ListDialog extends JDialog
 {
-    private static ListDialog dialog;
-    private static String value = "";
-    private JList list;
+    protected static ListDialog dialog;
+    protected static String value = "";
+    protected JList list;
 
     /**
      * Sets up the dialog.  The first argument can be null,
      * but it really should be a component in the dialog's
      * controlling frame.
      */
-    public static void initialize(Component comp,
-                                  String[] possibleValues,
-                                  String title,
-                                  String labelText)
+    public static void initialize(
+        Component comp,
+        String[] possibleValues,
+        String title,
+        String labelText)
     {
         Frame frame = JOptionPane.getFrameForComponent(comp);
-        dialog = new ListDialog(frame, possibleValues,
-                                title, labelText);
+        dialog = new ListDialog(frame, possibleValues, title, labelText);
     }
 
     /**
@@ -65,7 +59,8 @@ public class ListDialog extends JDialog
         }
         else
         {
-            System.err.println("ListDialog requires you to call initialize before calling showDialog.");
+            System.err.println(
+                "ListDialog requires you to call initialize before calling showDialog.");
         }
         return value;
     }
@@ -76,7 +71,11 @@ public class ListDialog extends JDialog
         list.setSelectedValue(value, true);
     }
 
-    private ListDialog(Frame frame, Object[] data, String title, String labelText)
+    private ListDialog(
+        Frame frame,
+        Object[] data,
+        String title,
+        String labelText)
     {
         super(frame, title, true);
 
@@ -86,14 +85,14 @@ public class ListDialog extends JDialog
         {
             public void actionPerformed(ActionEvent e)
             {
-                ListDialog.dialog.setVisible(false);
+                dialog.setVisible(false);
             }
         });
         setButton.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
-                ListDialog.value = (String)(list.getSelectedValue());
+                ListDialog.value = (String) (list.getSelectedValue());
                 ListDialog.dialog.setVisible(false);
             }
         });
@@ -128,9 +127,9 @@ public class ListDialog extends JDialog
         JLabel label = new JLabel(labelText);
         label.setLabelFor(list);
         listPane.add(label);
-        listPane.add(Box.createRigidArea(new Dimension(0,5)));
+        listPane.add(Box.createRigidArea(new Dimension(0, 5)));
         listPane.add(listScroller);
-        listPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        listPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         //Lay out the buttons from left to right.
         JPanel buttonPane = new JPanel();
