@@ -172,7 +172,7 @@ public class IRCListener extends Listener implements ShellCommandable
 
     public String getShellDescription()
     {
-        return "Alice IRC chat listener";
+        return "ProgramD IRC chat listener";
     }
 
     public String getShellCommands()
