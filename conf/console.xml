@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xml" href="../resources/xslt/generate-settings-class.xslt"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <!--
 Program D StandardConsole Configuration
@@ -29,7 +28,7 @@ GENERAL NOTES
 -->
 
 <properties version="1.0">
-    <!--[generate: org.aitools.programd.configurations.ConsoleSettings]
+    <!--[generate: org.aitools.programd.interfaces.ConsoleSettings]
         [strip-prefix: programd.console.]-->
 
     <!--
@@ -42,28 +41,19 @@ GENERAL NOTES
     <!-- Show developer info messages on console? [boolean: true]-->
     <entry key="programd.console.show-developer-info">true</entry>
     
-    <!-- (developer) Show caller methods even for userinfo messages? [boolean: false]
+    <!-- (developer) Show caller methods for errors? [boolean: false]
+         * This is an advanced debugging feature.  You likely want to leave it set to false.-->
+    <entry key="programd.console.show-method-names-for-errors">false</entry>
+    
+    <!-- (developer) Show caller methods for *all* messages? [boolean: false]
          * This is an advanced debugging feature.  You likely want to leave it set to false.-->
     <entry key="programd.console.show-method-names-always">false</entry>
-    
-    <!-- Show match-trace messages on console? [boolean: true]-->
-    <entry key="programd.console.show-match-trace">true</entry>
-    
-    <!-- Show message type flags on console? [boolean: true]-->
-    <entry key="programd.console.show-message-flags">true</entry>
     
     <!-- Which bot predicate contains the bot's name? [String: name]-->
     <entry key="programd.console.bot-name-predicate">name</entry>
     
-    <!-- Which bot predicate contains the client's name? [String: name]-->
-    <entry key="programd.console.client-name-predicate">name</entry>
-    
-    <!-- How many categories will be loaded before a message is displayed? [int: 5000]
-         * Only meaningful if programd.enable-console == true.-->
-    <entry key="programd.console.category-load-notify-interval">5000</entry>
-    
     <!-- The date-time format to use on the console. [String: H:mm:ss]
-         * See http://java.sun.com/jdk1.5.0_01/docs/api/java/text/SimpleDateFormat.html
+         * See http://java.sun.com/jdk1.5.0_02/docs/api/java/text/SimpleDateFormat.html
            for formatting codes.
          * Setting the value to blank means no timestamp will be displayed.-->
     <entry key="programd.console.timestamp-format">H:mm:ss</entry>
