@@ -26,7 +26,7 @@ setup_programd building
 setup_java
 
 # Set up other paths to other needed jars and check their existence.
-ANT_LIB=$LIBS/ant.jar
+ANT_LIB=$LIBS/ant.jar:$LIBS/ant-launcher.jar
 if [ ! -r $ANT_LIB ]
 then
   echo
