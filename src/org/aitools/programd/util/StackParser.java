@@ -78,6 +78,8 @@ public class StackParser
      * 
      * @param search
      *            the string which, if found in the method name, disqualifies it
+     * @param prettify whether to remove whatever looks like a package name from the result
+     * @return the most recent method in the stack that does not include the given search string
      */
     public static String getStackMethodBefore(String search, boolean prettify)
     {
@@ -119,6 +121,8 @@ public class StackParser
 
     /**
      * Returns the backtrace of a given throwable as an enumeration of lines.
+     * @param throwable the Throwable whose backtrace we want
+     * @return the backtrace as an enumeration of lines
      */
     public static StringTokenizer getStackTraceFor(Throwable throwable)
     {

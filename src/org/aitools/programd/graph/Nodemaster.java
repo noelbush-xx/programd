@@ -9,9 +9,9 @@
 
 package org.aitools.programd.graph;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,7 +41,7 @@ public class Nodemaster implements Nodemapper
 
     protected Object value;
 
-    protected HashMap<String, Object> Hidden;
+    protected Map<String, Object> hidden;
 
     /**
      * The minimum number of words needed to reach a leaf node from here.
@@ -51,11 +51,17 @@ public class Nodemaster implements Nodemapper
 
     protected Nodemapper parent;
 
-    public Object put(String keyToPut, Object valueToPut)
+    /**
+     * Puts the given object into the Nodemaster, associated with the given key.
+     * @param keyToUse  the key to use
+     * @param valueToPut    the value to put
+     * @return the same object that was put into the Nodemaster
+     */
+    public Object put(String keyToUse, Object valueToPut)
     {
         if (this.size == 0)
         {
-            this.key = keyToPut.toUpperCase().intern();
+            this.key = keyToUse.toUpperCase().intern();
             if (valueToPut instanceof String)
             {
                 this.value = ((String)valueToPut).intern();
@@ -69,37 +75,40 @@ public class Nodemaster implements Nodemapper
         } 
         else if (this.size == 1)
         {
-            this.Hidden = new HashMap<String, Object>();
-            this.Hidden.put(this.key, this.value);
+            this.hidden = Collections.checkedMap(new HashMap<String, Object>(), String.class, Object.class);
+            this.hidden.put(this.key, this.value);
             this.size = 2;
             if (valueToPut instanceof String)
             {
-                return this.Hidden.put(keyToPut.toUpperCase().intern(), ((String)valueToPut).intern());
+                return this.hidden.put(keyToUse.toUpperCase().intern(), ((String)valueToPut).intern());
             }
             // otherwise...
-            return this.Hidden.put(keyToPut.toUpperCase().intern(), valueToPut);
+            return this.hidden.put(keyToUse.toUpperCase().intern(), valueToPut);
         } 
         else
         {
             this.size++;
             if (valueToPut instanceof String)
             {
-                return this.Hidden.put(keyToPut.toUpperCase().intern(), ((String)valueToPut).intern());
+                return this.hidden.put(keyToUse.toUpperCase().intern(), ((String)valueToPut).intern());
             }
             // otherwise...
-            return this.Hidden.put(keyToPut.toUpperCase().intern(), valueToPut);
+            return this.hidden.put(keyToUse.toUpperCase().intern(), valueToPut);
         } 
     } 
 
-    public void remove(Object valueToRemove) throws DeveloperError
+    /**
+     * Removes the given object from the Nodemaster.
+     * @param valueToRemove the object to remove
+     */
+    public void remove(Object valueToRemove)
     {
         if (this.size > 1)
         {
             // Find the key for this value.
             Object keyToRemove = null;
-            for (Iterator iterator = this.Hidden.entrySet().iterator(); iterator.hasNext();)
+            for (Map.Entry item : this.hidden.entrySet())
             {
-                Map.Entry item = (Map.Entry) iterator.next();
                 if (item.getValue().equals(valueToRemove))
                 {
                     // Found it.
@@ -110,25 +119,25 @@ public class Nodemaster implements Nodemapper
             if (keyToRemove == null)
             {
                 // We didn't find a key.
-                throw new DeveloperError("Key was not found for value when trying to remove " + valueToRemove);
+                throw new DeveloperError("Key was not found for value when trying to remove " + valueToRemove, new NullPointerException());
             } 
             if (this.size > 2)
             {
                 // Remove the value from the HashMap (ignore the primary
                 // value/key pair).
-                this.Hidden.remove(keyToRemove);
+                this.hidden.remove(keyToRemove);
                 this.size--;
             } 
             else
             {
                 // Remove this item from the HashMap.
-                this.Hidden.remove(keyToRemove);
+                this.hidden.remove(keyToRemove);
                 // Set the last item in HashMap to be the primary value/key for
                 // this Nodemapper.
-                this.key = this.Hidden.keySet().iterator().next();
-                this.value = this.Hidden.remove(this.key);
+                this.key = this.hidden.keySet().iterator().next();
+                this.value = this.hidden.remove(this.key);
                 // Remove the empty HashMap to save space.
-                this.Hidden = null;
+                this.hidden = null;
                 this.size = 1;
             } 
         } 
@@ -140,6 +149,11 @@ public class Nodemaster implements Nodemapper
         } 
     } 
 
+    /**
+     * Gets the object associated with the specified key.
+     * @param keyToGet the key to use
+     * @return the object associated with the given key
+     */
     public Object get(String keyToGet)
     {
         if (this.size == 0)
@@ -157,10 +171,13 @@ public class Nodemaster implements Nodemapper
         } 
         else
         {
-            return this.Hidden.get(keyToGet.toUpperCase());
+            return this.hidden.get(keyToGet.toUpperCase());
         } 
     } 
 
+    /**
+     * @return the keyset of the Nodemaster
+     */
     public Set keySet()
     {
         if (this.size <= 1)
@@ -173,9 +190,13 @@ public class Nodemaster implements Nodemapper
             return result;
         } 
         // (otherwise...)
-        return this.Hidden.keySet();
+        return this.hidden.keySet();
     } 
 
+    /**
+     * @param keyToCheck the key to check
+     * @return whether or not the Nodemaster contains the given key
+     */
     public boolean containsKey(String keyToCheck)
     {
         if (this.size == 0)
@@ -186,29 +207,45 @@ public class Nodemaster implements Nodemapper
         {
             return (keyToCheck.equalsIgnoreCase(this.key));
         } 
-        return this.Hidden.containsKey(keyToCheck.toUpperCase());
+        return this.hidden.containsKey(keyToCheck.toUpperCase());
     } 
 
+    /**
+     * @return the size of the Nodemaster
+     */
     public int size()
     {
         return this.size;
     } 
 
+    /**
+     * Sets the parent of the Nodemaster.
+     * @param parentToSet the parent to set
+     */
     public void setParent(Nodemapper parentToSet)
     {
         this.parent = parentToSet;
     } 
 
+    /**
+     * @return the parent of the Nodemaster
+     */
     public Nodemapper getParent()
     {
         return this.parent;
     } 
 
+    /**
+     * @return the height of the Nodemaster
+     */
     public int getHeight()
     {
         return this.height;
     } 
 
+    /**
+     * Sets the Nodemaster as being at the top.
+     */
     public void setTop()
     {
         this.fillInHeight(0);

@@ -29,6 +29,9 @@ public class NoMatchException extends Exception
         this.path = pathToUse;
     } 
 
+    /**
+     * @see java.lang.Throwable#getMessage()
+     */
     public String getMessage()
     {
         return "No match found for path \"" + this.path + "\".";

@@ -10,13 +10,11 @@
 package org.aitools.programd.interfaces;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -42,7 +40,7 @@ import org.aitools.programd.util.XMLKit;
  * @author Noel Bush
  * @author Eion Robb
  */
-public class Shell
+public class Shell extends Thread
 {
     // Private convenience constants.
 
@@ -113,8 +111,11 @@ public class Shell
     /** A BufferedReader for user input to the shell. */
     private BufferedReader consoleIn;
 
-    /** Where console display output will go. */
-    private PrintStream consoleDisplay;
+    /** Where regular console output will go. */
+    private PrintStream consoleOut;
+
+    /** Where console errors will go. */
+    private PrintStream consoleErr;
 
     /** Where console prompt output will go. */
     private PrintStream consolePrompt;
@@ -125,18 +126,15 @@ public class Shell
     /** A bot name. */
     private String botName;
 
-    /** Name of the local host. */
-    private String hostname;
-
     /** The client name predicate. */
     private String clientNamePredicate;
 
     /** The bot name predicate. */
     private String botNamePredicate;
 
-    /** Flag for a line in an interactive shell. */
-    public String SHELL;
-
+    /** The host name. */
+    private String hostname;
+    
     /**
      * An indicator used to keep track of whether we're midline in a console
      * output (i.e., showing a prompt).
@@ -146,49 +144,45 @@ public class Shell
     /**
      * A <code>Shell</code> with default input and output streams (
      * <code>System.in</code> and <code>System.out</code>).
+     * @param consoleSettingsToUse the object containing the console settings to use
      */
     public Shell(ConsoleSettings consoleSettingsToUse)
     {
+        super("Shell");
         this.consoleIn = new BufferedReader(new InputStreamReader(System.in));
-        this.consoleDisplay = this.consolePrompt = System.out;
+        this.consoleOut = this.consoleErr = this.consolePrompt = System.out;
         initialize(consoleSettingsToUse);
     }
 
     /**
      * A <code>Shell</code> with custom input and output streams.
+     * @param consoleSettingsToUse 
      * 
      * @param in
      *            the input stream
-     * @param display
-     *            the display output stream
+     * @param out the output stream
+     * @param err the error stream
      * @param prompt
      *            the prompt output stream
      */
-    public Shell(InputStream in, PrintStream display, PrintStream prompt, ConsoleSettings consoleSettingsToUse)
+    public Shell(ConsoleSettings consoleSettingsToUse, InputStream in, PrintStream out, PrintStream err, PrintStream prompt)
     {
+        super("Shell");
         this.consoleIn = new BufferedReader(new InputStreamReader(in));
-        this.consoleDisplay = display;
+        this.consoleOut = out;
+        this.consoleErr = err;
         this.consolePrompt = prompt;
         initialize(consoleSettingsToUse);
     }
     
     /**
      * Initialization common to both constructors.
+     * @param consoleSettingsToUse the object containing the console settings to use
      */
     private void initialize(ConsoleSettings consoleSettingsToUse)
     {
         this.consoleSettings = consoleSettingsToUse;
-        this.clientNamePredicate = this.consoleSettings.getClientNamePredicate();
         this.botNamePredicate = this.consoleSettings.getBotNamePredicate();
-        this.SHELL = this.consoleSettings.showMessageFlags() ? "s " : "";
-        try
-        {
-            this.hostname = InetAddress.getLocalHost().getHostName();
-        } 
-        catch (UnknownHostException e)
-        {
-            this.hostname = "unknown-host";
-        }
         String timestampFormatString = this.consoleSettings.getTimestampFormat();
         if (timestampFormatString.length() > 0)
         {
@@ -207,12 +201,23 @@ public class Shell
      * 
      * @param coreToUse
      */
-    public void attach(Core coreToUse)
+    public void attachTo(Core coreToUse)
     {
         this.core = coreToUse;
         this.graphmaster = this.core.getGraphmaster();
         this.predicateMaster = this.core.getPredicateMaster();
         this.bots = this.core.getBots();
+        this.clientNamePredicate = this.core.getSettings().getClientNamePredicate();
+        this.hostname = this.core.getHostname();
+    }
+    
+    /**
+     * Nothing to do for failure.
+     * @param e the Throwable that caused the failure
+     */
+    public void failure(Throwable e)
+    {
+        // Do nothing.
     }
 
     /**
@@ -222,30 +227,22 @@ public class Shell
     {
         if (this.core == null)
         {
-            throw new DeveloperError("Must attach the shell to a Core before calling run()!");
+            throw new DeveloperError("Must attach the shell to a Core before calling run()!", new NullPointerException());
         }
         
-        showConsole("Interactive shell: type \"" + EXIT + "\" to shut down; \"" + HELP + "\" for help.");
+        showMessage("Interactive shell: type \"" + EXIT + "\" to shut down; \"" + HELP + "\" for help.");
         Bot bot = this.bots.getABot();
         if (bot == null)
         {
-            showConsole("No bot to talk to!");
+            showError("No bot to talk to!");
             return;
         }
         this.botid = bot.getID();
         this.botName = bot.getPropertyValue(this.botNamePredicate);
 
-        // Send the connect string and print the first response.
-        String connectString = this.core.getSettings().getConnectString();
-        if (connectString != null)
-        {
-            showConsole(this.botName, XMLKit.breakLinesAtTags(this.core.getResponse(connectString,
-                this.hostname, this.botid, new TextResponder())));
-        }
-
         while (true)
         {
-            promptConsole('[' + this.botName + "] " + this.predicateMaster.get(this.clientNamePredicate, this.hostname, this.botid));
+            showPrompt();
             String theLine = null;
             try
             {
@@ -253,7 +250,7 @@ public class Shell
             }
             catch (IOException e)
             {
-                throw new DeveloperError("Cannot read from console!");
+                throw new DeveloperError("Cannot read from console!", e);
             }
             if (theLine == null)
             {
@@ -286,7 +283,7 @@ public class Shell
                 if (theLine.toLowerCase().equals(EXIT))
                 {
                     printExitMessage();
-                    return;
+                    System.exit(1);
                 }
                 // Help command
                 else if (theLine.toLowerCase().equals(HELP))
@@ -323,13 +320,6 @@ public class Shell
                 {
                     listBotFiles();
                 }
-                // Roll chatlog command
-                /*
-                else if (theLine.toLowerCase().startsWith(ROLL_CHATLOG))
-                {
-                    rollChatLog(this.botid);
-                }
-                */
                 // List commandables command
                 else if (theLine.toLowerCase().equals(COMMANDABLES))
                 {
@@ -343,11 +333,11 @@ public class Shell
                     }
                     catch (NoCommandException e)
                     {
-                        showConsole("Please specify a command following the commandable.");
+                        showError("Please specify a command following the commandable.");
                     }
                     catch (NoSuchCommandableException e)
                     {
-                        showConsole("No such commandable is loaded.  Type \"" + COMMANDABLES + "\" for a list of loaded commandables.");
+                        showError("No such commandable is loaded.  Type \"" + COMMANDABLES + "\" for a list of loaded commandables.");
                     }
                 }
             }
@@ -357,10 +347,13 @@ public class Shell
             }
         }
     }
-
-    public String getCurrentBotID()
+    
+    /**
+     * Displays a prompt.
+     */
+    private void showPrompt()
     {
-        return this.botid;
+        promptConsole('[' + this.botName + "] " + this.predicateMaster.get(this.clientNamePredicate, this.hostname, this.botid).trim());
     }
 
     /**
@@ -373,38 +366,71 @@ public class Shell
      */
     private void promptConsole(String preprompt)
     {
-        print(preprompt + PROMPT + this.consolePrompt);
+        if (!this.midLine)
+        {
+            this.consolePrompt.println();
+        } 
+        this.consolePrompt.print(timestamp() + preprompt + PROMPT);
+        this.midLine = true;
     }
 
     /**
      * <p>
-     * Displays a message (no prompt) in an interactive console.
+     * Displays a regular message (no prompt) in an interactive console.
      * </p>
      * 
      * @param message
      *            the message to display
      */
-    private void showConsole(String message)
+    private void showMessage(String message)
     {
-        println(message);
+        printlnOut(message);
     }
 
     /**
      * <p>
-     * Displays a multi-line message (no prompt) in an interactive console.
+     * Displays a multi-line regular message (no prompt) in an interactive console.
      * </p>
      * 
      * @param message
      *            the message to display
      */
-    private void showConsole(String[] message)
+    private void showMessage(String[] message)
     {
         for (int index = 0; index < message.length; index++)
         {
-            println(message[index]);
+            printlnOut(message[index]);
         }
     }
 
+    /**
+     * <p>
+     * Displays a multi-line error message (no prompt) in an interactive console.
+     * </p>
+     * 
+     * @param message
+     *            the message to display
+     */
+    private void showError(String[] message)
+    {
+        for (int index = 0; index < message.length; index++)
+        {
+            printlnErr(message[index]);
+        }
+    }
+
+    /**
+     * <p>
+     * Displays an error message (no prompt) in an interactive console.
+     * </p>
+     * 
+     * @param message
+     *            the message to display
+     */
+    private void showError(String message)
+    {
+        printlnErr(message);
+    }
 
     /**
      * <p>
@@ -420,7 +446,7 @@ public class Shell
     {
         for (int index = 0; index < message.length; index++)
         {
-            println(preprompt + PROMPT + message[index]);
+            printlnOut(preprompt + PROMPT + message[index]);
         }
     }
 
@@ -437,11 +463,13 @@ public class Shell
      */
     public void help()
     {
-        showConsole(HELP_TEXT);
+        showMessage(HELP_TEXT);
     }
 
     /**
      * Loads a given file for a given bot.
+     * @param line the line that contains the name of the file to load
+     * @param botidToUse the id of the bot for whom to load the file
      */
     public void load(String line, String botidToUse)
     {
@@ -449,7 +477,7 @@ public class Shell
         int space = line.indexOf(' ');
         if (space == -1)
         {
-            showConsole("You must specify a filename.");
+            showError("You must specify a filename.");
         }
         else
         {
@@ -461,16 +489,17 @@ public class Shell
             }
             catch (IOException e)
             {
-                showConsole("I/O exception trying to locate file.");
+                showError("I/O exception trying to locate file.");
                 return;
             }
             this.graphmaster.load(path, botidToUse);
-            Logger.getLogger("programd.learn").log(Level.INFO, this.graphmaster.getTotalCategories() - categories + " categories loaded from \"" + path + "\".");
+            Logger.getLogger("programd").log(Level.INFO, this.graphmaster.getTotalCategories() - categories + " categories loaded from \"" + path + "\".");
         }
     }
 
     /**
      * Unloads a given file for a given bot.
+     * @param line the line in which to find the file name to unload
      */
     private void unload(String line)
     {
@@ -478,29 +507,16 @@ public class Shell
         int space = line.indexOf(' ');
         if (space == -1)
         {
-            showConsole("You must specify a filename.");
+            showError("You must specify a filename.");
         }
         else
         {
             int categories = this.graphmaster.getTotalCategories();
-            String path;
             Bot bot = this.bots.getBot(this.botid);
-            path = new File(line.substring(space + 1)).getAbsolutePath();
-            Set keys = bot.getLoadedFilesMap().keySet();
-            Iterator iterator = keys.iterator();
-            File fileToUnload = new File(path);
-            while (iterator.hasNext())
-            {
-                File iteratorFile = (File) iterator.next(); // paths stored in
-                // hashmap as Files
-                if (iteratorFile.getAbsolutePath().equals(path))
-                {
-                    fileToUnload = iteratorFile;
-                }
-            }
+            String path = line.substring(space + 1);
             this.graphmaster.unload(path, bot);
-            bot.getLoadedFilesMap().remove(fileToUnload);
-            Logger.getLogger("programd.learn").log(Level.INFO, categories - this.graphmaster.getTotalCategories() + " categories unloaded.");
+            bot.getLoadedFilesMap().remove(path);
+            Logger.getLogger("programd").log(Level.INFO, categories - this.graphmaster.getTotalCategories() + " categories unloaded.");
         }
     }
 
@@ -509,11 +525,12 @@ public class Shell
      */
     public void showBotList()
     {
-        showConsole("Active bots: " + this.bots.getNiceList());
+        showMessage("Active bots: " + this.bots.getNiceList());
     }
 
     /**
      * Switches conversation to a given botid.
+     * @param line the line in which to find the botid to which to switch
      */
     private void talkto(String line)
     {
@@ -521,7 +538,7 @@ public class Shell
         int space = line.indexOf(' ');
         if (space == -1)
         {
-            showConsole("You must specify a bot id.");
+            showError("You must specify a bot id.");
         }
         else
         {
@@ -538,12 +555,12 @@ public class Shell
     {
         if (!this.bots.include(newBotID))
         {
-            showConsole("That bot id is not known. Check your startup files.");
+            showError("That bot id is not known. Check your startup files.");
             return;
         }
         this.botid = newBotID;
         this.botName = this.bots.getBot(newBotID).getPropertyValue(this.botNamePredicate);
-        showConsole("Switched to bot \"" + newBotID + "\" (name: \"" + this.botName + "\").");
+        showMessage("Switched to bot \"" + newBotID + "\" (name: \"" + this.botName + "\").");
         // Send the connect string and print the first response.
         showConsole(this.botName, XMLKit.breakLinesAtTags(this.core.getResponse(this.core.getSettings().getConnectString(),
                 this.hostname, this.botid, new TextResponder())));
@@ -554,7 +571,7 @@ public class Shell
      */
     private void who()
     {
-        showConsole("You are talking to \"" + this.botid + "\".");
+        showMessage("You are talking to \"" + this.botid + "\".");
     }
 
     /**
@@ -562,36 +579,25 @@ public class Shell
      */
     public void listBotFiles()
     {
-        Set keys = this.bots.getBot(this.botid).getLoadedFilesMap().keySet();
-        Iterator iterator = keys.iterator();
+        Set<URL> keys = this.bots.getBot(this.botid).getLoadedFilesMap().keySet();
         int fileCount = keys.size();
         if (fileCount == 0)
         {
-            showConsole("No files loaded by \"" + this.botid + "\".");
+            showMessage("No files loaded by \"" + this.botid + "\".");
         }
         else if (fileCount > 1)
         {
-            showConsole(fileCount + " files loaded by \"" + this.botid + "\":");
+            showMessage(fileCount + " files loaded by \"" + this.botid + "\":");
         }
         else
         {
-            showConsole("1 file loaded by \"" + this.botid + "\":");
+            showMessage("1 file loaded by \"" + this.botid + "\":");
         }
-        while (iterator.hasNext())
+        for (URL url : keys)
         {
-            showConsole(((File) iterator.next()).getAbsolutePath());
+            showMessage(url.toExternalForm());
         }
     }
-
-    /*
-     * Rolls over the chat log file.
-    
-    public void rollChatLog(String botidToUse)
-    {
-        showConsole("Rolling over chat log for \"" + botidToUse + "\".");
-        XMLWriter.rollover(this.bots.getBot(botidToUse).getChatlogSpec());
-        showConsole("Finished rolling over chat log.");
-    }*/
 
     /**
      * Lists the shell commandables that are loaded to the console.
@@ -602,13 +608,13 @@ public class Shell
         int commandableCount = 0;
         if (processes.hasNext())
         {
-            showConsole("Available shell commandables:");
+            showMessage("Available shell commandables:");
             while (processes.hasNext())
             {
                 try
                 {
                     ShellCommandable commandable = (ShellCommandable) processes.next();
-                    showConsole("/" + commandable.getShellID() + " - " + commandable.getShellDescription());
+                    showMessage("/" + commandable.getShellID() + " - " + commandable.getShellDescription());
                     commandableCount++;
                 }
                 catch (ClassCastException e)
@@ -619,12 +625,12 @@ public class Shell
         }
         if (commandableCount == 0)
         {
-            showConsole("No shell commandables are loaded.");
+            showError("No shell commandables are loaded.");
         }
         else
         {
-            showConsole("Commands after the shell commandable will be sent to the commandable.");
-            showConsole("Example: \"/irc /JOIN #foo\" tells thIRCListenerRC listener to join channel \"#foo\".");
+            showMessage("Commands after the shell commandable will be sent to the commandable.");
+            showMessage("Example: \"/irc /JOIN #foo\" tells thIRCListenerRC listener to join channel \"#foo\".");
         }
     }
 
@@ -681,40 +687,45 @@ public class Shell
     }
 
     /**
-     * Print a message to a
-     * {@link java.io.PrintStream PrintStream}, preceded by
-     * a linebreak if the shell is currently midline.
-     * 
-     * @param message
-     *            the message to print
-     * @param typeFlag
-     *            user-defined
-     */
-    public void print(String message)
-    {
-        if (this.midLine)
-        {
-            this.consoleDisplay.println();
-        } 
-        this.consoleDisplay.print(timestamp() + message);
-        this.midLine = true;
-    }
-
-    /**
-     * Print a message line to the console.
+     * Print a message line of standard output to the console.
      * 
      * @param message
      *            the message to print
      */
-    public void println(String message)
+    public void printlnOut(String message)
     {
         if (this.midLine)
         {
-            this.consoleDisplay.println();
+            this.consoleOut.println();
         } 
-        this.consoleDisplay.println(timestamp() + message);
+        this.consoleOut.println(timestamp() + message);
         this.midLine = false;
     } 
+
+    /**
+     * Print a message line of error to the console.
+     * TODO: Make the formatting different here.
+     * 
+     * @param message
+     *            the message to print
+     */
+    public void printlnErr(String message)
+    {
+        if (this.midLine)
+        {
+            this.consoleErr.println();
+        } 
+        this.consoleErr.println(timestamp() + message);
+        this.midLine = false;
+    } 
+
+    /**
+     * @return the current bot id
+     */
+    public String getCurrentBotID()
+    {
+        return this.botid;
+    }
 
     /**
      * @return timestamp in specified long or short format
@@ -735,6 +746,7 @@ public class Shell
     public void gotLine()
     {
         this.midLine = false;
+        showPrompt();
     } 
 
     /**

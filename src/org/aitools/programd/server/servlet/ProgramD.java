@@ -41,16 +41,25 @@ public class ProgramD extends HttpServlet
     /** The Core to use. */
     private Core core;
     
+    /**
+     * @see javax.servlet.GenericServlet#init()
+     */
     public void init()
     {
         this.core = (Core)this.getServletContext().getAttribute(CORE);
     } 
 
+    /**
+     * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
+     */
     public void init(ServletConfig config)
     {
         this.core = (Core)config.getServletContext().getAttribute(CORE);
     } 
 
+    /**
+     * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     {
         ResponderBroker responder = new ResponderBroker(request, response, this.core);
@@ -58,6 +67,9 @@ public class ProgramD extends HttpServlet
 
     } 
 
+    /**
+     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     public void doPost(HttpServletRequest request, HttpServletResponse response)
     {
         doGet(request, response);

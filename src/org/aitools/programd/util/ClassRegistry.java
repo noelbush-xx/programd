@@ -18,44 +18,47 @@ import java.util.Hashtable;
 abstract public class ClassRegistry
 {
     /** The hidden Hashtable that backs this. */
-    private Hashtable<String, Class> hashtable;
+    private Hashtable<String, Class> registry;
     
-    /** The version of the content type for which this registry is intended. */
-    protected static String version;
+    /** The namespace URI of the content type for which this registry is intended. */
+    protected String namespaceURI;
 
     /** The list of classesToRegister (fully-qualified class names). */
-    protected static String[] classesToRegister;
+    protected String[] classes;
 
-    /** The fully-qualified name of the base class for the classesToRegister. */
-    protected static String baseClassName;
+    /** The fully-qualified name of the base class for the registered classes. */
+    protected String baseClassName;
     
     /** The actual Class represented by the {@link #baseClassName}. */
-    protected static Class<?> baseClass;
+    protected Class<?> baseClass;
 
     /** The string &quot;label&quot;--the required name for a label field. */
     private static final String LABEL = "label";
 
     /**
      * Loads the registry with a set of classes.
+     * @param namespaceURIToUse the namespace URI to use
+     * @param classesToRegister the classes to register
+     * @param baseClassNameToUse the base class name to use
      */
-    public ClassRegistry(String versionToUse, String[] classesToRegisterToUse, String baseClassNameToUse)
+    public ClassRegistry(String namespaceURIToUse, String[] classesToRegister, String baseClassNameToUse)
     {
         // Initialize the backing Hashtable.
-        this.hashtable = new Hashtable<String, Class>(classesToRegisterToUse.length);
+        this.registry = new Hashtable<String, Class>(classesToRegister.length);
 
         // Set the field values for this.
-        ClassRegistry.version = versionToUse;
-        ClassRegistry.classesToRegister = classesToRegisterToUse;
-        ClassRegistry.baseClassName = baseClassNameToUse;
+        this.namespaceURI = namespaceURIToUse;
+        this.classes = classesToRegister;
+        this.baseClassName = baseClassNameToUse;
 
         // Get a handle on the base class.
         try
         {
-            ClassRegistry.baseClass = Class.forName(baseClassName);
+            this.baseClass = Class.forName(this.baseClassName);
         } 
         catch (ClassNotFoundException e)
         {
-            throw new UserError("Could not find base class \"" + baseClassName + "\"!", e);
+            throw new UserError("Could not find base class \"" + this.baseClassName + "\"!", e);
         } 
 
         // Load in the classesToRegister.
@@ -85,10 +88,10 @@ abstract public class ClassRegistry
                     + "\" is missing from your classpath.  Cannot initialize registry.", e);
         } 
         // Ensure that the class is actually an extension of the processor.
-        if (!baseClass.isAssignableFrom(classToRegister))
+        if (!this.baseClass.isAssignableFrom(classToRegister))
         {
             throw new DeveloperError("Developer has incorrectly specified \"" + nameOfClassToRegister
-                    + "\" as a registrable class.");
+                    + "\" as a registrable class.", new ClassCastException());
         } 
 
         // Get the label field.
@@ -102,12 +105,12 @@ abstract public class ClassRegistry
             catch (NoSuchFieldException e)
             {
                 throw new DeveloperError("Unlikely error: \"" + nameOfClassToRegister
-                        + "\" is missing label field!");
+                        + "\" is missing label field!", e);
             } 
         } 
         else
         {
-            throw new DeveloperError("Failed to get processor \"" + nameOfClassToRegister + "\"");
+            throw new DeveloperError("Failed to get processor \"" + nameOfClassToRegister + "\"", new NullPointerException());
         } 
 
         // Get the value in the label field.
@@ -118,17 +121,17 @@ abstract public class ClassRegistry
         } 
         catch (IllegalAccessException e)
         {
-            throw new DeveloperError("Label field for \"" + nameOfClassToRegister + "\" is not accessible!");
+            throw new DeveloperError("Label field for \"" + nameOfClassToRegister + "\" is not accessible!", e);
         } 
 
         // (Finally!) register this class.
         if (label != null)
         {
-            this.hashtable.put(label, classToRegister);
+            this.registry.put(label, classToRegister);
         } 
         else
         {
-            throw new DeveloperError("Tried to register class with null label!");
+            throw new DeveloperError("Tried to register class with null label!", new NullPointerException());
         } 
     }
     
@@ -138,9 +141,23 @@ abstract public class ClassRegistry
      * @param label the label of the Class desired.
      * 
      * @return the Class corresponding to the given label.
+     * @throws NotARegisteredClassException if the given class is not registered
      */
-    public synchronized Class get(String label)
+    public synchronized Class get(String label) throws NotARegisteredClassException
     {
-        return this.hashtable.get(label);
+        if (this.registry.containsKey(label))
+        {
+            return this.registry.get(label);
+        }
+        throw new NotARegisteredClassException(label);
+    }
+    
+    /**
+     * @return the namespace URI of the content type for which
+     *         this registry manages processors
+     */
+    public String getNamespaceURI()
+    {
+        return this.namespaceURI;
     }
 }

@@ -41,9 +41,15 @@ public class FlashResponder extends AbstractMarkupResponder
     /** Map of template names to filenames. */
     private static HashMap templates;
 
-    public FlashResponder(String botidToRespond, String templateName, Core coreToUse)
+    /**
+     * Creates a new FlashResponder.
+     * @param botidToRespondFor the botid to respond for
+     * @param templateName the template name to use
+     * @param coreToUse the Core to use
+     */
+    public FlashResponder(String botidToRespondFor, String templateName, Core coreToUse)
     {
-        super(botidToRespond, coreToUse);
+        super(botidToRespondFor, coreToUse);
         checkStaticVariables();
         if (templateName.equals(EMPTY_STRING))
         {

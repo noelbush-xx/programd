@@ -12,12 +12,10 @@ package org.aitools.programd.processor;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
-import org.aitools.programd.parser.GenericParser;
 import org.aitools.programd.parser.TemplateParser;
 
 /**
@@ -30,22 +28,35 @@ import org.aitools.programd.parser.TemplateParser;
  */
 public class SRAIProcessor extends AIMLProcessor
 {
+    /** The label (as required by the registration scheme). */
     public static final String label = "srai";
     
+    private static boolean recordMatchTrace;
+    
+    private static Logger matchLogger = Logger.getLogger("programd.matching");
+    
+    /**
+     * Creates a new SRAIProcessor using the given Core.
+     * @param coreToUse the Core object to use
+     */
     public SRAIProcessor(Core coreToUse)
     {
         super(coreToUse);
+        recordMatchTrace = this.core.getSettings().recordMatchTrace();
     }
     
-    private static final Logger errorLogger = Logger.getLogger("programd.error");
+    private static final Logger logger = Logger.getLogger("programd");
 
     /**
      * Processes a &lt;srai/&gt; element. First, all elements contained within a
      * given &lt;srai/&gt; are evaluated, and the result is recursively fed as
      * input to the pattern matching process. The result of such evaluation
      * (which itself might be recursive) is returned as the result.
+     * @param element the <code>srai</code> element
+     * @param parser the parser that is at work
+     * @return the result of processing the element
      * 
-     * @see AIMLProcessor#process(int, XMLNode, GenericParser)
+     * @see AIMLProcessor#process(Element, TemplateParser)
      */
     public String process(Element element, TemplateParser parser)
     {
@@ -57,24 +68,20 @@ public class SRAIProcessor extends AIMLProcessor
             if (sraiChild.getNodeType() == Node.TEXT_NODE)
             {
                 String sraiContent = sraiChild.getTextContent();
-                Iterator inputsIterator = parser.getInputs().iterator();
-
-                while (inputsIterator.hasNext())
+                for (String input : parser.getInputs())
                 {
-                    String input = (String) inputsIterator.next();
-
                     if (sraiContent.equalsIgnoreCase(input))
                     {
                         String infiniteLoopInput = parser.getCore().getSettings().getInfiniteLoopInput();
                         if (!sraiContent.equalsIgnoreCase(infiniteLoopInput))
                         {
                             sraiChild.setTextContent(infiniteLoopInput);
-                            errorLogger.log(Level.WARNING, "Infinite loop detected; substituting \"" + infiniteLoopInput
+                            logger.log(Level.WARNING, "Infinite loop detected; substituting \"" + infiniteLoopInput
                                     + "\".");
                         } 
                         else
                         {
-                            errorLogger.log(Level.SEVERE, "Unrecoverable infinite loop.");
+                            logger.log(Level.SEVERE, "Unrecoverable infinite loop.");
                             return EMPTY_STRING;
                         } 
                     } 
@@ -82,12 +89,12 @@ public class SRAIProcessor extends AIMLProcessor
                 parser.addInput(sraiContent);
             } 
         }
-        /*
-        if (Settings.showMatchTrace())
+        
+        if (recordMatchTrace)
         {
-            Trace.userinfo("Symbolic Reduction:");
+            matchLogger.log(Level.FINE, "Symbolic Reduction:");
         }
-        */ 
+        
         return this.core.getMultiplexor().getInternalResponse(parser.evaluate(element.getChildNodes()), parser.getUserID(), parser
                 .getBotID(), parser);
     } 

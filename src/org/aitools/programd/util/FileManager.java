@@ -23,33 +23,33 @@ import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.aitools.programd.util.DeveloperError;
+
 /**
  * FileManager provides a standard interface for getting File objects and paths.
  */
 public class FileManager
 {
     /** The root path for running Program D. */
-    private static String rootPath;
+    private static URL rootPath;
 
     /** The current working directory. */
-    private static Stack<String> workingDirectory = new Stack<String>();
+    private static Stack<URL> workingDirectory = new Stack<URL>();
     static
     {
-        workingDirectory.push(System.getProperty("user.dir"));
+        workingDirectory.push(URITools.createValidURL(System.getProperty("user.dir")));
     }
     
     /** The error logger. */
-    private static Logger errorLogger = Logger.getLogger("programd.error");
+    private static Logger logger = Logger.getLogger("programd");
 
     /**
      * Sets the root path.
-     * 
-     * @param path
-     *            the value to set for the root path
+     * @param url the root path
      */
-    public static void setRootPath(String path)
+    public static void setRootPath(URL url)
     {
-        rootPath = path;
+        rootPath = url;
     } 
 
     /**
@@ -66,7 +66,14 @@ public class FileManager
         File file = new File(path);
         if (file.exists())
         {
-            return file;
+            try
+            {
+                return file.getCanonicalFile();
+            }
+            catch (IOException e)
+            {
+                throw new DeveloperError("Could not create canonical file for \"" + file.getAbsolutePath() + "\".", e);
+            }
         } 
         return new File(rootPath + path);
     } 
@@ -74,28 +81,33 @@ public class FileManager
     /**
      * Gets a file from a given path. First tries to use the path as-is if it's
      * absolute, then (otherwise) looks in the defined root directory, then
-     * finally looks in the current working directory. The file <i>must </i>
+     * finally looks in the current working directory. The file <i>must</i>
      * already exist, or an exception will be thrown.
      * 
      * @param path
      *            the path for the file (may be absolute or relative to root
      *            directory)
      * @return the file
-     * @throws FileNotFoundException
-     *             if the file does not exist
      */
-    public static File getExistingFile(String path) throws FileNotFoundException
+    public static File getExistingFile(String path)
     {
         File file = getFile(path);
         if (!file.exists())
         {
-            file = getFile(workingDirectory.peek() + File.separator + path);
+            file = getFile(workingDirectory.peek().getPath() + path);
             if (!file.exists())
             {
-                throw new FileNotFoundException("Couldn't find \"" + path + "\".");
+                throw new DeveloperError(new FileNotFoundException("Couldn't find \"" + path + "\"."));
             } 
-        } 
-        return file;
+        }
+        try
+        {
+            return file.getCanonicalFile();
+        }
+        catch (IOException e)
+        {
+            throw new DeveloperError("I/O Error creating the canonical form of file \"" + path + "\".", e);
+        }
     } 
 
     /**
@@ -216,20 +228,58 @@ public class FileManager
                     {
                         file.createNewFile();
                     } 
-                    catch (IOException e1)
+                    catch (IOException e)
                     {
-                        throw new UserError("Could not create " + description + " \"" + file.getAbsolutePath() + "\".");
+                        throw new UserError("Could not create " + description + ".", new CouldNotCreateFileException(file.getAbsolutePath()));
                     } 
                 } 
                 else
                 {
-                    throw new UserError("Could not create directory \"" + directory.getAbsolutePath() + "\".");
+                    throw new UserError(new CouldNotCreateFileException(directory.getAbsolutePath()));
                 } 
             } 
             else
             {
-                throw new UserError("Could not create " + description + " directory.");
+                throw new UserError("Could not create " + description + " directory.", new CouldNotCreateFileException(directory.getAbsolutePath()));
             } 
+        }
+        Logger.getLogger("programd").log(Level.FINE, "Created new " + description + " \"" + path + "\".");
+        return file;
+    } 
+
+    /**
+     * Checks whether a directory given by a path exists, and if not, creates it,
+     * along with any necessary subdirectories.
+     * 
+     * @param path
+     *            denoting the directory to create
+     * @param description
+     *            describes what the directory is for, for trace messages. Should fit
+     *            into a sentence like, &quot;created new <i>description
+     *            </i>&quot;. May be null (which will result in less informative
+     *            messages).
+     * @return the directory that is created (or retrieved)
+     */
+    public static File checkOrCreateDirectory(String path, String description)
+    {
+        File file = getFile(path);
+        if (file.exists())
+        {
+            if (!file.isDirectory())
+            {
+                throw new UserError(new FileAlreadyExistsAsFileException(file));
+            }
+            // otherwise
+            return file;
+        } 
+        if (description == null)
+        {
+            description = "file";
+        }
+        
+        if (!file.mkdirs())
+        {
+            throw new UserError("Could not create " + description + " directory.", new CouldNotCreateFileException(file.getAbsolutePath()));
         }
         Logger.getLogger("programd").log(Level.FINE, "Created new " + description + " \"" + path + "\".");
         return file;
@@ -258,7 +308,7 @@ public class FileManager
             } 
             catch (MalformedURLException e)
             {
-                errorLogger.log(Level.WARNING, "Malformed URL: \"" + path + "\"");
+                logger.log(Level.WARNING, "Malformed URL: \"" + path + "\"");
             } 
 
             try
@@ -268,26 +318,17 @@ public class FileManager
             } 
             catch (IOException e)
             {
-                errorLogger.log(Level.WARNING, "I/O error trying to read \"" + path + "\"");
+                logger.log(Level.WARNING, "I/O error trying to read \"" + path + "\"");
             } 
         } 
         // Handle paths which are apparently files.
         else
         {
-            File toRead = null;
-            try
-            {
-                toRead = getExistingFile(path);
-            } 
-            catch (FileNotFoundException e)
-            {
-                errorLogger.log(Level.WARNING, e.getMessage());
-                return null;
-            } 
+            File toRead = getExistingFile(path);
 
             if (toRead.isAbsolute())
             {
-                workingDirectory.push(toRead.getParent());
+                workingDirectory.push(URITools.createValidURL(toRead.getParent()));
             } 
 
             if (toRead.exists() && !toRead.isDirectory())
@@ -301,7 +342,7 @@ public class FileManager
                 } 
                 catch (IOException e)
                 {
-                    errorLogger.log(Level.WARNING, "I/O error trying to read \"" + path + "\"");
+                    logger.log(Level.WARNING, "I/O error trying to read \"" + path + "\"");
                     return null;
                 } 
             } 
@@ -309,11 +350,11 @@ public class FileManager
             {
                 if (!toRead.exists())
                 {
-                    throw new UserError("\"" + path + "\" does not exist!");
+                    throw new UserError(new FileNotFoundException(path));
                 } 
                 if (toRead.isDirectory())
                 {
-                    throw new UserError("\"" + path + "\" is a directory!");
+                    throw new UserError(new FileAlreadyExistsAsDirectoryException(toRead));
                 } 
             } 
         } 
@@ -329,7 +370,7 @@ public class FileManager
         } 
         catch (IOException e)
         {
-            errorLogger.log(Level.WARNING, "I/O error trying to read \"" + path + "\"");
+            logger.log(Level.WARNING, "I/O error trying to read \"" + path + "\"");
             return null;
         } 
         return result.toString();
@@ -348,7 +389,7 @@ public class FileManager
      */
     public static String[] glob(String path) throws FileNotFoundException
     {
-        return glob(path, workingDirectory.peek());
+        return glob(path, workingDirectory.peek().getPath());
     } 
 
     /**
@@ -362,9 +403,8 @@ public class FileManager
      * href="http://sourceforge.net/projects/jmk/">JMK </a> project. (Under the
      * GNU LGPL)
      * </p>
+     * @param path the path string to glob
      * 
-     * @param path
-     *            localized file name that may contain wildcards
      * @param workingDirectoryToUse
      *            the path to which relative paths should be considered relative
      * @return array of file names without wildcards
@@ -404,7 +444,7 @@ public class FileManager
         } 
         String pattern;
         String dirName;
-        File dir;
+        File dir = null;
         if (separatorIndex >= 0)
         {
             pattern = path.substring(separatorIndex + 1);
@@ -412,18 +452,25 @@ public class FileManager
             dir = new File(dirName);
             if (!dir.isDirectory())
             {
-                dir = new File(workingDirectory + File.separator + dirName);
+                dir = new File(workingDirectory.peek().getPath() + dirName);
             } 
         } 
         else
         {
             pattern = path;
             dirName = workingDirectoryToUse;
-            dir = new File(dirName);
+            try
+            {
+                dir = new File(dirName).getCanonicalFile();
+            }
+            catch (IOException e)
+            {
+                throw new DeveloperError("Could not get canonical file for \"" + dir.getAbsolutePath() + "\".", e);
+            }
         } 
         if (!dir.isDirectory())
         {
-            throw new UserError("\"" + dirName + "\" is not a valid directory path!");
+            throw new UserError("\"" + dirName + "\" is not a valid directory path!", new FileNotFoundException(dirName));
         } 
         String[] list = dir.list(new WildCardFilter(pattern, '*'));
         if (list == null)
@@ -445,8 +492,37 @@ public class FileManager
      */
     public static void pushWorkingDirectory(String path)
     {
-        workingDirectory.push(path);
-    } 
+        workingDirectory.push(URITools.createValidURL(path));
+    }
+    
+    /**
+     * Pushes the working directory of the file
+     * described by the given path onto the stack.
+     * Checks are performed to be sure that the given
+     * path actually points to a file (in other words,
+     * passing a path to a directory will result in an
+     * error).
+     * 
+     * @param path  the file path
+     */
+    public static void pushFileParentAsWorkingDirectory(String path)
+    {
+        File file = FileManager.getExistingFile(path);
+        pushWorkingDirectory(file.getParent());
+        if (file == null)
+        {
+            throw new DeveloperError("Could not find \"" + path + "\".", new NullPointerException());
+        }
+        // otherwise...
+        if (!file.exists())
+        {
+            throw new DeveloperError("\"" + path + "\" does not exist!", new FileNotFoundException());
+        } 
+        if (file.isDirectory())
+        {
+            throw new DeveloperError("\"" + path + "\" is a directory!", new FileAlreadyExistsAsDirectoryException(file));
+        } 
+    }
 
     /**
      * Pops a working directory off the stack.
@@ -464,7 +540,7 @@ public class FileManager
      * 
      * @return the working directory
      */
-    public static String getWorkingDirectory()
+    public static URL getWorkingDirectory()
     {
         return workingDirectory.peek();
     }

@@ -46,6 +46,9 @@ public class NoSuchPredicateException extends Exception
         NoSuchPredicateException.index = predicateIndex;
     } 
 
+    /**
+     * @see java.lang.Throwable#getMessage()
+     */
     public String getMessage()
     {
         if (index != -1)

@@ -14,8 +14,18 @@ import org.aitools.programd.Core;
 import org.mortbay.http.HttpContext;
 import org.mortbay.jetty.Server;
 
+/**
+ * This subclass of the Jetty server includes a reference to a Core object as one
+ * of its attributes, so that servlets can get access to the Core.
+ * @author Noel Bush
+ * @since 4.5
+ */
 public class ProgramDAwareJettyServer extends Server
 {
+    /**
+     * Creates a new ProgramDAwareJettyServer and attaches the given Core.
+     * @param core the Core to attach.
+     */
     public ProgramDAwareJettyServer(Core core)
     {
         super();

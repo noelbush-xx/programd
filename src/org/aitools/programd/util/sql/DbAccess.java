@@ -36,7 +36,7 @@ import org.aitools.programd.util.UserError;
  */
 public class DbAccess
 {
-    private static Logger dbLogger = Logger.getLogger("programd.database");
+    private static Logger logger = Logger.getLogger("programd");
     
     private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
     
@@ -108,7 +108,7 @@ public class DbAccess
             } 
             catch (ClassNotFoundException e)
             {
-                throw new UserError("Could not find your database driver.");
+                throw new UserError("Could not find your database driver.", e);
             } 
             try
             {
@@ -136,7 +136,7 @@ public class DbAccess
             } 
             catch (SQLException e)
             {
-                throw new UserError("Could not create a SQL statement using your database.");
+                throw new UserError("Could not create a SQL statement using your database.", e);
             } 
         } 
     } 
@@ -149,14 +149,12 @@ public class DbAccess
      *            the query to execute
      * @return the {@link java.sql.ResultSet ResultSet} from executing a given
      *         query
-     * @throws SQLException
-     *             if there was a problem.
      */
     public ResultSet executeQuery(String query)
     {
         if (this.statement == null)
         {
-            throw new DeveloperError("Tried to execute query before creating Statement object!");
+            throw new DeveloperError("Tried to execute query before creating Statement object!", new NullPointerException());
         } 
         try
         {
@@ -164,7 +162,7 @@ public class DbAccess
         } 
         catch (SQLException e)
         {
-            dbLogger.log(Level.SEVERE, "Problem executing a query on your database.  Check structure and availability." + LINE_SEPARATOR + e.getMessage());
+            logger.log(Level.SEVERE, "Problem executing a query on your database.  Check structure and availability." + LINE_SEPARATOR + e.getMessage());
             throw new UserError(e);
         } 
     } 
@@ -181,7 +179,7 @@ public class DbAccess
     {
         if (this.statement == null)
         {
-            throw new DeveloperError("Tried to execute query before creating Statement object!");
+            throw new DeveloperError("Tried to execute query before creating Statement object!", new NullPointerException());
         } 
         try
         {
@@ -189,7 +187,7 @@ public class DbAccess
         } 
         catch (SQLException e)
         {
-            dbLogger.log(Level.SEVERE, "Problem executing an update on your database.  Check structure and availability." + LINE_SEPARATOR + e.getMessage());
+            logger.log(Level.SEVERE, "Problem executing an update on your database.  Check structure and availability." + LINE_SEPARATOR + e.getMessage());
             throw new UserError(e);
         } 
     } 

@@ -26,13 +26,21 @@ import org.aitools.programd.parser.TemplateParser;
  */
 public class ThatStarProcessor extends IndexedPredicateProcessor
 {
+    /** The label (as required by the registration scheme). */
     public static final String label = "thatstar";
 
+    /**
+     * Creates a new ThatStarProcessor using the given Core.
+     * @param coreToUse the Core object to use
+     */
     public ThatStarProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
     
+    /**
+     * @see org.aitools.programd.processor.AIMLProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.TemplateParser)
+     */
     public String process(Element element, TemplateParser parser)
     {
         return super.process(element, parser, parser.getThatStars(), 1);

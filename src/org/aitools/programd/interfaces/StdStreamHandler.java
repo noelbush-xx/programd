@@ -10,6 +10,7 @@
 package org.aitools.programd.interfaces;
 
 import java.io.PrintStream;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.StreamHandler;
 
@@ -26,17 +27,32 @@ public class StdStreamHandler extends StreamHandler
     /** A Shell to watch. */
     private Shell shell;
     
+    /**
+     * Creates a new StdStreamHandler.
+     * @param consoleSettings the console settings to use
+     * @param stream the stream to handle
+     * @param filter the filter to use
+     */
     public StdStreamHandler(ConsoleSettings consoleSettings, PrintStream stream, StdFilter filter)
     {
-        super(System.out, new ConsoleFormatter(consoleSettings));
+        super(stream, new ConsoleFormatter(consoleSettings));
         setFilter(filter);
+        setLevel(Level.ALL);
     }
     
+    /**
+     * Assigns the given Shell to this handler, to watch it.
+     * @param shellToWatch
+     */
     public void watch(Shell shellToWatch)
     {
         this.shell = shellToWatch;
     }
     
+    /**
+     * Publishes the given record, also to the shell if one is attached.
+     * @see java.util.logging.StreamHandler#publish(java.util.logging.LogRecord)
+     */
     public void publish(LogRecord record)
     {
         super.publish(record);
@@ -44,5 +60,6 @@ public class StdStreamHandler extends StreamHandler
         {
             this.shell.gotLine();
         }
+        super.flush();
     }
 }

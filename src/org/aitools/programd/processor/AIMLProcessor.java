@@ -26,11 +26,18 @@ import org.aitools.programd.parser.TemplateParser;
  */
 abstract public class AIMLProcessor extends Processor
 {
+    /**
+     * Creates a new AIMLProcessor using the given Core.
+     * @param coreToUse the Core object to use with the new AIMLProcessor
+     */
     public AIMLProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
     
+    /**
+     * @see org.aitools.programd.processor.Processor#process(org.w3c.dom.Element, org.aitools.programd.parser.GenericParser)
+     */
     public String process(Element element, GenericParser parser) throws ProcessorException
     {
         try
@@ -39,9 +46,16 @@ abstract public class AIMLProcessor extends Processor
         } 
         catch (ClassCastException e)
         {
-            throw new ProcessorException("Tried to pass a non-TemplateParser to an AIMLProcessor.");
+            throw new ProcessorException("Tried to pass a non-TemplateParser to an AIMLProcessor.", e);
         } 
     } 
 
+    /**
+     * Processes the given element, using the given parser if needed.
+     * @param element the element to process
+     * @param parser the parser that has ordered the processing
+     * @return the result of processing the element
+     * @throws AIMLProcessorException if there is an unrecoverable problem processing the element
+     */
     abstract public String process(Element element, TemplateParser parser) throws AIMLProcessorException;
 }

@@ -14,8 +14,7 @@ import org.mortbay.log.OutputStreamLogSink;
 /**
  *  <p>
  *  Implements a &quot;wrapper&quot; for Jetty
- *  so it can be created with a parameterless constructor
- *  and then initialized with a configuration file..
+ *  so it implements the {@link org.aitools.programd.server.ProgramDCompatibleHttpServer ProgramDCompatibleHttpServer} interface.
  *  </p>
  *
  *  @author Noel Bush
@@ -28,22 +27,30 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
     
     private Core core;
 
+    /**
+     * Creates a new JettyWrapper using the given Core.
+     * @param coreToUse the Core to use
+     */
     public JettyWrapper(Core coreToUse)
     {
         this.core = coreToUse;
     } 
 
     /**
-     *  Configures the server and sets the address and port number in
-     *  {@link org.aitools.programd.server.Settings Settings} 
-     *  (for reference).
+     *  Configures the server.
      *
-     *  @param configFilePath   the config file path to pass to Jetty
+     *  @param configParameters   one String: the config file path to pass to Jetty
      */
-    public void configure(String configFilePath) throws IOException
+    public void configure(Object ... configParameters)
     {
-        this.jetty = new ProgramDAwareJettyServer(this.core);
+        if (configParameters.length != 1)
+        {
+            throw new DeveloperError("JettyWrapper requires exactly one config parameter!", new IllegalArgumentException());
+        }
+        String configFilePath = configParameters[0].toString();
 
+        this.jetty = new ProgramDAwareJettyServer(this.core);
+        
         // Add a LogSink to Jetty so it will shut up and not send messages to System.err.
         OutputStreamLogSink quietJetty = new OutputStreamLogSink("./logs/jetty.log");
         try
@@ -52,14 +59,24 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
         }
         catch (Exception e)
         {
-            throw new DeveloperError(e.getMessage());
+            throw new DeveloperError(e);
         }
 
-        this.jetty.configure(configFilePath);
+        try
+        {
+            this.jetty.configure(configFilePath);
+        }
+        catch (IOException e)
+        {
+            throw new DeveloperError(e);
+        }
 
         this.jetty.setStatsOn(true);
     }
     
+    /**
+     * @see org.aitools.programd.server.ProgramDCompatibleHttpServer#getHttpPort()
+     */
     public int getHttpPort()
     {
         // Isn't there an easier way to do this?
@@ -74,6 +91,9 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
         return port;
     }
 
+    /**
+     * @see org.aitools.programd.server.ProgramDCompatibleHttpServer#run()
+     */
     public void run()
     {
         try
@@ -82,10 +102,13 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
         } 
         catch (Exception e)
         {
-            throw new DeveloperError(e.getMessage());
+            throw new DeveloperError(e);
         } 
     } 
 
+    /**
+     * @see org.aitools.programd.bot.BotProcess#shutdown()
+     */
     public void shutdown()
     {
         try
@@ -94,10 +117,13 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
         }
         catch (InterruptedException e)
         {
-            throw new DeveloperError(e.getMessage());
+            throw new DeveloperError(e);
         }
     } 
 
+    /**
+     * @return the Jetty server itself
+     */
     public ProgramDAwareJettyServer getServer()
     {
         return this.jetty;

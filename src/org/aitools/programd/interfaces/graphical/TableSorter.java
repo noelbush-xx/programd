@@ -13,6 +13,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import org.aitools.programd.util.DeveloperError;
+import org.aitools.programd.util.IllegalObjectStateException;
 
 /**
  * A sorter for TableModels. The sorter has a model (conforming to TableModel)
@@ -41,22 +42,38 @@ public class TableSorter extends TableMap
 
     int compares;
 
+    /**
+     * Creates a new TableSorter.
+     */
     public TableSorter()
     {
         this.indexes = new int[0];
     } 
 
+    /**
+     * @param modelToSet
+     */
     public TableSorter(TableModel modelToSet)
     {
         setModel(modelToSet);
     } 
 
+    /**
+     * @see org.aitools.programd.interfaces.graphical.TableMap#setModel(javax.swing.table.TableModel)
+     */
     public void setModel(TableModel modelToSet)
     {
         super.setModel(modelToSet);
         reallocateIndexes();
     } 
 
+    /**
+     * Compares the given rows in the given column
+     * @param row1 one row
+     * @param row2 the other row
+     * @param column the column in which to compare
+     * @return an indicator of the comparison of the two columns (?)
+     */
     public int compareRowsByColumn(int row1, int row2, int column)
     {
         Class type = this.model.getColumnClass(column);
@@ -192,6 +209,12 @@ public class TableSorter extends TableMap
         } 
     } 
 
+    /**
+     * Compares two rows.
+     * @param row1 one row
+     * @param row2 another row
+     * @return the result of comparing the two rows
+     */
     public int compare(int row1, int row2)
     {
         this.compares++;
@@ -207,6 +230,9 @@ public class TableSorter extends TableMap
         return 0;
     } 
 
+    /**
+     * Sets up a new array of indices with the correct number of elements for the new data model, and initializes with the identity mapping.
+     */
     public void reallocateIndexes()
     {
         int rowCount = this.model.getRowCount();
@@ -224,21 +250,30 @@ public class TableSorter extends TableMap
         } 
     } 
 
+    /**
+     * @see org.aitools.programd.interfaces.graphical.TableMap#tableChanged(javax.swing.event.TableModelEvent)
+     */
     public void tableChanged(TableModelEvent e)
     {
         reallocateIndexes();
         super.tableChanged(e);
     } 
 
+    /**
+     * Checks that the model is valid (has not been changed without informing the sorter).
+     */
     public void checkModel()
     {
         if (this.indexes.length != this.model.getRowCount())
         {
-            throw new DeveloperError("Sorter not informed of a change in model.");
+            throw new DeveloperError(new IllegalObjectStateException("Sorter not informed of a change in model."));
         } 
     } 
 
-    public void sort(Object sender)
+    /**
+     * 
+     */
+    public void sort()
     {
         checkModel();
 
@@ -246,6 +281,9 @@ public class TableSorter extends TableMap
         shuttlesort(this.indexes.clone(), this.indexes, 0, this.indexes.length);
     } 
 
+    /**
+     * Sorts the table according to an n2 algorithm.
+     */
     public void n2sort()
     {
         for (int i = 0; i < getRowCount(); i++)
@@ -267,6 +305,10 @@ public class TableSorter extends TableMap
      * the values between the two arrays. The number of compares appears to vary
      * between N-1 and NlogN depending on the initial order but the main reason
      * for using it here is that, unlike qsort, it is stable.
+     * @param from ?
+     * @param to ?
+     * @param low ?
+     * @param high ?
      */
     public void shuttlesort(int from[], int to[], int low, int high)
     {
@@ -320,6 +362,11 @@ public class TableSorter extends TableMap
         } 
     } 
 
+    /**
+     * Swaps the cells indicated by <code>i</code> and <code>j</code>.
+     * @param i a cell
+     * @param j a cell
+     */
     public void swap(int i, int j)
     {
         int tmp = this.indexes[i];
@@ -330,35 +377,51 @@ public class TableSorter extends TableMap
     // The mapping only affects the contents of the data rows.
     // Pass all requests to these rows through the mapping array: "indexes".
 
+    /**
+     * @see org.aitools.programd.interfaces.graphical.TableMap#getValueAt(int, int)
+     */
     public Object getValueAt(int aRow, int aColumn)
     {
         checkModel();
         return this.model.getValueAt(this.indexes[aRow], aColumn);
     } 
 
+    /**
+     * @see org.aitools.programd.interfaces.graphical.TableMap#setValueAt(java.lang.Object, int, int)
+     */
     public void setValueAt(Object aValue, int aRow, int aColumn)
     {
         checkModel();
         this.model.setValueAt(aValue, this.indexes[aRow], aColumn);
     } 
 
+    /**
+     * Sorts the table by the specified column.
+     * @param column the column by which to sort
+     */
     public void sortByColumn(int column)
     {
         sortByColumn(column, true);
     } 
 
+    /**
+     * Sorts by the specified column, either ascending or descending.
+     * @param column the column by which to sort
+     * @param ascendingSetting whether to sort ascending
+     */
     public void sortByColumn(int column, boolean ascendingSetting)
     {
         this.ascending = ascendingSetting;
         this.sortingColumns.removeAllElements();
         this.sortingColumns.addElement(new Integer(column));
-        sort(this);
+        sort();
         super.tableChanged(new TableModelEvent(this));
     } 
 
-    // There is no-where else to put this.
-    // Add a mouse listener to the Table to trigger a table sort
-    // when a column heading is clicked in the JTable.
+    /**
+     * Adds a mouse listener to the header of the given table to trigger a table sort when a column heading is clicked in the JTable.
+     * @param table the table to whose header to add a mouse listener.
+     */
     public void addMouseListenerToHeaderInTable(JTable table)
     {
         final TableSorter sorter = this;

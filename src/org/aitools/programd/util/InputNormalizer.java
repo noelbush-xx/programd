@@ -13,7 +13,7 @@ import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 
 /**
@@ -35,14 +35,15 @@ public class InputNormalizer
     /**
      * Splits an input into sentences, as defined by the
      * <code>sentenceSplitters</code>.
+     * @param sentenceSplitters the sentence splitters to use
      * 
      * @param input
      *            the input to split
      * @return the input split into sentences
      */
-    public static ArrayList<String> sentenceSplit(ArrayList sentenceSplitters, String input)
+    public static List<String> sentenceSplit(List<String> sentenceSplitters, String input)
     {
-        ArrayList<String> result = new ArrayList<String>();
+        List<String> result = Collections.checkedList(new ArrayList<String>(), String.class);
 
         int inputLength = input.length();
         if (inputLength == 0)
@@ -54,15 +55,9 @@ public class InputNormalizer
         // This will hold the indices of all splitters in the input.
         ArrayList<Integer> splitterIndices = new ArrayList<Integer>();
 
-        // This will iterate over the splitters.
-        Iterator splitters = sentenceSplitters.iterator();
-
         // Iterate over all the splitters.
-        while (splitters.hasNext())
+        for (String splitter : sentenceSplitters)
         {
-            // Get the next splitter.
-            String splitter = (String) splitters.next();
-
             // Look for it in the input.
             int index = input.indexOf(splitter);
 

@@ -14,17 +14,25 @@ import java.awt.event.ActionListener;
 
 /**
  * An ActionListener that is aware of its parent.
+ * @param <P> the parent class
  * 
  * @author Noel Bush
  */
-abstract public class ParentAwareActionListener implements ActionListener
+abstract public class ParentAwareActionListener<P> implements ActionListener
 {
-    protected Object parent;
+    protected P parent;
 
-    public ParentAwareActionListener(Object parentToUse)
+    /**
+     * Creates a new ParentAwareActionListener
+     * @param parentToUse the parent to be aware of
+     */
+    public ParentAwareActionListener(P parentToUse)
     {
         this.parent = parentToUse;
     } 
 
+    /**
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     abstract public void actionPerformed(ActionEvent ae);
 }

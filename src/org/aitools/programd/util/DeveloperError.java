@@ -16,27 +16,24 @@ package org.aitools.programd.util;
  */
 public class DeveloperError extends Error
 {
-    private Throwable throwable;
-
-    public DeveloperError(String message)
-    {
-        super(message);
-    } 
-
+    /**
+     * Creates a new DeveloperError associated with the given Throwable.
+     * @param e the Throwable that is responsible for this DeveloperError
+     */
     public DeveloperError(Throwable e)
     {
         super("Developer did not describe exception.");
-        this.throwable = e;
+        initCause(e);
     } 
 
+    /**
+     * Creates a new DeveloperError associated with the given Throwable.
+     * @param message the message describing the error
+     * @param e the Throwable that is responsible for this DeveloperError
+     */
     public DeveloperError(String message, Throwable e)
     {
         super(message);
-        this.throwable = e;
-    } 
-
-    public Throwable getEmbedded()
-    {
-        return this.throwable;
-    } 
+        initCause(e);
+    }
 }

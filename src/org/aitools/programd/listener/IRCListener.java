@@ -92,14 +92,17 @@ public class IRCListener extends Listener implements ShellCommandable
     /** Please document. */
     private static final String MSG = "ProgramD-IRC: ";
 
-    /** Please document. */
+    /** The label (as required by the registration scheme). */
     public static final String label = "ProgramD-IRC";
 
     /**
      * Creates a new IRCListener chat listener for a given bot.
-     * 
-     * @param botToListen
-     *            the bot for whom to listen
+     * @param coreToUse
+     *            the Core object in use
+     * @param botToListenFor the bot for whom to listen
+     * @param parametersToUse
+     *            the parameters for the listener and their default values
+     * @throws InvalidListenerParameterException 
      */
     public IRCListener(Core coreToUse, Bot botToListenFor, HashMap<String, String> parametersToUse) throws InvalidListenerParameterException
     {
@@ -123,6 +126,9 @@ public class IRCListener extends Listener implements ShellCommandable
         this.channel = this.parameters.get("channel");
     } 
 
+    /**
+     * @see org.aitools.programd.listener.Listener#checkParameters()
+     */
     public void checkParameters() throws InvalidListenerParameterException
     {
         if (this.host.length() == 0)
@@ -143,6 +149,9 @@ public class IRCListener extends Listener implements ShellCommandable
         } 
     } 
 
+    /**
+     * @see org.aitools.programd.bot.BotProcess#shutdown()
+     */
     public void shutdown()
     {
         disconnect();
@@ -160,21 +169,33 @@ public class IRCListener extends Listener implements ShellCommandable
         listen();
     } 
 
+    /**
+     * @see org.aitools.programd.interfaces.ShellCommandable#getShellID()
+     */
     public String getShellID()
     {
         return "irc";
     } 
 
+    /**
+     * @see org.aitools.programd.interfaces.ShellCommandable#getShellDescription()
+     */
     public String getShellDescription()
     {
         return "ProgramD IRC chat listener";
     } 
 
+    /**
+     * @see org.aitools.programd.interfaces.ShellCommandable#getShellCommands()
+     */
     public String getShellCommands()
     {
         return "Not yet implemented.";
     } 
 
+    /**
+     * @see org.aitools.programd.interfaces.ShellCommandable#processShellCommand(java.lang.String)
+     */
     public void processShellCommand(String command)
     {
         int slash = command.indexOf('/');
@@ -331,7 +352,8 @@ public class IRCListener extends Listener implements ShellCommandable
     } 
 
     /**
-     * Please document this.
+     * Processes an IRC message
+     * @param message the message to process
      */
     protected void processMessage(String message)
     {
@@ -395,7 +417,10 @@ public class IRCListener extends Listener implements ShellCommandable
     } 
 
     /**
-     * Please document this.
+     * Processes an IRC command
+     * @param command the command to process
+     * @param message the message to process as the argument to the command
+     * @return the reuslt of processing the command
      */
     private boolean processMessageCommand(String command, String message)
     {
@@ -592,7 +617,10 @@ public class IRCListener extends Listener implements ShellCommandable
     } 
 
     /**
-     * Please document this.
+     * Processes a client-side IRC message (?).
+     * @param command the command to process
+     * @param message the message argument to the command
+     * @return whether the processing was successful
      */
     private boolean processMessageCommandClient(String command, String message)
     {
@@ -708,7 +736,10 @@ public class IRCListener extends Listener implements ShellCommandable
     } 
 
     /**
-     * Please document this.
+     * Handle an IRC debugging command (?).
+     * @param command the command to process
+     * @param message the message argument to the command
+     * @return whether or not the command was processed successfully 
      */
     private boolean processMessageCommandDebug(String command, String message)
     {
@@ -784,7 +815,8 @@ public class IRCListener extends Listener implements ShellCommandable
     } 
 
     /**
-     * Please document this.
+     * Processes an IRC server message
+     * @param message the message to process
      */
     private void processServerMessage(String message)
     {
@@ -1025,7 +1057,9 @@ public class IRCListener extends Listener implements ShellCommandable
     } 
 
     /**
-     * Please document this.
+     * A helper function for the IRCListener.
+     * @param string any input string
+     * @return the part of the string following the first <code>:</code> (colon), or the whole string if there is no colon.
      */
     private String helpExtractIRCString(String string)
     {
@@ -1057,7 +1091,9 @@ public class IRCListener extends Listener implements ShellCommandable
     } 
 
     /**
-     * Please document this.
+     * Sends an IRC message
+     * @param type the type of message to send
+     * @param message the message
      */
     private void sendMessage(String type, String message)
     {
@@ -1065,7 +1101,8 @@ public class IRCListener extends Listener implements ShellCommandable
     } 
 
     /**
-     * Please document this.
+     * Sends an IRC server message
+     * @param message the message to send
      */
     private void sendServerMessage(String message)
     {

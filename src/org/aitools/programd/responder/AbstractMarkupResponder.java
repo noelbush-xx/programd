@@ -68,7 +68,7 @@ abstract public class AbstractMarkupResponder implements Responder
     protected Bot bot;
 
     /** The logger to use. */
-    protected static Logger logger = Logger.getLogger("programd.responder");
+    protected static Logger logger = Logger.getLogger("programd");
     
     // Convenience constants.
 
@@ -120,12 +120,14 @@ abstract public class AbstractMarkupResponder implements Responder
 
     /**
      * Initializes an AbstractMarkupResponder.
+     * @param botidToRespondTo the botid for which this responder will be working
+     * @param coreToUse the core to use
      */
-    public AbstractMarkupResponder(String botidToRespond, Core coreToUse)
+    public AbstractMarkupResponder(String botidToRespondTo, Core coreToUse)
     {
         this.core = coreToUse;
-        this.botid = botidToRespond;
-        this.bot = this.core.getBots().getBot(botidToRespond);
+        this.botid = botidToRespondTo;
+        this.bot = this.core.getBots().getBot(botidToRespondTo);
     } 
 
     /**
@@ -150,6 +152,9 @@ abstract public class AbstractMarkupResponder implements Responder
         } 
     } 
 
+    /**
+     * @see org.aitools.programd.responder.Responder#preprocess(java.lang.String)
+     */
     public String preprocess(String input)
     {
         this.response.setLength(0);
@@ -199,6 +204,9 @@ abstract public class AbstractMarkupResponder implements Responder
         return input;
     } 
 
+    /**
+     * @see org.aitools.programd.responder.Responder#append(java.lang.String, java.lang.String, java.lang.String)
+     */
     public String append(String input, String reply, String appendTo)
     {
         int replyPartSize = this.replyPart.size();
@@ -253,6 +261,9 @@ abstract public class AbstractMarkupResponder implements Responder
         return appendTo + reply;
     } 
 
+    /**
+     * @see org.aitools.programd.responder.Responder#postprocess(java.lang.String)
+     */
     public String postprocess(String reply)
     {
         int footerSize = this.footer.size();
@@ -308,6 +319,7 @@ abstract public class AbstractMarkupResponder implements Responder
      * 
      * @param file
      *            a Reader for the chat template.
+     * @throws IOException if there was a problem parsing the template
      */
     protected void parse(Reader file) throws IOException
     {

@@ -26,15 +26,6 @@ public class StringKit
     /** An empty string. */
     private static final String EMPTY_STRING = "";
 
-    /** A space, for convenience. */
-    private static final String SPACE = " ";
-
-    /** A tab, for convenience. */
-    private static final String TAB = new Character('\u0009').toString();
-
-    /** The system line separator. */
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-
     /**
      * Filters out multiple consecutive instances of a given string.
      * 
@@ -98,95 +89,11 @@ public class StringKit
     } 
 
     /**
-     * Removes all instances of a given string from an input.
-     * 
-     * @param input
-     *            the string to filter
-     * @param filter
-     *            the string to remove
-     * @return the input with all instances of <code>filter</code> removed
-     * @throws StringIndexOutOfBoundsException
-     *             if there is malformed text in the input.
-     */
-    private static String removeAll(String input, String filter)
-    {
-        // Null inputs return an empty string.
-        if (input == null)
-        {
-            return EMPTY_STRING;
-        } 
-
-        // trim() removes all whitespace, not only spaces.
-        input = input.trim();
-
-        // Empty inputs return an empty string.
-        if (input.equals((EMPTY_STRING)))
-        {
-            return EMPTY_STRING;
-        } 
-
-        // If the filter is null, return the input as-is.
-        if (filter == null)
-        {
-            return input;
-        } 
-
-        // If the filter is an empty string, return the input as-is.
-        if (filter.equals(EMPTY_STRING))
-        {
-            return input;
-        } 
-
-        // Index the input length.
-        int inputLength = input.length();
-
-        // filterAddend is the amount to add to the index when comparing a
-        // substring of the input to the filter.
-        int filterAddend = filter.length() - 1;
-
-        // If the filter does not exist in the input, return the input as-is.
-        if (input.indexOf(filter) == -1)
-        {
-            return input;
-        } 
-
-        // Never look for the filter at an offset greater than inputLength -
-        // filterAddend.
-        int maxIndex = inputLength - filterAddend;
-
-        if (maxIndex > -1)
-        {
-            // The result will be constructed in this StringBuffer.
-            StringBuffer result = new StringBuffer(inputLength);
-
-            // Look through the string character by character.
-            for (int index = 0; index <= maxIndex; index++)
-            {
-                // If the input at offset index doesn't start with the filter,
-                if (!input.startsWith(filter, index))
-                {
-                    // append the present character.
-                    result.append(input.substring(index, index + 1));
-                } 
-                // Otherwise, we have found an instance of the filter,
-                else
-                {
-                    // and so do not append anything, but increment index to
-                    // skip ahead of the filter.
-                    index += filterAddend;
-                } 
-            } 
-            return result.toString();
-        } 
-        // (otherwise...)
-        return input;
-    } 
-
-    /**
      * Returns a tab of the specified length.
      * 
      * @param level
      *            the level of the tab
+     * @return the requested tab
      */
     public static String tab(int level)
     {

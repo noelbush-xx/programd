@@ -44,6 +44,7 @@ public class DbAccessRefsPoolMgr extends ObjectPool
     /**
      * Initializes the object by attempting to get a <code>DbAccess</code>
      * object based on the parameters set.
+     * @return the created object
      */
     protected Object create()
     {

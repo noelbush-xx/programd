@@ -116,16 +116,25 @@ abstract public class Tabulator extends JPanel
         /** The data of the columns in the table. */
         private Object[][] data;
 
+        /**
+         * @param columnNamesToSet
+         */
         public TabulatorTableModel(String[] columnNamesToSet)
         {
             this.columnNames = columnNamesToSet;
         } 
 
+        /**
+         * @see javax.swing.table.TableModel#getColumnCount()
+         */
         public int getColumnCount()
         {
             return this.columnNames.length;
         } 
 
+        /**
+         * @see javax.swing.table.TableModel#getRowCount()
+         */
         public synchronized int getRowCount()
         {
             if (this.data == null)
@@ -135,27 +144,43 @@ abstract public class Tabulator extends JPanel
             return this.data.length;
         } 
 
+        /**
+         * @see javax.swing.table.AbstractTableModel#getColumnName(int)
+         */
         public String getColumnName(int col)
         {
             return this.columnNames[col];
         } 
 
+        /**
+         * @see javax.swing.table.TableModel#getValueAt(int, int)
+         */
         public Object getValueAt(int row, int col)
         {
             return this.data[row][col];
         } 
 
+        /**
+         * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+         */
         public Class<?> getColumnClass(int c)
         {
             return getValueAt(0, c).getClass();
         } 
 
+        /**
+         * Sets the table's data to the given data.
+         * @param dataToSet
+         */
         public synchronized void setData(Object[][] dataToSet)
         {
             this.data = dataToSet;
             fireTableDataChanged();
         } 
 
+        /**
+         * @return the longest row
+         */
         public Object[] getLongestRow()
         {
             if (this.data == null)
@@ -178,16 +203,25 @@ abstract public class Tabulator extends JPanel
         } 
     } 
 
+    /**
+     * @return the sorter table model
+     */
     public TableSorter getSorterTableModel()
     {
         return this.sorterTableModel;
     } 
 
+    /**
+     * @return the number of columns in the table
+     */
     public int getColumnCount()
     {
         return this.columnCount;
     } 
 
+    /**
+     * @return the table
+     */
     public JTable getTable()
     {
         return this.table;

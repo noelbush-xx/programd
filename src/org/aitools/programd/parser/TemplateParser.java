@@ -90,11 +90,10 @@ public class TemplateParser extends GenericParser
 
     /**
      * Processes the AIML within and including a given AIML element.
+     * @param element the elment to process
      * 
-     * @param node
-     *            the node being evaluated
      * @return the result of processing the tag
-     * @throws AIMLProcessorException
+     * @throws ProcessorException
      *             if the AIML cannot be processed
      */
     public String processTag(Element element) throws ProcessorException
@@ -105,11 +104,14 @@ public class TemplateParser extends GenericParser
         } 
         catch (StackOverflowError e)
         {
-            Logger.getLogger("programd.error").log(Level.SEVERE, "Stack overflow error processing " + element.getTagName() + " tag.");
+            Logger.getLogger("programd").log(Level.SEVERE, "Stack overflow error processing " + element.getTagName() + " tag.");
             return EMPTY_STRING;
         } 
     }
 	
+	/**
+	 * @see org.aitools.programd.parser.GenericParser#processResponse(java.lang.String)
+	 */
 	public String processResponse(String templateContent) throws ProcessorException
 	{
 		return super.processResponse(TEMPLATE_START + templateContent + TEMPLATE_END);
@@ -133,7 +135,7 @@ public class TemplateParser extends GenericParser
      * @return the input that matched the <code>pattern</code> associated with
      *         this template
      */
-    public ArrayList getInputs()
+    public ArrayList<String> getInputs()
     {
         return this.inputs;
     } 

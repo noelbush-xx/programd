@@ -20,6 +20,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.util.NotAnAIMLPatternException;
 import org.aitools.programd.util.PatternArbiter;
+import org.aitools.programd.util.UserError;
 
 /**
  * Handles a
@@ -44,13 +45,21 @@ public class ConditionProcessor extends AIMLProcessor
     /** A valueOnlyListItem in a &lt;condition/&gt;. */
     public static final int VALUE_ONLY_LI = 3;
 
+    /** The label (as required by the registration scheme). */
     public static final String label = "condition";
 
+    /**
+     * Creates a new ConditionProcessor using the given Core.
+     * @param coreToUse the Core object to use
+     */
     public ConditionProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
     
+    /**
+     * @see org.aitools.programd.processor.AIMLProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.TemplateParser)
+     */
     public String process(Element element, TemplateParser parser)
     {
         String name = element.getAttribute(NAME);
@@ -83,7 +92,7 @@ public class ConditionProcessor extends AIMLProcessor
             }
             catch (NotAnAIMLPatternException e)
             {
-                Logger.getLogger("programd.error").log(Level.WARNING, "ConditionProcessor got a non-AIML pattern in a value attribute.", e);
+                Logger.getLogger("programd").log(Level.WARNING, "ConditionProcessor got a non-AIML pattern in a value attribute.", e);
                 return EMPTY_STRING;
             }
             return EMPTY_STRING;
@@ -115,8 +124,6 @@ public class ConditionProcessor extends AIMLProcessor
      *            {@link #VALUE_ONLY_LI}
      * @param name
      *            the name attribute of the &lt;li/&gt; (if applicable)
-     * @param value
-     *            the value attribute of the &lt;li/&gt; (if applicable)
      * @return the result of processing this &lt;li/&gt;
      */
     public String processListItem(TemplateParser parser, NodeList list, int listItemType, String name)
@@ -161,7 +168,7 @@ public class ConditionProcessor extends AIMLProcessor
                             }
                             catch (ProcessorException e)
                             {
-                                // Do nothing.
+                                throw new UserError(e.getExplanatoryMessage(), e);
                             }
                         }
                         else
@@ -222,7 +229,7 @@ public class ConditionProcessor extends AIMLProcessor
                                     }
                                     catch (NotAnAIMLPatternException e)
                                     {
-                                        Logger.getLogger("programd.error").log(Level.WARNING, "ConditionProcessor got a non-AIML pattern in a value attribute.", e);
+                                        Logger.getLogger("programd").log(Level.WARNING, "ConditionProcessor got a non-AIML pattern in a value attribute.", e);
                                     }
                                     break;
 
@@ -253,7 +260,7 @@ public class ConditionProcessor extends AIMLProcessor
                                         }
                                         catch (NotAnAIMLPatternException e)
                                         {
-                                            Logger.getLogger("programd.error").log(Level.WARNING, "ConditionProcessor got a non-AIML pattern in a value attribute.", e);
+                                            Logger.getLogger("programd").log(Level.WARNING, "ConditionProcessor got a non-AIML pattern in a value attribute.", e);
                                         }
                                     }
                                     /*

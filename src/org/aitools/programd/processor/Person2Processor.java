@@ -32,16 +32,24 @@ import org.aitools.programd.util.Substituter;
  */
 public class Person2Processor extends AIMLProcessor
 {
+    /** The label (as required by the registration scheme). */
     public static final String label = "person2";
 
     /** The map of substitutions to be performed on an input. */
     private static HashMap<String, String> substitutionMap = new HashMap<String, String>();
 
+    /**
+     * Creates a new Person2Processor using the given Core.
+     * @param coreToUse the Core object to use
+     */
     public Person2Processor(Core coreToUse)
     {
         super(coreToUse);
     }
     
+    /**
+     * @see org.aitools.programd.processor.AIMLProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.TemplateParser)
+     */
     public String process(Element element, TemplateParser parser) throws AIMLProcessorException
     {
         if (element.getChildNodes().getLength() > 0)
@@ -67,6 +75,7 @@ public class Person2Processor extends AIMLProcessor
      * 
      * @param input
      *            the input on which to perform substitutions
+     * @param botid the botid whose substitutions should be applied
      * @return the input with substitutions performed
      */
     public String applySubstitutions(String input, String botid)

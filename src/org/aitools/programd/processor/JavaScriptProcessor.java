@@ -28,12 +28,15 @@ import org.aitools.programd.parser.TemplateParser;
  */
 public class JavaScriptProcessor extends AIMLProcessor
 {
+    /** The label (as required by the registration scheme). */
     public static final String label = "javascript";
     
-    private static final Logger errorLogger = Logger.getLogger("programd.error");
+    private static final Logger logger = Logger.getLogger("programd");
 
-    private static final Logger interpreterLogger = Logger.getLogger("programd.interpreter");
-
+    /**
+     * Creates a new JavaScriptProcessor using the given Core.
+     * @param coreToUse the Core object to use
+     */
     public JavaScriptProcessor(Core coreToUse)
     {
         super(coreToUse);
@@ -42,16 +45,19 @@ public class JavaScriptProcessor extends AIMLProcessor
     /**
      * Returns the result of processing the contents of the
      * <code>javascript</code> element by the JavaScript interpreter.
+     * @param element the <code>javascript</code> element
+     * @param parser the parser that is at work
+     * @return the result of processing the element
      */
     public String process(Element element, TemplateParser parser)
     {
         // Don't use the system tag if not permitted.
         if (!parser.getCore().getSettings().javascriptAllowed())
         {
-            errorLogger.log(Level.WARNING, "Use of <javascript> prohibited!");
+            logger.log(Level.WARNING, "Use of <javascript> prohibited!");
             return EMPTY_STRING;
         }
-        interpreterLogger.log(Level.FINE, "Calling JavaScript interpreter.");
+        logger.log(Level.FINE, "Calling JavaScript interpreter.");
         return parser.getCore().getInterpreter().evaluate(parser.evaluate(element.getChildNodes()));
     } 
 }

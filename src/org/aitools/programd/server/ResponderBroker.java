@@ -80,6 +80,9 @@ public class ResponderBroker
     
     private static TextResponder textResponder = new TextResponder();
 
+    /** Possible service types. */
+    private enum ServiceType {UNKNOWN, PLAIN_TEXT, HTML, FLASH}
+    
     // Convenience constants.
 
     /** An empty string. */
@@ -118,14 +121,8 @@ public class ResponderBroker
     /** The string &quot;utf-8&quot; (for character encoding conversion). */
     private static final String ENC_UTF8 = "utf-8";
 
-    /** The string &quot;USER_AGENT&quot;. */
+    /** The string &quot;USER-AGENT&quot;. */
     private static final String USER_AGENT = "USER-AGENT";
-
-    /** The string &quot;USER_AGENT&quot;. */
-    private static final String PLAIN_TEXT = "plain_text";
-
-    /** The string &quot;USER_AGENT&quot;. */
-    private static final String FLASH = "flash";
 
     /** The string &quot;template&quot;. */
     private static final String TEMPLATE = "template";
@@ -145,6 +142,7 @@ public class ResponderBroker
      *            the servlet request
      * @param response
      *            the response to modify and send back
+     * @param coreToUse the core to use
      */
     public ResponderBroker(HttpServletRequest request, HttpServletResponse response, Core coreToUse)
     {
@@ -183,7 +181,7 @@ public class ResponderBroker
             } 
             catch (UnsupportedEncodingException e)
             {
-                throw new DeveloperError("Encodings are not properly supported!");
+                throw new DeveloperError("Encodings are not properly supported!", e);
             } 
         } 
 
@@ -235,13 +233,13 @@ public class ResponderBroker
 
         switch (getServiceType())
         {
-            case ServiceType.PLAIN_TEXT:
+            case PLAIN_TEXT:
                 this.serviceResponse.setContentType(TEXT_PLAIN);
                 this.botResponse = this.core.getResponse(this.userRequest, this.userid, this.botid,
                         new TextResponder());
                 break;
 
-            case ServiceType.HTML:
+            case HTML:
                 // Always force response content type to be UTF-8.
                 this.serviceResponse.setContentType(HTML_CONTENT_TYPE);
 
@@ -256,7 +254,7 @@ public class ResponderBroker
                 } 
                 break;
 
-            case ServiceType.FLASH:
+            case FLASH:
                 this.serviceResponse.setContentType(TEXT_PLAIN);
                 this.botResponse = this.core.getResponse(this.userRequest, this.userid, this.botid,
                         new FlashResponder(this.botid, this.templateName, this.core));
@@ -298,13 +296,16 @@ public class ResponderBroker
         } 
     } 
 
-    public int getServiceType()
+    /**
+     * @return the service type
+     */
+    public ServiceType getServiceType()
     {
-        if (this.serviceRequest.getParameter(PLAIN_TEXT) != null)
+        if (this.serviceRequest.getParameter("plain_text") != null)
         {
             return ServiceType.PLAIN_TEXT;
         } 
-        if (this.serviceRequest.getParameter(FLASH) != null)
+        if (this.serviceRequest.getParameter("flash") != null)
         {
             return ServiceType.FLASH;
         } 
@@ -319,14 +320,3 @@ public class ResponderBroker
     } 
 
 } 
-
-class ServiceType
-{
-    public static final int UNKNOWN = 0;
-
-    public static final int PLAIN_TEXT = 1;
-
-    public static final int HTML = 2;
-
-    public static final int FLASH = 3;
-}

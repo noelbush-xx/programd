@@ -24,13 +24,21 @@ import org.aitools.programd.parser.TemplateParser;
  */
 public class VersionProcessor extends AIMLProcessor
 {
+    /** The label (as required by the registration scheme). */
     public static final String label = "version";
 
+    /**
+     * Creates a new VersionProcessor using the given Core.
+     * @param coreToUse the Core object to use
+     */
     public VersionProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
     
+    /**
+     * @see org.aitools.programd.processor.AIMLProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.TemplateParser)
+     */
     public String process(Element element, TemplateParser parser)
     {
         return Core.VERSION;

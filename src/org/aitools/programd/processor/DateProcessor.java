@@ -27,13 +27,21 @@ import org.aitools.programd.parser.TemplateParser;
  */
 public class DateProcessor extends AIMLProcessor
 {
+    /** The label (as required by the registration scheme). */
     public static final String label = "date";
 
+    /**
+     * Creates a new DateProcessor using the given Core.
+     * @param coreToUse the Core object to use
+     */
     public DateProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
     
+    /**
+     * @see org.aitools.programd.processor.AIMLProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.TemplateParser)
+     */
     public String process(Element element, TemplateParser parser)
     {
         return new Date().toString();

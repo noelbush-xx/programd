@@ -14,12 +14,18 @@ package org.aitools.programd.multiplexor;
  */
 public class PredicateInfo
 {
+    /** The name of the predicate. */
     public String name;
 
+    /** The default value of the predicate. */
     public String defaultValue;
 
+    /** Whether the predicate should return its name, or its newly-set value, when set. */
     public boolean returnNameWhenSet;
 
+    /**
+     * Creates a new PredicateInfo.
+     */
     public PredicateInfo()
     {
         // Nothing to do.

@@ -26,13 +26,21 @@ import org.aitools.programd.parser.TemplateParser;
  */
 public class GetProcessor extends AIMLProcessor
 {
+    /** The label (as required by the registration scheme). */
     public static final String label = "get";
 
+    /**
+     * Creates a new GetProcessor using the given Core.
+     * @param coreToUse the Core object to use
+     */
     public GetProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
     
+    /**
+     * @see org.aitools.programd.processor.AIMLProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.TemplateParser)
+     */
     public String process(Element element, TemplateParser parser)
     {
         return parser.getCore().getPredicateMaster().get(element.getAttribute(NAME), parser.getUserID(),

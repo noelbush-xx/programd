@@ -44,6 +44,7 @@ import org.aitools.programd.util.StringKit;
  */
 public class SystemProcessor extends AIMLProcessor
 {
+    /** The label (as required by the registration scheme). */
     public static final String label = "system";
 
     /**
@@ -59,9 +60,7 @@ public class SystemProcessor extends AIMLProcessor
     /** Whether to use the array form of Runtime.exec(). */
     private static boolean useArrayExecForm;
     
-    private static final Logger errorLogger = Logger.getLogger("programd.error");
-
-    private static final Logger systemLogger = Logger.getLogger("programd.system");
+    private static final Logger logger = Logger.getLogger("programd");
 
     /**
      * Tries to guess whether to use the array form of Runtime.exec().
@@ -78,11 +77,18 @@ public class SystemProcessor extends AIMLProcessor
         }
     }
 
+    /**
+     * Creates a new SystemProcessor using the given Core.
+     * @param coreToUse the Core object to use
+     */
     public SystemProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
     
+    /**
+     * @see org.aitools.programd.processor.AIMLProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.TemplateParser)
+     */
     public String process(Element element, TemplateParser parser)
     {
         CoreSettings coreSettings = parser.getCore().getSettings();
@@ -90,7 +96,7 @@ public class SystemProcessor extends AIMLProcessor
         // Don't use the system tag if not permitted.
         if (!coreSettings.osAccessAllowed())
         {
-            errorLogger.log(Level.WARNING, "Use of <system> prohibited!");
+            logger.log(Level.WARNING, "Use of <system> prohibited!");
             return EMPTY_STRING;
         }
 
@@ -104,24 +110,24 @@ public class SystemProcessor extends AIMLProcessor
         }
         String output = EMPTY_STRING;
         response = response.trim();
-        systemLogger.log(Level.FINEST, "<system> call:" + LINE_SEPARATOR + response);
+        logger.log(Level.FINEST, "<system> call:" + LINE_SEPARATOR + response);
         try
         {
             File directory = null;
             if (directoryPath != null)
             {
-                systemLogger.log(Level.FINEST, "Executing <system> call in \"" + directoryPath + "\"");
+                logger.log(Level.FINEST, "Executing <system> call in \"" + directoryPath + "\"");
                 directory = FileManager.getFile(directoryPath);
                 if (!directory.isDirectory())
                 {
-                    systemLogger.log(Level.WARNING, "programd.system-interpreter.directory (\"" + directoryPath
+                    logger.log(Level.WARNING, "programd.system-interpreter.directory (\"" + directoryPath
                             + "\") does not exist or is not a directory.");
                     return EMPTY_STRING;
                 }
             }
             else
             {
-                systemLogger.log(Level.SEVERE, "No programd.interpreter.system.directory defined!");
+                logger.log(Level.SEVERE, "No programd.interpreter.system.directory defined!");
                 return EMPTY_STRING;
             }
             Process child;
@@ -136,7 +142,7 @@ public class SystemProcessor extends AIMLProcessor
             }
             if (child == null)
             {
-                systemLogger.log(Level.SEVERE, "Could not get separate process for <system> command.");
+                logger.log(Level.SEVERE, "Could not get separate process for <system> command.");
                 return EMPTY_STRING;
             }
 
@@ -146,7 +152,7 @@ public class SystemProcessor extends AIMLProcessor
             }
             catch (InterruptedException e)
             {
-                systemLogger.log(Level.SEVERE, "System process interruped; could not complete.");
+                logger.log(Level.SEVERE, "System process interruped; could not complete.");
                 return EMPTY_STRING;
             }
 
@@ -158,15 +164,15 @@ public class SystemProcessor extends AIMLProcessor
                 output = output + line + "\n";
             }
 
-            systemLogger.log(Level.FINEST, "output:" + LINE_SEPARATOR + output);
+            logger.log(Level.FINEST, "output:" + LINE_SEPARATOR + output);
 
             response = output;
             in.close();
-            systemLogger.log(Level.FINEST, "System process exit value: " + child.exitValue());
+            logger.log(Level.FINEST, "System process exit value: " + child.exitValue());
         }
         catch (IOException e)
         {
-            systemLogger.log(Level.WARNING, "Cannot execute <system> command:" + LINE_SEPARATOR + e.getMessage());
+            logger.log(Level.WARNING, "Cannot execute <system> command:" + LINE_SEPARATOR + e.getMessage());
         }
 
         return response.trim();

@@ -27,16 +27,24 @@ import org.aitools.programd.parser.TemplateParser;
  */
 public class FormalProcessor extends AIMLProcessor
 {
+    /** The label (as required by the registration scheme). */
     public static final String label = "formal";
 
     // Convenience constants.
     private static final String SPACE = " ";
 
+    /**
+     * Creates a new FormalProcessor using the given Core.
+     * @param coreToUse the Core object to use
+     */
     public FormalProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
     
+    /**
+     * @see org.aitools.programd.processor.AIMLProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.TemplateParser)
+     */
     public String process(Element element, TemplateParser parser)
     {
         String response = parser.evaluate(element.getChildNodes());

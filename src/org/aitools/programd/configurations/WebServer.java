@@ -13,6 +13,8 @@ import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.logging.FileHandler;
@@ -24,6 +26,7 @@ import org.aitools.programd.bot.BotProcesses;
 import org.aitools.programd.interfaces.Console;
 import org.aitools.programd.server.ProgramDCompatibleHttpServer;
 import org.aitools.programd.util.DeveloperError;
+import org.aitools.programd.util.UnspecifiedParameterError;
 import org.aitools.programd.util.UserError;
 
 /**
@@ -38,16 +41,16 @@ public class WebServer
 
     /** The Console that will (may) be created for this web server. */
     private Console console;
-    
+
     /** The logger for web server activity. */
     private Logger logger;
-    
+
     /** Whatever HTTP server is going to be used. */
     private ProgramDCompatibleHttpServer server;
 
     /** The WebServer settings. */
     private WebServerSettings settings;
-    
+
     /**
      * A WebServer without a console.
      * 
@@ -56,8 +59,8 @@ public class WebServer
      */
     public WebServer(String corePropertiesPath, String webServerPropertiesPath)
     {
-        initialize(corePropertiesPath, webServerPropertiesPath);
-    } 
+        launch(corePropertiesPath, webServerPropertiesPath);
+    }
 
     /**
      * A WebServer with a console.
@@ -69,19 +72,20 @@ public class WebServer
     public WebServer(String corePropertiesPath, String webServerPropertiesPath, String consolePropertiesPath)
     {
         this.console = new Console(consolePropertiesPath);
-        initialize(corePropertiesPath, webServerPropertiesPath);
+        launch(corePropertiesPath, webServerPropertiesPath);
     }
-    
-    private void initialize(String corePropertiesPath, String webServerPropertiesPath)
+
+    private void launch(String corePropertiesPath, String webServerPropertiesPath)
     {
         this.core = new Core(corePropertiesPath);
         if (this.console != null)
         {
-            this.console.attach(this.core);
+            this.console.attachTo(this.core);
         }
+        this.core.startup();
         this.settings = new WebServerSettings(webServerPropertiesPath);
-        
-        this.logger = Logger.getLogger("programd.web-server");
+
+        this.logger = Logger.getLogger("programd");
         try
         {
             this.logger.addHandler(new FileHandler(this.settings.getLogPath(), 1024, 10));
@@ -90,27 +94,20 @@ public class WebServer
         {
             throw new UserError("Could not open web server log path \"" + this.settings.getLogPath() + "\".", e);
         }
-    }
 
-    /**
-     * Tries to register any listeners in the classpath, starts the http server,
-     * and then starts a Graphmaster.
-     */
-    public void startup()
-    {
         String className = this.settings.getHttpserverClassname();
 
         // Fail if http server class name is not specified.
         if (className == null)
         {
-            throw new UserError("You must specify an http server to run WebServer. Failing.");
+            throw new UserError(new UnspecifiedParameterError("httpserver-classname"));
         }
-        
+
         this.logger.log(Level.INFO, "Starting web server " + className + ".");
 
         // Start the http server.
         startHttpServer(className, this.settings.getHttpserverConfig());
-        
+
         // Figure out what the full server address is.
         InetAddress localhost;
         try
@@ -125,24 +122,41 @@ public class WebServer
         String serverAddress = "http://" + localhost.getHostName() + ":" + this.server.getHttpPort();
 
         this.logger.log(Level.INFO, "Web server is listening at " + serverAddress);
-    } 
+    }
 
     /**
      * Tries to instantiate an http server of unpredetermined type. We wish to
      * be compatible with any server, not just the choix du jour.
+     * @param className the classname of the http server to instantiate
+     * @param configParameters the parameters need to configure the http server
      */
-    private void startHttpServer(String className, String configParameter)
+    private void startHttpServer(String className, Object... configParameters)
     {
         // First, see if the http server class can be found.
-        Class serverClass;
+        Class< ? extends ProgramDCompatibleHttpServer> serverClass;
         try
         {
-            serverClass = Class.forName(className);
-        } 
+            serverClass = (Class< ? extends ProgramDCompatibleHttpServer>) Class.forName(className);
+        }
         catch (ClassNotFoundException e)
         {
-            throw new UserError("Could not find http server \"" + className + "\".");
-        } 
+            throw new UserError("Could not find http server \"" + className + "\".", e);
+        }
+        catch (ClassCastException e)
+        {
+            throw new UserError("\"" + className + "\" is not a subclass of ProgramDCompatibleHttpServer.", e);
+        }
+
+        // Get the constructor that takes a Core as an argument.
+        Constructor<? extends ProgramDCompatibleHttpServer> constructor;
+        try
+        {
+            constructor = serverClass.getDeclaredConstructor(Core.class);
+        }
+        catch (NoSuchMethodException e)
+        {
+            throw new DeveloperError("Requested constructor not found for web server class.", e);
+        }
 
         /*
          * Any http server must implement ProgramDCompatibleHttpServer. The
@@ -152,40 +166,37 @@ public class WebServer
          */
         try
         {
-            this.server = (ProgramDCompatibleHttpServer) serverClass.newInstance();
-        } 
+            this.server = constructor.newInstance(this.core);
+        }
         catch (InstantiationException e)
         {
-            throw new UserError("Couldn't instantiate http server \"" + className + "\".");
-        } 
+            throw new UserError("Couldn't instantiate http server \"" + className + "\".", e);
+        }
         catch (IllegalAccessException e)
         {
-            throw new DeveloperError("The constructor for \"" + className + "\" or the class itself is not available.");
-        } 
+            throw new DeveloperError("The constructor for \"" + className + "\" or the class itself is not available.", e);
+        }
         catch (ClassCastException e)
         {
-            throw new DeveloperError("\"" + className + "\" is not an implementation ofProgramDCompatibleHttpServerr.");
-        } 
+            throw new DeveloperError("\"" + className + "\" is not an implementation ofProgramDCompatibleHttpServer.", e);
+        }
+        catch (InvocationTargetException e)
+        {
+            throw new DeveloperError("The web server constructor threw an exception.", e);
+        }
 
         /*
          * If the server config parameter was defined, and if the http server is
          * an implementation of ProgramDCompatibleHttpServer, configure it.
          */
-        if (configParameter != null)
+        if (configParameters != null)
         {
-            try
-            {
-                this.server.configure(configParameter);
-            } 
-            catch (IOException e)
-            {
-                throw new UserError("Could not find \"" + configParameter + "\".");
-            } 
-        } 
+            this.server.configure(configParameters);
+        }
 
         // Start the server as one of the BotProcesses.
         BotProcesses.start(this.server, "http server");
-    } 
+    }
 
     private static void usage()
     {
@@ -199,20 +210,29 @@ public class WebServer
         System.out.println("Report bugs to <programd@aitools.org>");
     }
 
+    /**
+     * Starts up the WebServer configuration.  Required arguments are:
+     * <ul>
+     * <li><code>-c, --core-properties     the path to the core configuration (XML properties) file</code></li>
+     * <li><code>-w, --web-server-properties  the path to the web server configuration (XML properties) file</code></li>
+     * <li><code>-n, --console-properties  the path to the console configuration (XML properties) file</code></li>
+     * </ul>
+     * @param argv
+     */
     public static void main(String[] argv)
     {
         String corePropertiesPath = null;
         String webServerPropertiesPath = null;
         String consolePropertiesPath = null;
-        
+
         int opt;
         LongOpt[] longopts = new LongOpt[3];
         longopts[0] = new LongOpt("core-properties", LongOpt.REQUIRED_ARGUMENT, null, 'c');
         longopts[1] = new LongOpt("web-server-properties", LongOpt.REQUIRED_ARGUMENT, null, 'w');
         longopts[2] = new LongOpt("console-properties", LongOpt.REQUIRED_ARGUMENT, null, 'n');
-        
+
         Getopt getopt = new Getopt("web-server", argv, ":c:n:w:", longopts);
-        
+
         while ((opt = getopt.getopt()) != -1)
         {
             switch (opt)
@@ -220,7 +240,7 @@ public class WebServer
                 case 'c':
                     corePropertiesPath = getopt.getOptarg();
                     break;
-                    
+
                 case 'n':
                     consolePropertiesPath = getopt.getOptarg();
                     break;
@@ -230,7 +250,7 @@ public class WebServer
                     break;
             }
         }
-        
+
         if (corePropertiesPath == null)
         {
             System.err.println("You must specify a core properties path.");
@@ -253,5 +273,5 @@ public class WebServer
         {
             new WebServer(corePropertiesPath, webServerPropertiesPath, consolePropertiesPath);
         }
-    } 
+    }
 }

@@ -24,9 +24,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -52,10 +54,13 @@ public class XMLKit
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     /** A tag start marker. */
-    private static final char TAG_START = '<';
+    private static final char MARKER_START = '<';
 
     /** A tag end marker. */
-    private static final char TAG_END = '>';
+    private static final char MARKER_END = '>';
+    
+    /** The beginning of an end tag. */
+    private static final String END_TAG_START = "</";
     
     /** An empty element tag end marker. */
     private static final String EMPTY_ELEMENT_TAG_END = "/>";
@@ -90,14 +95,8 @@ public class XMLKit
             { "&apos;", "'" } ,
             { "&quot;", "\"" } } ;
 
-    /** The string &quot;UTF-8&quot;. */
-    private static final String UTF8 = "UTF-8";
-
     /** The start of an XML processing instruction. */
     private static final String XML_PI_START = "<?xml version=\"1.0\"";
-
-    /** The length of {@link #XML_PI_START} . */
-    private static final int XML_PI_START_LENGTH = XML_PI_START.length();
 
     /** The string &apos;encoding=&quot;&apos;. */
     private static final String ENCODING_EQUALS_QUOTE = "encoding=\"";
@@ -107,6 +106,9 @@ public class XMLKit
 
     /** The system default file encoding; defaults to UTF-8!!! */
     private static final String SYSTEM_ENCODING = System.getProperty("file.encoding", "UTF-8");
+
+    /** The string &apos; xmlns="&apos;. */
+    private static final String SPACE_XMLNS_EQUALS_QUOTE = " xmlns=\"";
 
     /** The actual Map used to store prohibited-to-escaped mappings. */
     private static HashMap<String, String> xmlProhibited;
@@ -346,6 +348,8 @@ public class XMLKit
      * 
      * @param in
      *            the input stream
+     * @return the declared encoding
+     * @throws IOException if there was a problem reading the input stream
      * @result the declared encoding string
      */
     public static String getDeclaredXMLEncoding(InputStream in) throws IOException
@@ -387,6 +391,7 @@ public class XMLKit
      * 
      * @param content
      *            the AIML content to format
+     * @return the formatted AIML
      */
     public static String formatAIML(String content)
     {
@@ -422,7 +427,7 @@ public class XMLKit
                 {
                     atStart = false;
                 } 
-                result.append(StringKit.tab(level) + TAG_START + node.getNodeName());
+                result.append(StringKit.tab(level) + MARKER_START + node.getNodeName());
                 if (node.hasAttributes())
                 {
                     NamedNodeMap attributes = node.getAttributes();
@@ -436,9 +441,9 @@ public class XMLKit
                 String contents = formatAIML(node.getChildNodes(), level + 1, true);
                 if (contents.trim().length() > 0)
                 {
-                    result.append(TAG_END);
+                    result.append(MARKER_END);
                     result.append(LINE_SEPARATOR + contents);
-                    result.append(LINE_SEPARATOR + StringKit.tab(level) + TAG_START + '/' + node.getNodeName() + TAG_END);
+                    result.append(LINE_SEPARATOR + StringKit.tab(level) + MARKER_START + '/' + node.getNodeName() + MARKER_END);
                 } 
                 else
                 {
@@ -468,7 +473,7 @@ public class XMLKit
                     result.append(StringKit.tab(level));
                     atStart = false;
                 } 
-                result.append(LINE_SEPARATOR + StringKit.tab(level) + TAG_START + CDATA_START
+                result.append(LINE_SEPARATOR + StringKit.tab(level) + MARKER_START + CDATA_START
                         + node.getNodeValue() + CDATA_END);
                 break;
 
@@ -479,7 +484,7 @@ public class XMLKit
                     result.append(StringKit.tab(level));
                     atStart = false;
                 } 
-                result.append(LINE_SEPARATOR + StringKit.tab(level) + TAG_START + COMMENT_START
+                result.append(LINE_SEPARATOR + StringKit.tab(level) + MARKER_START + COMMENT_START
                         + node.getNodeValue() + COMMENT_END);
                 break;
         } 
@@ -488,10 +493,12 @@ public class XMLKit
     /**
      * Formats AIML from a node list into a nicely indented multi-line string.
      * 
-     * @param list@param level
+     * @param list the list of AIML nodes
+     * @param level
      *            the level (for indenting)
      * @param atStart
      *            whether the whole XML string is at its beginning
+     * @return the formatted AIML
      */
     public static String formatAIML(NodeList list, int level, boolean atStart)
     {
@@ -586,7 +593,7 @@ public class XMLKit
         } 
 
         // No tags means no breaks.
-        int tagStart = input.indexOf(TAG_START);
+        int tagStart = input.indexOf(MARKER_START);
         if (tagStart == -1)
         {
             return new String[]
@@ -609,7 +616,7 @@ public class XMLKit
         while ((tagStart > -1) && (tagEnd > -1))
         {
             // Get the end of a tag.
-            tagEnd = input.indexOf(TAG_END, lastEnd);
+            tagEnd = input.indexOf(MARKER_END, lastEnd);
 
             // Add the input until the tag as a line, as long as the tag is not
             // the beginning.
@@ -622,7 +629,7 @@ public class XMLKit
             lastEnd = tagEnd + 1;
 
             // Look for another tag.
-            tagStart = input.indexOf(TAG_START, lastEnd);
+            tagStart = input.indexOf(MARKER_START, lastEnd);
         } 
         // All tags are exhausted; if there is still something left in the
         // input,
@@ -659,7 +666,7 @@ public class XMLKit
         } 
 
         // No tags means no processing necessary.
-        int tagStart = input.indexOf(TAG_START);
+        int tagStart = input.indexOf(MARKER_START);
         if (tagStart == -1)
         {
             return input;
@@ -681,7 +688,7 @@ public class XMLKit
         while ((tagStart > -1) && (tagEnd > -1))
         {
             // Get the end of a tag.
-            tagEnd = input.indexOf(TAG_END, lastEnd);
+            tagEnd = input.indexOf(MARKER_END, lastEnd);
 
             // Add the input until the tag as a line, as long as the tag is not
             // the beginning.
@@ -694,7 +701,7 @@ public class XMLKit
             lastEnd = tagEnd + 1;
 
             // Look for another tag.
-            tagStart = input.indexOf(TAG_START, lastEnd);
+            tagStart = input.indexOf(MARKER_START, lastEnd);
         } 
         // All tags are exhausted; if there is still something left in the
         // input,
@@ -706,4 +713,113 @@ public class XMLKit
         return result.toString();
     } 
 
+    /**
+     * Renders a given element as a start tag, including a namespace declaration,
+     * if requested.
+     * @param element the element to render
+     * @param includeNamespaceAttribute whether to include the namespace attribute
+     * @return the rendering of the element
+     */
+    public static String renderStartTag(Element element, boolean includeNamespaceAttribute)
+    {
+        StringBuffer result = new StringBuffer();
+        result.append(MARKER_START);
+        result.append(element.getTagName());
+        if (includeNamespaceAttribute)
+        {
+            result.append(SPACE_XMLNS_EQUALS_QUOTE + element.getNamespaceURI() + QUOTE_MARK);
+        }
+        NamedNodeMap attributes = element.getAttributes();
+        if (attributes != null)
+        {
+            for (int index = 0; index < attributes.getLength(); index++)
+            {
+                Node attribute = attributes.item(index);
+                String attributeName = attribute.getLocalName();
+                result.append(SPACE);
+                result.append(attributeName + EQUAL_QUOTE
+                        + attribute.getNodeValue() + QUOTE_MARK);
+            }
+        }
+        result.append(MARKER_END);
+        return result.toString();
+    }
+    
+    /**
+     * Renders a given element name and set of attributes as a start tag,
+     * including a namespace declaration, if requested.
+     * @param elementName the name of the element to render
+     * @param attributes the attributes to include
+     * @param includeNamespaceAttribute whether or not to include the namespace attribute
+     * @param namespaceURI the namespace URI
+     * @return the rendering result
+     */
+    public static String renderStartTag(String elementName, Attributes attributes, boolean includeNamespaceAttribute, String namespaceURI)
+    {
+        StringBuffer result = new StringBuffer();
+        result.append(MARKER_START);
+        result.append(elementName);
+        if (includeNamespaceAttribute)
+        {
+            result.append(SPACE_XMLNS_EQUALS_QUOTE + namespaceURI + QUOTE_MARK);
+        }
+        if (attributes != null)
+        {
+            for (int index = 0; index < attributes.getLength(); index++)
+            {
+                String attributeName = attributes.getLocalName(index);
+                if (EMPTY_STRING.equals(attributeName))
+                {
+                    attributeName = attributes.getQName(index);
+                }
+                result.append(SPACE);
+                result.append(attributeName + EQUAL_QUOTE
+                        + attributes.getValue(index) + QUOTE_MARK);
+            }
+        }
+        result.append(MARKER_END);
+        return result.toString();
+    }
+
+    /**
+     * Renders a given element as an empty element, including a
+     * namespace declaration, if requested.
+     * @param element the element to render
+     * @param includeNamespaceAttribute whether to include the namespace attribute
+     * @return the result of the rendering
+     */
+    public static String renderEmptyElement(Element element, boolean includeNamespaceAttribute)
+    {
+        StringBuffer result = new StringBuffer();
+        result.append(MARKER_START);
+        result.append(element.getTagName());
+        if (includeNamespaceAttribute)
+        {
+            result.append(SPACE_XMLNS_EQUALS_QUOTE + element.getNamespaceURI() + QUOTE_MARK);
+        }
+        NamedNodeMap attributes = element.getAttributes();
+        if (attributes != null)
+        {
+            for (int index = 0; index < attributes.getLength(); index++)
+            {
+                Node attribute = attributes.item(index);
+                String attributeName = attribute.getLocalName();
+                result.append(SPACE);
+                result.append(attributeName + EQUAL_QUOTE
+                        + attribute.getNodeValue() + QUOTE_MARK);
+            }
+        }
+        result.append(EMPTY_ELEMENT_TAG_END);
+        return result.toString();
+    }
+    
+    /**
+     * Renders a given element as an end tag.
+     * @param element the element to render
+     * @return the result of the rendering
+     */
+    public static String renderEndTag(Element element)
+    {
+        return END_TAG_START + element.getTagName() + MARKER_END;
+    }
 }

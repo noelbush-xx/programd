@@ -9,10 +9,11 @@
 
 package org.aitools.programd.util;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * Provides generic substitution utilities for classes that don't have their
@@ -109,10 +110,10 @@ public class Substituter
      *            the string on which to perform the replacement
      * @return the input with substitutions applied
      */
-    public static String applySubstitutions(HashMap<String, String> substitutionMap, String input)
+    public static String applySubstitutions(Map<String, String> substitutionMap, String input)
     {
         // This will contain all pieces of the input untouched by substitution.
-        LinkedList<String> untouchedPieces = new LinkedList<String>();
+        List<String> untouchedPieces = Collections.checkedList(new LinkedList<String>(), String.class);
 
         // Pad the input with spaces.
         untouchedPieces.add(SPACE + input + SPACE);
@@ -121,12 +122,8 @@ public class Substituter
         LinkedList<String> replacements = new LinkedList<String>();
 
         // Iterate over all substitutions.
-        Iterator<String> substitutions = substitutionMap.keySet().iterator();
-
-        while (substitutions.hasNext())
+        for (String find : substitutionMap.keySet())
         {
-            String find = substitutions.next();
-
             // Iterate through all untouched pieces of the inputs.
             ListIterator<String> untouchedIterator = untouchedPieces.listIterator(0);
             while (untouchedIterator.hasNext())

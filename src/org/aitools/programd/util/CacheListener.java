@@ -34,5 +34,8 @@ package org.aitools.programd.util;
  */
 public interface CacheListener
 {
+    /**
+     * Notifies the cache entry that it's been removed from the cache.
+     */
     public void removeEvent();
 }

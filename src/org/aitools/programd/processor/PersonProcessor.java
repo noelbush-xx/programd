@@ -15,6 +15,7 @@ import org.w3c.dom.Node;
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.util.Substituter;
+import org.aitools.programd.util.UserError;
 
 /**
  * <p>
@@ -30,13 +31,21 @@ import org.aitools.programd.util.Substituter;
  */
 public class PersonProcessor extends AIMLProcessor
 {
+    /** The label (as required by the registration scheme). */
     public static final String label = "person";
 
+    /**
+     * Creates a new PersonProcessor using the given Core.
+     * @param coreToUse the Core object to use
+     */
     public PersonProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
     
+    /**
+     * @see org.aitools.programd.processor.AIMLProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.TemplateParser)
+     */
     public String process(Element element, TemplateParser parser)
     {
         if (element.getChildNodes().getLength() > 0)
@@ -50,7 +59,8 @@ public class PersonProcessor extends AIMLProcessor
             } 
             catch (ProcessorException e)
             {
-                return EMPTY_STRING;
+                //return EMPTY_STRING;
+                throw new UserError(e.getExplanatoryMessage(), e);
             } 
         } 
         // (otherwise...)
@@ -63,6 +73,7 @@ public class PersonProcessor extends AIMLProcessor
      * 
      * @param input
      *            the input on which to perform substitutions
+     * @param botid the botid whose substitutions should be applied
      * @return the input with substitutions performed
      */
     public String applySubstitutions(String input, String botid)

@@ -37,8 +37,11 @@ public class SimpleConsole
     {
         this.core = new Core(corePropertiesPath);
         this.console = new Console(consolePropertiesPath);
-        this.console.attach(this.core);
+        this.console.attachTo(this.core);
         this.core.startup();
+        
+        // Send the connect string.
+        this.core.processResponse(this.core.getSettings().getConnectString());
     }
     
     private static void usage()
@@ -52,6 +55,14 @@ public class SimpleConsole
         System.out.println("Report bugs to <programd@aitools.org>");
     }
 
+    /**
+     * Starts up the SimpleConsole configuration.  Required arguments are:
+     * <ul>
+     * <li><code>-c, --core-properties     the path to the core configuration (XML properties) file</code></li>
+     * <li><code>-n, --console-properties  the path to the console configuration (XML properties) file</code></li>
+     * </ul>
+     * @param argv
+     */
     public static void main(String[] argv)
     {
         String corePropertiesPath = null;

@@ -12,14 +12,14 @@ package org.aitools.programd.responder;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-03-16T12:00:05.928-04:00
+ * Automatically generated from properties file, 2005-03-21T21:57:50.724-04:00
  */
 public class HTMLResponderSettings extends Settings
 {
     /**
      * The html templates directory (relative to programd.home). 
      */
-    String templateDirectory;
+    private String templateDirectory;
 
     /**
      * The default chat template.  
@@ -27,33 +27,33 @@ public class HTMLResponderSettings extends Settings
            programd.responder.flash.template.directory will also be available if
            you specify a template name (without suffixes) parameter in the user request.
      */
-    String chatDefaultTemplatePath;
+    private String chatDefaultTemplatePath;
 
     /**
      * The registration form. 
      */
-    String registerFormPath;
+    private String registerFormPath;
 
     /**
      * The login form. 
      */
-    String loginFormPath;
+    private String loginFormPath;
 
     /**
      * The change password form. 
      */
-    String changePasswordFormPath;
+    private String changePasswordFormPath;
 
     /**
      * Whether to enable authentication via the HTMLResponder 
      */
-    boolean authenticate;
+    private boolean authenticate;
 
     /**
      * Whether to automatically generate a cookie for an unknown user 
      * Only applicable if programd.httpserver.authenticate == true
      */
-    boolean autocookie;
+    private boolean autocookie;
 
     /**
      * Creates a <code>HTMLResponderSettings</code> using default property values.
@@ -66,6 +66,7 @@ public class HTMLResponderSettings extends Settings
     /**
      * Creates a <code>HTMLResponderSettings</code> with the (XML-formatted) properties
      * located at the given path.
+     * @param propertiesPath the path to the settings file to use
      */
     public HTMLResponderSettings(String propertiesPath)
     {

@@ -9,8 +9,10 @@
 
 package org.aitools.programd.bot;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.aitools.programd.util.DeveloperError;
@@ -25,24 +27,25 @@ import org.aitools.programd.util.DeveloperError;
 public class Bots
 {
     /** The private HashMap that is used by this. */
-    private HashMap<String, Bot> hashmap;
+    private Map<String, Bot> botList;
 
     /**
      * <code>Bots</code> cannot be instantiated except by itself.
      */
     public Bots()
     {
-        this.hashmap = new HashMap<String, Bot>();
+        this.botList = Collections.checkedMap(new HashMap<String, Bot>(), String.class, Bot.class);
     } 
 
     /**
      * Returns whether the loaded bots include one with the given id.
+     * @param botid the botid to look for
      * 
      * @return whether the loaded bots include one with the given id
      */
     public boolean include(String botid)
     {
-        return !(this.hashmap.get(botid) == null);
+        return !(this.botList.get(botid) == null);
     }
 
     /**
@@ -56,7 +59,7 @@ public class Bots
      */
     public void addBot(String botid, Bot bot)
     {
-        this.hashmap.put(botid, bot);
+        this.botList.put(botid, bot);
     } 
 
     /**
@@ -71,15 +74,15 @@ public class Bots
         Bot wanted;
         try
         {
-            wanted = this.hashmap.get(botid);
+            wanted = this.botList.get(botid);
         } 
         catch (ClassCastException e)
         {
-            throw new DeveloperError("Something other than a Bot stored in Bots!");
+            throw new DeveloperError("Something other than a Bot stored in Bots!", e);
         } 
         if (wanted == null)
         {
-            throw new DeveloperError("Tried to get unknown bot \"" + botid + "\".");
+            throw new DeveloperError("Tried to get unknown bot \"" + botid + "\".", new NullPointerException());
         } 
         return wanted;
     } 
@@ -91,9 +94,9 @@ public class Bots
      */
     public Bot getABot()
     {
-        if (this.hashmap.size() > 0)
+        if (this.botList.size() > 0)
         {
-            return this.hashmap.values().iterator().next();
+            return this.botList.values().iterator().next();
         } 
         // (otherwise...)
         return null;
@@ -106,7 +109,7 @@ public class Bots
      */
     public int getCount()
     {
-        return this.hashmap.size();
+        return this.botList.size();
     } 
 
     /**
@@ -116,19 +119,18 @@ public class Bots
      */
     public String getNiceList()
     {
-        if (this.hashmap.size() == 0)
+        if (this.botList.size() == 0)
         {
             return "";
         } 
         StringBuffer result = new StringBuffer();
-        Iterator iterator = this.hashmap.keySet().iterator();
-        while (iterator.hasNext())
+        for (String botName : this.botList.keySet())
         {
             if (result.length() > 0)
             {
                 result.append(' ');
             } 
-            result.append((String) iterator.next());
+            result.append(botName);
         } 
         return result.toString();
     } 
@@ -140,7 +142,7 @@ public class Bots
      */
     public Set<String> getIDs()
     {
-        return this.hashmap.keySet();
+        return this.botList.keySet();
     } 
 
     /**
@@ -150,7 +152,7 @@ public class Bots
      */
     public Iterator keysIterator()
     {
-        return this.hashmap.keySet().iterator();
+        return this.botList.keySet().iterator();
     } 
 
     /**
@@ -161,10 +163,9 @@ public class Bots
      */
     public boolean haveLoaded(String filename)
     {
-        Iterator bots = this.hashmap.values().iterator();
-        while (bots.hasNext())
+        for (Bot bot : this.botList.values())
         {
-            if (((Bot) bots.next()).hasLoaded(filename))
+            if (bot.hasLoaded(filename))
             {
                 return true;
             } 

@@ -12,24 +12,24 @@ package org.aitools.programd.configurations;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-03-19T21:01:04.75-04:00
+ * Automatically generated from properties file, 2005-03-21T21:58:10.337-04:00
  */
 public class WebServerSettings extends Settings
 {
     /**
      * HTTP server (wrapper) to use (fully-qualified class name) 
      */
-    String httpserverClassname;
+    private String httpserverClassname;
 
     /**
      * configuration parameter for the HTTP server (not always applicable) 
      */
-    String httpserverConfig;
+    private String httpserverConfig;
 
     /**
      *log file for web server messages. 
      */
-    String logPath;
+    private String logPath;
 
     /**
      * Creates a <code>WebServerSettings</code> using default property values.
@@ -42,6 +42,7 @@ public class WebServerSettings extends Settings
     /**
      * Creates a <code>WebServerSettings</code> with the (XML-formatted) properties
      * located at the given path.
+     * @param propertiesPath the path to the properties file to use
      */
     public WebServerSettings(String propertiesPath)
     {

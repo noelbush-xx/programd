@@ -37,6 +37,11 @@ public final class WildCardFilter implements FilenameFilter
 
     private String suffix;
 
+    /**
+     * Creates a new WildCardFilter that will use the given pattern and the given wildcard.
+     * @param patternToUse the pattern to use
+     * @param wildCardToUse the wildcard to use
+     */
     public WildCardFilter(String patternToUse, char wildCardToUse)
     {
         this.pattern = patternToUse;
@@ -70,6 +75,9 @@ public final class WildCardFilter implements FilenameFilter
         } 
     } 
 
+    /**
+     * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
+     */
     public boolean accept(File dir, String name)
     {
         if (this.wildIndex.length == 0)

@@ -12,6 +12,7 @@ package org.aitools.programd.processor;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
@@ -30,7 +31,11 @@ import org.aitools.programd.util.XMLKit;
  */
 abstract public class IndexedPredicateProcessor extends AIMLProcessor
 {
-    public IndexedPredicateProcessor(Core coreToUse)
+    /**
+     * Creates a new IndexedPredicateProcessor using the given Core.
+     * @param coreToUse the Core object to use
+     */
+   public IndexedPredicateProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
@@ -38,13 +43,16 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
     /**
      * Processes an indexed predicate with <code>dimensions</code> dimensions
      * (must be either <code>1</code> or <code>2</code>)
+     * @param element 
+     * @param parser 
      * 
-     * @see AIMLProcessor#process(int, XMLNode, TemplateParser)
+     * @see AIMLProcessor#process(Element, TemplateParser)
      * @since 4.1.3
      * @param name
      *            predicate name
      * @param dimensions
      *            the number of dimensions (<code>1</code> or <code>2</code>)
+     * @return the result of processing the element
      */
     public String process(Element element, TemplateParser parser, String name, int dimensions)
     {
@@ -68,7 +76,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
 
         // Split predicate into sentences.
         Bot bot = parser.getCore().getBots().getBot(parser.getBotID());
-        ArrayList sentenceList = bot.sentenceSplit(value);
+        List sentenceList = bot.sentenceSplit(value);
 
         int sentenceCount = sentenceList.size();
 
@@ -96,18 +104,22 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
      * and
      * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-topicstar">topicstar</a></code>
      * elements).
+     * @param element 
+     * @param parser 
      * 
      * @param predicates
      *            predicate values
      * @param dimensions
      *            the number of dimensions (<code>1</code> only)
+     * @return the result of processing the element
+
      */
     public String process(Element element, TemplateParser parser, ArrayList predicates, int dimensions)
     {
         // Only 1 dimension is supported.
         if (dimensions != 1)
         {
-            throw new DeveloperError("Wrong number of dimensions: " + dimensions + " != 1");
+            throw new DeveloperError("Wrong number of dimensions: " + dimensions + " != 1", new IllegalArgumentException());
         } 
 
         // No need to go further if no predicate values are available.

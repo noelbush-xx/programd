@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
+import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -33,6 +33,8 @@ import org.aitools.programd.processor.Processor;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.ClassRegistry;
 import org.aitools.programd.util.DeveloperError;
+import org.aitools.programd.util.NotARegisteredClassException;
+import org.aitools.programd.util.URITools;
 import org.aitools.programd.util.XMLKit;
 
 /**
@@ -48,8 +50,8 @@ abstract public class GenericParser
     /** Each subclass should set this. */
     protected ClassRegistry processorRegistry;
     
-    /** The URI of this document. */
-    protected URI docURI;
+    /** The URL of this document. */
+    protected URL docURL;
     
     /** The Core in use. */
     protected Core core;
@@ -68,6 +70,10 @@ abstract public class GenericParser
 	/** A DocumentBuilder for producing new Documents. */
 	protected static DocumentBuilder utilDocBuilder;
     
+    /**
+     * Creates a new GenericParser with the given Core as its owner.
+     * @param coreToUse the Core that owns this
+     */
     public GenericParser(Core coreToUse)
     {
         if (utilDocBuilder == null)
@@ -87,86 +93,92 @@ abstract public class GenericParser
     
     /**
      * <p>
-     * Processes a given URI.
+     * Processes a given URL.
      * </p>
      * <p>
      * This is the general access method for external classes.
      * </p>
      * 
-     * @param uri
+     * @param url
      *            the XML content
      * @return the DOM produced by parsing
      * @throws ProcessorException
      *             if the content cannot be processed
      */
-    public Document parse(URI uri) throws ProcessorException
+    public Document parse(URL url) throws ProcessorException
     {
-		if (this.docURI != null)
-		{
-			this.docURI = this.docURI.resolve(uri);
-		}
-		else
-		{
-			this.docURI = uri;
-		}
+        contextualize(url);
         Document document;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
         try
         {
             DocumentBuilder builder = factory.newDocumentBuilder();
-            document = builder.parse(this.docURI.toString());
+            document = builder.parse(this.docURL.toString());
         }
         catch (IOException e)
         {
-            throw new ProcessorException("I/O error while parsing \"" + uri + "\".", e);
+            throw new ProcessorException("I/O error while parsing \"" + url + "\".", e);
         }
         catch (ParserConfigurationException e)
         {
-            throw new ProcessorException("Parser configuration error while parsing \"" + uri + "\".", e);
+            throw new ProcessorException("Parser configuration error while parsing \"" + url + "\".", e);
         }
         catch (SAXParseException e)
         {
-            throw new ProcessorException("SAX parsing error while parsing \"" + uri + "\".", e);
+            throw new ProcessorException("SAX parsing error while parsing \"" + url + "\".", e);
         }
         catch (SAXException e)
         {
-            throw new ProcessorException("SAX exception while parsing \"" + uri + "\".", e);
+            throw new ProcessorException("SAX exception while parsing \"" + url + "\".", e);
         }
 
         return document;
     }
 
-    public String processResponse(URI uri) throws ProcessorException
+    /**
+     * Processes whatever is at the given URL and returns a response.
+     * @param url where to find what is to be processed
+     * @return the result of processing whatever is found at the URL
+     * @throws ProcessorException if there is a problem processing what is found at the URL
+     */
+    public String processResponse(URL url) throws ProcessorException
     {
-		if (this.docURI != null)
-		{
-			this.docURI = this.docURI.resolve(uri);
-		}
-		else
-		{
-			this.docURI = uri;
-		}
-        Document document = parse(this.docURI);
+        contextualize(url);
+        Document document = parse(this.docURL);
         return evaluate(document);
     }
     
-    public void process(URI uri) throws ProcessorException
+    /**
+     * Processes whatever is at the given URL, returning nothing.
+     * @param url the URL at which to find whatever is to be processed
+     * @throws ProcessorException if there is a problem processing whatever is at the given URL
+     */
+    public void process(URL url) throws ProcessorException
     {
-		if (this.docURI != null)
-		{
-			this.docURI = this.docURI.resolve(uri);
-		}
-		else
-		{
-			this.docURI = uri;
-		}
-        Document document = parse(this.docURI);
+        contextualize(url);
+        Document document = parse(this.docURL);
         evaluate(document);
+    }
+    
+    private void contextualize(URL url)
+    {
+        if (this.docURL != null)
+        {
+            this.docURL = URITools.contextualize(this.docURL, url);
+        }
+        else
+        {
+            this.docURL = url;
+        }
     }
 	
 	/**
 	 * Processes a response by creating a document fragment from the given string
 	 * and returning the result of processing it.
+	 * @param input the string from which to create the document fragment
+	 * @return the result of processing the document fragment created from the given string
+	 * @throws ProcessorException if there was a problem processing the document fragment created from the given string
 	 */
 	public String processResponse(String input) throws ProcessorException
 	{
@@ -177,17 +189,17 @@ abstract public class GenericParser
 		}
 		catch (IOException e)
 		{
-			throw new ProcessorException("I/O Error processing template: " + e.getMessage());
+			throw new ProcessorException("I/O Error processing template.", e, input);
 		}
 		catch (SAXException e)
 		{
-			throw new ProcessorException("SAX Exception processing template: " + e.getMessage());
+			throw new ProcessorException("SAX Exception processing template.", e, input);
 		}
 		return evaluate(template);
 	}
 
     /**
-     * Processes a given XML node for a given identifier.
+     * Processes a given XML node.
      * 
      * @param element
      *            the element being evaluated
@@ -206,74 +218,95 @@ abstract public class GenericParser
         // Search for the tag in the processor registry.
         Class processorClass = null;
 
-        if (this.processorRegistry != null)
+        String elementNamespaceURI = element.getNamespaceURI();
+        if (elementNamespaceURI == null || this.processorRegistry.getNamespaceURI().equals(elementNamespaceURI))
         {
-            processorClass = this.processorRegistry.get(element.getTagName());
-        }
-        else
-        {
-            throw new DeveloperError("processorRegistry has not been initialized!");
-        }
+            try
+            {
+                processorClass = this.processorRegistry.get(element.getTagName());
+            }
+            catch (NotARegisteredClassException e)
+            {
+                throw new DeveloperError("Unknown processor \"" + element.getTagName() + "\".", e);
+            }
 
-        // Create a new instance of the processor.
-        Processor processor = null;
-        if (processorClass != null)
-        {
-            // Get the processor constructor that takes a Core as an argument.
-            Constructor<Processor> constructor = null;
-            try
+            // Create a new instance of the processor.
+            Processor processor = null;
+            if (processorClass != null)
             {
-                constructor = processorClass.getDeclaredConstructor(new Class[] {Core.class});
+                // Get the processor constructor that takes a Core as an argument.
+                Constructor<Processor> constructor = null;
+                try
+                {
+                    constructor = processorClass.getDeclaredConstructor(Core.class);
+                }
+                catch (NoSuchMethodException e)
+                {
+                    throw new DeveloperError("Developed specified an invalid constructor for Processor", e);
+                }
+                catch (SecurityException e)
+                {
+                    throw new DeveloperError("Permission denied to create new Processor with specified constructor", e);
+                }
+                
+                // Get a new instance of the processor.
+                try
+                {
+                    processor = constructor.newInstance(this.core);
+                } 
+                catch (IllegalAccessException e)
+                {
+                    throw new DeveloperError("Underlying constructor for Processor is inaccessible", e);
+                } 
+                catch (InstantiationException e)
+                {
+                    throw new DeveloperError("Could not instantiate Processor", e);
+                } 
+                catch (IllegalArgumentException e)
+                {
+                    throw new DeveloperError("Illegal argument exception when creating Processor.", e);
+                } 
+                catch (InvocationTargetException e)
+                {
+                    throw new DeveloperError("Constructor threw an exception when getting a Processor instance from it", e);
+                } 
             }
-            catch (NoSuchMethodException e)
+            else
             {
-                throw new DeveloperError("Developed specified an invalid constructor for Processor: " + e.getMessage());
+                throw new ProcessorException("Could not find a processor for \"" + element.getTagName() + "\"!", new NullPointerException());
             }
-            catch (SecurityException e)
+            // Return the results of processing the tag.
+            if (processor != null)
             {
-                throw new DeveloperError("Permission denied to create new Processor with specified constructor: " + e.getMessage());
+                return XMLKit.filterWhitespace(processor.process(element, this));
             }
-            
-            // Get a new instance of the Multiplexor.
-            try
-            {
-                processor = constructor.newInstance(new Object[] {this});
-            } 
-            catch (IllegalAccessException e)
-            {
-                throw new DeveloperError("Underlying constructor for Processor is inaccessible: " + e.getMessage());
-            } 
-            catch (InstantiationException e)
-            {
-                throw new DeveloperError("Could not instantiate Processor: " + e.getMessage());
-            } 
-            catch (IllegalArgumentException e)
-            {
-                throw new DeveloperError("Illegal argument exception when creating Processor: " + e.getMessage());
-            } 
-            catch (InvocationTargetException e)
-            {
-                throw new DeveloperError("Constructor threw an exception when getting a Processor instance from it: " + e.getMessage());
-            } 
+            // (otherwise...)
+            throw new DeveloperError("Corrupt processor set.", new NullPointerException());
         }
-        else
+        // otherwise (if this element is from a different namespace)
+        if (element.getChildNodes().getLength() == 0)
         {
-            throw new ProcessorException("Could not find a processor for \"" + element.getTagName() + "\"!");
+            return XMLKit.renderEmptyElement(element, true);
         }
-        // Return the results of processing the tag.
-        if (processor != null)
-        {
-            return XMLKit.filterWhitespace(processor.process(element, this));
-        }
-        // (otherwise...)
-        throw new DeveloperError("Corrupt processor set.");
+        // otherwise...
+        return XMLKit.renderStartTag(element, true) + evaluate(element.getChildNodes()) + XMLKit.renderEndTag(element);
     }
 
+    /**
+     * Evaluates the given document and returns the result.
+     * @param document the document to evaluate
+     * @return the result of evaluating the document
+     */
     public String evaluate(Document document)
     {
         return evaluate(document.getDocumentElement());
     }
 
+    /**
+     * Evaluates the given node list and returns the result.
+     * @param list the list of nodes to evaluate
+     * @return the result of evaluating the given list of nodes
+     */
     public String evaluate(NodeList list)
     {
         StringBuffer result = new StringBuffer();
@@ -318,7 +351,7 @@ abstract public class GenericParser
                 }
                 catch (ProcessorException e)
                 {
-                    throw new DeveloperError(e.getMessage(), e);
+                    throw new DeveloperError(e.getExplanatoryMessage(), e);
                 }
                 break;
 
@@ -334,11 +367,23 @@ abstract public class GenericParser
         return response;
     }
 
-    public int hasElement(String tagname, NodeList list)
+    /**
+     * Checks whether the given node list has an element with the given name.
+     * @param tagname the name of the element to look for
+     * @param list the list of nodes to look in
+     * @return whether the given node list has an element with the given name
+     */
+    public boolean hasElement(String tagname, NodeList list)
     {
-        return elementCount(tagname, list, false);
+        return (elementCount(tagname, list, false) > 1);
     }
 
+    /**
+     * Counts the number of elements with the given name in the given node list.
+     * @param tagname the name of the element to look for
+     * @param list the list in which to look
+     * @return the number of elements with the given name in the given list (may be 0)
+     */
     public int elementCount(String tagname, NodeList list)
     {
         return elementCount(tagname, list, true);
@@ -510,14 +555,36 @@ abstract public class GenericParser
 
         return response;
     }
+    
+    /**
+     * Verifies that the given URL points to something real/accessible,
+     * then parses it.
+     * @param urlString the URL to check
+     */
+    public void verifyAndParse(String urlString)
+    {
+        URL url = null;
+        if (this.docURL != null)
+        {
+            url = URITools.contextualize(this.docURL, urlString);
+        }
+        
+        try
+        {
+            processResponse(url);
+        } 
+        catch (ProcessorException e)
+        {
+            throw new DeveloperError(e.getExplanatoryMessage(), e);
+        }
+    }
 
     /**
      * Corrects a tag to use a valid 2-dimensional index, and returns the
      * indices. If either index is invalid or missing, it is set to 1.
+     * @param element the element for which to get a valid 2-dimensional index
      * 
      * @since 4.1.3
-     * @param tag
-     *            the tag whose 2-dimensional index we want
      * @return a valid 2-dimensional index
      */
     public static int[] getValid2dIndex(Element element)
@@ -569,10 +636,9 @@ abstract public class GenericParser
     /**
      * Corrects a tag to use a valid 1-dimensional index, and returns the index.
      * If the index is missing or valid, 1 is returned.
+     * @param element the element for which to get a valid 1-dimensional index
      * 
      * @since 4.1.3
-     * @param tag
-     *            the element whose 1-dimensional index we want
      * @return a valid 1-dimensional index
      */
     public static int getValid1dIndex(Element element)

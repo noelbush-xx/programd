@@ -16,6 +16,11 @@ import java.util.logging.XMLFormatter;
 import org.aitools.programd.logging.ChatLogRecord;
 import org.aitools.programd.util.XMLKit;
 
+/**
+ * Formats a ChatLogRecord by printing a number of extra fields as we like them.
+ * @author Noel Bush
+ * @since 4.5
+ */
 public class XMLChatLogFormatter extends XMLFormatter
 {
     private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -37,6 +42,11 @@ public class XMLChatLogFormatter extends XMLFormatter
     private static final String REPLY_START = "  <reply>";
     private static final String REPLY_END = "</reply>\n";
     
+    /**
+     * @see java.util.logging.XMLFormatter#format
+     * @param record the ChatLogRecord to format
+     * @return the result of formatting the given ChatLogRecord
+     */
     public String format(ChatLogRecord record)
     {
         StringBuffer result = new StringBuffer(1000);

@@ -17,8 +17,13 @@ package org.aitools.programd.processor;
  */
 public class AIMLProcessorException extends ProcessorException
 {
-    public AIMLProcessorException(String message)
+    /**
+     * Creates a new AIMLProcessorException with the given message, associated with the given Throwable.
+     * @param message the message to use
+     * @param e the Throwable to associate with the exception
+     */
+    public AIMLProcessorException(String message, Throwable e)
     {
-        super(message);
+        super(message, e);
     } 
 }

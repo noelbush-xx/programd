@@ -12,7 +12,7 @@ package org.aitools.programd;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-03-19T21:01:42.234-04:00
+ * Automatically generated from properties file, 2005-03-23T22:39:46.625-04:00
  */
 public class CoreSettings extends Settings
 {
@@ -22,64 +22,90 @@ public class CoreSettings extends Settings
      * (i.e., the conf directory), although you can change
      * that in your startup script.
      */
-    String rootDirectory;
+    private String rootDirectory;
+
+    /**
+     *The namespace URI of AIML to use. 
+     */
+    private String aimlSchemaNamespaceUri;
+
+    /**
+     *The location of the AIML schema (or a copy of it). 
+     */
+    private String aimlSchemaLocation;
 
     /**
      *The bot configuration startup file. 
      */
-    String startupFilePath;
+    private String startupFilePath;
 
     /**
      *Overwrite categories with identical pattern:that:topic? 
      */
-    boolean mergePolicy;
+    private boolean mergePolicy;
 
     /**
      *The default value for undefined predicates. 
      */
-    String predicateEmptyDefault;
+    private String predicateEmptyDefault;
 
     /**
      *The maximum allowable time (in milliseconds) to get a response. 
      */
-    int responseTimeout;
+    private int responseTimeout;
+
+    /**
+     * How many categories will be loaded before a message is displayed? 
+     * Only meaningful if programd.enable-console == true.
+     */
+    private int categoryLoadNotifyInterval;
 
     /**
      *The input to match if an infinite loop is found. 
      */
-    String infiniteLoopInput;
+    private String infiniteLoopInput;
+
+    /**
+     * Which bot predicate contains the client's name? 
+     */
+    private String clientNamePredicate;
+
+    /**
+     * Log/display match trace messages? 
+     */
+    private boolean recordMatchTrace;
 
     /**
      *Allow use of <system> element? 
      */
-    boolean osAccessAllowed;
+    private boolean osAccessAllowed;
 
     /**
      *Allow use of <javascript> element? 
      */
-    boolean javascriptAllowed;
+    private boolean javascriptAllowed;
 
     /**
      *The string to send when first connecting to the bot. 
      * If this value is empty or not defined, no value
            will be sent.
      */
-    String connectString;
+    private String connectString;
 
     /**
      *The string to send after an inactivity timeout. 
      */
-    String inactivityString;
+    private String inactivityString;
 
     /**
      *The Multiplexor to use. 
      */
-    String multiplexorClassname;
+    private String multiplexorClassname;
 
     /**
      *The subdirectory in which to save flat-file predicates (FFM only). 
      */
-    String multiplexorFfmDir;
+    private String multiplexorFfmDir;
 
     /**
      *Enable the heart? 
@@ -87,129 +113,69 @@ public class CoreSettings extends Settings
     * Right now the only kind of pulse is a message "I'm alive!" printed to the console.
     * You can write a "Pulse" that can do something more useful, like ping a server.
      */
-    boolean heartEnabled;
+    private boolean heartEnabled;
 
     /**
      *The pulse rate for the heart (beats per minute). 
      */
-    int heartPulserate;
+    private int heartPulserate;
 
     /**
      *The maximum size of the cache before writing to disk/database. 
      */
-    int predicateCacheMax;
+    private int predicateCacheMax;
 
     /**
      *The directory in which to execute <system> commands. 
      */
-    String systemInterpreterDirectory;
+    private String systemInterpreterDirectory;
 
     /**
      *The string to prepend to all <system> calls (platform-specific). 
      * Windows requires something like "cmd /c "; Linux doesn't (just comment out)
      */
-    String systemInterpreterPrefix;
+    private String systemInterpreterPrefix;
 
     /**
      *The JavaScript interpreter (fully-qualified class name). 
      */
-    String javascriptInterpreterClassname;
+    private String javascriptInterpreterClassname;
 
     /**
      *Enable the AIML Watcher? 
     * This will automatically load your AIML files if they are changed.
      */
-    boolean useWatcher;
+    private boolean useWatcher;
 
     /**
      *The delay period when checking changed AIML (milliseconds). 
     * Only applicable if the AIML Watcher is enabled.
      */
-    int watcherTimer;
+    private int watcherTimer;
 
     /**
-     *The log file for core activity. 
+     *The general activity log file. 
      */
-    String loggingCorePath;
-
-    /**
-     *The log file for database activity. 
-     */
-    String loggingDatabasePath;
-
-    /**
-     *The log file for any errors. 
-     */
-    String loggingErrorPath;
-
-    /**
-     *The log file for gossip. 
-     */
-    String loggingGossipPath;
-
-    /**
-     *The log file for interpreter activity. 
-     */
-    String loggingInterpreterPath;
-
-    /**
-     *The log file for learning activity. 
-     */
-    String loggingLearnPath;
-
-    /**
-     *The log file for listener activity. 
-     */
-    String loggingListenerPath;
+    private String activityLogPath;
 
     /**
      *The log file for matching activity. 
      */
-    String loggingMatchingPath;
-
-    /**
-     *The log file for merge activity. 
-     */
-    String loggingMergePath;
-
-    /**
-     *The log file for responder activity. 
-     */
-    String loggingResponderPath;
-
-    /**
-     *The log file for startup activity. 
-     */
-    String loggingStartupPath;
-
-    /**
-     *The log file for system command activity. 
-     */
-    String loggingSystemPath;
-
-    /**
-     *The log file for targeting activity. 
-     */
-    String loggingTargetingPath;
+    private String matchingLogPath;
 
     /**
      *The date-time format to use in logging. 
-    * See http://java.sun.com/jdk1.5.0_01/docs/api/java/text/SimpleDateFormat.html
+    * See http://java.sun.com/jdk1.5.0_02/docs/api/java/text/SimpleDateFormat.html
           for formatting codes.
     * Setting the value to blank means no timestamp will be displayed.
      */
-    String loggingTimestampFormat;
-
-    /**
-     *The generic userid to use in logs when old responders don't have it. 
-     */
-    String loggingGenericUsername;
+    private String logTimestampFormat;
 
     /**
      *Enable chat logging to XML text files? 
     * Be sure that the database configuration (later in this file) is valid.
      */
-    boolean loggingToXmlChat;
+    private boolean loggingToXmlChat;
 
     /**
      *How many log entries to collect before "rolling over" an XML log file. 
@@ -217,68 +183,68 @@ public class CoreSettings extends Settings
     * and a fresh log file is created using the path name.  The new log file will
     * contain links to all of the previous log files of the same type.
      */
-    int loggingXmlRollover;
+    private int loggingXmlRollover;
 
     /**
      *The subdirectory for XML chat logs. 
      */
-    String loggingXmlChatLogDirectory;
+    private String loggingXmlChatLogDirectory;
 
     /**
      *The path to the stylesheet for viewing chat logs. 
      */
-    String loggingXmlChatStylesheetPath;
+    private String loggingXmlChatStylesheetPath;
 
     /**
      *Roll over the chat log at restart? 
      */
-    boolean loggingXmlChatRolloverAtRestart;
+    private boolean loggingXmlChatRolloverAtRestart;
 
     /**
      *Enable chat logging to the database? 
     * Be sure that the database configuration (later in this file) is valid.
      */
-    boolean loggingToDatabaseChat;
+    private boolean loggingToDatabaseChat;
 
     /**
      *The URL of the database to use. 
      */
-    String databaseUrl;
+    private String databaseUrl;
 
     /**
      *The database driver to use. 
      */
-    String databaseDriver;
+    private String databaseDriver;
 
     /**
      *The maximum number of simultaneous connections to the database. 
      */
-    int databaseConnections;
+    private int databaseConnections;
 
     /**
      *The username which with to access the database. 
      */
-    String databaseUser;
+    private String databaseUser;
 
     /**
      *The password for the database. 
      */
-    String databasePassword;
+    private String databasePassword;
 
     /**
      *Configuration file for HTMLResponder. 
      */
-    String confLocationHtmlResponder;
+    private String confLocationHtmlResponder;
 
     /**
      *Configuration file for FlashResponder. 
      */
-    String confLocationFlashResponder;
+    private String confLocationFlashResponder;
 
     /**
      *Configuration file for HTTPServer. 
      */
-    String confLocationHttpServer;
+    private String confLocationHttpServer;
 
     /**
      * Creates a <code>CoreSettings</code> using default property values.
@@ -291,6 +257,8 @@ public class CoreSettings extends Settings
     /**
      * Creates a <code>CoreSettings</code> with the (XML-formatted) properties
      * located at the given path.
+     * 
+     * @param propertiesPath the path to the core properties file
      */
     public CoreSettings(String propertiesPath)
     {
@@ -302,42 +270,59 @@ public class CoreSettings extends Settings
     */
     protected void initialize()
     {
-        setRootDirectory(this.properties.getProperty("programd.root-directory", ".."));
+        setRootDirectory(this.properties.getProperty("programd.root-directory", "..")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setStartupFilePath(this.properties.getProperty("programd.startup-file-path", "conf/bots.xml"));
+        setAimlSchemaNamespaceUri(this.properties.getProperty("programd.aiml-schema.namespace-uri", "http://alicebot.org/2001/AIML-1.0.1")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setMergePolicy(Boolean.valueOf(this.properties.getProperty("programd.merge-policy", "true")).booleanValue());
+        setAimlSchemaLocation(this.properties.getProperty("programd.aiml-schema.location", "resources/schema/AIML.xsd")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setPredicateEmptyDefault(this.properties.getProperty("programd.predicate-empty-default", "undefined"));
+        setStartupFilePath(this.properties.getProperty("programd.startup-file-path", "conf/bots.xml")); //$NON-NLS-1$ //$NON-NLS-2$
+
+        setMergePolicy(Boolean.valueOf(this.properties.getProperty("programd.merge-policy", "true")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
+
+        setPredicateEmptyDefault(this.properties.getProperty("programd.predicate-empty-default", "undefined")); //$NON-NLS-1$ //$NON-NLS-2$
 
         try
         {
-            setResponseTimeout(Integer.parseInt(this.properties.getProperty("programd.response-timeout", "1000")));
+            setResponseTimeout(Integer.parseInt(this.properties.getProperty("programd.response-timeout", "1000"))); //$NON-NLS-1$ //$NON-NLS-2$
         }
         catch (NumberFormatException e)
         {
             setResponseTimeout(1000);
         }
 
-        setInfiniteLoopInput(this.properties.getProperty("programd.infinite-loop-input", "INFINITE LOOP"));
+        try
+        {
+            setCategoryLoadNotifyInterval(Integer.parseInt(this.properties.getProperty("programd.category-load-notify-interval", "5000"))); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        catch (NumberFormatException e)
+        {
+            setCategoryLoadNotifyInterval(5000);
+        }
 
-        setOsAccessAllowed(Boolean.valueOf(this.properties.getProperty("programd.os-access-allowed", "false")).booleanValue());
+        setInfiniteLoopInput(this.properties.getProperty("programd.infinite-loop-input", "INFINITE LOOP")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setJavascriptAllowed(Boolean.valueOf(this.properties.getProperty("programd.javascript-allowed", "false")).booleanValue());
+        setClientNamePredicate(this.properties.getProperty("programd.client-name-predicate", "name")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setConnectString(this.properties.getProperty("programd.connect-string", "CONNECT"));
+        setRecordMatchTrace(Boolean.valueOf(this.properties.getProperty("programd.record-match-trace", "true")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setInactivityString(this.properties.getProperty("programd.inactivity-string", "INACTIVITY"));
+        setOsAccessAllowed(Boolean.valueOf(this.properties.getProperty("programd.os-access-allowed", "false")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setMultiplexorClassname(this.properties.getProperty("programd.multiplexor-classname", "org.aitools.programd.multiplexor.FlatFileMultiplexor"));
+        setJavascriptAllowed(Boolean.valueOf(this.properties.getProperty("programd.javascript-allowed", "false")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setMultiplexorFfmDir(this.properties.getProperty("programd.multiplexor.ffm-dir", "ffm"));
+        setConnectString(this.properties.getProperty("programd.connect-string", "CONNECT")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setHeartEnabled(Boolean.valueOf(this.properties.getProperty("programd.heart.enabled", "false")).booleanValue());
+        setInactivityString(this.properties.getProperty("programd.inactivity-string", "INACTIVITY")); //$NON-NLS-1$ //$NON-NLS-2$
+
+        setMultiplexorClassname(this.properties.getProperty("programd.multiplexor-classname", "org.aitools.programd.multiplexor.FlatFileMultiplexor")); //$NON-NLS-1$ //$NON-NLS-2$
+
+        setMultiplexorFfmDir(this.properties.getProperty("programd.multiplexor.ffm-dir", "ffm")); //$NON-NLS-1$ //$NON-NLS-2$
+
+        setHeartEnabled(Boolean.valueOf(this.properties.getProperty("programd.heart.enabled", "false")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
 
         try
         {
-            setHeartPulserate(Integer.parseInt(this.properties.getProperty("programd.heart.pulserate", "5")));
+            setHeartPulserate(Integer.parseInt(this.properties.getProperty("programd.heart.pulserate", "5"))); //$NON-NLS-1$ //$NON-NLS-2$
         }
         catch (NumberFormatException e)
         {
@@ -346,101 +331,77 @@ public class CoreSettings extends Settings
 
         try
         {
-            setPredicateCacheMax(Integer.parseInt(this.properties.getProperty("programd.predicate-cache.max", "500")));
+            setPredicateCacheMax(Integer.parseInt(this.properties.getProperty("programd.predicate-cache.max", "500"))); //$NON-NLS-1$ //$NON-NLS-2$
         }
         catch (NumberFormatException e)
         {
             setPredicateCacheMax(500);
         }
 
-        setSystemInterpreterDirectory(this.properties.getProperty("programd.system-interpreter.directory", "."));
+        setSystemInterpreterDirectory(this.properties.getProperty("programd.system-interpreter.directory", ".")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setSystemInterpreterPrefix(this.properties.getProperty("programd.system-interpreter.prefix", ""));
+        setSystemInterpreterPrefix(this.properties.getProperty("programd.system-interpreter.prefix", "")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setJavascriptInterpreterClassname(this.properties.getProperty("programd.javascript-interpreter.classname", "org.aitools.programd.interpreter.RhinoInterpreter"));
+        setJavascriptInterpreterClassname(this.properties.getProperty("programd.javascript-interpreter.classname", "org.aitools.programd.interpreter.RhinoInterpreter")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setUseWatcher(Boolean.valueOf(this.properties.getProperty("programd.use-watcher", "false")).booleanValue());
+        setUseWatcher(Boolean.valueOf(this.properties.getProperty("programd.use-watcher", "false")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
 
         try
         {
-            setWatcherTimer(Integer.parseInt(this.properties.getProperty("programd.watcher.timer", "2000")));
+            setWatcherTimer(Integer.parseInt(this.properties.getProperty("programd.watcher.timer", "2000"))); //$NON-NLS-1$ //$NON-NLS-2$
         }
         catch (NumberFormatException e)
         {
             setWatcherTimer(2000);
         }
 
-        setLoggingCorePath(this.properties.getProperty("programd.logging.core.path", "logs/core.log"));
+        setActivityLogPath(this.properties.getProperty("programd.activity.log.path", "logs/activity.log")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setLoggingDatabasePath(this.properties.getProperty("programd.logging.database.path", "logs/database.log"));
+        setMatchingLogPath(this.properties.getProperty("programd.matching.log.path", "logs/matching.log")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setLoggingErrorPath(this.properties.getProperty("programd.logging.error.path", "logs/error.log"));
+        setLogTimestampFormat(this.properties.getProperty("programd.log.timestamp-format", "yyyy-MM-dd H:mm:ss")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setLoggingGossipPath(this.properties.getProperty("programd.logging.gossip.path", "logs/gossip.log"));
-
-        setLoggingInterpreterPath(this.properties.getProperty("programd.logging.interpreter.path", "logs/interpreter.log"));
-
-        setLoggingLearnPath(this.properties.getProperty("programd.logging.learn.path", "logs/learn.log"));
-
-        setLoggingListenerPath(this.properties.getProperty("programd.logging.listener.path", "logs/listener.log"));
-
-        setLoggingMatchingPath(this.properties.getProperty("programd.logging.matching.path", "logs/matching.log"));
-
-        setLoggingMergePath(this.properties.getProperty("programd.logging.merge.path", "logs/merge.log"));
-
-        setLoggingResponderPath(this.properties.getProperty("programd.logging.responder.path", "logs/responder.log"));
-
-        setLoggingStartupPath(this.properties.getProperty("programd.logging.startup.path", "logs/startup.log"));
-
-        setLoggingSystemPath(this.properties.getProperty("programd.logging.system.path", "logs/system.log"));
-
-        setLoggingTargetingPath(this.properties.getProperty("programd.logging.targeting.path", "logs/targeting.log"));
-
-        setLoggingTimestampFormat(this.properties.getProperty("programd.logging.timestamp-format", "yyyy-MM-dd H:mm:ss"));
-
-        setLoggingGenericUsername(this.properties.getProperty("programd.logging.generic-username", "client"));
-
-        setLoggingToXmlChat(Boolean.valueOf(this.properties.getProperty("programd.logging.to-xml.chat", "true")).booleanValue());
+        setLoggingToXmlChat(Boolean.valueOf(this.properties.getProperty("programd.logging.to-xml.chat", "true")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
 
         try
         {
-            setLoggingXmlRollover(Integer.parseInt(this.properties.getProperty("programd.logging.xml.rollover", "500")));
+            setLoggingXmlRollover(Integer.parseInt(this.properties.getProperty("programd.logging.xml.rollover", "500"))); //$NON-NLS-1$ //$NON-NLS-2$
         }
         catch (NumberFormatException e)
         {
             setLoggingXmlRollover(500);
         }
 
-        setLoggingXmlChatLogDirectory(this.properties.getProperty("programd.logging.xml.chat.log-directory", "logs/chat"));
+        setLoggingXmlChatLogDirectory(this.properties.getProperty("programd.logging.xml.chat.log-directory", "logs/chat")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setLoggingXmlChatStylesheetPath(this.properties.getProperty("programd.logging.xml.chat.stylesheet-path", "../resources/logs/view-chat.xsl"));
+        setLoggingXmlChatStylesheetPath(this.properties.getProperty("programd.logging.xml.chat.stylesheet-path", "../resources/logs/view-chat.xsl")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setLoggingXmlChatRolloverAtRestart(Boolean.valueOf(this.properties.getProperty("programd.logging.xml.chat.rollover-at-restart", "false")).booleanValue());
+        setLoggingXmlChatRolloverAtRestart(Boolean.valueOf(this.properties.getProperty("programd.logging.xml.chat.rollover-at-restart", "false")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setLoggingToDatabaseChat(Boolean.valueOf(this.properties.getProperty("programd.logging.to-database.chat", "false")).booleanValue());
+        setLoggingToDatabaseChat(Boolean.valueOf(this.properties.getProperty("programd.logging.to-database.chat", "false")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setDatabaseUrl(this.properties.getProperty("programd.database.url", "jdbc:mysql:///programdbot"));
+        setDatabaseUrl(this.properties.getProperty("programd.database.url", "jdbc:mysql:///programdbot")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setDatabaseDriver(this.properties.getProperty("programd.database.driver", "org.gjt.mm.mysql.Driver"));
+        setDatabaseDriver(this.properties.getProperty("programd.database.driver", "org.gjt.mm.mysql.Driver")); //$NON-NLS-1$ //$NON-NLS-2$
 
         try
         {
-            setDatabaseConnections(Integer.parseInt(this.properties.getProperty("programd.database.connections", "25")));
+            setDatabaseConnections(Integer.parseInt(this.properties.getProperty("programd.database.connections", "25"))); //$NON-NLS-1$ //$NON-NLS-2$
         }
         catch (NumberFormatException e)
         {
             setDatabaseConnections(25);
         }
 
-        setDatabaseUser(this.properties.getProperty("programd.database.user", "programd"));
+        setDatabaseUser(this.properties.getProperty("programd.database.user", "programd")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setDatabasePassword(this.properties.getProperty("programd.database.password", "yourpassword"));
+        setDatabasePassword(this.properties.getProperty("programd.database.password", "yourpassword")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setConfLocationHtmlResponder(this.properties.getProperty("programd.conf-location.html-responder", "conf/html-responder.xml"));
+        setConfLocationHtmlResponder(this.properties.getProperty("programd.conf-location.html-responder", "conf/html-responder.xml")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setConfLocationFlashResponder(this.properties.getProperty("programd.conf-location.flash-responder", "conf/flash-responder.xml"));
+        setConfLocationFlashResponder(this.properties.getProperty("programd.conf-location.flash-responder", "conf/flash-responder.xml")); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setConfLocationHttpServer(this.properties.getProperty("programd.conf-location.http-server", "conf/http-server.xml"));
+        setConfLocationHttpServer(this.properties.getProperty("programd.conf-location.http-server", "conf/http-server.xml")); //$NON-NLS-1$ //$NON-NLS-2$
 
     }
 
@@ -450,6 +411,22 @@ public class CoreSettings extends Settings
     public String getRootDirectory()
     {
         return this.rootDirectory;
+    }
+
+    /**
+     * @return the value of aimlSchemaNamespaceUri
+     */
+    public String getAimlSchemaNamespaceUri()
+    {
+        return this.aimlSchemaNamespaceUri;
+    }
+
+    /**
+     * @return the value of aimlSchemaLocation
+     */
+    public String getAimlSchemaLocation()
+    {
+        return this.aimlSchemaLocation;
     }
 
     /**
@@ -485,11 +462,35 @@ public class CoreSettings extends Settings
     }
 
     /**
+     * @return the value of categoryLoadNotifyInterval
+     */
+    public int getCategoryLoadNotifyInterval()
+    {
+        return this.categoryLoadNotifyInterval;
+    }
+
+    /**
      * @return the value of infiniteLoopInput
      */
     public String getInfiniteLoopInput()
     {
         return this.infiniteLoopInput;
+    }
+
+    /**
+     * @return the value of clientNamePredicate
+     */
+    public String getClientNamePredicate()
+    {
+        return this.clientNamePredicate;
+    }
+
+    /**
+     * @return the value of recordMatchTrace
+     */
+    public boolean recordMatchTrace()
+    {
+        return this.recordMatchTrace;
     }
 
     /**
@@ -605,123 +606,27 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @return the value of loggingCorePath
+     * @return the value of activityLogPath
      */
-    public String getLoggingCorePath()
+    public String getActivityLogPath()
     {
-        return this.loggingCorePath;
+        return this.activityLogPath;
     }
 
     /**
-     * @return the value of loggingDatabasePath
+     * @return the value of matchingLogPath
      */
-    public String getLoggingDatabasePath()
+    public String getMatchingLogPath()
     {
-        return this.loggingDatabasePath;
+        return this.matchingLogPath;
     }
 
     /**
-     * @return the value of loggingErrorPath
+     * @return the value of logTimestampFormat
      */
-    public String getLoggingErrorPath()
+    public String getLogTimestampFormat()
     {
-        return this.loggingErrorPath;
-    }
-
-    /**
-     * @return the value of loggingGossipPath
-     */
-    public String getLoggingGossipPath()
-    {
-        return this.loggingGossipPath;
-    }
-
-    /**
-     * @return the value of loggingInterpreterPath
-     */
-    public String getLoggingInterpreterPath()
-    {
-        return this.loggingInterpreterPath;
-    }
-
-    /**
-     * @return the value of loggingLearnPath
-     */
-    public String getLoggingLearnPath()
-    {
-        return this.loggingLearnPath;
-    }
-
-    /**
-     * @return the value of loggingListenerPath
-     */
-    public String getLoggingListenerPath()
-    {
-        return this.loggingListenerPath;
-    }
-
-    /**
-     * @return the value of loggingMatchingPath
-     */
-    public String getLoggingMatchingPath()
-    {
-        return this.loggingMatchingPath;
-    }
-
-    /**
-     * @return the value of loggingMergePath
-     */
-    public String getLoggingMergePath()
-    {
-        return this.loggingMergePath;
-    }
-
-    /**
-     * @return the value of loggingResponderPath
-     */
-    public String getLoggingResponderPath()
-    {
-        return this.loggingResponderPath;
-    }
-
-    /**
-     * @return the value of loggingStartupPath
-     */
-    public String getLoggingStartupPath()
-    {
-        return this.loggingStartupPath;
-    }
-
-    /**
-     * @return the value of loggingSystemPath
-     */
-    public String getLoggingSystemPath()
-    {
-        return this.loggingSystemPath;
-    }
-
-    /**
-     * @return the value of loggingTargetingPath
-     */
-    public String getLoggingTargetingPath()
-    {
-        return this.loggingTargetingPath;
-    }
-
-    /**
-     * @return the value of loggingTimestampFormat
-     */
-    public String getLoggingTimestampFormat()
-    {
-        return this.loggingTimestampFormat;
-    }
-
-    /**
-     * @return the value of loggingGenericUsername
-     */
-    public String getLoggingGenericUsername()
-    {
-        return this.loggingGenericUsername;
+        return this.logTimestampFormat;
     }
 
     /**
@@ -845,6 +750,22 @@ public class CoreSettings extends Settings
     }
 
     /**
+     * @param aimlSchemaNamespaceUriToSet   the value to which to set aimlSchemaNamespaceUri
+     */
+    public void setAimlSchemaNamespaceUri(String aimlSchemaNamespaceUriToSet)
+    {
+        this.aimlSchemaNamespaceUri = aimlSchemaNamespaceUriToSet;
+    }
+
+    /**
+     * @param aimlSchemaLocationToSet   the value to which to set aimlSchemaLocation
+     */
+    public void setAimlSchemaLocation(String aimlSchemaLocationToSet)
+    {
+        this.aimlSchemaLocation = aimlSchemaLocationToSet;
+    }
+
+    /**
      * @param startupFilePathToSet   the value to which to set startupFilePath
      */
     public void setStartupFilePath(String startupFilePathToSet)
@@ -877,11 +798,35 @@ public class CoreSettings extends Settings
     }
 
     /**
+     * @param categoryLoadNotifyIntervalToSet   the value to which to set categoryLoadNotifyInterval
+     */
+    public void setCategoryLoadNotifyInterval(int categoryLoadNotifyIntervalToSet)
+    {
+        this.categoryLoadNotifyInterval = categoryLoadNotifyIntervalToSet;
+    }
+
+    /**
      * @param infiniteLoopInputToSet   the value to which to set infiniteLoopInput
      */
     public void setInfiniteLoopInput(String infiniteLoopInputToSet)
     {
         this.infiniteLoopInput = infiniteLoopInputToSet;
+    }
+
+    /**
+     * @param clientNamePredicateToSet   the value to which to set clientNamePredicate
+     */
+    public void setClientNamePredicate(String clientNamePredicateToSet)
+    {
+        this.clientNamePredicate = clientNamePredicateToSet;
+    }
+
+    /**
+     * @param recordMatchTraceToSet   the value to which to set recordMatchTrace
+     */
+    public void setRecordMatchTrace(boolean recordMatchTraceToSet)
+    {
+        this.recordMatchTrace = recordMatchTraceToSet;
     }
 
     /**
@@ -997,123 +942,27 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param loggingCorePathToSet   the value to which to set loggingCorePath
+     * @param activityLogPathToSet   the value to which to set activityLogPath
      */
-    public void setLoggingCorePath(String loggingCorePathToSet)
+    public void setActivityLogPath(String activityLogPathToSet)
     {
-        this.loggingCorePath = loggingCorePathToSet;
+        this.activityLogPath = activityLogPathToSet;
     }
 
     /**
-     * @param loggingDatabasePathToSet   the value to which to set loggingDatabasePath
+     * @param matchingLogPathToSet   the value to which to set matchingLogPath
      */
-    public void setLoggingDatabasePath(String loggingDatabasePathToSet)
+    public void setMatchingLogPath(String matchingLogPathToSet)
     {
-        this.loggingDatabasePath = loggingDatabasePathToSet;
+        this.matchingLogPath = matchingLogPathToSet;
     }
 
     /**
-     * @param loggingErrorPathToSet   the value to which to set loggingErrorPath
+     * @param logTimestampFormatToSet   the value to which to set logTimestampFormat
      */
-    public void setLoggingErrorPath(String loggingErrorPathToSet)
+    public void setLogTimestampFormat(String logTimestampFormatToSet)
     {
-        this.loggingErrorPath = loggingErrorPathToSet;
-    }
-
-    /**
-     * @param loggingGossipPathToSet   the value to which to set loggingGossipPath
-     */
-    public void setLoggingGossipPath(String loggingGossipPathToSet)
-    {
-        this.loggingGossipPath = loggingGossipPathToSet;
-    }
-
-    /**
-     * @param loggingInterpreterPathToSet   the value to which to set loggingInterpreterPath
-     */
-    public void setLoggingInterpreterPath(String loggingInterpreterPathToSet)
-    {
-        this.loggingInterpreterPath = loggingInterpreterPathToSet;
-    }
-
-    /**
-     * @param loggingLearnPathToSet   the value to which to set loggingLearnPath
-     */
-    public void setLoggingLearnPath(String loggingLearnPathToSet)
-    {
-        this.loggingLearnPath = loggingLearnPathToSet;
-    }
-
-    /**
-     * @param loggingListenerPathToSet   the value to which to set loggingListenerPath
-     */
-    public void setLoggingListenerPath(String loggingListenerPathToSet)
-    {
-        this.loggingListenerPath = loggingListenerPathToSet;
-    }
-
-    /**
-     * @param loggingMatchingPathToSet   the value to which to set loggingMatchingPath
-     */
-    public void setLoggingMatchingPath(String loggingMatchingPathToSet)
-    {
-        this.loggingMatchingPath = loggingMatchingPathToSet;
-    }
-
-    /**
-     * @param loggingMergePathToSet   the value to which to set loggingMergePath
-     */
-    public void setLoggingMergePath(String loggingMergePathToSet)
-    {
-        this.loggingMergePath = loggingMergePathToSet;
-    }
-
-    /**
-     * @param loggingResponderPathToSet   the value to which to set loggingResponderPath
-     */
-    public void setLoggingResponderPath(String loggingResponderPathToSet)
-    {
-        this.loggingResponderPath = loggingResponderPathToSet;
-    }
-
-    /**
-     * @param loggingStartupPathToSet   the value to which to set loggingStartupPath
-     */
-    public void setLoggingStartupPath(String loggingStartupPathToSet)
-    {
-        this.loggingStartupPath = loggingStartupPathToSet;
-    }
-
-    /**
-     * @param loggingSystemPathToSet   the value to which to set loggingSystemPath
-     */
-    public void setLoggingSystemPath(String loggingSystemPathToSet)
-    {
-        this.loggingSystemPath = loggingSystemPathToSet;
-    }
-
-    /**
-     * @param loggingTargetingPathToSet   the value to which to set loggingTargetingPath
-     */
-    public void setLoggingTargetingPath(String loggingTargetingPathToSet)
-    {
-        this.loggingTargetingPath = loggingTargetingPathToSet;
-    }
-
-    /**
-     * @param loggingTimestampFormatToSet   the value to which to set loggingTimestampFormat
-     */
-    public void setLoggingTimestampFormat(String loggingTimestampFormatToSet)
-    {
-        this.loggingTimestampFormat = loggingTimestampFormatToSet;
-    }
-
-    /**
-     * @param loggingGenericUsernameToSet   the value to which to set loggingGenericUsername
-     */
-    public void setLoggingGenericUsername(String loggingGenericUsernameToSet)
-    {
-        this.loggingGenericUsername = loggingGenericUsernameToSet;
+        this.logTimestampFormat = logTimestampFormatToSet;
     }
 
     /**

@@ -24,13 +24,21 @@ import org.aitools.programd.parser.TemplateParser;
  */
 public class IDProcessor extends AIMLProcessor
 {
+    /** The label (as required by the registration scheme). */
     public static final String label = "id";
 
+    /**
+     * Creates a new IDProcessor using the given Core.
+     * @param coreToUse the Core object to use
+     */
     public IDProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
     
+    /**
+     * @see org.aitools.programd.processor.AIMLProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.TemplateParser)
+     */
     public String process(Element element, TemplateParser parser)
     {
         return parser.getUserID();

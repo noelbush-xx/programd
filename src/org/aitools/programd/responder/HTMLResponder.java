@@ -153,6 +153,12 @@ public class HTMLResponder extends AbstractMarkupResponder
     
     private static HTMLResponderSettings settings;
 
+    /**
+     * Creates a new HTMLResponder.
+     * @param botidToRespondFor the botid to respond for
+     * @param templateName the template name to use
+     * @param coreToUse the Core to use
+     */
     public HTMLResponder(String botidToRespondFor, String templateName, Core coreToUse)
     {
         super(botidToRespondFor, coreToUse);
@@ -227,11 +233,11 @@ public class HTMLResponder extends AbstractMarkupResponder
             } 
             catch (FileNotFoundException e)
             {
-                throw new DeveloperError("Could not find secret.key file!");
+                throw new DeveloperError("Could not find secret.key file!", e);
             } 
             catch (IOException e)
             {
-                throw new DeveloperError("I/O error reading secret.key file!");
+                throw new DeveloperError("I/O error reading secret.key file!", e);
             } 
         }
         if (templates == null)
@@ -243,6 +249,7 @@ public class HTMLResponder extends AbstractMarkupResponder
 
     /**
      * loginRequest with no parameters means unknown username, password
+     * @return the result of the login request
      */
     public static String loginRequest()
     {
@@ -256,6 +263,7 @@ public class HTMLResponder extends AbstractMarkupResponder
      *            the username
      * @param requestPassword
      *            the password
+     * @return the result of processing the login request
      */
     public static String loginRequest(String requestUser, String requestPassword)
     {
@@ -289,6 +297,7 @@ public class HTMLResponder extends AbstractMarkupResponder
 
     /**
      * Processes a registration request
+     * @return the result of processing the registration request
      */
     public static String registerRequest()
     {
@@ -297,6 +306,7 @@ public class HTMLResponder extends AbstractMarkupResponder
 
     /**
      * Processes a change password request.
+     * @return the result of processing the change password request
      */
     public static String changePasswordRequest()
     {
@@ -338,6 +348,7 @@ public class HTMLResponder extends AbstractMarkupResponder
      * @param userid
      *            the userid given with the request (will not be the same as
      *            final userid)
+     * @return the result of processing the authentication request
      */
     public String authenticate(HttpServletRequest request, HttpServletResponse servletResponse, String userid)
     {
@@ -642,6 +653,10 @@ public class HTMLResponder extends AbstractMarkupResponder
     /**
      * Convenience method; checks that a parameter value is not null before
      * doing equals() comparison.
+     * @param request the request in which to check the indicated parameter
+     * @param parameterName the name of the parameter to check
+     * @param comparisonValue the value to check for the parameter
+     * @return whether or not the specified parameter's value equals the given comparison value
      */
     private static boolean parameterEquals(HttpServletRequest request, String parameterName, String comparisonValue)
     {
@@ -663,6 +678,7 @@ public class HTMLResponder extends AbstractMarkupResponder
      * 
      * @param servletResponse
      *            the response to which to add the cookies
+     * @return whether or not the operation was successful
      */
     private boolean makeNewCookies(HttpServletResponse servletResponse)
     {

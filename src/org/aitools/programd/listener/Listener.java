@@ -9,7 +9,9 @@
 
 package org.aitools.programd.listener;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
@@ -31,7 +33,7 @@ public abstract class Listener implements BotProcess
     protected String botID;
 
     /** The parameters that can be set for this listener. */
-    protected HashMap<String, String> parameters = new HashMap<String, String>();
+    protected Map<String, String> parameters = Collections.checkedMap(new HashMap<String, String>(), String.class, String.class);
     
     /** The logger to use. */
     protected Logger logger;
@@ -41,10 +43,10 @@ public abstract class Listener implements BotProcess
      * 
      * @param coreToUse
      *            the Core object in use
-     * @param botToListenTo
-     *            the bot for which this listener works
+     * @param botToListenFor the bot for whom to listen
      * @param listenerParameters
      *            the parameters for the listener and their default values
+     * @throws InvalidListenerParameterException 
      */
     public Listener(Core coreToUse, Bot botToListenFor, HashMap<String, String> listenerParameters) throws InvalidListenerParameterException
     {
@@ -52,12 +54,13 @@ public abstract class Listener implements BotProcess
         this.bot = botToListenFor;
         this.botID = botToListenFor.getID();
         this.parameters = listenerParameters;
-        this.logger = Logger.getLogger("programd.listener");
+        this.logger = Logger.getLogger("programd");
         checkParameters();
     } 
 
     /**
      * Validates parameters.
+     * @throws InvalidListenerParameterException if a parameter is not valid
      */
     abstract public void checkParameters() throws InvalidListenerParameterException;
 }

@@ -124,11 +124,13 @@ public abstract class ObjectPool
 
     /**
      * Creates a new object to store in the pool.
+     * @return the created object
      */
     protected abstract Object create();
 
     /**
      * Expires an object in the pool.
+     * @param object the object to expire
      */
     protected abstract void expire(Object object);
 
@@ -137,6 +139,7 @@ public abstract class ObjectPool
      * 
      * @param object
      *            the object to validate
+     * @return whether or not the object validates
      */
     protected abstract boolean validate(Object object);
 }

@@ -31,17 +31,13 @@ public class Heart
     /** Will hold a set of Pulses. */
     private ArrayList<Pulse> pulses = new ArrayList<Pulse>();
     
+    /**
+     * Creates a new Heart with the given pulse rate.
+     * @param pulserateToUse the pulse rate to use
+     */
     public Heart(int pulserateToUse)
     {
         this.pulserate = pulserateToUse;
-    } 
-
-    /**
-     * Do not allow anyone to clone a Heart.
-     */
-    protected Object clone() throws CloneNotSupportedException
-    {
-        throw new CloneNotSupportedException();
     } 
 
     /**
@@ -100,6 +96,9 @@ public class Heart
 
     class HeartBeat extends TimerTask
     {
+        /**
+         * @see java.util.TimerTask#run()
+         */
         public void run()
         {
             pulse();

@@ -45,12 +45,6 @@ public class Match
     /** The <code>botid</code> part of the matched path. */
     private String botid;
 
-    /** An empty string. */
-    private static final String EMPTY_STRING = "";
-
-    /** The match path. */
-    private String path = EMPTY_STRING;
-
     /** The nodemapper that resulted from this match. */
     private Nodemapper nodemapper;
 

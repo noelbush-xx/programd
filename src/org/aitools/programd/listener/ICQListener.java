@@ -27,6 +27,7 @@ import org.aitools.programd.responder.TextResponder;
 /**
  * This code is from the Everybuddy Java Project by Chris Carlin
  * (http://EBJava.sourceforge.net/) modified to work with a Program D server.
+ * This needs more documentation.
  * 
  * @author Chris Carlin
  * @author Jon Baer
@@ -38,56 +39,59 @@ public class ICQListener extends Listener
 {
     private TextResponder responder;
     
-    /** Please document. */
+    /** ? */
     private static final int SERVERPORT = 4000;
 
-    /** Please document. */
+    /** ? */
     private static final String SERVER = "icq.mirabilis.com";
 
-    /** Please document. */
+    /** ? */
     private static final String _ICQ = "_ICQ";
 
-    /** Please document. */
+    /** ? */
     private String pass;
 
-    /** Please document. */
+    /** ? */
     private int uin;
 
-    /** Please document. */
+    /** ? */
     protected DatagramSocket socket;
 
-    /** Please document. */
+    /** ? */
     private DatagramPacket packet;
 
-    /** Please document. */
+    /** ? */
     private byte[] buffer;
 
-    /** Please document. */
+    /** ? */
     private short seqNo = 1;
 
-    /** Please document. */
+    /** ? */
     private static final short VERSION = (short) 2;
 
-    /** Please document. */
+    /** ? */
     private static InetAddress serverAddy;
 
-    /** Please document. */
+    /** ? */
     protected boolean online = false;
 
-    /** Please document. */
+    /** ? */
     private int clientport;
 
-    /** Please document. */
+    /** The label (as required by the registration scheme). */
     public static final String label = "ProgramD-ICQ";
 
-    /** Please document. */
+    /** ? */
     private static final String MSG = "ProgramD-ICQ: ";
 
     /**
      * Creates a new ICQListener chat listener for a given bot.
-     * 
-     * @param botToListenTo
-     *            the bot for whom to listen
+     * @param coreToUse
+     *            the Core object in use
+     * @param botToListenFor the bot for whom to listen
+     * @param parametersToUse
+     *            the parameters for the listener and their default values
+     * @throws InvalidListenerParameterException 
      */
     public ICQListener(Core coreToUse, Bot botToListenFor, HashMap<String, String> parametersToUse) throws InvalidListenerParameterException
     {
@@ -105,6 +109,9 @@ public class ICQListener extends Listener
         this.pass = this.parameters.get("password");
     } 
 
+    /**
+     * @see org.aitools.programd.listener.Listener#checkParameters()
+     */
     public void checkParameters() throws InvalidListenerParameterException
     {
         // Check parameters.
@@ -226,13 +233,18 @@ public class ICQListener extends Listener
         signoff();
     } 
 
+    /**
+     * @see org.aitools.programd.bot.BotProcess#shutdown()
+     */
     public void shutdown()
     {
         signoff();
     } 
 
     /**
-     * Please document this.
+     * Sends a message to the ICQ system.
+     * @param msgBuffer the message to send
+     * @throws IOException if there was a problem sending the message
      */
     public void toICQ(byte[] msgBuffer) throws IOException
     {
@@ -254,7 +266,8 @@ public class ICQListener extends Listener
     } 
 
     /**
-     * Please document this.
+     * Handles a message from the ICQ system
+     * @param msgBuffer the message to handle
      */
     private void fromICQ(byte[] msgBuffer)
     {
@@ -353,6 +366,12 @@ public class ICQListener extends Listener
         return b;
     } 
 
+    /**
+     * ?
+     * @param command ?
+     * @return ?
+     * @throws IOException ?
+     */
     public byte[] header(short command) throws IOException
     {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -364,6 +383,12 @@ public class ICQListener extends Listener
         return stream.toByteArray();
     } 
 
+    /**
+     * Processes an acknowledgement from the server
+     * @param a ?
+     * @param b ?
+     * @throws IOException ?
+     */
     public void ack(byte a, byte b) throws IOException
     {
         this.logger.log(Level.FINE, MSG + "Acknowledgement from server!");
@@ -376,11 +401,21 @@ public class ICQListener extends Listener
         this.socket.send(new DatagramPacket(stream.toByteArray(), stream.size(), serverAddy, SERVERPORT));
     } 
 
+    /**
+     * Sends a message to the ICQ system.
+     * @param msgBuffer the message to send
+     * @throws IOException if there is a problem sending the message
+     */
     public void send(byte[] msgBuffer) throws IOException
     {
         this.socket.send(new DatagramPacket(msgBuffer, msgBuffer.length, serverAddy, SERVERPORT));
     } 
 
+    /**
+     * Sends a message to the ICQ system.
+     * @param to the UIN to whom to send the message
+     * @param mesg the message to send
+     */
     public void sendMesg(int to, String mesg)
     {
         logMessage("Response to [" + to + "]: " + mesg);
@@ -403,6 +438,9 @@ public class ICQListener extends Listener
         } 
     } 
 
+    /**
+     * 
+     */
     public void signoff()
     {
         this.online = false;
@@ -446,11 +484,18 @@ class ProgramDICQKeepAlive extends Thread
 {
     ICQListener parent;
 
+    /**
+     * Creates a new ProgramDICQKeepAlive thread
+     * @param parentListener the parent listener
+     */
     public ProgramDICQKeepAlive(ICQListener parentListener)
     {
         this.parent = parentListener;
     } 
 
+    /**
+     * @see java.lang.Thread#run()
+     */
     public void run()
     {
         while (true)

@@ -55,6 +55,7 @@ import org.aitools.programd.util.MersenneTwisterFast;
  */
 public class RandomProcessor extends AIMLProcessor
 {
+    /** The label (as required by the registration scheme). */
     public static final String label = "random";
 
     /** The string &quot;li&quot;, for convenience. */
@@ -66,11 +67,18 @@ public class RandomProcessor extends AIMLProcessor
      */
     private static final LRUCache<String, MersenneTwisterFast> generators = new LRUCache<String, MersenneTwisterFast>(100);
 
+    /**
+     * Creates a new RandomProcessor using the given Core.
+     * @param coreToUse the Core object to use
+     */
     public RandomProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
     
+    /**
+     * @see org.aitools.programd.processor.AIMLProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.TemplateParser)
+     */
     public String process(Element element, TemplateParser parser)
     {
         // Construct the identifying string (botid + userid + element
@@ -85,7 +93,7 @@ public class RandomProcessor extends AIMLProcessor
             generators.put(identifier, generator);
         } 
 
-        int nodeCount = parser.elementCount(LI, element.getChildNodes());
+        int nodeCount = element.getElementsByTagName(LI).getLength();
 
         // Only one <li></li> child means we don't have to pick anything.
         if (nodeCount == 1)

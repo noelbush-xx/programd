@@ -26,8 +26,13 @@ import org.aitools.programd.parser.TemplateParser;
  */
 public class ThatProcessor extends IndexedPredicateProcessor
 {
+    /** The label (as required by the registration scheme). */
     public static final String label = "that";
 
+    /**
+     * Creates a new ThatProcessor using the given Core.
+     * @param coreToUse the Core object to use
+     */
     public ThatProcessor(Core coreToUse)
     {
         super(coreToUse);
@@ -35,7 +40,10 @@ public class ThatProcessor extends IndexedPredicateProcessor
     
     /**
      * Generalizes the processing of a <code>that</code> element to a job for
-     * {@link IndexedPredicateProcessor} .
+     * {@link IndexedPredicateProcessor}.
+     * @param element the <code>bot</code> element
+     * @param parser the parser that is at work
+     * @return the result of processing the element
      */
     public String process(Element element, TemplateParser parser)
     {

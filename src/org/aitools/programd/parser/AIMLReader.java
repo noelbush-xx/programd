@@ -10,6 +10,8 @@
 package org.aitools.programd.parser;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.aitools.programd.util.XMLKit;
@@ -29,6 +31,8 @@ public class AIMLReader extends DefaultHandler
 {
     /** The <code>Listener</code> that will handle new items. */
     protected AIMLReaderListener listener;
+    
+    protected String defaultNamespaceURI;
 
     /*
      * Constants used in parsing.
@@ -81,7 +85,7 @@ public class AIMLReader extends DefaultHandler
 
     /** The string &quot;template&quot;. */
     private static final String TEMPLATE = "template";
-
+    
     /** The current state. */
     private State state = State.IN_UNHANDLED;
 
@@ -109,15 +113,16 @@ public class AIMLReader extends DefaultHandler
     /** The finalized &lt;template&gt;&lt;/template&gt; contents. */
     private String template;
 
-    /** A count of categories collected. */
-    private int categoryCount = 0;
-    
     /**
+     * Creates a new AIMLReader.
+     * @param readerListener the listener that will (presumably) create new categories as they are found by the reader.
+     * @param defaultNamespaceURIToUse the namespace URI to use when none other is specified (?)
      * 
      */
-    public AIMLReader(AIMLReaderListener readerListener)
+    public AIMLReader(AIMLReaderListener readerListener, String defaultNamespaceURIToUse)
     {
         this.listener = readerListener;
+        this.defaultNamespaceURI = defaultNamespaceURIToUse;
     }
 
     /**
@@ -158,6 +163,7 @@ public class AIMLReader extends DefaultHandler
         {
             elementName = localName;
         }
+
         if (this.state == State.IN_PATTERN)
         {
             this.pattern = XMLKit.filterWhitespace(this.patternBuffer.toString());
@@ -179,6 +185,8 @@ public class AIMLReader extends DefaultHandler
 		else if (this.state == State.IN_TEMPLATE)
         {
             // See if we are ending an empty element.
+            boolean makeClosingTag = true;
+            
             // Get the template length (just once).
             int templateLength = this.templateBuffer.length();
             // If the last char of the template string is a '>',
@@ -193,11 +201,12 @@ public class AIMLReader extends DefaultHandler
                     {
                         // So just insert a '/' before the '>'.
                         this.templateBuffer.insert(templateLength - 1, '/');
+                        makeClosingTag = false;
                     }
                 }
             }
             // Otherwise, make a closing tag.
-            else
+            if (makeClosingTag)
             {
                 this.templateBuffer.append(MARKER_START);
                 this.templateBuffer.append('/' + elementName);
@@ -247,24 +256,15 @@ public class AIMLReader extends DefaultHandler
             // some big memory structure, since it may never be used.  So
             // really here we are just reconstituting the XML text for later
             // processing.
-            //
-            this.templateBuffer.append(MARKER_START);
-            this.templateBuffer.append(elementName);
-            if (attributes != null)
-            {
-                for (int index = 0; index < attributes.getLength(); index++)
-                {
-                    String attributeName = attributes.getLocalName(index);
-                    if (EMPTY_STRING.equals(attributeName))
-                    {
-                        attributeName = attributes.getQName(index);
-                    }
-                    this.templateBuffer.append(SPACE);
-                    this.templateBuffer.append(attributeName + EQUAL_QUOTE
-                            + attributes.getValue(index) + QUOTE_MARK);
-                }
-            }
-            this.templateBuffer.append(MARKER_END);
+            this.templateBuffer.append(XMLKit.renderStartTag(elementName, attributes, !uri.equals(this.defaultNamespaceURI), uri));
         }
+    }
+    
+    /**
+     * @see org.xml.sax.helpers.DefaultHandler#error(org.xml.sax.SAXParseException)
+     */
+    public void error(SAXParseException e) throws SAXException
+    {
+        throw e;
     }
 }

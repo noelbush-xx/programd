@@ -9,36 +9,36 @@
 
 package org.aitools.programd.graph;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.loader.AIMLLoader;
 import org.aitools.programd.parser.AIMLReader;
-import org.aitools.programd.parser.StartupFileParser;
+import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.NoMatchException;
 import org.aitools.programd.util.StringKit;
-import org.aitools.programd.util.UserError;
+import org.aitools.programd.util.URITools;
 
 import org.xml.sax.SAXException;
 
@@ -101,10 +101,7 @@ public class Graphmaster
     /** A space. */
     private static final String SPACE = " ";
     
-    /** The string "://". */
-    private static final String COLON_SLASH_SLASH = "://";
-    
-    /** The string "file" */
+    /** The string &quot;file&quot;. */
     private static final String FILE = "file";
     
     // State constants
@@ -129,14 +126,8 @@ public class Graphmaster
     /** The core's settings. */
     private CoreSettings coreSettings;
     
-    /** The startup logger. */
-    private Logger startupLogger;
-    
-    /** The Core (usual) logger. */
+    /** The logger. */
     private Logger logger;
-
-    /** The matching logger. */
-    private Logger matchLogger;
 
     /** The root {@link Nodemaster} . */
     private Nodemapper root = new Nodemaster();
@@ -153,16 +144,36 @@ public class Graphmaster
     /** Load time marker. */
     private boolean loadtime;
 
+    /**
+     * Creates a new Graphmaster for the given Core.
+     * @param coreToUse the core for which to create the Graphmaster.
+     */
     public Graphmaster(Core coreToUse)
     {
         this.core = coreToUse;
         this.coreSettings = this.core.getSettings();
-        this.startupLogger = Logger.getLogger("programd.startup");
-        this.logger = Logger.getLogger("programd.core");
+        this.logger = Logger.getLogger("programd");
+        
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        
+        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+        parserFactory.setNamespaceAware(true);
+        parserFactory.setXIncludeAware(true);
+        
+        Schema aimlSchema;
+        try
+        {
+            aimlSchema = schemaFactory.newSchema(URITools.createValidURL(this.coreSettings.getAimlSchemaLocation()));
+        }
+        catch (SAXException e)
+        {
+            throw new DeveloperError("SAX error occurred while parsing AIML schema.", e);
+        }
+        parserFactory.setSchema(aimlSchema);
         
         try
         {
-            this.parser = SAXParserFactory.newInstance().newSAXParser();
+            this.parser = parserFactory.newSAXParser();
         }
         catch (SAXException e)
         {
@@ -353,7 +364,7 @@ public class Graphmaster
         } 
         //(otherwise...)
         NoMatchException e = new NoMatchException(input);
-        this.matchLogger.log(Level.WARNING, "Match is null.", e);
+        this.logger.log(Level.WARNING, "Match is null.", e);
         throw e;
     } 
 
@@ -666,36 +677,18 @@ public class Graphmaster
     public void startup(String startupFilePath)
     {
         this.loadtime = true;
-        URI uri = null;
-        if (startupFilePath.indexOf(COLON_SLASH_SLASH) > 0)
+        URL url = URITools.createValidURL(startupFilePath);
+        if (url.getProtocol().equals(FILE))
         {
-            try
-            {
-                uri = new URI(startupFilePath);
-            }
-            catch (URISyntaxException e)
-            {
-                this.logger.log(Level.WARNING, "Cannot convert to URI: \"" + startupFilePath + "\"");
-            }            
-        }
-        else
-        {
-            try
-            {
-                uri = new URI(FILE, startupFilePath, EMPTY_STRING);
-            }
-            catch (URISyntaxException e)
-            {
-                this.logger.log(Level.WARNING, "Malformed URI: \"" + startupFilePath + "\"");
-            }            
+            FileManager.pushFileParentAsWorkingDirectory(url.getPath());
         }
         try
         {
-            new StartupFileParser(this.core).process(uri);
+            new BotsConfigurationFileParser(this.core).process(url);
         }
         catch (ProcessorException e)
         {
-            this.startupLogger.log(Level.SEVERE, e.getMessage());
+            this.logger.log(Level.SEVERE, e.getExplanatoryMessage());
             this.core.fail("processor exception during startup", e);
         }
         this.loadtime = false;
@@ -710,128 +703,74 @@ public class Graphmaster
      */
     public void load(String path, String botid)
     {
+        boolean localFile;
+        
         // Check for obviously invalid paths of zero length.
         if (path.length() < 1)
         {
             this.logger.log(Level.WARNING, "Cannot open a file whose name has zero length.");
         } 
 
-        Bot bot = this.core.getBots().getBot(botid);
-        boolean localFile = true;
-        URI uri = null;
-
-        // Guess if this is a URL.
-        if (path.indexOf(COLON_SLASH_SLASH) != -1)
+        // Handle paths with wildcards that need to be expanded.
+        if (path.indexOf(ASTERISK) != -1)
         {
-            // Try to create this as a URL.
+            String[] files = null;
+
             try
             {
-                uri = new URI(path);
-            } 
-            catch (URISyntaxException e)
-            {
-                this.logger.log(Level.WARNING, "Malformed URI: \"" + path + "\"");
-            } 
-
-            if (!loadCheck(uri, bot))
-            {
-                return;
-            } 
-            localFile = false;
-        } 
-
-        // Handle paths which are apparently files.
-        else
-        {
-            if (path.indexOf(ASTERISK) != -1)
-            {
-                String[] files = null;
-
-                try
-                {
-                    files = FileManager.glob(path);
-                } 
-                catch (FileNotFoundException e)
-                {
-                    this.logger.log(Level.WARNING, e.getMessage());
-                } 
-                if (files != null)
-                {
-                    for (int index = files.length; --index >= 0;)
-                    {
-                        load(files[index], botid);
-                    } 
-                    return;
-                } 
-            } 
-
-            File toRead = null;
-            try
-            {
-                toRead = FileManager.getExistingFile(path);
+                files = FileManager.glob(path);
             } 
             catch (FileNotFoundException e)
             {
-                throw new UserError(e.getMessage());
+                this.logger.log(Level.WARNING, e.getMessage());
             } 
-
-            if (toRead != null && toRead.exists() && !toRead.isDirectory())
+            if (files != null)
             {
-                if (!loadCheck(toRead, bot))
+                for (int index = files.length; --index >= 0;)
                 {
-                    return;
+                    load(files[index], botid);
                 } 
+            } 
+            return;
+        } 
 
-                // Add it to the AIMLWatcher, if active (and not the startup
-                // file).
-                if (this.coreSettings.useWatcher())
-                {
-                    if (!path.equals(this.coreSettings.getStartupFilePath()))
-                    {
-                        this.core.getAIMLWatcher().addWatchFile(path, botid);
-                    } 
-                } 
-                FileManager.pushWorkingDirectory(toRead.getParent());
-                try
-                {
-                    uri = new URI(FILE, path, EMPTY_STRING);
-                }
-                catch (URISyntaxException e)
-                {
-                    this.logger.log(Level.WARNING, "Malformed URI: \"" + path + "\"");
-                }
-            } 
-            else
-            {
-                if (toRead == null)
-                {
-                    this.logger.log(Level.WARNING, "Could not find \"" + path + "\".");
-                } 
-                else
-                {
-                    if (!toRead.exists())
-                    {
-                        this.logger.log(Level.WARNING, "\"" + path + "\" does not exist!");
-                    } 
-                    if (toRead.isDirectory())
-                    {
-                        this.logger.log(Level.WARNING, "\"" + path + "\" is a directory!");
-                    } 
-                } 
-            } 
+        Bot bot = this.core.getBots().getBot(botid);
+        URL url = URITools.createValidURL(path);
+
+        if (!loadCheck(url, bot))
+        {
+            return;
+        }
+        
+        // Add it to the AIMLWatcher, if active (and not the startup
+        // file).
+        if (this.coreSettings.useWatcher())
+        {
+            this.core.getAIMLWatcher().addWatchFile(path, botid);
+        }
+        
+        if (!url.getProtocol().equals(FILE))
+        {
+            localFile = false;
+        }
+        else
+        {
+            localFile = true;
+            FileManager.pushFileParentAsWorkingDirectory(path);
         }
         
         try
         {
-            this.parser.parse(uri.toString(), new AIMLReader(new AIMLLoader(this, this.core.getBots(), path, botid)));
+            this.parser.parse(url.toString(), new AIMLReader(new AIMLLoader(this, this.core.getBots(), path, botid), this.coreSettings.getAimlSchemaNamespaceUri()));
+            //this.parser.reset();
         }
         catch (IOException e)
         {
-            this.logger.log(Level.WARNING, "Error reading \"" + uri + "\".");
+            this.logger.log(Level.WARNING, "Error reading \"" + url + "\".");
         }
         catch (SAXException e)
         {
-            this.logger.log(Level.WARNING, "Error parsing \"" + uri + "\".");
+            this.logger.log(Level.WARNING, "Error parsing \"" + url + "\": " + e.getMessage());
         }
 
         if (localFile)
@@ -846,17 +785,18 @@ public class Graphmaster
      * loaded and is allowed to be reloaded, unloads the file first. A null
      * value for bot causes this to return true!!!
      * 
-     * @param path
-     * @param bot
+     * @param path the path to check
+     * @param bot the bot for whom to check
+     * @return whether or not the given path should be loaded
      */
-    private boolean loadCheck(Object path, Bot bot)
+    private boolean loadCheck(URL path, Bot bot)
     {
         if (bot == null)
         {
             return true;
         } 
 
-        HashMap<Object, HashSet<Nodemapper>> loadedFiles = bot.getLoadedFilesMap();
+        HashMap<URL, HashSet<Nodemapper>> loadedFiles = bot.getLoadedFilesMap();
 
         if (loadedFiles.keySet().contains(path))
         {
@@ -881,15 +821,15 @@ public class Graphmaster
      * 
      * @param path
      *            the filename
+     * @param bot the bot for whom to remove the given path
      */
     public void unload(Object path, Bot bot)
     {
         HashSet<Nodemapper> nodemappers = bot.getLoadedFilesMap().get(path);
-        Iterator nodemapperIterator = nodemappers.iterator();
 
-        while (nodemapperIterator.hasNext())
+        for (Nodemapper nodemapper : nodemappers)
         {
-            remove((Nodemapper) nodemapperIterator.next());
+            remove(nodemapper);
             this.totalCategories--;
         } 
     } 

@@ -12,14 +12,14 @@ package org.aitools.programd.responder;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-03-16T12:01:58.697-04:00
+ * Automatically generated from properties file, 2005-03-21T21:57:36.085-04:00
  */
 public class FlashResponderSettings extends Settings
 {
     /**
      * The flash templates directory (relative to programd.home). 
      */
-    String templateDirectory;
+    private String templateDirectory;
 
     /**
      * The default chat template. 
@@ -27,7 +27,7 @@ public class FlashResponderSettings extends Settings
            programd.responder.flash.template.directory will also be available if
            you specify a template">name (without suffixes) parameter in the user request.
      */
-    String chatDefaultTemplatePath;
+    private String chatDefaultTemplatePath;
 
     /**
      * Creates a <code>FlashResponderSettings</code> using default property values.
@@ -40,6 +40,7 @@ public class FlashResponderSettings extends Settings
     /**
      * Creates a <code>FlashResponderSettings</code> with the (XML-formatted) properties
      * located at the given path.
+     * @param propertiesPath the path to the settings file to use
      */
     public FlashResponderSettings(String propertiesPath)
     {

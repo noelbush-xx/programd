@@ -9,8 +9,10 @@
 
 package org.aitools.programd.bot;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,7 +23,7 @@ import java.util.logging.Logger;
 public class BotProcesses
 {
     /** The registry of all bot processes. */
-    private static HashMap<String, BotProcess> registry = new HashMap<String, BotProcess>();
+    private static Map<String, BotProcess> registry = Collections.checkedMap(new HashMap<String, BotProcess>(), String.class, BotProcess.class);
 
     /**
      * Adds a process to the registry and starts it.

@@ -26,6 +26,9 @@ public class StringTripleMatrix
 
     private LinkedList<StringTriple> horizontal;
 
+    /**
+     * Creates a new StringTripleMatrix.
+     */
     public StringTripleMatrix()
     {
         this.vertical = new LinkedList[]
@@ -33,41 +36,67 @@ public class StringTripleMatrix
         this.horizontal = new LinkedList<StringTriple>();
     } 
 
+    /**
+     * @return the horizontal component of the StringTripleMatrix
+     */
     public LinkedList<StringTriple> getAll()
     {
         return this.horizontal;
     } 
 
+    /**
+     * @return an iterator over the horizontal component
+     */
     public Iterator iterator()
     {
         return this.horizontal.iterator();
     } 
 
+    /**
+     * @return a list iterator for this StringTripleMatrix
+     */
     public ListIterator listIterator()
     {
         return this.horizontal.listIterator();
     } 
 
+    /**
+     * @param tuple the tuple to look for in this StringTripleMatrix
+     * @return whether or not this StringTripleMatrix contains the given tuple
+     */
     public boolean contains(StringTriple tuple)
     {
         return this.horizontal.contains(tuple);
     } 
 
+    /**
+     * @return the first-position elements of the vertical component of this StringTripleMatrix
+     */
     public LinkedList<String> getFirsts()
     {
         return this.vertical[0];
     } 
 
+    /**
+     * @return the second-position elements of the vertical component of this StringTripleMatrix
+     */
     public LinkedList<String> getSeconds()
     {
         return this.vertical[1];
     } 
 
+    /**
+     * @return the third-position elements of the vertical component of this StringTripleMatrix
+     */
     public LinkedList<String> getThirds()
     {
         return this.vertical[2];
     } 
 
+    /**
+     * Adds the given StringTuple to this StringTripleMatrix.
+     * @param tuple the tuple to add
+     */
     public void add(StringTriple tuple)
     {
         this.horizontal.add(tuple);
@@ -76,6 +105,10 @@ public class StringTripleMatrix
         this.vertical[2].add(tuple.getThird());
     } 
 
+    /**
+     * Adds the contents of the given StringTripleMatrix to this one.
+     * @param matrix the matrix whose contents we want to add
+     */
     public void addAll(StringTripleMatrix matrix)
     {
         this.horizontal.addAll(matrix.getAll());
@@ -84,17 +117,24 @@ public class StringTripleMatrix
         this.vertical[2].addAll(matrix.getThirds());
     } 
 
+    /**
+     * @return the size of the StringTripleMatrix
+     */
     public int size()
     {
         if (!((this.vertical[0].size() == this.vertical[1].size())
                 && (this.vertical[1].size() == this.vertical[2].size()) && (this.vertical[2].size() == this.horizontal
                 .size())))
         {
-            throw new DeveloperError("Triple matrix integrity violated!");
+            throw new DeveloperError(new IllegalObjectStateException("Triple matrix integrity violated!"));
         } 
         return this.horizontal.size();
     } 
 
+    /**
+     * Ensures that the StringTripleMatrix has the given size.
+     * @param size the size to ensure
+     */
     public void ensureSize(int size)
     {
         if (size() >= size)

@@ -28,6 +28,7 @@ public interface Nodemapper
      *            retrieved
      * @param value
      *            the object to be stored
+     * @return the same object that is stored
      */
     public Object put(String key, Object value);
 

@@ -11,7 +11,6 @@ package org.aitools.programd.multiplexor;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
@@ -22,6 +21,7 @@ import org.aitools.programd.CoreSettings;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.util.DeveloperError;
+import org.aitools.programd.util.IllegalObjectStateException;
 
 /**
  * <p>
@@ -72,7 +72,8 @@ public class PredicateMaster
     protected Logger logger;
 
     /**
-     * Private constructor.
+     * Creates a new PredicateMaster with the given Core as its owner.
+     * @param coreOwner the Core that owns this PredicateMaster
      */
     public PredicateMaster(Core coreOwner)
     {
@@ -84,14 +85,6 @@ public class PredicateMaster
         this.logger = Logger.getLogger("programd");
         this.cacheMax = coreSettings.getPredicateCacheMax();
         this.cacheMin = Math.max(this.cacheMax / 2, 1);
-    } 
-
-    /**
-     * Prohibits cloning this class.
-     */
-    protected Object clone() throws CloneNotSupportedException
-    {
-        throw new CloneNotSupportedException();
     } 
 
     /**
@@ -257,7 +250,7 @@ public class PredicateMaster
             else
             {
                 // This should never, ever happen!
-                throw new DeveloperError("Null string found in user predicates cache!");
+                throw new DeveloperError("Null string found in user predicates cache!", new NullPointerException());
             } 
 
         } 
@@ -277,7 +270,7 @@ public class PredicateMaster
         else
         {
             // This should never, ever happen!
-            throw new DeveloperError("Something other than a String or a ArrayList found in user predicates cache!");
+            throw new DeveloperError(new IllegalObjectStateException("Something other than a String or a ArrayList found in user predicates cache!"));
         } 
 
         // Check the cache.
@@ -403,15 +396,13 @@ public class PredicateMaster
                 }
                 else if (valueObject instanceof ArrayList)
                 {
-                    // I would like to figure out how to avoid the type safety
-                    // warning here, but I don't understand generics enough yet.
                     return (ArrayList<String>) valueObject;
                 }
                 // This should never happen!
-                throw new DeveloperError("Something other than a String or ArrayList found in predicates!");
+                throw new DeveloperError(new IllegalObjectStateException("Something other than a String or ArrayList found in predicates!"));
             }
             // This should never, ever happen!
-            throw new DeveloperError("Null String found as value in predicates!");
+            throw new DeveloperError("Null String found as value in predicates!", new NullPointerException());
         }
         // If the predicate is not found, throw an exception.
         throw new NoSuchPredicateException(name);
@@ -513,7 +504,8 @@ public class PredicateMaster
      * @param userPredicates
      *            the user predicates map
      * @param userid
-     *            the userid
+     *            the userid for which to return the value list
+     * @param botid the botid for which to return the value list
      * @return a value list in <code>userPredicates</code> for
      *         <code>name</code> for <code>userid</code>
      */
@@ -548,10 +540,11 @@ public class PredicateMaster
      * @param name
      *            the predicate name
      * @param botid
+     * @return the best available default predicate
      */
     private String bestAvailableDefault(String name, String botid)
     {
-        HashMap predicatesInfo = this.bots.getBot(botid).getPredicatesInfo();
+        Map predicatesInfo = this.bots.getBot(botid).getPredicatesInfo();
 
         // There may be an individual default defined.
         if (predicatesInfo.containsKey(name))
@@ -575,10 +568,11 @@ public class PredicateMaster
      * @param value
      *            the predicate value
      * @param botid
+     * @return the appropriate result (name or value depending on predicate settings)
      */
     private String nameOrValue(String name, String value, String botid)
     {
-        HashMap predicatesInfo = this.bots.getBot(botid).getPredicatesInfo();
+        Map predicatesInfo = this.bots.getBot(botid).getPredicatesInfo();
 
         // Check if any info is known about this predicate.
         if (predicatesInfo.containsKey(name))
@@ -610,7 +604,7 @@ public class PredicateMaster
         {
             String botid = (String) botsIterator.next();
             Bot bot = this.bots.getBot(botid);
-            Map cache = bot.getPredicateCache();
+            Map<String, Map<String, Object>> cache = bot.getPredicateCache();
 
             if (!cache.isEmpty())
             {
@@ -629,16 +623,11 @@ public class PredicateMaster
                     } 
 
                     // Get the cached predicates for this user.
-                    Map userPredicates = (Map) cache.get(userid);
+                    Map<String, Object> userPredicates = cache.get(userid);
 
                     // Iterate over all cached predicates and save them.
-                    Iterator predicates = userPredicates.keySet().iterator();
-
-                    while (predicates.hasNext())
+                    for (String name : userPredicates.keySet())
                     {
-                        // Get a predicate name.
-                        String name = (String) predicates.next();
-
                         Object valueObject = userPredicates.get(name);
 
                         // Save single-valued predicates.
@@ -676,7 +665,7 @@ public class PredicateMaster
                         else
                         {
                             // This should never, ever happen.
-                            throw new DeveloperError("Something other than a String or ArrayList found in predicates!");
+                            throw new DeveloperError(new IllegalObjectStateException("Something other than a String or ArrayList found in predicates!"));
                         } 
                     } 
 

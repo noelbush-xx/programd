@@ -6,7 +6,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -22,6 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
+/**
+ */
 public class ListDialog extends JDialog
 {
     protected static ListDialog dialog;
@@ -33,6 +34,10 @@ public class ListDialog extends JDialog
     /**
      * Sets up the dialog. The first argument can be null, but it really should
      * be a component in the dialog's controlling frame.
+     * @param comp the component to which to attach the dialog
+     * @param possibleValues the possible values to show in the dialog
+     * @param title the title of the dialog
+     * @param labelText the text of the label in the dialog
      */
     public static void initialize(Component comp, String[] possibleValues, String title, String labelText)
     {
@@ -45,6 +50,9 @@ public class ListDialog extends JDialog
      * want the dialog to come up in the center of the screen. Otherwise, the
      * argument should be the component on top of which the dialog should
      * appear.
+     * @param comp the component to which to set the relative location of the dialog
+     * @param initialValue the initial value of the dialog
+     * @return the value of the dialog
      */
     public static String showDialog(Component comp, String initialValue)
     {
@@ -73,18 +81,18 @@ public class ListDialog extends JDialog
 
         JButton cancelButton = new JButton("Cancel");
         final JButton setButton = new JButton("Set");
-        cancelButton.addActionListener(new ActionListener()
+        cancelButton.addActionListener(new ActionEventIgnoringActionListener()
         {
-            public void actionPerformed(ActionEvent e)
+            public void actionPerformed()
             {
                 dialog.setVisible(false);
             } 
         } );
-        setButton.addActionListener(new ParentAwareActionListener(this)
+        setButton.addActionListener(new ParentAwareActionListener<ListDialog>(this)
         {
             public void actionPerformed(ActionEvent e)
             {
-                ListDialog.value = (String) (((ListDialog) this.parent).list.getSelectedValue());
+                ListDialog.value = (String) this.parent.list.getSelectedValue();
                 ListDialog.dialog.setVisible(false);
             } 
         } );

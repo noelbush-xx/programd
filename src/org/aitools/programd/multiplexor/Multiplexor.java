@@ -15,11 +15,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
+import org.aitools.programd.CoreSettings;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
@@ -49,28 +52,6 @@ import org.aitools.programd.util.XMLKit;
  * crank&quot;. He/she enters his/her id, multiline query, and then receives the
  * reply. The door opens, the Multiplexor ushers him/her out, and seats the next
  * client.
- * </p>
- * <p>
- * Historically, the functionality specified by this class was implemented in <a
- * href="http://cvs.aitools.org/cgi-bin/viewcvs.cgi/ProgramD/src/org/alicebot/server/core/Attic/Classifier.java?rev=1.1&only_with_tag=v4_1_0&content-type=text/vnd.viewcvs-markup">Classifier
- * </a>. However, <a
- * href="http://cvs.aitools.org/cgi-bin/viewcvs.cgi/ProgramD/src/org/alicebot/server/core/Attic/Classifier.java?rev=1.1&only_with_tag=v4_1_0&content-type=text/vnd.viewcvs-markup">Classifier
- * </a> evolved to include database access methods that were not desirable for
- * all implementations. Furthermore, <a
- * href="http://cvs.aitools.org/cgi-bin/viewcvs.cgi/ProgramD/src/org/alicebot/server/core/Attic/Classifier.java?rev=1.1&only_with_tag=v4_1_0&content-type=text/vnd.viewcvs-markup">Classifier
- * </a> lost part of its original purpose as a &quot;classifier of user inputs
- * into categories&quot;. Hence, the Program D <a
- * href="http://cvs.aitools.org/cgi-bin/viewcvs.cgi/ProgramD/src/org/alicebot/server/core/Attic/Classifier.java?rev=1.1&only_with_tag=v4_1_0&content-type=text/vnd.viewcvs-markup">Classifier
- * </a> has been left as-is, except it has been changed into an subclass of this
- * abstract class. There are two new subclasses called
- * {@link FlatFileMultiplexor} and {@link DBMultiplexor} .
- * </p>
- * <p>
- * Starting in 4.1.5, this became an abstract class instead of an interface, and
- * introduced the single public {@link #getResponse} method, rather than
- * allowing multiple public methods for getting responses which can result in
- * synchronization problems. The former <code>AbstractClassifier</code> class
- * was then removed.
  * </p>
  * 
  * @since 4.1.3
@@ -130,6 +111,9 @@ abstract public class Multiplexor
 
     /** The predicate empty default. */
     protected String predicateEmptyDefault;
+    
+    /** The name of the predicate that is supposed to contain the client's name. */
+    protected String clientNamePredicate;
 
     /** A secret key used for (weakly) authorizing authentication requests. */
     protected static String SECRET_KEY;
@@ -148,8 +132,14 @@ abstract public class Multiplexor
     /** The Bots object that belongs to the Core. */
     protected Bots bots;
     
-    /** The matching log where we will record some events. */
-    protected Logger matchingLogger;
+    /** The general log where we will record some events. */
+    protected Logger logger;
+    
+    /** The match logger where information about individual matches can be recorded. */
+    protected Logger matchLogger;
+    
+    /** Whether or not to record match trace info. */
+    protected boolean recordMatchTrace;
 
     /** The time that the Multiplexor started operation. */
     protected long startTime = System.currentTimeMillis();
@@ -165,7 +155,8 @@ abstract public class Multiplexor
 
     /**
      * Constructs the Multiplexor, using some values taken from the
-     * Core object's settings.
+     * Core object's settings.  Note that the {@link #predicateMaster} is <i>not</i>
+     * initialized -- it must be {@link #attach}ed subsequently.
      * 
      * @param coreOwner the Core that owns this Multiplexor
      */
@@ -173,10 +164,24 @@ abstract public class Multiplexor
     {
         this.core = coreOwner;
         this.graphmaster = this.core.getGraphmaster();
-        this.matchingLogger = Logger.getLogger("programd.matching");
+        this.logger = Logger.getLogger("programd");
+        this.matchLogger = Logger.getLogger("programd.matching");
         this.bots = this.core.getBots();
-        this.predicateMaster = this.core.getPredicateMaster();
-        this.predicateEmptyDefault = this.core.getSettings().getPredicateEmptyDefault();
+        CoreSettings coreSettings = this.core.getSettings();
+        this.predicateEmptyDefault = coreSettings.getPredicateEmptyDefault();
+        this.recordMatchTrace = coreSettings.recordMatchTrace();
+        this.clientNamePredicate = coreSettings.getClientNamePredicate();
+    }
+    
+    /**
+     * Attaches the given {@link org.aitools.programd.multiplexor.PredicateMaster PredicateMaster}
+     * to this <code>Multiplexor</code>.
+     * 
+     * @param predicateMasterToAttach
+     */
+    public void attach(PredicateMaster predicateMasterToAttach)
+    {
+        this.predicateMaster = predicateMasterToAttach;
     }
 
     /**
@@ -194,7 +199,7 @@ abstract public class Multiplexor
         } 
         catch (IOException e)
         {
-            throw new UserError("Error creating secret key file.");
+            throw new UserError("Error creating secret key file.", e);
         } 
         PrintWriter out;
         try
@@ -203,7 +208,7 @@ abstract public class Multiplexor
         } 
         catch (FileNotFoundException e)
         {
-            throw new UserError("Error writing secret key file.");
+            throw new UserError("Error writing secret key file.", e);
         } 
         out.print(SECRET_KEY);
         out.flush();
@@ -222,6 +227,7 @@ abstract public class Multiplexor
      *            the botid from which to get the response
      * @param responder
      *            the Responder who cares about this response
+     * @return the response
      */
     public synchronized String getResponse(String input, String userid, String botid, Responder responder)
     {
@@ -230,7 +236,7 @@ abstract public class Multiplexor
 
         // Split sentences (after performing substitutions and responder
         // pre-processing).
-        ArrayList sentenceList = bot.sentenceSplit(bot.applyInputSubstitutions(responder.preprocess(input)));
+        List<String> sentenceList = bot.sentenceSplit(bot.applyInputSubstitutions(responder.preprocess(input)));
 
         // Get an iterator on the replies.
         Iterator replies = getReplies(sentenceList, userid, botid).iterator();
@@ -238,23 +244,55 @@ abstract public class Multiplexor
         // Start by assuming an empty response.
         String response = EMPTY_STRING;
 
-        // Get an iterator over the input sentences.
-        Iterator sentences = sentenceList.iterator();
-
         // For each input sentence...
-        while (sentences.hasNext())
+        for (String sentence : sentenceList)
         {
             // ...ask the responder to append the reply to the response, and
             // accumulate the result.
-            response = responder.append((String) sentences.next(), (String) replies.next(), response);
-        } 
-
-        // Log the response.
-        //responder.log(input, response, hostName, userid, botid);
+            response = responder.append(sentence, (String) replies.next(), response);
+        }
 
         // Finally, ask the responder to postprocess the response, and return
         // the result.
         response = responder.postprocess(response);
+
+        // Return the response (may be just EMPTY_STRING!)
+        return response;
+    } 
+
+    /**
+     * Returns the response to a non-internal input, without using a Responder.
+     * 
+     * @param input
+     *            the &quot;non-internal&quot; (possibly multi-sentence,
+     *            non-substituted) input
+     * @param userid
+     *            the userid for whom the response will be generated
+     * @param botid
+     *            the botid from which to get the response
+     * @return the response
+     */
+    public synchronized String getResponse(String input, String userid, String botid)
+    {
+        // Get the specified bot object.
+        Bot bot = this.bots.getBot(botid);
+
+        // Split sentences (after performing substitutions).
+        List<String> sentenceList = bot.sentenceSplit(bot.applyInputSubstitutions(input));
+
+        // Get an iterator on the replies.
+        Iterator replies = getReplies(sentenceList, userid, botid).iterator();
+
+        // Start by assuming an empty response.
+        String response = EMPTY_STRING;
+
+        // For each input sentence...
+        for (String sentence : sentenceList)
+        {
+            // ...ask the responder to append the reply to the response, and
+            // accumulate the result.
+            response += (String)replies.next();
+        }
 
         // Return the response (may be just EMPTY_STRING!)
         return response;
@@ -281,6 +319,7 @@ abstract public class Multiplexor
      *            the botid from which to get the response
      * @param parser
      *            the parser object to update when generating the response
+     * @return the response
      */
     public String getInternalResponse(String input, String userid, String botid, TemplateParser parser)
     {
@@ -288,7 +327,7 @@ abstract public class Multiplexor
         Bot bot = this.bots.getBot(botid);
 
         // Ready the that and topic predicates for constructing the match path.
-        ArrayList thatSentences = bot.sentenceSplit(this.predicateMaster.get(THAT, 1, userid, botid));
+        List thatSentences = bot.sentenceSplit(this.predicateMaster.get(THAT, 1, userid, botid));
         String that = InputNormalizer.patternFitIgnoreCase((String) thatSentences.get(thatSentences.size() - 1));
 
         if (that.equals(EMPTY_STRING) || that.equals(this.predicateEmptyDefault))
@@ -317,16 +356,16 @@ abstract public class Multiplexor
      * @param botid
      * @return the list of replies to the input sentences
      */
-    private ArrayList getReplies(ArrayList sentenceList, String userid, String botid)
+    private List getReplies(List<String> sentenceList, String userid, String botid)
     {
         // All replies will be assembled in this ArrayList.
-        ArrayList<String> replies = new ArrayList<String>(sentenceList.size());
+        List<String> replies = Collections.checkedList(new ArrayList<String>(sentenceList.size()), String.class);
 
         // Get the requested bot.
         Bot bot = this.bots.getBot(botid);
 
         // Ready the that and topic predicates for constructing the match path.
-        ArrayList thatSentences = bot.sentenceSplit(this.predicateMaster.get(THAT, 1, userid, botid));
+        List thatSentences = bot.sentenceSplit(this.predicateMaster.get(THAT, 1, userid, botid));
         String that = InputNormalizer.patternFitIgnoreCase((String) thatSentences.get(thatSentences.size() - 1));
 
         if (that.equals(EMPTY_STRING) || that.equals(this.predicateEmptyDefault))
@@ -340,21 +379,19 @@ abstract public class Multiplexor
             topic = ASTERISK;
         } 
 
-        Iterator sentences = sentenceList.iterator();
-
         // We might use this to track matching statistics.
         long time = 0;
 
         // If match trace info is on, mark the time just before matching starts.
-        /* if (SHOW_MATCH_TRACE)
-        {*/
-            time = System.currentTimeMillis();
-        /*}*/ 
-
-        // Get a reply for each sentence.
-        while (sentences.hasNext())
+        if (this.recordMatchTrace)
         {
-            replies.add(getReply((String) sentences.next(), that, topic, userid, botid));
+            time = System.currentTimeMillis();
+        }
+        
+        // Get a reply for each sentence.
+        for (String sentence : sentenceList)
+        {
+            replies.add(getReply(sentence, that, topic, userid, botid));
         } 
 
         // Increment the (static) response count.
@@ -362,16 +399,16 @@ abstract public class Multiplexor
 
         // If match trace info is on, produce statistics about the response
         // time.
-        /*if (SHOW_MATCH_TRACE)
-        {*/
+        if (this.recordMatchTrace)
+        {
             // Mark the time that processing is finished.
             time = System.currentTimeMillis() - time;
 
             // Calculate the average response time.
             this.totalTime += time;
             this.avgResponseTime = (float) this.totalTime / (float) this.responseCount;
-            /*Trace.userinfo(RESPONSE_SPACE + responseCount + SPACE_IN_SPACE + time + MS_AVERAGE + avgResponseTime + MS);
-        }*/
+            this.matchLogger.log(Level.FINE, RESPONSE_SPACE + this.responseCount + SPACE_IN_SPACE + time + MS_AVERAGE + this.avgResponseTime + MS);
+        }
 
         // Invoke targeting if appropriate.
         /*
@@ -424,34 +461,10 @@ abstract public class Multiplexor
             throw new DeveloperError(e);
         } 
 
-        String reply = null;
-        //try
-        //{
-            reply = getMatchResult(input, that, topic, userid, botid, parser);
-        //}
-        /*
-        catch (DeveloperError e)
-        {
-            Log.devfail(e);
-            Log.devfail("Exiting due to developer error.", Log.ERROR);
-            System.exit(1);
-        } 
-        catch (UserError e)
-        {
-            Log.userfail(e);
-            Log.devfail("Exiting due to user error.", Log.ERROR);
-            System.exit(1);
-        } 
-        catch (RuntimeException e)
-        {
-            Log.devfail(e);
-            Log.devfail("Exiting due to unforeseen runtime exception.", Log.ERROR);
-            System.exit(1);
-        }
-        */
+        String reply = getMatchResult(input, that, topic, userid, botid, parser);
         if (reply == null)
         {
-            this.core.fail(new DeveloperError("getMatchReply generated a null reply!"));
+            this.core.fail(new DeveloperError("getMatchReply generated a null reply!", new NullPointerException()));
         } 
 
         // Push the reply onto the <that/> stack.
@@ -463,26 +476,24 @@ abstract public class Multiplexor
     /**
      * Gets the match result from the Graphmaster.
      * 
-     * @param input
-     * @param that
-     * @param topic
-     * @param userid
-     * @param botid
-     * @param parser
+     * @param input the input to match
+     * @param that the current that value
+     * @param topic the current topic value
+     * @param userid the userid for whom to perform the match
+     * @param botid the botid for whom to perform the match
+     * @param parser the parser to use
+     * @return the match result
      */
     private String getMatchResult(String input, String that, String topic, String userid, String botid,
             TemplateParser parser)
     {
         // Always show the input path (in any case, if match trace is on).
-        /*if (SHOW_MATCH_TRACE)
+        if (this.recordMatchTrace)
         {
-            Trace.userinfo(PredicateMaster.get(Settings.getClientNamePredicate(), userid, botid) + '>' + SPACE + input
+            this.matchLogger.log(Level.FINE, this.predicateMaster.get(this.clientNamePredicate, userid, botid).trim() + '>' + SPACE + input
                     + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + that + SPACE + Graphmaster.PATH_SEPARATOR + SPACE
                     + topic + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + botid);
-        }*/
-
-        // Create a case-insensitive pattern-fitted version of the input.
-        //String inputIgnoreCase = InputNormalizer.patternFitIgnoreCase(input);
+        }
 
         Match match = null;
 
@@ -492,21 +503,21 @@ abstract public class Multiplexor
         } 
         catch (NoMatchException e)
         {
-            this.matchingLogger.log(Level.INFO, e.getMessage());
+            this.logger.log(Level.INFO, e.getMessage());
             return EMPTY_STRING;
         } 
 
         if (match == null)
         {
-            this.matchingLogger.log(Level.INFO, "No match found for input \"" + input + "\".");
+            this.logger.log(Level.INFO, "No match found for input \"" + input + "\".");
             return EMPTY_STRING;
         } 
 
-        /*if (SHOW_MATCH_TRACE)
+        if (this.recordMatchTrace)
         {
-            Trace.userinfo(LABEL_MATCH + match.getPath());
-            Trace.userinfo(LABEL_FILENAME + QUOTE_MARK + match.getFileName() + QUOTE_MARK);
-        }*/ 
+            this.matchLogger.log(Level.FINE, LABEL_MATCH + match.getPath());
+            this.matchLogger.log(Level.FINE, LABEL_FILENAME + QUOTE_MARK + match.getFileName() + QUOTE_MARK);
+        }
 
         ArrayList<String> stars = match.getInputStars();
         if (stars.size() > 0)
@@ -536,7 +547,7 @@ abstract public class Multiplexor
         catch (ProcessorException e)
         {
             // Log the error message.
-            Logger.getLogger("programd.error").log(Level.SEVERE, e.getMessage());
+            Logger.getLogger("programd").log(Level.SEVERE, e.getExplanatoryMessage());
 
             // Set response to empty string.
             return EMPTY_STRING;
@@ -676,6 +687,7 @@ abstract public class Multiplexor
     /**
      * Returns a count of known userids. This may be defined differently for
      * different multiplexors.
+     * @param botid the botid for which we want a count of known userids
      * 
      * @return a count of known userids
      */

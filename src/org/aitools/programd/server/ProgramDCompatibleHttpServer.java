@@ -9,8 +9,6 @@
 
 package org.aitools.programd.server;
 
-import java.io.IOException;
-
 import org.aitools.programd.bot.BotProcess;
 
 /**
@@ -24,12 +22,10 @@ public interface ProgramDCompatibleHttpServer extends BotProcess
     /**
      * Configures the http server given the path or URL to a configuration file.
      * 
-     * @param configFilePath
-     *            path or URL for a configuration file
-     * @throws IOException
-     *             if the configuration file cannot be read
+     * @param configParameters
+     *            parameters used in configuring the server
      */
-    public void configure(String configFilePath) throws IOException;
+    public void configure(Object ... configParameters);
 
     /**
      * Starts the http server.

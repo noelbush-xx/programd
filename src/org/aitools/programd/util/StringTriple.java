@@ -23,6 +23,12 @@ public class StringTriple
 
     private String third;
 
+    /**
+     * Constructs a StringTriple from the given three strings.
+     * @param firstString the first string
+     * @param secondString the second string
+     * @param thirdString the third string
+     */
     public StringTriple(String firstString, String secondString, String thirdString)
     {
         this.first = firstString;
@@ -30,36 +36,60 @@ public class StringTriple
         this.third = thirdString;
     } 
 
+    /**
+     * @return the first string
+     */
     public String getFirst()
     {
         return this.first;
     } 
 
+    /**
+     * @return the second string
+     */
     public String getSecond()
     {
         return this.second;
     } 
 
+    /**
+     * @return the third string
+     */
     public String getThird()
     {
         return this.third;
     } 
 
+    /**
+     * Sets the text of the first string.
+     * @param text the text to set
+     */
     public void setFirst(String text)
     {
         this.first = text;
     } 
 
+    /**
+     * Sets the text of the second string.
+     * @param text the text to set
+     */
     public void setSecond(String text)
     {
         this.second = text;
     } 
 
+    /**
+     * Sets the text of the third string.
+     * @param text the text to set
+     */
     public void setThird(String text)
     {
         this.third = text;
     } 
 
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     public boolean equals(Object object)
     {
         StringTriple tuple;

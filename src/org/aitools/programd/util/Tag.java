@@ -13,6 +13,8 @@ package org.aitools.programd.util;
  * A simple little utility class for working with a pseudo-XML concept of
  * &quot;tag&quot;.
  * 
+ * TODO: Get rid of this!
+ * 
  * @author Jon Baer
  */
 public class Tag

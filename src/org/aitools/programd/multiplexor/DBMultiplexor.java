@@ -14,7 +14,9 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,17 +51,21 @@ public class DBMultiplexor extends Multiplexor
     /** The logger for database activity. */
     private Logger dbLogger;
 
-    private HashMap<String, HashMap<String, String>> userCacheForBots = new HashMap<String, HashMap<String, String>>();
+    private Map<String, Map<String, String>> userCacheForBots = new HashMap<String, Map<String, String>>();
 
     // Convenience constants.
     
     /** The string &quot;UTF-8&quot; (for character encoding conversion). */
     private static final String ENC_UTF8 = "UTF-8";
 
+    /**
+     * Creates a new DBMultiplexor with the given Core as owner.
+     * @param coreOwner the Core that owns this DBMultiplexor
+     */
     public DBMultiplexor(Core coreOwner)
     {
         super(coreOwner);
-        this.dbLogger = Logger.getLogger("programd.database");
+        this.dbLogger = Logger.getLogger("programd");
     }
     
     /**
@@ -85,6 +91,10 @@ public class DBMultiplexor extends Multiplexor
 
     /**
      * Saves a predicate in a database.
+     * @param name the name of the predicate to save
+     * @param value the value to save for the predicate
+     * @param userid the userid with which to associate this predicate
+     * @param botid the botid with which to associate this predicate
      */
     public void savePredicate(String name, String value, String userid, String botid)
     {
@@ -99,7 +109,7 @@ public class DBMultiplexor extends Multiplexor
         } 
         catch (UnsupportedEncodingException e)
         {
-            throw new DeveloperError("This platform does not support UTF-8!");
+            throw new DeveloperError("This platform does not support UTF-8!", e);
         } 
 
         DbAccess dbaRef = null;
@@ -142,6 +152,11 @@ public class DBMultiplexor extends Multiplexor
 
     /**
      * Loads the value of a predicate from a database.
+     * @param name the name of the predicate to locate
+     * @param userid the userid whose value of the given predicate is desired
+     * @param botid the botid whose userid-associated value of the given predicate is desired
+     * @return the value of the predicate
+     * @throws NoSuchPredicateException if no such predicate has been defined for the given userid and botid pair
      */
     public String loadPredicate(String name, String userid, String botid) throws NoSuchPredicateException
     {
@@ -185,13 +200,18 @@ public class DBMultiplexor extends Multiplexor
         } 
         catch (UnsupportedEncodingException e)
         {
-            throw new DeveloperError("This platform does not support UTF-8!");
+            throw new DeveloperError("This platform does not support UTF-8!", e);
         } 
     } 
 
     /**
      * Creates a userid with a given password. If the userid already exists,
      * returns false.
+     * @param userid the userid to create
+     * @param password the password to associate with the userid
+     * @param secretKey the secret key that helps validate this userid/password creation
+     * @param botid the botid with whom to associate this userid/password combination
+     * @return whether the user so created was new
      */
     public boolean createUser(String userid, String password, String secretKey, String botid)
     {
@@ -239,6 +259,9 @@ public class DBMultiplexor extends Multiplexor
         return true;
     } 
 
+    /**
+     * @see org.aitools.programd.multiplexor.Multiplexor#checkUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     */
     public boolean checkUser(String userid, String password, String secretKey, String botid)
     {
         if (!secretKey.equals(SECRET_KEY))
@@ -249,9 +272,9 @@ public class DBMultiplexor extends Multiplexor
         // Look first to see if the user is already in the cache.
         if (!this.userCacheForBots.containsKey(botid))
         {
-            this.userCacheForBots.put(botid, new HashMap<String, String>());
+            this.userCacheForBots.put(botid, Collections.checkedMap(new HashMap<String, String>(), String.class, String.class));
         } 
-        HashMap<String, String> userCache = this.userCacheForBots.get(botid);
+        Map<String, String> userCache = this.userCacheForBots.get(botid);
         if (userCache.containsKey(userid))
         {
             // If so, check against stored password.
@@ -279,6 +302,7 @@ public class DBMultiplexor extends Multiplexor
      *            the userid to check
      * @param password
      *            the password to check
+     * @param botid the botid for which to check this combination
      * @return whether the userid and password combination is valid
      */
     private boolean checkUserInDB(String userid, String password, String botid)
@@ -317,7 +341,7 @@ public class DBMultiplexor extends Multiplexor
                 } 
                 if (returnCount > 1)
                 {
-                    throw new UserError("Duplicate user name: \"" + userid + "\"");
+                    throw new UserError(new DuplicateUserIDError(userid));
                 } 
             } 
             rs.close();
@@ -338,6 +362,9 @@ public class DBMultiplexor extends Multiplexor
         return true;
     } 
 
+    /**
+     * @see org.aitools.programd.multiplexor.Multiplexor#changePassword(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     */
     public boolean changePassword(String userid, String password, String secretKey, String botid)
     {
         if (!secretKey.equals(SECRET_KEY))
@@ -381,12 +408,15 @@ public class DBMultiplexor extends Multiplexor
         {
             throw new UserError("Database error.", e);
         }
-        HashMap<String, String> userCache = this.userCacheForBots.get(botid);
+        Map<String, String> userCache = this.userCacheForBots.get(botid);
         userCache.remove(userid);
         userCache.put(userid, password);
         return true;
     } 
 
+    /**
+     * @see org.aitools.programd.multiplexor.Multiplexor#useridCount(java.lang.String)
+     */
     public int useridCount(String botid)
     {
         return ((HashMap) this.userCacheForBots.get(botid)).size();

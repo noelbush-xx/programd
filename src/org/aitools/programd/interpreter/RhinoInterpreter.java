@@ -26,8 +26,11 @@ public class RhinoInterpreter implements Interpreter
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     
     /** The logger. */
-    private static final Logger logger = Logger.getLogger("programd.interpreter");
+    private static final Logger logger = Logger.getLogger("programd");
 
+    /**
+     * @see org.aitools.programd.interpreter.Interpreter#evaluate(java.lang.String)
+     */
     public String evaluate(String expression)
     {
         logger.log(Level.FINE, "evaluate: \"" + expression + "\"");
@@ -41,7 +44,7 @@ public class RhinoInterpreter implements Interpreter
         } 
         catch (Exception e)
         {
-            Logger.getLogger("programd.error").log(Level.WARNING, "JavaScript exception (see interpreter log).");
+            logger.log(Level.WARNING, "JavaScript exception (see interpreter log).");
             logger.log(Level.WARNING, "Got exception:" + LINE_SEPARATOR + e + LINE_SEPARATOR + "when processing:" + LINE_SEPARATOR + expression);
         } 
         Context.exit();

@@ -55,6 +55,10 @@ abstract public class Processor
     /** The string &quot;enabled&quot;. */
     protected static final String ENABLED = "enabled";
     
+    /**
+     * Creates a new Processor using the given Core.
+     * @param coreToUse the Core object to use
+     */
     public Processor(Core coreToUse)
     {
         this.core = coreToUse;

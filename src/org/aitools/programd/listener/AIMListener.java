@@ -125,9 +125,6 @@ public class AIMListener extends Listener
     /** The string &quot;7&quot;. */
     private static final String SEVEN = "7";
 
-    /** The string &quot;8&quot;. */
-    private static final String EIGHT = "8";
-
     /** The string &quot;9&quot;. */
     private static final String NINE = "9";
 
@@ -215,14 +212,15 @@ public class AIMListener extends Listener
     /** The label (as required by the registration scheme). */
     public static final String label = "ProgramD-AIM";
 
-    /** The message label. */
-    private static final String MSG = "ProgramD-AIM: ";
-
     /**
      * Constructs a new <code>AIMListener</code> listener and sets up
      * parameters.
-     * 
-     * @param botToListen   the bot to listen to
+     * @param coreToUse
+     *            the Core object in use
+     * @param botToListenFor the bot for whom to listen
+     * @param parametersToUse
+     *            the parameters for the listener and their default values
+     * @throws InvalidListenerParameterException 
      */
     public AIMListener(Core coreToUse, Bot botToListenFor, HashMap<String, String> parametersToUse) throws InvalidListenerParameterException
     {
@@ -247,8 +245,8 @@ public class AIMListener extends Listener
     }
 
     /**
-     * This will be called by the super constructor.
-     * @return whether the configured parameters are valid
+     * Checks all the parameters for validity.
+     * @throws InvalidListenerParameterException if a parameter is invalid
      */
     public void checkParameters() throws InvalidListenerParameterException
     {
@@ -674,9 +672,8 @@ public class AIMListener extends Listener
 
     /**
      * Encodes a password according to AIM's stupid requirement.
+     * @param pass the password to encode
      * 
-     * @param password
-     *            the password to encode
      * @return the result of this operation.
      */
     public static String imRoast(String pass)

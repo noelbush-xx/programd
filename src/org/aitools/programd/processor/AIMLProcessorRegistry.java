@@ -17,9 +17,10 @@ import org.aitools.programd.util.ClassRegistry;
  * @since 4.1.3
  * @author Noel Bush
  */
-public class AIMLProcessorRegistry extends ClassRegistry {
-	/** The version of AIML for which this registry is intended. */
-	private static final String VERSION = "1.0.1";
+public class AIMLProcessorRegistry extends ClassRegistry
+{
+	/** The XML namespace URI for AIML. */
+	private static final String XMLNS = "http://alicebot.org/2001/AIML-1.0.1";
 
 	/** The list of processors (fully-qualified class names). */
 	private static final String[] PROCESSOR_LIST = {
@@ -59,10 +60,13 @@ public class AIMLProcessorRegistry extends ClassRegistry {
 	/** The private member that initializes this class. */
 	private static final AIMLProcessorRegistry self = new AIMLProcessorRegistry();
 
-	public AIMLProcessorRegistry() {
-		super(VERSION, PROCESSOR_LIST, PROCESSOR_BASE_CLASS_NAME);
+	private AIMLProcessorRegistry() {
+		super(XMLNS, PROCESSOR_LIST, PROCESSOR_BASE_CLASS_NAME);
 	}
 
+	/**
+	 * @return the AIMLProcessorRegistry itself
+	 */
 	public static AIMLProcessorRegistry getSelf() {
 		return self;
 	}

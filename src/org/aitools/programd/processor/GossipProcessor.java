@@ -28,15 +28,23 @@ import org.aitools.programd.parser.TemplateParser;
  */
 public class GossipProcessor extends AIMLProcessor
 {
+    /** The label (as required by the registration scheme). */
     public static final String label = "gossip";
     
-    private static final Logger logger = Logger.getLogger("programd.gossip");
+    private static final Logger logger = Logger.getLogger("programd");
 
+    /**
+     * Creates a new GossipProcessor using the given Core.
+     * @param coreToUse the Core object to use
+     */
     public GossipProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
     
+    /**
+     * @see org.aitools.programd.processor.AIMLProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.TemplateParser)
+     */
     public String process(Element element, TemplateParser parser)
     {
         // Get the gossip.

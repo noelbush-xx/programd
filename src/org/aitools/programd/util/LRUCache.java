@@ -40,6 +40,8 @@ import java.util.Iterator;
  * <p>
  * Null keys are not allowed. LRUCache is synchronized.
  * </p>
+ * @param <K> the key
+ * @param <V> the value
  */
 public class LRUCache<K,V>
  {
@@ -108,7 +110,7 @@ public class LRUCache<K,V>
     }
 
     /**
-     * Returns the current number of entries in the cache.
+     * @return the current number of entries in the cache
      */
     public int size()
     {
@@ -251,6 +253,7 @@ public class LRUCache<K,V>
      *            key to store data
      * @param value
      *            value to be stored
+     * @param replace whether or not to replace the old value
      * @return old value stored under the key
      */
     private V put(K key, V value, boolean replace)
@@ -330,6 +333,7 @@ public class LRUCache<K,V>
     /**
      * Put item at the head of the used-twice lru list. This is always called
      * while synchronized.
+     * @param item the item to put at the head of the list
      */
     private void updateLru(CacheItem<K,V> item)
     {
@@ -401,7 +405,7 @@ public class LRUCache<K,V>
     }
 
     /**
-     * Remove the last item in the LRU
+     * @return the last item in the LRU
      */
     public boolean removeTail()
     {
@@ -546,6 +550,7 @@ public class LRUCache<K,V>
 
     /**
      * Put the item in the best location available in the hash table.
+     * @param item the item to put in the best location available
      */
     private void refillEntry(CacheItem<K,V> item)
     {
@@ -564,7 +569,7 @@ public class LRUCache<K,V>
     }
 
     /**
-     * Returns the keys stored in the cache
+     * @return the keys stored in the cache
      */
     public Iterator<K> keys()
     {
@@ -574,7 +579,8 @@ public class LRUCache<K,V>
     }
 
     /**
-     * Returns keys stored in the cache using an old iterator
+     * @param oldIter the old iterator to use
+     * @return keys stored in the cache using an old iterator
      */
     public Iterator<K> keys(Iterator<K> oldIter)
     {
@@ -584,7 +590,7 @@ public class LRUCache<K,V>
     }
 
     /**
-     * Returns the values in the cache
+     * @return the values in the cache
      */
     public Iterator<V> values()
     {
@@ -593,6 +599,10 @@ public class LRUCache<K,V>
         return iter;
     }
 
+    /**
+     * @param oldIter the old iterator
+     * @return the values of the old iterator
+     */
     public Iterator<V> values(Iterator<V> oldIter)
     {
         ValueIterator<K,V> iter = (ValueIterator<K,V>) oldIter;
@@ -601,7 +611,7 @@ public class LRUCache<K,V>
     }
 
     /**
-     * Returns the entries
+     * @return the entries
      */
     public Iterator<Entry<K,V>> iterator()
     {
@@ -609,7 +619,7 @@ public class LRUCache<K,V>
     }
 
     /**
-     * Returns the hit count.
+     * @return the hit count.
      */
     public long getHitCount()
     {
@@ -617,7 +627,7 @@ public class LRUCache<K,V>
     }
 
     /**
-     * Returns the miss count.
+     * @return the miss count.
      */
     public long getMissCount()
     {
@@ -626,6 +636,8 @@ public class LRUCache<K,V>
 
     /**
      * A cache item
+     * @param <K> the key
+     * @param <V> the value
      */
     static class CacheItem<K,V>
     {
@@ -651,6 +663,8 @@ public class LRUCache<K,V>
 
     /**
      * Iterator of cache keys
+     * @param <K> the key
+     * @param <V> the value
      */
     static class KeyIterator<K,V> implements Iterator<K>
     {
@@ -670,7 +684,7 @@ public class LRUCache<K,V>
         }
 
         /**
-         * Returns the next entry in the cache.
+         * @return the next entry in the cache
          */
         public boolean hasNext()
         {
@@ -690,7 +704,7 @@ public class LRUCache<K,V>
         }
 
         /**
-         * Returns the next value.
+         * @return the next value
          */
         public K next()
         {
@@ -710,6 +724,9 @@ public class LRUCache<K,V>
             return null;
         }
 
+        /**
+         * @see java.util.Iterator#remove()
+         */
         public void remove()
         {
             throw new UnsupportedOperationException();
@@ -718,6 +735,8 @@ public class LRUCache<K,V>
 
     /**
      * Iterator of cache values
+     * @param <K> the key
+     * @param <V> the value
      */
     static class ValueIterator<K,V> implements Iterator<V>
     {
@@ -737,7 +756,7 @@ public class LRUCache<K,V>
         }
 
         /**
-         * Returns the next entry in the cache.
+         * @return the next entry in the cache.
          */
         public boolean hasNext()
         {
@@ -760,7 +779,7 @@ public class LRUCache<K,V>
         }
 
         /**
-         * Returns the next value.
+         * @return the next value
          */
         public V next()
         {
@@ -783,6 +802,9 @@ public class LRUCache<K,V>
             return null;
         }
 
+        /**
+         * @see java.util.Iterator#remove()
+         */
         public void remove()
         {
             throw new UnsupportedOperationException();
@@ -791,16 +813,18 @@ public class LRUCache<K,V>
 
     /**
      * Interface for entry iterator;
+     * @param <K> the key
+     * @param <V> the value
      */
     public interface Entry<K,V>
     {
         /**
-         * Returns the key.
+         * @return the key
          */
         public K getKey();
 
         /**
-         * Returns the value.
+         * @return the value
          */
         public V getValue();
     }
@@ -812,13 +836,20 @@ public class LRUCache<K,V>
     {
         private int _i = -1;
 
-        private LRUCache _cache;
+        private LRUCache<K,V> _cache;
 
-        public EntryIterator(LRUCache cache)
+        /**
+         * Creates a new EntryIterator using the given cache.
+         * @param cache the cache to use
+         */
+        public EntryIterator(LRUCache<K,V> cache)
         {
             this._cache = cache;
         }
 
+        /**
+         * @see java.util.Iterator#hasNext()
+         */
         public boolean hasNext()
         {
             int i = this._i + 1;
@@ -835,6 +866,10 @@ public class LRUCache<K,V>
             return i < length;
         }
 
+        /**
+         * @return the next entry
+         * @see java.util.Iterator#next()
+         */
         public Entry<K,V> next()
         {
             int i = this._i + 1;
@@ -857,7 +892,7 @@ public class LRUCache<K,V>
         }
 
         /**
-         * Returns the key.
+         * @return the key
          */
         public K getKey()
         {
@@ -873,7 +908,7 @@ public class LRUCache<K,V>
         }
 
         /**
-         * Returns the value.
+         * @return the value
          */
         public V getValue()
         {
@@ -888,6 +923,9 @@ public class LRUCache<K,V>
             return null;
         }
 
+        /**
+         * @see java.util.Iterator#remove()
+         */
         public void remove()
         {
             CacheItem<K,V>[] entries = this._cache._entries;

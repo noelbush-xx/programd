@@ -40,10 +40,11 @@ public class DatabaseChatLogHandler extends Handler
     
     /**
      * Private constructor to help enforce singleton pattern.
+     * @param settings the Core settings to use
      */
     public DatabaseChatLogHandler(CoreSettings settings)
     {
-        this.logger = Logger.getLogger("programd.database");
+        this.logger = Logger.getLogger("programd");
         this.logger.log(Level.FINE, "Opening database pool.");
 
         dbManager = new DbAccessRefsPoolMgr(settings.getDatabaseDriver(), settings.getDatabaseUrl(),
@@ -54,11 +55,18 @@ public class DatabaseChatLogHandler extends Handler
         dbManager.populate(settings.getDatabaseConnections());
     }
     
+    /**
+     * @see java.util.logging.Handler#publish(java.util.logging.LogRecord)
+     */
     public void publish(LogRecord record)
     {
          // Regular LogRecords are ignored.
     }
 
+    /**
+     * Publishes the given record to the database.
+     * @param record the record to publish
+     */
     public void publish(ChatLogRecord record)
     {
         // Get a database reference.
@@ -82,17 +90,23 @@ public class DatabaseChatLogHandler extends Handler
         } 
         catch (UnsupportedEncodingException e)
         {
-            throw new DeveloperError("This platform does not support UTF-8!");
+            throw new DeveloperError("This platform does not support UTF-8!", e);
         }
 
         dbManager.returnDbaRef(dbaRef);
     }
     
+    /**
+     * @see java.util.logging.Handler#flush()
+     */
     public void flush()
     {
         // Nothing to do.
     }
     
+    /**
+     * @see java.util.logging.Handler#close()
+     */
     public void close()
     {
         // Nothing to do.

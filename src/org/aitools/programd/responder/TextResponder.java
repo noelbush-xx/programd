@@ -41,6 +41,10 @@ public class TextResponder implements Responder
 
     /**
      * Simply appends the response to <code>appendTo</code>.
+     * @param input unused but required by interface
+     * @param response the string to append to the <code>appendTo</code> argument
+     * @param appendTo the string to which to append the <code>response</code>
+     * @return the result of this appending
      */
     public String append(String input, String response, String appendTo)
     {

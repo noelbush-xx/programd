@@ -19,6 +19,7 @@ abstract public interface Interpreter
      * 
      * @param expression
      *            the expression to evaluate
+     * @return the result of evaluating the expression
      */
     public String evaluate(String expression);
 }

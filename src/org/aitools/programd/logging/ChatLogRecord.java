@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 /**
+ * A ChatLogRecord contains additional information about an exchange in a chat.
  * Note that the "message" member of a ChatLogRecord will be null.
  * 
  * @author Noel Bush
@@ -32,6 +33,13 @@ public class ChatLogRecord extends LogRecord
     /** The id of the bot. */
     private String botid;
 
+    /**
+     * Creates a new ChatLogRecord.
+     * @param botidToUse the botid with whom this exchange occurred
+     * @param useridToUse the userid with whom this exchange occurred
+     * @param inputToUse the input from the user
+     * @param replyToUse the reply from the bot
+     */
     public ChatLogRecord(String botidToUse, String useridToUse, String inputToUse, String replyToUse)
     {
         super(Level.INFO, null);

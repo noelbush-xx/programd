@@ -16,27 +16,24 @@ package org.aitools.programd.util;
  */
 public class UserError extends Error
 {
-    private Exception exception;
-
-    public UserError(String message)
-    {
-        super(message);
-    } 
-
-    public UserError(Exception e)
+    /**
+     * Creates a new UserError with the given cause.
+     * @param cause the cause of the UserError
+     */
+    public UserError(Throwable cause)
     {
         super("Developer did not describe exception.");
-        this.exception = e;
+        initCause(cause);
     } 
 
-    public UserError(String message, Exception e)
+    /**
+     * Creates a new UserError with the given message cause.
+     * @param message a message about the UserError
+     * @param cause the cause of the UserError
+     */
+    public UserError(String message, Throwable cause)
     {
         super(message);
-        this.exception = e;
-    } 
-
-    public Exception getException()
-    {
-        return this.exception;
-    } 
+        initCause(cause);
+    }
 }

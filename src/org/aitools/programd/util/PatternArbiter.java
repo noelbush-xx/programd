@@ -105,6 +105,7 @@ public class PatternArbiter
      *            the literal string to check
      * @param pattern
      *            the pattern to try to match against it
+     * @param ignoreCase whether or not to ignore case
      * @return <code>true</code> if <code>pattern</code> matches
      *         <code>literal</code>,<code>false</code> if not
      * @throws NotAnAIMLPatternException
@@ -611,6 +612,7 @@ public class PatternArbiter
 
     /**
      * For testing.
+     * @param args not used
      */
     public static void main(String[] args)
     {
