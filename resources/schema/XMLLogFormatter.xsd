@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:annotation>
+        <xs:documentation>This was generated from the DTD used by the
+            java.util.logging.XMLFormatter. This provides an XML formatted log
+        message.</xs:documentation>
+    </xs:annotation>
+    <xs:element name="log">
+        <xs:annotation>
+            <xs:documentation>The document type is "log" which consists of a sequence of record
+                elements.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="record" type="Record" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="Record">
+        <xs:annotation>
+            <xs:documentation>Each logging call is described by a record element.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="date" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Date and time when LogRecord was created in ISO 8601
+                    format.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="millis" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Time when LogRecord was created in milliseconds since midnight
+                        January 1st, 1970, UTC.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="sequence" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Unique sequence number within source VM.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="logger" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Name of source Logger object.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="level" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Logging level, may be either one of the constant names from
+                        java.util.logging.Constants (such as "SEVERE" or "WARNING") or an integer
+                        value such as "20".</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="class" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Fully qualified name of class that issued logging call, e.g.
+                        "javax.marsupial.Wombat".</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="method" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Name of method that issued logging call. It may be either an
+                        unqualified method name such as "fred" or it may include argument type
+                        information in parenthesis, for example
+                    "fred(int,String)".</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="thread" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Integer thread ID.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="message" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>The message element contains the text string of a log
+                    message.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="key" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>If the message string was localized, the key element provides
+                        the original localization message key.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="catalog" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>If the message string was localized, the catalog element
+                        provides the logger's localization resource bundle name.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="param" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>If the message string was localized, each of the param
+                        elements provides the String value (obtained using Object.toString()) of the
+                        corresponding LogRecord parameter.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="exception" type="Exception" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Exception">
+        <xs:annotation>
+            <xs:documentation>An exception consists of an optional message string followed by a
+                series of StackFrames. Exception elements are used for Java exceptions and other
+                java Throwables.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" name="message" type="xs:string"/>
+            <xs:element name="frame" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>A frame describes one line in a Throwable
+                    backtrace.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="class" type="xs:string"/>
+                        <xs:element name="method" type="xs:string"/>
+                        <xs:element name="line" type="xs:integer" minOccurs="0">
+                            <xs:annotation>
+                                <xs:documentation>An integer line number within a class's source
+                                    file.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
