@@ -234,7 +234,7 @@ public class ICQListener extends Listener
     } 
 
     /**
-     * @see org.aitools.programd.bot.BotProcess#shutdown()
+     * @see org.aitools.programd.util.ManagedProcess#shutdown()
      */
     public void shutdown()
     {

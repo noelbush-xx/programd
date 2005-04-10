@@ -23,7 +23,7 @@ import org.aitools.programd.util.XMLKit;
  * @author Chris Knight
  * @author Jon Baer
  * @author Noel Bush
- * @version 4.2
+ * @version 4.5
  * @see <a href="http://www.chrisknight.com/sirc/">sIRC </a>
  */
 
@@ -150,7 +150,7 @@ public class IRCListener extends Listener implements ShellCommandable
     } 
 
     /**
-     * @see org.aitools.programd.bot.BotProcess#shutdown()
+     * @see org.aitools.programd.util.ManagedProcess#shutdown()
      */
     public void shutdown()
     {

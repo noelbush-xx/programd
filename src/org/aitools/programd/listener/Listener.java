@@ -16,12 +16,12 @@ import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
-import org.aitools.programd.bot.BotProcess;
+import org.aitools.programd.util.ManagedProcess;
 
 /**
  * An abstract listener.
  */
-public abstract class Listener implements BotProcess
+public abstract class Listener implements ManagedProcess
 {
     /** The Core object in use. */
     protected Core core;
