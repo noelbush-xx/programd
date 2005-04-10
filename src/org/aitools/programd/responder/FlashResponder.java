@@ -9,87 +9,23 @@
 
 package org.aitools.programd.responder;
 
-import java.io.File;
-import java.util.HashMap;
-
-import org.aitools.programd.Core;
-import org.aitools.programd.CoreSettings;
-import org.aitools.programd.util.SuffixFilenameFilter;
-
 /**
  * Implements a {@link Responder} for a Flash client.
  * 
  * @author Chris Fahey
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
+ * @version 4.5
  */
-public class FlashResponder extends AbstractMarkupResponder
+public class FlashResponder extends AbstractXMLResponder implements ServletRequestResponder
 {
-    private CoreSettings coreSettings;
-    
-    /** The settings to use. */
-    private static FlashResponderSettings settings;
-    
-    /** Location of flash templates. */
-    private static String templatesDirectoryName;
-
-    /** Path to the default chat template. */
-    private static String chatTemplatePath;
-
-    /** A filename filter for finding html templates. */
-    private static final SuffixFilenameFilter flashFilenameFilter = new SuffixFilenameFilter(new String[]
-        { ".flash", ".data" } );
-
-    /** Map of template names to filenames. */
-    private static HashMap templates;
-
     /**
      * Creates a new FlashResponder.
+     * @param responsibleManager the manager that is responsible for this responder
      * @param botidToRespondFor the botid to respond for
      * @param templateName the template name to use
-     * @param coreToUse the Core to use
      */
-    public FlashResponder(String botidToRespondFor, String templateName, Core coreToUse)
+    public FlashResponder(FlashResponderManager responsibleManager, String botidToRespondFor, String templateName)
     {
-        super(botidToRespondFor, coreToUse);
-        checkStaticVariables();
-        if (templateName.equals(EMPTY_STRING))
-        {
-            parseTemplate(chatTemplatePath);
-        } 
-        else
-        {
-            // Otherwise, try to find the named template.
-            String templateFileName = (String) templates.get(templateName);
-            if (templateFileName != null)
-            {
-                parseTemplate(templateFileName);
-            } 
-            else
-            {
-                parseTemplate(chatTemplatePath);
-            } 
-        } 
-    }
-    
-    private void checkStaticVariables()
-    {
-        if (settings == null)
-        {
-            settings = new FlashResponderSettings(this.core.getSettings().getConfLocationHtmlResponder());
-        }
-        if(templatesDirectoryName == null)
-        {
-            templatesDirectoryName = this.coreSettings.getRootDirectory() + File.separator +
-                                      settings.getTemplateDirectory() + File.separator + "html";
-        }
-        if(chatTemplatePath == null)
-        {
-            chatTemplatePath = templatesDirectoryName + File.separator +
-            settings.getChatDefaultTemplatePath();
-        }
-        if (templates == null)
-        {
-            // Scan and register other templates.
-            templates = registerTemplates(templatesDirectoryName, flashFilenameFilter);
-        }
+        super(responsibleManager, botidToRespondFor, templateName);
     }
 }
