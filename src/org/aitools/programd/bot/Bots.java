@@ -22,7 +22,7 @@ import org.aitools.programd.util.DeveloperError;
  * 
  * @author Noel Bush
  * @since 4.1.5
- * @version 4.2
+ * @version 4.5
  */
 public class Bots
 {
@@ -30,7 +30,7 @@ public class Bots
     private Map<String, Bot> botList;
 
     /**
-     * <code>Bots</code> cannot be instantiated except by itself.
+     * Creates a new <code>Bots</code>.
      */
     public Bots()
     {
@@ -99,7 +99,7 @@ public class Bots
             return this.botList.values().iterator().next();
         } 
         // (otherwise...)
-        return null;
+        throw new NullPointerException("No bots!");
     } 
 
     /**
