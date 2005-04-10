@@ -9,15 +9,13 @@
 
 package org.aitools.programd.server;
 
-import org.aitools.programd.bot.BotProcess;
-
 /**
  * Specifies the methods that an http server must implement in order to be
  * compatible with Program D.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public interface ProgramDCompatibleHttpServer extends BotProcess
+public interface ProgramDCompatibleHttpServer
 {
     /**
      * Configures the http server given the path or URL to a configuration file.
@@ -31,6 +29,11 @@ public interface ProgramDCompatibleHttpServer extends BotProcess
      * Starts the http server.
      */
     public void run();
+    
+    /**
+     * Shuts down the http server.
+     */
+    public void shutdown();
     
     /**
      * @return the port on which the server is listening.
