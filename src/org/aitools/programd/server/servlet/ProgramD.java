@@ -15,12 +15,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.aitools.programd.Core;
-import org.aitools.programd.server.ResponderBroker;
+import org.aitools.programd.server.ServletRequestTransactionEnvelope;
+import org.aitools.programd.server.ServletRequestResponderManagerRegistry;
 
 /**
  * <p>
  * This is the chat servlet used to broker a conversation from a client. It does
- * not really do much except pass information to the ResponderBroker, which is
+ * not really do much except pass information to the ServletRequestTransactionEnvelope, which is
  * responsible for:
  * </p>
  * <ol>
@@ -32,14 +33,21 @@ import org.aitools.programd.server.ResponderBroker;
  * 
  * @author Jon Baer
  * @author Kris Drent
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class ProgramD extends HttpServlet
 {
-    /** The string &quot;core&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String CORE = "core";
+    
+    /** The string &quot;{@value}&quot;. */
+    private static final String RESPONDER_REGISTRY = "responder-registry";
     
     /** The Core to use. */
     private Core core;
+    
+    /** The ServletRequestResponderManagerRegistry to use. */
+    private ServletRequestResponderManagerRegistry responderRegistry;
     
     /**
      * @see javax.servlet.GenericServlet#init()
@@ -47,6 +55,7 @@ public class ProgramD extends HttpServlet
     public void init()
     {
         this.core = (Core)this.getServletContext().getAttribute(CORE);
+        this.responderRegistry = (ServletRequestResponderManagerRegistry)this.getServletContext().getAttribute(RESPONDER_REGISTRY);
     } 
 
     /**
@@ -55,6 +64,7 @@ public class ProgramD extends HttpServlet
     public void init(ServletConfig config)
     {
         this.core = (Core)config.getServletContext().getAttribute(CORE);
+        this.responderRegistry = (ServletRequestResponderManagerRegistry)config.getServletContext().getAttribute(RESPONDER_REGISTRY);
     } 
 
     /**
@@ -62,9 +72,15 @@ public class ProgramD extends HttpServlet
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     {
-        ResponderBroker responder = new ResponderBroker(request, response, this.core);
-        responder.doResponse();
-
+        ServletRequestTransactionEnvelope envelope = new ServletRequestTransactionEnvelope(request, response, this.core, this.responderRegistry);
+        try
+        {
+            envelope.process();
+        }
+        catch (Throwable e)
+        {
+            this.core.fail(e);
+        }
     } 
 
     /**
