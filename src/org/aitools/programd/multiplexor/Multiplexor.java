@@ -56,7 +56,7 @@ import org.aitools.programd.util.XMLKit;
  * 
  * @since 4.1.3
  * @version 4.5
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @author Richard Wallace, Jon Baer
  * @author Thomas Ringate/Pedro Colla
  */
@@ -91,22 +91,22 @@ abstract public class Multiplexor
     /** A quote mark. */
     protected static final String QUOTE_MARK = "\"";
     
-    /** The string &quot;> &quot;. */
+    /** The string &quot;{@value}&quot;. */
     protected static final String PROMPT = "> ";
 
-    /** The string &quot;Match:&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String LABEL_MATCH = "Match: ";
 
-    /** The string &quot;Filename:&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String LABEL_FILENAME = "Filename: ";
 
-    /** The string &quot;Response &quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String RESPONSE_SPACE = "Response ";
 
-    /** The string &quot; in &quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String SPACE_IN_SPACE = " in ";
 
-    /** The string &quot; ms. Average: &quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String MS_AVERAGE = " ms. (Average: ";
 
     /* The string &quot; ms).&quot; */

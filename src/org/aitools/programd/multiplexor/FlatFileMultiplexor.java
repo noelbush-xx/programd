@@ -31,8 +31,8 @@ import org.aitools.programd.util.FileManager;
  * predicate data.
  * </p>
  * 
- * @author Noel Bush
- * @version 4.1.3
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
+ * @version 4.5
  */
 public class FlatFileMultiplexor extends Multiplexor
 {
@@ -45,7 +45,7 @@ public class FlatFileMultiplexor extends Multiplexor
     /** The suffix for a predicates storage file. */
     private static final String PREDICATES_SUFFIX = ".predicates";
 
-    /** The string &quot;FlatFileMultiplexor predicates file&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String FFM_FILE_LABEL = "FlatFileMultiplexor predicates file";
 
     /**

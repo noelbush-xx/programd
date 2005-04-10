@@ -15,7 +15,7 @@ import org.aitools.programd.util.ClassRegistry;
  * Registers {@link Listener} s.
  * 
  * @since 4.1.3
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class ListenerRegistry extends ClassRegistry<Listener>
 {

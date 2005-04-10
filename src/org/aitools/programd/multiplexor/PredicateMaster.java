@@ -36,7 +36,7 @@ import org.aitools.programd.util.IllegalObjectStateException;
  * by userid) makes no guarantees about order. :-(
  * </p>
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.1.4'
  */
 public class PredicateMaster

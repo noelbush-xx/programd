@@ -40,8 +40,8 @@ import org.aitools.programd.util.sql.DbAccessRefsPoolMgr;
  * 
  * @author Richard Wallace, Jon Baer
  * @author Thomas Ringate/Pedro Colla
- * @author Noel Bush
- * @version 4.1.3
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
+ * @version 4.5
  */
 public class DBMultiplexor extends Multiplexor
 {
@@ -55,7 +55,7 @@ public class DBMultiplexor extends Multiplexor
 
     // Convenience constants.
     
-    /** The string &quot;UTF-8&quot; (for character encoding conversion). */
+    /** The string &quot;{@value}&quot; (for character encoding conversion). */
     private static final String ENC_UTF8 = "UTF-8";
 
     /**
