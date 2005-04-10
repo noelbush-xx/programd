@@ -55,7 +55,7 @@ import org.aitools.programd.util.XMLKit;
  * </p>
  * 
  * @since 4.1.3
- * @version 4.2
+ * @version 4.5
  * @author Noel Bush
  * @author Richard Wallace, Jon Baer
  * @author Thomas Ringate/Pedro Colla
@@ -90,6 +90,9 @@ abstract public class Multiplexor
 
     /** A quote mark. */
     protected static final String QUOTE_MARK = "\"";
+    
+    /** The string &quot;> &quot;. */
+    protected static final String PROMPT = "> ";
 
     /** The string &quot;Match:&quot;. */
     private static final String LABEL_MATCH = "Match: ";
@@ -111,9 +114,6 @@ abstract public class Multiplexor
 
     /** The predicate empty default. */
     protected String predicateEmptyDefault;
-    
-    /** The name of the predicate that is supposed to contain the client's name. */
-    protected String clientNamePredicate;
 
     /** A secret key used for (weakly) authorizing authentication requests. */
     protected static String SECRET_KEY;
@@ -170,7 +170,6 @@ abstract public class Multiplexor
         CoreSettings coreSettings = this.core.getSettings();
         this.predicateEmptyDefault = coreSettings.getPredicateEmptyDefault();
         this.recordMatchTrace = coreSettings.recordMatchTrace();
-        this.clientNamePredicate = coreSettings.getClientNamePredicate();
     }
     
     /**
@@ -289,8 +288,7 @@ abstract public class Multiplexor
         // For each input sentence...
         for (String sentence : sentenceList)
         {
-            // ...ask the responder to append the reply to the response, and
-            // accumulate the result.
+            // Append the reply to the response.
             response += (String)replies.next();
         }
 
@@ -458,7 +456,7 @@ abstract public class Multiplexor
         } 
         catch (TemplateParserException e)
         {
-            throw new DeveloperError(e);
+            throw new DeveloperError("Error occurred while creating new TemplateParser.", e);
         } 
 
         String reply = getMatchResult(input, that, topic, userid, botid, parser);
@@ -490,7 +488,7 @@ abstract public class Multiplexor
         // Always show the input path (in any case, if match trace is on).
         if (this.recordMatchTrace)
         {
-            this.matchLogger.log(Level.FINE, this.predicateMaster.get(this.clientNamePredicate, userid, botid).trim() + '>' + SPACE + input
+            this.matchLogger.log(Level.FINE, userid + PROMPT + input
                     + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + that + SPACE + Graphmaster.PATH_SEPARATOR + SPACE
                     + topic + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + botid);
         }
@@ -589,7 +587,7 @@ abstract public class Multiplexor
     /**
      * Returns the average response time.
      * 
-     * @return the average response time'
+     * @return the average response time
      */
     public float averageResponseTime()
     {
@@ -665,9 +663,9 @@ abstract public class Multiplexor
      *            the password to assign
      * @param secretKey
      *            the secret key that should authenticate this request
-     * @return whether the creation was successful
+     * @throws DuplicateUserIDError if the given userid was already found in the system
      */
-    abstract public boolean createUser(String userid, String password, String secretKey, String botid);
+    abstract public void createUser(String userid, String password, String secretKey, String botid) throws DuplicateUserIDError;
 
     /**
      * Changes the password associated with a userid. Multiplexors for which
