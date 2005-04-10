@@ -11,7 +11,7 @@ package org.aitools.programd.responder;
 
 /**
  * A Responder for interfacing with the AOL Instant Messenger protocol.
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class AIMResponder implements Responder
 {
@@ -21,8 +21,8 @@ public class AIMResponder implements Responder
     public AIMResponder()
     {
         // Nothing to do.
-    } 
-
+    }
+    
     /**
      * @see org.aitools.programd.responder.Responder#preprocess(java.lang.String)
      */
@@ -46,5 +46,4 @@ public class AIMResponder implements Responder
     {
         return reply.substring(0, Math.min(1024, reply.length()));
     }
-
 }
