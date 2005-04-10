@@ -37,7 +37,7 @@ GENERAL NOTES
     <!-- configuration parameter for the HTTP server (not always applicable) [String: conf/jetty.xml]-->
     <entry key="programd.webserver.httpserver-config">conf/jetty.xml</entry>
     
-    <!--log file for web server messages. [String: logs/web-server.log]-->
-    <entry key="programd.webserver.log.path">logs/web-server.log</entry>
+    <!-- Pattern for naming the log file for web server messages. [String: logs/web-server-%g.log]-->
+    <entry key="programd.webserver.log.path-pattern">logs/web-server-%g.log</entry>
     
 </properties>
