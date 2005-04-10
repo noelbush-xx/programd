@@ -12,7 +12,7 @@ package org.aitools.programd.responder;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-03-21T21:57:36.085-04:00
+ * Automatically generated from properties file, 2005-04-07T01:47:10.788-04:00
  */
 public class FlashResponderSettings extends Settings
 {
@@ -22,12 +22,12 @@ public class FlashResponderSettings extends Settings
     private String templateDirectory;
 
     /**
-     * The default chat template. 
+     * The default chat template name. 
      * Note: Any other *.flash or *.data files in
            programd.responder.flash.template.directory will also be available if
-           you specify a template">name (without suffixes) parameter in the user request.
+           you specify a template-name (without suffixes) parameter in the user request.
      */
-    private String chatDefaultTemplatePath;
+    private String chatDefaultTemplateName;
 
     /**
      * Creates a <code>FlashResponderSettings</code> using default property values.
@@ -40,7 +40,7 @@ public class FlashResponderSettings extends Settings
     /**
      * Creates a <code>FlashResponderSettings</code> with the (XML-formatted) properties
      * located at the given path.
-     * @param propertiesPath the path to the settings file to use
+     * @param propertiesPath the path at which to find the configuration file
      */
     public FlashResponderSettings(String propertiesPath)
     {
@@ -54,7 +54,7 @@ public class FlashResponderSettings extends Settings
     {
         setTemplateDirectory(this.properties.getProperty("programd.responder.flash.template.directory", "templates/flash"));
 
-        setChatDefaultTemplatePath(this.properties.getProperty("programd.responder.flash.chat-default.template.path", "chat.flash"));
+        setChatDefaultTemplateName(this.properties.getProperty("programd.responder.flash.chat-default.template.name", "chat"));
 
     }
 
@@ -67,11 +67,11 @@ public class FlashResponderSettings extends Settings
     }
 
     /**
-     * @return the value of chatDefaultTemplatePath
+     * @return the value of chatDefaultTemplateName
      */
-    public String getChatDefaultTemplatePath()
+    public String getChatDefaultTemplateName()
     {
-        return this.chatDefaultTemplatePath;
+        return this.chatDefaultTemplateName;
     }
 
     /**
@@ -83,11 +83,11 @@ public class FlashResponderSettings extends Settings
     }
 
     /**
-     * @param chatDefaultTemplatePathToSet   the value to which to set chatDefaultTemplatePath
+     * @param chatDefaultTemplateNameToSet   the value to which to set chatDefaultTemplateName
      */
-    public void setChatDefaultTemplatePath(String chatDefaultTemplatePathToSet)
+    public void setChatDefaultTemplateName(String chatDefaultTemplateNameToSet)
     {
-        this.chatDefaultTemplatePath = chatDefaultTemplatePathToSet;
+        this.chatDefaultTemplateName = chatDefaultTemplateNameToSet;
     }
 
 }
