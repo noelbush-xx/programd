@@ -14,8 +14,8 @@ package org.aitools.programd.processor;
  * handle.
  * 
  * @since 4.1.3
- * @author Noel Bush
- * @version 4.2
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
+ * @version 4.5
  */
 public class ProcessorException extends Exception
 {

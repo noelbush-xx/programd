@@ -20,7 +20,7 @@ import org.aitools.programd.parser.GenericParser;
  * and set <code>label</code> to the appropriate string.
  * 
  * @since 4.1.3
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 abstract public class Processor
 {
@@ -37,22 +37,22 @@ abstract public class Processor
     /** An empty string, for convenience. */
     protected static final String EMPTY_STRING = "";
 
-    /** The string &quot;name&quot;, for convenience. */
+    /** The string &quot;{@value}&quot;, for convenience. */
     protected static final String NAME = "name";
 
-    /** The string &quot;value&quot;, for convenience. */
+    /** The string &quot;{@value}&quot;, for convenience. */
     protected static final String VALUE = "value";
 
-    /** The string &quot;name=&quot;, for convenience. */
+    /** The string &quot;{@value}&quot;, for convenience. */
     protected static final String NAME_EQUALS = "name=";
 
-    /** The string &quot;value=&quot;, for convenience. */
+    /** The string &quot;{@value}&quot;, for convenience. */
     protected static final String VALUE_EQUALS = "value=";
 
-    /** The string &quot;id&quot;, for convenience. */
+    /** The string &quot;{@value}&quot;, for convenience. */
     protected static final String ID = "id";
 
-    /** The string &quot;enabled&quot;. */
+    /** The string &quot;{@value}&quot;. */
     protected static final String ENABLED = "enabled";
     
     /**

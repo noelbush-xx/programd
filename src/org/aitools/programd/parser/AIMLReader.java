@@ -24,7 +24,7 @@ import org.aitools.programd.util.XMLKit;
  * This has been rewritten starting with 4.2 to use SAX.
  * </p>
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @version 4.5
  */
 public class AIMLReader extends DefaultHandler
@@ -76,16 +76,16 @@ public class AIMLReader extends DefaultHandler
         IN_UNHANDLED
     }
 	
-    /** The string &quot;pattern&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String PATTERN = "pattern";
 
-    /** The string &quot;that&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String THAT = "that";
 
-    /** The string &quot;topic&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String TOPIC = "topic";
 
-    /** The string &quot;template&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String TEMPLATE = "template";
     
     /** The current state. */
