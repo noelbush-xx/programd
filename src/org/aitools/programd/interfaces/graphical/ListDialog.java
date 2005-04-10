@@ -113,8 +113,7 @@ public class ListDialog extends JDialog
         JScrollPane listScroller = new JScrollPane(this.list);
         listScroller.setPreferredSize(new Dimension(250, 80));
 
-        //XXX: Must do the following, too, or else the scroller thinks
-        //XXX: it's taller than it is:
+        // Must do the following, too, or else the scroller thinks it's taller than it is:
         listScroller.setMinimumSize(new Dimension(250, 80));
         listScroller.setAlignmentX(LEFT_ALIGNMENT);
 
