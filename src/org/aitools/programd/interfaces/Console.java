@@ -14,9 +14,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
-import org.aitools.programd.CoreListener;
-import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.UserError;
 
 /**
  * Creating a Console essentially means that loggers (as configured)
@@ -25,8 +22,11 @@ import org.aitools.programd.util.UserError;
  * @author Noel Bush
  * @since 4.2
  */
-public class Console implements CoreListener
+public class Console
 {
+    /** The Core to which this console is (may be) attached. */
+    private Core core;
+    
     /** The settings for this console. */
     private ConsoleSettings settings;
     
@@ -82,14 +82,14 @@ public class Console implements CoreListener
     
     /**
      * Attaches the Console to the given Core.
-     * @param core the Core to which to attach
+     * @param coreToUse the Core to which to attach
      */
-    public void attachTo(Core core)
+    public void attachTo(Core coreToUse)
     {
-        core.attach(this);
+        this.core = coreToUse;
         if (this.settings.useShell())
         {
-            addShell(new Shell(this.settings), core);
+            addShell(new Shell(this.settings), this.core);
         }
         else
         {
@@ -100,42 +100,24 @@ public class Console implements CoreListener
     /**
      * Adds the given Shell to the Console
      * @param shellToAdd    the Shell to add
-     * @param core  the core to which to attach the Shell
+     * @param coreToUse  the core to which to attach the Shell
      */
-    public void addShell(Shell shellToAdd, Core core)
+    public void addShell(Shell shellToAdd, Core coreToUse)
     {
         this.shell = shellToAdd;
-        this.shell.attachTo(core);
+        this.shell.attachTo(coreToUse);
         this.stdOutHandler.watch(this.shell);
         this.stdErrHandler.watch(this.shell);
     }
     
     /**
-     * Starts the Shell.
-     * @see org.aitools.programd.CoreListener#coreReady()
+     * Starts the attached shell (if one exists and the shell is enabled).
      */
-    public void coreReady()
+    public void startShell()
     {
         if (this.settings.useShell())
         {
             this.shell.start();
-        }
-    }
-    
-    /**
-     * Prints the stack trace associated with the given Throwable.
-     * @param e the Throwable that caused the failure.
-     * @see org.aitools.programd.CoreListener#failure(java.lang.Throwable)
-     */
-    public void failure(Throwable e)
-    {
-        if (e instanceof UserError || e instanceof DeveloperError)
-        {
-            e.getCause().printStackTrace(System.err);
-        }
-        else
-        {
-            e.printStackTrace(System.err);
         }
     }
     
