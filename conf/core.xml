@@ -69,6 +69,9 @@ GENERAL NOTES
     <!-- Which bot predicate contains the client's name? [String: name]-->
     <entry key="programd.client-name-predicate">name</entry>
     
+    <!-- Which bot predicate contains the bot's name? [String: name]-->
+    <entry key="programd.bot-name-predicate">name</entry>
+    
     <!-- Log/display match trace messages? [boolean: true]-->
     <entry key="programd.record-match-trace">true</entry>
     
@@ -143,43 +146,24 @@ GENERAL NOTES
     
     <!--
     LOGGING CONFIGURATION
+    For pattern syntax, see http://java.sun.com/j2se/1.5.0/docs/api/java/util/logging/FileHandler.html
     -->
     
     <!--The general activity log file. [String: logs/activity.log]-->
-    <entry key="programd.activity.log.path">logs/activity.log</entry>
+    <entry key="programd.activity.log.pattern">logs/activity-%g.log</entry>
 
     <!--The log file for matching activity. [String: logs/matching.log]-->
-    <entry key="programd.matching.log.path">logs/matching.log</entry>
+    <entry key="programd.matching.log.pattern">logs/matching-%g.log</entry>
+    
+    <!--The subdirectory for chat logs. [String: logs/chat]-->
+    <entry key="programd.chat.log.directory">logs/chat</entry>
 
     <!--The date-time format to use in logging. [String: yyyy-MM-dd H:mm:ss]
         * See http://java.sun.com/jdk1.5.0_02/docs/api/java/text/SimpleDateFormat.html
           for formatting codes.
         * Setting the value to blank means no timestamp will be displayed.-->
     <entry key="programd.log.timestamp-format">yyyy-MM-dd H:mm:ss</entry>
-    
-    <!--
-    XML logs
-    -->
-    
-    <!--Enable chat logging to XML text files? [boolean: true]
-        * Be sure that the database configuration (later in this file) is valid.-->
-    <entry key="programd.logging.to-xml.chat">true</entry>
-    
-    <!--How many log entries to collect before "rolling over" an XML log file. [int: 500]
-        * "Rolling over" means that the current file is renamed using the date & time,
-        * and a fresh log file is created using the path name.  The new log file will
-        * contain links to all of the previous log files of the same type.-->
-    <entry key="programd.logging.xml.rollover">500</entry>
-    
-    <!--The subdirectory for XML chat logs. [String: logs/chat]-->
-    <entry key="programd.logging.xml.chat.log-directory">logs/chat</entry>
-    
-    <!--The path to the stylesheet for viewing chat logs. [String: ../resources/logs/view-chat.xsl]-->
-    <entry key="programd.logging.xml.chat.stylesheet-path">../resources/logs/view-chat.xsl</entry>
-    
-    <!--Roll over the chat log at restart? [boolean: false]-->
-    <entry key="programd.logging.xml.chat.rollover-at-restart">false</entry>
-    
+
     <!--
     Database logs
     -->
