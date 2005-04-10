@@ -10,63 +10,52 @@
 package org.aitools.programd.responder;
 
 /**
- * A <code>Responder</code> is an object that processes and logs input via a
- * given channel (text, html, flash, etc.).
+ * A <code>Responder</code> is an object that can manipulate the user input and
+ * bot responses at several stages of the response production loop.  It is specific
+ * to a particular output channel (such as HTML, an IM client, etc.).
  * 
  * @author Jon Baer
- * @author Noel Bush
- * @version 4.2
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
+ * @version 4.5
  */
 abstract public interface Responder
 {
     /**
-     * <p>
-     * Preprocesses a message from a bot as appropriate for a given channel.
-     * </p>
-     * <p>
-     * For some channels, this may involve doing substitutions on the message;
-     * for some channels this may mean formatting the message in a particular
-     * way, etc.
-     * </p>
+     * Preprocesses a user input <i>prior to</i> the application of input
+     * substitutions and sentence splitting performed by the
+     * {@link org.aitools.programd.multiplexor.Multiplexor Multiplexor}, before
+     * it (the Multiplexor) obtains bot replies for each sentence.
      * 
-     * @param message
-     *            the message to be formatted
-     * @return the result of preprocessing the message
+     * @param userInput
+     *            the user input to be preprocessed
+     * @return the result of preprocessing the userinput
      */
-    String preprocess(String message);
+    String preprocess(String userInput);
 
     /**
-     * <p>
-     * Response by a <code>Responder</code> is considered an
-     * &quot;append&quot; to some previous string. That string might be some
-     * form of the previous exchange, or it might be nothing.
-     * </p>
+     * Appends a per-sentence reply from the bot to the Responder's total record
+     * of the bot response.
      * 
-     * @param input
-     *            an input from the client
-     * @param reply
-     *            a reply from the bot
+     * @param userInput
+     *            the input (sentence) from the client that generated the reply
+     * @param botReply
+     *            the reply from the bot
      * @param appendTo
      *            the string to which the client of the <code>Responder</code>
      *            may expect the reply to be appended
      * @return the reply, in whatever fashion the <code>Responder</code> has
-     *         decided to modify it
+     *         decided to modify it. This is likely to be fed in as the
+     *         <code>appendTo</code> argument on subsequent calls to this
+     *         function for the same input
      */
-    String append(String input, String reply, String appendTo);
+    String append(String userInput, String botReply, String appendTo);
 
     /**
-     * <p>
-     * Postprocesses a message from a bot as appropriate for a given channel.
-     * </p>
-     * <p>
-     * For some channels, this may involve doing substitutions on the message;
-     * for some channels this may mean formatting the message in a particular
-     * way, etc.
-     * </p>
+     * Postprocesses the complete bot response.
      * 
-     * @param reply
-     *            the message to be formatted
+     * @param finalBotResponse
+     *            the complete bot response
      * @return the result of postprocessing the message
      */
-    String postprocess(String reply);
+    String postprocess(String finalBotResponse);
 }
