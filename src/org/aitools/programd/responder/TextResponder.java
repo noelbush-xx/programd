@@ -14,7 +14,7 @@ package org.aitools.programd.responder;
  * 
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class TextResponder implements Responder
 {
@@ -26,9 +26,9 @@ public class TextResponder implements Responder
     {
         // Nothing to do.
     } 
-
+    
     /**
-     * Returns the input, converted into Unicode from the request encoding.
+     * Returns the input.
      * 
      * @param input
      *            the input
