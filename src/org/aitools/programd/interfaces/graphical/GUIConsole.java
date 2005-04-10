@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.URL;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -55,7 +56,7 @@ import org.aitools.programd.util.DeveloperError;
  * 
  * @author Noel Bush
  * @since 4.1.5
- * @version 4.2
+ * @version 4.5
  */
 public class GUIConsole extends JPanel
 {
@@ -102,32 +103,14 @@ public class GUIConsole extends JPanel
         { "Simple Console for", "Program D version " + Core.VERSION } ;
 
     private static JMenuBar menuBar;
-
-    private static ImageIcon logo;
-    static
-    {
-        try
-        {
-            logo = new ImageIcon(ClassLoader.getSystemResource("org/aitools/programd/gui/icons/logo.jpg"));
-        } 
-        catch (NullPointerException e)
-        {
-            logger.log(Level.SEVERE, "The logo is missing from available resources.");
-        } 
-    } 
-
-    private static ImageIcon icon;
-    static
-    {
-        try
-        {
-            icon = new ImageIcon(ClassLoader.getSystemResource("org/aitools/programd/gui/icons/icon.jpg"));
-        } 
-        catch (NullPointerException e)
-        {
-            logger.log(Level.SEVERE, "The icon is missing from available resources.");
-        } 
-    } 
+    
+    private static String LOGO_PATH = "org/aitools/programd/gui/icons/logo.jpg";
+    
+    private ImageIcon logo;
+    
+    private static String ICON_PATH = "org/aitools/programd/gui/icons/icon.jpg";
+    
+    private ImageIcon icon;
 
     /**
      * Constructs a new simple console gui with a new shell.
@@ -155,6 +138,27 @@ public class GUIConsole extends JPanel
         {
             throw new DeveloperError("The requested LookAndFeel is not supported.", e);
         }
+        
+        URL logoURL = ClassLoader.getSystemResource(LOGO_PATH);
+        if (logoURL != null)
+        {
+            this.logo = new ImageIcon(logoURL);
+        }
+        else
+        {
+            throw new DeveloperError("Logo is missing from \"" + LOGO_PATH + "\"!", new NullPointerException());
+        }
+        
+        URL iconURL = ClassLoader.getSystemResource(ICON_PATH);
+        if (iconURL != null)
+        {
+            this.icon = new ImageIcon(iconURL);
+        }
+        else
+        {
+            throw new DeveloperError("Icon is missing from \"" + ICON_PATH + "\"!", new NullPointerException());
+        }
+        
         this.console = new Console(consolePropertiesPath, this.outStream, this.errStream);
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -171,6 +175,7 @@ public class GUIConsole extends JPanel
         scrollPane.setAlignmentY(Component.CENTER_ALIGNMENT);
 
         this.inputPanel = new InputPanel(this);
+        this.inputPanel.setEnabled(false);
 
         this.add(scrollPane);
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -327,6 +332,7 @@ public class GUIConsole extends JPanel
         this.frame.setTitle("Program D Simple GUI Console");
         this.frame.getContentPane().add(this);
         this.frame.setJMenuBar(menuBar);
+        this.frame.setIconImage(this.icon.getImage());
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame.pack();
         this.frame.setLocation(50, 50);
@@ -339,7 +345,6 @@ public class GUIConsole extends JPanel
      */
     public void attachTo(Core coreToUse)
     {
-        coreToUse.attach(this.console);
         if (this.console.getSettings().useShell())
         {
             this.shell = new Shell(this.console.getSettings(), this.inStream, this.outStream, this.errStream, this.promptStream);
@@ -356,7 +361,7 @@ public class GUIConsole extends JPanel
      */
     public void start()
     {
-        this.core.startup();
+        this.core.start();
     } 
 
     protected void shutdown()
@@ -372,7 +377,6 @@ public class GUIConsole extends JPanel
     protected void quit()
     {
         this.frame.dispose();
-        System.exit(0);
     }
     
     class InputPanel extends JPanel
@@ -382,6 +386,9 @@ public class GUIConsole extends JPanel
 
         /** The console input field. */
         protected JTextField input;
+        
+        /** The enter button. */
+        protected JButton enter;
 
         protected GUIConsole parent;
 
@@ -412,18 +419,18 @@ public class GUIConsole extends JPanel
             this.input.setAlignmentY(Component.CENTER_ALIGNMENT);
             this.input.addActionListener(new InputSender(this));
 
-            JButton enter = new JButton("Enter");
-            enter.setFont(new Font("Sans-serif", Font.PLAIN, 10));
-            enter.setForeground(Color.black);
-            enter.setMinimumSize(new Dimension(70, 20));
-            enter.setPreferredSize(new Dimension(70, 20));
-            enter.setMaximumSize(new Dimension(70, 20));
-            enter.addActionListener(new InputSender(this));
-            enter.setAlignmentY(Component.CENTER_ALIGNMENT);
+            this.enter = new JButton("Enter");
+            this.enter.setFont(new Font("Sans-serif", Font.PLAIN, 10));
+            this.enter.setForeground(Color.black);
+            this.enter.setMinimumSize(new Dimension(70, 20));
+            this.enter.setPreferredSize(new Dimension(70, 20));
+            this.enter.setMaximumSize(new Dimension(70, 20));
+            this.enter.addActionListener(new InputSender(this));
+            this.enter.setAlignmentY(Component.CENTER_ALIGNMENT);
 
             this.add(this.prompt);
             this.add(this.input);
-            this.add(enter);
+            this.add(this.enter);
         } 
 
         /**
@@ -435,7 +442,19 @@ public class GUIConsole extends JPanel
             this.prompt.setText(text);
             this.prompt.revalidate();
             this.input.requestFocus();
-        } 
+        }
+        
+        /**
+         * Sets the components of this panel to the
+         * given state.
+         * 
+         * @param enabled whether or not the panel should be enabled
+         */
+        public void setEnabled(boolean enabled)
+        {
+            this.input.setEnabled(enabled);
+            this.enter.setEnabled(enabled);
+        }
 
         private class InputSender extends ParentAwareActionListener
         {
@@ -727,6 +746,15 @@ public class GUIConsole extends JPanel
 
     protected void showAboutBox()
     {
-        JOptionPane.showMessageDialog(null, HELP_MESSAGE, "About", JOptionPane.INFORMATION_MESSAGE, logo);
+        JOptionPane.showMessageDialog(null, HELP_MESSAGE, "About", JOptionPane.INFORMATION_MESSAGE, this.logo);
+    }
+    
+    /**
+     * Enables the input panel and starts the underlying console's shell.
+     */
+    public void startShell()
+    {
+        this.inputPanel.setEnabled(true);
+        this.console.startShell();
     }
 }
