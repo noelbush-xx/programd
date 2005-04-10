@@ -11,7 +11,6 @@ package org.aitools.programd.parser;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
-import org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessorRegistry;
 
 /**
  * <code>BotsConfigurationFileParser</code> processes a bots configuration file.
@@ -26,8 +25,7 @@ public class BotsConfigurationFileParser extends GenericParser
      */
     public BotsConfigurationFileParser(Core coreToUse)
     {
-        super(coreToUse);
-        super.processorRegistry = BotConfigurationElementProcessorRegistry.getSelf();
+        super(coreToUse.getBotConfigurationElementProcessorRegistry(), coreToUse);
     } 
 
     /**
