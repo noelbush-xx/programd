@@ -16,7 +16,7 @@ import java.util.Set;
  * {@link Graphmaster Graphmaster} structure.
  * 
  * @author Richard Wallace
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public interface Nodemapper
 {

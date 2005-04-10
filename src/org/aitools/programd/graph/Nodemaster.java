@@ -30,7 +30,7 @@ import org.aitools.programd.util.DeveloperError;
  * </p>
  * 
  * @author Richard Wallace
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @author Eion Robb
  */
 public class Nodemaster implements Nodemapper
