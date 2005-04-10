@@ -11,6 +11,7 @@ package org.aitools.programd.logging;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.LogRecord;
 import java.util.logging.XMLFormatter;
 
 import org.aitools.programd.logging.ChatLogRecord;
@@ -41,6 +42,22 @@ public class XMLChatLogFormatter extends XMLFormatter
     private static final String INPUT_END = "</input>\n";
     private static final String REPLY_START = "  <reply>";
     private static final String REPLY_END = "</reply>\n";
+    
+    /**
+     * We insist that the record be a ChatLogRecord.
+     * @see java.util.logging.XMLFormatter#format
+     * @param record the ChatLogRecord to format
+     * @return the result of formatting the given ChatLogRecord
+     * @throws IllegalArgumentException if the record is not a ChatLogRecord
+     */
+    public String format(LogRecord record)
+    {
+        if (!(record instanceof ChatLogRecord))
+        {
+            throw new IllegalArgumentException("XMLChatLogFormatter is intended to handle ChatRecords only.");
+        }
+        return format((ChatLogRecord) record);
+    }
     
     /**
      * @see java.util.logging.XMLFormatter#format
