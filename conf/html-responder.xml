@@ -34,11 +34,14 @@ GENERAL NOTES
     <!-- The html templates directory (relative to programd.home). [String: templates/html]-->
     <entry key="programd.responder.html.template.directory">templates/html</entry>
     
-    <!-- The default chat template.  [String: chat.html]
+    <!-- The default chat template name.  [String: chat]
          * Note: Any other *.html, *.htm or *.data files in
            programd.responder.flash.template.directory will also be available if
            you specify a template name (without suffixes) parameter in the user request.-->
-    <entry key="programd.responder.html.chat.default-template.path">chat.html</entry>
+    <entry key="programd.responder.html.chat.default-template.name">chat</entry>
+    
+    <!-- Use user authentication? [boolean: true]-->
+    <entry key="programd.responder.html.use-user-authentication">true</entry>
     
     <!-- The registration form. [String: register.html]-->
     <entry key="programd.responder.html.register.form.path">register.html</entry>
@@ -48,6 +51,36 @@ GENERAL NOTES
     
     <!-- The change password form. [String: change-password.html]-->
     <entry key="programd.responder.html.change-password.form.path">change-password.html</entry>
+
+    <!-- The access denied page. [String: access-denied.html]-->
+    <entry key="programd.responder.html.access-denied.page.path">access-denied.html</entry>
+
+    <!-- The login success page. [String: login-success.html]-->
+    <entry key="programd.responder.html.login-success.page.path">login-success.html</entry>
+
+    <!-- The login failed page. [String: login-failed.html]-->
+    <entry key="programd.responder.html.login-failed.page.path">login-failed.html</entry>
+
+    <!-- The logout success page. [String: logout-success.html]-->
+    <entry key="programd.responder.html.logout-success.page.path">logout-success.html</entry>
+
+    <!-- The password change succeeded page. [String: password-change-succeeded.html]-->
+    <entry key="programd.responder.html.password-change-succeeded.page.path">password-change-succeeded.html</entry>
+
+    <!-- The old password invalid page. [String: old-password-invalid.html]-->
+    <entry key="programd.responder.html.old-password-invalid.page.path">old-password-invalid.html</entry>
+
+    <!-- The username format invalid page. [String: username-format-invalid.html]-->
+    <entry key="programd.responder.html.username-format-invalid.page.path">username-format-invalid.html</entry>
+
+    <!-- The password format invalid page. [String: password-format-invalid.html]-->
+    <entry key="programd.responder.html.password-format-invalid.page.path">password-format-invalid.html</entry>
+
+    <!-- The password not confirmed page. [String: password-not-confirmed.html]-->
+    <entry key="programd.responder.html.password-not-confirmed.page.path">password-not-confirmed.html</entry>
+
+    <!-- The registration succeeded page. [String: registration-succeeded.html]-->
+    <entry key="programd.responder.html.registration-succeeded.page.path">registration-succeeded.html</entry>
 
     <!-- Whether to enable authentication via the HTMLResponder [boolean: true]-->
     <entry key="programd.responder.html.authenticate">true</entry>
