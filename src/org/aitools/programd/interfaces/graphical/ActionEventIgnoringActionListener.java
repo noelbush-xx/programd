@@ -32,7 +32,6 @@ abstract public class ActionEventIgnoringActionListener implements ActionListene
      */
     public void actionPerformed(ActionEvent ae)
     {
-        ae = null;
         actionPerformed();
     }
     
