@@ -12,8 +12,9 @@ package org.aitools.programd.configurations;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
-import org.aitools.programd.Core;
 
+import org.aitools.programd.Core;
+import org.aitools.programd.CoreShutdownHook;
 import org.aitools.programd.interfaces.graphical.GUIConsole;
 
 /**
@@ -38,9 +39,20 @@ public class SimpleGUIConsole
         this.core = new Core(corePropertiesPath);
         this.console = new GUIConsole(consolePropertiesPath);
         this.console.attachTo(this.core);
-        this.core.startup();
+        this.core.setup();
     }
     
+    /**
+     * Starts the core and the shell (if enabled) and sends the connect string.
+     */
+    public void run()
+    {
+        this.core.start();
+        // Send the connect string.
+        this.core.processResponse(this.core.getSettings().getConnectString());
+        this.console.startShell();
+    }
+
     private static void usage()
     {
         System.out.println("Usage: simple-gui-console -c <CORE_CONFIG> -n <CONSOLE_CONFIG>");
@@ -100,6 +112,9 @@ public class SimpleGUIConsole
             System.exit(1);
         }
 
-        new SimpleGUIConsole(corePropertiesPath, consolePropertiesPath);
+        SimpleGUIConsole console = new SimpleGUIConsole(corePropertiesPath, consolePropertiesPath);
+        // Add a shutdown hook so the Core will be properly shut down if the system exits.
+        Runtime.getRuntime().addShutdownHook(new CoreShutdownHook(console.core));
+        console.run();
     } 
 }

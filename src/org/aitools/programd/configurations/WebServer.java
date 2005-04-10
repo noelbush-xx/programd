@@ -12,22 +12,10 @@ package org.aitools.programd.configurations;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.aitools.programd.Core;
-import org.aitools.programd.bot.BotProcesses;
+import org.aitools.programd.CoreShutdownHook;
 import org.aitools.programd.interfaces.Console;
-import org.aitools.programd.server.ProgramDCompatibleHttpServer;
-import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.UnspecifiedParameterError;
-import org.aitools.programd.util.UserError;
+import org.aitools.programd.interfaces.HTTPServer;
 
 /**
  * An implementation of Program D combined with a web server.
@@ -38,18 +26,11 @@ public class WebServer
 {
     /** The Core to which this web server will be attached. */
     private Core core;
+    
+    private HTTPServer httpServer;
 
     /** The Console that will (may) be created for this web server. */
     private Console console;
-
-    /** The logger for web server activity. */
-    private Logger logger;
-
-    /** Whatever HTTP server is going to be used. */
-    private ProgramDCompatibleHttpServer server;
-
-    /** The WebServer settings. */
-    private WebServerSettings settings;
 
     /**
      * A WebServer without a console.
@@ -59,7 +40,7 @@ public class WebServer
      */
     public WebServer(String corePropertiesPath, String webServerPropertiesPath)
     {
-        launch(corePropertiesPath, webServerPropertiesPath);
+        initialize(corePropertiesPath, webServerPropertiesPath);
     }
 
     /**
@@ -72,130 +53,31 @@ public class WebServer
     public WebServer(String corePropertiesPath, String webServerPropertiesPath, String consolePropertiesPath)
     {
         this.console = new Console(consolePropertiesPath);
-        launch(corePropertiesPath, webServerPropertiesPath);
+        initialize(corePropertiesPath, webServerPropertiesPath);
     }
-
-    private void launch(String corePropertiesPath, String webServerPropertiesPath)
+    
+    private void initialize(String corePropertiesPath, String webServerPropertiesPath)
     {
         this.core = new Core(corePropertiesPath);
         if (this.console != null)
         {
             this.console.attachTo(this.core);
         }
-        this.core.startup();
-        this.settings = new WebServerSettings(webServerPropertiesPath);
-
-        this.logger = Logger.getLogger("programd");
-        try
+        this.core.setup();
+        this.httpServer = new HTTPServer(this.core, webServerPropertiesPath);
+        if (this.console != null)
         {
-            this.logger.addHandler(new FileHandler(this.settings.getLogPath(), 1024, 10));
+            this.console.startShell();
         }
-        catch (IOException e)
-        {
-            throw new UserError("Could not open web server log path \"" + this.settings.getLogPath() + "\".", e);
-        }
-
-        String className = this.settings.getHttpserverClassname();
-
-        // Fail if http server class name is not specified.
-        if (className == null)
-        {
-            throw new UserError(new UnspecifiedParameterError("httpserver-classname"));
-        }
-
-        this.logger.log(Level.INFO, "Starting web server " + className + ".");
-
-        // Start the http server.
-        startHttpServer(className, this.settings.getHttpserverConfig());
-
-        // Figure out what the full server address is.
-        InetAddress localhost;
-        try
-        {
-            localhost = InetAddress.getLocalHost();
-        }
-        catch (UnknownHostException e)
-        {
-            throw new DeveloperError("Unbelievable -- localhost is an 'unknown host'!", e);
-        }
-
-        String serverAddress = "http://" + localhost.getHostName() + ":" + this.server.getHttpPort();
-
-        this.logger.log(Level.INFO, "Web server is listening at " + serverAddress);
     }
 
     /**
-     * Tries to instantiate an http server of unpredetermined type. We wish to
-     * be compatible with any server, not just the choix du jour.
-     * @param className the classname of the http server to instantiate
-     * @param configParameters the parameters need to configure the http server
+     * Starts the core and the http server.
      */
-    private void startHttpServer(String className, Object... configParameters)
+    public void run()
     {
-        // First, see if the http server class can be found.
-        Class< ? extends ProgramDCompatibleHttpServer> serverClass;
-        try
-        {
-            serverClass = (Class< ? extends ProgramDCompatibleHttpServer>) Class.forName(className);
-        }
-        catch (ClassNotFoundException e)
-        {
-            throw new UserError("Could not find http server \"" + className + "\".", e);
-        }
-        catch (ClassCastException e)
-        {
-            throw new UserError("\"" + className + "\" is not a subclass of ProgramDCompatibleHttpServer.", e);
-        }
-
-        // Get the constructor that takes a Core as an argument.
-        Constructor<? extends ProgramDCompatibleHttpServer> constructor;
-        try
-        {
-            constructor = serverClass.getDeclaredConstructor(Core.class);
-        }
-        catch (NoSuchMethodException e)
-        {
-            throw new DeveloperError("Requested constructor not found for web server class.", e);
-        }
-
-        /*
-         * Any http server must implement ProgramDCompatibleHttpServer. The
-         * interface itself is very trivial, and is just a way for us to isolate
-         * dependencies on particular http servers (non-GPL) to a single wrapper
-         * class.
-         */
-        try
-        {
-            this.server = constructor.newInstance(this.core);
-        }
-        catch (InstantiationException e)
-        {
-            throw new UserError("Couldn't instantiate http server \"" + className + "\".", e);
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new DeveloperError("The constructor for \"" + className + "\" or the class itself is not available.", e);
-        }
-        catch (ClassCastException e)
-        {
-            throw new DeveloperError("\"" + className + "\" is not an implementation ofProgramDCompatibleHttpServer.", e);
-        }
-        catch (InvocationTargetException e)
-        {
-            throw new DeveloperError("The web server constructor threw an exception.", e);
-        }
-
-        /*
-         * If the server config parameter was defined, and if the http server is
-         * an implementation of ProgramDCompatibleHttpServer, configure it.
-         */
-        if (configParameters != null)
-        {
-            this.server.configure(configParameters);
-        }
-
-        // Start the server as one of the BotProcesses.
-        BotProcesses.start(this.server, "http server");
+        this.core.start();
+        this.core.getManagedProcesses().start(this.httpServer, "http server");
     }
 
     private static void usage()
@@ -264,14 +146,20 @@ public class WebServer
             usage();
             System.exit(1);
         }
+        
+        WebServer server;
 
         if (consolePropertiesPath == null)
         {
-            new WebServer(corePropertiesPath, webServerPropertiesPath);
+            server = new WebServer(corePropertiesPath, webServerPropertiesPath);
         }
         else
         {
-            new WebServer(corePropertiesPath, webServerPropertiesPath, consolePropertiesPath);
+            server = new WebServer(corePropertiesPath, webServerPropertiesPath, consolePropertiesPath);
         }
+
+        // Add a shutdown hook so the Core will be properly shut down if the system exits.
+        Runtime.getRuntime().addShutdownHook(new CoreShutdownHook(server.core));
+        server.run();
     }
 }

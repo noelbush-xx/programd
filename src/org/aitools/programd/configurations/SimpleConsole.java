@@ -13,7 +13,7 @@ import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
 import org.aitools.programd.Core;
-
+import org.aitools.programd.CoreShutdownHook;
 import org.aitools.programd.interfaces.Console;
 
 /**
@@ -23,7 +23,7 @@ import org.aitools.programd.interfaces.Console;
  * attached (if you enable it).  Input, output and error are routed via standard system objects.
  * 
  * @author Noel Bush
- * @since 4.2
+ * @since 4.5
  */
 public class SimpleConsole
 {
@@ -38,12 +38,20 @@ public class SimpleConsole
         this.core = new Core(corePropertiesPath);
         this.console = new Console(consolePropertiesPath);
         this.console.attachTo(this.core);
-        this.core.startup();
-        
-        // Send the connect string.
-        this.core.processResponse(this.core.getSettings().getConnectString());
+        this.core.setup();
     }
     
+    /**
+     * Starts the core and the shell (if enabled) and sends the connect string.
+     */
+    public void run()
+    {
+        this.core.start();
+        // Send the connect string.
+        this.core.processResponse(this.core.getSettings().getConnectString());
+        this.console.startShell();
+    }
+
     private static void usage()
     {
         System.out.println("Usage: simple-console -c <CORE_CONFIG> -n <CONSOLE_CONFIG>");
@@ -103,6 +111,9 @@ public class SimpleConsole
             System.exit(1);
         }
 
-        new SimpleConsole(corePropertiesPath, consolePropertiesPath);
+        SimpleConsole console = new SimpleConsole(corePropertiesPath, consolePropertiesPath);
+        // Add a shutdown hook so the Core will be properly shut down if the system exits.
+        Runtime.getRuntime().addShutdownHook(new CoreShutdownHook(console.core));
+        console.run();
     } 
 }
