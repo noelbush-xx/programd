@@ -27,7 +27,7 @@ import org.aitools.programd.util.FileManager;
  * 
  * @author Jon Baer
  * @author Noel Bush
- * @version 4.2
+ * @version 4.5
  */
 public class AIMLWatcher
 {
