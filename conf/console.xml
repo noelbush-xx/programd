@@ -49,9 +49,6 @@ GENERAL NOTES
          * This is an advanced debugging feature.  You likely want to leave it set to false.-->
     <entry key="programd.console.show-method-names-always">false</entry>
     
-    <!-- Which bot predicate contains the bot's name? [String: name]-->
-    <entry key="programd.console.bot-name-predicate">name</entry>
-    
     <!-- The date-time format to use on the console. [String: H:mm:ss]
          * See http://java.sun.com/jdk1.5.0_02/docs/api/java/text/SimpleDateFormat.html
            for formatting codes.
