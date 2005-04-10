@@ -15,7 +15,7 @@ import java.io.File;
  * This exception indicates that an attempt to create a file cannot be
  * fulfilled, because there is already a directory with the requested name.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.5
  */
 public class FileAlreadyExistsAsDirectoryException extends Exception

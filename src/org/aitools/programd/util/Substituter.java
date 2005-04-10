@@ -19,7 +19,7 @@ import java.util.Map;
  * Provides generic substitution utilities for classes that don't have their
  * own.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class Substituter
 {

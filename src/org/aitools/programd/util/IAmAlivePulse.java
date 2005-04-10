@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 /**
  * Prints the message &quot;I am alive!&quot; to the console/log.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class IAmAlivePulse implements Pulse
 {

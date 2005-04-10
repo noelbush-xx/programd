@@ -27,7 +27,7 @@ import org.aitools.programd.parser.AIMLReaderListener;
  * @author Kris Drent
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @version 4.5
  */
 public class AIMLLoader implements AIMLReaderListener

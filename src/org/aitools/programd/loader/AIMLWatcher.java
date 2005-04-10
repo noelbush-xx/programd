@@ -26,7 +26,7 @@ import org.aitools.programd.util.FileManager;
  * Watches a set of AIML files. Any file changes will be loaded automatically.
  * 
  * @author Jon Baer
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @version 4.5
  */
 public class AIMLWatcher

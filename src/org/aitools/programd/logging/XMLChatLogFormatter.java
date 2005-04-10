@@ -19,7 +19,7 @@ import org.aitools.programd.util.XMLKit;
 
 /**
  * Formats a ChatLogRecord by printing a number of extra fields as we like them.
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.5
  */
 public class XMLChatLogFormatter extends XMLFormatter

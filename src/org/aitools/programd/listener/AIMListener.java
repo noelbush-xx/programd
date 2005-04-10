@@ -30,7 +30,7 @@ import org.aitools.programd.util.XMLKit;
  * This code is from the Everybuddy Java Project by Chris Carlin
  * (http://EBJava.sourceforge.net/) modified to work with a Program D server.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @author Jon Baer
  * @author Sandy McArthur
  * @version 4.5
@@ -92,88 +92,88 @@ public class AIMListener extends Listener
     /** The port to which to connect. */
     private static final int PORT = 21;
 
-    /** The string &quot;Tic/Toc&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String ROAST = "Tic/Toc";
 
-    /** The string &quot;0&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String ZERO = "0";
 
-    /** The string &quot;0x&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String ZERO_X = "0x";
 
-    /** The string &quot;1&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String ONE = "1";
 
-    /** The string &quot;2&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String TWO = "2";
 
-    /** The string &quot;2.5&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String TWO_POINT_FIVE = "2.5";
 
-    /** The string &quot;3&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String THREE = "3";
 
-    /** The string &quot;4&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String FOUR = "4";
 
-    /** The string &quot;5&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String FIVE = "5";
 
-    /** The string &quot;6&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String SIX = "6";
 
-    /** The string &quot;7&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String SEVEN = "7";
 
-    /** The string &quot;9&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String NINE = "9";
 
-    /** The string &quot;ERROR&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String ERROR = "ERROR";
 
-    /** The string &quot;IM_IN&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String IM_IN = "IM_IN";
 
-    /** The string &quot; Message from [&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String MSG_FROM = "Message from [";
 
-    /** The string &quot;]: &quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String RB_COLON = "]: ";
 
-    /** The string &quot;$SENDIM&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String SENDIM = "$SENDIM";
 
-    /** The string &quot;_AIM&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String _AIM = "_AIM";
 
-    /** The string &quot;CHAT_IN&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String CHAT_IN = "CHAT_IN";
 
-    /** The string &quot;901&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String _901 = "901";
 
-    /** The string &quot;903&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String _903 = "903";
 
-    /** The string &quot;960&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String _960 = "960";
 
-    /** The string &quot;961&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String _961 = "961";
 
-    /** The string &quot;962&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String _962 = "962";
 
-    /** The string &quot;Signon err&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String SIGNON_ERR = "Signon err";
 
-    /** The string &quot;toc_send_im &quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String TOC_SEND_IM = "toc_send_im ";
 
-    /** The string &quot;toc_chat_send &quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String TOC_CHAT_SEND = "toc_chat_send ";
 
-    /** The string &quot;toc_add_buddy &quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String TOC_ADD_BUDDY = "toc_add_buddy ";
 
     /** <code>&lt;BODY BGCOLOR=&quot;</code> */
@@ -425,12 +425,12 @@ public class AIMListener extends Listener
             }
             else
             {
-                String[] botResponse = XMLKit.breakLinesAtTags(this.core.getResponse(request, from + _AIM, this.botID, this.responder));
-                if (botResponse.length > 0)
+                String[] response = XMLKit.breakLinesAtTags(this.core.getResponse(request, from + _AIM, this.botID, this.responder));
+                if (response.length > 0)
                 {
-                    for (int line = 0; line < botResponse.length; line++)
+                    for (int line = 0; line < response.length; line++)
                     {
-                        sendMesg(from, botResponse[line]);
+                        sendMesg(from, response[line]);
                     }
                 }
             }
@@ -449,12 +449,12 @@ public class AIMListener extends Listener
             String request = XMLKit.removeMarkup(mesg.toString());
             if (request.indexOf(this.screenname) > 0)
             {
-                String[] botResponse = XMLKit.breakLinesAtTags(this.core.getResponse(request, from + _AIM, this.botID, this.responder));
-                if (botResponse.length > 0)
+                String[] response = XMLKit.breakLinesAtTags(this.core.getResponse(request, from + _AIM, this.botID, this.responder));
+                if (response.length > 0)
                 {
-                    for (int line = 0; line < botResponse.length; line++)
+                    for (int line = 0; line < response.length; line++)
                     {
-                        sendChatRoomMesg(room_id, botResponse[line]);
+                        sendChatRoomMesg(room_id, response[line]);
                     }
                 }
             }

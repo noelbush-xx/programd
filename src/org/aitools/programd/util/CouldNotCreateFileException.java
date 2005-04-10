@@ -12,7 +12,7 @@ package org.aitools.programd.util;
 /**
  * Thrown when a file cannot be created.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.2
  */
 public class CouldNotCreateFileException extends Exception

@@ -22,7 +22,7 @@ import org.aitools.programd.util.XMLKit;
  * 
  * @author Chris Knight
  * @author Jon Baer
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @version 4.5
  * @see <a href="http://www.chrisknight.com/sirc/">sIRC </a>
  */
@@ -401,13 +401,13 @@ public class IRCListener extends Listener implements ShellCommandable
                         logMessage("Got a message from [" + this.nick + "]: " + message);
                         sendServerMessage("/MSG " + " " + this.channel + " :" + message);
 
-                        String[] botResponse = XMLKit.breakLinesAtTags(this.core.getResponse(message, this.nick
+                        String[] response = XMLKit.breakLinesAtTags(this.core.getResponse(message, this.nick
                                 + "_IRC", this.botID, new TextResponder()));
-                        if (botResponse.length > 0)
+                        if (response.length > 0)
                         {
-                            for (int line = 0; line < botResponse.length; line++)
+                            for (int line = 0; line < response.length; line++)
                             {
-                                processMessage("/PRVMSG " + this.nick + " " + botResponse[line]);
+                                processMessage("/PRVMSG " + this.nick + " " + response[line]);
                             } 
                         } 
                     } 
@@ -1009,13 +1009,13 @@ public class IRCListener extends Listener implements ShellCommandable
                     sendMessage(NONE, "*" + targetnick + "* " + gitter);
                     logMessage("Request: [" + targetnick + "]: " + gitter);
 
-                    String[] botResponse = XMLKit.breakLinesAtTags(this.core.getResponse(gitter, targetnick + "_IRC",
+                    String[] response = XMLKit.breakLinesAtTags(this.core.getResponse(gitter, targetnick + "_IRC",
                             this.botID, new TextResponder()));
-                    if (botResponse.length > 0)
+                    if (response.length > 0)
                     {
-                        for (int line = 0; line < botResponse.length; line++)
+                        for (int line = 0; line < response.length; line++)
                         {
-                            processMessage("/MSG " + targetnick + " " + botResponse[line]);
+                            processMessage("/MSG " + targetnick + " " + response[line]);
                         } 
                     } 
                 } 

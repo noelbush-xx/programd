@@ -14,7 +14,7 @@ package org.aitools.programd.util;
  * when its <code>label</code> does not correspond to a class that is registered by the
  * {@link org.aitools.programd.util.ClassRegistry ClassRegistry}.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class NotARegisteredClassException extends Exception
 {

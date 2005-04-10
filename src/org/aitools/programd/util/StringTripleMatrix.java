@@ -17,7 +17,7 @@ import java.util.Vector;
 /**
  * Manages a matrix of {@link StringTriple} s.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.1.5
  */
 public class StringTripleMatrix

@@ -18,7 +18,7 @@ import java.util.TimerTask;
  * objects (currently only the parent static Multiplexor) in order to provide
  * assurance that the bot server is alive.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class Heart
 {

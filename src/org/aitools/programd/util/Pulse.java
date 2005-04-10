@@ -13,7 +13,7 @@ package org.aitools.programd.util;
  * A <code>Pulse</code> does something (anything) at a regular interval to
  * indicate that the bot is alive.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public interface Pulse
 {

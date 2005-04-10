@@ -22,7 +22,7 @@ import org.aitools.programd.util.FileManager;
  * Usually the subclasses of Settings will be generated automatically from some other structure,
  * such as (as currently) the properties file itself, since it's annoying to create and maintain these by hand.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 abstract public class Settings
 {

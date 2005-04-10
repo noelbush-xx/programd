@@ -162,8 +162,8 @@ public class DbAccess
         } 
         catch (SQLException e)
         {
-            logger.log(Level.SEVERE, "Problem executing a query on your database.  Check structure and availability." + LINE_SEPARATOR + e.getMessage());
-            throw new UserError(e);
+            logger.log(Level.SEVERE, "Problem executing a query on the database.  Check structure and availability." + LINE_SEPARATOR + e.getMessage());
+            throw new DeveloperError("SQL error while executing query: " + query, e);
         } 
     } 
 
@@ -188,7 +188,7 @@ public class DbAccess
         catch (SQLException e)
         {
             logger.log(Level.SEVERE, "Problem executing an update on your database.  Check structure and availability." + LINE_SEPARATOR + e.getMessage());
-            throw new UserError(e);
+            throw new UserError("SQL error while executing update: " + update, e);
         } 
     } 
 

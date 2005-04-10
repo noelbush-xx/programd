@@ -12,7 +12,7 @@ package org.aitools.programd.util;
 /**
  * A developer error.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class DeveloperError extends Error
 {

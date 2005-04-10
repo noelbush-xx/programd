@@ -21,7 +21,7 @@ import java.util.StringTokenizer;
 /**
  * Provides utility methods for pattern-oriented tasks.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.1.3
  */
 public class PatternArbiter
@@ -646,7 +646,7 @@ public class PatternArbiter
             if (theLine.toLowerCase().equals("exit"))
             {
                 System.out.println("Exiting.");
-                System.exit(0);
+                return;
             } 
             if (!theLine.startsWith(";") && theLine.trim().length() > 0)
             {

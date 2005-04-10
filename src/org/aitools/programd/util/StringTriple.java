@@ -12,7 +12,7 @@ package org.aitools.programd.util;
 /**
  * Contains three Strings.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.1.5
  */
 public class StringTriple

@@ -20,7 +20,7 @@ import org.aitools.programd.CoreSettings;
 /**
  * Our own version of the SimpleFormatter, which has the appearance we like for textual logs.
  * TODO: Elaborate this to be configurable in the information it logs.
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.5
  */
 public class SimpleFormatter extends Formatter

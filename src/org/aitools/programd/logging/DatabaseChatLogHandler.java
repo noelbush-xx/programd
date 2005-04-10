@@ -25,14 +25,14 @@ import org.aitools.programd.util.sql.DbAccessRefsPoolMgr;
 /**
  * Provides a logging handler that writes to a database.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class DatabaseChatLogHandler extends Handler
 {
     /** A manager for database access (is this really necessary?). */
     private static DbAccessRefsPoolMgr dbManager;
 
-    /** The string &quot;utf-8&quot; (for character encoding conversion). */
+    /** The string &quot;{@value}&quot; (for character encoding conversion). */
     private static final String ENC_UTF8 = "utf-8";
 
     /** The (file-based) logger for database activity. */

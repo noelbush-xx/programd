@@ -15,7 +15,7 @@ import java.io.FilenameFilter;
 /**
  * Provides a simple filename filter given an array of acceptable suffixes.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class SuffixFilenameFilter implements FilenameFilter
 {

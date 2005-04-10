@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * @author Richard Wallace
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class StringKit
 {

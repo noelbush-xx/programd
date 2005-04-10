@@ -13,7 +13,7 @@ package org.aitools.programd.util;
  * Thrown when an object has somehow gotten into a state
  * that it was never supposed to.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class IllegalObjectStateException extends Exception
 {

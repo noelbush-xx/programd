@@ -31,7 +31,7 @@ import org.aitools.programd.responder.TextResponder;
  * 
  * @author Chris Carlin
  * @author Jon Baer
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @see <a href="http://EBJava.sourceforge.net/">Everybuddy </a>
  * @version 1.0
  */
@@ -323,8 +323,8 @@ public class ICQListener extends Listener
             logMessage("Message from [" + from + "]: " + message);
             if (message != null)
             {
-                String botResponse = this.core.getResponse(message, from + _ICQ, this.botID, this.responder);
-                sendMesg(from, botResponse);
+                String response = this.core.getResponse(message, from + _ICQ, this.botID, this.responder);
+                sendMesg(from, response);
             } 
             return;
         } 

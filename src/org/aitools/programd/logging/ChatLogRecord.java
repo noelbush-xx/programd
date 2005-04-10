@@ -16,7 +16,7 @@ import java.util.logging.LogRecord;
  * A ChatLogRecord contains additional information about an exchange in a chat.
  * Note that the "message" member of a ChatLogRecord will be null.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.2
  */
 public class ChatLogRecord extends LogRecord
