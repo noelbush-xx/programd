@@ -211,14 +211,13 @@ public class DBMultiplexor extends Multiplexor
      * @param password the password to associate with the userid
      * @param secretKey the secret key that helps validate this userid/password creation
      * @param botid the botid with whom to associate this userid/password combination
-     * @return whether the user so created was new
+     * @throws DuplicateUserIDError if the given userid was already found in the database
      */
-    public boolean createUser(String userid, String password, String secretKey, String botid)
+    public void createUser(String userid, String password, String secretKey, String botid) throws DuplicateUserIDError
     {
         if (!secretKey.equals(SECRET_KEY))
         {
-            this.dbLogger.log(Level.SEVERE, "ACCESS VIOLATION: Tried to create a user with invalid secret key.");
-            return false;
+            throw new DeveloperError("ACCESS VIOLATION: Tried to create a user with invalid secret key.", new SecurityException());
         } 
         userid = userid.trim().toLowerCase();
         password = password.trim().toLowerCase();
@@ -244,7 +243,7 @@ public class DBMultiplexor extends Multiplexor
                 {
                     rs.close();
                     this.dbManager.returnDbaRef(dba);
-                    return false;
+                    throw new DuplicateUserIDError(userid);
                 } 
             } 
             dba.executeUpdate("insert into users (userid, password, botid) values ('" + userid + "' , '" + password
@@ -256,7 +255,6 @@ public class DBMultiplexor extends Multiplexor
             throw new UserError("Error working with database.", e);
         } 
         this.dbManager.returnDbaRef(dba);
-        return true;
     } 
 
     /**

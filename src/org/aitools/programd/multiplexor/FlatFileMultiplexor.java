@@ -73,17 +73,16 @@ public class FlatFileMultiplexor extends Multiplexor
     } 
 
     /**
-     * Always returns true (FlatFileMultiplexor currently does not support
+     * Does nothing (FlatFileMultiplexor currently does not support
      * authentication).
      * @param userid the userid to create
      * @param password the password to add
      * @param secretKey the secret key that is supposed to validate that this is a secure request
      * @param botid the id of the bot for whom to create the given userid/password combination
-     * @return true always
      */
-    public boolean createUser(String userid, String password, String secretKey, String botid)
+    public void createUser(String userid, String password, String secretKey, String botid)
     {
-        return true;
+        // Do nothing.
     } 
 
     /**
