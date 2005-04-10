@@ -60,7 +60,7 @@ import org.xml.sax.SAXException;
  * @author Thomas Ringate/Pedro Colla
  * @author Noel Bush
  * @author Eion Robb
- * @version 4.2
+ * @version 4.5
  */
 public class Graphmaster
 {
@@ -104,19 +104,21 @@ public class Graphmaster
     /** The string &quot;file&quot;. */
     private static final String FILE = "file";
     
-    // State constants
+    /** Match states. */
+    private static enum MatchState
+    {
+        /** Trying to match the input part of the path. */
+        IN_INPUT,
 
-    /** Match state: in <code>input</code> portion of path. */
-    private static final int S_INPUT = 0;
+        /** Trying to match the that part of the path. */
+        IN_THAT,
 
-    /** Match state: in <code>that</code> portion of path. */
-    private static final int S_THAT = 1;
+        /** Trying to match the topic part of the path. */
+        IN_TOPIC,
 
-    /** Match state: in <code>topic</code> portion of path. */
-    private static final int S_TOPIC = 2;
-
-    /** Match state: in <code>botid</code> portion of path. */
-    private static final int S_BOTID = 3;
+        /** Trying to match the botid part of the path. */
+        IN_BOTID
+    }
 
     // Class variables.
     
@@ -138,7 +140,7 @@ public class Graphmaster
     /** The SAXParser used in loading AIML. */
     private SAXParser parser;
 
-    /** The response timeout. */
+    /** The botResponse timeout. */
     protected int responseTimeout;
 
     /** Load time marker. */
@@ -177,11 +179,11 @@ public class Graphmaster
         }
         catch (SAXException e)
         {
-            throw new DeveloperError(e);
+            throw new DeveloperError("SAX exception occurred while creating parser for Graphmaster.", e);
         }
         catch (ParserConfigurationException e)
         {
-            throw new DeveloperError(e);
+            throw new DeveloperError("Parser configuration exception occurred while creating parser for Graphmaster.", e);
         }
 
         this.responseTimeout = this.coreSettings.getResponseTimeout();
@@ -289,7 +291,7 @@ public class Graphmaster
      * synchronized!
      * </p>
      * 
-     * @see #match(Nodemapper, Nodemapper, List, String, StringBuffer, int,
+     * @see #match(Nodemapper, Nodemapper, List, String, StringBuffer, MatchState,
      *      long)
      * @param input
      *            &lt;input/&gt; path component
@@ -353,7 +355,7 @@ public class Graphmaster
 
         // Get the match, starting at the root, with an empty star and path,
         // starting in "in input" mode.
-        Match match = match(this.root, this.root, inputPath, EMPTY_STRING, new StringBuffer(), S_INPUT, System
+        Match match = match(this.root, this.root, inputPath, EMPTY_STRING, new StringBuffer(), MatchState.IN_INPUT, System
                 .currentTimeMillis()
                 + this.responseTimeout);
 
@@ -383,18 +385,18 @@ public class Graphmaster
      *            the parent of the nodemapper where we start matching
      * @param input
      *            the input path (possibly a sublist of the original)
-     * @param star
+     * @param wildcardContent
      *            contents absorbed by a wildcard
      * @param path
      *            the path matched so far
      * @param matchState
      *            state variable tracking which part of the path we're in
      * @param expiration
-     *            when this response process expires
+     *            when this botResponse process expires
      * @return the resulting <code>Match</code> object
      */
-    private Match match(Nodemapper nodemapper, Nodemapper parent, List input, String star, StringBuffer path,
-            int matchState, long expiration)
+    private Match match(Nodemapper nodemapper, Nodemapper parent, List<String> input, String wildcardContent, StringBuffer path,
+            MatchState matchState, long expiration)
     {
         // Return null if expiration has been reached.
         if (System.currentTimeMillis() >= expiration)
@@ -414,7 +416,7 @@ public class Graphmaster
         // If no more tokens in the input, see if this is a template.
         if (input.size() == 0)
         {
-            // If so, the star is from the topic, and the path component is the
+            // If so, the wildcard content is from the topic, and the path component is the
             // topic.
             if (nodemapper.containsKey(TEMPLATE))
             {
@@ -428,10 +430,10 @@ public class Graphmaster
         } 
 
         // Take the first word of the input as the head.
-        String head = ((String) input.get(0)).trim();
+        String head = input.get(0).trim();
 
         // Take the rest as the tail.
-        List tail = input.subList(1, input.size());
+        List<String> tail = input.subList(1, input.size());
 
         /*
          * See if this nodemapper has a _ wildcard. _ comes first in the AIML
@@ -444,41 +446,44 @@ public class Graphmaster
             StringBuffer newPath = new StringBuffer();
             synchronized (newPath)
             {
-                newPath.append(path);
-                newPath.append(' ');
+                if (path.length() > 0)
+                {
+                    newPath.append(path);
+                    newPath.append(' ');
+                }
                 newPath.append('_');
             } 
 
             // Try to get a match with the tail and this new path, using the
-            // head as the star.
+            // head as the wildcard content.
             match = match((Nodemapper) nodemapper.get(UNDERSCORE), nodemapper, tail, head, newPath, matchState,
                     expiration);
 
             // If that did result in a match,
             if (match != null)
             {
-                // capture and push the star content appropriate to the current
+                // capture and push the wildcard content appropriate to the current
                 // match state.
                 switch (matchState)
                 {
-                    case S_INPUT:
-                        if (star.length() > 0)
+                    case IN_INPUT:
+                        if (wildcardContent.length() > 0)
                         {
-                            match.pushInputStar(star);
+                            match.pushInputWildcardContent(wildcardContent);
                         } 
                         break;
 
-                    case S_THAT:
-                        if (star.length() > 0)
+                    case IN_THAT:
+                        if (wildcardContent.length() > 0)
                         {
-                            match.pushThatStar(star);
+                            match.pushThatWildcardContent(wildcardContent);
                         } 
                         break;
 
-                    case S_TOPIC:
-                        if (star.length() > 0)
+                    case IN_TOPIC:
+                        if (wildcardContent.length() > 0)
                         {
-                            match.pushTopicStar(star);
+                            match.pushTopicWildcardContent(wildcardContent);
                         } 
                         break;
                 } 
@@ -494,7 +499,7 @@ public class Graphmaster
         if (nodemapper.containsKey(head))
         {
             /*
-             * Check now whether this is a marker for the <that>, <topic> or
+             * Check now whether this head is a marker for the <that>, <topic> or
              * <botid> segments of the path. If it is, set the match state
              * variable accordingly.
              */
@@ -502,15 +507,15 @@ public class Graphmaster
             {
                 if (head.equals(THAT))
                 {
-                    matchState = S_THAT;
+                    matchState = MatchState.IN_THAT;
                 } 
                 else if (head.equals(TOPIC))
                 {
-                    matchState = S_TOPIC;
+                    matchState = MatchState.IN_TOPIC;
                 } 
                 else if (head.equals(BOTID))
                 {
-                    matchState = S_BOTID;
+                    matchState = MatchState.IN_BOTID;
                 } 
 
                 // Now try to get a match using the tail and an empty star and
@@ -525,28 +530,28 @@ public class Graphmaster
                     // *previous* match state.
                     switch (matchState)
                     {
-                        case S_THAT:
-                            if (star.length() > 0)
+                        case IN_THAT:
+                            if (wildcardContent.length() > 0)
                             {
-                                match.pushInputStar(star);
+                                match.pushInputWildcardContent(wildcardContent);
                             } 
                             // Remember the pattern segment of the matched path.
                             match.setPattern(path.toString());
                             break;
 
-                        case S_TOPIC:
-                            if (star.length() > 0)
+                        case IN_TOPIC:
+                            if (wildcardContent.length() > 0)
                             {
-                                match.pushThatStar(star);
+                                match.pushThatWildcardContent(wildcardContent);
                             } 
                             // Remember the that segment of the matched path.
                             match.setThat(path.toString());
                             break;
 
-                        case S_BOTID:
-                            if (star.length() > 0)
+                        case IN_BOTID:
+                            if (wildcardContent.length() > 0)
                             {
-                                match.pushTopicStar(star);
+                                match.pushTopicWildcardContent(wildcardContent);
                             } 
                             // Remember the topic segment of the matched path.
                             match.setTopic(path.toString());
@@ -568,14 +573,17 @@ public class Graphmaster
                 StringBuffer newPath = new StringBuffer();
                 synchronized (newPath)
                 {
-                    newPath.append(path);
-                    newPath.append(' ');
+                    if (path.length() > 0)
+                    {
+                        newPath.append(path);
+                        newPath.append(' ');
+                    }
                     newPath.append(head);
                 } 
 
                 // Try to get a match with the tail and this path, using the
                 // current star.
-                match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, star, newPath, matchState,
+                match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, wildcardContent, newPath, matchState,
                         expiration);
 
                 // If that did result in a match, just return it.
@@ -598,8 +606,11 @@ public class Graphmaster
             StringBuffer newPath = new StringBuffer();
             synchronized (newPath)
             {
-                newPath.append(path);
-                newPath.append(' ');
+                if (path.length() > 0)
+                {
+                    newPath.append(path);
+                    newPath.append(' ');
+                }
                 newPath.append('*');
             } 
 
@@ -615,24 +626,24 @@ public class Graphmaster
                 // match state.
                 switch (matchState)
                 {
-                    case S_INPUT:
-                        if (star.length() > 0)
+                    case IN_INPUT:
+                        if (wildcardContent.length() > 0)
                         {
-                            match.pushInputStar(star);
+                            match.pushInputWildcardContent(wildcardContent);
                         } 
                         break;
 
-                    case S_THAT:
-                        if (star.length() > 0)
+                    case IN_THAT:
+                        if (wildcardContent.length() > 0)
                         {
-                            match.pushThatStar(star);
+                            match.pushThatWildcardContent(wildcardContent);
                         } 
                         break;
 
-                    case S_TOPIC:
-                        if (star.length() > 0)
+                    case IN_TOPIC:
+                        if (wildcardContent.length() > 0)
                         {
-                            match.pushTopicStar(star);
+                            match.pushTopicWildcardContent(wildcardContent);
                         } 
                         break;
                 } 
@@ -649,7 +660,7 @@ public class Graphmaster
          */
         if (nodemapper.equals(parent.get(ASTERISK)) || nodemapper.equals(parent.get(UNDERSCORE)))
         {
-            return match(nodemapper, parent, tail, star + SPACE + head, path, matchState, expiration);
+            return match(nodemapper, parent, tail, wildcardContent + SPACE + head, path, matchState, expiration);
         } 
 
         /*
@@ -761,7 +772,7 @@ public class Graphmaster
         
         try
         {
-            this.parser.parse(url.toString(), new AIMLReader(new AIMLLoader(this, this.core.getBots(), path, botid), this.coreSettings.getAimlSchemaNamespaceUri()));
+            this.parser.parse(url.toString(), new AIMLReader(new AIMLLoader(this, path, botid), this.coreSettings.getAimlSchemaNamespaceUri()));
             //this.parser.reset();
         }
         catch (IOException e)
