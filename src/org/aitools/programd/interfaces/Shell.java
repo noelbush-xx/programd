@@ -17,20 +17,19 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
-import org.aitools.programd.bot.BotProcesses;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.multiplexor.PredicateMaster;
 import org.aitools.programd.responder.TextResponder;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
+import org.aitools.programd.util.ManagedProcess;
 import org.aitools.programd.util.XMLKit;
 
 /**
@@ -181,8 +180,8 @@ public class Shell extends Thread
      */
     private void initialize(ConsoleSettings consoleSettingsToUse)
     {
+        this.setDaemon(true);
         this.consoleSettings = consoleSettingsToUse;
-        this.botNamePredicate = this.consoleSettings.getBotNamePredicate();
         String timestampFormatString = this.consoleSettings.getTimestampFormat();
         if (timestampFormatString.length() > 0)
         {
@@ -204,6 +203,7 @@ public class Shell extends Thread
     public void attachTo(Core coreToUse)
     {
         this.core = coreToUse;
+        this.botNamePredicate = this.core.getSettings().getBotNamePredicate();
         this.graphmaster = this.core.getGraphmaster();
         this.predicateMaster = this.core.getPredicateMaster();
         this.bots = this.core.getBots();
@@ -211,15 +211,6 @@ public class Shell extends Thread
         this.hostname = this.core.getHostname();
     }
     
-    /**
-     * Nothing to do for failure.
-     * @param e the Throwable that caused the failure
-     */
-    public void failure(Throwable e)
-    {
-        // Do nothing.
-    }
-
     /**
      * Runs the shell.
      */
@@ -257,7 +248,7 @@ public class Shell extends Thread
                 /*
                  * A null line probably means that the shell is being mistakenly
                  * run in interactive mode when in fact there is no System.in
-                 * available. In this case, sleep for days :-) and wait to be
+                 * available. In this case, sleep for 100 days :-) and wait to be
                  * interrupted.
                  */
                 while (true)
@@ -283,7 +274,8 @@ public class Shell extends Thread
                 if (theLine.toLowerCase().equals(EXIT))
                 {
                     printExitMessage();
-                    System.exit(1);
+                    this.core.shutdown();
+                    return;
                 }
                 // Help command
                 else if (theLine.toLowerCase().equals(HELP))
@@ -343,7 +335,7 @@ public class Shell extends Thread
             }
             else if (theLine.length() > 0)
             {
-                showConsole(this.botName, XMLKit.breakLinesAtTags(this.core.getResponse(theLine, this.hostname, this.botid, new TextResponder())));
+                showConsole(this.botName, XMLKit.breakLinesAtTags(this.core.getResponse(theLine, this.hostname, this.botid)));
             }
         }
     }
@@ -353,7 +345,10 @@ public class Shell extends Thread
      */
     private void showPrompt()
     {
-        promptConsole('[' + this.botName + "] " + this.predicateMaster.get(this.clientNamePredicate, this.hostname, this.botid).trim());
+        if (this.getState() != Thread.State.NEW)
+        {
+            promptConsole('[' + this.botName + "] " + this.predicateMaster.get(this.clientNamePredicate, this.hostname, this.botid).trim());
+        }
     }
 
     /**
@@ -366,7 +361,7 @@ public class Shell extends Thread
      */
     private void promptConsole(String preprompt)
     {
-        if (!this.midLine)
+        if (this.midLine)
         {
             this.consolePrompt.println();
         } 
@@ -434,6 +429,21 @@ public class Shell extends Thread
 
     /**
      * <p>
+     * Displays a message (after a prompt) in an interactive console.
+     * </p>
+     * 
+     * @param preprompt
+     *            the text to show before the prompt
+     * @param message
+     *            the multi-line message to display
+     */
+    private void showConsole(String preprompt, String message)
+    {
+        printlnOut(preprompt + PROMPT + message);
+    }
+
+    /**
+     * <p>
      * Displays a multi-line message (after a prompt) in an interactive console.
      * </p>
      * 
@@ -451,12 +461,74 @@ public class Shell extends Thread
     }
 
     /**
+     * Print a message line of standard output to the console.
+     * 
+     * @param message
+     *            the message to print
+     */
+    public void printlnOut(String message)
+    {
+        if (this.midLine)
+        {
+            this.consoleOut.println();
+        } 
+        this.consoleOut.println(timestamp() + message);
+        this.midLine = false;
+    } 
+
+    /**
+     * Print a message line of error to the console.
+     * TODO: Make the formatting different here.
+     * 
+     * @param message
+     *            the message to print
+     */
+    public void printlnErr(String message)
+    {
+        if (this.midLine)
+        {
+            this.consoleErr.println();
+        } 
+        this.consoleErr.println(timestamp() + message);
+        this.midLine = false;
+    } 
+
+    /**
+     * Tells the Shell that something else was printed to the console; not midLine anymore.
+     */
+    public void gotLine()
+    {
+        this.midLine = false;
+    } 
+
+    /**
      * Prints an exit message.
      */
     private void printExitMessage()
     {
         Logger.getLogger("programd").log(Level.INFO, "Exiting at user request.");
     }
+
+    /**
+     * @return the current bot id
+     */
+    public String getCurrentBotID()
+    {
+        return this.botid;
+    }
+
+    /**
+     * @return timestamp in specified long or short format
+     */
+    private String timestamp()
+    {
+        if (this.showTimestamp)
+        {
+            return '[' + this.timestampFormat.format(new Date()) + RBRACKET_SPACE;
+        } 
+        // (otherwise...)
+        return EMPTY_STRING;
+    } 
 
     /**
      * Prints help text.
@@ -561,7 +633,7 @@ public class Shell extends Thread
         this.botid = newBotID;
         this.botName = this.bots.getBot(newBotID).getPropertyValue(this.botNamePredicate);
         showMessage("Switched to bot \"" + newBotID + "\" (name: \"" + this.botName + "\").");
-        // Send the connect string and print the first response.
+        // Send the connect string and print the first botResponse.
         showConsole(this.botName, XMLKit.breakLinesAtTags(this.core.getResponse(this.core.getSettings().getConnectString(),
                 this.hostname, this.botid, new TextResponder())));
     }
@@ -604,23 +676,15 @@ public class Shell extends Thread
      */
     private void listCommandables()
     {
-        Iterator processes = BotProcesses.getRegistryIterator();
         int commandableCount = 0;
-        if (processes.hasNext())
+        showMessage("Available shell commandables:");
+        for (ManagedProcess process : this.core.getManagedProcesses().values())
         {
-            showMessage("Available shell commandables:");
-            while (processes.hasNext())
+            if (process instanceof ShellCommandable)
             {
-                try
-                {
-                    ShellCommandable commandable = (ShellCommandable) processes.next();
-                    showMessage("/" + commandable.getShellID() + " - " + commandable.getShellDescription());
-                    commandableCount++;
-                }
-                catch (ClassCastException e)
-                {
-                    // Do nothing; this is not a ShellCommandable.
-                }
+                ShellCommandable commandable = (ShellCommandable)process;
+                showMessage("/" + commandable.getShellID() + " - " + commandable.getShellDescription());
+                commandableCount++;
             }
         }
         if (commandableCount == 0)
@@ -659,23 +723,15 @@ public class Shell extends Thread
 
         String commandableID = command.substring(1, space);
         ShellCommandable commandable = null;
-
-        Iterator processes = BotProcesses.getRegistryIterator();
-        if (processes.hasNext())
+        
+        for (ManagedProcess process : this.core.getManagedProcesses().values())
         {
-            while (processes.hasNext())
+            if (process instanceof ShellCommandable)
             {
-                try
+                ShellCommandable candidate = (ShellCommandable)process;
+                if (commandableID.equals(candidate.getShellID()))
                 {
-                    ShellCommandable candidate = (ShellCommandable) processes.next();
-                    if (commandableID.equals(candidate.getShellID()))
-                    {
-                        commandable = candidate;
-                    }
-                }
-                catch (ClassCastException e)
-                {
-                    // Do nothing; this is not a ShellCommandable.
+                    commandable = candidate;
                 }
             }
         }
@@ -685,69 +741,6 @@ public class Shell extends Thread
         }
         commandable.processShellCommand(command.substring(space + 1));
     }
-
-    /**
-     * Print a message line of standard output to the console.
-     * 
-     * @param message
-     *            the message to print
-     */
-    public void printlnOut(String message)
-    {
-        if (this.midLine)
-        {
-            this.consoleOut.println();
-        } 
-        this.consoleOut.println(timestamp() + message);
-        this.midLine = false;
-    } 
-
-    /**
-     * Print a message line of error to the console.
-     * TODO: Make the formatting different here.
-     * 
-     * @param message
-     *            the message to print
-     */
-    public void printlnErr(String message)
-    {
-        if (this.midLine)
-        {
-            this.consoleErr.println();
-        } 
-        this.consoleErr.println(timestamp() + message);
-        this.midLine = false;
-    } 
-
-    /**
-     * @return the current bot id
-     */
-    public String getCurrentBotID()
-    {
-        return this.botid;
-    }
-
-    /**
-     * @return timestamp in specified long or short format
-     */
-    private String timestamp()
-    {
-        if (this.showTimestamp)
-        {
-            return '[' + this.timestampFormat.format(new Date()) + RBRACKET_SPACE;
-        } 
-        // (otherwise...)
-        return EMPTY_STRING;
-    } 
-
-    /**
-     * Tells the Shell that something else was printed to the console; not midLine anymore.
-     */
-    public void gotLine()
-    {
-        this.midLine = false;
-        showPrompt();
-    } 
 
     /**
      * An exception thrown if no command is specified.
