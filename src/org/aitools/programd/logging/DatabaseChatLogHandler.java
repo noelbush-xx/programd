@@ -39,7 +39,7 @@ public class DatabaseChatLogHandler extends Handler
     private Logger logger;
     
     /**
-     * Private constructor to help enforce singleton pattern.
+     * Creates a new DatabaseChatLogHandler.
      * @param settings the Core settings to use
      */
     public DatabaseChatLogHandler(CoreSettings settings)
