@@ -15,25 +15,28 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.aitools.programd.bot.Bots;
-import org.aitools.programd.bot.BotProcesses;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.interpreter.Interpreter;
+import org.aitools.programd.listener.ListenerRegistry;
 import org.aitools.programd.loader.AIMLWatcher;
 import org.aitools.programd.logging.ChatLogRecord;
 import org.aitools.programd.logging.SimpleFormatter;
 import org.aitools.programd.multiplexor.Multiplexor;
 import org.aitools.programd.multiplexor.PredicateMaster;
+import org.aitools.programd.processor.aiml.AIMLProcessorRegistry;
+import org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessorRegistry;
 import org.aitools.programd.responder.Responder;
+import org.aitools.programd.responder.TextResponder;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.Heart;
+import org.aitools.programd.util.ManagedProcesses;
 import org.aitools.programd.util.UnspecifiedParameterError;
 import org.aitools.programd.util.URITools;
 import org.aitools.programd.util.UserError;
@@ -43,7 +46,7 @@ import org.aitools.programd.util.UserError;
  * 
  * @author Noel Bush
  */
-public class Core
+public class Core extends Thread
 {
     // Public access informational constants.
 
@@ -75,6 +78,18 @@ public class Core
     /** The bots. */
     private Bots bots;
     
+    /** The processes. */
+    private ManagedProcesses processes;
+    
+    /** The bot configuration element processor registry. */
+    private BotConfigurationElementProcessorRegistry botConfigurationElementProcessorRegistry;
+    
+    /** The AIML processor registry. */
+    private AIMLProcessorRegistry aimlProcessorRegistry;
+    
+    /** The Listener registry. */
+    private ListenerRegistry listenerRegistry;
+    
     /** An AIMLWatcher. */
     private AIMLWatcher aimlWatcher;
     
@@ -86,12 +101,25 @@ public class Core
     
     /** Name of the local host. */
     private String hostname;
-
-    /** The {@link org.aitools.programd.CoreListener CoreListener}s, who get notices of certain events. */
-    private HashSet<CoreListener> listeners;
     
     /** A heart. */
     private Heart heart;
+    
+    /** The status of the Core. */
+    private Status status = Status.NOT_STARTED;
+    
+    /** Possible values for status. */
+    public static enum Status
+    {
+        /** The Core has not yet started. */
+        NOT_STARTED,
+        
+        /** The Core is running. */
+        RUNNING,
+        
+        /** The Core has shut down. */
+        SHUT_DOWN
+    }
 
     // Convenience constants.
     private static final String EMPTY_STRING = "";
@@ -103,28 +131,46 @@ public class Core
      */
     public Core(String propertiesPath)
     {
+        super("Core");
         this.settings = new CoreSettings(propertiesPath);
         FileManager.setRootPath(URITools.contextualize(URITools.createValidURL(propertiesPath), this.settings.getRootDirectory()));
         initialize();
     }
 
     /**
+     * Initializes a new Core object with the given CoreSettings object.
+     * @param settingsToUse the settings to use
+     */
+    public Core(CoreSettings settingsToUse)
+    {
+        super("Core");
+        this.settings = settingsToUse;
+        FileManager.setRootPath(URITools.contextualize(FileManager.getWorkingDirectory(), this.settings.getRootDirectory()));
+        initialize();
+    }
+    
+    /**
      * Initializes a new Core object with default property values.
      */
     public Core()
     {
+        super("Core");
         this.settings = new CoreSettings();
         FileManager.setRootPath(URITools.contextualize(FileManager.getWorkingDirectory(), this.settings.getRootDirectory()));
         initialize();
     }
     
     /**
-     * Initialization that is common to both constructors.
+     * Initialization common to all constructors.
      */
     private void initialize()
     {
+        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
+        this.aimlProcessorRegistry = new AIMLProcessorRegistry();
+        this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
         this.graphmaster = new Graphmaster(this);
         this.bots = new Bots();
+        this.processes = new ManagedProcesses();
         // Get the class for the settings-specified Multiplexor.
         Class<? extends Multiplexor> multiplexorClass = null;
         try
@@ -162,25 +208,23 @@ public class Core
         } 
         catch (IllegalAccessException e)
         {
-            throw new DeveloperError("Underlying constructor for Multiplexor is inaccessible", e);
+            throw new DeveloperError("Underlying constructor for Multiplexor is inaccessible.", e);
         } 
         catch (InstantiationException e)
         {
-            throw new DeveloperError("Could not instantiate Multiplexor", e);
+            throw new DeveloperError("Could not instantiate Multiplexor.", e);
         } 
         catch (IllegalArgumentException e)
         {
-            throw new DeveloperError("Illegal argument exception when creating Multiplexor", e);
+            throw new DeveloperError("Illegal argument exception when creating Multiplexor.", e);
         } 
         catch (InvocationTargetException e)
         {
-            throw new DeveloperError("Constructor threw an exception when getting a Multiplexor instance from it", e);
+            throw new DeveloperError("Constructor threw an exception when getting a Multiplexor instance from it.", e);
         } 
         
         this.predicateMaster = new PredicateMaster(this);
         this.multiplexor.attach(this.predicateMaster);
-        
-        this.listeners = new HashSet<CoreListener>();
         
         // Remove all Handlers from the root logger.
         Logger rootLogger = Logger.getLogger("");
@@ -191,10 +235,10 @@ public class Core
         }
         
         // Set up loggers based on the settings.
-        this.logger = setupLogger("programd", this.settings.getActivityLogPath());
+        this.logger = setupLogger("programd", this.settings.getActivityLogPattern());
         this.logger.setLevel(Level.ALL);
         
-        Logger matchingLogger = setupLogger("programd.matching", this.settings.getMatchingLogPath());
+        Logger matchingLogger = setupLogger("programd.matching", this.settings.getMatchingLogPattern());
         if (this.settings.recordMatchTrace())
         {
             matchingLogger.setLevel(Level.FINE);
@@ -212,19 +256,10 @@ public class Core
     }
     
     /**
-     * Attaches the given {@link org.aitools.programd.CoreListener CoreListener}
-     * so that it can be notified of certain events by the <code>Core</core>.
-     * 
-     * @param listener  the {@link org.aitools.programd.CoreListener CoreListener} to attach
+     * Sets up the Core and prepares it to work.  This should be called
+     * by every Core user after creating the Core but before starting it.
      */
-    public void attach(CoreListener listener)
-    {
-        this.listeners.add(listener);
-    }
-    
-    /**
-     */
-    public void startup()
+    public void setup()
     {
         this.logger.log(Level.INFO, "Starting Program D version " + VERSION);
         this.logger.log(Level.INFO, "Using Java VM " + System.getProperty("java.vm.version") + " from "
@@ -291,7 +326,7 @@ public class Core
                 } 
                 catch (Exception e)
                 {
-                    throw new DeveloperError(e);
+                    throw new DeveloperError("Error while creating new instance of JavaScript interpreter.", e);
                 }
             }
             else
@@ -311,12 +346,6 @@ public class Core
                 this.heart.start();
                 this.logger.log(Level.INFO, "Heart started.");
             }
-            
-            // Notify the listeners that the Core is ready.
-            for (CoreListener listener : this.listeners)
-            {
-                listener.coreReady();
-            }
         }
         catch (DeveloperError e)
         {
@@ -330,18 +359,38 @@ public class Core
         {
             fail("unforeseen runtime exception", e);
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
-            fail("unforeseen exception", e);
+            fail("unforeseen problem", e);
         }
-
-        Runtime.getRuntime().addShutdownHook(new Thread("Shutdown Thread")
-                {
-                    public void run()
-                    {
-                        shutdown();
-                    } 
-                } );
+    }
+    
+    /**
+     * Runs the Core -- this just means keeping it alive until the
+     * status flag is changed to <code>SHUT_DOWN</code>.
+     */
+    public void run()
+    {
+        // Notify the listeners that the Core is ready.
+        /*for (CoreListener listener : this.listeners)
+        {
+            listener.coreReady();
+        }*/
+        
+        this.status = Status.RUNNING;
+        
+        // Now just run until the status flag has been set to SHUT_DOWN (check each second).
+        while (this.status != Status.SHUT_DOWN)
+        {
+            try
+            {
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException e)
+            {
+                break;
+            }
+        }
     }
     
     /**
@@ -357,18 +406,37 @@ public class Core
     }
     
     /**
-     * Returns the response to an input, using a Responder.
+     * Returns the botResponse to an input, using a default TextResponder.
      * 
      * @param input
      *            the &quot;non-internal&quot; (possibly multi-sentence,
      *            non-substituted) input
      * @param userid
-     *            the userid for whom the response will be generated
+     *            the userid for whom the botResponse will be generated
      * @param botid
-     *            the botid from which to get the response
+     *            the botid from which to get the botResponse
+     * @return the botResponse
+     */
+    public synchronized String getResponse(String input, String userid, String botid)
+    {
+        String response = this.multiplexor.getResponse(input, userid, botid, new TextResponder());
+        logResponse(input, response, userid, botid);
+        return response;
+    }
+
+    /**
+     * Returns the botResponse to an input, using the given Responder.
+     * 
+     * @param input
+     *            the &quot;non-internal&quot; (possibly multi-sentence,
+     *            non-substituted) input
+     * @param userid
+     *            the userid for whom the botResponse will be generated
+     * @param botid
+     *            the botid from which to get the botResponse
      * @param responder
-     *            the Responder who cares about this response
-     * @return the response
+     *            the Responder who cares about this botResponse
+     * @return the botResponse
      */
     public synchronized String getResponse(String input, String userid, String botid, Responder responder)
     {
@@ -378,11 +446,11 @@ public class Core
     }
 
     /**
-     * Logs a response to the chat log.
-     * @param input the input that produced the response
+     * Logs a botResponse to the chat log.
+     * @param input the input that produced the botResponse
      * @param response the response
-     * @param userid the userid for whom the response was produced
-     * @param botid the botid that produced the response
+     * @param userid the userid for whom the botResponse was produced
+     * @param botid the botid that produced the botResponse
      */
     private void logResponse(String input, String response, String userid, String botid)
     {
@@ -391,14 +459,15 @@ public class Core
     
     /**
      * Performs all necessary shutdown tasks. Shuts down the Graphmaster and all
-     * BotProcesses.
+     * ManagedProcesses.
      */
     public void shutdown()
     {
         this.logger.log(Level.INFO, "Program D is shutting down.");
-        BotProcesses.shutdownAll();
+        this.processes.shutdownAll();
         this.graphmaster.shutdown();
         this.logger.log(Level.INFO, "Shutdown complete.");
+        this.status = Status.SHUT_DOWN;
     }
     
     /**
@@ -407,7 +476,17 @@ public class Core
      */
     public void fail(Throwable e)
     {
-        fail(e.getClass().getName(), e);
+        fail(e.getClass().getSimpleName(), Thread.currentThread(), e);
+    }    
+    
+    /**
+     * Logs the given Throwable and shuts down.
+     * @param t the thread in which the Throwable was thrown
+     * @param e the Throwable to log
+     */
+    public void fail(Thread t, Throwable e)
+    {
+        fail(e.getClass().getSimpleName(), t, e);
     }    
     
     /**
@@ -417,7 +496,18 @@ public class Core
      */
     public void fail(String description, Throwable e)
     {
-        String throwableDescription = e.getClass().getSimpleName();
+        fail(description, Thread.currentThread(), e);
+    }    
+    
+    /**
+     * Logs the given Throwable and shuts down.
+     * @param description the description of the Throwable
+     * @param t the thread in which the Throwable was thrown
+     * @param e the Throwable to log
+     */
+    public void fail(String description, Thread t, Throwable e)
+    {
+        String throwableDescription = e.getClass().getSimpleName() + " in thread \"" + t.getName() + "\"";
         if (e.getMessage() != null)
         {
             throwableDescription += ": " + e.getMessage();
@@ -426,29 +516,45 @@ public class Core
         {
             throwableDescription += ".";
         }
-        this.logger.log(Level.SEVERE, "Exiting abnormally due to " + description + " " + throwableDescription);
+        this.logger.log(Level.SEVERE, "Exiting abnormally due to " + description + ":\n" + throwableDescription);
         
-        // Notify the listeners of the failure.
-        for (CoreListener listener : this.listeners)
+        System.err.println();
+        if (e instanceof UserError || e instanceof DeveloperError)
         {
-            listener.failure(e);
+            e.getCause().printStackTrace(System.err);
         }
-        System.exit(1);
-    }    
+        else
+        {
+            e.printStackTrace(System.err);
+        }
+        shutdown();
+    }
+    
+    class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
+    {
+        /**
+         * Causes the Core to fail, with information about the exception.
+         * @see java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang.Thread, java.lang.Throwable)
+         */
+        public void uncaughtException(Thread t, Throwable e)
+        {
+            fail(t, e);
+        }
+    }
     
     /**
      * Sets up a Logger in a standard way.  (A FileHandler is attached with some generic settings.)
      * @param name the name of the logger
-     * @param path the path for the logger's file output
+     * @param pattern the pattern for the determining the logger's file output file
      * @return the Logger that was set up.
      */
-    private Logger setupLogger(String name, String path)
+    public Logger setupLogger(String name, String pattern)
     {
         Logger newLogger = Logger.getLogger(name);
         FileHandler newHandler = null;
         try
         {
-            newHandler = new FileHandler(path, 1024, 10, true);
+            newHandler = new FileHandler(pattern, 1048576, 10, true);
         }
         catch (IOException e)
         {
@@ -512,6 +618,28 @@ public class Core
     }
     
     /**
+     * @return the BotConfigurationElementProcessorRegistry
+     */
+    public BotConfigurationElementProcessorRegistry getBotConfigurationElementProcessorRegistry()
+    {
+        return this.botConfigurationElementProcessorRegistry;
+    }
+    
+    /**
+     * @return the AIML processor registry. */
+    public AIMLProcessorRegistry getAIMLProcessorRegistry()
+    {
+        return this.aimlProcessorRegistry;
+    }
+    
+    /**
+     * @return the listener registry. */
+    public ListenerRegistry getListenerRegistry()
+    {
+        return this.listenerRegistry;
+    }
+    
+    /**
      * @return the AIMLWatcher
      */
     public AIMLWatcher getAIMLWatcher()
@@ -553,5 +681,21 @@ public class Core
     public String getHostname()
     {
         return this.hostname;
+    }
+    
+    /**
+     * @return the managed processes
+     */
+    public ManagedProcesses getManagedProcesses()
+    {
+        return this.processes;
+    }
+    
+    /**
+     * @return the status of the Core
+     */
+    public Status getStatus()
+    {
+        return this.status;
     }
 }
