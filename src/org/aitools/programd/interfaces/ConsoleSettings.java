@@ -12,7 +12,7 @@ package org.aitools.programd.interfaces;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-03-23T22:39:20.274-04:00
+ * Automatically generated from properties file, 2005-04-09T14:46:52.88-04:00
  */
 public class ConsoleSettings extends Settings
 {
@@ -39,11 +39,6 @@ public class ConsoleSettings extends Settings
     private boolean showMethodNamesAlways;
 
     /**
-     * Which bot predicate contains the bot's name? 
-     */
-    private String botNamePredicate;
-
-    /**
      * The date-time format to use on the console. 
      * See http://java.sun.com/jdk1.5.0_02/docs/api/java/text/SimpleDateFormat.html
            for formatting codes.
@@ -67,7 +62,8 @@ public class ConsoleSettings extends Settings
     /**
      * Creates a <code>ConsoleSettings</code> with the (XML-formatted) properties
      * located at the given path.
-     * @param propertiesPath the path to the settings file
+     *
+     * @param propertiesPath the path to the configuration file
      */
     public ConsoleSettings(String propertiesPath)
     {
@@ -86,8 +82,6 @@ public class ConsoleSettings extends Settings
         setShowMethodNamesForErrors(Boolean.valueOf(this.properties.getProperty("programd.console.show-method-names-for-errors", "false")).booleanValue());
 
         setShowMethodNamesAlways(Boolean.valueOf(this.properties.getProperty("programd.console.show-method-names-always", "false")).booleanValue());
-
-        setBotNamePredicate(this.properties.getProperty("programd.console.bot-name-predicate", "name"));
 
         setTimestampFormat(this.properties.getProperty("programd.console.timestamp-format", "H:mm:ss"));
 
@@ -125,14 +119,6 @@ public class ConsoleSettings extends Settings
     public boolean showMethodNamesAlways()
     {
         return this.showMethodNamesAlways;
-    }
-
-    /**
-     * @return the value of botNamePredicate
-     */
-    public String getBotNamePredicate()
-    {
-        return this.botNamePredicate;
     }
 
     /**
@@ -181,14 +167,6 @@ public class ConsoleSettings extends Settings
     public void setShowMethodNamesAlways(boolean showMethodNamesAlwaysToSet)
     {
         this.showMethodNamesAlways = showMethodNamesAlwaysToSet;
-    }
-
-    /**
-     * @param botNamePredicateToSet   the value to which to set botNamePredicate
-     */
-    public void setBotNamePredicate(String botNamePredicateToSet)
-    {
-        this.botNamePredicate = botNamePredicateToSet;
     }
 
     /**
