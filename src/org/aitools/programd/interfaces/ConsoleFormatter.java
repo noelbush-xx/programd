@@ -37,7 +37,7 @@ public class ConsoleFormatter extends Formatter
     private boolean showMethodNamesAlways;
 
     /** The system line separator. */
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
 
     /**
      * Creates a new ConsoleFormatter using the specified console settings.
