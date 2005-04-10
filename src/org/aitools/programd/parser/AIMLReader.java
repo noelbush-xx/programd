@@ -25,54 +25,56 @@ import org.aitools.programd.util.XMLKit;
  * </p>
  * 
  * @author Noel Bush
- * @version 4.2
+ * @version 4.5
  */
 public class AIMLReader extends DefaultHandler
 {
     /** The <code>Listener</code> that will handle new items. */
-    protected AIMLReaderListener listener;
+    private AIMLReaderListener listener;
     
-    protected String defaultNamespaceURI;
+    private String defaultNamespaceURI;
 
     /*
      * Constants used in parsing.
      */
 
     /** The start of a tag marker. */
-    protected static final String MARKER_START = "<";
+    private static final String MARKER_START = "<";
 
     /** The end of a tag marker. */
-    protected static final String MARKER_END = ">";
-
-    /** '<code>!--</code>' */
-    protected static final String COMMENT_MARK = "!--";
+    private static final String MARKER_END = ">";
 
     /** An empty string. */
-    protected static final String EMPTY_STRING = "";
+    private static final String EMPTY_STRING = "";
+    
+    private static final String OPEN_TEMPLATE_START_TAG = "<template xmlns=\"";
+    
+    private static final String QUOTE_MARKER_END = "\">";
 
     /** A slash. */
-    protected static final String SLASH = "/";
+    private static final String SLASH = "/";
 
-    /** A quote mark. */
-    protected static final char QUOTE_MARK = '"';
-
-    /** =". */
-    protected static final String EQUAL_QUOTE = "=\"";
-
-    /** An asterisk. */
-    protected static final String ASTERISK = "*";
-
-    /** A colon. */
-    protected static final char COLON = ':';
-
-    /** A space. */
-    protected static final char SPACE = ' ';
-
+    /** End of a template element. */
+    private static final String TEMPLATE_END_TAG = "</template>";
+    
     /** The system line separator. */
     protected static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     /** Parser states. */
-    private enum State {IN_PATTERN, IN_THAT, IN_TEMPLATE, IN_UNHANDLED}
+    private enum State
+    {
+        /** inside the pattern element */
+        IN_PATTERN,
+    
+        /** inside the that element*/
+        IN_THAT,
+        
+        /** inside the template element */
+        IN_TEMPLATE,
+        
+        /** inside an element that is not specially handled */
+        IN_UNHANDLED
+    }
 	
     /** The string &quot;pattern&quot;. */
     private static final String PATTERN = "pattern";
@@ -112,6 +114,9 @@ public class AIMLReader extends DefaultHandler
 
     /** The finalized &lt;template&gt;&lt;/template&gt; contents. */
     private String template;
+    
+    /** The start of a template element. */
+    private String templateStartTag;
 
     /**
      * Creates a new AIMLReader.
@@ -123,6 +128,7 @@ public class AIMLReader extends DefaultHandler
     {
         this.listener = readerListener;
         this.defaultNamespaceURI = defaultNamespaceURIToUse;
+        this.templateStartTag = OPEN_TEMPLATE_START_TAG + defaultNamespaceURIToUse + QUOTE_MARKER_END;
     }
 
     /**
@@ -177,9 +183,12 @@ public class AIMLReader extends DefaultHandler
         else if (elementName.equals(TEMPLATE))
 		{
             // Whitespace-normalize the template contents.
-            this.template = XMLKit.filterWhitespace(this.templateBuffer.toString());
+            this.template = XMLKit.filterWhitespace(this.templateStartTag + this.templateBuffer.toString() + TEMPLATE_END_TAG);
             // Finally, deliver the newly defined category to the listener.
             this.listener.newCategory(this.pattern, this.that, this.topic, this.template);
+            // Reset the pattern, that and template.
+            this.pattern = this.that = this.template = null;
+            this.patternBuffer = this.thatBuffer = this.templateBuffer = null;
 	        this.state = State.IN_UNHANDLED;
 		}
 		else if (this.state == State.IN_TEMPLATE)
