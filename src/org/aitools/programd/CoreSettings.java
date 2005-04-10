@@ -12,7 +12,7 @@ package org.aitools.programd;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-03-23T22:39:46.625-04:00
+ * Automatically generated from properties file, 2005-04-09T14:46:39.907-04:00
  */
 public class CoreSettings extends Settings
 {
@@ -69,6 +69,11 @@ public class CoreSettings extends Settings
      * Which bot predicate contains the client's name? 
      */
     private String clientNamePredicate;
+
+    /**
+     * Which bot predicate contains the bot's name? 
+     */
+    private String botNamePredicate;
 
     /**
      * Log/display match trace messages? 
@@ -156,12 +161,17 @@ public class CoreSettings extends Settings
     /**
      *The general activity log file. 
      */
-    private String activityLogPath;
+    private String activityLogPattern;
 
     /**
      *The log file for matching activity. 
      */
-    private String matchingLogPath;
+    private String matchingLogPattern;
+
+    /**
+     *The subdirectory for chat logs. 
+     */
+    private String chatLogDirectory;
 
     /**
      *The date-time format to use in logging. 
@@ -170,35 +180,6 @@ public class CoreSettings extends Settings
     * Setting the value to blank means no timestamp will be displayed.
      */
     private String logTimestampFormat;
-
-    /**
-     *Enable chat logging to XML text files? 
-    * Be sure that the database configuration (later in this file) is valid.
-     */
-    private boolean loggingToXmlChat;
-
-    /**
-     *How many log entries to collect before "rolling over" an XML log file. 
-    * "Rolling over" means that the current file is renamed using the date & time,
-    * and a fresh log file is created using the path name.  The new log file will
-    * contain links to all of the previous log files of the same type.
-     */
-    private int loggingXmlRollover;
-
-    /**
-     *The subdirectory for XML chat logs. 
-     */
-    private String loggingXmlChatLogDirectory;
-
-    /**
-     *The path to the stylesheet for viewing chat logs. 
-     */
-    private String loggingXmlChatStylesheetPath;
-
-    /**
-     *Roll over the chat log at restart? 
-     */
-    private boolean loggingXmlChatRolloverAtRestart;
 
     /**
      *Enable chat logging to the database? 
@@ -257,8 +238,8 @@ public class CoreSettings extends Settings
     /**
      * Creates a <code>CoreSettings</code> with the (XML-formatted) properties
      * located at the given path.
-     * 
-     * @param propertiesPath the path to the core properties file
+     *
+     * @param propertiesPath the path to the configuration file
      */
     public CoreSettings(String propertiesPath)
     {
@@ -270,21 +251,21 @@ public class CoreSettings extends Settings
     */
     protected void initialize()
     {
-        setRootDirectory(this.properties.getProperty("programd.root-directory", "..")); //$NON-NLS-1$ //$NON-NLS-2$
+        setRootDirectory(this.properties.getProperty("programd.root-directory", ".."));
 
-        setAimlSchemaNamespaceUri(this.properties.getProperty("programd.aiml-schema.namespace-uri", "http://alicebot.org/2001/AIML-1.0.1")); //$NON-NLS-1$ //$NON-NLS-2$
+        setAimlSchemaNamespaceUri(this.properties.getProperty("programd.aiml-schema.namespace-uri", "http://alicebot.org/2001/AIML-1.0.1"));
 
-        setAimlSchemaLocation(this.properties.getProperty("programd.aiml-schema.location", "resources/schema/AIML.xsd")); //$NON-NLS-1$ //$NON-NLS-2$
+        setAimlSchemaLocation(this.properties.getProperty("programd.aiml-schema.location", "resources/schema/AIML.xsd"));
 
-        setStartupFilePath(this.properties.getProperty("programd.startup-file-path", "conf/bots.xml")); //$NON-NLS-1$ //$NON-NLS-2$
+        setStartupFilePath(this.properties.getProperty("programd.startup-file-path", "conf/bots.xml"));
 
-        setMergePolicy(Boolean.valueOf(this.properties.getProperty("programd.merge-policy", "true")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
+        setMergePolicy(Boolean.valueOf(this.properties.getProperty("programd.merge-policy", "true")).booleanValue());
 
-        setPredicateEmptyDefault(this.properties.getProperty("programd.predicate-empty-default", "undefined")); //$NON-NLS-1$ //$NON-NLS-2$
+        setPredicateEmptyDefault(this.properties.getProperty("programd.predicate-empty-default", "undefined"));
 
         try
         {
-            setResponseTimeout(Integer.parseInt(this.properties.getProperty("programd.response-timeout", "1000"))); //$NON-NLS-1$ //$NON-NLS-2$
+            setResponseTimeout(Integer.parseInt(this.properties.getProperty("programd.response-timeout", "1000")));
         }
         catch (NumberFormatException e)
         {
@@ -293,36 +274,38 @@ public class CoreSettings extends Settings
 
         try
         {
-            setCategoryLoadNotifyInterval(Integer.parseInt(this.properties.getProperty("programd.category-load-notify-interval", "5000"))); //$NON-NLS-1$ //$NON-NLS-2$
+            setCategoryLoadNotifyInterval(Integer.parseInt(this.properties.getProperty("programd.category-load-notify-interval", "5000")));
         }
         catch (NumberFormatException e)
         {
             setCategoryLoadNotifyInterval(5000);
         }
 
-        setInfiniteLoopInput(this.properties.getProperty("programd.infinite-loop-input", "INFINITE LOOP")); //$NON-NLS-1$ //$NON-NLS-2$
+        setInfiniteLoopInput(this.properties.getProperty("programd.infinite-loop-input", "INFINITE LOOP"));
 
-        setClientNamePredicate(this.properties.getProperty("programd.client-name-predicate", "name")); //$NON-NLS-1$ //$NON-NLS-2$
+        setClientNamePredicate(this.properties.getProperty("programd.client-name-predicate", "name"));
 
-        setRecordMatchTrace(Boolean.valueOf(this.properties.getProperty("programd.record-match-trace", "true")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
+        setBotNamePredicate(this.properties.getProperty("programd.bot-name-predicate", "name"));
 
-        setOsAccessAllowed(Boolean.valueOf(this.properties.getProperty("programd.os-access-allowed", "false")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
+        setRecordMatchTrace(Boolean.valueOf(this.properties.getProperty("programd.record-match-trace", "true")).booleanValue());
 
-        setJavascriptAllowed(Boolean.valueOf(this.properties.getProperty("programd.javascript-allowed", "false")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
+        setOsAccessAllowed(Boolean.valueOf(this.properties.getProperty("programd.os-access-allowed", "false")).booleanValue());
 
-        setConnectString(this.properties.getProperty("programd.connect-string", "CONNECT")); //$NON-NLS-1$ //$NON-NLS-2$
+        setJavascriptAllowed(Boolean.valueOf(this.properties.getProperty("programd.javascript-allowed", "false")).booleanValue());
 
-        setInactivityString(this.properties.getProperty("programd.inactivity-string", "INACTIVITY")); //$NON-NLS-1$ //$NON-NLS-2$
+        setConnectString(this.properties.getProperty("programd.connect-string", "CONNECT"));
 
-        setMultiplexorClassname(this.properties.getProperty("programd.multiplexor-classname", "org.aitools.programd.multiplexor.FlatFileMultiplexor")); //$NON-NLS-1$ //$NON-NLS-2$
+        setInactivityString(this.properties.getProperty("programd.inactivity-string", "INACTIVITY"));
 
-        setMultiplexorFfmDir(this.properties.getProperty("programd.multiplexor.ffm-dir", "ffm")); //$NON-NLS-1$ //$NON-NLS-2$
+        setMultiplexorClassname(this.properties.getProperty("programd.multiplexor-classname", "org.aitools.programd.multiplexor.FlatFileMultiplexor"));
 
-        setHeartEnabled(Boolean.valueOf(this.properties.getProperty("programd.heart.enabled", "false")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
+        setMultiplexorFfmDir(this.properties.getProperty("programd.multiplexor.ffm-dir", "ffm"));
+
+        setHeartEnabled(Boolean.valueOf(this.properties.getProperty("programd.heart.enabled", "false")).booleanValue());
 
         try
         {
-            setHeartPulserate(Integer.parseInt(this.properties.getProperty("programd.heart.pulserate", "5"))); //$NON-NLS-1$ //$NON-NLS-2$
+            setHeartPulserate(Integer.parseInt(this.properties.getProperty("programd.heart.pulserate", "5")));
         }
         catch (NumberFormatException e)
         {
@@ -331,77 +314,62 @@ public class CoreSettings extends Settings
 
         try
         {
-            setPredicateCacheMax(Integer.parseInt(this.properties.getProperty("programd.predicate-cache.max", "500"))); //$NON-NLS-1$ //$NON-NLS-2$
+            setPredicateCacheMax(Integer.parseInt(this.properties.getProperty("programd.predicate-cache.max", "500")));
         }
         catch (NumberFormatException e)
         {
             setPredicateCacheMax(500);
         }
 
-        setSystemInterpreterDirectory(this.properties.getProperty("programd.system-interpreter.directory", ".")); //$NON-NLS-1$ //$NON-NLS-2$
+        setSystemInterpreterDirectory(this.properties.getProperty("programd.system-interpreter.directory", "."));
 
-        setSystemInterpreterPrefix(this.properties.getProperty("programd.system-interpreter.prefix", "")); //$NON-NLS-1$ //$NON-NLS-2$
+        setSystemInterpreterPrefix(this.properties.getProperty("programd.system-interpreter.prefix", ""));
 
-        setJavascriptInterpreterClassname(this.properties.getProperty("programd.javascript-interpreter.classname", "org.aitools.programd.interpreter.RhinoInterpreter")); //$NON-NLS-1$ //$NON-NLS-2$
+        setJavascriptInterpreterClassname(this.properties.getProperty("programd.javascript-interpreter.classname", "org.aitools.programd.interpreter.RhinoInterpreter"));
 
-        setUseWatcher(Boolean.valueOf(this.properties.getProperty("programd.use-watcher", "false")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
+        setUseWatcher(Boolean.valueOf(this.properties.getProperty("programd.use-watcher", "false")).booleanValue());
 
         try
         {
-            setWatcherTimer(Integer.parseInt(this.properties.getProperty("programd.watcher.timer", "2000"))); //$NON-NLS-1$ //$NON-NLS-2$
+            setWatcherTimer(Integer.parseInt(this.properties.getProperty("programd.watcher.timer", "2000")));
         }
         catch (NumberFormatException e)
         {
             setWatcherTimer(2000);
         }
 
-        setActivityLogPath(this.properties.getProperty("programd.activity.log.path", "logs/activity.log")); //$NON-NLS-1$ //$NON-NLS-2$
+        setActivityLogPattern(this.properties.getProperty("programd.activity.log.pattern", "logs/activity.log"));
 
-        setMatchingLogPath(this.properties.getProperty("programd.matching.log.path", "logs/matching.log")); //$NON-NLS-1$ //$NON-NLS-2$
+        setMatchingLogPattern(this.properties.getProperty("programd.matching.log.pattern", "logs/matching.log"));
 
-        setLogTimestampFormat(this.properties.getProperty("programd.log.timestamp-format", "yyyy-MM-dd H:mm:ss")); //$NON-NLS-1$ //$NON-NLS-2$
+        setChatLogDirectory(this.properties.getProperty("programd.chat.log.directory", "logs/chat"));
 
-        setLoggingToXmlChat(Boolean.valueOf(this.properties.getProperty("programd.logging.to-xml.chat", "true")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
+        setLogTimestampFormat(this.properties.getProperty("programd.log.timestamp-format", "yyyy-MM-dd H:mm:ss"));
 
-        try
-        {
-            setLoggingXmlRollover(Integer.parseInt(this.properties.getProperty("programd.logging.xml.rollover", "500"))); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        catch (NumberFormatException e)
-        {
-            setLoggingXmlRollover(500);
-        }
+        setLoggingToDatabaseChat(Boolean.valueOf(this.properties.getProperty("programd.logging.to-database.chat", "false")).booleanValue());
 
-        setLoggingXmlChatLogDirectory(this.properties.getProperty("programd.logging.xml.chat.log-directory", "logs/chat")); //$NON-NLS-1$ //$NON-NLS-2$
+        setDatabaseUrl(this.properties.getProperty("programd.database.url", "jdbc:mysql:///programdbot"));
 
-        setLoggingXmlChatStylesheetPath(this.properties.getProperty("programd.logging.xml.chat.stylesheet-path", "../resources/logs/view-chat.xsl")); //$NON-NLS-1$ //$NON-NLS-2$
-
-        setLoggingXmlChatRolloverAtRestart(Boolean.valueOf(this.properties.getProperty("programd.logging.xml.chat.rollover-at-restart", "false")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
-
-        setLoggingToDatabaseChat(Boolean.valueOf(this.properties.getProperty("programd.logging.to-database.chat", "false")).booleanValue()); //$NON-NLS-1$ //$NON-NLS-2$
-
-        setDatabaseUrl(this.properties.getProperty("programd.database.url", "jdbc:mysql:///programdbot")); //$NON-NLS-1$ //$NON-NLS-2$
-
-        setDatabaseDriver(this.properties.getProperty("programd.database.driver", "org.gjt.mm.mysql.Driver")); //$NON-NLS-1$ //$NON-NLS-2$
+        setDatabaseDriver(this.properties.getProperty("programd.database.driver", "org.gjt.mm.mysql.Driver"));
 
         try
         {
-            setDatabaseConnections(Integer.parseInt(this.properties.getProperty("programd.database.connections", "25"))); //$NON-NLS-1$ //$NON-NLS-2$
+            setDatabaseConnections(Integer.parseInt(this.properties.getProperty("programd.database.connections", "25")));
         }
         catch (NumberFormatException e)
         {
             setDatabaseConnections(25);
         }
 
-        setDatabaseUser(this.properties.getProperty("programd.database.user", "programd")); //$NON-NLS-1$ //$NON-NLS-2$
+        setDatabaseUser(this.properties.getProperty("programd.database.user", "programd"));
 
-        setDatabasePassword(this.properties.getProperty("programd.database.password", "yourpassword")); //$NON-NLS-1$ //$NON-NLS-2$
+        setDatabasePassword(this.properties.getProperty("programd.database.password", "yourpassword"));
 
-        setConfLocationHtmlResponder(this.properties.getProperty("programd.conf-location.html-responder", "conf/html-responder.xml")); //$NON-NLS-1$ //$NON-NLS-2$
+        setConfLocationHtmlResponder(this.properties.getProperty("programd.conf-location.html-responder", "conf/html-responder.xml"));
 
-        setConfLocationFlashResponder(this.properties.getProperty("programd.conf-location.flash-responder", "conf/flash-responder.xml")); //$NON-NLS-1$ //$NON-NLS-2$
+        setConfLocationFlashResponder(this.properties.getProperty("programd.conf-location.flash-responder", "conf/flash-responder.xml"));
 
-        setConfLocationHttpServer(this.properties.getProperty("programd.conf-location.http-server", "conf/http-server.xml")); //$NON-NLS-1$ //$NON-NLS-2$
+        setConfLocationHttpServer(this.properties.getProperty("programd.conf-location.http-server", "conf/http-server.xml"));
 
     }
 
@@ -483,6 +451,14 @@ public class CoreSettings extends Settings
     public String getClientNamePredicate()
     {
         return this.clientNamePredicate;
+    }
+
+    /**
+     * @return the value of botNamePredicate
+     */
+    public String getBotNamePredicate()
+    {
+        return this.botNamePredicate;
     }
 
     /**
@@ -606,19 +582,27 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @return the value of activityLogPath
+     * @return the value of activityLogPattern
      */
-    public String getActivityLogPath()
+    public String getActivityLogPattern()
     {
-        return this.activityLogPath;
+        return this.activityLogPattern;
     }
 
     /**
-     * @return the value of matchingLogPath
+     * @return the value of matchingLogPattern
      */
-    public String getMatchingLogPath()
+    public String getMatchingLogPattern()
     {
-        return this.matchingLogPath;
+        return this.matchingLogPattern;
+    }
+
+    /**
+     * @return the value of chatLogDirectory
+     */
+    public String getChatLogDirectory()
+    {
+        return this.chatLogDirectory;
     }
 
     /**
@@ -627,46 +611,6 @@ public class CoreSettings extends Settings
     public String getLogTimestampFormat()
     {
         return this.logTimestampFormat;
-    }
-
-    /**
-     * @return the value of loggingToXmlChat
-     */
-    public boolean loggingToXmlChat()
-    {
-        return this.loggingToXmlChat;
-    }
-
-    /**
-     * @return the value of loggingXmlRollover
-     */
-    public int getLoggingXmlRollover()
-    {
-        return this.loggingXmlRollover;
-    }
-
-    /**
-     * @return the value of loggingXmlChatLogDirectory
-     */
-    public String getLoggingXmlChatLogDirectory()
-    {
-        return this.loggingXmlChatLogDirectory;
-    }
-
-    /**
-     * @return the value of loggingXmlChatStylesheetPath
-     */
-    public String getLoggingXmlChatStylesheetPath()
-    {
-        return this.loggingXmlChatStylesheetPath;
-    }
-
-    /**
-     * @return the value of loggingXmlChatRolloverAtRestart
-     */
-    public boolean loggingXmlChatRolloverAtRestart()
-    {
-        return this.loggingXmlChatRolloverAtRestart;
     }
 
     /**
@@ -822,6 +766,14 @@ public class CoreSettings extends Settings
     }
 
     /**
+     * @param botNamePredicateToSet   the value to which to set botNamePredicate
+     */
+    public void setBotNamePredicate(String botNamePredicateToSet)
+    {
+        this.botNamePredicate = botNamePredicateToSet;
+    }
+
+    /**
      * @param recordMatchTraceToSet   the value to which to set recordMatchTrace
      */
     public void setRecordMatchTrace(boolean recordMatchTraceToSet)
@@ -942,19 +894,27 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param activityLogPathToSet   the value to which to set activityLogPath
+     * @param activityLogPatternToSet   the value to which to set activityLogPattern
      */
-    public void setActivityLogPath(String activityLogPathToSet)
+    public void setActivityLogPattern(String activityLogPatternToSet)
     {
-        this.activityLogPath = activityLogPathToSet;
+        this.activityLogPattern = activityLogPatternToSet;
     }
 
     /**
-     * @param matchingLogPathToSet   the value to which to set matchingLogPath
+     * @param matchingLogPatternToSet   the value to which to set matchingLogPattern
      */
-    public void setMatchingLogPath(String matchingLogPathToSet)
+    public void setMatchingLogPattern(String matchingLogPatternToSet)
     {
-        this.matchingLogPath = matchingLogPathToSet;
+        this.matchingLogPattern = matchingLogPatternToSet;
+    }
+
+    /**
+     * @param chatLogDirectoryToSet   the value to which to set chatLogDirectory
+     */
+    public void setChatLogDirectory(String chatLogDirectoryToSet)
+    {
+        this.chatLogDirectory = chatLogDirectoryToSet;
     }
 
     /**
@@ -963,46 +923,6 @@ public class CoreSettings extends Settings
     public void setLogTimestampFormat(String logTimestampFormatToSet)
     {
         this.logTimestampFormat = logTimestampFormatToSet;
-    }
-
-    /**
-     * @param loggingToXmlChatToSet   the value to which to set loggingToXmlChat
-     */
-    public void setLoggingToXmlChat(boolean loggingToXmlChatToSet)
-    {
-        this.loggingToXmlChat = loggingToXmlChatToSet;
-    }
-
-    /**
-     * @param loggingXmlRolloverToSet   the value to which to set loggingXmlRollover
-     */
-    public void setLoggingXmlRollover(int loggingXmlRolloverToSet)
-    {
-        this.loggingXmlRollover = loggingXmlRolloverToSet;
-    }
-
-    /**
-     * @param loggingXmlChatLogDirectoryToSet   the value to which to set loggingXmlChatLogDirectory
-     */
-    public void setLoggingXmlChatLogDirectory(String loggingXmlChatLogDirectoryToSet)
-    {
-        this.loggingXmlChatLogDirectory = loggingXmlChatLogDirectoryToSet;
-    }
-
-    /**
-     * @param loggingXmlChatStylesheetPathToSet   the value to which to set loggingXmlChatStylesheetPath
-     */
-    public void setLoggingXmlChatStylesheetPath(String loggingXmlChatStylesheetPathToSet)
-    {
-        this.loggingXmlChatStylesheetPath = loggingXmlChatStylesheetPathToSet;
-    }
-
-    /**
-     * @param loggingXmlChatRolloverAtRestartToSet   the value to which to set loggingXmlChatRolloverAtRestart
-     */
-    public void setLoggingXmlChatRolloverAtRestart(boolean loggingXmlChatRolloverAtRestartToSet)
-    {
-        this.loggingXmlChatRolloverAtRestart = loggingXmlChatRolloverAtRestartToSet;
     }
 
     /**
