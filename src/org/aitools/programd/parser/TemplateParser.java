@@ -15,23 +15,16 @@ import java.util.logging.Logger;
 
 import org.w3c.dom.Element;
 import org.aitools.programd.Core;
-import org.aitools.programd.processor.AIMLProcessorRegistry;
 import org.aitools.programd.processor.ProcessorException;
 
 /**
- * <code>TemplateParser</code> has been rewritten (starting in 4.2)
+ * <code>TemplateParser</code> has been rewritten (starting in 4.5)
  * to use DOM for parsing.  It also eliminates handling of 
  * "deprecated AIML" (this will be possible to handle again later
- * with an extensible version of D.
+ * with an extensible version of D).
  */
 public class TemplateParser extends GenericParser
 {
-	/** Start of a template element. */
-	private static final String TEMPLATE_START = "<template>";
-	
-	/** End of a template element. */
-	private static final String TEMPLATE_END = "</template>";
-	
     /**
      * The values captured from the input by wildcards in the
      * <code>pattern</code>.
@@ -77,7 +70,7 @@ public class TemplateParser extends GenericParser
      */
     public TemplateParser(String input, String useridToUse, String botidToUse, Core coreToUse) throws TemplateParserException
     {
-        super(coreToUse);
+        super(coreToUse.getAIMLProcessorRegistry(), coreToUse);
         if (input == null)
         {
             throw new TemplateParserException("No input supplied for TemplateParser!");
@@ -85,7 +78,6 @@ public class TemplateParser extends GenericParser
         this.inputs.add(input);
         this.userid = useridToUse;
         this.botid = botidToUse;
-        super.processorRegistry = AIMLProcessorRegistry.getSelf();
     } 
 
     /**
@@ -104,7 +96,7 @@ public class TemplateParser extends GenericParser
         } 
         catch (StackOverflowError e)
         {
-            Logger.getLogger("programd").log(Level.SEVERE, "Stack overflow error processing " + element.getTagName() + " tag.");
+            Logger.getLogger("programd").log(Level.SEVERE, "Stack overflow error processing " + element.getLocalName() + " tag.");
             return EMPTY_STRING;
         } 
     }
@@ -114,7 +106,7 @@ public class TemplateParser extends GenericParser
 	 */
 	public String processResponse(String templateContent) throws ProcessorException
 	{
-		return super.processResponse(TEMPLATE_START + templateContent + TEMPLATE_END);
+		return super.processResponse(templateContent);
 	}
 
     /**
