@@ -62,7 +62,7 @@ public class Match
      * @param string
      *            the string to push onto the input stack
      */
-    public void pushInputStar(String string)
+    public void pushInputWildcardContent(String string)
     {
         this.inputStars.add(0, string);
     } 
@@ -73,7 +73,7 @@ public class Match
      * @param string
      *            the string to push onto the thatstar stack
      */
-    public void pushThatStar(String string)
+    public void pushThatWildcardContent(String string)
     {
         this.thatStars.add(0, string);
     } 
@@ -84,7 +84,7 @@ public class Match
      * @param string
      *            the string to push onto the topicstar stack
      */
-    public void pushTopicStar(String string)
+    public void pushTopicWildcardContent(String string)
     {
         this.topicStars.add(0, string);
     } 
