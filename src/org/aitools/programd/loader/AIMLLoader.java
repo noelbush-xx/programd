@@ -27,7 +27,8 @@ import org.aitools.programd.parser.AIMLReaderListener;
  * @author Kris Drent
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
- * @version 4.1.3
+ * @author Noel Bush
+ * @version 4.5
  */
 public class AIMLLoader implements AIMLReaderListener
 {
@@ -57,16 +58,14 @@ public class AIMLLoader implements AIMLReaderListener
 
     /**
      * Initializes the <code>AIMLLoader</code>.
-     * TODO: Shrink this paramter list -- Bots can be gotten otherwise, for instance.
      * @param graphmasterToUse the Graphmaster into which to load new categories
-     * @param botsToUse the bots for whom to load new categories
      * @param filenameToUse the filename from which to load new categories
      * @param botidToUse the id of the bot for whom to load new categories
      */
-    public AIMLLoader(Graphmaster graphmasterToUse, Bots botsToUse, String filenameToUse, String botidToUse)
+    public AIMLLoader(Graphmaster graphmasterToUse, String filenameToUse, String botidToUse)
     {
         this.graphmaster = graphmasterToUse;
-        this.bots = botsToUse;
+        this.bots = this.graphmaster.getCore().getBots();
         this.logger = Logger.getLogger("programd");
         this.filename = filenameToUse;
         this.botid = botidToUse;
@@ -95,11 +94,7 @@ public class AIMLLoader implements AIMLReaderListener
         if (topic == null)
         {
             topic = Graphmaster.ASTERISK;
-        } 
-        if (template == null)
-        {
-            template = Graphmaster.ASTERISK;
-        } 
+        }
 
         int currentTotalCategories = this.graphmaster.getTotalCategories();
         if (currentTotalCategories % this.notifyInterval == 0 && currentTotalCategories > 0)
