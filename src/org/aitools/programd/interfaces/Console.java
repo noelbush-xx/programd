@@ -19,7 +19,7 @@ import org.aitools.programd.Core;
  * Creating a Console essentially means that loggers (as configured)
  * will (may) also print output to the console.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.2
  */
 public class Console

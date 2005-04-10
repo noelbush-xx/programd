@@ -18,7 +18,7 @@ import java.util.logging.LogRecord;
 // TODO: Elaborate this to be configurable.
 /**
  * A ConsoleFormatter formats output for display on a console.
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class ConsoleFormatter extends Formatter
 {

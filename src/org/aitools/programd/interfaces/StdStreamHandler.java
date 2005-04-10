@@ -19,7 +19,7 @@ import java.util.logging.StreamHandler;
  * the given <code>stream</code>,
  * except those messages which are discarded by the given {@link StdFilter}.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.2
  */
 public class StdStreamHandler extends StreamHandler

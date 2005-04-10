@@ -27,7 +27,7 @@ import org.aitools.programd.util.UserError;
 /**
  * An HTTP server interface to Program D.  This class manages
  * the creation and use of an actual HTTP server (it is not itself the server).
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class HTTPServer implements ManagedProcess
 {

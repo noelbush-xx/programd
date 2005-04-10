@@ -15,7 +15,7 @@ import java.util.logging.Filter;
  * A <code>StdFilter</code> filters out messages for
  * passing to &quot;standard stream&quot; (<code>stdout</code>, <code>stderr</code>).
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.2
  */
 public interface StdFilter extends Filter

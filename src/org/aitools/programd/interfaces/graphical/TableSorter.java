@@ -30,7 +30,7 @@ import org.aitools.programd.util.IllegalObjectStateException;
  * 
  * @version 1.5 12/17/97
  * @author Philip Milne
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class TableSorter extends TableMap
 {

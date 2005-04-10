@@ -15,7 +15,7 @@ import java.awt.event.ActionListener;
 /**
  * An ActionListener that ignores the ActionEvent it gets.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 abstract public class ActionEventIgnoringActionListener implements ActionListener
 {

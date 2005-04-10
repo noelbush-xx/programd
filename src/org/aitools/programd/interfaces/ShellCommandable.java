@@ -14,8 +14,8 @@ package org.aitools.programd.interfaces;
  * Defines the interface for processes that can receive commands from the
  * interactive {@link Shell} .
  * 
- * @author Noel Bush
- * @version 4.1.4
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
+ * @version 4.5
  */
 public interface ShellCommandable
 {

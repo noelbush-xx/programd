@@ -15,7 +15,7 @@ import java.awt.event.ActionEvent;
  * An ActionListener that is aware of its parent and ignores its ActionEvent.
  * @param <P> the parent class
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 abstract public class ParentAwareActionEventIgnoringActionListener<P> extends ParentAwareActionListener<P>
 {

@@ -24,7 +24,7 @@ import javax.swing.table.TableColumn;
  * A generic panel that displays a sortable, loadable table.
  * 
  * @author Richard Wallace
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 abstract public class Tabulator extends JPanel
 {

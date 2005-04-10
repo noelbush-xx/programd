@@ -16,7 +16,7 @@ import java.util.logging.LogRecord;
  * This filter rejects {@link java.util.logging.Level#WARNING Level.WARNING}
  * and {@link java.util.logging.Level#SEVERE Level.SEVERE} records.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.2
  */
 public class StdOutFilter implements StdFilter

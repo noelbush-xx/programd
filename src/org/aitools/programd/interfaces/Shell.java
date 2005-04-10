@@ -36,7 +36,7 @@ import org.aitools.programd.util.XMLKit;
  * Provides a simple shell for interacting with the bot at a command line.
  * 
  * @author Jon Baer
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @author Eion Robb
  */
 public class Shell extends Thread
@@ -633,7 +633,7 @@ public class Shell extends Thread
         this.botid = newBotID;
         this.botName = this.bots.getBot(newBotID).getPropertyValue(this.botNamePredicate);
         showMessage("Switched to bot \"" + newBotID + "\" (name: \"" + this.botName + "\").");
-        // Send the connect string and print the first botResponse.
+        // Send the connect string and print the first response.
         showConsole(this.botName, XMLKit.breakLinesAtTags(this.core.getResponse(this.core.getSettings().getConnectString(),
                 this.hostname, this.botid, new TextResponder())));
     }

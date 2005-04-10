@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
  * An ActionListener that is aware of its parent.
  * @param <P> the parent class
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 abstract public class ParentAwareActionListener<P> implements ActionListener
 {

@@ -54,7 +54,7 @@ import org.aitools.programd.util.DeveloperError;
 /**
  * Provides a very simple GUI console for the bot.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.1.5
  * @version 4.5
  */
@@ -581,7 +581,7 @@ public class GUIConsole extends JPanel
 
     /**
      * Extends InputStream to suit our purposes in handling user input for the GUIConsole.
-     * @author Noel Bush
+     * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
      */
     public class ConsoleInputStream extends InputStream
     {
