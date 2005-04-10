@@ -90,6 +90,8 @@ public class </xsl:text>
         <xsl:value-of select="$classname"/>
         <xsl:text>&lt;/code&gt; with the (XML-formatted) properties
      * located at the given path.
+     *
+     * @param propertiesPath the path to the configuration file
      */
     public </xsl:text>
         <xsl:value-of select="$classname"/>
