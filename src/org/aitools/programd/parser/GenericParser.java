@@ -31,24 +31,25 @@ import org.w3c.dom.NodeList;
 import org.aitools.programd.Core;
 import org.aitools.programd.processor.Processor;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.ClassRegistry;
+import org.aitools.programd.processor.ProcessorRegistry;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.NotARegisteredClassException;
 import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.XMLKit;
 
 /**
  * A generic parser that allows us to register processors for any element type.
  * This has been heavily modified (simplified) to use DOM.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.1.3
- * @version 4.2
+ * @version 4.5
  */
 abstract public class GenericParser
 {
-    /** Each subclass should set this. */
-    protected ClassRegistry processorRegistry;
+    /** Set by subclasses. */
+    private ProcessorRegistry processorRegistry;
     
     /** The URL of this document. */
     protected URL docURL;
@@ -71,14 +72,32 @@ abstract public class GenericParser
 	protected static DocumentBuilder utilDocBuilder;
     
     /**
+     * Creates a new GenericParser with no Core.
+     * @param registry the registry of processors
+     */
+    public GenericParser(ProcessorRegistry registry)
+    {
+        initialize(registry);
+    }
+    
+    /**
      * Creates a new GenericParser with the given Core as its owner.
+     * @param registry the registry of processors
      * @param coreToUse the Core that owns this
      */
-    public GenericParser(Core coreToUse)
+    public GenericParser(ProcessorRegistry registry, Core coreToUse)
     {
+        this.core = coreToUse;
+        initialize(registry);
+    }
+    
+    private void initialize(ProcessorRegistry registry)
+    {
+        this.processorRegistry = registry;
         if (utilDocBuilder == null)
         {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
             try
             {
                 utilDocBuilder = factory.newDocumentBuilder();
@@ -88,7 +107,6 @@ abstract public class GenericParser
                 throw new DeveloperError("Error creating utilDocBuilder for GenericParser.", e);
             }
         }
-        this.core = coreToUse;
     }
     
     /**
@@ -163,19 +181,25 @@ abstract public class GenericParser
     
     private void contextualize(URL url)
     {
-        if (this.docURL != null)
+        if (url != null)
         {
-            this.docURL = URITools.contextualize(this.docURL, url);
+            if (this.docURL != null)
+            {
+                this.docURL = URITools.contextualize(this.docURL, url);
+            }
+            else
+            {
+                this.docURL = url;
+            }
         }
         else
         {
-            this.docURL = url;
+            throw new DeveloperError("Passed a null URL to GenericParser.contextualize!", new NullPointerException());
         }
     }
-	
+    
 	/**
-	 * Processes a response by creating a document fragment from the given string
-	 * and returning the result of processing it.
+	 * Processes an XML fragment provided in a string.
 	 * @param input the string from which to create the document fragment
 	 * @return the result of processing the document fragment created from the given string
 	 * @throws ProcessorException if there was a problem processing the document fragment created from the given string
@@ -189,11 +213,11 @@ abstract public class GenericParser
 		}
 		catch (IOException e)
 		{
-			throw new ProcessorException("I/O Error processing template.", e, input);
+			throw new ProcessorException("I/O Error processing XML fragment.", e, input);
 		}
 		catch (SAXException e)
 		{
-			throw new ProcessorException("SAX Exception processing template.", e, input);
+			throw new ProcessorException("SAX Exception processing XML fragment.", e, input);
 		}
 		return evaluate(template);
 	}
@@ -223,11 +247,11 @@ abstract public class GenericParser
         {
             try
             {
-                processorClass = this.processorRegistry.get(element.getTagName());
+                processorClass = this.processorRegistry.get(element.getLocalName());
             }
             catch (NotARegisteredClassException e)
             {
-                throw new DeveloperError("Unknown processor \"" + element.getTagName() + "\".", e);
+                handleUnknownElement(element, e);
             }
 
             // Create a new instance of the processor.
@@ -271,17 +295,14 @@ abstract public class GenericParser
                     throw new DeveloperError("Constructor threw an exception when getting a Processor instance from it", e);
                 } 
             }
-            else
-            {
-                throw new ProcessorException("Could not find a processor for \"" + element.getTagName() + "\"!", new NullPointerException());
-            }
+
             // Return the results of processing the tag.
             if (processor != null)
             {
                 return XMLKit.filterWhitespace(processor.process(element, this));
             }
-            // (otherwise...)
-            throw new DeveloperError("Corrupt processor set.", new NullPointerException());
+            // or ignore the unknown tag.
+            return XMLKit.filterWhitespace(evaluate(element.getChildNodes()));
         }
         // otherwise (if this element is from a different namespace)
         if (element.getChildNodes().getLength() == 0)
@@ -291,13 +312,27 @@ abstract public class GenericParser
         // otherwise...
         return XMLKit.renderStartTag(element, true) + evaluate(element.getChildNodes()) + XMLKit.renderEndTag(element);
     }
+    
+    /**
+     * Handles an unknown element.  By default it throws an exception.
+     * This can be overridden by subclasses that want to do something else,
+     * like ignore it, and/or just print a warning message.
+     * 
+     * @param element the element that could not be handled
+     * @param e the exception generated by trying to find a processor for the element
+     */
+    protected void handleUnknownElement(Element element, NotARegisteredClassException e)
+    {
+        throw new DeveloperError("Unknown processor \"" + element.getLocalName() + "\".", e);
+    }
 
     /**
      * Evaluates the given document and returns the result.
      * @param document the document to evaluate
      * @return the result of evaluating the document
+     * @throws ProcessorException if there is an error in processing
      */
-    public String evaluate(Document document)
+    public String evaluate(Document document) throws ProcessorException
     {
         return evaluate(document.getDocumentElement());
     }
@@ -306,8 +341,9 @@ abstract public class GenericParser
      * Evaluates the given node list and returns the result.
      * @param list the list of nodes to evaluate
      * @return the result of evaluating the given list of nodes
+     * @throws ProcessorException if there is an error in processing
      */
-    public String evaluate(NodeList list)
+    public String evaluate(NodeList list) throws ProcessorException
     {
         StringBuffer result = new StringBuffer();
         int listSize = list.getLength();
@@ -330,8 +366,9 @@ abstract public class GenericParser
      * 
      * @param node the node to parse
      * @return the result of processing the tag
+     * @throws ProcessorException if there is an error in processing
      */
-    public String evaluate(Node node)
+    public String evaluate(Node node) throws ProcessorException
     {
         String response = EMPTY_STRING;
 
@@ -345,14 +382,7 @@ abstract public class GenericParser
         {
             // Collect and process elements.
             case Node.ELEMENT_NODE:
-                try
-                {
-                    response = response + processElement((Element) node);
-                }
-                catch (ProcessorException e)
-                {
-                    throw new DeveloperError(e.getExplanatoryMessage(), e);
-                }
+                response = response + processElement((Element) node);
                 break;
 
             // Text chunks should just be added to the response.
@@ -516,8 +546,9 @@ abstract public class GenericParser
      * @param childType
      *            the type of the child
      * @return the result of processing this structure
+     * @throws ProcessorException if there is an error in processing
      */
-    public String shortcutTag(Element element, String newElementName, String childContent, short childType)
+    public String shortcutTag(Element element, String newElementName, String childContent, short childType) throws ProcessorException
     {
         String response = EMPTY_STRING;
 
@@ -534,7 +565,7 @@ abstract public class GenericParser
         if ((!childContent.equals(EMPTY_STRING)) && ((childType == Node.ELEMENT_NODE) || (childType == Node.TEXT_NODE)))
         {
 			Document ownerDoc = element.getOwnerDocument();
-			Element newElement = ownerDoc.createElement(newElementName);
+			Element newElement = ownerDoc.createElementNS(element.getNamespaceURI(), newElementName);
             /*
              * Create an XML node for the child tag. Note that we assume that
              * the child is an empty tag with no attributes. This is reasonable
@@ -542,7 +573,7 @@ abstract public class GenericParser
              */
             if (childType == Node.ELEMENT_NODE)
             {
-				newElement.appendChild(ownerDoc.createElement(childContent));
+				newElement.appendChild(ownerDoc.createElementNS(element.getNamespaceURI(), childContent));
             }
             else if (childType == Node.TEXT_NODE)
             {
@@ -558,25 +589,74 @@ abstract public class GenericParser
     
     /**
      * Verifies that the given URL points to something real/accessible,
-     * then parses it.
+     * then processes it (not returning anything).
      * @param urlString the URL to check
+     * @throws ProcessorException if there is an error in processing
      */
-    public void verifyAndParse(String urlString)
+    public void verifyAndProcess(String urlString) throws ProcessorException
     {
         URL url = null;
         if (this.docURL != null)
         {
             url = URITools.contextualize(this.docURL, urlString);
         }
-        
+        verifyAndProcess(url);
+    }
+
+    /**
+     * Verifies that the given URL points to something real/accessible,
+     * then processes it, returning a response.
+     * @param urlString the URL to check
+     * @return the response produced by processing whatever is at the URL
+     * @throws ProcessorException if there is an error in processing
+     */
+    public String verifyAndProcessResponse(String urlString) throws ProcessorException
+    {
+        URL url = null;
+        if (this.docURL != null)
+        {
+            url = URITools.contextualize(this.docURL, urlString);
+        }
+        return verifyAndProcessResponse(url);
+    }
+
+    /**
+     * Verifies that the given URL points to something real/accessible,
+     * then processes it (not returning anything).
+     * @param url the URL to check
+     * @throws ProcessorException if there is an error in processing
+     */
+    public void verifyAndProcess(URL url) throws ProcessorException
+    {
         try
         {
-            processResponse(url);
-        } 
-        catch (ProcessorException e)
-        {
-            throw new DeveloperError(e.getExplanatoryMessage(), e);
+            url.openConnection();
         }
+        catch (IOException e)
+        {
+            throw new UserError("Could not open a connection to \"" + url.toExternalForm() + "\".", e);
+        }
+        process(url);
+    }
+
+    /**
+     * Verifies that the given URL points to something real/accessible,
+     * then processes it (not returning anything).
+     * @param url the URL to check
+     * @return the result of processing whatever is at the URL
+     * @throws ProcessorException if there is an error in processing
+     */
+    public String verifyAndProcessResponse(URL url) throws ProcessorException
+    {
+        try
+        {
+            url.openConnection();
+        }
+        catch (IOException e)
+        {
+            throw new UserError("Could not open a connection to \"" + url.toExternalForm() + "\".", e);
+        }
+        return processResponse(url);
     }
 
     /**
@@ -659,6 +739,10 @@ abstract public class GenericParser
      */
     public Core getCore()
     {
+        if (this.core == null)
+        {
+            throw new DeveloperError("Tried to get the Core from a GenericParser that does not have one!", new NullPointerException());
+        }
         return this.core;
     }
 }
