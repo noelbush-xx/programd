@@ -13,7 +13,7 @@ import org.aitools.programd.Core;
 import org.w3c.dom.Element;
 
 /**
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  *
  */
 public class BotProcessor extends XMLTemplateProcessor

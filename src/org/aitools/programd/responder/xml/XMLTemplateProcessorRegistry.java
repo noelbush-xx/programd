@@ -18,7 +18,7 @@ import org.aitools.programd.processor.aiml.AIMLProcessor;
  * Registers {@link XMLTemplateProcessor}s.
  * 
  * @since 4.5
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class XMLTemplateProcessorRegistry extends ProcessorRegistry<AIMLProcessor>
 {

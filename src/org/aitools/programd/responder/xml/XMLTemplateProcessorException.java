@@ -15,7 +15,7 @@ import org.aitools.programd.processor.ProcessorException;
  * Should be thrown by {@link XMLTemplateProcessor} s when they find invalid template tags.
  * 
  * @since 4.1.3
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class XMLTemplateProcessorException extends ProcessorException
 {

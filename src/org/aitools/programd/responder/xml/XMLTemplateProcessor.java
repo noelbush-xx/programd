@@ -21,7 +21,7 @@ import org.aitools.programd.processor.ProcessorException;
  * element in an HTML template.
  * 
  * @since 4.5
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 abstract public class XMLTemplateProcessor extends Processor
 {

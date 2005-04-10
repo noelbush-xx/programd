@@ -15,7 +15,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.util.XMLKit;
 
 /**
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  *
  */
 public class ReplyProcessor extends XMLTemplateProcessor

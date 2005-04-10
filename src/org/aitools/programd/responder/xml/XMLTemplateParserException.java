@@ -13,7 +13,7 @@ package org.aitools.programd.responder.xml;
  * Thrown by {@link XMLTemplateParser} when it is given invalid input.
  * 
  * @since 4.5
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class XMLTemplateParserException extends Exception
 {
