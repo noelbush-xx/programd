@@ -22,6 +22,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 import org.aitools.programd.graph.Nodemapper;
+import org.aitools.programd.logging.SimpleChatLogFormatter;
 import org.aitools.programd.logging.XMLChatLogFormatter;
 import org.aitools.programd.multiplexor.PredicateInfo;
 import org.aitools.programd.util.DeveloperError;
@@ -36,7 +37,7 @@ import org.aitools.programd.util.UserError;
  * @author Noel Bush
  * @author Eion Robb
  * @since 4.1.5
- * @version 4.2
+ * @version 4.5
  */
 public class Bot
 {
@@ -94,17 +95,32 @@ public class Bot
         this.logger = Logger.getLogger("programd.chat." + this.id);
         this.logger.setUseParentHandlers(false);
         FileManager.checkOrCreateDirectory(chatlogDirectory, "chat log directory");
+        
+        // Set up regular logging of chat.
         FileHandler chatLogFileHandler;
         try
         {
-            chatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id, 1024, 10);
+            chatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id + "-%g.log", 1048576, 10, true);
         }
         catch (IOException e)
         {
             throw new UserError("Could not create XML chat log for bot \"" + this.id + "\" in \"" + chatlogDirectory + "\"!", e);
         }
-        chatLogFileHandler.setFormatter(new XMLChatLogFormatter());
+        chatLogFileHandler.setFormatter(new SimpleChatLogFormatter());
         this.logger.addHandler(chatLogFileHandler);
+
+        // Set up XML logging of chat.
+        FileHandler xmlChatLogFileHandler;
+        try
+        {
+            xmlChatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id + "%g.xml", 1048576, 10, true);
+        }
+        catch (IOException e)
+        {
+            throw new UserError("Could not create XML chat log for bot \"" + this.id + "\" in \"" + chatlogDirectory + "\"!", e);
+        }
+        xmlChatLogFileHandler.setFormatter(new XMLChatLogFormatter());
+        this.logger.addHandler(xmlChatLogFileHandler);
     } 
 
     /**
