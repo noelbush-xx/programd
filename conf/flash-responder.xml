@@ -34,10 +34,10 @@ GENERAL NOTES
     <!-- The flash templates directory (relative to programd.home). [String: templates/flash]-->
     <entry key="programd.responder.flash.template.directory">templates/flash</entry>
     
-    <!-- The default chat template. [String: chat.flash]
+    <!-- The default chat template name. [String: chat]
          * Note: Any other *.flash or *.data files in
            programd.responder.flash.template.directory will also be available if
-           you specify a template">name (without suffixes) parameter in the user request.-->
-    <entry key="programd.responder.flash.chat-default.template.path">chat.flash</entry>
+           you specify a template-name (without suffixes) parameter in the user request.-->
+    <entry key="programd.responder.flash.chat-default.template.name">chat</entry>
     
 </properties>
