@@ -14,85 +14,56 @@ import java.util.Hashtable;
 
 /**
  * Registers classes with aliases.
+ * @param <B> the base class for classes that will be registered
  */
-abstract public class ClassRegistry
+abstract public class ClassRegistry<B>
 {
-    /** The hidden Hashtable that backs this. */
-    private Hashtable<String, Class> registry;
-    
-    /** The namespace URI of the content type for which this registry is intended. */
-    protected String namespaceURI;
+    /** The Hashtable that stores the classes. */
+    protected Hashtable<String, Class<? extends B>> registry;
 
-    /** The list of classesToRegister (fully-qualified class names). */
-    protected String[] classes;
-
-    /** The fully-qualified name of the base class for the registered classes. */
-    protected String baseClassName;
-    
-    /** The actual Class represented by the {@link #baseClassName}. */
-    protected Class<?> baseClass;
-
-    /** The string &quot;label&quot;--the required name for a label field. */
+    /** The string &quot;{@value}&quot;--the required name for a label field. */
     private static final String LABEL = "label";
 
     /**
      * Loads the registry with a set of classes.
-     * @param namespaceURIToUse the namespace URI to use
-     * @param classesToRegister the classes to register
-     * @param baseClassNameToUse the base class name to use
+     * @param classnames the names of the classes to register
      */
-    public ClassRegistry(String namespaceURIToUse, String[] classesToRegister, String baseClassNameToUse)
+    public ClassRegistry(String[] classnames)
     {
         // Initialize the backing Hashtable.
-        this.registry = new Hashtable<String, Class>(classesToRegister.length);
-
-        // Set the field values for this.
-        this.namespaceURI = namespaceURIToUse;
-        this.classes = classesToRegister;
-        this.baseClassName = baseClassNameToUse;
-
-        // Get a handle on the base class.
-        try
-        {
-            this.baseClass = Class.forName(this.baseClassName);
-        } 
-        catch (ClassNotFoundException e)
-        {
-            throw new UserError("Could not find base class \"" + this.baseClassName + "\"!", e);
-        } 
+        this.registry = new Hashtable<String, Class<? extends B>>(classnames.length);
 
         // Load in the classesToRegister.
-        for (int index = classesToRegister.length; --index >= 0;)
+        for (int index = classnames.length; --index >= 0;)
         {
-        	register(classesToRegister[index]);
+        	register(classnames[index]);
         }
     }
     
     /**
      * Registers an individual class.
      * 
-     * @param nameOfClassToRegister	the name of the class to register
+     * @param classname	the name of the class to register
      */
-    public void register(String nameOfClassToRegister)
+    public void register(String classname)
     {
-    	Class classToRegister;
+    	Class<? extends B> classToRegister;
     	
         // Get the class.
         try
         {
-            classToRegister = Class.forName(nameOfClassToRegister);
-        } 
+            classToRegister = (Class<? extends B>)Class.forName(classname);
+        }
         catch (ClassNotFoundException e)
         {
-            throw new UserError("\"" + nameOfClassToRegister
-                    + "\" is missing from your classpath.  Cannot initialize registry.", e);
+            throw new UserError("\"" + classname
+                    + "\" is unavailable (not found in classpath).  Cannot initialize registry.", e);
         } 
-        // Ensure that the class is actually an extension of the processor.
-        if (!this.baseClass.isAssignableFrom(classToRegister))
+        catch (ClassCastException e)
         {
-            throw new DeveloperError("Developer has incorrectly specified \"" + nameOfClassToRegister
-                    + "\" as a registrable class.", new ClassCastException());
-        } 
+            throw new DeveloperError("Developer has incorrectly specified \"" + classname
+                    + "\" as a registrable class.", e);
+        }
 
         // Get the label field.
         Field labelField = null;
@@ -104,13 +75,13 @@ abstract public class ClassRegistry
             } 
             catch (NoSuchFieldException e)
             {
-                throw new DeveloperError("Unlikely error: \"" + nameOfClassToRegister
+                throw new DeveloperError("Unlikely error: \"" + classname
                         + "\" is missing label field!", e);
             } 
         } 
         else
         {
-            throw new DeveloperError("Failed to get processor \"" + nameOfClassToRegister + "\"", new NullPointerException());
+            throw new DeveloperError("Failed to get processor \"" + classname + "\"", new NullPointerException());
         } 
 
         // Get the value in the label field.
@@ -121,7 +92,7 @@ abstract public class ClassRegistry
         } 
         catch (IllegalAccessException e)
         {
-            throw new DeveloperError("Label field for \"" + nameOfClassToRegister + "\" is not accessible!", e);
+            throw new DeveloperError("Label field for \"" + classname + "\" is not accessible!", e);
         } 
 
         // (Finally!) register this class.
@@ -143,21 +114,16 @@ abstract public class ClassRegistry
      * @return the Class corresponding to the given label.
      * @throws NotARegisteredClassException if the given class is not registered
      */
-    public synchronized Class get(String label) throws NotARegisteredClassException
+    public synchronized Class<? extends B> get(String label) throws NotARegisteredClassException
     {
-        if (this.registry.containsKey(label))
+        if (label != null)
         {
-            return this.registry.get(label);
+            if (this.registry.containsKey(label))
+            {
+                return this.registry.get(label);
+            }
+            throw new NotARegisteredClassException(label);
         }
-        throw new NotARegisteredClassException(label);
-    }
-    
-    /**
-     * @return the namespace URI of the content type for which
-     *         this registry manages processors
-     */
-    public String getNamespaceURI()
-    {
-        return this.namespaceURI;
+        throw new DeveloperError("Passed a null label to ClassRegistry!", new NullPointerException());
     }
 }
