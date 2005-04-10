@@ -58,7 +58,7 @@ import org.xml.sax.SAXException;
  * 
  * @author Richard Wallace, Jon Baer
  * @author Thomas Ringate/Pedro Colla
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @author Eion Robb
  * @version 4.5
  */
@@ -101,7 +101,7 @@ public class Graphmaster
     /** A space. */
     private static final String SPACE = " ";
     
-    /** The string &quot;file&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String FILE = "file";
     
     /** Match states. */
@@ -140,7 +140,7 @@ public class Graphmaster
     /** The SAXParser used in loading AIML. */
     private SAXParser parser;
 
-    /** The botResponse timeout. */
+    /** The response timeout. */
     protected int responseTimeout;
 
     /** Load time marker. */
@@ -392,7 +392,7 @@ public class Graphmaster
      * @param matchState
      *            state variable tracking which part of the path we're in
      * @param expiration
-     *            when this botResponse process expires
+     *            when this response process expires
      * @return the resulting <code>Match</code> object
      */
     private Match match(Nodemapper nodemapper, Nodemapper parent, List<String> input, String wildcardContent, StringBuffer path,
