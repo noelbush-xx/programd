@@ -3,7 +3,9 @@ package org.aitools.programd.server.jettyinterface;
 import java.io.IOException;
 
 import org.aitools.programd.Core;
+import org.aitools.programd.interfaces.HTTPServerSettings;
 import org.aitools.programd.server.ProgramDCompatibleHttpServer;
+import org.aitools.programd.server.ServletRequestResponderManagerRegistry;
 import org.aitools.programd.server.jettyinterface.ProgramDAwareJettyServer;
 import org.aitools.programd.util.DeveloperError;
 import org.mortbay.http.HttpListener;
@@ -17,7 +19,7 @@ import org.mortbay.log.OutputStreamLogSink;
  *  so it implements the {@link org.aitools.programd.server.ProgramDCompatibleHttpServer ProgramDCompatibleHttpServer} interface.
  *  </p>
  *
- *  @author Noel Bush
+ *  @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class JettyWrapper implements ProgramDCompatibleHttpServer
 {
@@ -26,14 +28,22 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
     private ProgramDAwareJettyServer jetty;
     
     private Core core;
+    
+    private ServletRequestResponderManagerRegistry responderRegistry;
+    
+    private HTTPServerSettings serverSettings;
 
     /**
      * Creates a new JettyWrapper using the given Core.
      * @param coreToUse the Core to use
+     * @param registry the responder registry to use
+     * @param serverSettingsToUse the web server settings
      */
-    public JettyWrapper(Core coreToUse)
+    public JettyWrapper(Core coreToUse, ServletRequestResponderManagerRegistry registry, HTTPServerSettings serverSettingsToUse)
     {
         this.core = coreToUse;
+        this.responderRegistry = registry;
+        this.serverSettings = serverSettingsToUse;
     } 
 
     /**
@@ -49,17 +59,17 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
         }
         String configFilePath = configParameters[0].toString();
 
-        this.jetty = new ProgramDAwareJettyServer(this.core);
+        this.jetty = new ProgramDAwareJettyServer(this.core, this.responderRegistry);
         
-        // Add a LogSink to Jetty so it will shut up and not send messages to System.err.
-        OutputStreamLogSink quietJetty = new OutputStreamLogSink("./logs/jetty.log");
+        // Add a LogSink to Jetty so it will send its errors to the web server log.
+        OutputStreamLogSink logsink = new OutputStreamLogSink(this.serverSettings.getLogPathPattern());
         try
         {
-            (new LogImpl()).add(quietJetty);
+            (new LogImpl()).add(logsink);
         }
         catch (Exception e)
         {
-            throw new DeveloperError(e);
+            throw new DeveloperError("Error occurred while setting up logger for jetty.", e);
         }
 
         try
@@ -68,7 +78,7 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
         }
         catch (IOException e)
         {
-            throw new DeveloperError(e);
+            throw new DeveloperError("Error occurred while configuring jetty.  Check that the config file is valid.", e);
         }
 
         this.jetty.setStatsOn(true);
@@ -102,12 +112,12 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
         } 
         catch (Exception e)
         {
-            throw new DeveloperError(e);
+            throw new DeveloperError("Exception occurred while starting jetty.", e);
         } 
     } 
 
     /**
-     * @see org.aitools.programd.bot.BotProcess#shutdown()
+     * @see ProgramDCompatibleHttpServer#shutdown()
      */
     public void shutdown()
     {
@@ -117,7 +127,7 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
         }
         catch (InterruptedException e)
         {
-            throw new DeveloperError(e);
+            throw new DeveloperError("Exception occurred while stopping jetty.", e);
         }
     } 
 
