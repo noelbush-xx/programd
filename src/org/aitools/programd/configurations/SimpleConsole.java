@@ -22,7 +22,7 @@ import org.aitools.programd.interfaces.Console;
  * just a basic {@link org.aitools.programd.interfaces.Shell Shell}
  * attached (if you enable it).  Input, output and error are routed via standard system objects.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.5
  */
 public class SimpleConsole

@@ -20,7 +20,7 @@ import org.aitools.programd.interfaces.HTTPServer;
 /**
  * An implementation of Program D combined with a web server.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class WebServer
 {

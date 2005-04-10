@@ -44,7 +44,7 @@ import org.aitools.programd.util.UserError;
 /**
  * The "core" of Program D, independent of any interfaces.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class Core extends Thread
 {
@@ -406,16 +406,16 @@ public class Core extends Thread
     }
     
     /**
-     * Returns the botResponse to an input, using a default TextResponder.
+     * Returns the response to an input, using a default TextResponder.
      * 
      * @param input
      *            the &quot;non-internal&quot; (possibly multi-sentence,
      *            non-substituted) input
      * @param userid
-     *            the userid for whom the botResponse will be generated
+     *            the userid for whom the response will be generated
      * @param botid
-     *            the botid from which to get the botResponse
-     * @return the botResponse
+     *            the botid from which to get the response
+     * @return the response
      */
     public synchronized String getResponse(String input, String userid, String botid)
     {
@@ -425,18 +425,18 @@ public class Core extends Thread
     }
 
     /**
-     * Returns the botResponse to an input, using the given Responder.
+     * Returns the response to an input, using the given Responder.
      * 
      * @param input
      *            the &quot;non-internal&quot; (possibly multi-sentence,
      *            non-substituted) input
      * @param userid
-     *            the userid for whom the botResponse will be generated
+     *            the userid for whom the response will be generated
      * @param botid
-     *            the botid from which to get the botResponse
+     *            the botid from which to get the response
      * @param responder
-     *            the Responder who cares about this botResponse
-     * @return the botResponse
+     *            the Responder who cares about this response
+     * @return the response
      */
     public synchronized String getResponse(String input, String userid, String botid, Responder responder)
     {
@@ -446,11 +446,11 @@ public class Core extends Thread
     }
 
     /**
-     * Logs a botResponse to the chat log.
-     * @param input the input that produced the botResponse
+     * Logs a response to the chat log.
+     * @param input the input that produced the response
      * @param response the response
-     * @param userid the userid for whom the botResponse was produced
-     * @param botid the botid that produced the botResponse
+     * @param userid the userid for whom the response was produced
+     * @param botid the botid that produced the response
      */
     private void logResponse(String input, String response, String userid, String botid)
     {

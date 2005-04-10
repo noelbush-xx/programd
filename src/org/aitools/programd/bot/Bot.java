@@ -34,7 +34,7 @@ import org.aitools.programd.util.UserError;
 /**
  * Handles all of the properties of a bot.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @author Eion Robb
  * @since 4.1.5
  * @version 4.5

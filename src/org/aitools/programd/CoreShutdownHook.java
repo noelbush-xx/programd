@@ -17,7 +17,7 @@ package org.aitools.programd;
  * in an application server), so this may not always be used.  When this class's {@link #run}
  * method is called, it first checks that the {@link Core} has not been shut down already.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class CoreShutdownHook extends Thread
 {

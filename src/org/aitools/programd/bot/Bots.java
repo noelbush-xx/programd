@@ -20,7 +20,7 @@ import org.aitools.programd.util.DeveloperError;
 /**
  * Contains all descriptions of bots.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.1.5
  * @version 4.5
  */

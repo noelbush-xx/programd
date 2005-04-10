@@ -23,7 +23,7 @@ import org.aitools.programd.interfaces.graphical.GUIConsole;
  * a basic {@link org.aitools.programd.interfaces.Shell Shell}
  * attached (if you enable it).
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.2
  */
 public class SimpleGUIConsole

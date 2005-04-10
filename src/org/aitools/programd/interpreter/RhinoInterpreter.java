@@ -11,7 +11,7 @@ import org.mozilla.javascript.Scriptable;
  * that handles server-side JavaScript using the Rhino package.
  * 
  * @author Jon Baer
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @version 4.5
  */
 public class RhinoInterpreter implements Interpreter
