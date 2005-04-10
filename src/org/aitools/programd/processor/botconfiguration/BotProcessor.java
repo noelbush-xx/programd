@@ -18,12 +18,13 @@ import org.aitools.programd.CoreSettings;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
+import org.aitools.programd.processor.ProcessorException;
 
 /**
  * Supports configuration of a bot from the startup file.
  * 
- * @version 4.2
- * @author Noel Bush
+ * @version 4.5
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class BotProcessor extends BotConfigurationElementProcessor
 {
@@ -40,9 +41,9 @@ public class BotProcessor extends BotConfigurationElementProcessor
     }
     
     /**
-     * @see org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
      */
-    public void process(Element element, BotsConfigurationFileParser parser)
+    public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         String botID = element.getAttribute(ID);
 
@@ -52,7 +53,7 @@ public class BotProcessor extends BotConfigurationElementProcessor
             if (!bots.include(botID))
             {
                 CoreSettings coreSettings = parser.getCore().getSettings();
-                Bot bot = new Bot(botID, coreSettings.getPredicateEmptyDefault(), coreSettings.getLoggingXmlChatLogDirectory());
+                Bot bot = new Bot(botID, coreSettings.getPredicateEmptyDefault(), coreSettings.getChatLogDirectory());
                 logger.log(Level.INFO, "Configuring bot \"" + botID + "\".");
                 parser.setCurrentBot(bot);
                 bots.addBot(botID, bot);

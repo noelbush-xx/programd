@@ -9,16 +9,16 @@
 
 package org.aitools.programd.processor.botconfiguration;
 
-import org.aitools.programd.util.ClassRegistry;
+import org.aitools.programd.processor.ProcessorRegistry;
 
 /**
  * Registers {@link BotConfigurationElementProcessor} s for Program D.
  * 
- * @version 4.2
+ * @version 4.5
  * @since 4.1.3
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class BotConfigurationElementProcessorRegistry extends ClassRegistry
+public class BotConfigurationElementProcessorRegistry extends ProcessorRegistry<BotConfigurationElementProcessor>
 {
     /** The XML namespace URI for the Program D bot configuration file. */
     private static final String XMLNS = "http://aitools.org/programd/startup/2005/02/06";
@@ -41,22 +41,11 @@ public class BotConfigurationElementProcessorRegistry extends ClassRegistry
           "org.aitools.programd.processor.botconfiguration.SentenceSplittersProcessor",
           "org.aitools.programd.processor.botconfiguration.SubstitutionsProcessor" } ;
 
-    /** The fully-qualified name of {@link BotConfigurationElementProcessor} . */
-    private static final String PROCESSOR_BASE_CLASS_NAME = "org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessor";
-
-    /** The private member that initializes this class. */
-    private static final BotConfigurationElementProcessorRegistry self = new BotConfigurationElementProcessorRegistry();
-
-    private BotConfigurationElementProcessorRegistry()
-    {
-        super(XMLNS, PROCESSOR_LIST, PROCESSOR_BASE_CLASS_NAME);
-    } 
-
     /**
-     * @return the BotConfigurationElementProcessorRegistry itself
+     * Creates a new <code>BotConfigurationElementProcessorRegistry</code>.
      */
-    public static BotConfigurationElementProcessorRegistry getSelf()
+    public BotConfigurationElementProcessorRegistry()
     {
-        return self;
+        super(XMLNS, PROCESSOR_LIST);
     } 
 }

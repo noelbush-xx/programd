@@ -13,13 +13,14 @@ import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
+import org.aitools.programd.processor.ProcessorException;
 
 /**
  * Loads AIML at load-time.
  * 
  * @since 4.1.2
- * @version 4.2
- * @author Noel Bush
+ * @version 4.5
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class LearnProcessor extends BotConfigurationElementProcessor
 {
@@ -36,9 +37,9 @@ public class LearnProcessor extends BotConfigurationElementProcessor
     }
     
     /**
-     * @see org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
      */
-    public void process(Element element, BotsConfigurationFileParser parser)
+    public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         parser.getCore().getGraphmaster().load(parser.evaluate(element.getChildNodes()), parser.getCurrentBot().getID());
     }

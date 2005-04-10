@@ -34,7 +34,7 @@ public class PersonProcessor extends BotConfigurationElementProcessor
     }
     
     /**
-     * @see org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
      */
     public void process(Element element, BotsConfigurationFileParser parser)
     {

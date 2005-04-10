@@ -19,10 +19,10 @@ import org.aitools.programd.parser.BotsConfigurationFileParser;
  * Sets bot predicate values at load-time.
  * </p>
  * 
- * @version 4.2
+ * @version 4.5
  * @since 4.1.2
  * @author Thomas Ringate, Pedro Colla
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class PropertyProcessor extends BotConfigurationElementProcessor
 {
@@ -39,7 +39,7 @@ public class PropertyProcessor extends BotConfigurationElementProcessor
     }
     
     /**
-     * @see org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
      */
     public void process(Element element, BotsConfigurationFileParser parser)
     {

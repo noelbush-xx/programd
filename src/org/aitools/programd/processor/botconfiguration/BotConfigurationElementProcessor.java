@@ -24,11 +24,11 @@ import org.aitools.programd.processor.ProcessorException;
  * element in a Program D startup file.
  * 
  * @since 4.2
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 abstract public class BotConfigurationElementProcessor extends Processor
 {
-    /** The string &quot;href&quot;. */
+    /** The string &quot;{@value}&quot;. */
     protected static final String HREF = "href";
 
     protected static final Logger logger = Logger.getLogger("programd");
@@ -43,7 +43,7 @@ abstract public class BotConfigurationElementProcessor extends Processor
     }
     
     /**
-     * @see org.aitools.programd.processor.Processor#process(org.w3c.dom.Element, org.aitools.programd.parser.GenericParser)
+     * @see org.aitools.programd.processor.Processor#process(Element, GenericParser)
      */
     public String process(Element element, GenericParser parser) throws ProcessorException
     {
@@ -63,8 +63,9 @@ abstract public class BotConfigurationElementProcessor extends Processor
 	 * 
 	 * @param element	the element to process
 	 * @param parser	the parser that is doing the processing
+	 * @throws ProcessorException if there is an error in processing
 	 */
-    public void process(Element element, BotsConfigurationFileParser parser)
+    public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         parser.evaluate(element.getChildNodes());
     }

@@ -13,15 +13,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
-import org.aitools.programd.bot.BotProcesses;
 import org.aitools.programd.listener.Listener;
-import org.aitools.programd.listener.ListenerRegistry;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
+import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.NotARegisteredClassException;
 
@@ -29,27 +29,26 @@ import org.aitools.programd.util.NotARegisteredClassException;
  * The <code>listener</code> element is a container for defining parameters of
  * a listener.
  * 
- * @version 4.2
- * @author Noel Bush
+ * @version 4.5
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class ListenerProcessor extends BotConfigurationElementProcessor
 {
     /** The label (as required by the registration scheme). */
     public static final String label = "listener";
-
+    
     // Convenience constants.
 
-    /** The string &quot;parameter&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String PARAMETER = "parameter";
 
-    /** The string &quot;type&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String TYPE = "type";
 
-    /** The string &quot;true&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String TRUE = "true";
 
-    /** The string &quot; : &quot;. */
-
+    /** The string &quot;{@value}&quot;. */
     private static final String SEPARATOR = " : ";
 
     /**
@@ -62,14 +61,14 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
     }
 
     /**
-     * @see org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
      */
-    public void process(Element element, BotsConfigurationFileParser parser)
+    public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         // Does it have an href attribute?
         if (element.hasAttribute(HREF))
         {
-            parser.verifyAndParse(element.getAttribute(HREF));
+            parser.verifyAndProcess(element.getAttribute(HREF));
             return;
         }
         // otherwise...
@@ -81,7 +80,7 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         Class listenerClass = null;
         try
         {
-            listenerClass = ListenerRegistry.getSelf().get(type);
+            listenerClass = parser.getCore().getListenerRegistry().get(type);
         }
         catch (NotARegisteredClassException e)
         {
@@ -139,13 +138,8 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         }
 
         // Start listener
-        BotProcesses.start(listener, type + SEPARATOR + bot.getID());
+        this.core.getManagedProcesses().start(listener, type + SEPARATOR + bot.getID());
 
-        /*
-         if (Settings.showConsole())
-         {
-         Log.userinfo("Started \"" + type + "\" listener for bot \"" + bot.getID() + "\".", Log.STARTUP);
-         }
-         */
+        logger.log(Level.INFO, "Started \"" + type + "\" listener for bot \"" + bot.getID() + "\".");
     }
 }

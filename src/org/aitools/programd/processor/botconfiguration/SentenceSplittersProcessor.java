@@ -14,13 +14,14 @@ import org.w3c.dom.Element;
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
+import org.aitools.programd.processor.ProcessorException;
 
 /**
  * The <code>sentence-splitters</code> element is a container for defining
  * strings that should cause the input to be split into sentences.
  * 
- * @version 4.2
- * @author Noel Bush
+ * @version 4.5
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
 {
@@ -29,7 +30,7 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
 
     // Convenience constants.
 
-    /** The string &quot;splitter&quot;. */
+    /** The string &quot;{@value}&quot;. */
     private static final String SPLITTER = "splitter";
 
     /**
@@ -42,14 +43,14 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
     }
     
     /**
-     * @see org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
      */
-    public void process(Element element, BotsConfigurationFileParser parser)
+    public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         // Does it have an href attribute?
         if (element.hasAttribute(HREF))
         {
-            parser.verifyAndParse(element.getAttribute(HREF));
+            parser.verifyAndProcess(element.getAttribute(HREF));
             return;
         }
         // (otherwise...)

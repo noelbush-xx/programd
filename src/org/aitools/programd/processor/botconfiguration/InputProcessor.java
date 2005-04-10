@@ -19,8 +19,8 @@ import org.aitools.programd.parser.BotsConfigurationFileParser;
  * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-substitution-normalizations">substitution
  * normalizations </a> to be performed on an input.
  * 
- * @version 4.2
- * @author Noel Bush
+ * @version 4.5
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class InputProcessor extends BotConfigurationElementProcessor
 {
@@ -37,7 +37,7 @@ public class InputProcessor extends BotConfigurationElementProcessor
     }
     
     /**
-     * @see org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
      */
     public void process(Element element, BotsConfigurationFileParser parser)
     {

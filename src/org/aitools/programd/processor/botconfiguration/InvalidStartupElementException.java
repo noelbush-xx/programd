@@ -15,9 +15,9 @@ import org.aitools.programd.processor.ProcessorException;
  * Should be thrown by {@link BotConfigurationElementProcessor} s when they find invalid
  * AIML.
  * 
- * @version 4.2
+ * @version 4.5
  * @since 4.1.3
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class InvalidStartupElementException extends ProcessorException
 {

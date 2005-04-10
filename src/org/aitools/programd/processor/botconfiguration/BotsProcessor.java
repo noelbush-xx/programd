@@ -15,8 +15,8 @@ import org.aitools.programd.Core;
  * The <code>bots</code> element is a container for bot configuration
  * definitions.
  * 
- * @version 4.2
- * @author Noel Bush
+ * @version 4.5
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class BotsProcessor extends BotConfigurationElementProcessor
 {
