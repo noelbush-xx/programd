@@ -1,9 +1,10 @@
-<html>
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>
 			Register a New User
 		</title>
-		<link rel="stylesheet" type="text/css" href="http://localhost/style/sample.css" />
+		<link rel="stylesheet" type="text/css" href="sample.css" />
 	</head>
 	<body>
 		<h1>
@@ -38,7 +39,7 @@
 						</p>
 					</td>
 					<td width="80%" valign="middle">
-						<input type="password" name="password1" value="" /> 
+						<input type="password" name="password-confirm" value="" /> 
 					</td>
 				</tr>
 				<tr>
@@ -47,7 +48,7 @@
 					</td>
 				</tr>
 			</table>
-			<input type="hidden" name="register" value="auth" />
+			<input type="hidden" name="request" value="process-registration" />
 		</form>
 	</body>
 </html>

@@ -1,9 +1,10 @@
-<html>
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>
 			Please Log In
 		</title>
-		<link rel="stylesheet" type="text/css" href="http://localhost/style/sample.css" />
+		<link rel="stylesheet" type="text/css" href="sample.css" />
 	</head>
 	<body>
 		<h1>
@@ -37,11 +38,11 @@
 					</td>
 				</tr>
 			</table>
-			<input type="hidden" name="checkauth" value="auth" />
+			<input type="hidden" name="request" value="process-login" />
 		</form>
 		<p>
 			Don't have a login? Create one
-			<a href="/?register=yes">here</a>.
+			<a href="/?request=send-registration-form">here</a>.
 		</p>
 	</body>
 </html>
