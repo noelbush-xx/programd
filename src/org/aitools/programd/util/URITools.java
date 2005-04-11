@@ -19,7 +19,7 @@ import java.net.URL;
  * <code>URITools</code> contains helper methods for dealing
  * with URIs and URLs.
  * 
- * @author Noel Bush
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.2
  */
 public class URITools
