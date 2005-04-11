@@ -75,7 +75,7 @@ public class FileManager
                 throw new DeveloperError("Could not create canonical file for \"" + file.getAbsolutePath() + "\".", e);
             }
         } 
-        return new File(rootPath + path);
+        return new File(rootPath.getPath() + path);
     } 
 
     /**
@@ -179,7 +179,7 @@ public class FileManager
         {
             return file.getAbsolutePath();
         } 
-        file = new File(rootPath + path);
+        file = new File(rootPath.getPath() + path);
         if (!file.exists())
         {
             throw new FileNotFoundException("Could not find \"" + path + "\".");
@@ -408,8 +408,7 @@ public class FileManager
      * @param workingDirectoryToUse
      *            the path to which relative paths should be considered relative
      * @return array of file names without wildcards
-     * @author John D. Ramsdell
-     * @see <a href="http://sourceforge.net/projects/jmk/">JMK </a>
+     * @see <a href="http://sourceforge.net/projects/jmk/">JMK</a>
      * @throws FileNotFoundException
      *             if wild card is misused
      */
@@ -554,14 +553,26 @@ public class FileManager
      */
     public static String loadFileAsString(String path)
     {
+        return loadFileAsString(getExistingFile(path));
+    } 
+
+    /**
+     * Loads a file into a String.
+     * 
+     * @param file
+     *            the file
+     * @return the loaded template
+     */
+    public static String loadFileAsString(File file)
+    {
         String templateLine;
         StringBuffer result = new StringBuffer(1000);
     
         BufferedReader reader;
         try
         {
-            String encoding = XMLKit.getDeclaredXMLEncoding(new FileInputStream(path));
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(path), encoding));
+            String encoding = XMLKit.getDeclaredXMLEncoding(new FileInputStream(file));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
         } 
         catch (IOException e)
         {
@@ -578,7 +589,7 @@ public class FileManager
         } 
         catch (IOException e)
         {
-            throw new UserError("I/O error reading \"" + path + "\".", e);
+            throw new UserError("I/O error reading \"" + file.getAbsolutePath() + "\".", e);
         } 
     
         return result.toString();
