@@ -20,15 +20,14 @@ import org.aitools.programd.util.ClassRegistry;
 public class ListenerRegistry extends ClassRegistry<Listener>
 {
     /** The list of processors (fully-qualified class names). */
-    private static final String[] PROCESSOR_LIST =
-        { "org.aitools.programd.listener.AIMListener", "org.aitools.programd.listener.ICQListener",
-                "org.aitools.programd.listener.IRCListener" } ;
-    
+    private static final String[] PROCESSOR_LIST = { "org.aitools.programd.listener.AIMListener", "org.aitools.programd.listener.ICQListener",
+            "org.aitools.programd.listener.IRCListener" };
+
     /**
      * Creates a new <code>ListenerRegistry</code>.
      */
     public ListenerRegistry()
     {
         super(PROCESSOR_LIST);
-    } 
+    }
 }

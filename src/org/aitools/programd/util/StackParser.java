@@ -9,7 +9,9 @@ import java.util.StringTokenizer;
  * Fitch.
  * 
  * @author Simeon Fitch sfitch@swri.org
- * @see <a href="http://groups.google.com/groups?hl=en&threadm=37F455F1.E490748%40mf.uni-lj.si&rnum=2&prev=/groups%3Fq%3Djava%2B%2522get%2Bmethod%2522%2Bcalled%2Bmethod%26hl%3Den%26sa%3DN%26tab%3Dwg">this message</a>
+ * @see <a
+ *      href="http://groups.google.com/groups?hl=en&threadm=37F455F1.E490748%40mf.uni-lj.si&rnum=2&prev=/groups%3Fq%3Djava%2B%2522get%2Bmethod%2522%2Bcalled%2Bmethod%26hl%3Den%26sa%3DN%26tab%3Dwg">this
+ *      message</a>
  */
 public class StackParser
 {
@@ -22,15 +24,13 @@ public class StackParser
     private StackParser()
     {
         // Nothing to do.
-    } 
+    }
 
     /**
      * Gets the name of the method in the stack the given number of levels down.
      * 
-     * @param throwable
-     *            throwable from which to get stack trace
-     * @param level
-     *            number of stack frames to go down.
+     * @param throwable throwable from which to get stack trace
+     * @param level number of stack frames to go down.
      * @return method name if found, null otherwise
      */
     public static String getStackMethod(Throwable throwable, int level)
@@ -43,7 +43,7 @@ public class StackParser
         while (level-- >= 0 && start >= 0)
         {
             start = backtrace.indexOf(AT, start + 3);
-        } 
+        }
 
         if (start > 0)
         {
@@ -51,16 +51,15 @@ public class StackParser
             if (finish > 0)
             {
                 method = backtrace.substring(start + 3, finish);
-            } 
-        } 
+            }
+        }
         return method;
-    } 
+    }
 
     /**
      * Gets the name of the method in the stack the given number of levels down.
      * 
-     * @param level
-     *            Number of stack frames to go.
+     * @param level Number of stack frames to go.
      * @return Method name if found, null otherwise.
      */
     public static String getStackMethod(int level)
@@ -69,17 +68,19 @@ public class StackParser
         level++;
         Throwable throwable = new Throwable().fillInStackTrace();
         return getStackMethod(throwable, level);
-    } 
+    }
 
     /**
      * Gets the name of the most recent method in the stack that does not
      * include the given search string. If <code>prettify</code> is true, also
      * removes whatever looks like a package name from the result.
      * 
-     * @param search
-     *            the string which, if found in the method name, disqualifies it
-     * @param prettify whether to remove whatever looks like a package name from the result
-     * @return the most recent method in the stack that does not include the given search string
+     * @param search the string which, if found in the method name, disqualifies
+     *            it
+     * @param prettify whether to remove whatever looks like a package name from
+     *            the result
+     * @return the most recent method in the stack that does not include the
+     *         given search string
      */
     public static String getStackMethodBefore(String search, boolean prettify)
     {
@@ -88,7 +89,7 @@ public class StackParser
         while ((method.indexOf(search) != -1) && (method != null))
         {
             method = getStackMethod(++level);
-        } 
+        }
 
         if (prettify)
         {
@@ -96,20 +97,19 @@ public class StackParser
             if (nextToLastDot != -1)
             {
                 return method.substring(nextToLastDot + 1);
-            } 
+            }
             // (otherwise...)
             return method;
-        } 
+        }
         // (otherwise...)
         return method;
-    } 
+    }
 
     /**
      * Creates a string containing the stack backtrace of the given Throwable
      * object.
      * 
-     * @param throwable
-     *            source of backtrace
+     * @param throwable source of backtrace
      * @return String containing backtrace
      */
     public static String getStackString(Throwable throwable)
@@ -117,15 +117,16 @@ public class StackParser
         StringWriter writer = new StringWriter();
         throwable.printStackTrace(new PrintWriter(writer));
         return writer.toString();
-    } 
+    }
 
     /**
      * Returns the backtrace of a given throwable as an enumeration of lines.
+     * 
      * @param throwable the Throwable whose backtrace we want
      * @return the backtrace as an enumeration of lines
      */
     public static StringTokenizer getStackTraceFor(Throwable throwable)
     {
         return new StringTokenizer(getStackString(throwable), System.getProperty("line.separator"));
-    } 
+    }
 }

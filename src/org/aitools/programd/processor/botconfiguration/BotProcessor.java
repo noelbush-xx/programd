@@ -9,7 +9,7 @@
 
 package org.aitools.programd.processor.botconfiguration;
 
-import java.util.logging.Level; 
+import java.util.logging.Level;
 
 import org.w3c.dom.Element;
 
@@ -30,18 +30,20 @@ public class BotProcessor extends BotConfigurationElementProcessor
 {
     /** The label (as required by the registration scheme). */
     public static final String label = "bot";
-    
+
     /**
      * Creates a new BotProcessor with the given Core.
+     * 
      * @param coreToUse the Core to use
      */
     public BotProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
-     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element,
+     *      BotsConfigurationFileParser)
      */
     public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
@@ -58,7 +60,7 @@ public class BotProcessor extends BotConfigurationElementProcessor
                 parser.setCurrentBot(bot);
                 bots.addBot(botID, bot);
                 parser.evaluate(element.getChildNodes());
-            } 
+            }
             else
             {
                 logger.log(Level.WARNING, "Bot \"" + botID + "\" has already been configured.");

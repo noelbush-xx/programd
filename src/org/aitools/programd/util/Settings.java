@@ -17,10 +17,12 @@ import java.util.Properties;
 import org.aitools.programd.util.FileManager;
 
 /**
- * A Settings object can read properties from a given path, or initialize itself with default values.
- * It also contains getter and setter methods for every property value.
- * Usually the subclasses of Settings will be generated automatically from some other structure,
- * such as (as currently) the properties file itself, since it's annoying to create and maintain these by hand.
+ * A Settings object can read properties from a given path, or initialize itself
+ * with default values. It also contains getter and setter methods for every
+ * property value. Usually the subclasses of Settings will be generated
+ * automatically from some other structure, such as (as currently) the
+ * properties file itself, since it's annoying to create and maintain these by
+ * hand.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
@@ -39,7 +41,9 @@ abstract public class Settings
     }
 
     /**
-     * Creates a new Settings object, filling it with properties read from the given path.
+     * Creates a new Settings object, filling it with properties read from the
+     * given path.
+     * 
      * @param propertiesPath the path to the properties file
      */
     public Settings(String propertiesPath)
@@ -64,7 +68,8 @@ abstract public class Settings
         catch (ClassCastException e)
         {
             throw new UserError(
-                    "There is a problem with the format of your XML properties file.  Not all valid XML is actually accepted by the JDK's XML Properties parser!", e);
+                    "There is a problem with the format of your XML properties file.  Not all valid XML is actually accepted by the JDK's XML Properties parser!",
+                    e);
         }
         initialize();
     }

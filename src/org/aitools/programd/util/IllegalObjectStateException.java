@@ -10,8 +10,8 @@
 package org.aitools.programd.util;
 
 /**
- * Thrown when an object has somehow gotten into a state
- * that it was never supposed to.
+ * Thrown when an object has somehow gotten into a state that it was never
+ * supposed to.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
@@ -19,6 +19,7 @@ public class IllegalObjectStateException extends Exception
 {
     /**
      * Creates a new IllegalObjectStateException with the given message.
+     * 
      * @param message the message explaining the exception
      */
     public IllegalObjectStateException(String message)

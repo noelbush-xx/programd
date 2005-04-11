@@ -13,7 +13,8 @@ import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 
 /**
- * <code>BotsConfigurationFileParser</code> processes a bots configuration file.
+ * <code>BotsConfigurationFileParser</code> processes a bots configuration
+ * file.
  */
 public class BotsConfigurationFileParser extends GenericParser
 {
@@ -21,21 +22,23 @@ public class BotsConfigurationFileParser extends GenericParser
 
     /**
      * Initializes a <code>BotsConfigurationFileParser</code>.
-     * @param coreToUse 
+     * 
+     * @param coreToUse
      */
     public BotsConfigurationFileParser(Core coreToUse)
     {
         super(coreToUse.getBotConfigurationElementProcessorRegistry(), coreToUse);
-    } 
+    }
 
     /**
      * Sets the current Bot to the given Bot.
+     * 
      * @param bot the Bot to set the current Bot to
      */
     public void setCurrentBot(Bot bot)
     {
         this.currentBot = bot;
-    } 
+    }
 
     /**
      * @return the current Bot
@@ -43,5 +46,5 @@ public class BotsConfigurationFileParser extends GenericParser
     public Bot getCurrentBot()
     {
         return this.currentBot;
-    } 
+    }
 }

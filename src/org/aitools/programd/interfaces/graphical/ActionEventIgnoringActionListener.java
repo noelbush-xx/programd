@@ -25,7 +25,7 @@ abstract public class ActionEventIgnoringActionListener implements ActionListene
     public ActionEventIgnoringActionListener()
     {
         super();
-    } 
+    }
 
     /**
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -34,7 +34,7 @@ abstract public class ActionEventIgnoringActionListener implements ActionListene
     {
         actionPerformed();
     }
-    
+
     /**
      * Should be overridden by the subclass.
      */

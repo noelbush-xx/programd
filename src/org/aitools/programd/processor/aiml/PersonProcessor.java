@@ -37,13 +37,14 @@ public class PersonProcessor extends AIMLProcessor
 
     /**
      * Creates a new PersonProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public PersonProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
@@ -55,30 +56,28 @@ public class PersonProcessor extends AIMLProcessor
             {
                 // Return the processed contents of the element, properly
                 // substituted.
-                return applySubstitutions(parser.evaluate(element.getChildNodes()), parser
-                        .getBotID());
-            } 
+                return applySubstitutions(parser.evaluate(element.getChildNodes()), parser.getBotID());
+            }
             catch (ProcessorException e)
             {
-                //return EMPTY_STRING;
+                // return EMPTY_STRING;
                 throw new UserError(e.getExplanatoryMessage(), e);
-            } 
-        } 
+            }
+        }
         // (otherwise...)
         return parser.shortcutTag(element, label, StarProcessor.label, Node.ELEMENT_NODE);
-    } 
+    }
 
     /**
      * Applies substitutions as defined in the substitution map. Comparisons are
      * case-insensitive.
      * 
-     * @param input
-     *            the input on which to perform substitutions
+     * @param input the input on which to perform substitutions
      * @param botid the botid whose substitutions should be applied
      * @return the input with substitutions performed
      */
     public String applySubstitutions(String input, String botid)
     {
         return Substituter.applySubstitutions(this.core.getBots().getBot(botid).getPersonSubstitutionsMap(), input);
-    } 
+    }
 }

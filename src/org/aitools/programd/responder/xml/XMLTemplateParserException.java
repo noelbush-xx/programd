@@ -19,10 +19,11 @@ public class XMLTemplateParserException extends Exception
 {
     /**
      * Creates a new XMLTemplateParserException with the given message.
+     * 
      * @param message the message describing the exception
      */
     public XMLTemplateParserException(String message)
     {
         super(message);
-    } 
+    }
 }

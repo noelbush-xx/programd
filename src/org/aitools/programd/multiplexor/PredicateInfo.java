@@ -20,7 +20,10 @@ public class PredicateInfo
     /** The default value of the predicate. */
     public String defaultValue;
 
-    /** Whether the predicate should return its name, or its newly-set value, when set. */
+    /**
+     * Whether the predicate should return its name, or its newly-set value,
+     * when set.
+     */
     public boolean returnNameWhenSet;
 
     /**
@@ -29,5 +32,5 @@ public class PredicateInfo
     public PredicateInfo()
     {
         // Nothing to do.
-    } 
+    }
 }

@@ -17,10 +17,11 @@ import org.aitools.programd.CoreShutdownHook;
 import org.aitools.programd.interfaces.Console;
 
 /**
- * A <code>SimpleConsole</code> gives you a running {@link org.aitools.programd.Core Core}
- * with a regular {@link org.aitools.programd.interfaces.Console Console} and 
- * just a basic {@link org.aitools.programd.interfaces.Shell Shell}
- * attached (if you enable it).  Input, output and error are routed via standard system objects.
+ * A <code>SimpleConsole</code> gives you a running
+ * {@link org.aitools.programd.Core Core} with a regular
+ * {@link org.aitools.programd.interfaces.Console Console} and just a basic
+ * {@link org.aitools.programd.interfaces.Shell Shell} attached (if you enable
+ * it). Input, output and error are routed via standard system objects.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.5
@@ -32,7 +33,7 @@ public class SimpleConsole
 
     /** The console. */
     private Console console;
-    
+
     private SimpleConsole(String corePropertiesPath, String consolePropertiesPath)
     {
         this.core = new Core(corePropertiesPath);
@@ -40,7 +41,7 @@ public class SimpleConsole
         this.console.attachTo(this.core);
         this.core.setup();
     }
-    
+
     /**
      * Starts the core and the shell (if enabled) and sends the connect string.
      */
@@ -64,25 +65,26 @@ public class SimpleConsole
     }
 
     /**
-     * Starts up the SimpleConsole configuration.  Required arguments are:
+     * Starts up the SimpleConsole configuration. Required arguments are:
      * <ul>
      * <li><code>-c, --core-properties     the path to the core configuration (XML properties) file</code></li>
      * <li><code>-n, --console-properties  the path to the console configuration (XML properties) file</code></li>
      * </ul>
+     * 
      * @param argv
      */
     public static void main(String[] argv)
     {
         String corePropertiesPath = null;
         String consolePropertiesPath = null;
-        
+
         int opt;
         LongOpt[] longopts = new LongOpt[2];
         longopts[0] = new LongOpt("core-properties", LongOpt.REQUIRED_ARGUMENT, null, 'c');
         longopts[1] = new LongOpt("console-properties", LongOpt.REQUIRED_ARGUMENT, null, 'n');
-        
+
         Getopt getopt = new Getopt("simple-console", argv, ":c:n:", longopts);
-        
+
         while ((opt = getopt.getopt()) != -1)
         {
             switch (opt)
@@ -90,13 +92,13 @@ public class SimpleConsole
                 case 'c':
                     corePropertiesPath = getopt.getOptarg();
                     break;
-                    
+
                 case 'n':
                     consolePropertiesPath = getopt.getOptarg();
                     break;
             }
         }
-        
+
         if (corePropertiesPath == null)
         {
             System.err.println("You must specify a core properties path.");
@@ -112,8 +114,9 @@ public class SimpleConsole
         }
 
         SimpleConsole console = new SimpleConsole(corePropertiesPath, consolePropertiesPath);
-        // Add a shutdown hook so the Core will be properly shut down if the system exits.
+        // Add a shutdown hook so the Core will be properly shut down if the
+        // system exits.
         Runtime.getRuntime().addShutdownHook(new CoreShutdownHook(console.core));
         console.run();
-    } 
+    }
 }

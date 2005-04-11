@@ -41,12 +41,9 @@ public class Substituter
      * use {@link #applySubstitutions} .
      * </p>
      * 
-     * @param input
-     *            the string on which to perform the replacement
-     * @param find
-     *            the string to find
-     * @param replace
-     *            the string with which to replace it
+     * @param input the string on which to perform the replacement
+     * @param find the string to find
+     * @param replace the string with which to replace it
      * @return the str
      */
     public static String replace(String find, String replace, String input)
@@ -55,14 +52,13 @@ public class Substituter
         StringBuffer result = new StringBuffer(SPACE + input + SPACE);
 
         // Is the find string in the input?
-        for (int startIndex = result.toString().indexOf(find); startIndex != -1; startIndex = result.toString()
-                .indexOf(find))
+        for (int startIndex = result.toString().indexOf(find); startIndex != -1; startIndex = result.toString().indexOf(find))
         {
             // If so, replace it in the result.
             result.replace(startIndex, startIndex + find.length(), replace);
-        } 
+        }
         return result.toString().trim();
-    } 
+    }
 
     /**
      * <p>
@@ -74,12 +70,9 @@ public class Substituter
      * use {@link #applySubstitutions} .
      * </p>
      * 
-     * @param input
-     *            the string on which to perform the replacement
-     * @param find
-     *            the string to find
-     * @param replace
-     *            the string with which to replace it
+     * @param input the string on which to perform the replacement
+     * @param find the string to find
+     * @param replace the string with which to replace it
      * @return the str
      */
     public static String replaceIgnoreCase(String find, String replace, String input)
@@ -90,24 +83,22 @@ public class Substituter
         find = find.toUpperCase();
 
         // Is the find string in the input?
-        for (int startIndex = result.toString().toUpperCase().indexOf(find); startIndex != -1; startIndex = result
-                .toString().toUpperCase().indexOf(find))
+        for (int startIndex = result.toString().toUpperCase().indexOf(find); startIndex != -1; startIndex = result.toString().toUpperCase().indexOf(
+                find))
         {
             // If so, replace it in the result.
             result.replace(startIndex, startIndex + find.length(), replace);
-        } 
+        }
         return result.toString().trim();
-    } 
+    }
 
     /**
      * Same as {@link #replaceIgnoreCase} except a substitution map is given,
      * and extra care is taken to ensure that a replaced value does not have
      * further substitutions performed on it.
      * 
-     * @param substitutionMap
-     *            the map of substitutions to be performed
-     * @param input
-     *            the string on which to perform the replacement
+     * @param substitutionMap the map of substitutions to be performed
+     * @param input the string on which to perform the replacement
      * @return the input with substitutions applied
      */
     public static String applySubstitutions(Map<String, String> substitutionMap, String input)
@@ -147,14 +138,14 @@ public class Substituter
                     if (startIndex + replacement.length() < untouchedTest.length())
                     {
                         untouchedIterator.add(untouchedTest.substring(startIndex + find.length()));
-                    } 
+                    }
                     else
                     {
                         untouchedIterator.add(EMPTY_STRING);
-                    } 
-                } 
-            } 
-        } 
+                    }
+                }
+            }
+        }
 
         // Now construct the result.
         StringBuffer result = new StringBuffer();
@@ -170,8 +161,8 @@ public class Substituter
             if (replaceIterator.hasNext())
             {
                 result.append(replaceIterator.next());
-            } 
-        } 
+            }
+        }
 
         // Remove the padding spaces before returning!
         int resultLength = result.length();
@@ -181,19 +172,19 @@ public class Substituter
             if (result.charAt(0) == ' ')
             {
                 resultStart = 1;
-            } 
+            }
             if (result.charAt(resultLength - 1) == ' ')
             {
                 resultLength--;
-            } 
+            }
             if (resultStart == resultLength)
             {
                 return EMPTY_STRING;
-            } 
+            }
             // (otherwise...)
             return result.substring(resultStart, resultLength);
-        } 
+        }
         // (otherwise...)
         return result.toString();
-    } 
+    }
 }

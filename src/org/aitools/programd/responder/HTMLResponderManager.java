@@ -39,7 +39,7 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
 
     /** The Multiplexor in use. */
     private Multiplexor multiplexor;
-    
+
     /** The templates directory path. */
     private String templatesDirectoryPath;
 
@@ -51,7 +51,7 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
 
     /** Path to the change password template. */
     private String changePasswordFormPath;
-    
+
     /** Path to the access denied page. */
     private String accessDeniedPagePath;
 
@@ -78,7 +78,7 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
 
     /** The Multiplexor secret key. */
     private String secretKey;
-    
+
     private static final String USERNAME_FORMAT = "\\p{Alnum}{4,}";
 
     private static final String PASSWORD_FORMAT = "\\p{Graph}{6,}";
@@ -102,15 +102,16 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
 
     /** The password cookie name. */
     public static final String PASSWORD_COOKIE_NAME = "programd_password";
-    
+
     /** The string &quot;{@value}&quot;. */
     private static final String REQUEST = "request";
-    
+
     /** The string &quot;{@value}&quot;. */
     private static final String LOGGED_IN = "logged_in";
 
     /**
      * Creates this object.
+     * 
      * @param coreToUse the core to use when getting some values
      */
     public HTMLResponderManager(Core coreToUse)
@@ -123,7 +124,7 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
         // Scan and register other templates.
         registerTemplates(FileManager.getExistingFile(this.settings.getTemplateDirectory()).getAbsolutePath(), FILENAME_FILTER);
         this.templatesDirectoryPath = FileManager.getExistingFile(this.settings.getTemplateDirectory()).getAbsolutePath();
-        
+
         // Read the registration, login, etc. paths.
         this.registrationForm = validTemplatePath(this.settings.getRegisterFormPath());
         this.loginFormPath = validTemplatePath(this.settings.getLoginFormPath());
@@ -153,10 +154,10 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
             throw new DeveloperError("I/O error reading secret.key file!", e);
         }
     }
-    
+
     /**
-     * Convenience method used by constructor to attempt to turn the path into a valid
-     * path that points at a real file.
+     * Convenience method used by constructor to attempt to turn the path into a
+     * valid path that points at a real file.
      * 
      * @param path the path to use
      * @return the (possibly modified) path after validation
@@ -175,8 +176,9 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
 
     /**
      * This will return true if <code>request</code>
-     * {@link javax.servlet.http.HttpServletRequest HttpServletRequest},
-     * and if it contains a user-agent header with a recognized user agent name.
+     * {@link javax.servlet.http.HttpServletRequest HttpServletRequest}, and if
+     * it contains a user-agent header with a recognized user agent name.
+     * 
      * @see ServletRequestResponderManager#responderHandles(ServletRequest)
      */
     public boolean responderHandles(ServletRequest request)
@@ -210,8 +212,9 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
         {
             // The user is already logged in, or perhaps authentication is off.
             case proceed:
-                return envelope.getCore().getResponse(envelope.getUserRequest(), getCookieValue(serviceRequest, USER_COOKIE_NAME), envelope.getBotID(), new HTMLResponder(this, envelope.getBotID(), envelope.getTemplateName()));
-                
+                return envelope.getCore().getResponse(envelope.getUserRequest(), getCookieValue(serviceRequest, USER_COOKIE_NAME),
+                        envelope.getBotID(), new HTMLResponder(this, envelope.getBotID(), envelope.getTemplateName()));
+
             // The user needs to be authenticated.
             case authenticate:
                 String botid = envelope.getBotID();
@@ -220,118 +223,124 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
                 {
                     authResult = authenticate(serviceRequest, envelope.getServiceResponse(), botid);
                 }
-                catch(DuplicateUserIDError e)
+                catch (DuplicateUserIDError e)
                 {
                     return "";
                 }
-                
+
                 switch (authResult)
                 {
                     // Authentication was successful.
-                    case authenticated :
-                        return envelope.getCore().getResponse(envelope.getUserRequest(), getCookieValue(serviceRequest, USER_COOKIE_NAME), botid, new HTMLResponder(this, botid, envelope.getTemplateName()));
-                        
+                    case authenticated:
+                        return envelope.getCore().getResponse(envelope.getUserRequest(), getCookieValue(serviceRequest, USER_COOKIE_NAME), botid,
+                                new HTMLResponder(this, botid, envelope.getTemplateName()));
+
                     // Authentication was unsuccessful.
-                    case denied :
+                    case denied:
                         return FileManager.getFileContents(this.accessDeniedPagePath);
-                        
+
                     // The login form needs to be sent.
-                    case loginRequired :
+                    case loginRequired:
                         return FileManager.getFileContents(this.loginFormPath);
-                        
+
                     // Unknown result -- should not happen!
                     default:
                         throw new DeveloperError("Invalid AuthenticationResult \"" + authResult + "\" returned!", new IllegalArgumentException());
                 }
-                
+
             // The login form needs to be sent.
-            case sendLoginForm :
+            case sendLoginForm:
                 return FileManager.getFileContents(this.loginFormPath);
-                
+
             // The login form is being sent and needs to be processed.
-            case processLoginForm :
+            case processLoginForm:
                 LoginResult loginResult = processLogin(serviceRequest, envelope.getServiceResponse(), envelope.getBotID());
                 switch (loginResult)
                 {
-                    // Processing of the login form was successful (user was successfully logged in).
-                    case succeeded :
+                    // Processing of the login form was successful (user was
+                    // successfully logged in).
+                    case succeeded:
                         return FileManager.getFileContents(this.loginSuccessPagePath);
-                        
-                    // Processing of the login form failed (user was not successfully logged in).
-                    case failed :
+
+                    // Processing of the login form failed (user was not
+                    // successfully logged in).
+                    case failed:
                         return FileManager.getFileContents(this.loginFailedPagePath);
 
                     // Unknown result -- should not happen!
                     default:
                         throw new DeveloperError("Invalid LoginResult \"" + loginResult + "\" returned!", new IllegalArgumentException());
                 }
-                
+
             // User has requested to log out.
-            case logout :
+            case logout:
                 return processLogout(serviceRequest);
-            
+
             // Change Password form needs to be sent.
-            case sendPasswordChangeForm :
+            case sendPasswordChangeForm:
                 return FileManager.getFileContents(this.changePasswordFormPath);
-                            
+
             // Change Password form is being sent and needs to be processed.
-            case processPasswordChangeForm :
+            case processPasswordChangeForm:
                 PasswordChangeResult pwChangeResult = processPasswordChange(serviceRequest, envelope.getServiceResponse(), envelope.getBotID());
                 switch (pwChangeResult)
                 {
-                    // The password form was processed successfully (the password was changed).
-                    case succeeded :
+                    // The password form was processed successfully (the
+                    // password was changed).
+                    case succeeded:
                         return FileManager.getFileContents(this.passwordChangeSucceededPagePath);
-                        
+
                     // The old password was invalid.
-                    case oldInfoInvalid :
+                    case oldInfoInvalid:
                         return FileManager.getFileContents(this.oldPasswordInvalidPagePath);
-                        
+
                     // The password format was invalid.
-                    case passwordFormatInvalid :
+                    case passwordFormatInvalid:
                         return FileManager.getFileContents(this.passwordFormatInvalidPagePath);
-                        
-                    // The new password confirmation did not match the new password.
-                    case passwordNotConfirmed :
+
+                    // The new password confirmation did not match the new
+                    // password.
+                    case passwordNotConfirmed:
                         return FileManager.getFileContents(this.passwordNotConfirmedPagePath);
 
                     // Unknown result -- should not happen!
                     default:
                         throw new DeveloperError("Invalid PasswordChangeResult \"" + pwChangeResult + "\" returned!", new IllegalArgumentException());
                 }
-            
+
             // The registration form needs to be sent.
-            case sendRegistrationForm :
+            case sendRegistrationForm:
                 return FileManager.getFileContents(this.registrationForm);
-                
+
             // The registration form is being sent and needs to be processed.
-            case processRegistrationForm :
+            case processRegistrationForm:
                 RegistrationResult regResult = processRegistration(serviceRequest, envelope.getServiceResponse(), envelope.getBotID());
                 switch (regResult)
                 {
-                    // The registration form was processed successfully (the user has been registered).
-                    case succeeded :
+                    // The registration form was processed successfully (the
+                    // user has been registered).
+                    case succeeded:
                         return FileManager.getFileContents(this.registrationSucceededPagePath);
-                        
+
                     // The username format was invalid.
-                    case usernameFormatInvalid :
+                    case usernameFormatInvalid:
                         return FileManager.getFileContents(this.usernameFormatInvalidPagePath);
-                        
+
                     // The password format was invalid.
-                    case passwordFormatInvalid :
+                    case passwordFormatInvalid:
                         return FileManager.getFileContents(this.passwordFormatInvalidPagePath);
-                        
+
                     // The given userid already exists.
-                    case userAlreadyExists :
+                    case userAlreadyExists:
                         return FileManager.getFileContents(this.passwordChangeSucceededPagePath);
-                        
+
                     // Unknown result -- should not happen!
                     default:
                         throw new DeveloperError("Invalid RegistrationResult \"" + regResult + "\" returned!", new IllegalArgumentException());
                 }
-                 
+
             // Unknown result -- should not happen!
-            case unknown :
+            case unknown:
                 throw new DeveloperError("Could not determine appropriate action for servlet request!", new IllegalArgumentException());
 
             // Unknown result -- should not happen!
@@ -339,48 +348,49 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
                 throw new DeveloperError("Invalid RequiredAction \"" + action + "\" returned!", new IllegalArgumentException());
         }
     }
-    
+
     /**
      * The possible required actions based on an initial evaulation of the
      * request.
      */
     public static enum RequiredAction
     {
-        /** Proceed with responding. */
-        proceed,
-        
-        /** Authenticate the user. */
-        authenticate,
-        
-        /** Send the login form. */
-        sendLoginForm,
-        
-        /** Process the login form. */
-        processLoginForm,
-        
-        /** Log the user out. */
-        logout,
-        
-        /** Send the password change form. */
-        sendPasswordChangeForm,
-        
-        /** Process the password change form. */
-        processPasswordChangeForm,
-        
-        /** Send the registration form. */
-        sendRegistrationForm,
-        
-        /** Process the registration form. */
-        processRegistrationForm,
-        
-        /** Unknown request. */
-        unknown
+    /** Proceed with responding. */
+    proceed,
+
+    /** Authenticate the user. */
+    authenticate,
+
+    /** Send the login form. */
+    sendLoginForm,
+
+    /** Process the login form. */
+    processLoginForm,
+
+    /** Log the user out. */
+    logout,
+
+    /** Send the password change form. */
+    sendPasswordChangeForm,
+
+    /** Process the password change form. */
+    processPasswordChangeForm,
+
+    /** Send the registration form. */
+    sendRegistrationForm,
+
+    /** Process the registration form. */
+    processRegistrationForm,
+
+    /** Unknown request. */
+    unknown
     }
 
     /**
-     * Determines the appropriate action, based on request parameters.  If there is a parameter
-     * &quot;request&quot; set to one of the following values, then the corresponding action is
-     * indicated.  Otherwise, we attempt to authenticate the user.
+     * Determines the appropriate action, based on request parameters. If there
+     * is a parameter &quot;request&quot; set to one of the following values,
+     * then the corresponding action is indicated. Otherwise, we attempt to
+     * authenticate the user.
      * 
      * @param request the HttpServletRequest
      * @return the required action to take
@@ -392,16 +402,16 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
         {
             return RequiredAction.proceed;
         }
-        
+
         // If the session is marked as logged in, proceed.
-        /*if (request.getSession().getAttribute(LOGGED_IN).equals(true))
-        {
-            return RequiredAction.proceed;
-        }*/
-        
+        /*
+         * if (request.getSession().getAttribute(LOGGED_IN).equals(true)) {
+         * return RequiredAction.proceed; }
+         */
+
         // Otherwise, look for the request parameter.
         String requestParam = request.getParameter(REQUEST);
-        
+
         // If requestParam is null, we must authenticate.
         if (requestParam == null)
         {
@@ -443,31 +453,33 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
     /** Possible results of attempting to authenticate a request. */
     public static enum AuthenticationResult
     {
-        /** Authentication was successful. */
-        authenticated,
-        
-        /** Authentication was denied. */
-        denied,
-        
-        /** The user needs to log in. */
-        loginRequired
+    /** Authentication was successful. */
+    authenticated,
+
+    /** Authentication was denied. */
+    denied,
+
+    /** The user needs to log in. */
+    loginRequired
     }
-    
+
     /**
      * Attempts to authenticate the request by examining cookies, and looking up
-     * the user in the Multiplexor.  If the autocookie setting is on, will create
+     * the user in the Multiplexor. If the autocookie setting is on, will create
      * cookies if the user is not known.
      * 
      * @param request the servlet request
      * @param response the servlet response
      * @param botid the botid for whom to authenticate the user
      * @return the result of attempting the authentication
-     * @throws DuplicateUserIDError if an attempt was made to automatically create a new userid but it failed because of an existing duplicate
+     * @throws DuplicateUserIDError if an attempt was made to automatically
+     *             create a new userid but it failed because of an existing
+     *             duplicate
      */
     public AuthenticationResult authenticate(HttpServletRequest request, HttpServletResponse response, String botid) throws DuplicateUserIDError
     {
         Cookie[] cookies = request.getCookies();
-        
+
         String user = null;
         String password = null;
 
@@ -475,7 +487,7 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
         if (cookies != null)
         {
             int cookiesLength = cookies.length;
-    
+
             for (int index = 0; index < cookiesLength; index++)
             {
                 if (USER_COOKIE_NAME.equals(cookies[index].getName()))
@@ -488,7 +500,7 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
                 }
             }
         }
-            
+
         if (user != null && password != null)
         {
             // If user is known by the multiplexor
@@ -517,21 +529,21 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
         // Otherwise, require login....
         return AuthenticationResult.loginRequired;
     }
-    
+
     private static enum LoginResult
     {
-        
-        /** Login succeeded. */
-        succeeded,
-        
-        /** Login failed. */
-        failed
+
+    /** Login succeeded. */
+    succeeded,
+
+    /** Login failed. */
+    failed
     }
-    
+
     private LoginResult processLogin(HttpServletRequest request, HttpServletResponse response, String botid)
     {
         String userParam = request.getParameter("user");
-        String passwordParam = request.getParameter("password");      
+        String passwordParam = request.getParameter("password");
         if (this.multiplexor.checkUser(userParam, passwordParam, this.secretKey, botid))
         {
             Cookie ucookie = new Cookie(USER_COOKIE_NAME, userParam);
@@ -540,53 +552,53 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
             pcookie.setMaxAge(1000000);
             response.addCookie(ucookie);
             response.addCookie(pcookie);
-            //request.getSession().setAttribute(LOGGED_IN, true);
+            // request.getSession().setAttribute(LOGGED_IN, true);
             return LoginResult.succeeded;
         }
         // otherwise...
         return LoginResult.failed;
     }
-    
+
     private String processLogout(HttpServletRequest request)
     {
-        //request.getSession().setAttribute(LOGGED_IN, false);
+        // request.getSession().setAttribute(LOGGED_IN, false);
         return FileManager.getFileContents(this.logoutSuccessPagePath);
     }
 
     private static enum PasswordChangeResult
     {
-        /** Password change was successful. */
-        succeeded,
-        
-        /** The old password supplied was incorrect. */
-        oldInfoInvalid,
-        
-        /** The password format was invalid. */
-        passwordFormatInvalid,
-        
-        /** The new password and its confirmation did not match. */
-        passwordNotConfirmed
+    /** Password change was successful. */
+    succeeded,
+
+    /** The old password supplied was incorrect. */
+    oldInfoInvalid,
+
+    /** The password format was invalid. */
+    passwordFormatInvalid,
+
+    /** The new password and its confirmation did not match. */
+    passwordNotConfirmed
     }
-    
+
     private PasswordChangeResult processPasswordChange(HttpServletRequest request, HttpServletResponse response, String botid)
     {
         String userParam = request.getParameter("user");
         String oldPasswordParam = request.getParameter("old-password");
         String newPasswordParam = request.getParameter("new-password");
         String newPasswordConfirmParam = request.getParameter("new-password-confirm");
-        
+
         // Check that password confirmation matches.
         if (!(newPasswordParam.equals(newPasswordConfirmParam)))
         {
             return PasswordChangeResult.passwordNotConfirmed;
         }
-        
+
         // Check that new password has valid format.
         if (!newPasswordParam.matches(PASSWORD_FORMAT))
         {
             return PasswordChangeResult.passwordFormatInvalid;
         }
-        
+
         // Check user/password combo.
         if (this.multiplexor.checkUser(userParam, oldPasswordParam, this.secretKey, botid))
         {
@@ -602,46 +614,46 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
 
     private static enum RegistrationResult
     {
-        /** Registration was successful. */
-        succeeded,
-        
-        /** The username format was invalid. */
-        usernameFormatInvalid,
-        
-        /** The password format was invalid. */
-        passwordFormatInvalid,
-        
-        /** The password was not confirmed. */
-        passwordNotConfirmed,
-        
-        /** The given userid already exists. */
-        userAlreadyExists
+    /** Registration was successful. */
+    succeeded,
+
+    /** The username format was invalid. */
+    usernameFormatInvalid,
+
+    /** The password format was invalid. */
+    passwordFormatInvalid,
+
+    /** The password was not confirmed. */
+    passwordNotConfirmed,
+
+    /** The given userid already exists. */
+    userAlreadyExists
     }
-    
+
     private RegistrationResult processRegistration(HttpServletRequest request, HttpServletResponse response, String botid)
     {
         String userParam = request.getParameter("user");
         String passwordParam = request.getParameter("password");
         String passwordConfirmParam = request.getParameter("password-confirm");
-        
+
         // Check that username has valid format.
         if (!userParam.matches(USERNAME_FORMAT))
         {
             return RegistrationResult.usernameFormatInvalid;
         }
-        
+
         // Check that password has valid format.
         if (!passwordParam.matches(PASSWORD_FORMAT))
         {
             return RegistrationResult.passwordFormatInvalid;
         }
-        
+
         // Check that password confirmation matches.
         if (!(passwordParam.equals(passwordConfirmParam)))
         {
             return RegistrationResult.passwordNotConfirmed;
         }
-        
+
         // Try to create user.
         try
         {
@@ -662,13 +674,13 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
     }
 
     /**
-     * Generates a new username/password cookie pair for a user
-     * and registers the user automatically with the multiplexor.
+     * Generates a new username/password cookie pair for a user and registers
+     * the user automatically with the multiplexor.
      * 
-     * @param servletResponse
-     *            the response to which to add the cookies
+     * @param servletResponse the response to which to add the cookies
      * @param botid the botid for whom to create the user
-     * @throws DuplicateUserIDError if the generated userid already exists (yikes!)
+     * @throws DuplicateUserIDError if the generated userid already exists
+     *             (yikes!)
      */
     private void makeNewCookiesAndRegister(HttpServletResponse servletResponse, String botid) throws DuplicateUserIDError
     {

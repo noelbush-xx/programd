@@ -24,13 +24,18 @@ import org.aitools.programd.util.ObjectExemplarRegistry;
  */
 public class ServletRequestResponderManagerRegistry extends ObjectExemplarRegistry<ServletRequestResponderManager>
 {
-    /** The list of ServletRequestResponderManagers (fully-qualified class names). */
+    /**
+     * The list of ServletRequestResponderManagers (fully-qualified class
+     * names).
+     */
     private static final String[] MANAGER_LIST = { "org.aitools.programd.responder.FlashResponderManager",
             "org.aitools.programd.responder.HTMLResponderManager" };
 
     /**
      * Creates a <code>ServletRequestResponderManagerRegistry</code>.
-     * @param core the Core to pass with the constructors of the responder managers
+     * 
+     * @param core the Core to pass with the constructors of the responder
+     *            managers
      * @see ObjectExemplarRegistry
      */
     public ServletRequestResponderManagerRegistry(Core core)
@@ -39,13 +44,15 @@ public class ServletRequestResponderManagerRegistry extends ObjectExemplarRegist
     }
 
     /**
-     * Returns a registered responder manager that handles the given ServletRequest.
-     * If multiple registered responder managers indicate that their responder can handle the request, there is no guarantee
-     * about which one will be returned!
+     * Returns a registered responder manager that handles the given
+     * ServletRequest. If multiple registered responder managers indicate that
+     * their responder can handle the request, there is no guarantee about which
+     * one will be returned!
      * 
      * @param request the request to test
      * @return the registered responder that handles the request
-     * @throws NoResponderHandlesThisException if no responder could be found that handles the request
+     * @throws NoResponderHandlesThisException if no responder could be found
+     *             that handles the request
      */
     public ServletRequestResponderManager getHandlerFor(ServletRequest request) throws NoResponderHandlesThisException
     {

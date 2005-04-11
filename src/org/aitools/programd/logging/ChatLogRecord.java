@@ -35,6 +35,7 @@ public class ChatLogRecord extends LogRecord
 
     /**
      * Creates a new ChatLogRecord.
+     * 
      * @param botidToUse the botid with whom this exchange occurred
      * @param useridToUse the userid with whom this exchange occurred
      * @param inputToUse the input from the user

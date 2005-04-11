@@ -36,7 +36,7 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
 {
     /** The label (as required by the registration scheme). */
     public static final String label = "listener";
-    
+
     // Convenience constants.
 
     /** The string &quot;{@value}&quot;. */
@@ -53,6 +53,7 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
 
     /**
      * Creates a new ListenerProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public ListenerProcessor(Core coreToUse)
@@ -61,7 +62,8 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
     }
 
     /**
-     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element,
+     *      BotsConfigurationFileParser)
      */
     public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {

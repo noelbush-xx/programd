@@ -28,15 +28,17 @@ public class PredicatesProcessor extends BotConfigurationElementProcessor
 
     /**
      * Creates a new PredicatesProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public PredicatesProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
-     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element,
+     *      BotsConfigurationFileParser)
      */
     public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
@@ -49,5 +51,5 @@ public class PredicatesProcessor extends BotConfigurationElementProcessor
         {
             parser.evaluate(element.getChildNodes());
         }
-    } 
+    }
 }

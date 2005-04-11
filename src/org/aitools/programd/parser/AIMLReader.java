@@ -31,7 +31,7 @@ public class AIMLReader extends DefaultHandler
 {
     /** The <code>Listener</code> that will handle new items. */
     private AIMLReaderListener listener;
-    
+
     private String defaultNamespaceURI;
 
     /*
@@ -46,9 +46,9 @@ public class AIMLReader extends DefaultHandler
 
     /** An empty string. */
     private static final String EMPTY_STRING = "";
-    
+
     private static final String OPEN_TEMPLATE_START_TAG = "<template xmlns=\"";
-    
+
     private static final String QUOTE_MARKER_END = "\">";
 
     /** A slash. */
@@ -56,26 +56,26 @@ public class AIMLReader extends DefaultHandler
 
     /** End of a template element. */
     private static final String TEMPLATE_END_TAG = "</template>";
-    
+
     /** The system line separator. */
     protected static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     /** Parser states. */
     private enum State
     {
-        /** inside the pattern element */
-        IN_PATTERN,
-    
-        /** inside the that element*/
-        IN_THAT,
-        
-        /** inside the template element */
-        IN_TEMPLATE,
-        
-        /** inside an element that is not specially handled */
-        IN_UNHANDLED
+    /** inside the pattern element */
+    IN_PATTERN,
+
+    /** inside the that element */
+    IN_THAT,
+
+    /** inside the template element */
+    IN_TEMPLATE,
+
+    /** inside an element that is not specially handled */
+    IN_UNHANDLED
     }
-	
+
     /** The string &quot;{@value}&quot;. */
     private static final String PATTERN = "pattern";
 
@@ -87,7 +87,7 @@ public class AIMLReader extends DefaultHandler
 
     /** The string &quot;{@value}&quot;. */
     private static final String TEMPLATE = "template";
-    
+
     /** The current state. */
     private State state = State.IN_UNHANDLED;
 
@@ -102,7 +102,7 @@ public class AIMLReader extends DefaultHandler
 
     /** The most recently collected &lt;template&gt;&lt;/template&gt; contents. */
     private StringBuffer templateBuffer;
-    
+
     /** The finalized &lt;pattern&gt;&lt;/pattern&gt; contents. */
     private String pattern;
 
@@ -114,15 +114,17 @@ public class AIMLReader extends DefaultHandler
 
     /** The finalized &lt;template&gt;&lt;/template&gt; contents. */
     private String template;
-    
+
     /** The start of a template element. */
     private String templateStartTag;
 
     /**
      * Creates a new AIMLReader.
-     * @param readerListener the listener that will (presumably) create new categories as they are found by the reader.
-     * @param defaultNamespaceURIToUse the namespace URI to use when none other is specified (?)
      * 
+     * @param readerListener the listener that will (presumably) create new
+     *            categories as they are found by the reader.
+     * @param defaultNamespaceURIToUse the namespace URI to use when none other
+     *            is specified (?)
      */
     public AIMLReader(AIMLReaderListener readerListener, String defaultNamespaceURIToUse)
     {
@@ -136,9 +138,9 @@ public class AIMLReader extends DefaultHandler
      */
     public void characters(char[] ch, int start, int length)
     {
-		String s = XMLKit.escapeXMLChars(new String(ch, start, length));
-		
-		switch (this.state)
+        String s = XMLKit.escapeXMLChars(new String(ch, start, length));
+
+        switch (this.state)
         {
             case IN_PATTERN:
                 this.patternBuffer.append(s);
@@ -154,7 +156,7 @@ public class AIMLReader extends DefaultHandler
         }
     }
 
-	/**
+    /**
      * @see org.xml.sax.ContentHandler#endElement(java.lang.String,
      *      java.lang.String, java.lang.String)
      */
@@ -173,15 +175,15 @@ public class AIMLReader extends DefaultHandler
         if (this.state == State.IN_PATTERN)
         {
             this.pattern = XMLKit.filterWhitespace(this.patternBuffer.toString());
-	        this.state = State.IN_UNHANDLED;
+            this.state = State.IN_UNHANDLED;
         }
         else if (this.state == State.IN_THAT)
         {
             this.that = XMLKit.filterWhitespace(this.thatBuffer.toString());
-	        this.state = State.IN_UNHANDLED;
+            this.state = State.IN_UNHANDLED;
         }
         else if (elementName.equals(TEMPLATE))
-		{
+        {
             // Whitespace-normalize the template contents.
             this.template = XMLKit.filterWhitespace(this.templateStartTag + this.templateBuffer.toString() + TEMPLATE_END_TAG);
             // Finally, deliver the newly defined category to the listener.
@@ -189,13 +191,13 @@ public class AIMLReader extends DefaultHandler
             // Reset the pattern, that and template.
             this.pattern = this.that = this.template = null;
             this.patternBuffer = this.thatBuffer = this.templateBuffer = null;
-	        this.state = State.IN_UNHANDLED;
-		}
-		else if (this.state == State.IN_TEMPLATE)
+            this.state = State.IN_UNHANDLED;
+        }
+        else if (this.state == State.IN_TEMPLATE)
         {
             // See if we are ending an empty element.
             boolean makeClosingTag = true;
-            
+
             // Get the template length (just once).
             int templateLength = this.templateBuffer.length();
             // If the last char of the template string is a '>',
@@ -204,8 +206,9 @@ public class AIMLReader extends DefaultHandler
                 // and if the next to last char is *not* a '/',
                 if (!this.templateBuffer.substring(templateLength - 2, templateLength - 1).equals(SLASH))
                 {
-                    // then if the name of the last tag is the same as this one, this is an empty element.
-					int lastMarkerStart = this.templateBuffer.lastIndexOf(MARKER_START);
+                    // then if the name of the last tag is the same as this one,
+                    // this is an empty element.
+                    int lastMarkerStart = this.templateBuffer.lastIndexOf(MARKER_START);
                     if (this.templateBuffer.indexOf(elementName, lastMarkerStart) == lastMarkerStart + 1)
                     {
                         // So just insert a '/' before the '>'.
@@ -228,8 +231,7 @@ public class AIMLReader extends DefaultHandler
      * @see org.xml.sax.ContentHandler#startElement(java.lang.String,
      *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */
-    public void startElement(String uri, String localName, String qName,
-            Attributes attributes)
+    public void startElement(String uri, String localName, String qName, Attributes attributes)
     {
         String elementName;
         if (localName.equals(EMPTY_STRING))
@@ -243,32 +245,32 @@ public class AIMLReader extends DefaultHandler
         if (elementName.equals(PATTERN))
         {
             this.state = State.IN_PATTERN;
-			this.patternBuffer = null;
+            this.patternBuffer = null;
             this.patternBuffer = new StringBuffer();
         }
         else if (elementName.equals(THAT) && this.state != State.IN_TEMPLATE)
         {
             this.state = State.IN_THAT;
-			this.thatBuffer = null;
+            this.thatBuffer = null;
             this.thatBuffer = new StringBuffer();
         }
         else if (elementName.equals(TEMPLATE))
         {
             this.state = State.IN_TEMPLATE;
-			this.templateBuffer = null;
+            this.templateBuffer = null;
             this.templateBuffer = new StringBuffer();
         }
         else if (this.state == State.IN_TEMPLATE)
         {
             // This seems stupid -- I wish there were a better way.
             // The point is that we don't want to parse the template into
-            // some big memory structure, since it may never be used.  So
+            // some big memory structure, since it may never be used. So
             // really here we are just reconstituting the XML text for later
             // processing.
             this.templateBuffer.append(XMLKit.renderStartTag(elementName, attributes, !uri.equals(this.defaultNamespaceURI), uri));
         }
     }
-    
+
     /**
      * @see org.xml.sax.helpers.DefaultHandler#error(org.xml.sax.SAXParseException)
      */

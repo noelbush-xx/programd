@@ -31,13 +31,14 @@ public class SRAIProcessor extends AIMLProcessor
 {
     /** The label (as required by the registration scheme). */
     public static final String label = "srai";
-    
+
     private static boolean recordMatchTrace;
-    
+
     private static Logger matchLogger = Logger.getLogger("programd.matching");
-    
+
     /**
      * Creates a new SRAIProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public SRAIProcessor(Core coreToUse)
@@ -45,7 +46,7 @@ public class SRAIProcessor extends AIMLProcessor
         super(coreToUse);
         recordMatchTrace = this.core.getSettings().recordMatchTrace();
     }
-    
+
     private static final Logger logger = Logger.getLogger("programd");
 
     /**
@@ -53,10 +54,10 @@ public class SRAIProcessor extends AIMLProcessor
      * given &lt;srai/&gt; are evaluated, and the result is recursively fed as
      * input to the pattern matching process. The result of such evaluation
      * (which itself might be recursive) is returned as the result.
+     * 
      * @param element the <code>srai</code> element
      * @param parser the parser that is at work
      * @return the result of processing the element
-     * 
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
     public String process(Element element, TemplateParser parser) throws ProcessorException
@@ -77,26 +78,25 @@ public class SRAIProcessor extends AIMLProcessor
                         if (!input.equalsIgnoreCase(infiniteLoopInput))
                         {
                             sraiChild.setTextContent(infiniteLoopInput);
-                            logger.log(Level.WARNING, "Infinite loop detected; substituting \"" + infiniteLoopInput
-                                    + "\".");
-                        } 
+                            logger.log(Level.WARNING, "Infinite loop detected; substituting \"" + infiniteLoopInput + "\".");
+                        }
                         else
                         {
                             logger.log(Level.SEVERE, "Unrecoverable infinite loop.");
                             return EMPTY_STRING;
-                        } 
-                    } 
-                } 
+                        }
+                    }
+                }
                 parser.addInput(sraiContent);
-            } 
+            }
         }
-        
+
         if (recordMatchTrace)
         {
             matchLogger.log(Level.FINE, "Symbolic Reduction:");
         }
-        
-        return this.core.getMultiplexor().getInternalResponse(parser.evaluate(element.getChildNodes()), parser.getUserID(), parser
-                .getBotID(), parser);
-    } 
+
+        return this.core.getMultiplexor()
+                .getInternalResponse(parser.evaluate(element.getChildNodes()), parser.getUserID(), parser.getBotID(), parser);
+    }
 }

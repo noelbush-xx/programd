@@ -22,22 +22,22 @@ import org.aitools.programd.processor.aiml.AIMLProcessor;
  */
 public class XMLTemplateProcessorRegistry extends ProcessorRegistry<AIMLProcessor>
 {
-	/** The XML namespace URI for AIML. */
-	private static final String XMLNS = "http://aitools.org/programd/html-responder-template";
+    /** The XML namespace URI for AIML. */
+    private static final String XMLNS = "http://aitools.org/programd/html-responder-template";
 
-	/** The list of processors (fully-qualified class names). */
-	private static final String[] PROCESSOR_LIST = {
-        "org.aitools.programd.responder.xml.BotProcessor",
-        "org.aitools.programd.responder.xml.UserInputProcessor",
-        "org.aitools.programd.responder.xml.ReplyProcessor",
-        "org.aitools.programd.responder.xml.ResponseProcessor" };
-    
+    /** The list of processors (fully-qualified class names). */
+    private static final String[] PROCESSOR_LIST = { "org.aitools.programd.responder.xml.BotProcessor",
+                                                     "org.aitools.programd.responder.xml.UserInputProcessor",
+                                                     "org.aitools.programd.responder.xml.ReplyProcessor",
+                                                     "org.aitools.programd.responder.xml.ResponseProcessor" };
+
     private static final Logger logger = Logger.getLogger("programd");
 
     /**
      * Creates a new <code>XMLTemplateProcessorRegistry</code>.
      */
-	public XMLTemplateProcessorRegistry() {
-		super(XMLNS, PROCESSOR_LIST);
-	}
+    public XMLTemplateProcessorRegistry()
+    {
+        super(XMLNS, PROCESSOR_LIST);
+    }
 }

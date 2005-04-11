@@ -117,7 +117,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
 
     private static final int MATRIX_A = 0x9908b0df;
 
-    //    private static final * constant vector a
+    // private static final * constant vector a
     private static final int UPPER_MASK = 0x80000000;
 
     // most significant w-r bits
@@ -166,6 +166,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
     /**
      * Constructor using a given seed. Though you pass this seed in as a long,
      * it's best to make sure it's actually an integer.
+     * 
      * @param seed the seed to use
      */
     public MersenneTwister(final long seed)
@@ -181,6 +182,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
      * an int (Mersenne Twister only uses the first 32 bits for its seed). Also
      * it's suggested that for you avoid even-numbered seeds in this older
      * seed-generation procedure.
+     * 
      * @param seed the seed to use
      */
 
@@ -198,7 +200,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
         // setting initial seeds to mt[N] using
         // the generator Line 25 of Table 1 in
         // [KNUTH 1981, The Art of Computer Programming
-        //    Vol. 2 (2nd Ed.), pp102]
+        // Vol. 2 (2nd Ed.), pp102]
 
         // the 0xffffffff is commented out because in Java
         // ints are always 32 bits; hence i & 0xffffffff == i
@@ -206,7 +208,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
         this.mt[0] = ((int) seed); // & 0xffffffff;
 
         for (this.mti = 1; this.mti < N; this.mti++)
-            this.mt[this.mti] = (69069 * this.mt[this.mti - 1]); //&
+            this.mt[this.mti] = (69069 * this.mt[this.mti - 1]); // &
         // 0xffffffff;
 
         // mag01[x] = x * MATRIX_A for x=0,1
@@ -219,6 +221,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
      * An alternative, more complete, method of seeding the pseudo random number
      * generator. array must be an array of 624 ints, and they can be any value
      * as long as they're not *all* zero.
+     * 
      * @param array an array of 624 ints
      */
 
@@ -246,6 +249,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
      * Initalize the pseudo random number generator. Don't pass in a long that's
      * bigger than an int (Mersenne Twister only uses the first 32 bits for its
      * seed).
+     * 
      * @param seed the seed to use
      */
 
@@ -338,6 +342,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
      * between 0.0 and 1.0, inclusive. Not as precise a random real event as
      * nextBoolean(double), but twice as fast. To explicitly use this, remember
      * you may need to cast to float first.
+     * 
      * @param probability the probability to use (between 0.0 and 1.0)
      * @return the coin flip result
      */
@@ -353,6 +358,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
      * This generates a coin flip with a probability <tt>probability</tt> of
      * returning true, else returning false. <tt>probability</tt> must be
      * between 0.0 and 1.0, inclusive.
+     * 
      * @param probability must be between 0.0 and 1.0
      * @return the result of the coin flip
      */
@@ -368,6 +374,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
      * A bug fix for all versions of the JDK. The JDK appears to use all four
      * bytes in an integer as independent byte values! Totally wrong. I've
      * submitted a bug report.
+     * 
      * @param bytes the bytes for which to get the next bytes (?)
      */
 
@@ -377,7 +384,9 @@ public class MersenneTwister extends java.util.Random implements Serializable
             bytes[x] = (byte) next(8);
     }
 
-    /** For completeness' sake, though it's not in java.util.Random. 
+    /**
+     * For completeness' sake, though it's not in java.util.Random.
+     * 
      * @return the next char
      */
     public char nextChar()
@@ -386,7 +395,9 @@ public class MersenneTwister extends java.util.Random implements Serializable
         return (char) (next(16));
     }
 
-    /** For completeness' sake, though it's not in java.util.Random. 
+    /**
+     * For completeness' sake, though it's not in java.util.Random.
+     * 
      * @return the next short
      */
 
@@ -395,7 +406,9 @@ public class MersenneTwister extends java.util.Random implements Serializable
         return (short) (next(16));
     }
 
-    /** For completeness' sake, though it's not in java.util.Random. 
+    /**
+     * For completeness' sake, though it's not in java.util.Random.
+     * 
      * @return the next byte
      */
 
@@ -409,6 +422,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
      * ask for the log of 0 and divide it by 0! See Java bug <a
      * href="http://developer.java.sun.com/developer/bugParade/bugs/4254501.html">
      * http://developer.java.sun.com/developer/bugParade/bugs/4254501.html </a>
+     * 
      * @return the next Gaussian
      */
 
@@ -435,6 +449,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
 
     /**
      * Tests the code.
+     * 
      * @param args not used
      */
     public static void main(String args[])
@@ -452,7 +467,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
          * "unsigned" long l = (long)r.nextInt(); if (l < 0 ) l += 4294967296L; //
          * max int value String s = String.valueOf(l); while(s.length() < 10) s = " " +
          * s; // buffer System.out.print(s + " "); if (j%8==7)
-         * System.out.println(); } 
+         * System.out.println(); }
          */
 
         // UNCOMMENT THIS TO TEST FOR CORRECTNESS WITH
@@ -465,7 +480,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
          * <1000;j++) { // first, convert the int from signed to "unsigned" long
          * l = (long)r.nextInt(); if (l < 0 ) l += 4294967296L; // max int value
          * String s = String.valueOf(l); while(s.length() < 10) s = " " + s; //
-         * buffer System.out.print(s + " "); if (j%5==4) System.out.println(); } 
+         * buffer System.out.print(s + " "); if (j%5==4) System.out.println(); }
          */
 
         // UNCOMMENT THIS TO TEST FOR SPEED

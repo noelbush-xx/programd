@@ -49,18 +49,18 @@ public class SystemProcessor extends AIMLProcessor
     public static final String label = "system";
 
     /**
-     * Known names of Unix-like operating systems, which tend to require the array
-     * form of Runtime.exec().
+     * Known names of Unix-like operating systems, which tend to require the
+     * array form of Runtime.exec().
      */
-    private static final String[] arrayFormOSnames = { "mac os x", "linux", "solaris", "sunos", "mpe", "hp-ux",
-            "pa_risc", "aix", "freebsd", "irix", "unix" };
+    private static final String[] arrayFormOSnames = { "mac os x", "linux", "solaris", "sunos", "mpe", "hp-ux", "pa_risc", "aix", "freebsd", "irix",
+            "unix" };
 
     /** For convenience, the system line separator. */
     protected static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
 
     /** Whether to use the array form of Runtime.exec(). */
     private static boolean useArrayExecForm;
-    
+
     private static final Logger logger = Logger.getLogger("programd");
 
     /**
@@ -80,20 +80,21 @@ public class SystemProcessor extends AIMLProcessor
 
     /**
      * Creates a new SystemProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public SystemProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         CoreSettings coreSettings = parser.getCore().getSettings();
-        
+
         // Don't use the system tag if not permitted.
         if (!coreSettings.osAccessAllowed())
         {
@@ -134,8 +135,7 @@ public class SystemProcessor extends AIMLProcessor
             Process child;
             if (useArrayExecForm)
             {
-                child = Runtime.getRuntime().exec(StringKit.wordSplit(response).toArray(new String[] {}), null,
-                        directory);
+                child = Runtime.getRuntime().exec(StringKit.wordSplit(response).toArray(new String[] {}), null, directory);
             }
             else
             {

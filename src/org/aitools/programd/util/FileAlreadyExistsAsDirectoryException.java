@@ -22,6 +22,7 @@ public class FileAlreadyExistsAsDirectoryException extends Exception
 {
     /**
      * Creates a new FileAlreadyExistsAsDirectoryException.
+     * 
      * @param directory the directory that already exists
      */
     public FileAlreadyExistsAsDirectoryException(File directory)

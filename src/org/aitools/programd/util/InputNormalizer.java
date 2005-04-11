@@ -35,10 +35,9 @@ public class InputNormalizer
     /**
      * Splits an input into sentences, as defined by the
      * <code>sentenceSplitters</code>.
-     * @param sentenceSplitters the sentence splitters to use
      * 
-     * @param input
-     *            the input to split
+     * @param sentenceSplitters the sentence splitters to use
+     * @param input the input to split
      * @return the input split into sentences
      */
     public static List<String> sentenceSplit(List<String> sentenceSplitters, String input)
@@ -50,7 +49,7 @@ public class InputNormalizer
         {
             result.add(EMPTY_STRING);
             return result;
-        } 
+        }
 
         // This will hold the indices of all splitters in the input.
         ArrayList<Integer> splitterIndices = new ArrayList<Integer>();
@@ -70,13 +69,13 @@ public class InputNormalizer
                 // and look for it again starting just after the discovered
                 // index.
                 index = input.indexOf(splitter, index + 1);
-            } 
-        } 
+            }
+        }
         if (splitterIndices.size() == 0)
         {
             result.add(input);
             return result;
-        } 
+        }
 
         // Sort the list of indices.
         Collections.sort(splitterIndices);
@@ -93,9 +92,9 @@ public class InputNormalizer
                 indices.previous();
                 indices.previous();
                 indices.remove();
-            } 
+            }
             previousIndex = nextIndex;
-        } 
+        }
 
         // Now iterate through the remaining indices and split sentences.
         indices = splitterIndices.listIterator();
@@ -106,16 +105,16 @@ public class InputNormalizer
             endIndex = ((Integer) indices.next()).intValue();
             result.add(input.substring(startIndex, endIndex + 1).trim());
             startIndex = endIndex + 1;
-        } 
+        }
 
         // Add whatever remains.
         if (startIndex < inputLength - 1)
         {
             result.add(input.substring(startIndex).trim());
-        } 
+        }
 
         return result;
-    } 
+    }
 
     /**
      * <p>
@@ -131,8 +130,7 @@ public class InputNormalizer
      * is probably in order.
      * </p>
      * 
-     * @param input
-     *            the string to pattern-fit
+     * @param input the string to pattern-fit
      * @return the pattern-fitted input
      */
     public static String patternFit(String input)
@@ -150,15 +148,15 @@ public class InputNormalizer
             if (!Character.isLetterOrDigit(aChar) && aChar != '*' && aChar != '_')
             {
                 result.append(' ');
-            } 
+            }
             else
             {
                 result.append(Character.toUpperCase(aChar));
-            } 
-        } 
+            }
+        }
         return XMLKit.filterWhitespace(result.toString());
 
-    } 
+    }
 
     /**
      * <p>
@@ -173,8 +171,7 @@ public class InputNormalizer
      * specification is probably in order.
      * </p>
      * 
-     * @param input
-     *            the string to pattern-fit
+     * @param input the string to pattern-fit
      * @return the pattern-fitted input
      */
     public static String patternFitIgnoreCase(String input)
@@ -192,13 +189,13 @@ public class InputNormalizer
             if (!Character.isLetterOrDigit(aChar))
             {
                 result.append(' ');
-            } 
+            }
             else
             {
                 result.append(aChar);
-            } 
-        } 
+            }
+        }
         return XMLKit.filterWhitespace(result.toString());
 
-    } 
+    }
 }

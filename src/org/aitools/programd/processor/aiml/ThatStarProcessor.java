@@ -31,18 +31,19 @@ public class ThatStarProcessor extends IndexedPredicateProcessor
 
     /**
      * Creates a new ThatStarProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public ThatStarProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
     public String process(Element element, TemplateParser parser)
     {
         return super.process(element, parser, parser.getThatStars(), 1);
-    } 
+    }
 }

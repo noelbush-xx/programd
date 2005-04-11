@@ -20,21 +20,20 @@ public interface ProgramDCompatibleHttpServer
     /**
      * Configures the http server given the path or URL to a configuration file.
      * 
-     * @param configParameters
-     *            parameters used in configuring the server
+     * @param configParameters parameters used in configuring the server
      */
-    public void configure(Object ... configParameters);
+    public void configure(Object... configParameters);
 
     /**
      * Starts the http server.
      */
     public void run();
-    
+
     /**
      * Shuts down the http server.
      */
     public void shutdown();
-    
+
     /**
      * @return the port on which the server is listening.
      */

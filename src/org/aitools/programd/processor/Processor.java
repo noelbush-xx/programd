@@ -26,7 +26,7 @@ abstract public class Processor
 {
     /** The Core to use. */
     protected Core core;
-    
+
     /*
      * Every Processor should have a String called label. But we don't specify
      * this here, to avoid a situation in which implementors are accused of
@@ -54,9 +54,10 @@ abstract public class Processor
 
     /** The string &quot;{@value}&quot;. */
     protected static final String ENABLED = "enabled";
-    
+
     /**
      * Creates a new Processor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public Processor(Core coreToUse)
@@ -67,13 +68,11 @@ abstract public class Processor
     /**
      * Processes an element.
      * 
-     * @param element
-     *            the element to process
-     * @param parser
-     *            the parser calling the processor
+     * @param element the element to process
+     * @param parser the parser calling the processor
      * @return the result of processing the given element
-     * @throws ProcessorException
-     *             if the <code>tag</code> or its contents are invalid
+     * @throws ProcessorException if the <code>tag</code> or its contents are
+     *             invalid
      */
     abstract public String process(Element element, GenericParser parser) throws ProcessorException;
 }

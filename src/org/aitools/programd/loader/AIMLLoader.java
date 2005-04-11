@@ -43,21 +43,22 @@ public class AIMLLoader implements AIMLReaderListener
 
     /** The bot for whom this file is being loaded. */
     private Bot bot;
-    
+
     /** The Graphmaster in use. */
     private Graphmaster graphmaster;
-    
+
     /** The Bots object in use. */
     private Bots bots;
 
     /** The merge policy. */
     private boolean policy;
-    
+
     /** The logger. */
     private Logger logger;
 
     /**
      * Initializes the <code>AIMLLoader</code>.
+     * 
      * @param graphmasterToUse the Graphmaster into which to load new categories
      * @param filenameToUse the filename from which to load new categories
      * @param botidToUse the id of the bot for whom to load new categories
@@ -72,13 +73,14 @@ public class AIMLLoader implements AIMLReaderListener
         if (this.botid != null)
         {
             this.bot = this.bots.getBot(botidToUse);
-        } 
+        }
         this.policy = this.graphmaster.getCore().getSettings().mergePolicy();
         this.notifyInterval = this.graphmaster.getCore().getSettings().getCategoryLoadNotifyInterval();
-    } 
+    }
 
     /**
-     * @see org.aitools.programd.parser.AIMLReaderListener#newCategory(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     * @see org.aitools.programd.parser.AIMLReaderListener#newCategory(java.lang.String,
+     *      java.lang.String, java.lang.String, java.lang.String)
      */
     public void newCategory(String pattern, String that, String topic, String template)
     {
@@ -86,11 +88,11 @@ public class AIMLLoader implements AIMLReaderListener
         if (pattern == null)
         {
             pattern = Graphmaster.ASTERISK;
-        } 
+        }
         if (that == null)
         {
             that = Graphmaster.ASTERISK;
-        } 
+        }
         if (topic == null)
         {
             topic = Graphmaster.ASTERISK;
@@ -100,7 +102,7 @@ public class AIMLLoader implements AIMLReaderListener
         if (currentTotalCategories % this.notifyInterval == 0 && currentTotalCategories > 0)
         {
             this.logger.log(Level.INFO, currentTotalCategories + " categories loaded so far.");
-        } 
+        }
 
         Nodemapper node = this.graphmaster.add(pattern, that, topic, this.botid);
         if (node.get(Graphmaster.TEMPLATE) == null)
@@ -109,26 +111,24 @@ public class AIMLLoader implements AIMLReaderListener
             this.bot.addToFilenameMap(this.filename, node);
             node.put(Graphmaster.TEMPLATE, template);
             this.graphmaster.incrementTotalCategories();
-        } 
+        }
         else
         {
             if (!this.policy)
             {
                 /*
-                if (Settings.showConsole())
-                {
-                    Log.userinfo(new String[]
-                        { "Duplicate category:", pattern + " : " + that + " : " + topic,
-                                " in \"" + filename + "\"", "conflicts with category already loaded from",
-                                (String) node.get(Graphmaster.FILENAME) } , Log.MERGE);
-                }
-                */
-            } 
+                 * if (Settings.showConsole()) { Log.userinfo(new String[] {
+                 * "Duplicate category:", pattern + " : " + that + " : " +
+                 * topic, " in \"" + filename + "\"", "conflicts with category
+                 * already loaded from", (String) node.get(Graphmaster.FILENAME) } ,
+                 * Log.MERGE); }
+                 */
+            }
             else
             {
                 node.put(Graphmaster.FILENAME, this.filename);
                 node.put(Graphmaster.TEMPLATE, template);
-            } 
-        } 
-    } 
+            }
+        }
+    }
 }

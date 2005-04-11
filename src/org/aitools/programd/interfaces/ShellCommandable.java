@@ -9,7 +9,6 @@
 
 package org.aitools.programd.interfaces;
 
-
 /**
  * Defines the interface for processes that can receive commands from the
  * interactive {@link Shell} .
@@ -48,8 +47,7 @@ public interface ShellCommandable
      * Sends a command to the shell. The <code>ShellCommandable</code> itself
      * is responsible for putting back any output to the shell.
      * 
-     * @param command
-     *            the command to send to the shell
+     * @param command the command to send to the shell
      */
     public void processShellCommand(String command);
 }

@@ -13,20 +13,23 @@ import java.awt.event.ActionEvent;
 
 /**
  * An ActionListener that is aware of its parent and ignores its ActionEvent.
- * @param <P> the parent class
  * 
+ * @param
+ * <P>
+ * the parent class
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 abstract public class ParentAwareActionEventIgnoringActionListener<P> extends ParentAwareActionListener<P>
 {
     /**
      * Creates a new ParentAwareActionListener
+     * 
      * @param parentToUse the parent to be aware of
      */
     public ParentAwareActionEventIgnoringActionListener(P parentToUse)
     {
         super(parentToUse);
-    } 
+    }
 
     /**
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -35,7 +38,7 @@ abstract public class ParentAwareActionEventIgnoringActionListener<P> extends Pa
     {
         actionPerformed();
     }
-    
+
     /**
      * Should be overridden by the subclass.
      */

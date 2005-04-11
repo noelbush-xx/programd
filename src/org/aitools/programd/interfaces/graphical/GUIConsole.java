@@ -65,10 +65,10 @@ public class GUIConsole extends JPanel
 
     /** The underlying Console. */
     protected Console console;
-    
+
     /** The Shell that will (may) be used by the underlying console. */
     protected Shell shell;
-    
+
     /** The logger. */
     protected static Logger logger = Logger.getLogger("programd");
 
@@ -99,21 +99,21 @@ public class GUIConsole extends JPanel
     /** For convenience, the system line separator. */
     protected static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
 
-    private static final Object[] HELP_MESSAGE =
-        { "Simple Console for", "Program D version " + Core.VERSION } ;
+    private static final Object[] HELP_MESSAGE = { "Simple Console for", "Program D version " + Core.VERSION };
 
     private static JMenuBar menuBar;
-    
+
     private static String LOGO_PATH = "org/aitools/programd/gui/icons/logo.jpg";
-    
+
     private ImageIcon logo;
-    
+
     private static String ICON_PATH = "org/aitools/programd/gui/icons/icon.jpg";
-    
+
     private ImageIcon icon;
 
     /**
      * Constructs a new simple console gui with a new shell.
+     * 
      * @param consolePropertiesPath the path to the console properties file
      */
     public GUIConsole(String consolePropertiesPath)
@@ -138,7 +138,7 @@ public class GUIConsole extends JPanel
         {
             throw new DeveloperError("The requested LookAndFeel is not supported.", e);
         }
-        
+
         URL logoURL = ClassLoader.getSystemResource(LOGO_PATH);
         if (logoURL != null)
         {
@@ -148,7 +148,7 @@ public class GUIConsole extends JPanel
         {
             throw new DeveloperError("Logo is missing from \"" + LOGO_PATH + "\"!", new NullPointerException());
         }
-        
+
         URL iconURL = ClassLoader.getSystemResource(ICON_PATH);
         if (iconURL != null)
         {
@@ -158,7 +158,7 @@ public class GUIConsole extends JPanel
         {
             throw new DeveloperError("Icon is missing from \"" + ICON_PATH + "\"!", new NullPointerException());
         }
-        
+
         this.console = new Console(consolePropertiesPath, this.outStream, this.errStream);
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -184,11 +184,11 @@ public class GUIConsole extends JPanel
 
         menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
-        //fileMenu.setFont(new Font("Sans-serif", Font.PLAIN, 12));
+        // fileMenu.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
         JMenuItem loadAIMLURL = new JMenuItem("Load AIML from URL...");
-        //loadAIMLURL.setFont(new Font("Sans-serif", Font.PLAIN, 12));
+        // loadAIMLURL.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         loadAIMLURL.setMnemonic(KeyEvent.VK_U);
         loadAIMLURL.addActionListener(new ActionEventIgnoringActionListener()
         {
@@ -196,40 +196,40 @@ public class GUIConsole extends JPanel
             {
                 loadAIMLURLBox();
             }
-        } );
+        });
 
         JMenuItem loadAIMLFilePath = new JMenuItem("Load AIML from file path...");
-        //loadAIMLFilePath.setFont(new Font("Sans-serif", Font.PLAIN, 12));
+        // loadAIMLFilePath.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         loadAIMLFilePath.setMnemonic(KeyEvent.VK_P);
         loadAIMLFilePath.addActionListener(new ActionEventIgnoringActionListener()
         {
             public void actionPerformed()
             {
                 loadAIMLFilePathChooser();
-            } 
-        } );
+            }
+        });
 
         JMenuItem shutdown = new JMenuItem("Shutdown Program D");
-        //shutdown.setFont(new Font("Sans-serif", Font.PLAIN, 12));
+        // shutdown.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         shutdown.setMnemonic(KeyEvent.VK_X);
         shutdown.addActionListener(new ActionEventIgnoringActionListener()
         {
             public void actionPerformed()
             {
                 shutdown();
-            } 
-        } );
+            }
+        });
 
         JMenuItem quit = new JMenuItem("Quit");
-        //quit.setFont(new Font("Sans-serif", Font.PLAIN, 12));
+        // quit.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         quit.setMnemonic(KeyEvent.VK_X);
         quit.addActionListener(new ActionEventIgnoringActionListener()
         {
             public void actionPerformed()
             {
                 quit();
-            } 
-        } );
+            }
+        });
         fileMenu.add(loadAIMLURL);
         fileMenu.add(loadAIMLFilePath);
         fileMenu.addSeparator();
@@ -239,11 +239,11 @@ public class GUIConsole extends JPanel
 
         // Create the Actions menu.
         JMenu actionsMenu = new JMenu("Actions");
-        //actionsMenu.setFont(new Font("Sans-serif", Font.PLAIN, 12));
+        // actionsMenu.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         actionsMenu.setMnemonic(KeyEvent.VK_A);
 
         JCheckBoxMenuItem pause = new JCheckBoxMenuItem("Pause Console");
-        //pause.setFont(new Font("Sans-serif", Font.PLAIN, 12));
+        // pause.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         pause.setMnemonic(KeyEvent.VK_P);
         pause.addActionListener(new ParentAwareActionEventIgnoringActionListener<GUIConsole>(this)
         {
@@ -251,41 +251,41 @@ public class GUIConsole extends JPanel
             {
                 this.parent.outDisplay.togglePause();
                 this.parent.errDisplay.togglePause();
-            } 
-        } );
+            }
+        });
 
         JMenuItem talkToBot = new JMenuItem("Talk to bot...");
-        //talkToBot.setFont(new Font("Sans-serif", Font.PLAIN, 12));
+        // talkToBot.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         talkToBot.setMnemonic(KeyEvent.VK_B);
         talkToBot.addActionListener(new ActionEventIgnoringActionListener()
         {
             public void actionPerformed()
             {
                 chooseBot();
-            } 
-        } );
+            }
+        });
 
         JMenuItem botFiles = new JMenuItem("List bot files");
-        //botFiles.setFont(new Font("Sans-serif", Font.PLAIN, 12));
+        // botFiles.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         botFiles.setMnemonic(KeyEvent.VK_F);
         botFiles.addActionListener(new ParentAwareActionEventIgnoringActionListener<GUIConsole>(this)
         {
             public void actionPerformed()
             {
                 this.parent.shell.listBotFiles();
-            } 
-        } );
+            }
+        });
 
         JMenuItem listBots = new JMenuItem("List bots");
-        //listBots.setFont(new Font("Sans-serif", Font.PLAIN, 12));
+        // listBots.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         listBots.setMnemonic(KeyEvent.VK_L);
         listBots.addActionListener(new ParentAwareActionEventIgnoringActionListener<GUIConsole>(this)
         {
             public void actionPerformed()
             {
                 this.parent.shell.showBotList();
-            } 
-        } );
+            }
+        });
 
         actionsMenu.add(pause);
         actionsMenu.addSeparator();
@@ -296,29 +296,29 @@ public class GUIConsole extends JPanel
 
         // Create the Help menu.
         JMenu helpMenu = new JMenu("Help");
-        //helpMenu.setFont(new Font("Sans-serif", Font.PLAIN, 12));
+        // helpMenu.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         helpMenu.setMnemonic(KeyEvent.VK_H);
 
         JMenuItem shellHelp = new JMenuItem("Shell Help...");
-        //shellHelp.setFont(new Font("Sans-serif", Font.PLAIN, 12));
+        // shellHelp.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         shellHelp.setMnemonic(KeyEvent.VK_H);
         shellHelp.addActionListener(new ParentAwareActionEventIgnoringActionListener<GUIConsole>(this)
         {
             public void actionPerformed()
             {
                 this.parent.shell.help();
-            } 
-        } );
+            }
+        });
         JMenuItem about = new JMenuItem("About Simple GUI Console...");
-        //about.setFont(new Font("Sans-serif", Font.PLAIN, 12));
+        // about.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         about.setMnemonic(KeyEvent.VK_A);
         about.addActionListener(new ActionEventIgnoringActionListener()
         {
             public void actionPerformed()
             {
                 showAboutBox();
-            } 
-        } );
+            }
+        });
 
         helpMenu.add(about);
         helpMenu.add(shellHelp);
@@ -341,6 +341,7 @@ public class GUIConsole extends JPanel
 
     /**
      * Attaches the GUIConsole to the given Core.
+     * 
      * @param coreToUse the Core to which to attach
      */
     public void attachTo(Core coreToUse)
@@ -355,14 +356,14 @@ public class GUIConsole extends JPanel
             this.outStream.println("Interactive shell disabled.  Awaiting manual shut down.");
         }
     }
-    
+
     /**
      * Starts the attached Core.
      */
     public void start()
     {
         this.core.start();
-    } 
+    }
 
     protected void shutdown()
     {
@@ -373,12 +374,12 @@ public class GUIConsole extends JPanel
         // Let the user exit, in case termination was abnormal or messages are
         // otherwise interesting.
     }
-    
+
     protected void quit()
     {
         this.frame.dispose();
     }
-    
+
     class InputPanel extends JPanel
     {
         /** Where the console prompt will be displayed. */
@@ -386,7 +387,7 @@ public class GUIConsole extends JPanel
 
         /** The console input field. */
         protected JTextField input;
-        
+
         /** The enter button. */
         protected JButton enter;
 
@@ -394,6 +395,7 @@ public class GUIConsole extends JPanel
 
         /**
          * Creates a new InputPanel.
+         * 
          * @param parentToUse the parent GUIConsole to use
          */
         public InputPanel(GUIConsole parentToUse)
@@ -431,10 +433,11 @@ public class GUIConsole extends JPanel
             this.add(this.prompt);
             this.add(this.input);
             this.add(this.enter);
-        } 
+        }
 
         /**
          * Sets the prompt.
+         * 
          * @param text the text of the prompt
          */
         public void setPrompt(String text)
@@ -443,10 +446,9 @@ public class GUIConsole extends JPanel
             this.prompt.revalidate();
             this.input.requestFocus();
         }
-        
+
         /**
-         * Sets the components of this panel to the
-         * given state.
+         * Sets the components of this panel to the given state.
          * 
          * @param enabled whether or not the panel should be enabled
          */
@@ -460,12 +462,13 @@ public class GUIConsole extends JPanel
         {
             /**
              * Creates a new InputSender
+             * 
              * @param parentToUse the InputPanel parent to use
              */
             public InputSender(InputPanel parentToUse)
             {
                 super(parentToUse);
-            } 
+            }
 
             /**
              * @see org.aitools.programd.interfaces.graphical.ParentAwareActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -473,13 +476,12 @@ public class GUIConsole extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 String inputText = ae.getActionCommand();
-                ((InputPanel) this.parent).parent.display.append(((InputPanel) this.parent).prompt.getText()
-                        + inputText + LINE_SEPARATOR);
+                ((InputPanel) this.parent).parent.display.append(((InputPanel) this.parent).prompt.getText() + inputText + LINE_SEPARATOR);
                 ((InputPanel) this.parent).parent.inStream.receive(inputText);
                 ((InputPanel) this.parent).input.setText(null);
-            } 
-        } 
-    } 
+            }
+        }
+    }
 
     /**
      * Extends OutputStream to direct all output to the display textarea.
@@ -492,13 +494,14 @@ public class GUIConsole extends JPanel
 
         /**
          * Creates a new ConsoleDisplayStream.
+         * 
          * @param parentToUse the GUIConsole parent to use
          */
         public ConsoleDisplayStream(GUIConsole parentToUse)
         {
             super();
             this.parent = parentToUse;
-        } 
+        }
 
         /**
          * @see java.io.OutputStream#write(byte[], int, int)
@@ -510,15 +513,15 @@ public class GUIConsole extends JPanel
                 try
                 {
                     Thread.sleep(500);
-                } 
+                }
                 catch (InterruptedException e)
                 {
                     // Nothing to do.
-                } 
-            } 
+                }
+            }
             this.parent.display.append(new String(b, off, len));
             this.parent.display.setCaretPosition(this.parent.display.getText().length());
-        } 
+        }
 
         /**
          * @see java.io.OutputStream#write(int)
@@ -530,21 +533,21 @@ public class GUIConsole extends JPanel
                 try
                 {
                     Thread.sleep(500);
-                } 
+                }
                 catch (InterruptedException e)
                 {
                     // Do nothing.
-                } 
-            } 
+                }
+            }
             this.parent.display.append(String.valueOf((char) b));
             this.parent.display.setCaretPosition(this.parent.display.getText().length());
-        } 
+        }
 
         protected void togglePause()
         {
             this.paused = !this.paused;
-        } 
-    } 
+        }
+    }
 
     /**
      * Extends OutputStream to direct all output to the prompt field.
@@ -560,7 +563,7 @@ public class GUIConsole extends JPanel
         {
             super();
             this.parent = parentToUse;
-        } 
+        }
 
         /**
          * @see java.io.OutputStream#write(byte[], int, int)
@@ -568,7 +571,7 @@ public class GUIConsole extends JPanel
         public void write(byte[] b, int off, int len)
         {
             this.parent.inputPanel.setPrompt(new String(b, off, len));
-        } 
+        }
 
         /**
          * @see java.io.OutputStream#write(int)
@@ -576,16 +579,18 @@ public class GUIConsole extends JPanel
         public void write(int b)
         {
             this.parent.inputPanel.setPrompt(String.valueOf((char) b));
-        } 
-    } 
+        }
+    }
 
     /**
-     * Extends InputStream to suit our purposes in handling user input for the GUIConsole.
+     * Extends InputStream to suit our purposes in handling user input for the
+     * GUIConsole.
+     * 
      * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
      */
     public class ConsoleInputStream extends InputStream
     {
-        byte[] content = new byte[] {} ;
+        byte[] content = new byte[] {};
 
         private int mark = 0;
 
@@ -595,17 +600,18 @@ public class GUIConsole extends JPanel
         public ConsoleInputStream()
         {
             // Nothing to do.
-        } 
+        }
 
         /**
          * Receives the given string.
+         * 
          * @param string the string to receive
          */
         public void receive(String string)
         {
             this.content = (string + '\n').getBytes();
             this.mark = 0;
-        } 
+        }
 
         /**
          * @see java.io.InputStream#read(byte[], int, int)
@@ -617,28 +623,28 @@ public class GUIConsole extends JPanel
                 try
                 {
                     Thread.sleep(100);
-                } 
+                }
                 catch (InterruptedException e)
                 {
                     return -1;
-                } 
-            } 
+                }
+            }
             if (b == null)
             {
                 throw new NullPointerException();
-            } 
+            }
             else if ((off < 0) || (off > b.length) || (len < 0) || ((off + len) > b.length) || ((off + len) < 0))
             {
                 throw new IndexOutOfBoundsException();
-            } 
+            }
             else if (len == 0)
             {
                 return 0;
-            } 
+            }
             else if (this.content.length == 0)
             {
                 return -1;
-            } 
+            }
 
             int i = 1;
             b[off] = this.content[this.mark++];
@@ -646,9 +652,9 @@ public class GUIConsole extends JPanel
             {
 
                 b[off + i] = this.content[this.mark++];
-            } 
+            }
             return i;
-        } 
+        }
 
         /**
          * @see java.io.InputStream#available()
@@ -656,7 +662,7 @@ public class GUIConsole extends JPanel
         public int available()
         {
             return this.content.length - this.mark - 1;
-        } 
+        }
 
         /**
          * @see java.io.InputStream#markSupported()
@@ -664,7 +670,7 @@ public class GUIConsole extends JPanel
         public boolean markSupported()
         {
             return false;
-        } 
+        }
 
         /**
          * @see java.io.InputStream#read()
@@ -676,37 +682,37 @@ public class GUIConsole extends JPanel
                 try
                 {
                     Thread.sleep(100);
-                } 
+                }
                 catch (InterruptedException e)
                 {
                     return -1;
-                } 
-            } 
+                }
+            }
             if (this.mark < this.content.length)
             {
                 return this.content[this.mark++];
-            } 
-            //          (otherwise...)
+            }
+            // (otherwise...)
             return -1;
-        } 
+        }
 
-    } 
+    }
 
     protected void loadAIMLURLBox()
     {
-        Object response = JOptionPane.showInputDialog(null, "Enter the URL from which to load.", "Load AIML from URL",
-                JOptionPane.PLAIN_MESSAGE, null, null, null);
+        Object response = JOptionPane.showInputDialog(null, "Enter the URL from which to load.", "Load AIML from URL", JOptionPane.PLAIN_MESSAGE,
+                null, null, null);
         if (response == null)
         {
             return;
-        } 
+        }
 
         Graphmaster graphmaster = this.core.getGraphmaster();
         int categories = graphmaster.getTotalCategories();
         graphmaster.load((String) response, this.shell.getCurrentBotID());
-        Logger.getLogger("programd").log(Level.INFO, graphmaster.getTotalCategories() - categories + " categories loaded from \"" + (String) response
-                + "\".");
-    } 
+        Logger.getLogger("programd").log(Level.INFO,
+                graphmaster.getTotalCategories() - categories + " categories loaded from \"" + (String) response + "\".");
+    }
 
     protected void loadAIMLFilePathChooser()
     {
@@ -721,34 +727,35 @@ public class GUIConsole extends JPanel
             try
             {
                 newPath = chosen.getCanonicalPath();
-            } 
+            }
             catch (IOException e)
             {
                 return;
-            } 
+            }
             int categories = this.core.getGraphmaster().getTotalCategories();
             Graphmaster graphmaster = this.core.getGraphmaster();
             graphmaster.load(newPath, this.shell.getCurrentBotID());
-            Logger.getLogger("programd").log(Level.INFO, graphmaster.getTotalCategories() - categories + " categories loaded from \"" + newPath + "\".");
-        } 
-    } 
+            Logger.getLogger("programd").log(Level.INFO,
+                    graphmaster.getTotalCategories() - categories + " categories loaded from \"" + newPath + "\".");
+        }
+    }
 
     protected void chooseBot()
     {
-        String[] botIDs = this.core.getBots().getIDs().toArray(new String[] {} );
+        String[] botIDs = this.core.getBots().getIDs().toArray(new String[] {});
         ListDialog.initialize(this.frame, botIDs, "Choose a bot", "Choose the bot with whom you want to talk.");
         String choice = ListDialog.showDialog(null, this.shell.getCurrentBotID());
         if (choice != null)
         {
             this.shell.switchToBot(choice);
-        } 
-    } 
+        }
+    }
 
     protected void showAboutBox()
     {
         JOptionPane.showMessageDialog(null, HELP_MESSAGE, "About", JOptionPane.INFORMATION_MESSAGE, this.logo);
     }
-    
+
     /**
      * Enables the input panel and starts the underlying console's shell.
      */

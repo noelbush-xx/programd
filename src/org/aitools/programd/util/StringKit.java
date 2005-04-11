@@ -29,10 +29,8 @@ public class StringKit
     /**
      * Filters out multiple consecutive instances of a given string.
      * 
-     * @param input
-     *            the string to filter
-     * @param filter
-     *            the string to filter out
+     * @param input the string to filter
+     * @param filter the string to filter out
      * @return the string without multiple consecutive instances of
      *         <code>filterChar</code>
      */
@@ -42,7 +40,7 @@ public class StringKit
         if (input == null)
         {
             return EMPTY_STRING;
-        } 
+        }
 
         // trim() removes all whitespace, not only spaces.
         input = input.trim();
@@ -51,7 +49,7 @@ public class StringKit
         if (input.equals((EMPTY_STRING)))
         {
             return EMPTY_STRING;
-        } 
+        }
 
         // Index the input length.
         int inputLength = input.length();
@@ -79,20 +77,19 @@ public class StringKit
                 if (!(current.equals(previous) && current.equals(filter)))
                 {
                     result.append(current);
-                } 
+                }
                 previous = current;
-            } 
+            }
             return result.toString();
-        } 
+        }
         // (otherwise...)
         return input;
-    } 
+    }
 
     /**
      * Returns a tab of the specified length.
      * 
-     * @param level
-     *            the level of the tab
+     * @param level the level of the tab
      * @return the requested tab
      */
     public static String tab(int level)
@@ -101,16 +98,15 @@ public class StringKit
         for (int index = level; --index >= 0;)
         {
             result[index] = '\t';
-        } 
+        }
         return new String(result);
-    } 
+    }
 
     /**
      * Splits an input into words, breaking at spaces. This method is obviously
      * limited in that it is not aware of other word boundaries.
      * 
-     * @param input
-     *            the input to split
+     * @param input the input to split
      * @return the input split into sentences
      */
     public static ArrayList<String> wordSplit(String input)
@@ -122,7 +118,7 @@ public class StringKit
         {
             result.add(EMPTY_STRING);
             return result;
-        } 
+        }
 
         int wordStart = 0;
 
@@ -135,13 +131,13 @@ public class StringKit
                 int index = iterator.getIndex();
                 result.add(input.substring(wordStart, index));
                 wordStart = index + 1;
-            } 
-        } 
+            }
+        }
         if (wordStart < input.length())
         {
             result.add(input.substring(wordStart));
-        } 
+        }
         return result;
-    } 
+    }
 
 }

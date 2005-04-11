@@ -18,20 +18,21 @@ import java.util.logging.LogRecord;
 // TODO: Elaborate this to be configurable.
 /**
  * A ConsoleFormatter formats output for display on a console.
+ * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class ConsoleFormatter extends Formatter
 {
     private static final String RBRACKET_SPACE = "] ";
-    
+
     private static final String COLON_SPACE = ": ";
-    
+
     private static int WARNING_VALUE = Level.WARNING.intValue();
 
     private SimpleDateFormat timestampFormat;
 
     private boolean showTimestamp;
-    
+
     private boolean showMethodNamesForErrors;
 
     private boolean showMethodNamesAlways;
@@ -41,6 +42,7 @@ public class ConsoleFormatter extends Formatter
 
     /**
      * Creates a new ConsoleFormatter using the specified console settings.
+     * 
      * @param consoleSettings
      */
     public ConsoleFormatter(ConsoleSettings consoleSettings)
@@ -62,6 +64,7 @@ public class ConsoleFormatter extends Formatter
 
     /**
      * Formats the given record.
+     * 
      * @see java.util.logging.Formatter#format(java.util.logging.LogRecord)
      */
     public String format(LogRecord record)
@@ -71,8 +74,7 @@ public class ConsoleFormatter extends Formatter
         {
             result.append('[' + this.timestampFormat.format(new Date(record.getMillis())) + RBRACKET_SPACE);
         }
-        if ( this.showMethodNamesAlways ||
-             (record.getLevel().intValue() >= WARNING_VALUE && this.showMethodNamesForErrors))
+        if (this.showMethodNamesAlways || (record.getLevel().intValue() >= WARNING_VALUE && this.showMethodNamesForErrors))
         {
             result.append(record.getSourceClassName() + '.' + record.getSourceMethodName() + COLON_SPACE);
         }

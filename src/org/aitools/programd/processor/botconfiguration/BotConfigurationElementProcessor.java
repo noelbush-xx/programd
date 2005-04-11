@@ -20,8 +20,8 @@ import org.aitools.programd.processor.Processor;
 import org.aitools.programd.processor.ProcessorException;
 
 /**
- * A <code>BotConfigurationElementProcessor</code> is responsible for processing an
- * element in a Program D startup file.
+ * A <code>BotConfigurationElementProcessor</code> is responsible for
+ * processing an element in a Program D startup file.
  * 
  * @since 4.2
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -35,15 +35,17 @@ abstract public class BotConfigurationElementProcessor extends Processor
 
     /**
      * Creates a new BotConfigurationElementProcessor with the given Core.
+     * 
      * @param coreToUse the Core to use
      */
     public BotConfigurationElementProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
-     * @see org.aitools.programd.processor.Processor#process(Element, GenericParser)
+     * @see org.aitools.programd.processor.Processor#process(Element,
+     *      GenericParser)
      */
     public String process(Element element, GenericParser parser) throws ProcessorException
     {
@@ -51,20 +53,20 @@ abstract public class BotConfigurationElementProcessor extends Processor
         {
             process(element, (BotsConfigurationFileParser) parser);
             return EMPTY_STRING;
-        } 
+        }
         catch (ClassCastException e)
         {
             throw new ProcessorException("Tried to pass a non-BotsConfigurationFileParser to a BotConfigurationElementProcessor.", e);
-        } 
-    } 
+        }
+    }
 
-	/**
-	 * Generic implementation of process -- just processes children.
-	 * 
-	 * @param element	the element to process
-	 * @param parser	the parser that is doing the processing
-	 * @throws ProcessorException if there is an error in processing
-	 */
+    /**
+     * Generic implementation of process -- just processes children.
+     * 
+     * @param element the element to process
+     * @param parser the parser that is doing the processing
+     * @throws ProcessorException if there is an error in processing
+     */
     public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         parser.evaluate(element.getChildNodes());

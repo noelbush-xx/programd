@@ -24,22 +24,21 @@ public class BotConfigurationElementProcessorRegistry extends ProcessorRegistry<
     private static final String XMLNS = "http://aitools.org/programd/startup/2005/02/06";
 
     /** The list of processors (fully-qualified class names). */
-    private static final String[] PROCESSOR_LIST =
-        { "org.aitools.programd.processor.botconfiguration.BotProcessor",
-          "org.aitools.programd.processor.botconfiguration.BotsProcessor",
-          "org.aitools.programd.processor.botconfiguration.GenderProcessor",
-          "org.aitools.programd.processor.botconfiguration.InputProcessor",
-          "org.aitools.programd.processor.botconfiguration.LearnProcessor",
-          "org.aitools.programd.processor.botconfiguration.ListenerProcessor",
-          "org.aitools.programd.processor.botconfiguration.ListenersProcessor",
-          "org.aitools.programd.processor.botconfiguration.PersonProcessor",
-          "org.aitools.programd.processor.botconfiguration.Person2Processor",
-          "org.aitools.programd.processor.botconfiguration.PredicateProcessor",
-          "org.aitools.programd.processor.botconfiguration.PredicatesProcessor",
-          "org.aitools.programd.processor.botconfiguration.PropertiesProcessor",
-          "org.aitools.programd.processor.botconfiguration.PropertyProcessor",
-          "org.aitools.programd.processor.botconfiguration.SentenceSplittersProcessor",
-          "org.aitools.programd.processor.botconfiguration.SubstitutionsProcessor" } ;
+    private static final String[] PROCESSOR_LIST = { "org.aitools.programd.processor.botconfiguration.BotProcessor",
+                                                     "org.aitools.programd.processor.botconfiguration.BotsProcessor",
+                                                     "org.aitools.programd.processor.botconfiguration.GenderProcessor",
+                                                     "org.aitools.programd.processor.botconfiguration.InputProcessor",
+                                                     "org.aitools.programd.processor.botconfiguration.LearnProcessor",
+                                                     "org.aitools.programd.processor.botconfiguration.ListenerProcessor",
+                                                     "org.aitools.programd.processor.botconfiguration.ListenersProcessor",
+                                                     "org.aitools.programd.processor.botconfiguration.PersonProcessor",
+                                                     "org.aitools.programd.processor.botconfiguration.Person2Processor",
+                                                     "org.aitools.programd.processor.botconfiguration.PredicateProcessor",
+                                                     "org.aitools.programd.processor.botconfiguration.PredicatesProcessor",
+                                                     "org.aitools.programd.processor.botconfiguration.PropertiesProcessor",
+                                                     "org.aitools.programd.processor.botconfiguration.PropertyProcessor",
+                                                     "org.aitools.programd.processor.botconfiguration.SentenceSplittersProcessor",
+                                                     "org.aitools.programd.processor.botconfiguration.SubstitutionsProcessor" };
 
     /**
      * Creates a new <code>BotConfigurationElementProcessorRegistry</code>.
@@ -47,5 +46,5 @@ public class BotConfigurationElementProcessorRegistry extends ProcessorRegistry<
     public BotConfigurationElementProcessorRegistry()
     {
         super(XMLNS, PROCESSOR_LIST);
-    } 
+    }
 }

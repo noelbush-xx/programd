@@ -25,13 +25,12 @@ public class SuffixFilenameFilter implements FilenameFilter
     /**
      * Constructs a new filename filter given an array of acceptable suffixes.
      * 
-     * @param suffixes
-     *            the acceptable suffixes
+     * @param suffixes the acceptable suffixes
      */
     public SuffixFilenameFilter(String[] suffixes)
     {
         SUFFIXES = suffixes;
-    } 
+    }
 
     /**
      * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
@@ -41,18 +40,18 @@ public class SuffixFilenameFilter implements FilenameFilter
         if (name == null)
         {
             return false;
-        } 
+        }
         if (name.length() == 0)
         {
             return false;
-        } 
+        }
         for (int index = SUFFIXES.length; --index >= 0;)
         {
             if (name.endsWith(SUFFIXES[index]))
             {
                 return true;
-            } 
-        } 
+            }
+        }
         return false;
-    } 
+    }
 }

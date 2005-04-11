@@ -50,6 +50,7 @@ public class FlatFileMultiplexor extends Multiplexor
 
     /**
      * Creates a new FlatFileMultiplexor with the given Core as owner.
+     * 
      * @param coreOwner the Core that owns this FlatFileMultiplexor
      */
     public FlatFileMultiplexor(Core coreOwner)
@@ -57,50 +58,60 @@ public class FlatFileMultiplexor extends Multiplexor
         super(coreOwner);
         this.ffmDirName = this.core.getSettings().getMultiplexorFfmDir();
     }
-    
+
     /**
      * Always returns true (FlatFileMultiplexor currently does not support
      * authentication).
+     * 
      * @param userid the userid to check
      * @param password the password to try
-     * @param secretKey the secret key that is supposed to validate that this is a secure request
-     * @param botid the id of the bot for whom to check the given userid/password combination
+     * @param secretKey the secret key that is supposed to validate that this is
+     *            a secure request
+     * @param botid the id of the bot for whom to check the given
+     *            userid/password combination
      * @return true always
      */
     public boolean checkUser(String userid, String password, String secretKey, String botid)
     {
         return true;
-    } 
+    }
 
     /**
      * Does nothing (FlatFileMultiplexor currently does not support
      * authentication).
+     * 
      * @param userid the userid to create
      * @param password the password to add
-     * @param secretKey the secret key that is supposed to validate that this is a secure request
-     * @param botid the id of the bot for whom to create the given userid/password combination
+     * @param secretKey the secret key that is supposed to validate that this is
+     *            a secure request
+     * @param botid the id of the bot for whom to create the given
+     *            userid/password combination
      */
     public void createUser(String userid, String password, String secretKey, String botid)
     {
         // Do nothing.
-    } 
+    }
 
     /**
      * Always returns true (FlatFileMultiplexor currently does not support
      * authentication).
+     * 
      * @param userid the userid for whom to change the passwod
      * @param password the password to change
-     * @param secretKey the secret key that is supposed to validate that this is a secure request
-     * @param botid the id of the bot for whom to change the given userid/password combination
+     * @param secretKey the secret key that is supposed to validate that this is
+     *            a secure request
+     * @param botid the id of the bot for whom to change the given
+     *            userid/password combination
      * @return true always
      */
     public boolean changePassword(String userid, String password, String secretKey, String botid)
     {
         return true;
-    } 
+    }
 
     /**
      * Saves a predicate to disk.
+     * 
      * @param name the name of the predicate to save
      * @param value the value to save for the predicate
      * @param userid the userid with which to associate this predicate
@@ -112,7 +123,7 @@ public class FlatFileMultiplexor extends Multiplexor
         if (predicateSets == null)
         {
             predicateSets = new Hashtable();
-        } 
+        }
 
         Properties predicates = loadPredicates(userid, botid);
 
@@ -121,15 +132,18 @@ public class FlatFileMultiplexor extends Multiplexor
 
         // Write predicates to disk immediately.
         savePredicates(predicates, userid, botid);
-    } 
+    }
 
     /**
      * Loads the value of a predicate from disk.
+     * 
      * @param name the name of the predicate to locate
      * @param userid the userid whose value of the given predicate is desired
-     * @param botid the botid whose userid-associated value of the given predicate is desired
+     * @param botid the botid whose userid-associated value of the given
+     *            predicate is desired
      * @return the value of the predicate
-     * @throws NoSuchPredicateException if no such predicate has been defined for the given userid and botid pair
+     * @throws NoSuchPredicateException if no such predicate has been defined
+     *             for the given userid and botid pair
      */
     public String loadPredicate(String name, String userid, String botid) throws NoSuchPredicateException
     {
@@ -137,7 +151,7 @@ public class FlatFileMultiplexor extends Multiplexor
         if (predicateSets == null)
         {
             predicateSets = new Hashtable();
-        } 
+        }
 
         Properties predicates = loadPredicates(userid, botid);
 
@@ -147,9 +161,9 @@ public class FlatFileMultiplexor extends Multiplexor
         if (result == null)
         {
             throw new NoSuchPredicateException(name);
-        } 
+        }
         return result;
-    } 
+    }
 
     /**
      * Loads the predicates file for a given userid. Ensures that the directory
@@ -171,20 +185,20 @@ public class FlatFileMultiplexor extends Multiplexor
             try
             {
                 predicates.load(new FileInputStream(predicateFile));
-            } 
+            }
             catch (IOException e)
             {
                 throw new DeveloperError("Error trying to load predicates.", e);
-            } 
-        } 
+            }
+        }
         return predicates;
-    } 
+    }
 
     /**
      * Saves the predicates file for a given userid. Ensures that the directory
      * exists.
-     * @param predicates 
      * 
+     * @param predicates
      * @param userid the userid for which to save the predicates
      * @param botid the botid for which to save the predicates
      */
@@ -196,23 +210,23 @@ public class FlatFileMultiplexor extends Multiplexor
         try
         {
             outputStream = FileManager.getFileOutputStream(fileName);
-        } 
+        }
         catch (FileNotFoundException e)
         {
             throw new DeveloperError("Could not locate just-created file: \"" + fileName + "\".", e);
-        } 
+        }
 
         try
         {
             predicates.store(outputStream, null);
-        } 
+        }
         catch (IOException e)
         {
             System.err.println(System.getProperty("user.dir"));
             System.err.println(e.getMessage());
             throw new DeveloperError("Error trying to save predicates.", e);
-        } 
-    } 
+        }
+    }
 
     /**
      * @see org.aitools.programd.multiplexor.Multiplexor#useridCount(java.lang.String)
@@ -220,5 +234,5 @@ public class FlatFileMultiplexor extends Multiplexor
     public int useridCount(String botid)
     {
         return 0;
-    } 
+    }
 }

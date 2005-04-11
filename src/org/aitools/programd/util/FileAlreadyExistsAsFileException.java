@@ -22,6 +22,7 @@ public class FileAlreadyExistsAsFileException extends Exception
 {
     /**
      * Creates a new FileAlreadyExistsAsFileException.
+     * 
      * @param file the file that already exists
      */
     public FileAlreadyExistsAsFileException(File file)

@@ -51,13 +51,14 @@ public class ConditionProcessor extends AIMLProcessor
 
     /**
      * Creates a new ConditionProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public ConditionProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
@@ -70,8 +71,7 @@ public class ConditionProcessor extends AIMLProcessor
          * Process a multiPredicateCondition: <condition>
          * <li name="xxx" value="xxx"> ... </li><li> ... </li> </condition>
          */
-        if ((element.getAttribute(NAME) == null)
-                && (element.getAttribute(VALUE) == null))
+        if ((element.getAttribute(NAME) == null) && (element.getAttribute(VALUE) == null))
         {
             return processListItem(parser, element.getChildNodes(), NAME_VALUE_LI, name);
         }
@@ -80,13 +80,11 @@ public class ConditionProcessor extends AIMLProcessor
          * Process a blockCondition: <condition name="xxx" value="yyy"> ...
          * </condition>
          */
-        if ((element.getAttribute(NAME) != null)
-                && (element.getAttribute(VALUE) != null))
+        if ((element.getAttribute(NAME) != null) && (element.getAttribute(VALUE) != null))
         {
             try
             {
-                if (PatternArbiter.matches(parser.getCore().getPredicateMaster().get(name, parser.getUserID(), parser.getBotID()), value,
-                        true))
+                if (PatternArbiter.matches(parser.getCore().getPredicateMaster().get(name, parser.getUserID(), parser.getBotID()), value, true))
                 {
                     return processListItem(parser, element.getChildNodes(), DEFAULT_LI, EMPTY_STRING);
                 }
@@ -103,8 +101,7 @@ public class ConditionProcessor extends AIMLProcessor
          * Process a singlePredicateCondition: <condition name="xxx">
          * <li value="yyy"> ... </li><li> ... </li> </condition>
          */
-        if ((element.getAttribute(NAME) != null)
-                && (element.getAttribute(VALUE) == null))
+        if ((element.getAttribute(NAME) != null) && (element.getAttribute(VALUE) == null))
         {
             return processListItem(parser, element.getChildNodes(), VALUE_ONLY_LI, name);
         }
@@ -116,15 +113,11 @@ public class ConditionProcessor extends AIMLProcessor
     /**
      * Evaluates an &lt;li/&gt; element inside a &lt;condition/&gt;.
      * 
-     * @param parser
-     *            the TemplateParser object responsible for this
-     * @param list
-     *            the XML trie
-     * @param listItemType
-     *            one of {@link #NAME_VALUE_LI},{@link #DEFAULT_LI}or
+     * @param parser the TemplateParser object responsible for this
+     * @param list the XML trie
+     * @param listItemType one of {@link #NAME_VALUE_LI},{@link #DEFAULT_LI}or
      *            {@link #VALUE_ONLY_LI}
-     * @param name
-     *            the name attribute of the &lt;li/&gt; (if applicable)
+     * @param name the name attribute of the &lt;li/&gt; (if applicable)
      * @return the result of processing this &lt;li/&gt;
      * @throws ProcessorException if there is an error in processing
      */
@@ -196,8 +189,7 @@ public class ConditionProcessor extends AIMLProcessor
                                      * not necessarily at the end. This is a
                                      * violation of strict AIML 1.0.1.
                                      */
-                                    if ((node.getAttributes().getNamedItem(NAME) == null)
-                                            && (node.getAttributes().getNamedItem(VALUE) == null))
+                                    if ((node.getAttributes().getNamedItem(NAME) == null) && (node.getAttributes().getNamedItem(VALUE) == null))
                                     {
                                         response = response + parser.evaluate(node.getChildNodes());
                                         break;
@@ -205,8 +197,7 @@ public class ConditionProcessor extends AIMLProcessor
 
                                     // Ignore if there is not a name and a
                                     // value.
-                                    if ((node.getAttributes().getNamedItem(NAME) == null)
-                                            || (node.getAttributes().getNamedItem(VALUE) == null))
+                                    if ((node.getAttributes().getNamedItem(NAME) == null) || (node.getAttributes().getNamedItem(VALUE) == null))
                                     {
                                         break;
                                     }
@@ -223,15 +214,16 @@ public class ConditionProcessor extends AIMLProcessor
                                      */
                                     try
                                     {
-                                        if (PatternArbiter.matches(this.core.getPredicateMaster().get(liname, parser.getUserID(),
-                                                parser.getBotID()), livalue, true))
+                                        if (PatternArbiter.matches(this.core.getPredicateMaster().get(liname, parser.getUserID(), parser.getBotID()),
+                                                livalue, true))
                                         {
                                             return response + parser.evaluate(node.getChildNodes());
                                         }
                                     }
                                     catch (NotAnAIMLPatternException e)
                                     {
-                                        Logger.getLogger("programd").log(Level.WARNING, "ConditionProcessor got a non-AIML pattern in a value attribute.", e);
+                                        Logger.getLogger("programd").log(Level.WARNING,
+                                                "ConditionProcessor got a non-AIML pattern in a value attribute.", e);
                                     }
                                     break;
 
@@ -262,13 +254,15 @@ public class ConditionProcessor extends AIMLProcessor
                                         }
                                         catch (NotAnAIMLPatternException e)
                                         {
-                                            Logger.getLogger("programd").log(Level.WARNING, "ConditionProcessor got a non-AIML pattern in a value attribute.", e);
+                                            Logger.getLogger("programd").log(Level.WARNING,
+                                                    "ConditionProcessor got a non-AIML pattern in a value attribute.", e);
                                         }
                                     }
                                     /*
-                                     * When there is no value attribute, we actually
-                                     * got the wrong li type, but process as a
-                                     * defaultListItem anyway (probably a bad idea).
+                                     * When there is no value attribute, we
+                                     * actually got the wrong li type, but
+                                     * process as a defaultListItem anyway
+                                     * (probably a bad idea).
                                      */
                                     else
                                     {

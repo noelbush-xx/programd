@@ -16,8 +16,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
- * <code>URITools</code> contains helper methods for dealing
- * with URIs and URLs.
+ * <code>URITools</code> contains helper methods for dealing with URIs and
+ * URLs.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.2
@@ -26,29 +26,29 @@ public class URITools
 {
     /** A slash. */
     private static final String SLASH = "/";
-    
+
     /** The string "://". */
     private static final String COLON_SLASH_SLASH = "://";
-    
+
     /**
      * <p>
-     * Tries to put the <code>subject</code> in the &quot;context&quot;
-     * of the <code>context</code>.  If the <code>context</code> URL
-     * does not appear to specify a file, this will essentially be
-     * the equivalent of {@link java.net.URI#resolve(URI) URI.resolve};
-     * if a file <i>is</i> specified by <code>context</code>, and if
-     * <code>subject</code> is relative, then this will replace the file
-     * component of <code>context</code> with <code>subject</code>.
+     * Tries to put the <code>subject</code> in the &quot;context&quot; of the
+     * <code>context</code>. If the <code>context</code> URL does not
+     * appear to specify a file, this will essentially be the equivalent of
+     * {@link java.net.URI#resolve(URI) URI.resolve}; if a file <i>is</i>
+     * specified by <code>context</code>, and if <code>subject</code> is
+     * relative, then this will replace the file component of
+     * <code>context</code> with <code>subject</code>.
      * </p>
      * <p>
      * If <code>subject</code> is not relative, this will throw a
-     * {@link java.net.MalformedURLException MalformedURLException}
-     * is thrown.
+     * {@link java.net.MalformedURLException MalformedURLException} is thrown.
      * </p>
      * 
      * @param context
      * @param subject
-     * @return the result of &quot;contextualizing&quot; the given <code>subject</code> in the <code>context</code>
+     * @return the result of &quot;contextualizing&quot; the given
+     *         <code>subject</code> in the <code>context</code>
      */
     public static URL contextualize(URL context, URL subject)
     {
@@ -57,10 +57,10 @@ public class URITools
             return subject;
         }
         String contextFile = context.getFile();
-        /* If the context URL ends with a /, this is
-         * good enough (for our purposes) to regard this as
-         * "not specifying a file", even though, of course,
-         * it could actually point to one.
+        /*
+         * If the context URL ends with a /, this is good enough (for our
+         * purposes) to regard this as "not specifying a file", even though, of
+         * course, it could actually point to one.
          */
         if (contextFile.endsWith(SLASH))
         {
@@ -101,7 +101,8 @@ public class URITools
                 throw new DeveloperError("Given subject cannot be contextualized in given context.", e);
             }
         }
-        // If the context *does* specify a file, then we need to remove it first.
+        // If the context *does* specify a file, then we need to remove it
+        // first.
         String contextString = context.toString();
         try
         {
@@ -112,14 +113,16 @@ public class URITools
             throw new DeveloperError("Cannot remove file part from context URL.", e);
         }
     }
-    
+
     /**
      * Same as {@link #contextualize(URL, URL)}, except the
-     * <code>subject</code> is a String which is assumed to <i>not</i> be absolute.
+     * <code>subject</code> is a String which is assumed to <i>not</i> be
+     * absolute.
      * 
      * @param context
      * @param subject
-     * @return the result of &quot;contextualizing&quot; the given <code>subject</code> in the <code>context</code>
+     * @return the result of &quot;contextualizing&quot; the given
+     *         <code>subject</code> in the <code>context</code>
      */
     public static URL contextualize(URL context, String subject)
     {
@@ -135,10 +138,10 @@ public class URITools
             }
         }
         String contextFile = context.getFile();
-        /* If the context URL ends with a /, this is
-         * good enough (for our purposes) to regard this as
-         * "not specifying a file", even though, of course,
-         * it could actually point to one.
+        /*
+         * If the context URL ends with a /, this is good enough (for our
+         * purposes) to regard this as "not specifying a file", even though, of
+         * course, it could actually point to one.
          */
         if (contextFile.endsWith(SLASH))
         {
@@ -155,7 +158,8 @@ public class URITools
                 throw new DeveloperError("Given subject cannot be contextualized in given context.", e);
             }
         }
-        // If the context *does* specify a file, then we need to remove it first.
+        // If the context *does* specify a file, then we need to remove it
+        // first.
         String contextString = context.toString();
         try
         {
@@ -166,14 +170,15 @@ public class URITools
             throw new DeveloperError("Cannot remove file part from context URL.", e);
         }
     }
-    
+
     /**
      * Same as {@link #contextualize(URL, String)}, except the
      * <code>context</code> is also a String.
      * 
      * @param context
      * @param subject
-     * @return the result of &quot;contextualizing&quot; the given <code>subject</code> in the <code>context</code>
+     * @return the result of &quot;contextualizing&quot; the given
+     *         <code>subject</code> in the <code>context</code>
      */
     public static URL contextualize(String context, String subject)
     {
@@ -188,10 +193,10 @@ public class URITools
                 throw new DeveloperError("Subject URL is malformed.", e);
             }
         }
-        /* If the context URL ends with a /, this is
-         * good enough (for our purposes) to regard this as
-         * "not specifying a file", even though, of course,
-         * it could actually point to one.
+        /*
+         * If the context URL ends with a /, this is good enough (for our
+         * purposes) to regard this as "not specifying a file", even though, of
+         * course, it could actually point to one.
          */
         if (context.endsWith(SLASH))
         {
@@ -208,7 +213,8 @@ public class URITools
                 throw new DeveloperError("Given subject cannot be contextualized in given context.", e);
             }
         }
-        // If the context *does* specify a file, then we need to remove it first.
+        // If the context *does* specify a file, then we need to remove it
+        // first.
         try
         {
             return contextualize(new URL(context.substring(0, context.lastIndexOf('/') + 1)), subject);
@@ -218,10 +224,10 @@ public class URITools
             throw new DeveloperError("Cannot remove file part from context URL.", e);
         }
     }
-    
+
     /**
-     * Attempts to create the given <code>path</code> into a
-     * valid URL, using a few heuristics.
+     * Attempts to create the given <code>path</code> into a valid URL, using
+     * a few heuristics.
      * 
      * @param path
      * @return a valid URL, if possible
@@ -238,7 +244,7 @@ public class URITools
             catch (MalformedURLException e)
             {
                 throw new DeveloperError("Cannot convert to URL: \"" + path + "\"", e);
-            }            
+            }
         }
         else
         {
@@ -250,7 +256,7 @@ public class URITools
             catch (MalformedURLException e)
             {
                 throw new DeveloperError("Malformed URL: \"" + path + "\"", e);
-            }            
+            }
         }
         return url;
     }

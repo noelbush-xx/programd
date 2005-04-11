@@ -51,7 +51,8 @@ public class Bot
     private Map<String, String> properties = Collections.checkedMap(new HashMap<String, String>(), String.class, String.class);
 
     /** The bot's predicate infos. */
-    private Map<String, PredicateInfo> predicatesInfo = Collections.checkedMap(new HashMap<String, PredicateInfo>(), String.class, PredicateInfo.class);
+    private Map<String, PredicateInfo> predicatesInfo = Collections.checkedMap(new HashMap<String, PredicateInfo>(), String.class,
+            PredicateInfo.class);
 
     /** The bot's input substitutions map. */
     private Map<String, String> inputSubstitutions = Collections.checkedMap(new HashMap<String, String>(), String.class, String.class);
@@ -80,12 +81,14 @@ public class Bot
     /** An empty string. */
     private static final String EMPTY_STRING = "";
 
-
     /**
      * Creates a new Bot with the given id. The bot's chat log is also set up.
+     * 
      * @param botID the id to use for the new bot
-     * @param predicateEmptyDefaultToUse the default value for empty predicates for the new bot
-     * @param chatlogDirectory the directory in which to store chat logs for the bot
+     * @param predicateEmptyDefaultToUse the default value for empty predicates
+     *            for the new bot
+     * @param chatlogDirectory the directory in which to store chat logs for the
+     *            bot
      */
     public Bot(String botID, String predicateEmptyDefaultToUse, String chatlogDirectory)
     {
@@ -95,7 +98,7 @@ public class Bot
         this.logger = Logger.getLogger("programd.chat." + this.id);
         this.logger.setUseParentHandlers(false);
         FileManager.checkOrCreateDirectory(chatlogDirectory, "chat log directory");
-        
+
         // Set up regular logging of chat.
         FileHandler chatLogFileHandler;
         try
@@ -121,7 +124,7 @@ public class Bot
         }
         xmlChatLogFileHandler.setFormatter(new XMLChatLogFormatter());
         this.logger.addHandler(xmlChatLogFileHandler);
-    } 
+    }
 
     /**
      * Returns the id of the bot.
@@ -132,7 +135,7 @@ public class Bot
     {
         return this.id;
     }
-    
+
     /**
      * @return the XML chat logger for this bot
      */
@@ -149,26 +152,24 @@ public class Bot
     public HashMap<URL, HashSet<Nodemapper>> getLoadedFilesMap()
     {
         return this.loadedFiles;
-    } 
+    }
 
     /**
      * Returns whether the bot has loaded the given file(name).
-     * @param filename the filename to check
      * 
+     * @param filename the filename to check
      * @return whether the bot has loaded the given file(name)
      */
     public boolean hasLoaded(String filename)
     {
         return this.loadedFiles.containsKey(filename);
-    } 
+    }
 
     /**
      * Adds a nodemapper to the filename map.
      * 
-     * @param filename
-     *            the filename
-     * @param nodemapper
-     *            the mapper for the node to add
+     * @param filename the filename
+     * @param nodemapper the mapper for the node to add
      */
     public void addToFilenameMap(String filename, Nodemapper nodemapper)
     {
@@ -176,14 +177,13 @@ public class Bot
         if (nodemappers != null)
         {
             nodemappers.add(nodemapper);
-        } 
-    } 
+        }
+    }
 
     /**
      * Retrieves the value of a named bot property.
      * 
-     * @param name
-     *            the name of the bot property to get
+     * @param name the name of the bot property to get
      * @return the value of the bot property
      */
     public String getPropertyValue(String name)
@@ -192,25 +192,23 @@ public class Bot
         if (name.equals(EMPTY_STRING))
         {
             return this.predicateEmptyDefault;
-        } 
+        }
 
         // Retrieve the contents of the property.
         String value = this.properties.get(name);
         if (value != null)
         {
             return value;
-        } 
+        }
         // (otherwise...)
         return this.predicateEmptyDefault;
-    } 
+    }
 
     /**
      * Sets the value of a bot property.
      * 
-     * @param name
-     *            the name of the bot predicate to set
-     * @param value
-     *            the value to set
+     * @param name the name of the bot predicate to set
+     * @param value the value to set
      */
     public void setPropertyValue(String name, String value)
     {
@@ -218,11 +216,11 @@ public class Bot
         if (name.equals(EMPTY_STRING))
         {
             return;
-        } 
+        }
 
         // Store the property.
         this.properties.put(name, value);
-    } 
+    }
 
     /**
      * @return the properties
@@ -230,28 +228,27 @@ public class Bot
     public Map getProperties()
     {
         return this.properties;
-    } 
+    }
 
     /**
      * Sets the bot's properties.
+     * 
      * @param map the properties to set.
      */
     public void setProperties(HashMap<String, String> map)
     {
         this.properties = map;
-    } 
+    }
 
     /**
      * Registers some information about a predicate in advance. Not required;
      * just used when it is necessary to specify a default value for a predicate
      * and/or specify its type as return-name-when-set.
      * 
-     * @param name
-     *            the name of the predicate
-     * @param defaultValue
-     *            the default value (if any) for the predicate
-     * @param returnNameWhenSet
-     *            whether the predicate should return its name when set
+     * @param name the name of the predicate
+     * @param defaultValue the default value (if any) for the predicate
+     * @param returnNameWhenSet whether the predicate should return its name
+     *            when set
      */
     public void addPredicateInfo(String name, String defaultValue, boolean returnNameWhenSet)
     {
@@ -260,7 +257,7 @@ public class Bot
         info.defaultValue = defaultValue;
         info.returnNameWhenSet = returnNameWhenSet;
         this.predicatesInfo.put(name, info);
-    } 
+    }
 
     /**
      * Returns the predicates info map.
@@ -270,7 +267,7 @@ public class Bot
     public Map getPredicatesInfo()
     {
         return this.predicatesInfo;
-    } 
+    }
 
     /**
      * Returns the predicate cache.
@@ -280,7 +277,7 @@ public class Bot
     public Map<String, Map<String, Object>> getPredicateCache()
     {
         return this.predicateCache;
-    } 
+    }
 
     /**
      * Returns the map of predicates for a userid if it is cached, or a new map
@@ -299,7 +296,7 @@ public class Bot
             // Create them if not.
             userPredicates = Collections.synchronizedMap(new HashMap<String, Object>());
             this.predicateCache.put(userid, userPredicates);
-        } 
+        }
         else
         {
             userPredicates = this.predicateCache.get(userid);
@@ -307,50 +304,54 @@ public class Bot
             {
                 // This should never happen!
                 throw new DeveloperError("userPredicates is null.", new NullPointerException());
-            } 
-        } 
+            }
+        }
         return userPredicates;
-    } 
+    }
 
     /**
      * Adds the given input substitution.
-     * @param find  the find-string part of the substitution
-     * @param replace   the replace-string part of the substitution
+     * 
+     * @param find the find-string part of the substitution
+     * @param replace the replace-string part of the substitution
      */
     public void addInputSubstitution(String find, String replace)
     {
         addSubstitution(this.inputSubstitutions, find, replace);
-    } 
+    }
 
     /**
      * Adds the given gender substitution.
-     * @param find  the find-string part of the substitution
-     * @param replace   the replace-string part of the substitution
+     * 
+     * @param find the find-string part of the substitution
+     * @param replace the replace-string part of the substitution
      */
     public void addGenderSubstitution(String find, String replace)
     {
         addSubstitution(this.genderSubstitutions, find, replace);
-    } 
+    }
 
     /**
      * Adds the given person substitution.
-     * @param find  the find-string part of the substitution
-     * @param replace   the replace-string part of the substitution
+     * 
+     * @param find the find-string part of the substitution
+     * @param replace the replace-string part of the substitution
      */
     public void addPersonSubstitution(String find, String replace)
     {
         addSubstitution(this.personSubstitutions, find, replace);
-    } 
+    }
 
     /**
      * Adds the given person2 substitution.
-     * @param find  the find-string part of the substitution
-     * @param replace   the replace-string part of the substitution
+     * 
+     * @param find the find-string part of the substitution
+     * @param replace the replace-string part of the substitution
      */
     public void addPerson2Substitution(String find, String replace)
     {
         addSubstitution(this.person2Substitutions, find, replace);
-    } 
+    }
 
     /**
      * Adds a substitution to the substitutions map. The <code>find</code>
@@ -358,32 +359,29 @@ public class Bot
      * <code>replace</code> parameter is stored as is.
      * 
      * @param substitutionMap
-     * @param find
-     *            the string to find in the input
-     * @param replace
-     *            the string with which to replace the found string
+     * @param find the string to find in the input
+     * @param replace the string with which to replace the found string
      */
     private void addSubstitution(Map<String, String> substitutionMap, String find, String replace)
     {
         if (find != null && replace != null)
         {
             substitutionMap.put(find.toUpperCase(), replace);
-        } 
-    } 
+        }
+    }
 
     /**
      * Adds a sentence splitter to the sentence splitters list.
      * 
-     * @param splitter
-     *            the string on which to divide sentences
+     * @param splitter the string on which to divide sentences
      */
     public void addSentenceSplitter(String splitter)
     {
         if (splitter != null)
         {
             this.sentenceSplitters.add(splitter);
-        } 
-    } 
+        }
+    }
 
     /**
      * @return the input substitution map
@@ -391,7 +389,7 @@ public class Bot
     public Map<String, String> getInputSubstitutionsMap()
     {
         return this.inputSubstitutions;
-    } 
+    }
 
     /**
      * @return the gender substitution map
@@ -399,7 +397,7 @@ public class Bot
     public Map<String, String> getGenderSubstitutionsMap()
     {
         return this.genderSubstitutions;
-    } 
+    }
 
     /**
      * @return the person substitution map
@@ -407,7 +405,7 @@ public class Bot
     public Map<String, String> getPersonSubstitutionsMap()
     {
         return this.personSubstitutions;
-    } 
+    }
 
     /**
      * @return the person2 substitution map
@@ -415,7 +413,7 @@ public class Bot
     public Map<String, String> getPerson2SubstitutionsMap()
     {
         return this.person2Substitutions;
-    } 
+    }
 
     /**
      * @return the sentence splitters
@@ -423,25 +421,27 @@ public class Bot
     public List<String> getSentenceSplitters()
     {
         return this.sentenceSplitters;
-    } 
+    }
 
     /**
      * Splits the given input into sentences.
+     * 
      * @param input the input to split
      * @return the sentences of the input
      */
     public List<String> sentenceSplit(String input)
     {
         return InputNormalizer.sentenceSplit(this.sentenceSplitters, input);
-    } 
+    }
 
     /**
      * Applies input substitutions to the given input
+     * 
      * @param input the input to which to apply substitutions
      * @return the processed input
      */
     public String applyInputSubstitutions(String input)
     {
         return Substituter.applySubstitutions(this.inputSubstitutions, input);
-    } 
+    }
 }

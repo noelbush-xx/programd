@@ -11,12 +11,14 @@ package org.aitools.programd.util;
 
 /**
  * An error condition in which a necessary parameter has not been specified.
+ * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class UnspecifiedParameterError extends Error
 {
     /**
      * Creates a new UnspecifiedParameterError about the given parameter name
+     * 
      * @param paramName the name of the parameter that was not specified
      */
     public UnspecifiedParameterError(String paramName)

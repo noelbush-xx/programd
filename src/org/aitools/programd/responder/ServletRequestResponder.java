@@ -10,8 +10,8 @@
 package org.aitools.programd.responder;
 
 /**
- * A <code>ServletRequestResponder</code> is a Responder specifically able
- * to handle certain servlet requests.  Its {@link ServletRequestResponderManager}
+ * A <code>ServletRequestResponder</code> is a Responder specifically able to
+ * handle certain servlet requests. Its {@link ServletRequestResponderManager}
  * is responsible for actually indicating which requests it can handle.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>

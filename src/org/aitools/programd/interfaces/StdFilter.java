@@ -12,8 +12,8 @@ package org.aitools.programd.interfaces;
 import java.util.logging.Filter;
 
 /**
- * A <code>StdFilter</code> filters out messages for
- * passing to &quot;standard stream&quot; (<code>stdout</code>, <code>stderr</code>).
+ * A <code>StdFilter</code> filters out messages for passing to &quot;standard
+ * stream&quot; (<code>stdout</code>, <code>stderr</code>).
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.2

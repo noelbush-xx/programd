@@ -25,24 +25,25 @@ public class TextResponder implements Responder
     public TextResponder()
     {
         // Nothing to do.
-    } 
-    
+    }
+
     /**
      * Returns the input.
      * 
-     * @param input
-     *            the input
+     * @param input the input
      * @return the input
      */
     public String preprocess(String input)
     {
         return input;
-    } 
+    }
 
     /**
      * Simply appends the response to <code>appendTo</code>.
+     * 
      * @param input unused but required by interface
-     * @param response the string to append to the <code>appendTo</code> argument
+     * @param response the string to append to the <code>appendTo</code>
+     *            argument
      * @param appendTo the string to which to append the <code>response</code>
      * @return the result of this appending
      */
@@ -51,20 +52,19 @@ public class TextResponder implements Responder
         if (appendTo.length() > 0)
         {
             return appendTo + ' ' + response;
-        } 
+        }
         // (otherwise...)
         return appendTo + response;
-    } 
+    }
 
     /**
      * Simply returns the reply.
      * 
-     * @param reply
-     *            the reply from the bot to be processed
+     * @param reply the reply from the bot to be processed
      * @return the reply
      */
     public String postprocess(String reply)
     {
         return reply;
-    } 
+    }
 }

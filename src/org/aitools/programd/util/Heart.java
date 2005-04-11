@@ -30,15 +30,16 @@ public class Heart
 
     /** Will hold a set of Pulses. */
     private ArrayList<Pulse> pulses = new ArrayList<Pulse>();
-    
+
     /**
      * Creates a new Heart with the given pulse rate.
+     * 
      * @param pulserateToUse the pulse rate to use
      */
     public Heart(int pulserateToUse)
     {
         this.pulserate = pulserateToUse;
-    } 
+    }
 
     /**
      * Starts the heart (if the pulse is greater than zero).
@@ -49,39 +50,37 @@ public class Heart
         try
         {
             pulse = 60000 / this.pulserate;
-        } 
+        }
         catch (NumberFormatException e)
         {
             // Do nothing.
-        } 
+        }
         if (pulse > 0)
         {
             startBeating(pulse);
-        } 
-    } 
+        }
+    }
 
     /**
      * Starts the heart beating with a specified pulse.
      * 
-     * @param pulse
-     *            the period in milliseconds
+     * @param pulse the period in milliseconds
      */
     private void startBeating(int pulse)
     {
         this.timer = new Timer();
         this.timer.schedule(new HeartBeat(), 0, pulse);
-    } 
+    }
 
     /**
      * Adds a Pulse to the registered list.
      * 
-     * @param pulse
-     *            the Pulse to be added
+     * @param pulse the Pulse to be added
      */
     public void addPulse(Pulse pulse)
     {
         this.pulses.add(pulse);
-    } 
+    }
 
     /**
      * Emits any registered pulses.
@@ -91,8 +90,8 @@ public class Heart
         for (Pulse pulse : this.pulses)
         {
             pulse.emit();
-        } 
-    } 
+        }
+    }
 
     class HeartBeat extends TimerTask
     {
@@ -102,6 +101,6 @@ public class Heart
         public void run()
         {
             pulse();
-        } 
-    } 
+        }
+    }
 }

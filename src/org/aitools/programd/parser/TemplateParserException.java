@@ -19,10 +19,11 @@ public class TemplateParserException extends Exception
 {
     /**
      * Creates a new TemplateParserException with the given message.
+     * 
      * @param message the message describing the exception
      */
     public TemplateParserException(String message)
     {
         super(message);
-    } 
+    }
 }

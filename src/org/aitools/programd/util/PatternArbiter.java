@@ -101,16 +101,13 @@ public class PatternArbiter
      * Decides whether a given pattern matches a given literal, in an isolated
      * context, according to the AIML pattern-matching specification.
      * 
-     * @param literal
-     *            the literal string to check
-     * @param pattern
-     *            the pattern to try to match against it
+     * @param literal the literal string to check
+     * @param pattern the pattern to try to match against it
      * @param ignoreCase whether or not to ignore case
      * @return <code>true</code> if <code>pattern</code> matches
      *         <code>literal</code>,<code>false</code> if not
-     * @throws NotAnAIMLPatternException
-     *             if the pattern is not a valid AIML pattern (conditioned by
-     *             <code>ignoreCase</code>
+     * @throws NotAnAIMLPatternException if the pattern is not a valid AIML
+     *             pattern (conditioned by <code>ignoreCase</code>
      */
     public static boolean matches(String literal, String pattern, boolean ignoreCase) throws NotAnAIMLPatternException
     {
@@ -130,13 +127,13 @@ public class PatternArbiter
             // Iterate over uppercased versions of literal and pattern.
             patternIterator = new StringCharacterIterator(pattern.toUpperCase().trim());
             literalIterator = new StringCharacterIterator(literal.toUpperCase().trim());
-        } 
+        }
         else
         {
             // Iterate over original literal and pattern.
             patternIterator = new StringCharacterIterator(pattern.trim());
             literalIterator = new StringCharacterIterator(literal.trim());
-        } 
+        }
 
         // Get first characters from both iterators.
         char patternChar = patternIterator.first();
@@ -168,18 +165,18 @@ public class PatternArbiter
                 {
                     // Advance the pattern iterator.
                     patternChar = patternIterator.next();
-                } 
+                }
 
                 // Check for advance literal flag.
                 if ((matchState & ADVANCE_LITERAL) == ADVANCE_LITERAL)
                 {
                     // Advance the literal iterator.
                     literalChar = literalIterator.next();
-                } 
+                }
 
                 // Cancel any other flags besides continue matching.
                 matchState = CONTINUE_MATCHING;
-            } 
+            }
 
             // Matching phase 1.
             if ((matchState & CONTINUE_MATCHING) == CONTINUE_MATCHING)
@@ -209,19 +206,19 @@ public class PatternArbiter
                         {
                             // Flag literal character is space.
                             literalCharState = literalCharState | IS_SPACE;
-                        } 
+                        }
                         else
                         {
                             // Stop matching and fail.
                             matchState = STOP_MATCHING | MATCH_FAILURE;
-                        } 
-                    } 
-                } 
+                        }
+                    }
+                }
                 else
                 {
                     // Flag literal character is a letterdigit.
                     literalCharState = IS_LETTERDIGIT;
-                } 
+                }
 
                 /*
                  * Determine pattern character state and check pattern character
@@ -245,27 +242,27 @@ public class PatternArbiter
                         {
                             // Flag pattern character is space.
                             patternCharState = patternCharState | IS_SPACE;
-                        } 
+                        }
                         else
                         {
                             // Stop matching and fail.
                             matchState = STOP_MATCHING | MATCH_FAILURE;
-                        } 
-                    } 
+                        }
+                    }
 
                     // Check if pattern character is wildcard.
                     if ((patternChar == ASTERISK) || (patternChar == UNDERSCORE))
                     {
                         // Flag pattern character is wildcard.
                         patternCharState = patternCharState | IS_WILDCARD;
-                    } 
-                } 
+                    }
+                }
                 else
                 {
                     // Flag pattern character is a letterdigit.
                     patternCharState = IS_LETTERDIGIT;
-                } 
-            } 
+                }
+            }
 
             // Matching phase 2.
             if ((matchState & CONTINUE_MATCHING) == CONTINUE_MATCHING)
@@ -281,15 +278,15 @@ public class PatternArbiter
                     patternIteratorState = PAST_END;
                     // Stop matching.
                     matchState = matchState | STOP_MATCHING;
-                } 
+                }
                 else
                 {
                     if (patternIterator.getEndIndex() == patternIterator.getIndex() + 1)
                     {
                         // Flag pattern is at end.
                         patternIteratorState = AT_END;
-                    } 
-                } 
+                    }
+                }
 
                 // Check if literal is past end.
                 if (literalChar == CharacterIterator.DONE)
@@ -298,7 +295,7 @@ public class PatternArbiter
                     literalIteratorState = PAST_END;
                     // Stop matching.
                     matchState = matchState | STOP_MATCHING;
-                } 
+                }
                 else
                 {
                     // Check if literal is at end.
@@ -306,9 +303,9 @@ public class PatternArbiter
                     {
                         // Flag literal is at end.
                         literalIteratorState = AT_END;
-                    } 
-                } 
-            } 
+                    }
+                }
+            }
 
             // Matching phase 3.
             if ((matchState & CONTINUE_MATCHING) == CONTINUE_MATCHING)
@@ -332,18 +329,18 @@ public class PatternArbiter
                         {
                             // Flag to advance literal and pattern.
                             matchState = matchState | ADVANCE_LITERAL | ADVANCE_PATTERN;
-                        } 
+                        }
                         else
                         {
                             // Stop matching and fail.
                             matchState = STOP_MATCHING | MATCH_FAILURE;
-                        } 
-                    } 
+                        }
+                    }
                     else
                     {
                         // Stop matching and fail.
                         matchState = STOP_MATCHING | MATCH_FAILURE;
-                    } 
+                    }
 
                     /*
                      * CASE 1: Pattern letterdigit at end means stop matching.
@@ -351,8 +348,8 @@ public class PatternArbiter
                     if (patternIteratorState == AT_END)
                     {
                         matchState = matchState | STOP_MATCHING;
-                    } 
-                } 
+                    }
+                }
 
                 /*
                  * CASE 2: Pattern wildcard matches literal letterdigit.
@@ -366,7 +363,7 @@ public class PatternArbiter
                     {
                         // Flag to advance literal.
                         matchState = matchState | ADVANCE_LITERAL;
-                    } 
+                    }
 
                     /*
                      * CASE 3: Pattern wildcard at end matches literal
@@ -381,7 +378,7 @@ public class PatternArbiter
                         {
                             // Flag to advance literal.
                             matchState = matchState | ADVANCE_LITERAL;
-                        } 
+                        }
 
                         /*
                          * CASE 4: Pattern wildcard+nonspace is invalid.
@@ -396,7 +393,7 @@ public class PatternArbiter
                             {
                                 // Stop matching and fail.
                                 matchState = STOP_MATCHING | MATCH_FAILURE;
-                            } 
+                            }
 
                             /*
                              * CASE 5: Pattern wildcard+space matches literal
@@ -406,10 +403,10 @@ public class PatternArbiter
                             {
                                 // Flag to advance literal and pattern.
                                 matchState = matchState | ADVANCE_PATTERN | ADVANCE_LITERAL;
-                            } 
-                        } 
-                    } 
-                } 
+                            }
+                        }
+                    }
+                }
 
                 /*
                  * CASE 6: Pattern space matches literal non-letterdigit.
@@ -423,15 +420,15 @@ public class PatternArbiter
                     {
                         // Flag to advance literal and pattern.
                         matchState = matchState | ADVANCE_PATTERN | ADVANCE_LITERAL;
-                    } 
+                    }
                     else
                     {
                         // Stop matching and fail.
                         matchState = STOP_MATCHING | MATCH_FAILURE;
-                    } 
-                } 
-            } 
-        } 
+                    }
+                }
+            }
+        }
 
         /*
          * Matching stopped; check match state and iterator states.
@@ -442,7 +439,7 @@ public class PatternArbiter
         {
             // Return false because match failed.
             return false;
-        } 
+        }
         // Otherwise, check if literal iterator is at or past end.
         if ((literalIteratorState == AT_END) || (literalIteratorState == PAST_END))
         {
@@ -451,25 +448,23 @@ public class PatternArbiter
             {
                 // Return true because both iterators are at or past end.
                 return true;
-            } 
+            }
             // Otherwise, return false because both iterators are not at or past
             // end.
             return false;
-        } 
+        }
         // Otherwise, return false because literal iterator is not at end.
         return false;
-    } 
+    }
 
     /**
      * Determines whether a given string is a valid AIML pattern. Conditioned by
      * <code>ignoreCase</code>.
      * 
-     * @param pattern
-     *            the string to check
-     * @param ignoreCase
-     *            whether to ignore case
-     * @throws NotAnAIMLPatternException
-     *             with a helpful message if the pattern is not valid
+     * @param pattern the string to check
+     * @param ignoreCase whether to ignore case
+     * @throws NotAnAIMLPatternException with a helpful message if the pattern
+     *             is not valid
      */
     public static void checkAIMLPattern(String pattern, boolean ignoreCase) throws NotAnAIMLPatternException
     {
@@ -504,13 +499,13 @@ public class PatternArbiter
                     {
                         // Flag pattern character is space.
                         charState = charState | IS_SPACE;
-                    } 
+                    }
                     else
                     {
                         // Throw an explanatory exception.
                         throw new NotAnAIMLPatternException("The only allowed whitespace is a space (\u0020).", pattern);
-                    } 
-                } 
+                    }
+                }
 
                 // Check if pattern character is wildcard.
                 if ((theChar == ASTERISK) || (theChar == UNDERSCORE))
@@ -528,11 +523,10 @@ public class PatternArbiter
                         if ((previousCharState == IS_LETTERDIGIT) || ((previousCharState & IS_WILDCARD) == IS_WILDCARD))
                         {
                             // Throw an explanatory exception.
-                            throw new NotAnAIMLPatternException(
-                                    "A wildcard cannot be preceded by a wildcard, a letter or a digit.", pattern);
-                        } 
-                    } 
-                } 
+                            throw new NotAnAIMLPatternException("A wildcard cannot be preceded by a wildcard, a letter or a digit.", pattern);
+                        }
+                    }
+                }
 
                 // Check if pattern character is a tag start.
                 if (theChar == TAG_START)
@@ -552,28 +546,27 @@ public class PatternArbiter
                          */
                         iterator.setIndex(currentIndex + 11);
                         theChar = iterator.next();
-                        while ((theChar != CharacterIterator.DONE)
-                                && (theChar != QUOTE_MARK)
+                        while ((theChar != CharacterIterator.DONE) && (theChar != QUOTE_MARK)
                                 && (Character.isLetterOrDigit(theChar) || (theChar == SPACE) || (theChar == UNDERSCORE)))
                         {
                             theChar = iterator.next();
-                        } 
+                        }
 
                         // Finally, check that the attribute is ended correctly.
                         currentIndex = iterator.getIndex();
                         if (!pattern.regionMatches(false, currentIndex, ATOMIC_ELEMENT_END, 0, 3))
                         {
                             throw new NotAnAIMLPatternException("Invalid or malformed <bot/> element.", pattern);
-                        } 
+                        }
                         // If we got this far, update the index.
                         iterator.setIndex(currentIndex + 3);
-                    } 
+                    }
                     else
                     {
                         throw new NotAnAIMLPatternException("Invalid or malformed inner element.", pattern);
-                    } 
-                } 
-            } 
+                    }
+                }
+            }
             else
             {
                 // Flag pattern character is a letterdigit.
@@ -586,8 +579,8 @@ public class PatternArbiter
                     {
                         // Throw an explanatory exception.
                         throw new NotAnAIMLPatternException("Characters with case mappings must be uppercase.", pattern);
-                    } 
-                } 
+                    }
+                }
 
                 // Check if previous pattern character state is known.
                 if (previousCharState != UNKNOWN)
@@ -599,19 +592,19 @@ public class PatternArbiter
                     if ((previousCharState & IS_WILDCARD) == IS_WILDCARD)
                     {
                         // Throw an explanatory exception.
-                        throw new NotAnAIMLPatternException("A letter or digit may not be preceded by a wildcard.",
-                                pattern);
-                    } 
-                } 
-            } 
+                        throw new NotAnAIMLPatternException("A letter or digit may not be preceded by a wildcard.", pattern);
+                    }
+                }
+            }
 
             // Remember pattern character state for next time.
             previousCharState = charState;
-        } 
-    } 
+        }
+    }
 
     /**
      * For testing.
+     * 
      * @param args not used
      */
     public static void main(String[] args)
@@ -633,21 +626,21 @@ public class PatternArbiter
             try
             {
                 theLine = console.readLine();
-            } 
+            }
             catch (IOException e)
             {
                 System.out.println("Cannot read from console!");
                 return;
-            } 
+            }
             if (theLine == null)
             {
                 break;
-            } 
+            }
             if (theLine.toLowerCase().equals("exit"))
             {
                 System.out.println("Exiting.");
                 return;
-            } 
+            }
             if (!theLine.startsWith(";") && theLine.trim().length() > 0)
             {
                 tokenizer = new StringTokenizer(theLine, "|");
@@ -657,51 +650,51 @@ public class PatternArbiter
                     pattern = tokenizer.nextToken();
                     ignoreCase = tokenizer.nextToken().equals("y") ? true : false;
                     prediction = tokenizer.nextToken().equals("t") ? true : false;
-                } 
+                }
                 catch (NoSuchElementException e)
                 {
                     System.out.println("Improperly formatted input. Use: literal|PATTERN|(y/n)|(t/f)");
                     continue console;
-                } 
+                }
 
                 long time = new Date().getTime();
 
                 try
                 {
                     matched = matches(literal, pattern, ignoreCase);
-                } 
+                }
                 catch (NotAnAIMLPatternException e)
                 {
                     System.out.println("Exception: " + e.getMessage());
                     matched = false;
-                } 
+                }
                 time = new Date().getTime() - time;
 
                 if (matched == prediction)
                 {
                     successes++;
                     System.out.print("TEST PASSED] ");
-                } 
+                }
                 else
                 {
                     failures++;
                     System.out.print("TEST FAILED] ");
-                } 
+                }
                 if (matched)
                 {
                     System.out.print("match: " + literal + " | " + pattern + (ignoreCase ? " (ignoreCase)" : ""));
-                } 
+                }
                 else
                 {
                     System.out.print("no match: " + literal + " | " + pattern + (ignoreCase ? " (ignoreCase)" : ""));
-                } 
+                }
                 System.out.println(" (" + time + " ms)");
-            } 
+            }
             else
             {
                 System.out.println(theLine);
-            } 
-        } 
+            }
+        }
         System.out.println((successes + failures) + " tests: " + successes + " successes, " + failures + " failures");
-    } 
+    }
 }

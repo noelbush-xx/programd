@@ -70,13 +70,14 @@ public class RandomProcessor extends AIMLProcessor
 
     /**
      * Creates a new RandomProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public RandomProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
@@ -92,7 +93,7 @@ public class RandomProcessor extends AIMLProcessor
         {
             generator = new MersenneTwisterFast(System.currentTimeMillis());
             generators.put(identifier, generator);
-        } 
+        }
 
         int nodeCount = element.getElementsByTagName(LI).getLength();
 
@@ -100,10 +101,9 @@ public class RandomProcessor extends AIMLProcessor
         if (nodeCount == 1)
         {
             return parser.evaluate(parser.getNode(LI, element.getChildNodes(), 1).getChildNodes());
-        } 
+        }
 
         // Otherwise, select a random element of the listitem.
-        return parser
-                .evaluate(parser.getNode(LI, element.getChildNodes(), generator.nextInt(nodeCount) + 1).getChildNodes());
-    } 
+        return parser.evaluate(parser.getNode(LI, element.getChildNodes(), generator.nextInt(nodeCount) + 1).getChildNodes());
+    }
 }

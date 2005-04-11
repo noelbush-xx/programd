@@ -32,16 +32,18 @@ public class LearnProcessor extends AIMLProcessor
 
     /**
      * Creates a new LearnProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public LearnProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * Attempts to load an AIML file whose location is described by the results
      * of processing the content of the element.
+     * 
      * @param element the <code>learn</code> element
      * @param parser the parser that is at work
      * @return the result of processing the element
@@ -51,5 +53,5 @@ public class LearnProcessor extends AIMLProcessor
     {
         parser.getCore().getGraphmaster().load(parser.evaluate(element.getChildNodes()), parser.getBotID());
         return EMPTY_STRING;
-    } 
+    }
 }

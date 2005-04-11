@@ -38,7 +38,9 @@ public final class WildCardFilter implements FilenameFilter
     private String suffix;
 
     /**
-     * Creates a new WildCardFilter that will use the given pattern and the given wildcard.
+     * Creates a new WildCardFilter that will use the given pattern and the
+     * given wildcard.
+     * 
      * @param patternToUse the pattern to use
      * @param wildCardToUse the wildcard to use
      */
@@ -52,8 +54,8 @@ public final class WildCardFilter implements FilenameFilter
             if (this.wildCard == this.pattern.charAt(index))
             {
                 wilds++;
-            } 
-        } 
+            }
+        }
         this.wildIndex = new int[wilds];
         int windex = 0;
         for (int index = 0; windex < wilds; index++)
@@ -61,19 +63,19 @@ public final class WildCardFilter implements FilenameFilter
             if (this.wildCard == this.pattern.charAt(index))
             {
                 this.wildIndex[windex++] = index;
-            } 
-        } 
+            }
+        }
         if (wilds == 0)
         {
             this.prefix = null;
             this.suffix = null;
-        } 
+        }
         else
         {
             this.prefix = this.pattern.substring(0, this.wildIndex[0]);
             this.suffix = this.pattern.substring(this.wildIndex[wilds - 1] + 1);
-        } 
-    } 
+        }
+    }
 
     /**
      * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
@@ -83,15 +85,15 @@ public final class WildCardFilter implements FilenameFilter
         if (this.wildIndex.length == 0)
         {
             return this.pattern.equals(name);
-        } 
+        }
         else if (!name.startsWith(this.prefix) || !name.endsWith(this.suffix))
         {
             return false;
-        } 
+        }
         else if (this.wildIndex.length == 1)
         {
             return true;
-        } 
+        }
         else
         {
             int flen = name.length() - this.suffix.length();
@@ -114,19 +116,19 @@ public final class WildCardFilter implements FilenameFilter
                     if (plen + findex > flen)
                     {
                         return false;
-                    } 
+                    }
                     else if (name.regionMatches(findex, this.pattern, pstart, plen))
                     {
                         break;
-                    } 
+                    }
                     else
                     {
                         findex++;
-                    } 
-                } 
+                    }
+                }
                 findex += plen;
-            } 
+            }
             return true;
-        } 
-    } 
+        }
+    }
 }

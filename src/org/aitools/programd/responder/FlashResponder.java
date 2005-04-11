@@ -20,7 +20,9 @@ public class FlashResponder extends AbstractXMLResponder implements ServletReque
 {
     /**
      * Creates a new FlashResponder.
-     * @param responsibleManager the manager that is responsible for this responder
+     * 
+     * @param responsibleManager the manager that is responsible for this
+     *            responder
      * @param botidToRespondFor the botid to respond for
      * @param templateName the template name to use
      */

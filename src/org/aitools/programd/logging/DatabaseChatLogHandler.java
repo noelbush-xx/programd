@@ -37,9 +37,10 @@ public class DatabaseChatLogHandler extends Handler
 
     /** The (file-based) logger for database activity. */
     private Logger logger;
-    
+
     /**
      * Creates a new DatabaseChatLogHandler.
+     * 
      * @param settings the Core settings to use
      */
     public DatabaseChatLogHandler(CoreSettings settings)
@@ -47,24 +48,25 @@ public class DatabaseChatLogHandler extends Handler
         this.logger = Logger.getLogger("programd");
         this.logger.log(Level.FINE, "Opening database pool.");
 
-        dbManager = new DbAccessRefsPoolMgr(settings.getDatabaseDriver(), settings.getDatabaseUrl(),
-                settings.getDatabaseUser(), settings.getDatabasePassword());
+        dbManager = new DbAccessRefsPoolMgr(settings.getDatabaseDriver(), settings.getDatabaseUrl(), settings.getDatabaseUser(), settings
+                .getDatabasePassword());
 
         this.logger.log(Level.FINE, "Populating database pool.");
 
         dbManager.populate(settings.getDatabaseConnections());
     }
-    
+
     /**
      * @see java.util.logging.Handler#publish(java.util.logging.LogRecord)
      */
     public void publish(LogRecord record)
     {
-         // Regular LogRecords are ignored.
+        // Regular LogRecords are ignored.
     }
 
     /**
      * Publishes the given record to the database.
+     * 
      * @param record the record to publish
      */
     public void publish(ChatLogRecord record)
@@ -74,20 +76,19 @@ public class DatabaseChatLogHandler extends Handler
         try
         {
             dbaRef = dbManager.takeDbaRef();
-        } 
+        }
         catch (Exception e)
         {
             throw new UserError("Could not get database reference when logging.", e);
-        } 
+        }
 
         // Write the log info.
         try
         {
-            dbaRef.executeQuery("insert into chatlog (userid, botid, input, response) values ('"
-                    + URLEncoder.encode(record.getUserID(), ENC_UTF8)
-                    + "', '" + URLEncoder.encode(record.getBotID(), ENC_UTF8) + "', '" + URLEncoder.encode(record.getInput(), ENC_UTF8)
-                    + "', '" + URLEncoder.encode(record.getReply(), ENC_UTF8) + "')");
-        } 
+            dbaRef.executeQuery("insert into chatlog (userid, botid, input, response) values ('" + URLEncoder.encode(record.getUserID(), ENC_UTF8)
+                    + "', '" + URLEncoder.encode(record.getBotID(), ENC_UTF8) + "', '" + URLEncoder.encode(record.getInput(), ENC_UTF8) + "', '"
+                    + URLEncoder.encode(record.getReply(), ENC_UTF8) + "')");
+        }
         catch (UnsupportedEncodingException e)
         {
             throw new DeveloperError("This platform does not support UTF-8!", e);
@@ -95,7 +96,7 @@ public class DatabaseChatLogHandler extends Handler
 
         dbManager.returnDbaRef(dbaRef);
     }
-    
+
     /**
      * @see java.util.logging.Handler#flush()
      */
@@ -103,7 +104,7 @@ public class DatabaseChatLogHandler extends Handler
     {
         // Nothing to do.
     }
-    
+
     /**
      * @see java.util.logging.Handler#close()
      */

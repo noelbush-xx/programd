@@ -61,18 +61,19 @@ public class PredicateMaster
 
     /** The Core that owns this. */
     protected Core core;
-    
+
     /** The Multiplexor in use. */
     protected Multiplexor multiplexor;
-    
+
     /** The Bots object in use. */
     protected Bots bots;
-    
+
     /** The general Program D logger. */
     protected Logger logger;
 
     /**
      * Creates a new PredicateMaster with the given Core as its owner.
+     * 
      * @param coreOwner the Core that owns this PredicateMaster
      */
     public PredicateMaster(Core coreOwner)
@@ -85,7 +86,7 @@ public class PredicateMaster
         this.logger = Logger.getLogger("programd");
         this.cacheMax = coreSettings.getPredicateCacheMax();
         this.cacheMin = Math.max(this.cacheMax / 2, 1);
-    } 
+    }
 
     /**
      * Sets a predicate <code>value</code> against a predicate
@@ -93,12 +94,9 @@ public class PredicateMaster
      * <code>name</code> or the <code>value</code>, depending on the
      * predicate type.
      * 
-     * @param name
-     *            the predicate name
-     * @param value
-     *            the predicate value
-     * @param userid
-     *            the userid
+     * @param name the predicate name
+     * @param value the predicate value
+     * @param userid the userid
      * @param botid
      * @return the <code>name</code> or the <code>value</code>, depending
      *         on the predicate type
@@ -119,7 +117,7 @@ public class PredicateMaster
 
         // Return the name or value.
         return nameOrValue(name, value, botid);
-    } 
+    }
 
     /**
      * Sets a <code>value</code> against an indexed predicate
@@ -127,14 +125,10 @@ public class PredicateMaster
      * either the <code>name</code> or the <code>value</code>, depending on
      * the predicate type.
      * 
-     * @param name
-     *            the predicate name
-     * @param index
-     *            the index
-     * @param value
-     *            the predicate value
-     * @param userid
-     *            the userid
+     * @param name the predicate name
+     * @param index the index
+     * @param value the predicate value
+     * @param userid the userid
      * @param botid
      * @return the <code>name</code> or the <code>value</code>, depending
      *         on the predicate type
@@ -152,12 +146,12 @@ public class PredicateMaster
         try
         {
             values.add(index - 1, value);
-        } 
+        }
         catch (IndexOutOfBoundsException e)
         {
             // If failed, push the value onto the front of the list.
             pushOnto(values, value);
-        } 
+        }
 
         // Increment the cache count.
         cacheSize++;
@@ -167,7 +161,7 @@ public class PredicateMaster
 
         // Return the name or value.
         return nameOrValue(name, value, botid);
-    } 
+    }
 
     /**
      * Pushes a <code>value</code> onto an indexed predicate <code>name</code>
@@ -175,12 +169,9 @@ public class PredicateMaster
      * <code>name</code> or the <code>value</code>, depending on the
      * predicate type.
      * 
-     * @param name
-     *            the predicate name
-     * @param value
-     *            the predicate value
-     * @param userid
-     *            the userid
+     * @param name the predicate name
+     * @param value the predicate value
+     * @param userid the userid
      * @param botid
      * @return the <code>name</code> or the <code>value</code>, depending
      *         on the predicate type
@@ -204,16 +195,14 @@ public class PredicateMaster
 
         // Return the name or value.
         return nameOrValue(name, value, botid);
-    } 
+    }
 
     /**
      * Gets the predicate <code>value</code> associated with a
      * <code>name</code> for a given <code>userid</code>.
      * 
-     * @param name
-     *            the predicate name
-     * @param userid
-     *            the userid
+     * @param name the predicate name
+     * @param userid the userid
      * @param botid
      * @return the <code>value</code> associated with the given
      *         <code>name</code>, for the given <code>userid</code>
@@ -234,63 +223,60 @@ public class PredicateMaster
             try
             {
                 value = this.multiplexor.loadPredicate(name, userid, botid);
-            } 
+            }
             catch (NoSuchPredicateException e0)
             {
                 // If not found, set and cache the best available default.
                 value = bestAvailableDefault(name, botid);
-            } 
+            }
 
             // Check that the result is not null.
             if (value != null)
             {
                 // Cache it.
                 userPredicates.put(name, value);
-            } 
+            }
             else
             {
                 // This should never, ever happen!
                 throw new DeveloperError("Null string found in user predicates cache!", new NullPointerException());
-            } 
+            }
 
-        } 
+        }
 
         // Determine whether this is an indexed or unindexed predicate.
         else if (valueObject instanceof String)
         {
             // This is an unindexed predicate.
             value = (String) valueObject;
-        } 
+        }
         else if (valueObject instanceof ArrayList)
         {
             // This is an indexed predicate.
             ArrayList values = (ArrayList) valueObject;
             value = (String) values.get(0);
-        } 
+        }
         else
         {
             // This should never, ever happen!
             throw new DeveloperError(new IllegalObjectStateException("Something other than a String or a ArrayList found in user predicates cache!"));
-        } 
+        }
 
         // Check the cache.
         checkCache();
 
         // Cache and return the value.
         return value;
-    } 
+    }
 
     /**
      * Gets the predicate <code>value</code> associated with a
      * <code>name</code> at a given <code>index</code> for a given
      * <code>userid</code>.
      * 
-     * @param name
-     *            the predicate name
-     * @param index
-     *            the index
-     * @param userid
-     *            the userid
+     * @param name the predicate name
+     * @param index the index
+     * @param userid the userid
      * @param botid
      * @return the <code>value</code> associated with the given
      *         <code>name</code> at the given <code>index</code>, for the
@@ -309,21 +295,21 @@ public class PredicateMaster
         try
         {
             values = getValueList(name, userPredicates);
-        } 
+        }
         catch (NoSuchPredicateException e0)
         {
             // No values cached; try loading.
             try
             {
                 values = loadValueList(name, userPredicates, userid, botid);
-            } 
+            }
             catch (NoSuchPredicateException e1)
             {
                 // Still no list, so set and cache default.
                 value = bestAvailableDefault(name, botid);
                 userPredicates.put(name, value);
-            } 
-        } 
+            }
+        }
 
         if (values != null)
         {
@@ -332,29 +318,27 @@ public class PredicateMaster
             {
                 // Get the value at index (minus one -- no zero index in AIML).
                 value = (String) values.get(index - 1);
-            } 
+            }
             catch (IndexOutOfBoundsException e)
             {
                 // Return the best available default.
                 value = bestAvailableDefault(name, botid);
-            } 
-        } 
+            }
+        }
 
         // Check the cache.
         checkCache();
 
         // Return the value.
         return value;
-    } 
+    }
 
     /**
      * Pushes a value onto the front of a list, and pops off any values at the
      * end of the list so that the list size is no more than {@link #MAX_INDEX}.
      * 
-     * @param values
-     *            the list onto which to push
-     * @param value
-     *            the value to push onto the list
+     * @param values the list onto which to push
+     * @param value the value to push onto the list
      */
     private static void pushOnto(ArrayList<String> values, String value)
     {
@@ -362,8 +346,8 @@ public class PredicateMaster
         while (values.size() > MAX_INDEX)
         {
             values.remove(values.size() - 1);
-        } 
-    } 
+        }
+    }
 
     /**
      * Returns, from the cache, an ArrayList of values assigned to a
@@ -372,14 +356,12 @@ public class PredicateMaster
      * but it is not indexed, it is converted into an indexed value. If it does
      * not exist at all, a <code>NoSuchPredicateException</code> is thrown.
      * 
-     * @param name
-     *            the name of the predicate
-     * @param userPredicates
-     *            the existing map of predicates
+     * @param name the name of the predicate
+     * @param userPredicates the existing map of predicates
      * @return a list of values assigned to a <code>name</code> for a
      *         predicate for a <code>userid</code>
-     * @throws NoSuchPredicateException
-     *             if no values are assigned to the <code>name</code>
+     * @throws NoSuchPredicateException if no values are assigned to the
+     *             <code>name</code>
      */
     private static ArrayList<String> getValueList(String name, Map<String, Object> userPredicates) throws NoSuchPredicateException
     {
@@ -407,28 +389,23 @@ public class PredicateMaster
         // If the predicate is not found, throw an exception.
         throw new NoSuchPredicateException(name);
 
-     }
-    
-    
+    }
+
     /**
      * Tries to load a predicate with <code>name</code> for
      * <code>userid</code> from the ActiveMultiplexor into the
      * <code>userPredicates</code>. If successful, tries to get the value
      * list for name. If unsuccessful, throws a NoSuchPredicateException.
      * 
-     * @param name
-     *            the predicate <code>name</code>
-     * @param userPredicates
-     *            the user predicates (must not be null!)
-     * @param userid
-     *            the userid
+     * @param name the predicate <code>name</code>
+     * @param userPredicates the user predicates (must not be null!)
+     * @param userid the userid
      * @param botid
      * @return an ArrayList of values assigned to a <code>name</code> for a
      *         predicate for a <code>userid</code>
-     * @throws NoSuchPredicateException
-     *             if no values are assigned to the <code>name</code>
-     * @throws NullPointerException
-     *             if <code>userPredicates</code> is null
+     * @throws NoSuchPredicateException if no values are assigned to the
+     *             <code>name</code>
+     * @throws NullPointerException if <code>userPredicates</code> is null
      */
     private ArrayList<String> loadValueList(String name, Map<String, Object> userPredicates, String userid, String botid)
             throws NoSuchPredicateException, NullPointerException
@@ -437,7 +414,7 @@ public class PredicateMaster
         if (userPredicates == null)
         {
             throw new NullPointerException("Cannot call loadValueList with null userPredicates!");
-        } 
+        }
 
         // Try to load the predicate as an indexed predicate.
         int index = 1;
@@ -445,11 +422,11 @@ public class PredicateMaster
         try
         {
             value = this.multiplexor.loadPredicate(name + '.' + index, userid, botid);
-        } 
+        }
         catch (NoSuchPredicateException e0)
         {
             throw new NoSuchPredicateException(name);
-        } 
+        }
 
         // If this succeeded, create the new values list in the predicates.
         ArrayList<String> values = createValueList(name, userPredicates);
@@ -465,25 +442,23 @@ public class PredicateMaster
             {
                 index++;
                 values.add(this.multiplexor.loadPredicate(name + '.' + index, userid, botid));
-            } 
-        } 
+            }
+        }
         catch (NoSuchPredicateException e1)
         {
             // Do nothing if the exception is thrown; that's fine (there is at
             // least one).
-        } 
+        }
 
         return values;
-    } 
+    }
 
     /**
      * Creates a value list for the given predicate <code>name</code> and
      * given <code>userid</code>.
      * 
-     * @param name
-     *            the predicate name
-     * @param userPredicates
-     *            the predicates map to which to add the list
+     * @param name the predicate name
+     * @param userPredicates the predicates map to which to add the list
      * @return the new list
      */
     private static ArrayList<String> createValueList(String name, Map<String, Object> userPredicates)
@@ -492,19 +467,16 @@ public class PredicateMaster
         ArrayList<String> values = new ArrayList<String>();
         userPredicates.put(name, values);
         return values;
-    } 
+    }
 
     /**
      * Returns a value list one way or another: first tries to get it from the
      * cache, then tries to load it from the ActiveMultiplexor; finally creates
      * a new one if the preceding failed.
      * 
-     * @param name
-     *            the predicate <code>name</code>
-     * @param userPredicates
-     *            the user predicates map
-     * @param userid
-     *            the userid for which to return the value list
+     * @param name the predicate <code>name</code>
+     * @param userPredicates the user predicates map
+     * @param userid the userid for which to return the value list
      * @param botid the botid for which to return the value list
      * @return a value list in <code>userPredicates</code> for
      *         <code>name</code> for <code>userid</code>
@@ -516,29 +488,28 @@ public class PredicateMaster
         try
         {
             values = getValueList(name, userPredicates);
-        } 
+        }
         catch (NoSuchPredicateException e0)
         {
             // No list found in cache; try load.
             try
             {
                 values = loadValueList(name, userPredicates, userid, botid);
-            } 
+            }
             catch (NoSuchPredicateException e1)
             {
                 // Still no list, so create new one.
                 values = createValueList(name, userPredicates);
-            } 
-        } 
+            }
+        }
         return values;
-    } 
+    }
 
     /**
      * Returns the best available default predicate <code>value</code> for a
      * predicate <code>name</code>
      * 
-     * @param name
-     *            the predicate name
+     * @param name the predicate name
      * @param botid
      * @return the best available default predicate
      */
@@ -553,22 +524,21 @@ public class PredicateMaster
             if (value != null)
             {
                 return value;
-            } 
-        } 
+            }
+        }
         // If not, return the global empty default.
         return this.predicateEmptyDefault;
-    } 
+    }
 
     /**
      * Returns the name or value of a predicate, depending on whether or not it
      * is &quot;return-name-when-set&quot;.
      * 
-     * @param name
-     *            the predicate name
-     * @param value
-     *            the predicate value
+     * @param name the predicate name
+     * @param value the predicate value
      * @param botid
-     * @return the appropriate result (name or value depending on predicate settings)
+     * @return the appropriate result (name or value depending on predicate
+     *         settings)
      */
     private String nameOrValue(String name, String value, String botid)
     {
@@ -581,17 +551,16 @@ public class PredicateMaster
             if (((PredicateInfo) predicatesInfo.get(name)).returnNameWhenSet)
             {
                 return name;
-            } 
-        } 
+            }
+        }
         return value;
-    } 
+    }
 
     /**
      * Attempts to dump a given number of predicate values from the cache,
      * starting with the oldest userid first.
      * 
-     * @param dumpCount
-     *            the number of values to try to dump
+     * @param dumpCount the number of values to try to dump
      * @return the number that were actually dumped
      */
     private int save(int dumpCount)
@@ -616,11 +585,11 @@ public class PredicateMaster
                     try
                     {
                         userid = (String) userids.next();
-                    } 
+                    }
                     catch (ConcurrentModificationException e)
                     {
                         throw new DeveloperError("Some problem with PredicateMaster design: ConcurrentModificationException in save() [1].", e);
-                    } 
+                    }
 
                     // Get the cached predicates for this user.
                     Map<String, Object> userPredicates = cache.get(userid);
@@ -640,8 +609,8 @@ public class PredicateMaster
                             {
                                 this.multiplexor.savePredicate(name, value, userid, botid);
                                 saveCount++;
-                            } 
-                        } 
+                            }
+                        }
                         // Save indexed predicates.
                         else if (valueObject instanceof ArrayList)
                         {
@@ -656,37 +625,37 @@ public class PredicateMaster
                                 String value = (String) values.get(index - 1);
                                 if (!value.equals(bestAvailableDefault(name, botid)))
                                 {
-                                    this.multiplexor.savePredicate(name + '.' + index, value, userid,
-                                            botid);
+                                    this.multiplexor.savePredicate(name + '.' + index, value, userid, botid);
                                     saveCount++;
-                                } 
-                            } 
-                        } 
+                                }
+                            }
+                        }
                         else
                         {
                             // This should never, ever happen.
-                            throw new DeveloperError(new IllegalObjectStateException("Something other than a String or ArrayList found in predicates!"));
-                        } 
-                    } 
+                            throw new DeveloperError(new IllegalObjectStateException(
+                                    "Something other than a String or ArrayList found in predicates!"));
+                        }
+                    }
 
                     // Remove the userid from the cache.
                     try
                     {
                         userids.remove();
-                    } 
+                    }
                     catch (ConcurrentModificationException e)
                     {
                         throw new DeveloperError("Some problem with PredicateMaster design: ConcurrentModificationException in save() [2].", e);
-                    } 
-                } 
-            } 
-        } 
+                    }
+                }
+            }
+        }
 
         cacheSize -= saveCount;
 
         // Return the cacheSize now.
         return cacheSize;
-    } 
+    }
 
     /**
      * Dumps the entire cache.
@@ -695,7 +664,7 @@ public class PredicateMaster
     {
         this.logger.log(Level.INFO, "PredicateMaster saving all cached predicates (" + cacheSize + ")");
         save(cacheSize);
-    } 
+    }
 
     /**
      * Checks the predicate cache, and saves out predicates if necessary.
@@ -712,7 +681,7 @@ public class PredicateMaster
             if (resultSize < this.cacheMin)
             {
                 this.cacheMin = (resultSize + this.cacheMin) / 2;
-            } 
-        } 
-    } 
+            }
+        }
+    }
 }

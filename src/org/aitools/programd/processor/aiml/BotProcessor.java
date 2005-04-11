@@ -25,25 +25,26 @@ public class BotProcessor extends AIMLProcessor
 {
     /**
      * Creates a new BotProcessor with the given Core.
+     * 
      * @param coreToUse the Core to use in creating the BotProcessor
      */
     public BotProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /** The label (as required by the registration scheme). */
     public static final String label = "bot";
 
     /**
      * Retrieves the value of the desired bot predicate.
+     * 
      * @param element the <code>bot</code> element
      * @param parser the parser that is at work
      * @return the result of processing the element
      */
     public String process(Element element, TemplateParser parser)
     {
-        return parser.getCore().getBots().getBot(parser.getBotID()).getPropertyValue(
-                element.getAttribute(NAME));
+        return parser.getCore().getBots().getBot(parser.getBotID()).getPropertyValue(element.getAttribute(NAME));
     }
 }

@@ -12,16 +12,19 @@ package org.aitools.programd.responder;
 import org.aitools.programd.Core;
 
 /**
- * A <code>ResponderManager</code> manages a corresponding <code>Responder</code>.
+ * A <code>ResponderManager</code> manages a corresponding
+ * <code>Responder</code>.
+ * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @version 4.5
  */
 public abstract class ResponderManager
 {
     protected Core core;
-    
+
     /**
      * Creates a new ResponderManager with the given Core.
+     * 
      * @param coreToUse
      */
     public ResponderManager(Core coreToUse)

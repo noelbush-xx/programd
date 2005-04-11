@@ -31,19 +31,20 @@ public class PropertyProcessor extends BotConfigurationElementProcessor
 
     /**
      * Creates a new PropertyProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public PropertyProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
-     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element,
+     *      BotsConfigurationFileParser)
      */
     public void process(Element element, BotsConfigurationFileParser parser)
     {
-        parser.getCurrentBot().setPropertyValue(element.getAttribute(NAME),
-                element.getAttribute(VALUE));
+        parser.getCurrentBot().setPropertyValue(element.getAttribute(NAME), element.getAttribute(VALUE));
     }
 }

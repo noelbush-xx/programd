@@ -25,6 +25,7 @@ public class StringTriple
 
     /**
      * Constructs a StringTriple from the given three strings.
+     * 
      * @param firstString the first string
      * @param secondString the second string
      * @param thirdString the third string
@@ -34,7 +35,7 @@ public class StringTriple
         this.first = firstString;
         this.second = secondString;
         this.third = thirdString;
-    } 
+    }
 
     /**
      * @return the first string
@@ -42,7 +43,7 @@ public class StringTriple
     public String getFirst()
     {
         return this.first;
-    } 
+    }
 
     /**
      * @return the second string
@@ -50,7 +51,7 @@ public class StringTriple
     public String getSecond()
     {
         return this.second;
-    } 
+    }
 
     /**
      * @return the third string
@@ -58,34 +59,37 @@ public class StringTriple
     public String getThird()
     {
         return this.third;
-    } 
+    }
 
     /**
      * Sets the text of the first string.
+     * 
      * @param text the text to set
      */
     public void setFirst(String text)
     {
         this.first = text;
-    } 
+    }
 
     /**
      * Sets the text of the second string.
+     * 
      * @param text the text to set
      */
     public void setSecond(String text)
     {
         this.second = text;
-    } 
+    }
 
     /**
      * Sets the text of the third string.
+     * 
      * @param text the text to set
      */
     public void setThird(String text)
     {
         this.third = text;
-    } 
+    }
 
     /**
      * @see java.lang.Object#equals(java.lang.Object)
@@ -96,12 +100,11 @@ public class StringTriple
         try
         {
             tuple = (StringTriple) object;
-        } 
+        }
         catch (ClassCastException e)
         {
             return false;
-        } 
-        return (tuple.getFirst().equals(this.first)) & (tuple.getSecond().equals(this.second))
-                & (tuple.getThird().equals(this.third));
-    } 
+        }
+        return (tuple.getFirst().equals(this.first)) & (tuple.getSecond().equals(this.second)) & (tuple.getThird().equals(this.third));
+    }
 }

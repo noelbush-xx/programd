@@ -20,28 +20,28 @@ package org.aitools.programd.processor;
 public class ProcessorException extends Exception
 {
     private String offendingInput;
-    
+
     private static final String DUE_TO = " due to: ";
-    
+
     /**
-     * @param message       the message describing the error
-     * @param exception     the exception that generated the error
+     * @param message the message describing the error
+     * @param exception the exception that generated the error
      */
     public ProcessorException(String message, Throwable exception)
     {
         super(message, exception);
-    } 
+    }
 
     /**
-     * @param message       the message describing the error
-     * @param exception     the exception that generated the error
-     * @param input         the offending input
+     * @param message the message describing the error
+     * @param exception the exception that generated the error
+     * @param input the offending input
      */
     public ProcessorException(String message, Throwable exception, String input)
     {
         super(message, exception);
         this.offendingInput = input;
-    } 
+    }
 
     /**
      * @return the offending input, if available, that generated this exception
@@ -50,7 +50,7 @@ public class ProcessorException extends Exception
     {
         return this.offendingInput;
     }
-    
+
     /**
      * @return whether this exception contains an offending input
      */
@@ -58,14 +58,13 @@ public class ProcessorException extends Exception
     {
         return (this.offendingInput != null);
     }
-    
+
     /**
-     * If an {@link #offendingInput} has been specified,
-     * this message will be the <code>ProcessorException</code>'s
-     * regular message, plus the string &quot; due to: &quot;
-     * followed by the offending input.
+     * If an {@link #offendingInput} has been specified, this message will be
+     * the <code>ProcessorException</code>'s regular message, plus the string
+     * &quot; due to: &quot; followed by the offending input.
      * 
-     * @return  a message including the offending input, if available
+     * @return a message including the offending input, if available
      */
     public String getExplanatoryMessage()
     {
@@ -75,5 +74,5 @@ public class ProcessorException extends Exception
         }
         return this.getMessage() + DUE_TO + this.offendingInput;
     }
-    
+
 }

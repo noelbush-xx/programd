@@ -31,18 +31,19 @@ public class SRProcessor extends AIMLProcessor
 
     /**
      * Creates a new SRProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public SRProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         return parser.shortcutTag(element, SRAIProcessor.label, StarProcessor.label, Node.ELEMENT_NODE);
-    } 
+    }
 }

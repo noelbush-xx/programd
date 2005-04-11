@@ -16,8 +16,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
-
 /**
  * Controls processes that run in separate threads and need to be shut down
  * before the bot exits.
@@ -30,10 +28,8 @@ public class ManagedProcesses
     /**
      * Adds a process to the registry and starts it.
      * 
-     * @param process
-     *            the process to add
-     * @param name
-     *            a name by which its thread will be identified
+     * @param process the process to add
+     * @param name a name by which its thread will be identified
      */
     public void start(ManagedProcess process, String name)
     {
@@ -45,7 +41,7 @@ public class ManagedProcesses
 
         // Start the thread.
         botProcess.start();
-    } 
+    }
 
     /**
      * Returns an iterator on the registry.
@@ -55,19 +51,18 @@ public class ManagedProcesses
     public Collection<ManagedProcess> values()
     {
         return this.registry.values();
-    } 
+    }
 
     /**
      * Returns a given process.
      * 
-     * @param name
-     *            the name of the process
+     * @param name the name of the process
      * @return the process assigned to the name
      */
     public ManagedProcess get(String name)
     {
         return this.registry.get(name);
-    } 
+    }
 
     /**
      * Shuts down all registered processes.
@@ -80,9 +75,9 @@ public class ManagedProcesses
         {
             logger.log(Level.FINE, "Shutting down " + process);
             process.shutdown();
-        } 
+        }
         logger.log(Level.INFO, "Finished shutting down ManagedProcesses.");
-    } 
+    }
 
     /**
      * Creates a ManagedProcesses object.
@@ -90,5 +85,5 @@ public class ManagedProcesses
     public ManagedProcesses()
     {
         // Nothing to do.
-    } 
+    }
 }

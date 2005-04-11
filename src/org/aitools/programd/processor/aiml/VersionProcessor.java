@@ -29,18 +29,19 @@ public class VersionProcessor extends AIMLProcessor
 
     /**
      * Creates a new VersionProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public VersionProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
     public String process(Element element, TemplateParser parser)
     {
         return Core.VERSION;
-    } 
+    }
 }

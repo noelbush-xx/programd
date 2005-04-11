@@ -21,7 +21,6 @@ import org.aitools.programd.processor.ProcessorException;
  * element.
  * 
  * @version 4.5
- * 
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -33,13 +32,14 @@ public class ThinkProcessor extends AIMLProcessor
 
     /**
      * Creates a new ThinkProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public ThinkProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
@@ -47,5 +47,5 @@ public class ThinkProcessor extends AIMLProcessor
     {
         parser.evaluate(element.getChildNodes());
         return EMPTY_STRING;
-    } 
+    }
 }

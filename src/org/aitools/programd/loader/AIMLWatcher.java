@@ -38,11 +38,12 @@ public class AIMLWatcher
 
     /** Used for storing information about file changes. */
     protected HashMap<String, Map<File, Long>> watchMaps = new HashMap<String, Map<File, Long>>();
-    
+
     private static final Logger logger = Logger.getLogger("programd");
 
     /**
      * Creates a new AIMLWatcher using the given Graphmaster
+     * 
      * @param graphmasterToUse the Graphmaster to use
      */
     public AIMLWatcher(Graphmaster graphmasterToUse)
@@ -74,10 +75,8 @@ public class AIMLWatcher
     /**
      * Reloads AIML from a given file.
      * 
-     * @param file
-     *            the file to reload
-     * @param botid
-     *            the bot for whom to reload the file
+     * @param file the file to reload
+     * @param botid the bot for whom to reload the file
      */
     protected void reload(File file, String botid)
     {
@@ -97,8 +96,7 @@ public class AIMLWatcher
     /**
      * Adds a file to the watchlist.
      * 
-     * @param path
-     *            the path to the file
+     * @param path the path to the file
      * @param botid
      */
     public void addWatchFile(String path, String botid)
@@ -123,6 +121,7 @@ public class AIMLWatcher
 
         /**
          * Creates a new CheckAIMLTask using the given watchmaps.
+         * 
          * @param watchMapsToUse the watchmaps to use
          */
         public CheckAIMLTask(HashMap<String, Map<File, Long>> watchMapsToUse)

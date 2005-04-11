@@ -19,6 +19,7 @@ public class DuplicateUserIDError extends Exception
 {
     /**
      * Creates a new DuplicateUserIDError.
+     * 
      * @param userid the userid that was duplicated
      */
     public DuplicateUserIDError(String userid)

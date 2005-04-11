@@ -42,13 +42,12 @@ public abstract class ObjectPool
         this.cleaner = new CleanUpThread(this, this.expirationTime);
         this.cleaner.setDaemon(true);
         this.cleaner.start();
-    } 
+    }
 
     /**
      * Checks in and unlocks an object.
      * 
-     * @param object
-     *            the object to check in and unlock.
+     * @param object the object to check in and unlock.
      */
     protected void checkIn(Object object)
     {
@@ -56,8 +55,8 @@ public abstract class ObjectPool
         {
             this.locked.remove(object);
             this.unlocked.put(object, new Long(System.currentTimeMillis()));
-        } 
-    } 
+        }
+    }
 
     /**
      * Checks out and locks the next available object in the pool.
@@ -83,19 +82,19 @@ public abstract class ObjectPool
                     this.unlocked.remove(object);
                     this.locked.put(object, new Long(now));
                     return (object);
-                } 
+                }
                 // (otherwise...)
                 this.unlocked.remove(object);
                 expire(object);
                 object = null;
-            } 
-        } 
+            }
+        }
 
         object = create();
 
         this.locked.put(object, new Long(now));
         return object;
-    } 
+    }
 
     /**
      * Cleans up the pool by checking for expired objects.
@@ -117,19 +116,21 @@ public abstract class ObjectPool
                 this.unlocked.remove(object);
                 expire(object);
                 object = null;
-            } 
-        } 
+            }
+        }
         System.gc();
-    } 
+    }
 
     /**
      * Creates a new object to store in the pool.
+     * 
      * @return the created object
      */
     protected abstract Object create();
 
     /**
      * Expires an object in the pool.
+     * 
      * @param object the object to expire
      */
     protected abstract void expire(Object object);
@@ -137,8 +138,7 @@ public abstract class ObjectPool
     /**
      * Validates an object in the pool.
      * 
-     * @param object
-     *            the object to validate
+     * @param object the object to validate
      * @return whether or not the object validates
      */
     protected abstract boolean validate(Object object);

@@ -21,8 +21,8 @@ import org.aitools.programd.util.UserError;
 
 /**
  * Contains common methods of template parsing and processing that are generic
- * for all responders that deal with markup output,
- * such as {@link HTMLResponder} ,{@link FlashResponder} , etc.
+ * for all responders that deal with markup output, such as
+ * {@link HTMLResponder} ,{@link FlashResponder} , etc.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
@@ -30,36 +30,38 @@ abstract public class AbstractXMLResponder implements Responder
 {
     /** The manager responsible for this responder. */
     protected AbstractXMLResponderManager manager;
-    
+
     /** The template to use. */
     protected Document template;
-    
+
     /** The original user input. */
     protected String userInput;
-    
+
     /** The individual user input sentences. */
     protected ArrayList<String> userInputSentences = new ArrayList<String>();
-    
+
     /** The individual bot replies. */
     protected ArrayList<String> botReplies = new ArrayList<String>();
-    
+
     /** The complete bot response. */
     protected String botResponse;
 
     /** The id of the bot that is handling this. */
     protected String botid;
-    
+
     /** The bot that is handling this. */
     protected Bot bot;
 
     /** The logger to use. */
     protected static Logger logger = Logger.getLogger("programd");
-    
+
     private static final String EMPTY_STRING = "";
-    
+
     /**
      * Initializes an AbstractXMLResponder.
-     * @param respnsibleManager the manager that is responsible for this responder
+     * 
+     * @param respnsibleManager the manager that is responsible for this
+     *            responder
      * @param botidToRespondFor the botid to respond for
      * @param templateName the template name to use
      */
@@ -74,7 +76,7 @@ abstract public class AbstractXMLResponder implements Responder
             initialize(respnsibleManager, botidToRespondFor, templateName);
         }
     }
-    
+
     private void initialize(AbstractXMLResponderManager respnsibleManager, String botidToRespondFor, String templateName)
     {
         this.botid = botidToRespondFor;
@@ -85,6 +87,7 @@ abstract public class AbstractXMLResponder implements Responder
 
     /**
      * Returns the input without any modification.
+     * 
      * @see org.aitools.programd.responder.Responder#preprocess(String)
      */
     public String preprocess(String input)
@@ -94,10 +97,11 @@ abstract public class AbstractXMLResponder implements Responder
     }
 
     /**
-     * Accumulates the reply in an internal ArrayList, and returns it
-     * appended to the <code>appendTo</code> argument.
+     * Accumulates the reply in an internal ArrayList, and returns it appended
+     * to the <code>appendTo</code> argument.
      * 
-     * @see org.aitools.programd.responder.Responder#append(String, String, String)
+     * @see org.aitools.programd.responder.Responder#append(String, String,
+     *      String)
      */
     public String append(String input, String reply, String appendTo)
     {
@@ -107,9 +111,9 @@ abstract public class AbstractXMLResponder implements Responder
     }
 
     /**
-     * Inserts the user input, bot replies and total response into the
-     * chat template, also processing any other special tags in the template,
-     * and returns the result.
+     * Inserts the user input, bot replies and total response into the chat
+     * template, also processing any other special tags in the template, and
+     * returns the result.
      * 
      * @see org.aitools.programd.responder.Responder#postprocess(java.lang.String)
      */
@@ -118,7 +122,7 @@ abstract public class AbstractXMLResponder implements Responder
         this.botResponse = finalBotResponse;
         return process(this.template);
     }
-    
+
     /**
      * @param templateToProcess the template to process
      * @return the result of processing the given template
@@ -134,33 +138,34 @@ abstract public class AbstractXMLResponder implements Responder
             throw new UserError("Processor exception occurred while processing XML template.", e);
         }
     }
+
     /**
      * @return the original user input.
-     * */
+     */
     public String getUserInput()
     {
         return this.userInput;
     }
-    
+
     /**
      * @return the individual user input sentences.
-     * */
+     */
     public ArrayList<String> getUserInputSentences()
     {
         return this.userInputSentences;
     }
-    
+
     /**
      * @return the individual bot replies.
-     * */
+     */
     public ArrayList<String> getBotReplies()
     {
         return this.botReplies;
     }
-    
+
     /**
      * @return the complete bot response.
-     * */
+     */
     public String getBotResponse()
     {
         return this.botResponse;
@@ -168,15 +173,15 @@ abstract public class AbstractXMLResponder implements Responder
 
     /**
      * @return the id of the bot that is handling this.
-     * */
+     */
     public String getBotID()
     {
         return this.botid;
     }
-    
+
     /**
      * @return the bot that is handling this.
-     * */
+     */
     public Bot getBot()
     {
         return this.bot;

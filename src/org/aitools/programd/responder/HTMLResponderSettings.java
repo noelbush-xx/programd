@@ -6,7 +6,7 @@
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 package org.aitools.programd.responder;
 
 import org.aitools.programd.util.Settings;
@@ -17,110 +17,112 @@ import org.aitools.programd.util.Settings;
 public class HTMLResponderSettings extends Settings
 {
     /**
-     * The html templates directory (relative to programd.home). 
+     * The html templates directory (relative to programd.home).
      */
     private String templateDirectory;
 
     /**
-     * The default chat template name.  
-     * Note: Any other *.html, *.htm or *.data files in
-           programd.responder.flash.template.directory will also be available if
-           you specify a template name (without suffixes) parameter in the user request.
+     * The default chat template name. Note: Any other *.html, *.htm or *.data
+     * files in programd.responder.flash.template.directory will also be
+     * available if you specify a template name (without suffixes) parameter in
+     * the user request.
      */
     private String chatDefaultTemplateName;
 
     /**
-     * Use user authentication? 
+     * Use user authentication?
      */
     private boolean useUserAuthentication;
 
     /**
-     * The registration form. 
+     * The registration form.
      */
     private String registerFormPath;
 
     /**
-     * The login form. 
+     * The login form.
      */
     private String loginFormPath;
 
     /**
-     * The change password form. 
+     * The change password form.
      */
     private String changePasswordFormPath;
 
     /**
-     * The access denied page. 
+     * The access denied page.
      */
     private String accessDeniedPagePath;
 
     /**
-     * The login success page. 
+     * The login success page.
      */
     private String loginSuccessPagePath;
 
     /**
-     * The login failed page. 
+     * The login failed page.
      */
     private String loginFailedPagePath;
 
     /**
-     * The logout success page. 
+     * The logout success page.
      */
     private String logoutSuccessPagePath;
 
     /**
-     * The password change succeeded page. 
+     * The password change succeeded page.
      */
     private String passwordChangeSucceededPagePath;
 
     /**
-     * The old password invalid page. 
+     * The old password invalid page.
      */
     private String oldPasswordInvalidPagePath;
 
     /**
-     * The username format invalid page. 
+     * The username format invalid page.
      */
     private String usernameFormatInvalidPagePath;
 
     /**
-     * The password format invalid page. 
+     * The password format invalid page.
      */
     private String passwordFormatInvalidPagePath;
 
     /**
-     * The password not confirmed page. 
+     * The password not confirmed page.
      */
     private String passwordNotConfirmedPagePath;
 
     /**
-     * The registration succeeded page. 
+     * The registration succeeded page.
      */
     private String registrationSucceededPagePath;
 
     /**
-     * Whether to enable authentication via the HTMLResponder 
+     * Whether to enable authentication via the HTMLResponder
      */
     private boolean authenticate;
 
     /**
-     * Whether to automatically generate a cookie for an unknown user 
-     * Only applicable if programd.httpserver.authenticate == true
+     * Whether to automatically generate a cookie for an unknown user Only
+     * applicable if programd.httpserver.authenticate == true
      */
     private boolean autocookie;
 
     /**
-     * Creates a <code>HTMLResponderSettings</code> using default property values.
+     * Creates a <code>HTMLResponderSettings</code> using default property
+     * values.
      */
     public HTMLResponderSettings()
     {
         super();
     }
-    
+
     /**
-     * Creates a <code>HTMLResponderSettings</code> with the (XML-formatted) properties
-     * located at the given path.
+     * Creates a <code>HTMLResponderSettings</code> with the (XML-formatted)
+     * properties located at the given path.
+     * 
      * @param propertiesPath the path to the configuration file
      */
     public HTMLResponderSettings(String propertiesPath)
@@ -129,15 +131,16 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-    * Initializes the Settings with values from properties, or defaults.
-    */
+     * Initializes the Settings with values from properties, or defaults.
+     */
     protected void initialize()
     {
         setTemplateDirectory(this.properties.getProperty("programd.responder.html.template.directory", "templates/html"));
 
         setChatDefaultTemplateName(this.properties.getProperty("programd.responder.html.chat.default-template.name", "chat"));
 
-        setUseUserAuthentication(Boolean.valueOf(this.properties.getProperty("programd.responder.html.use-user-authentication", "true")).booleanValue());
+        setUseUserAuthentication(Boolean.valueOf(this.properties.getProperty("programd.responder.html.use-user-authentication", "true"))
+                .booleanValue());
 
         setRegisterFormPath(this.properties.getProperty("programd.responder.html.register.form.path", "register.html"));
 
@@ -153,17 +156,23 @@ public class HTMLResponderSettings extends Settings
 
         setLogoutSuccessPagePath(this.properties.getProperty("programd.responder.html.logout-success.page.path", "logout-success.html"));
 
-        setPasswordChangeSucceededPagePath(this.properties.getProperty("programd.responder.html.password-change-succeeded.page.path", "password-change-succeeded.html"));
+        setPasswordChangeSucceededPagePath(this.properties.getProperty("programd.responder.html.password-change-succeeded.page.path",
+                "password-change-succeeded.html"));
 
-        setOldPasswordInvalidPagePath(this.properties.getProperty("programd.responder.html.old-password-invalid.page.path", "old-password-invalid.html"));
+        setOldPasswordInvalidPagePath(this.properties.getProperty("programd.responder.html.old-password-invalid.page.path",
+                "old-password-invalid.html"));
 
-        setUsernameFormatInvalidPagePath(this.properties.getProperty("programd.responder.html.username-format-invalid.page.path", "username-format-invalid.html"));
+        setUsernameFormatInvalidPagePath(this.properties.getProperty("programd.responder.html.username-format-invalid.page.path",
+                "username-format-invalid.html"));
 
-        setPasswordFormatInvalidPagePath(this.properties.getProperty("programd.responder.html.password-format-invalid.page.path", "password-format-invalid.html"));
+        setPasswordFormatInvalidPagePath(this.properties.getProperty("programd.responder.html.password-format-invalid.page.path",
+                "password-format-invalid.html"));
 
-        setPasswordNotConfirmedPagePath(this.properties.getProperty("programd.responder.html.password-not-confirmed.page.path", "password-not-confirmed.html"));
+        setPasswordNotConfirmedPagePath(this.properties.getProperty("programd.responder.html.password-not-confirmed.page.path",
+                "password-not-confirmed.html"));
 
-        setRegistrationSucceededPagePath(this.properties.getProperty("programd.responder.html.registration-succeeded.page.path", "registration-succeeded.html"));
+        setRegistrationSucceededPagePath(this.properties.getProperty("programd.responder.html.registration-succeeded.page.path",
+                "registration-succeeded.html"));
 
         setAuthenticate(Boolean.valueOf(this.properties.getProperty("programd.responder.html.authenticate", "true")).booleanValue());
 
@@ -316,7 +325,7 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param templateDirectoryToSet   the value to which to set templateDirectory
+     * @param templateDirectoryToSet the value to which to set templateDirectory
      */
     public void setTemplateDirectory(String templateDirectoryToSet)
     {
@@ -324,7 +333,8 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param chatDefaultTemplateNameToSet   the value to which to set chatDefaultTemplateName
+     * @param chatDefaultTemplateNameToSet the value to which to set
+     *            chatDefaultTemplateName
      */
     public void setChatDefaultTemplateName(String chatDefaultTemplateNameToSet)
     {
@@ -332,7 +342,8 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param useUserAuthenticationToSet   the value to which to set useUserAuthentication
+     * @param useUserAuthenticationToSet the value to which to set
+     *            useUserAuthentication
      */
     public void setUseUserAuthentication(boolean useUserAuthenticationToSet)
     {
@@ -340,7 +351,7 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param registerFormPathToSet   the value to which to set registerFormPath
+     * @param registerFormPathToSet the value to which to set registerFormPath
      */
     public void setRegisterFormPath(String registerFormPathToSet)
     {
@@ -348,7 +359,7 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param loginFormPathToSet   the value to which to set loginFormPath
+     * @param loginFormPathToSet the value to which to set loginFormPath
      */
     public void setLoginFormPath(String loginFormPathToSet)
     {
@@ -356,7 +367,8 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param changePasswordFormPathToSet   the value to which to set changePasswordFormPath
+     * @param changePasswordFormPathToSet the value to which to set
+     *            changePasswordFormPath
      */
     public void setChangePasswordFormPath(String changePasswordFormPathToSet)
     {
@@ -364,7 +376,8 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param accessDeniedPagePathToSet   the value to which to set accessDeniedPagePath
+     * @param accessDeniedPagePathToSet the value to which to set
+     *            accessDeniedPagePath
      */
     public void setAccessDeniedPagePath(String accessDeniedPagePathToSet)
     {
@@ -372,7 +385,8 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param loginSuccessPagePathToSet   the value to which to set loginSuccessPagePath
+     * @param loginSuccessPagePathToSet the value to which to set
+     *            loginSuccessPagePath
      */
     public void setLoginSuccessPagePath(String loginSuccessPagePathToSet)
     {
@@ -380,7 +394,8 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param loginFailedPagePathToSet   the value to which to set loginFailedPagePath
+     * @param loginFailedPagePathToSet the value to which to set
+     *            loginFailedPagePath
      */
     public void setLoginFailedPagePath(String loginFailedPagePathToSet)
     {
@@ -388,7 +403,8 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param logoutSuccessPagePathToSet   the value to which to set logoutSuccessPagePath
+     * @param logoutSuccessPagePathToSet the value to which to set
+     *            logoutSuccessPagePath
      */
     public void setLogoutSuccessPagePath(String logoutSuccessPagePathToSet)
     {
@@ -396,7 +412,8 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param passwordChangeSucceededPagePathToSet   the value to which to set passwordChangeSucceededPagePath
+     * @param passwordChangeSucceededPagePathToSet the value to which to set
+     *            passwordChangeSucceededPagePath
      */
     public void setPasswordChangeSucceededPagePath(String passwordChangeSucceededPagePathToSet)
     {
@@ -404,7 +421,8 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param oldPasswordInvalidPagePathToSet   the value to which to set oldPasswordInvalidPagePath
+     * @param oldPasswordInvalidPagePathToSet the value to which to set
+     *            oldPasswordInvalidPagePath
      */
     public void setOldPasswordInvalidPagePath(String oldPasswordInvalidPagePathToSet)
     {
@@ -412,7 +430,8 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param usernameFormatInvalidPagePathToSet   the value to which to set usernameFormatInvalidPagePath
+     * @param usernameFormatInvalidPagePathToSet the value to which to set
+     *            usernameFormatInvalidPagePath
      */
     public void setUsernameFormatInvalidPagePath(String usernameFormatInvalidPagePathToSet)
     {
@@ -420,7 +439,8 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param passwordFormatInvalidPagePathToSet   the value to which to set passwordFormatInvalidPagePath
+     * @param passwordFormatInvalidPagePathToSet the value to which to set
+     *            passwordFormatInvalidPagePath
      */
     public void setPasswordFormatInvalidPagePath(String passwordFormatInvalidPagePathToSet)
     {
@@ -428,7 +448,8 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param passwordNotConfirmedPagePathToSet   the value to which to set passwordNotConfirmedPagePath
+     * @param passwordNotConfirmedPagePathToSet the value to which to set
+     *            passwordNotConfirmedPagePath
      */
     public void setPasswordNotConfirmedPagePath(String passwordNotConfirmedPagePathToSet)
     {
@@ -436,7 +457,8 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param registrationSucceededPagePathToSet   the value to which to set registrationSucceededPagePath
+     * @param registrationSucceededPagePathToSet the value to which to set
+     *            registrationSucceededPagePath
      */
     public void setRegistrationSucceededPagePath(String registrationSucceededPagePathToSet)
     {
@@ -444,7 +466,7 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param authenticateToSet   the value to which to set authenticate
+     * @param authenticateToSet the value to which to set authenticate
      */
     public void setAuthenticate(boolean authenticateToSet)
     {
@@ -452,7 +474,7 @@ public class HTMLResponderSettings extends Settings
     }
 
     /**
-     * @param autocookieToSet   the value to which to set autocookie
+     * @param autocookieToSet the value to which to set autocookie
      */
     public void setAutocookie(boolean autocookieToSet)
     {

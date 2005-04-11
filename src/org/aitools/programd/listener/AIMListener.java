@@ -215,24 +215,21 @@ public class AIMListener extends Listener
     /**
      * Constructs a new <code>AIMListener</code> listener and sets up
      * parameters.
-     * @param coreToUse
-     *            the Core object in use
+     * 
+     * @param coreToUse the Core object in use
      * @param botToListenFor the bot for whom to listen
-     * @param parametersToUse
-     *            the parameters for the listener and their default values
-     * @throws InvalidListenerParameterException 
+     * @param parametersToUse the parameters for the listener and their default
+     *            values
+     * @throws InvalidListenerParameterException
      */
     public AIMListener(Core coreToUse, Bot botToListenFor, HashMap<String, String> parametersToUse) throws InvalidListenerParameterException
     {
         super(coreToUse, botToListenFor, parametersToUse);
-                /*new String[][] { { "owner", "" },
-                                                                         { "screenname", "" },
-                                                                         { "password", "" },
-                                                                         { "bgcolor", "White" },
-                                                                         { "fontface", "Verdana,Arial" },
-                                                                         { "fontsize", "2" },
-                                                                         { "fontcolor", "Black" },
-                                                                         { "buddies", "" } });*/
+        /*
+         * new String[][] { { "owner", "" }, { "screenname", "" }, { "password", "" }, {
+         * "bgcolor", "White" }, { "fontface", "Verdana,Arial" }, { "fontsize",
+         * "2" }, { "fontcolor", "Black" }, { "buddies", "" } });
+         */
         // Get parameters.
         this.owner = this.parameters.get("owner");
         this.screenname = this.parameters.get("screenname");
@@ -246,6 +243,7 @@ public class AIMListener extends Listener
 
     /**
      * Checks all the parameters for validity.
+     * 
      * @throws InvalidListenerParameterException if a parameter is invalid
      */
     public void checkParameters() throws InvalidListenerParameterException
@@ -372,7 +370,7 @@ public class AIMListener extends Listener
     /**
      * Sends the given frame.
      * 
-     * @param toBeSent  the frame to send
+     * @param toBeSent the frame to send
      * @throws IOException
      */
     public void frameSend(String toBeSent) throws IOException
@@ -389,8 +387,7 @@ public class AIMListener extends Listener
     /**
      * Processes data received from AIM.
      * 
-     * @param buffer
-     *            the data received from AIM
+     * @param buffer the data received from AIM
      */
     public void fromAIM(byte[] buffer)
     {
@@ -501,10 +498,8 @@ public class AIMListener extends Listener
     /**
      * Sends a message to a designated recipient.
      * 
-     * @param to
-     *            the recipient
-     * @param message
-     *            the message to send
+     * @param to the recipient
+     * @param message the message to send
      */
     public void sendMesg(String to, String message)
     {
@@ -527,10 +522,8 @@ public class AIMListener extends Listener
     /**
      * Sends a message to a chat room.
      * 
-     * @param roomID
-     *            the room identifier
-     * @param message
-     *            the message to send
+     * @param roomID the room identifier
+     * @param message the message to send
      */
     public void sendChatRoomMesg(String roomID, String message)
     {
@@ -550,8 +543,7 @@ public class AIMListener extends Listener
     /**
      * Escapes a string according to the requirements of AIM.
      * 
-     * @param text
-     *            the string to escape
+     * @param text the string to escape
      * @return the escaped string
      */
     private StringBuffer imEscape(String text)
@@ -585,8 +577,7 @@ public class AIMListener extends Listener
     /**
      * Sends an AIM message. Cannot send a message longer than 2030 bytes.
      * 
-     * @param buffer
-     *            the message
+     * @param buffer the message
      */
     public void toAIM(byte[] buffer)
     {
@@ -672,8 +663,8 @@ public class AIMListener extends Listener
 
     /**
      * Encodes a password according to AIM's stupid requirement.
-     * @param pass the password to encode
      * 
+     * @param pass the password to encode
      * @return the result of this operation.
      */
     public static String imRoast(String pass)
@@ -698,8 +689,7 @@ public class AIMListener extends Listener
     /**
      * Removes spaces from a string.
      * 
-     * @param in
-     *            the string from which to remove spaces
+     * @param in the string from which to remove spaces
      * @return the string without spaces
      */
     public static String imNormalize(String in)

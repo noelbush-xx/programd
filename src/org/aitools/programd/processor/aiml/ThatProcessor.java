@@ -31,16 +31,18 @@ public class ThatProcessor extends IndexedPredicateProcessor
 
     /**
      * Creates a new ThatProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public ThatProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * Generalizes the processing of a <code>that</code> element to a job for
      * {@link IndexedPredicateProcessor}.
+     * 
      * @param element the <code>bot</code> element
      * @param parser the parser that is at work
      * @return the result of processing the element

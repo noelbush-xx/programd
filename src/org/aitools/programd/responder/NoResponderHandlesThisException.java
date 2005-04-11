@@ -24,9 +24,10 @@ public class NoResponderHandlesThisException extends Exception
 {
     /** The request that could not be handled. */
     private ServletRequest request;
-    
+
     /**
      * Creates a new exception with the given request.
+     * 
      * @param unhandledRequest the request that could not be handled.
      */
     public NoResponderHandlesThisException(ServletRequest unhandledRequest)
@@ -34,15 +35,16 @@ public class NoResponderHandlesThisException extends Exception
         super();
         this.request = unhandledRequest;
     }
-    
+
     /**
-     * @return a message giving information about the request that could not be handled
+     * @return a message giving information about the request that could not be
+     *         handled
      */
     public String getMessage()
     {
         return "Request could not be handled: " + this.request.toString();
     }
-    
+
     /**
      * @return the request that could not be handled
      */

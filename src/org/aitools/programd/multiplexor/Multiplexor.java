@@ -90,7 +90,7 @@ abstract public class Multiplexor
 
     /** A quote mark. */
     protected static final String QUOTE_MARK = "\"";
-    
+
     /** The string &quot;{@value}&quot;. */
     protected static final String PROMPT = "> ";
 
@@ -119,25 +119,28 @@ abstract public class Multiplexor
     protected static String SECRET_KEY;
 
     // Class variables.
-    
+
     /** The Core that owns this Multiplexor. */
     protected Core core;
-    
+
     /** The Graphmaster in use by the Core. */
     protected Graphmaster graphmaster;
-    
+
     /** The PredicateMaster in use by the Core. */
     protected PredicateMaster predicateMaster;
-    
+
     /** The Bots object that belongs to the Core. */
     protected Bots bots;
-    
+
     /** The general log where we will record some events. */
     protected Logger logger;
-    
-    /** The match logger where information about individual matches can be recorded. */
+
+    /**
+     * The match logger where information about individual matches can be
+     * recorded.
+     */
     protected Logger matchLogger;
-    
+
     /** Whether or not to record match trace info. */
     protected boolean recordMatchTrace;
 
@@ -154,8 +157,8 @@ abstract public class Multiplexor
     protected float avgResponseTime = 0;
 
     /**
-     * Constructs the Multiplexor, using some values taken from the
-     * Core object's settings.  Note that the {@link #predicateMaster} is <i>not</i>
+     * Constructs the Multiplexor, using some values taken from the Core
+     * object's settings. Note that the {@link #predicateMaster} is <i>not</i>
      * initialized -- it must be {@link #attach}ed subsequently.
      * 
      * @param coreOwner the Core that owns this Multiplexor
@@ -171,9 +174,10 @@ abstract public class Multiplexor
         this.predicateEmptyDefault = coreSettings.getPredicateEmptyDefault();
         this.recordMatchTrace = coreSettings.recordMatchTrace();
     }
-    
+
     /**
-     * Attaches the given {@link org.aitools.programd.multiplexor.PredicateMaster PredicateMaster}
+     * Attaches the given
+     * {@link org.aitools.programd.multiplexor.PredicateMaster PredicateMaster}
      * to this <code>Multiplexor</code>.
      * 
      * @param predicateMasterToAttach
@@ -195,37 +199,33 @@ abstract public class Multiplexor
         try
         {
             keyFile.createNewFile();
-        } 
+        }
         catch (IOException e)
         {
             throw new UserError("Error creating secret key file.", e);
-        } 
+        }
         PrintWriter out;
         try
         {
             out = new PrintWriter(new FileOutputStream(keyFile));
-        } 
+        }
         catch (FileNotFoundException e)
         {
             throw new UserError("Error writing secret key file.", e);
-        } 
+        }
         out.print(SECRET_KEY);
         out.flush();
         out.close();
-    } 
+    }
 
     /**
      * Returns the response to a non-internal input, using a Responder.
      * 
-     * @param input
-     *            the &quot;non-internal&quot; (possibly multi-sentence,
+     * @param input the &quot;non-internal&quot; (possibly multi-sentence,
      *            non-substituted) input
-     * @param userid
-     *            the userid for whom the response will be generated
-     * @param botid
-     *            the botid from which to get the response
-     * @param responder
-     *            the Responder who cares about this response
+     * @param userid the userid for whom the response will be generated
+     * @param botid the botid from which to get the response
+     * @param responder the Responder who cares about this response
      * @return the response
      */
     public synchronized String getResponse(String input, String userid, String botid, Responder responder)
@@ -257,18 +257,15 @@ abstract public class Multiplexor
 
         // Return the response (may be just EMPTY_STRING!)
         return response;
-    } 
+    }
 
     /**
      * Returns the response to a non-internal input, without using a Responder.
      * 
-     * @param input
-     *            the &quot;non-internal&quot; (possibly multi-sentence,
+     * @param input the &quot;non-internal&quot; (possibly multi-sentence,
      *            non-substituted) input
-     * @param userid
-     *            the userid for whom the response will be generated
-     * @param botid
-     *            the botid from which to get the response
+     * @param userid the userid for whom the response will be generated
+     * @param botid the botid from which to get the response
      * @return the response
      */
     public synchronized String getResponse(String input, String userid, String botid)
@@ -289,12 +286,12 @@ abstract public class Multiplexor
         for (String sentence : sentenceList)
         {
             // Append the reply to the response.
-            response += (String)replies.next();
+            response += (String) replies.next();
         }
 
         // Return the response (may be just EMPTY_STRING!)
         return response;
-    } 
+    }
 
     /**
      * <p>
@@ -309,14 +306,10 @@ abstract public class Multiplexor
      * already been normalized.
      * </p>
      * 
-     * @param input
-     *            the input sentence
-     * @param userid
-     *            the userid requesting the response
-     * @param botid
-     *            the botid from which to get the response
-     * @param parser
-     *            the parser object to update when generating the response
+     * @param input the input sentence
+     * @param userid the userid requesting the response
+     * @param botid the botid from which to get the response
+     * @param parser the parser object to update when generating the response
      * @return the response
      */
     public String getInternalResponse(String input, String userid, String botid, TemplateParser parser)
@@ -331,26 +324,24 @@ abstract public class Multiplexor
         if (that.equals(EMPTY_STRING) || that.equals(this.predicateEmptyDefault))
         {
             that = ASTERISK;
-        } 
+        }
 
         String topic = InputNormalizer.patternFitIgnoreCase(this.predicateMaster.get(TOPIC, userid, botid));
         if (topic.equals(EMPTY_STRING) || topic.equals(this.predicateEmptyDefault))
         {
             topic = ASTERISK;
-        } 
+        }
 
         return getMatchResult(input, that, topic, userid, botid, parser);
-    } 
+    }
 
     /**
      * Gets the list of replies to some input sentences. Assumes that the
      * sentences have already had all necessary pre-processing and substitutions
      * performed.
      * 
-     * @param sentenceList
-     *            the input sentences
-     * @param userid
-     *            the userid requesting the replies
+     * @param sentenceList the input sentences
+     * @param userid the userid requesting the replies
      * @param botid
      * @return the list of replies to the input sentences
      */
@@ -369,13 +360,13 @@ abstract public class Multiplexor
         if (that.equals(EMPTY_STRING) || that.equals(this.predicateEmptyDefault))
         {
             that = ASTERISK;
-        } 
+        }
 
         String topic = InputNormalizer.patternFitIgnoreCase(this.predicateMaster.get(TOPIC, userid, botid));
         if (topic.equals(EMPTY_STRING) || topic.equals(this.predicateEmptyDefault))
         {
             topic = ASTERISK;
-        } 
+        }
 
         // We might use this to track matching statistics.
         long time = 0;
@@ -385,12 +376,12 @@ abstract public class Multiplexor
         {
             time = System.currentTimeMillis();
         }
-        
+
         // Get a reply for each sentence.
         for (String sentence : sentenceList)
         {
             replies.add(getReply(sentence, that, topic, userid, botid));
-        } 
+        }
 
         // Increment the (static) response count.
         this.responseCount++;
@@ -410,36 +401,27 @@ abstract public class Multiplexor
 
         // Invoke targeting if appropriate.
         /*
-        if (responseCount % TARGET_SKIP == 0)
-        {
-            if (USE_TARGETING)
-            {
-                Graphmaster.checkpoint();
-            } 
-        }
-        */
+         * if (responseCount % TARGET_SKIP == 0) { if (USE_TARGETING) {
+         * Graphmaster.checkpoint(); } }
+         */
 
         // If no replies, return an empty string.
         if (replies.size() == 0)
         {
             replies.add(EMPTY_STRING);
-        } 
+        }
         return replies;
-    } 
+    }
 
     /**
      * Gets a reply to an input. Assumes that the input has already had all
      * necessary substitutions and pre-processing performed, and that the input
      * is a single sentence.
      * 
-     * @param input
-     *            the input sentence
-     * @param that
-     *            the input that value
-     * @param topic
-     *            the input topic value
-     * @param userid
-     *            the userid requesting the reply
+     * @param input the input sentence
+     * @param that the input that value
+     * @param topic the input topic value
+     * @param userid the userid requesting the reply
      * @param botid
      * @return the reply to the input sentence
      */
@@ -453,23 +435,23 @@ abstract public class Multiplexor
         try
         {
             parser = new TemplateParser(input, userid, botid, this.core);
-        } 
+        }
         catch (TemplateParserException e)
         {
             throw new DeveloperError("Error occurred while creating new TemplateParser.", e);
-        } 
+        }
 
         String reply = getMatchResult(input, that, topic, userid, botid, parser);
         if (reply == null)
         {
             this.core.fail(new DeveloperError("getMatchReply generated a null reply!", new NullPointerException()));
-        } 
+        }
 
         // Push the reply onto the <that/> stack.
         this.predicateMaster.push(THAT, reply, userid, botid);
 
         return XMLKit.filterWhitespace(reply);
-    } 
+    }
 
     /**
      * Gets the match result from the Graphmaster.
@@ -482,15 +464,13 @@ abstract public class Multiplexor
      * @param parser the parser to use
      * @return the match result
      */
-    private String getMatchResult(String input, String that, String topic, String userid, String botid,
-            TemplateParser parser)
+    private String getMatchResult(String input, String that, String topic, String userid, String botid, TemplateParser parser)
     {
         // Always show the input path (in any case, if match trace is on).
         if (this.recordMatchTrace)
         {
-            this.matchLogger.log(Level.FINE, userid + PROMPT + input
-                    + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + that + SPACE + Graphmaster.PATH_SEPARATOR + SPACE
-                    + topic + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + botid);
+            this.matchLogger.log(Level.FINE, userid + PROMPT + input + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + that + SPACE
+                    + Graphmaster.PATH_SEPARATOR + SPACE + topic + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + botid);
         }
 
         Match match = null;
@@ -498,18 +478,18 @@ abstract public class Multiplexor
         try
         {
             match = this.graphmaster.match(InputNormalizer.patternFitIgnoreCase(input), that, topic, botid);
-        } 
+        }
         catch (NoMatchException e)
         {
             this.logger.log(Level.INFO, e.getMessage());
             return EMPTY_STRING;
-        } 
+        }
 
         if (match == null)
         {
             this.logger.log(Level.INFO, "No match found for input \"" + input + "\".");
             return EMPTY_STRING;
-        } 
+        }
 
         if (this.recordMatchTrace)
         {
@@ -521,19 +501,19 @@ abstract public class Multiplexor
         if (stars.size() > 0)
         {
             parser.setInputStars(stars);
-        } 
+        }
 
         stars = match.getThatStars();
         if (stars.size() > 0)
         {
             parser.setThatStars(stars);
-        } 
+        }
 
         stars = match.getTopicStars();
         if (stars.size() > 0)
         {
             parser.setTopicStars(stars);
-        } 
+        }
 
         String template = match.getTemplate();
         String reply = null;
@@ -541,7 +521,7 @@ abstract public class Multiplexor
         try
         {
             reply = parser.processResponse(template);
-        } 
+        }
         catch (ProcessorException e)
         {
             // Log the error message.
@@ -549,40 +529,28 @@ abstract public class Multiplexor
 
             // Set response to empty string.
             return EMPTY_STRING;
-        } 
+        }
 
         // Record activation, if targeting is in use.
         // Needs review in light of multi-bot update
         /*
-        if (USE_TARGETING)
-        {
-            Nodemapper matchNodemapper = match.getNodemapper();
-            if (matchNodemapper == null)
-            {
-                Trace.devinfo("Match nodemapper is null!");
-            } 
-            else
-            {
-                Set<Object> activations = (Set<Object>) matchNodemapper.get(Graphmaster.ACTIVATIONS);
-                if (activations == null)
-                {
-                    activations = new HashSet<Object>();
-                } 
-                String path = match.getPath() + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + inputIgnoreCase + SPACE
-                        + Graphmaster.PATH_SEPARATOR + SPACE + that + SPACE + Graphmaster.PATH_SEPARATOR + SPACE
-                        + topic + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + botid + SPACE
-                        + Graphmaster.PATH_SEPARATOR + SPACE + reply;
-                if (!activations.contains(path))
-                {
-                    activations.add(path);
-                    match.getNodemapper().put(Graphmaster.ACTIVATIONS, activations);
-                    Graphmaster.activatedNode(match.getNodemapper());
-                } 
-            } 
-        }
-        */
+         * if (USE_TARGETING) { Nodemapper matchNodemapper =
+         * match.getNodemapper(); if (matchNodemapper == null) {
+         * Trace.devinfo("Match nodemapper is null!"); } else { Set<Object>
+         * activations = (Set<Object>)
+         * matchNodemapper.get(Graphmaster.ACTIVATIONS); if (activations ==
+         * null) { activations = new HashSet<Object>(); } String path =
+         * match.getPath() + SPACE + Graphmaster.PATH_SEPARATOR + SPACE +
+         * inputIgnoreCase + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + that +
+         * SPACE + Graphmaster.PATH_SEPARATOR + SPACE + topic + SPACE +
+         * Graphmaster.PATH_SEPARATOR + SPACE + botid + SPACE +
+         * Graphmaster.PATH_SEPARATOR + SPACE + reply; if
+         * (!activations.contains(path)) { activations.add(path);
+         * match.getNodemapper().put(Graphmaster.ACTIVATIONS, activations);
+         * Graphmaster.activatedNode(match.getNodemapper()); } } }
+         */
         return reply;
-    } 
+    }
 
     /**
      * Returns the average response time.
@@ -592,7 +560,7 @@ abstract public class Multiplexor
     public float averageResponseTime()
     {
         return this.avgResponseTime;
-    } 
+    }
 
     /**
      * Returns the number of queries per hour.
@@ -602,7 +570,7 @@ abstract public class Multiplexor
     public float queriesPerHour()
     {
         return this.responseCount / ((System.currentTimeMillis() - this.startTime) / 3600000.00f);
-    } 
+    }
 
     /**
      * Saves a predicate for a given <code>userid</code>. This only applies
@@ -610,12 +578,9 @@ abstract public class Multiplexor
      * nothing).
      * 
      * @since 4.1.4
-     * @param name
-     *            predicate name
-     * @param value
-     *            predicate value
-     * @param userid
-     *            user identifier
+     * @param name predicate name
+     * @param value predicate value
+     * @param userid user identifier
      * @param botid
      */
     abstract public void savePredicate(String name, String value, String userid, String botid);
@@ -626,14 +591,11 @@ abstract public class Multiplexor
      * just do nothing).
      * 
      * @since 4.1.4
-     * @param name
-     *            predicate name
-     * @param userid
-     *            user identifier
+     * @param name predicate name
+     * @param userid user identifier
      * @param botid
      * @return the predicate value
-     * @throws NoSuchPredicateException
-     *             if there is no predicate with this name
+     * @throws NoSuchPredicateException if there is no predicate with this name
      */
     abstract public String loadPredicate(String name, String userid, String botid) throws NoSuchPredicateException;
 
@@ -641,13 +603,10 @@ abstract public class Multiplexor
      * Checks whether a given userid and password combination is valid.
      * Multiplexors for which this makes no sense should just return true.
      * 
-     * @param userid
-     *            the userid to check
+     * @param userid the userid to check
      * @param botid
-     * @param password
-     *            the password to check
-     * @param secretKey
-     *            the secret key that should authenticate this request
+     * @param password the password to check
+     * @param secretKey the secret key that should authenticate this request
      * @return whether the userid and password combination is valid
      */
     abstract public boolean checkUser(String userid, String password, String secretKey, String botid);
@@ -656,14 +615,12 @@ abstract public class Multiplexor
      * Creates a new user entry, given a userid and password. Multiplexors for
      * which this makes no sense should just return true.
      * 
-     * @param userid
-     *            the userid to use
+     * @param userid the userid to use
      * @param botid
-     * @param password
-     *            the password to assign
-     * @param secretKey
-     *            the secret key that should authenticate this request
-     * @throws DuplicateUserIDError if the given userid was already found in the system
+     * @param password the password to assign
+     * @param secretKey the secret key that should authenticate this request
+     * @throws DuplicateUserIDError if the given userid was already found in the
+     *             system
      */
     abstract public void createUser(String userid, String password, String secretKey, String botid) throws DuplicateUserIDError;
 
@@ -671,13 +628,10 @@ abstract public class Multiplexor
      * Changes the password associated with a userid. Multiplexors for which
      * this makes no sense should just return true.
      * 
-     * @param userid
-     *            the userid
+     * @param userid the userid
      * @param botid
-     * @param password
-     *            the new password
-     * @param secretKey
-     *            the secret key that should authenticate this request
+     * @param password the new password
+     * @param secretKey the secret key that should authenticate this request
      * @return whether the change was successful
      */
     abstract public boolean changePassword(String userid, String password, String secretKey, String botid);
@@ -685,8 +639,8 @@ abstract public class Multiplexor
     /**
      * Returns a count of known userids. This may be defined differently for
      * different multiplexors.
-     * @param botid the botid for which we want a count of known userids
      * 
+     * @param botid the botid for which we want a count of known userids
      * @return a count of known userids
      */
     abstract public int useridCount(String botid);

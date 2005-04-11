@@ -35,13 +35,14 @@ public class SetProcessor extends AIMLProcessor
 
     /**
      * Creates a new SetProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public SetProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
@@ -49,7 +50,7 @@ public class SetProcessor extends AIMLProcessor
     {
         // Return the result of setting this predicate value (should check
         // its type, but not yet implemented).
-        return parser.getCore().getPredicateMaster().set(element.getAttribute(NAME), parser.evaluate(element
-                .getChildNodes()), parser.getUserID(), parser.getBotID());
+        return parser.getCore().getPredicateMaster().set(element.getAttribute(NAME), parser.evaluate(element.getChildNodes()), parser.getUserID(),
+                parser.getBotID());
     }
 }

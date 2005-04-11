@@ -81,29 +81,29 @@ public class Shell extends Thread
             "/who              - prints the id of the current bot", "/files            - lists the files loaded by the current bot",
             "/roll chatlog     - rolls over chat log", "/roll targets     - rolls over saved targeting data",
             "/commandables     - lists available \"shell commandables\" (such as listeners)" };
-    
+
     private static final String EMPTY_STRING = "";
 
     // Instance variables.
 
     private static final String RBRACKET_SPACE = "] ";
-    
+
     private SimpleDateFormat timestampFormat;
-    
+
     private boolean showTimestamp;
-    
+
     /** The Core to which this Shell is attached. */
     private Core core;
-    
+
     /** The console settings to use. */
     private ConsoleSettings consoleSettings;
-    
+
     /** The Graphmaster in use by the attached Core. */
     private Graphmaster graphmaster;
-    
+
     /** The PredicateMaster in use by the attached Core. */
     private PredicateMaster predicateMaster;
-    
+
     /** The Bots object in use by the attached Core. */
     private Bots bots;
 
@@ -133,7 +133,7 @@ public class Shell extends Thread
 
     /** The host name. */
     private String hostname;
-    
+
     /**
      * An indicator used to keep track of whether we're midline in a console
      * output (i.e., showing a prompt).
@@ -143,7 +143,9 @@ public class Shell extends Thread
     /**
      * A <code>Shell</code> with default input and output streams (
      * <code>System.in</code> and <code>System.out</code>).
-     * @param consoleSettingsToUse the object containing the console settings to use
+     * 
+     * @param consoleSettingsToUse the object containing the console settings to
+     *            use
      */
     public Shell(ConsoleSettings consoleSettingsToUse)
     {
@@ -155,14 +157,12 @@ public class Shell extends Thread
 
     /**
      * A <code>Shell</code> with custom input and output streams.
-     * @param consoleSettingsToUse 
      * 
-     * @param in
-     *            the input stream
+     * @param consoleSettingsToUse
+     * @param in the input stream
      * @param out the output stream
      * @param err the error stream
-     * @param prompt
-     *            the prompt output stream
+     * @param prompt the prompt output stream
      */
     public Shell(ConsoleSettings consoleSettingsToUse, InputStream in, PrintStream out, PrintStream err, PrintStream prompt)
     {
@@ -173,10 +173,12 @@ public class Shell extends Thread
         this.consolePrompt = prompt;
         initialize(consoleSettingsToUse);
     }
-    
+
     /**
      * Initialization common to both constructors.
-     * @param consoleSettingsToUse the object containing the console settings to use
+     * 
+     * @param consoleSettingsToUse the object containing the console settings to
+     *            use
      */
     private void initialize(ConsoleSettings consoleSettingsToUse)
     {
@@ -193,8 +195,7 @@ public class Shell extends Thread
             this.showTimestamp = false;
         }
     }
-    
-    
+
     /**
      * Attach this shell to the given core.
      * 
@@ -210,7 +211,7 @@ public class Shell extends Thread
         this.clientNamePredicate = this.core.getSettings().getClientNamePredicate();
         this.hostname = this.core.getHostname();
     }
-    
+
     /**
      * Runs the shell.
      */
@@ -220,7 +221,7 @@ public class Shell extends Thread
         {
             throw new DeveloperError("Must attach the shell to a Core before calling run()!", new NullPointerException());
         }
-        
+
         showMessage("Interactive shell: type \"" + EXIT + "\" to shut down; \"" + HELP + "\" for help.");
         Bot bot = this.bots.getABot();
         if (bot == null)
@@ -248,8 +249,8 @@ public class Shell extends Thread
                 /*
                  * A null line probably means that the shell is being mistakenly
                  * run in interactive mode when in fact there is no System.in
-                 * available. In this case, sleep for 100 days :-) and wait to be
-                 * interrupted.
+                 * available. In this case, sleep for 100 days :-) and wait to
+                 * be interrupted.
                  */
                 while (true)
                 {
@@ -339,7 +340,7 @@ public class Shell extends Thread
             }
         }
     }
-    
+
     /**
      * Displays a prompt.
      */
@@ -356,15 +357,14 @@ public class Shell extends Thread
      * Displays a line for an interactive console, including the prompt.
      * </p>
      * 
-     * @param preprompt
-     *            the text to show before the prompt
+     * @param preprompt the text to show before the prompt
      */
     private void promptConsole(String preprompt)
     {
         if (this.midLine)
         {
             this.consolePrompt.println();
-        } 
+        }
         this.consolePrompt.print(timestamp() + preprompt + PROMPT);
         this.midLine = true;
     }
@@ -374,8 +374,7 @@ public class Shell extends Thread
      * Displays a regular message (no prompt) in an interactive console.
      * </p>
      * 
-     * @param message
-     *            the message to display
+     * @param message the message to display
      */
     private void showMessage(String message)
     {
@@ -384,11 +383,11 @@ public class Shell extends Thread
 
     /**
      * <p>
-     * Displays a multi-line regular message (no prompt) in an interactive console.
+     * Displays a multi-line regular message (no prompt) in an interactive
+     * console.
      * </p>
      * 
-     * @param message
-     *            the message to display
+     * @param message the message to display
      */
     private void showMessage(String[] message)
     {
@@ -400,11 +399,11 @@ public class Shell extends Thread
 
     /**
      * <p>
-     * Displays a multi-line error message (no prompt) in an interactive console.
+     * Displays a multi-line error message (no prompt) in an interactive
+     * console.
      * </p>
      * 
-     * @param message
-     *            the message to display
+     * @param message the message to display
      */
     private void showError(String[] message)
     {
@@ -419,8 +418,7 @@ public class Shell extends Thread
      * Displays an error message (no prompt) in an interactive console.
      * </p>
      * 
-     * @param message
-     *            the message to display
+     * @param message the message to display
      */
     private void showError(String message)
     {
@@ -432,10 +430,8 @@ public class Shell extends Thread
      * Displays a message (after a prompt) in an interactive console.
      * </p>
      * 
-     * @param preprompt
-     *            the text to show before the prompt
-     * @param message
-     *            the multi-line message to display
+     * @param preprompt the text to show before the prompt
+     * @param message the multi-line message to display
      */
     private void showConsole(String preprompt, String message)
     {
@@ -447,10 +443,8 @@ public class Shell extends Thread
      * Displays a multi-line message (after a prompt) in an interactive console.
      * </p>
      * 
-     * @param preprompt
-     *            the text to show before the prompt
-     * @param message
-     *            the multi-line message to display
+     * @param preprompt the text to show before the prompt
+     * @param message the multi-line message to display
      */
     private void showConsole(String preprompt, String[] message)
     {
@@ -463,43 +457,42 @@ public class Shell extends Thread
     /**
      * Print a message line of standard output to the console.
      * 
-     * @param message
-     *            the message to print
+     * @param message the message to print
      */
     public void printlnOut(String message)
     {
         if (this.midLine)
         {
             this.consoleOut.println();
-        } 
+        }
         this.consoleOut.println(timestamp() + message);
         this.midLine = false;
-    } 
+    }
 
     /**
-     * Print a message line of error to the console.
-     * TODO: Make the formatting different here.
+     * Print a message line of error to the console. TODO: Make the formatting
+     * different here.
      * 
-     * @param message
-     *            the message to print
+     * @param message the message to print
      */
     public void printlnErr(String message)
     {
         if (this.midLine)
         {
             this.consoleErr.println();
-        } 
+        }
         this.consoleErr.println(timestamp() + message);
         this.midLine = false;
-    } 
+    }
 
     /**
-     * Tells the Shell that something else was printed to the console; not midLine anymore.
+     * Tells the Shell that something else was printed to the console; not
+     * midLine anymore.
      */
     public void gotLine()
     {
         this.midLine = false;
-    } 
+    }
 
     /**
      * Prints an exit message.
@@ -525,10 +518,10 @@ public class Shell extends Thread
         if (this.showTimestamp)
         {
             return '[' + this.timestampFormat.format(new Date()) + RBRACKET_SPACE;
-        } 
+        }
         // (otherwise...)
         return EMPTY_STRING;
-    } 
+    }
 
     /**
      * Prints help text.
@@ -540,6 +533,7 @@ public class Shell extends Thread
 
     /**
      * Loads a given file for a given bot.
+     * 
      * @param line the line that contains the name of the file to load
      * @param botidToUse the id of the bot for whom to load the file
      */
@@ -565,12 +559,14 @@ public class Shell extends Thread
                 return;
             }
             this.graphmaster.load(path, botidToUse);
-            Logger.getLogger("programd").log(Level.INFO, this.graphmaster.getTotalCategories() - categories + " categories loaded from \"" + path + "\".");
+            Logger.getLogger("programd").log(Level.INFO,
+                    this.graphmaster.getTotalCategories() - categories + " categories loaded from \"" + path + "\".");
         }
     }
 
     /**
      * Unloads a given file for a given bot.
+     * 
      * @param line the line in which to find the file name to unload
      */
     private void unload(String line)
@@ -602,6 +598,7 @@ public class Shell extends Thread
 
     /**
      * Switches conversation to a given botid.
+     * 
      * @param line the line in which to find the botid to which to switch
      */
     private void talkto(String line)
@@ -634,8 +631,8 @@ public class Shell extends Thread
         this.botName = this.bots.getBot(newBotID).getPropertyValue(this.botNamePredicate);
         showMessage("Switched to bot \"" + newBotID + "\" (name: \"" + this.botName + "\").");
         // Send the connect string and print the first response.
-        showConsole(this.botName, XMLKit.breakLinesAtTags(this.core.getResponse(this.core.getSettings().getConnectString(),
-                this.hostname, this.botid, new TextResponder())));
+        showConsole(this.botName, XMLKit.breakLinesAtTags(this.core.getResponse(this.core.getSettings().getConnectString(), this.hostname,
+                this.botid, new TextResponder())));
     }
 
     /**
@@ -682,7 +679,7 @@ public class Shell extends Thread
         {
             if (process instanceof ShellCommandable)
             {
-                ShellCommandable commandable = (ShellCommandable)process;
+                ShellCommandable commandable = (ShellCommandable) process;
                 showMessage("/" + commandable.getShellID() + " - " + commandable.getShellDescription());
                 commandableCount++;
             }
@@ -701,12 +698,9 @@ public class Shell extends Thread
     /**
      * Sends a command to a shell commandable, if possible.
      * 
-     * @param command
-     *            the command (including the shell commandable name)
-     * @throws NoCommandException
-     *             if no command is given
-     * @throws NoSuchCommandableException
-     *             if an invalid commandable is specified
+     * @param command the command (including the shell commandable name)
+     * @throws NoCommandException if no command is given
+     * @throws NoSuchCommandableException if an invalid commandable is specified
      */
     private void sendCommand(String command) throws NoCommandException, NoSuchCommandableException
     {
@@ -723,12 +717,12 @@ public class Shell extends Thread
 
         String commandableID = command.substring(1, space);
         ShellCommandable commandable = null;
-        
+
         for (ManagedProcess process : this.core.getManagedProcesses().values())
         {
             if (process instanceof ShellCommandable)
             {
-                ShellCommandable candidate = (ShellCommandable)process;
+                ShellCommandable candidate = (ShellCommandable) process;
                 if (commandableID.equals(candidate.getShellID()))
                 {
                     commandable = candidate;

@@ -41,13 +41,14 @@ public class Person2Processor extends AIMLProcessor
 
     /**
      * Creates a new Person2Processor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public Person2Processor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
@@ -57,41 +58,37 @@ public class Person2Processor extends AIMLProcessor
         {
             // Return the processed contents of the element, properly
             // substituted.
-            return applySubstitutions(parser.evaluate(element.getChildNodes()), parser
-                    .getBotID());
-        } 
+            return applySubstitutions(parser.evaluate(element.getChildNodes()), parser.getBotID());
+        }
         return parser.shortcutTag(element, label, StarProcessor.label, Node.ELEMENT_NODE);
-    } 
+    }
 
     /**
      * Applies substitutions as defined in the {@link #substitutionMap} .
      * Comparisons are case-insensitive.
      * 
-     * @param input
-     *            the input on which to perform substitutions
+     * @param input the input on which to perform substitutions
      * @param botid the botid whose substitutions should be applied
      * @return the input with substitutions performed
      */
     public String applySubstitutions(String input, String botid)
     {
         return Substituter.applySubstitutions(this.core.getBots().getBot(botid).getPerson2SubstitutionsMap(), input);
-    } 
+    }
 
     /**
      * Adds a substitution to the substitutions map. The <code>find</code>
      * parameter is stored in uppercase, to do case-insensitive comparisons. The
      * <code>replace</code> parameter is stored as is.
      * 
-     * @param find
-     *            the string to find in the input
-     * @param replace
-     *            the string with which to replace the found string
+     * @param find the string to find in the input
+     * @param replace the string with which to replace the found string
      */
     public static void addSubstitution(String find, String replace)
     {
         if (find != null && replace != null)
         {
             substitutionMap.put(find.toUpperCase(), replace);
-        } 
-    } 
+        }
+    }
 }

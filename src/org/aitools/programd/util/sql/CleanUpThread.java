@@ -18,17 +18,16 @@ class CleanUpThread extends Thread
      * Creates a new <code>CleanUpThread</code> for a given object pool and
      * with a given sleep time.
      * 
-     * @param poolToUse
-     *            the object pool to clean up
-     * @param sleepTimeToUse
-     *            the period (in milliseconds) to wait before cleaning up
+     * @param poolToUse the object pool to clean up
+     * @param sleepTimeToUse the period (in milliseconds) to wait before
+     *            cleaning up
      */
     public CleanUpThread(ObjectPool poolToUse, long sleepTimeToUse)
     {
         super("Database Pool Cleanup Thread");
         this.pool = poolToUse;
         this.sleepTime = sleepTimeToUse;
-    } 
+    }
 
     /**
      * Cleans up the object pool at the period determined by {@link #sleepTime} .
@@ -40,12 +39,12 @@ class CleanUpThread extends Thread
             try
             {
                 sleep(this.sleepTime);
-            } 
+            }
             catch (InterruptedException e)
             {
                 // ignore it
-            } 
+            }
             this.pool.cleanUp();
-        } 
-    } 
+        }
+    }
 }

@@ -35,12 +35,12 @@ public class Bots
     public Bots()
     {
         this.botList = Collections.checkedMap(new HashMap<String, Bot>(), String.class, Bot.class);
-    } 
+    }
 
     /**
      * Returns whether the loaded bots include one with the given id.
-     * @param botid the botid to look for
      * 
+     * @param botid the botid to look for
      * @return whether the loaded bots include one with the given id
      */
     public boolean include(String botid)
@@ -52,21 +52,18 @@ public class Bots
      * Adds the given bot with the given id. No check is made to see whether a
      * bot is already loaded with the given id!
      * 
-     * @param botid
-     *            the id to use for the bot
-     * @param bot
-     *            the bot to add
+     * @param botid the id to use for the bot
+     * @param bot the bot to add
      */
     public void addBot(String botid, Bot bot)
     {
         this.botList.put(botid, bot);
-    } 
+    }
 
     /**
      * Returns the bot with the given id.
      * 
-     * @param botid
-     *            the id of the bot to return
+     * @param botid the id of the bot to return
      * @return the bot with the given id
      */
     public Bot getBot(String botid)
@@ -75,17 +72,17 @@ public class Bots
         try
         {
             wanted = this.botList.get(botid);
-        } 
+        }
         catch (ClassCastException e)
         {
             throw new DeveloperError("Something other than a Bot stored in Bots!", e);
-        } 
+        }
         if (wanted == null)
         {
             throw new DeveloperError("Tried to get unknown bot \"" + botid + "\".", new NullPointerException());
-        } 
+        }
         return wanted;
-    } 
+    }
 
     /**
      * Returns any bot (probably the last one loaded).
@@ -97,10 +94,10 @@ public class Bots
         if (this.botList.size() > 0)
         {
             return this.botList.values().iterator().next();
-        } 
+        }
         // (otherwise...)
         throw new NullPointerException("No bots!");
-    } 
+    }
 
     /**
      * Returns the number of bots (the size)
@@ -110,7 +107,7 @@ public class Bots
     public int getCount()
     {
         return this.botList.size();
-    } 
+    }
 
     /**
      * Returns a nicely-formatted list of the bots.
@@ -122,18 +119,18 @@ public class Bots
         if (this.botList.size() == 0)
         {
             return "";
-        } 
+        }
         StringBuffer result = new StringBuffer();
         for (String botName : this.botList.keySet())
         {
             if (result.length() > 0)
             {
                 result.append(' ');
-            } 
+            }
             result.append(botName);
-        } 
+        }
         return result.toString();
-    } 
+    }
 
     /**
      * Returns the IDs (the key set)
@@ -143,7 +140,7 @@ public class Bots
     public Set<String> getIDs()
     {
         return this.botList.keySet();
-    } 
+    }
 
     /**
      * Returns an iterator over the key set
@@ -153,7 +150,7 @@ public class Bots
     public Iterator keysIterator()
     {
         return this.botList.keySet().iterator();
-    } 
+    }
 
     /**
      * Returns whether any bots have loaded the given file(name).
@@ -168,8 +165,8 @@ public class Bots
             if (bot.hasLoaded(filename))
             {
                 return true;
-            } 
-        } 
+            }
+        }
         return false;
-    } 
+    }
 }

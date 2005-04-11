@@ -14,7 +14,8 @@ import javax.servlet.ServletRequest;
 import org.aitools.programd.server.ServletRequestTransactionEnvelope;
 
 /**
- * A <code>ServletRequestResponderManager</code> manages a <code>ServletRequestResponder</code>.
+ * A <code>ServletRequestResponderManager</code> manages a
+ * <code>ServletRequestResponder</code>.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.5
@@ -23,14 +24,16 @@ abstract public interface ServletRequestResponderManager
 {
     /**
      * Indicates whether the Responder can handle the given request object.
+     * 
      * @param request the request object to test
      * @return whether the given request can be handled by this responder
      */
     abstract public boolean responderHandles(ServletRequest request);
-    
+
     /**
      * Performs whatever processing is necessary from the enclosed request,
      * modifying the response as needed, and returns the bot response.
+     * 
      * @param envelope the envelope to process
      * @return the bot response
      */

@@ -21,12 +21,16 @@ import java.util.logging.LogRecord;
  */
 public class StdErrFilter implements StdFilter
 {
-    /** For comparison, the value of {@link java.util.logging.Level#WARNING Level.WARNING}. */
+    /**
+     * For comparison, the value of
+     * {@link java.util.logging.Level#WARNING Level.WARNING}.
+     */
     private static int warningLevel = Level.WARNING.intValue();
-    
+
     /**
      * @see java.util.logging.Filter#isLoggable(java.util.logging.LogRecord)
-     * @return <code>true</code> if the record level is WARNING or greater, false otherwise
+     * @return <code>true</code> if the record level is WARNING or greater,
+     *         false otherwise
      */
     public boolean isLoggable(LogRecord record)
     {

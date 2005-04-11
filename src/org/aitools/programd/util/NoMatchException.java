@@ -21,13 +21,12 @@ public class NoMatchException extends Exception
     /**
      * Constructs a new NoMatchException for the given path.
      * 
-     * @param pathToUse
-     *            the path for which there was no match
+     * @param pathToUse the path for which there was no match
      */
     public NoMatchException(String pathToUse)
     {
         this.path = pathToUse;
-    } 
+    }
 
     /**
      * @see java.lang.Throwable#getMessage()
@@ -35,5 +34,5 @@ public class NoMatchException extends Exception
     public String getMessage()
     {
         return "No match found for path \"" + this.path + "\".";
-    } 
+    }
 }

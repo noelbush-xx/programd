@@ -26,7 +26,7 @@ public class WebServer
 {
     /** The Core to which this web server will be attached. */
     private Core core;
-    
+
     private HTTPServer httpServer;
 
     /** The Console that will (may) be created for this web server. */
@@ -35,8 +35,8 @@ public class WebServer
     /**
      * A WebServer without a console.
      * 
-     * @param corePropertiesPath        the path to the console properties file
-     * @param webServerPropertiesPath   the path to the web server properties file
+     * @param corePropertiesPath the path to the console properties file
+     * @param webServerPropertiesPath the path to the web server properties file
      */
     public WebServer(String corePropertiesPath, String webServerPropertiesPath)
     {
@@ -46,16 +46,16 @@ public class WebServer
     /**
      * A WebServer with a console.
      * 
-     * @param corePropertiesPath        the path to the console properties file
-     * @param webServerPropertiesPath   the path to the web server properties file
-     * @param consolePropertiesPath     the path to the console properties file
+     * @param corePropertiesPath the path to the console properties file
+     * @param webServerPropertiesPath the path to the web server properties file
+     * @param consolePropertiesPath the path to the console properties file
      */
     public WebServer(String corePropertiesPath, String webServerPropertiesPath, String consolePropertiesPath)
     {
         this.console = new Console(consolePropertiesPath);
         initialize(corePropertiesPath, webServerPropertiesPath);
     }
-    
+
     private void initialize(String corePropertiesPath, String webServerPropertiesPath)
     {
         this.core = new Core(corePropertiesPath);
@@ -93,12 +93,13 @@ public class WebServer
     }
 
     /**
-     * Starts up the WebServer configuration.  Required arguments are:
+     * Starts up the WebServer configuration. Required arguments are:
      * <ul>
      * <li><code>-c, --core-properties     the path to the core configuration (XML properties) file</code></li>
      * <li><code>-w, --web-server-properties  the path to the web server configuration (XML properties) file</code></li>
      * <li><code>-n, --console-properties  the path to the console configuration (XML properties) file</code></li>
      * </ul>
+     * 
      * @param argv
      */
     public static void main(String[] argv)
@@ -146,7 +147,7 @@ public class WebServer
             usage();
             System.exit(1);
         }
-        
+
         WebServer server;
 
         if (consolePropertiesPath == null)
@@ -158,7 +159,8 @@ public class WebServer
             server = new WebServer(corePropertiesPath, webServerPropertiesPath, consolePropertiesPath);
         }
 
-        // Add a shutdown hook so the Core will be properly shut down if the system exits.
+        // Add a shutdown hook so the Core will be properly shut down if the
+        // system exits.
         Runtime.getRuntime().addShutdownHook(new CoreShutdownHook(server.core));
         server.run();
     }

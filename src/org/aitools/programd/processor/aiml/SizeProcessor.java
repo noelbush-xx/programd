@@ -29,18 +29,19 @@ public class SizeProcessor extends AIMLProcessor
 
     /**
      * Creates a new SizeProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public SizeProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
     public String process(Element element, TemplateParser parser)
     {
         return String.valueOf(parser.getCore().getGraphmaster().getTotalCategories());
-    } 
+    }
 }

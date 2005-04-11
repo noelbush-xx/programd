@@ -31,16 +31,18 @@ public class InputProcessor extends IndexedPredicateProcessor
 
     /**
      * Creates a new InputProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public InputProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * Generalizes the processing of an <code>input</code> element to a job
      * for {@link IndexedPredicateProcessor}.
+     * 
      * @param element the <code>input</code> element
      * @param parser the parser that is at work
      * @return the result of processing the element
@@ -48,5 +50,5 @@ public class InputProcessor extends IndexedPredicateProcessor
     public String process(Element element, TemplateParser parser)
     {
         return super.process(element, parser, label, 2);
-    } 
+    }
 }

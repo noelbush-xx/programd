@@ -21,8 +21,8 @@ import org.aitools.programd.server.ServletRequestResponderManagerRegistry;
 /**
  * <p>
  * This is the chat servlet used to broker a conversation from a client. It does
- * not really do much except pass information to the ServletRequestTransactionEnvelope, which is
- * responsible for:
+ * not really do much except pass information to the
+ * ServletRequestTransactionEnvelope, which is responsible for:
  * </p>
  * <ol>
  * <li>Determining the type of client requesting a bot response (via
@@ -39,36 +39,37 @@ public class ProgramD extends HttpServlet
 {
     /** The string &quot;{@value}&quot;. */
     private static final String CORE = "core";
-    
+
     /** The string &quot;{@value}&quot;. */
     private static final String RESPONDER_REGISTRY = "responder-registry";
-    
+
     /** The Core to use. */
     private Core core;
-    
+
     /** The ServletRequestResponderManagerRegistry to use. */
     private ServletRequestResponderManagerRegistry responderRegistry;
-    
+
     /**
      * @see javax.servlet.GenericServlet#init()
      */
     public void init()
     {
-        this.core = (Core)this.getServletContext().getAttribute(CORE);
-        this.responderRegistry = (ServletRequestResponderManagerRegistry)this.getServletContext().getAttribute(RESPONDER_REGISTRY);
-    } 
+        this.core = (Core) this.getServletContext().getAttribute(CORE);
+        this.responderRegistry = (ServletRequestResponderManagerRegistry) this.getServletContext().getAttribute(RESPONDER_REGISTRY);
+    }
 
     /**
      * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
      */
     public void init(ServletConfig config)
     {
-        this.core = (Core)config.getServletContext().getAttribute(CORE);
-        this.responderRegistry = (ServletRequestResponderManagerRegistry)config.getServletContext().getAttribute(RESPONDER_REGISTRY);
-    } 
+        this.core = (Core) config.getServletContext().getAttribute(CORE);
+        this.responderRegistry = (ServletRequestResponderManagerRegistry) config.getServletContext().getAttribute(RESPONDER_REGISTRY);
+    }
 
     /**
-     * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     {
@@ -81,13 +82,14 @@ public class ProgramD extends HttpServlet
         {
             this.core.fail(e);
         }
-    } 
+    }
 
     /**
-     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
      */
     public void doPost(HttpServletRequest request, HttpServletResponse response)
     {
         doGet(request, response);
-    } 
+    }
 }

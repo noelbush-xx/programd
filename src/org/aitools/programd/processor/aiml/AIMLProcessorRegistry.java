@@ -19,45 +19,45 @@ import org.aitools.programd.processor.ProcessorRegistry;
  */
 public class AIMLProcessorRegistry extends ProcessorRegistry<AIMLProcessor>
 {
-	/** The XML namespace URI for AIML. */
-	private static final String XMLNS = "http://alicebot.org/2001/AIML-1.0.1";
+    /** The XML namespace URI for AIML. */
+    private static final String XMLNS = "http://alicebot.org/2001/AIML-1.0.1";
 
-	/** The list of processors (fully-qualified class names). */
-	private static final String[] PROCESSOR_LIST = {
-			"org.aitools.programd.processor.aiml.BotProcessor",
-			"org.aitools.programd.processor.aiml.ConditionProcessor",
-			"org.aitools.programd.processor.aiml.DateProcessor",
-			"org.aitools.programd.processor.aiml.FormalProcessor",
-			"org.aitools.programd.processor.aiml.GenderProcessor",
-			"org.aitools.programd.processor.aiml.GetProcessor",
-			"org.aitools.programd.processor.aiml.GossipProcessor",
-			"org.aitools.programd.processor.aiml.IDProcessor",
-			"org.aitools.programd.processor.aiml.InputProcessor",
-			"org.aitools.programd.processor.aiml.JavaScriptProcessor",
-			"org.aitools.programd.processor.aiml.LearnProcessor",
-			"org.aitools.programd.processor.aiml.LowerCaseProcessor",
-			"org.aitools.programd.processor.aiml.Person2Processor",
-			"org.aitools.programd.processor.aiml.PersonProcessor",
-			"org.aitools.programd.processor.aiml.RandomProcessor",
-			"org.aitools.programd.processor.aiml.SentenceProcessor",
-			"org.aitools.programd.processor.aiml.SetProcessor",
-			"org.aitools.programd.processor.aiml.SizeProcessor",
-			"org.aitools.programd.processor.aiml.SRAIProcessor",
-			"org.aitools.programd.processor.aiml.SRProcessor",
-			"org.aitools.programd.processor.aiml.StarProcessor",
-			"org.aitools.programd.processor.aiml.SystemProcessor",
-			"org.aitools.programd.processor.aiml.TemplateProcessor",
-			"org.aitools.programd.processor.aiml.ThatProcessor",
-			"org.aitools.programd.processor.aiml.ThatStarProcessor",
-			"org.aitools.programd.processor.aiml.ThinkProcessor",
-			"org.aitools.programd.processor.aiml.TopicStarProcessor",
-			"org.aitools.programd.processor.aiml.UpperCaseProcessor",
-			"org.aitools.programd.processor.aiml.VersionProcessor" };
+    /** The list of processors (fully-qualified class names). */
+    private static final String[] PROCESSOR_LIST = { "org.aitools.programd.processor.aiml.BotProcessor",
+                                                     "org.aitools.programd.processor.aiml.ConditionProcessor",
+                                                     "org.aitools.programd.processor.aiml.DateProcessor",
+                                                     "org.aitools.programd.processor.aiml.FormalProcessor", 
+                                                     "org.aitools.programd.processor.aiml.GenderProcessor",
+                                                     "org.aitools.programd.processor.aiml.GetProcessor",
+                                                     "org.aitools.programd.processor.aiml.GossipProcessor",
+                                                     "org.aitools.programd.processor.aiml.IDProcessor",
+                                                     "org.aitools.programd.processor.aiml.InputProcessor",
+                                                     "org.aitools.programd.processor.aiml.JavaScriptProcessor",
+                                                     "org.aitools.programd.processor.aiml.LearnProcessor",
+                                                     "org.aitools.programd.processor.aiml.LowerCaseProcessor",
+                                                     "org.aitools.programd.processor.aiml.Person2Processor",
+                                                     "org.aitools.programd.processor.aiml.PersonProcessor",
+                                                     "org.aitools.programd.processor.aiml.RandomProcessor",
+                                                     "org.aitools.programd.processor.aiml.SentenceProcessor",
+                                                     "org.aitools.programd.processor.aiml.SetProcessor",
+                                                     "org.aitools.programd.processor.aiml.SizeProcessor",
+                                                     "org.aitools.programd.processor.aiml.SRAIProcessor",
+                                                     "org.aitools.programd.processor.aiml.SRProcessor",
+                                                     "org.aitools.programd.processor.aiml.StarProcessor",
+                                                     "org.aitools.programd.processor.aiml.SystemProcessor",
+                                                     "org.aitools.programd.processor.aiml.TemplateProcessor",
+                                                     "org.aitools.programd.processor.aiml.ThatProcessor",
+                                                     "org.aitools.programd.processor.aiml.ThatStarProcessor",
+                                                     "org.aitools.programd.processor.aiml.ThinkProcessor",
+                                                     "org.aitools.programd.processor.aiml.TopicStarProcessor",
+                                                     "org.aitools.programd.processor.aiml.UpperCaseProcessor",
+                                                     "org.aitools.programd.processor.aiml.VersionProcessor" };
 
     /**
      * Creates a new <code>AIMLProcessorRegistry</code>.
      */
-	public AIMLProcessorRegistry() {
-		super(XMLNS, PROCESSOR_LIST);
-	}
+    public AIMLProcessorRegistry()
+    {
+        super(XMLNS, PROCESSOR_LIST);
+    }
 }

@@ -16,24 +16,25 @@ import org.aitools.programd.util.XMLKit;
 
 /**
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- *
  */
 public class ReplyProcessor extends XMLTemplateProcessor
 {
     /**
      * Creates a new ReplyProcessor with the given Core.
+     * 
      * @param coreToUse the Core to use in creating the BotProcessor
      */
     public ReplyProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /** The label (as required by the registration scheme). */
     public static final String label = "reply";
 
     /**
      * Inserts each reply, preceded by the content of the reply element.
+     * 
      * @param element the <code>reply</code> element
      * @param parser the parser that is at work
      * @return the result of processing the element

@@ -34,6 +34,7 @@ public class ListDialog extends JDialog
     /**
      * Sets up the dialog. The first argument can be null, but it really should
      * be a component in the dialog's controlling frame.
+     * 
      * @param comp the component to which to attach the dialog
      * @param possibleValues the possible values to show in the dialog
      * @param title the title of the dialog
@@ -43,14 +44,16 @@ public class ListDialog extends JDialog
     {
         Frame frame = JOptionPane.getFrameForComponent(comp);
         dialog = new ListDialog(frame, possibleValues, title, labelText);
-    } 
+    }
 
     /**
      * Show the initialized dialog. The first argument should be null if you
      * want the dialog to come up in the center of the screen. Otherwise, the
      * argument should be the component on top of which the dialog should
      * appear.
-     * @param comp the component to which to set the relative location of the dialog
+     * 
+     * @param comp the component to which to set the relative location of the
+     *            dialog
      * @param initialValue the initial value of the dialog
      * @return the value of the dialog
      */
@@ -61,19 +64,19 @@ public class ListDialog extends JDialog
             dialog.setValue(initialValue);
             dialog.setLocationRelativeTo(comp);
             dialog.setVisible(true);
-        } 
+        }
         else
         {
             System.err.println("ListDialog requires you to call initialize before calling showDialog.");
-        } 
+        }
         return value;
-    } 
+    }
 
     private void setValue(String newValue)
     {
         value = newValue;
         this.list.setSelectedValue(value, true);
-    } 
+    }
 
     private ListDialog(Frame frame, Object[] data, String title, String labelText)
     {
@@ -86,16 +89,16 @@ public class ListDialog extends JDialog
             public void actionPerformed()
             {
                 dialog.setVisible(false);
-            } 
-        } );
+            }
+        });
         setButton.addActionListener(new ParentAwareActionListener<ListDialog>(this)
         {
             public void actionPerformed(ActionEvent e)
             {
                 ListDialog.value = (String) this.parent.list.getSelectedValue();
                 ListDialog.dialog.setVisible(false);
-            } 
-        } );
+            }
+        });
         getRootPane().setDefaultButton(setButton);
 
         this.list = new JList(data);
@@ -107,20 +110,21 @@ public class ListDialog extends JDialog
                 if (e.getClickCount() == 2)
                 {
                     setButton.doClick();
-                } 
-            } 
-        } );
+                }
+            }
+        });
         JScrollPane listScroller = new JScrollPane(this.list);
         listScroller.setPreferredSize(new Dimension(250, 80));
 
-        // Must do the following, too, or else the scroller thinks it's taller than it is:
+        // Must do the following, too, or else the scroller thinks it's taller
+        // than it is:
         listScroller.setMinimumSize(new Dimension(250, 80));
         listScroller.setAlignmentX(LEFT_ALIGNMENT);
 
-        //Create a container so that we can add a title around
-        //the scroll pane. Can't add a title directly to the
-        //scroll pane because its background would be white.
-        //Lay out the label and scroll pane from top to button.
+        // Create a container so that we can add a title around
+        // the scroll pane. Can't add a title directly to the
+        // scroll pane because its background would be white.
+        // Lay out the label and scroll pane from top to button.
         JPanel listPane = new JPanel();
         listPane.setLayout(new BoxLayout(listPane, BoxLayout.Y_AXIS));
         JLabel label = new JLabel(labelText);
@@ -130,7 +134,7 @@ public class ListDialog extends JDialog
         listPane.add(listScroller);
         listPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        //Lay out the buttons from left to right.
+        // Lay out the buttons from left to right.
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.X_AXIS));
         buttonPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
@@ -139,11 +143,11 @@ public class ListDialog extends JDialog
         buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
         buttonPane.add(setButton);
 
-        //Put everything together, using the content pane's BorderLayout.
+        // Put everything together, using the content pane's BorderLayout.
         Container contentPane = getContentPane();
         contentPane.add(listPane, BorderLayout.CENTER);
         contentPane.add(buttonPane, BorderLayout.SOUTH);
 
         pack();
-    } 
+    }
 }

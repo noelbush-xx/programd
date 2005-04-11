@@ -26,19 +26,21 @@ public class Person2Processor extends BotConfigurationElementProcessor
 
     /**
      * Creates a new Person2Processor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public Person2Processor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
-     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element,
+     *      BotsConfigurationFileParser)
      */
     public void process(Element element, BotsConfigurationFileParser parser)
-    
+
     {
         SubstitutionsProcessor.addSubstitutions(SubstitutionsProcessor.SubstitutionType.PERSON2, element, parser);
-    } 
+    }
 }

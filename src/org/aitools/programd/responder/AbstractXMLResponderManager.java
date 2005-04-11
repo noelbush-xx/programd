@@ -35,19 +35,19 @@ abstract public class AbstractXMLResponderManager extends ResponderManager
 {
     /** The Bots object from which to obtain bot info. */
     protected Bots bots;
-    
+
     /** The default template name. */
     protected String defaultTemplateName;
 
     /** Map of template names to parsed templates. */
     protected HashMap<String, Document> templates = new HashMap<String, Document>();
-    
+
     /** The logger. */
     protected Logger logger = Logger.getLogger("programd");
-    
+
     /** The template processor registry. */
-    protected XMLTemplateProcessorRegistry templateProcessorRegistry ;
-    
+    protected XMLTemplateProcessorRegistry templateProcessorRegistry;
+
     /**
      * @param coreToUse the core to use when getting some values
      */
@@ -57,9 +57,10 @@ abstract public class AbstractXMLResponderManager extends ResponderManager
         this.bots = this.core.getBots();
         this.templateProcessorRegistry = new XMLTemplateProcessorRegistry();
     }
-    
+
     /**
      * Sets the default template name to the given value.
+     * 
      * @param name the name of the default template
      */
     public void setDefaultTemplateName(String name)
@@ -72,10 +73,8 @@ abstract public class AbstractXMLResponderManager extends ResponderManager
      * and returns a map of template names (filenames minus suffixes) to
      * filenames.
      * 
-     * @param directoryName
-     *            the name of the directory to scan
-     * @param filter
-     *            the filename filter to use
+     * @param directoryName the name of the directory to scan
+     * @param filter the filename filter to use
      */
     protected void registerTemplates(String directoryName, SuffixFilenameFilter filter)
     {
@@ -92,16 +91,16 @@ abstract public class AbstractXMLResponderManager extends ResponderManager
                     String templateFilename = templateFilenames[index];
                     try
                     {
-                        this.templates.put(templateFilename.substring(0, templateFilename.lastIndexOf('.')), parser.parse(URITools.createValidURL(directoryName
-                                + File.separator + templateFilename)));
+                        this.templates.put(templateFilename.substring(0, templateFilename.lastIndexOf('.')), parser.parse(URITools
+                                .createValidURL(directoryName + File.separator + templateFilename)));
                     }
                     catch (ProcessorException e)
                     {
                         throw new UserError("Could not parse template \"" + templateFilename + "\".", e);
                     }
-                } 
-            } 
-        } 
+                }
+            }
+        }
     }
 
     /**
@@ -111,7 +110,7 @@ abstract public class AbstractXMLResponderManager extends ResponderManager
     {
         return this.defaultTemplateName;
     }
-    
+
     /**
      * @param name the name of the template to get
      * @return the template corresponding to the given name
@@ -127,9 +126,9 @@ abstract public class AbstractXMLResponderManager extends ResponderManager
         {
             return this.templates.get(this.defaultTemplateName);
         }
-        throw new DeveloperError("Invalid template name \""+ name + "\", and default template also could not be found!", new NullPointerException());
+        throw new DeveloperError("Invalid template name \"" + name + "\", and default template also could not be found!", new NullPointerException());
     }
-    
+
     /**
      * @return the Bots object
      */
@@ -137,7 +136,7 @@ abstract public class AbstractXMLResponderManager extends ResponderManager
     {
         return this.bots;
     }
-    
+
     /**
      * @return the XMLTemplateProcessor registry
      */

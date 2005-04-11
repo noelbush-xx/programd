@@ -12,7 +12,8 @@ package org.aitools.programd.responder.xml;
 import org.aitools.programd.processor.ProcessorException;
 
 /**
- * Should be thrown by {@link XMLTemplateProcessor} s when they find invalid template tags.
+ * Should be thrown by {@link XMLTemplateProcessor} s when they find invalid
+ * template tags.
  * 
  * @since 4.1.3
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -20,12 +21,14 @@ import org.aitools.programd.processor.ProcessorException;
 public class XMLTemplateProcessorException extends ProcessorException
 {
     /**
-     * Creates a new XMLTemplateProcessorException with the given message, associated with the given Throwable.
+     * Creates a new XMLTemplateProcessorException with the given message,
+     * associated with the given Throwable.
+     * 
      * @param message the message to use
      * @param e the Throwable to associate with the exception
      */
     public XMLTemplateProcessorException(String message, Throwable e)
     {
         super(message, e);
-    } 
+    }
 }

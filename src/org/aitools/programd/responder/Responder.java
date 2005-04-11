@@ -10,9 +10,9 @@
 package org.aitools.programd.responder;
 
 /**
- * A <code>Responder</code> is an object that can manipulate the user input and
- * bot responses at several stages of the response production loop.  It is specific
- * to a particular output channel (such as HTML, an IM client, etc.).
+ * A <code>Responder</code> is an object that can manipulate the user input
+ * and bot responses at several stages of the response production loop. It is
+ * specific to a particular output channel (such as HTML, an IM client, etc.).
  * 
  * @author Jon Baer
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -26,8 +26,7 @@ abstract public interface Responder
      * {@link org.aitools.programd.multiplexor.Multiplexor Multiplexor}, before
      * it (the Multiplexor) obtains bot replies for each sentence.
      * 
-     * @param userInput
-     *            the user input to be preprocessed
+     * @param userInput the user input to be preprocessed
      * @return the result of preprocessing the userinput
      */
     String preprocess(String userInput);
@@ -36,13 +35,11 @@ abstract public interface Responder
      * Appends a per-sentence reply from the bot to the Responder's total record
      * of the bot response.
      * 
-     * @param userInput
-     *            the input (sentence) from the client that generated the reply
-     * @param botReply
-     *            the reply from the bot
-     * @param appendTo
-     *            the string to which the client of the <code>Responder</code>
-     *            may expect the reply to be appended
+     * @param userInput the input (sentence) from the client that generated the
+     *            reply
+     * @param botReply the reply from the bot
+     * @param appendTo the string to which the client of the
+     *            <code>Responder</code> may expect the reply to be appended
      * @return the reply, in whatever fashion the <code>Responder</code> has
      *         decided to modify it. This is likely to be fed in as the
      *         <code>appendTo</code> argument on subsequent calls to this
@@ -53,8 +50,7 @@ abstract public interface Responder
     /**
      * Postprocesses the complete bot response.
      * 
-     * @param finalBotResponse
-     *            the complete bot response
+     * @param finalBotResponse the complete bot response
      * @return the result of postprocessing the message
      */
     String postprocess(String finalBotResponse);

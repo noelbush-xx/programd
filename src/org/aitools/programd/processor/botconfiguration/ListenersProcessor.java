@@ -26,15 +26,17 @@ public class ListenersProcessor extends BotConfigurationElementProcessor
 
     /**
      * Creates a new ListenersProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public ListenersProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
-     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element,
+     *      BotsConfigurationFileParser)
      */
     public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
@@ -47,5 +49,5 @@ public class ListenersProcessor extends BotConfigurationElementProcessor
         {
             parser.evaluate(element.getChildNodes());
         }
-    } 
+    }
 }

@@ -32,13 +32,14 @@ public class SentenceProcessor extends AIMLProcessor
 
     /**
      * Creates a new SentenceProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public SentenceProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
@@ -48,12 +49,12 @@ public class SentenceProcessor extends AIMLProcessor
         if (response.equals(EMPTY_STRING))
         {
             return response;
-        } 
+        }
         if (response.trim().length() > 1)
         {
             return response.substring(0, 1).toUpperCase() + response.substring(1);
-        } 
+        }
         // (otherwise...)
         return response;
-    } 
+    }
 }

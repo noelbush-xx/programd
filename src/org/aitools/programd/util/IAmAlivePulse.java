@@ -20,12 +20,12 @@ import java.util.logging.Logger;
 public class IAmAlivePulse implements Pulse
 {
     private Logger logger = Logger.getLogger("programd");
-    
+
     /**
      * Prints the message &quot;I am alive!&quot; to the console.
      */
     public void emit()
     {
         this.logger.log(Level.INFO, "I am alive!");
-    } 
+    }
 }

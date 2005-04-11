@@ -1,29 +1,17 @@
 /*
- * Copyright (c) 1998-2004 Caucho Technology -- all rights reserved
- *
- * This file is part of Resin(R) Open Source
- *
- * Each copy or derived work must preserve the copyright notice and this
- * notice unmodified.
- *
- * Resin Open Source is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * Resin Open Source is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE, or any warranty
- * of NON-INFRINGEMENT.  See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Resin Open Source; if not, write to the
- *   Free SoftwareFoundation, Inc.
- *   59 Temple Place, Suite 330
- *   Boston, MA 02111-1307  USA
- *
- * @author Scott Ferguson
+ * Copyright (c) 1998-2004 Caucho Technology -- all rights reserved This file is
+ * part of Resin(R) Open Source Each copy or derived work must preserve the
+ * copyright notice and this notice unmodified. Resin Open Source is free
+ * software; you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version. Resin Open
+ * Source is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE, or any warranty of NON-INFRINGEMENT. See the GNU
+ * General Public License for more details. You should have received a copy of
+ * the GNU General Public License along with Resin Open Source; if not, write to
+ * the Free SoftwareFoundation, Inc. 59 Temple Place, Suite 330 Boston, MA
+ * 02111-1307 USA @author Scott Ferguson
  */
 
 // originally: package com.caucho.util;
@@ -40,10 +28,11 @@ import java.util.Iterator;
  * <p>
  * Null keys are not allowed. LRUCache is synchronized.
  * </p>
+ * 
  * @param <K> the key
  * @param <V> the value
  */
-public class LRUCache<K,V>
+public class LRUCache<K, V>
  {
     private static final Integer NULL = new Integer(0);
 
@@ -51,7 +40,7 @@ public class LRUCache<K,V>
      * hash table containing the entries. Its size is twice the capacity so it
      * will always remain at least half empty
      */
-    protected CacheItem<K,V>[] _entries;
+    protected CacheItem<K, V>[] _entries;
 
     /* maximum allowed entries */
     private int _capacity;
@@ -66,19 +55,19 @@ public class LRUCache<K,V>
     private int _size1;
 
     /* head of the LRU list */
-    private CacheItem<K,V> _head1;
+    private CacheItem<K, V> _head1;
 
     /* tail of the LRU list */
-    private CacheItem<K,V> _tail1;
+    private CacheItem<K, V> _tail1;
 
     /* number of items in the cache seen more than once */
     private int _size2;
 
     /* head of the LRU list */
-    private CacheItem<K,V> _head2;
+    private CacheItem<K, V> _head2;
 
     /* tail of the LRU list */
-    private CacheItem<K,V> _tail2;
+    private CacheItem<K, V> _tail2;
 
     /* hit count statistics */
     private volatile long _hitCount;
@@ -88,10 +77,10 @@ public class LRUCache<K,V>
 
     /**
      * Create the LRU cache with a specific capacity. Originally called
-     * "LruCache". Some minor changes (in coding style and formatting) made by Noel.
+     * "LruCache". Some minor changes (in coding style and formatting) made by
+     * Noel.
      * 
-     * @param initialCapacity
-     *            minimum capacity of the cache
+     * @param initialCapacity minimum capacity of the cache
      */
     public LRUCache(int initialCapacity)
     {
@@ -128,7 +117,7 @@ public class LRUCache<K,V>
         {
             for (int i = this._entries.length - 1; i >= 0; i--)
             {
-                CacheItem<K,V> item = this._entries[i];
+                CacheItem<K, V> item = this._entries[i];
 
                 if (item != null)
                 {
@@ -163,8 +152,7 @@ public class LRUCache<K,V>
     /**
      * Get an item from the cache and make it most recently used.
      * 
-     * @param key
-     *            key to lookup the item
+     * @param key key to lookup the item
      * @return the matching object in the cache
      */
     public V get(K key)
@@ -180,7 +168,7 @@ public class LRUCache<K,V>
         {
             for (; count >= 0; count--)
             {
-                CacheItem<K,V> item = this._entries[hash];
+                CacheItem<K, V> item = this._entries[hash];
 
                 if (item == null)
                 {
@@ -209,10 +197,8 @@ public class LRUCache<K,V>
     /**
      * Puts a new item in the cache. If the cache is full, remove the LRU item.
      * 
-     * @param key
-     *            key to store data
-     * @param value
-     *            value to be stored
+     * @param key key to store data
+     * @param value value to be stored
      * @return old value stored under the key
      */
     public V put(K key, V value)
@@ -228,10 +214,8 @@ public class LRUCache<K,V>
     /**
      * Puts a new item in the cache. If the cache is full, remove the LRU item.
      * 
-     * @param key
-     *            key to store data
-     * @param value
-     *            value to be stored
+     * @param key key to store data
+     * @param value value to be stored
      * @return the value actually stored
      */
     public V putIfNew(K key, V value)
@@ -249,10 +233,8 @@ public class LRUCache<K,V>
     /**
      * Puts a new item in the cache. If the cache is full, remove the LRU item.
      * 
-     * @param key
-     *            key to store data
-     * @param value
-     *            value to be stored
+     * @param key key to store data
+     * @param value value to be stored
      * @param replace whether or not to replace the old value
      * @return old value stored under the key
      */
@@ -280,12 +262,12 @@ public class LRUCache<K,V>
         {
             for (; count > 0; count--)
             {
-                CacheItem<K,V> item = this._entries[hash];
+                CacheItem<K, V> item = this._entries[hash];
 
                 // No matching item, so create one
                 if (item == null)
                 {
-                    item = new CacheItem<K,V>(key, value);
+                    item = new CacheItem<K, V>(key, value);
                     this._entries[hash] = item;
                     this._size1++;
 
@@ -333,12 +315,13 @@ public class LRUCache<K,V>
     /**
      * Put item at the head of the used-twice lru list. This is always called
      * while synchronized.
+     * 
      * @param item the item to put at the head of the list
      */
-    private void updateLru(CacheItem<K,V> item)
+    private void updateLru(CacheItem<K, V> item)
     {
-        CacheItem<K,V> prev = item._prev;
-        CacheItem<K,V> next = item._next;
+        CacheItem<K, V> prev = item._prev;
+        CacheItem<K, V> next = item._next;
 
         if (item._isOnce)
         {
@@ -409,7 +392,7 @@ public class LRUCache<K,V>
      */
     public boolean removeTail()
     {
-        CacheItem<K,V> tail;
+        CacheItem<K, V> tail;
 
         if (this._capacity1 <= this._size1)
         {
@@ -433,8 +416,7 @@ public class LRUCache<K,V>
     /**
      * Removes an item from the cache
      * 
-     * @param key
-     *            the key to remove
+     * @param key the key to remove
      * @return the value removed
      */
     public V remove(K key)
@@ -454,7 +436,7 @@ public class LRUCache<K,V>
         {
             for (; count > 0; count--)
             {
-                CacheItem<K,V> item = this._entries[hash];
+                CacheItem<K, V> item = this._entries[hash];
 
                 if (item == null)
                 {
@@ -465,8 +447,8 @@ public class LRUCache<K,V>
                 {
                     this._entries[hash] = null;
 
-                    CacheItem<K,V> prev = item._prev;
-                    CacheItem<K,V> next = item._next;
+                    CacheItem<K, V> prev = item._prev;
+                    CacheItem<K, V> next = item._next;
 
                     if (item._isOnce)
                     {
@@ -519,7 +501,7 @@ public class LRUCache<K,V>
                     for (int i = 1; i <= count; i++)
                     {
                         int nextHash = (hash + i) & this._mask;
-                        CacheItem<K,V> nextItem = this._entries[nextHash];
+                        CacheItem<K, V> nextItem = this._entries[nextHash];
                         if (nextItem == null)
                         {
                             break;
@@ -550,9 +532,10 @@ public class LRUCache<K,V>
 
     /**
      * Put the item in the best location available in the hash table.
+     * 
      * @param item the item to put in the best location available
      */
-    private void refillEntry(CacheItem<K,V> item)
+    private void refillEntry(CacheItem<K, V> item)
     {
         int baseHash = item._key.hashCode();
 
@@ -573,7 +556,7 @@ public class LRUCache<K,V>
      */
     public Iterator<K> keys()
     {
-        KeyIterator<K,V> iter = new KeyIterator<K,V>(this);
+        KeyIterator<K, V> iter = new KeyIterator<K, V>(this);
         iter.init(this);
         return iter;
     }
@@ -584,7 +567,7 @@ public class LRUCache<K,V>
      */
     public Iterator<K> keys(Iterator<K> oldIter)
     {
-        KeyIterator<K,V> iter = (KeyIterator<K,V>) oldIter;
+        KeyIterator<K, V> iter = (KeyIterator<K, V>) oldIter;
         iter.init(this);
         return oldIter;
     }
@@ -594,7 +577,7 @@ public class LRUCache<K,V>
      */
     public Iterator<V> values()
     {
-        ValueIterator<K,V> iter = new ValueIterator<K,V>(this);
+        ValueIterator<K, V> iter = new ValueIterator<K, V>(this);
         iter.init(this);
         return iter;
     }
@@ -605,7 +588,7 @@ public class LRUCache<K,V>
      */
     public Iterator<V> values(Iterator<V> oldIter)
     {
-        ValueIterator<K,V> iter = (ValueIterator<K,V>) oldIter;
+        ValueIterator<K, V> iter = (ValueIterator<K, V>) oldIter;
         iter.init(this);
         return oldIter;
     }
@@ -613,7 +596,7 @@ public class LRUCache<K,V>
     /**
      * @return the entries
      */
-    public Iterator<Entry<K,V>> iterator()
+    public Iterator<Entry<K, V>> iterator()
     {
         return new EntryIterator(this);
     }
@@ -636,14 +619,15 @@ public class LRUCache<K,V>
 
     /**
      * A cache item
+     * 
      * @param <K> the key
      * @param <V> the value
      */
-    static class CacheItem<K,V>
+    static class CacheItem<K, V>
     {
-        LRUCache.CacheItem<K,V> _prev;
+        LRUCache.CacheItem<K, V> _prev;
 
-        LRUCache.CacheItem<K,V> _next;
+        LRUCache.CacheItem<K, V> _next;
 
         K _key;
 
@@ -663,21 +647,22 @@ public class LRUCache<K,V>
 
     /**
      * Iterator of cache keys
+     * 
      * @param <K> the key
      * @param <V> the value
      */
-    static class KeyIterator<K,V> implements Iterator<K>
+    static class KeyIterator<K, V> implements Iterator<K>
     {
-        private LRUCache<K,V> _cache;
+        private LRUCache<K, V> _cache;
 
         private int _i = -1;
 
-        KeyIterator(LRUCache<K,V> cache)
+        KeyIterator(LRUCache<K, V> cache)
         {
             this._cache = cache;
         }
 
-        void init(LRUCache<K,V> cache)
+        void init(LRUCache<K, V> cache)
         {
             this._cache = cache;
             this._i = -1;
@@ -688,7 +673,7 @@ public class LRUCache<K,V>
          */
         public boolean hasNext()
         {
-            CacheItem<K,V>[] entries = this._cache._entries;
+            CacheItem<K, V>[] entries = this._cache._entries;
             int length = entries.length;
 
             for (this._i++; this._i < length; this._i++)
@@ -708,12 +693,12 @@ public class LRUCache<K,V>
          */
         public K next()
         {
-            CacheItem<K,V>[] entries = this._cache._entries;
+            CacheItem<K, V>[] entries = this._cache._entries;
             int length = entries.length;
 
             for (this._i++; this._i < length; this._i++)
             {
-                CacheItem<K,V> entry = entries[this._i];
+                CacheItem<K, V> entry = entries[this._i];
 
                 if (entry != null)
                 {
@@ -735,21 +720,22 @@ public class LRUCache<K,V>
 
     /**
      * Iterator of cache values
+     * 
      * @param <K> the key
      * @param <V> the value
      */
-    static class ValueIterator<K,V> implements Iterator<V>
+    static class ValueIterator<K, V> implements Iterator<V>
     {
-        private LRUCache<K,V> _cache;
+        private LRUCache<K, V> _cache;
 
         private int _i = -1;
 
-        ValueIterator(LRUCache<K,V> cache)
+        ValueIterator(LRUCache<K, V> cache)
         {
             init(cache);
         }
 
-        void init(LRUCache<K,V> cache)
+        void init(LRUCache<K, V> cache)
         {
             this._cache = cache;
             this._i = -1;
@@ -760,7 +746,7 @@ public class LRUCache<K,V>
          */
         public boolean hasNext()
         {
-            CacheItem<K,V>[] entries = this._cache._entries;
+            CacheItem<K, V>[] entries = this._cache._entries;
             int length = entries.length;
 
             int i = this._i + 1;
@@ -783,13 +769,13 @@ public class LRUCache<K,V>
          */
         public V next()
         {
-            CacheItem<K,V>[] entries = this._cache._entries;
+            CacheItem<K, V>[] entries = this._cache._entries;
             int length = entries.length;
 
             int i = this._i + 1;
             for (; i < length; i++)
             {
-                CacheItem<K,V> entry = entries[i];
+                CacheItem<K, V> entry = entries[i];
 
                 if (entry != null)
                 {
@@ -813,10 +799,11 @@ public class LRUCache<K,V>
 
     /**
      * Interface for entry iterator;
+     * 
      * @param <K> the key
      * @param <V> the value
      */
-    public interface Entry<K,V>
+    public interface Entry<K, V>
     {
         /**
          * @return the key
@@ -832,17 +819,18 @@ public class LRUCache<K,V>
     /**
      * Iterator of cache values
      */
-    class EntryIterator implements Iterator<Entry<K,V>>, Entry<K,V>
+    class EntryIterator implements Iterator<Entry<K, V>>, Entry<K, V>
     {
         private int _i = -1;
 
-        private LRUCache<K,V> _cache;
+        private LRUCache<K, V> _cache;
 
         /**
          * Creates a new EntryIterator using the given cache.
+         * 
          * @param cache the cache to use
          */
-        public EntryIterator(LRUCache<K,V> cache)
+        public EntryIterator(LRUCache<K, V> cache)
         {
             this._cache = cache;
         }
@@ -853,7 +841,7 @@ public class LRUCache<K,V>
         public boolean hasNext()
         {
             int i = this._i + 1;
-            CacheItem<K,V>[] entries = this._cache._entries;
+            CacheItem<K, V>[] entries = this._cache._entries;
             int length = entries.length;
 
             for (; i < length && entries[i] == null; i++)
@@ -870,10 +858,10 @@ public class LRUCache<K,V>
          * @return the next entry
          * @see java.util.Iterator#next()
          */
-        public Entry<K,V> next()
+        public Entry<K, V> next()
         {
             int i = this._i + 1;
-            CacheItem<K,V>[] entries = this._cache._entries;
+            CacheItem<K, V>[] entries = this._cache._entries;
             int length = entries.length;
 
             for (; i < length && entries[i] == null; i++)
@@ -896,10 +884,10 @@ public class LRUCache<K,V>
          */
         public K getKey()
         {
-            CacheItem<K,V>[] entries = this._cache._entries;
+            CacheItem<K, V>[] entries = this._cache._entries;
             if (this._i < this._cache._entries.length)
             {
-                CacheItem<K,V> entry = entries[this._i];
+                CacheItem<K, V> entry = entries[this._i];
 
                 return entry != null ? entry._key : null;
             }
@@ -912,10 +900,10 @@ public class LRUCache<K,V>
          */
         public V getValue()
         {
-            CacheItem<K,V>[] entries = this._cache._entries;
+            CacheItem<K, V>[] entries = this._cache._entries;
             if (this._i < this._cache._entries.length)
             {
-                CacheItem<K,V> entry = entries[this._i];
+                CacheItem<K, V> entry = entries[this._i];
 
                 return entry != null ? entry._value : null;
             }
@@ -928,10 +916,10 @@ public class LRUCache<K,V>
          */
         public void remove()
         {
-            CacheItem<K,V>[] entries = this._cache._entries;
+            CacheItem<K, V>[] entries = this._cache._entries;
             if (this._i < this._cache._entries.length)
             {
-                CacheItem<K,V> entry = entries[this._i];
+                CacheItem<K, V> entry = entries[this._i];
 
                 if (entry != null)
                 {

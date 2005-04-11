@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 /**
- * Similar to {@link ClassRegistry}, but registers
- * object exemplars.
+ * Similar to {@link ClassRegistry}, but registers object exemplars.
+ * 
  * @param <B> the base class for objects that will be registered
  */
 abstract public class ObjectExemplarRegistry<B>
@@ -26,20 +26,21 @@ abstract public class ObjectExemplarRegistry<B>
 
     /**
      * Loads the registry with a set of exemplar objects.
+     * 
      * @param classnames the classnames for which to register exemplar objects
      * @param constructorArguments the arguments for B's constructor
      */
-    public ObjectExemplarRegistry(String[] classnames, Object ... constructorArguments)
+    public ObjectExemplarRegistry(String[] classnames, Object... constructorArguments)
     {
         // Initialize the backing Hashtable.
         this.registry = new Hashtable<String, B>(classnames.length);
-        
+
         ArrayList<Class> constructorArgumentClasses = new ArrayList<Class>();
         for (int index = 0; index < constructorArguments.length; index++)
         {
             constructorArgumentClasses.add(constructorArguments[index].getClass());
         }
-        
+
         Class[] argumentClassesArray = constructorArgumentClasses.toArray(new Class[] {});
 
         // Create and register exemplar objects.
@@ -52,9 +53,10 @@ abstract public class ObjectExemplarRegistry<B>
     /**
      * Registers an individual exemplar object.
      * 
-     * @param classname	the name of the object to register
+     * @param classname the name of the object to register
      * @param constructorArguments the arguments to the constructor
-     * @param constructorArgumentClasses the corresponding class of each argument
+     * @param constructorArgumentClasses the corresponding class of each
+     *            argument
      */
     public void register(String classname, Object[] constructorArguments, Class[] constructorArgumentClasses)
     {
@@ -73,7 +75,7 @@ abstract public class ObjectExemplarRegistry<B>
         {
             throw new DeveloperError("Developer has incorrectly specified \"" + classname + "\" as a registrable class.", e);
         }
-        
+
         Constructor<B> constructor;
         try
         {
@@ -87,30 +89,30 @@ abstract public class ObjectExemplarRegistry<B>
         {
             throw new DeveloperError("Permission denied to create new \"" + classname + "\" with specified constructor.", e);
         }
-        
+
         // Create an instance of the class.
         B exemplar;
         try
         {
             exemplar = constructor.newInstance(constructorArguments);
-        } 
+        }
         catch (IllegalAccessException e)
         {
             throw new DeveloperError("Underlying constructor for \"" + classname + "\" is inaccessible.", e);
-        } 
+        }
         catch (InstantiationException e)
         {
             throw new DeveloperError("Could not instantiate \"" + classname + "\".", e);
-        } 
+        }
         catch (IllegalArgumentException e)
         {
             throw new DeveloperError("Illegal argument exception when creating \"" + classname + "\".", e);
-        } 
+        }
         catch (InvocationTargetException e)
         {
             throw new DeveloperError("Constructor threw an exception when getting a \"" + classname + "\" instance from it.", e);
-        } 
-        
+        }
+
         // Register the exemplar object.
         this.registry.put(classname, exemplar);
     }
@@ -119,9 +121,9 @@ abstract public class ObjectExemplarRegistry<B>
      * A wrapper for the internal HashSet's get method.
      * 
      * @param classname the classname for which an exemplar object is desired
-     * 
      * @return the registered exemplar object corresponding to the classname
-     * @throws NotARegisteredObjectException if the given class is not registered
+     * @throws NotARegisteredObjectException if the given class is not
+     *             registered
      */
     public synchronized B get(String classname) throws NotARegisteredObjectException
     {

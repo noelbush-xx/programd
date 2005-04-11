@@ -12,8 +12,8 @@ package org.aitools.programd.processor.botconfiguration;
 import org.aitools.programd.processor.ProcessorException;
 
 /**
- * Should be thrown by {@link BotConfigurationElementProcessor} s when they find invalid
- * AIML.
+ * Should be thrown by {@link BotConfigurationElementProcessor} s when they find
+ * invalid AIML.
  * 
  * @version 4.5
  * @since 4.1.3
@@ -22,19 +22,21 @@ import org.aitools.programd.processor.ProcessorException;
 public class InvalidStartupElementException extends ProcessorException
 {
     /**
-     * Creates a new InvalidStartupElement exception with the given message
-     * and associated with the given Throwable.
+     * Creates a new InvalidStartupElement exception with the given message and
+     * associated with the given Throwable.
+     * 
      * @param message the message to associate with the exception
      * @param e the Throwable that caused the exception
      */
     public InvalidStartupElementException(String message, Throwable e)
     {
         super(message, e);
-    } 
+    }
 
     /**
-     * Creates a new InvalidStartupElement exception with the given message
-     * and associated with the given Throwable and input.
+     * Creates a new InvalidStartupElement exception with the given message and
+     * associated with the given Throwable and input.
+     * 
      * @param message the message to associate with the exception
      * @param e the Throwable that caused the exception
      * @param input the input that caused the exception
@@ -42,5 +44,5 @@ public class InvalidStartupElementException extends ProcessorException
     public InvalidStartupElementException(String message, Throwable e, String input)
     {
         super(message, e, input);
-    } 
+    }
 }

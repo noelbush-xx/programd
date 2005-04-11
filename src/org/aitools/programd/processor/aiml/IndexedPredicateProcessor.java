@@ -33,25 +33,25 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
 {
     /**
      * Creates a new IndexedPredicateProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
-   public IndexedPredicateProcessor(Core coreToUse)
+    public IndexedPredicateProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * Processes an indexed predicate with <code>dimensions</code> dimensions
      * (must be either <code>1</code> or <code>2</code>)
-     * @param element 
-     * @param parser 
      * 
+     * @param element
+     * @param parser
      * @see AIMLProcessor#process(Element, TemplateParser)
      * @since 4.1.3
-     * @param name
-     *            predicate name
-     * @param dimensions
-     *            the number of dimensions (<code>1</code> or <code>2</code>)
+     * @param name predicate name
+     * @param dimensions the number of dimensions (<code>1</code> or
+     *            <code>2</code>)
      * @return the result of processing the element
      */
     public String process(Element element, TemplateParser parser, String name, int dimensions)
@@ -60,7 +60,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         if (!((dimensions == 1) || (dimensions == 2)))
         {
             return EMPTY_STRING;
-        } 
+        }
 
         // Get a valid 2-dimensional index.
         int indexes[] = GenericParser.getValid2dIndex(element);
@@ -68,7 +68,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         if (indexes[0] <= 0)
         {
             return EMPTY_STRING;
-        } 
+        }
 
         // Get entire predicate value at this index (may contain multiple
         // "sentences").
@@ -84,16 +84,16 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         if (sentenceCount == 0)
         {
             return value;
-        } 
+        }
 
         // Return "" for a sentence whose index is greater than sentence count.
         if (indexes[1] > sentenceCount)
         {
             return EMPTY_STRING;
-        } 
+        }
         // Get the nth "sentence" (1 is most recent, 2 just before that, etc.)
         return XMLKit.removeMarkup((String) sentenceList.get(sentenceCount - indexes[1])).trim();
-    } 
+    }
 
     /**
      * Processes an indexed predicate whose values are stored in the supplied
@@ -104,15 +104,12 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
      * and
      * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-topicstar">topicstar</a></code>
      * elements).
-     * @param element 
-     * @param parser 
      * 
-     * @param predicates
-     *            predicate values
-     * @param dimensions
-     *            the number of dimensions (<code>1</code> only)
+     * @param element
+     * @param parser
+     * @param predicates predicate values
+     * @param dimensions the number of dimensions (<code>1</code> only)
      * @return the result of processing the element
-
      */
     public String process(Element element, TemplateParser parser, ArrayList predicates, int dimensions)
     {
@@ -120,13 +117,13 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         if (dimensions != 1)
         {
             throw new DeveloperError("Wrong number of dimensions: " + dimensions + " != 1", new IllegalArgumentException());
-        } 
+        }
 
         // No need to go further if no predicate values are available.
         if (predicates.isEmpty())
         {
             return EMPTY_STRING;
-        } 
+        }
 
         // Get a valid 1-dimensional index.
         int index = GenericParser.getValid1dIndex(element);
@@ -138,9 +135,9 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         if (index >= predicates.size())
         {
             return EMPTY_STRING;
-        } 
+        }
 
         // Retrieve and prettify the result.
         return XMLKit.removeMarkup((String) predicates.get(index)).trim();
-    } 
+    }
 }

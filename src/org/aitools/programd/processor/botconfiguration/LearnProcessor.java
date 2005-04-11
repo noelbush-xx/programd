@@ -29,15 +29,17 @@ public class LearnProcessor extends BotConfigurationElementProcessor
 
     /**
      * Creates a new LearnProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public LearnProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
-     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element,
+     *      BotsConfigurationFileParser)
      */
     public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {

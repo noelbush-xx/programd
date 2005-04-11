@@ -13,31 +13,36 @@ import org.aitools.programd.util.ClassRegistry;
 
 /**
  * Registers {@link Processor}s associated with a given namespace URI.
- * @param <B> the base class for the processors
  * 
+ * @param <B> the base class for the processors
  * @since 4.1.3
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class ProcessorRegistry<B> extends ClassRegistry
 {
-    /** The namespace URI of the content type for which this registry is intended. */
+    /**
+     * The namespace URI of the content type for which this registry is
+     * intended.
+     */
     protected String namespaceURI;
 
     /**
-     * Creates a <code>ProcessorRegistry</code> associated with the given namespace URI.
+     * Creates a <code>ProcessorRegistry</code> associated with the given
+     * namespace URI.
+     * 
      * @param namespaceURIToUse the namespace URI for the processors
      * @param classnames the names of the classes to register
      * @see ClassRegistry
      */
-	protected ProcessorRegistry(String namespaceURIToUse, String[] classnames)
+    protected ProcessorRegistry(String namespaceURIToUse, String[] classnames)
     {
-		super(classnames);
+        super(classnames);
         this.namespaceURI = namespaceURIToUse;
-	}
+    }
 
     /**
-     * @return the namespace URI of the content type for which
-     *         this registry manages processors
+     * @return the namespace URI of the content type for which this registry
+     *         manages processors
      */
     public String getNamespaceURI()
     {

@@ -31,19 +31,19 @@ public class GetProcessor extends AIMLProcessor
 
     /**
      * Creates a new GetProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public GetProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
     public String process(Element element, TemplateParser parser)
     {
-        return parser.getCore().getPredicateMaster().get(element.getAttribute(NAME), parser.getUserID(),
-                parser.getBotID());
+        return parser.getCore().getPredicateMaster().get(element.getAttribute(NAME), parser.getUserID(), parser.getBotID());
     }
 }

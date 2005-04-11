@@ -35,15 +35,17 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
 
     /**
      * Creates a new SentenceSplittersProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public SentenceSplittersProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
-     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element,
+     *      BotsConfigurationFileParser)
      */
     public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
@@ -59,14 +61,12 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
         int splitterCount = element.getElementsByTagName(SPLITTER).getLength();
         for (int index = splitterCount; --index > 0;)
         {
-            bot.addSentenceSplitter(((Element)parser.getNode(SPLITTER, element.getChildNodes(), index)).getAttribute(VALUE));
+            bot.addSentenceSplitter(((Element) parser.getNode(SPLITTER, element.getChildNodes(), index)).getAttribute(VALUE));
         }
-        
+
         /*
-        if (Settings.showConsole())
-        {
-            Log.userinfo("Loaded " + splitterCount + " sentence-splitters.", Log.STARTUP);
-        }
-        */
-    } 
+         * if (Settings.showConsole()) { Log.userinfo("Loaded " + splitterCount + "
+         * sentence-splitters.", Log.STARTUP); }
+         */
+    }
 }

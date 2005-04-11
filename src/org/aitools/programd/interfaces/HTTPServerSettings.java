@@ -6,7 +6,7 @@
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 package org.aitools.programd.interfaces;
 
 import org.aitools.programd.util.Settings;
@@ -17,32 +17,33 @@ import org.aitools.programd.util.Settings;
 public class HTTPServerSettings extends Settings
 {
     /**
-     * HTTP server (wrapper) to use (fully-qualified class name) 
+     * HTTP server (wrapper) to use (fully-qualified class name)
      */
     private String httpserverClassname;
 
     /**
-     * configuration parameter for the HTTP server (not always applicable) 
+     * configuration parameter for the HTTP server (not always applicable)
      */
     private String httpserverConfig;
 
     /**
-     * Pattern for naming the log file for web server messages. 
+     * Pattern for naming the log file for web server messages.
      */
     private String logPathPattern;
 
     /**
-     * Creates a <code>HTTPServerSettings</code> using default property values.
+     * Creates a <code>HTTPServerSettings</code> using default property
+     * values.
      */
     public HTTPServerSettings()
     {
         super();
     }
-    
+
     /**
-     * Creates a <code>HTTPServerSettings</code> with the (XML-formatted) properties
-     * located at the given path.
-     *
+     * Creates a <code>HTTPServerSettings</code> with the (XML-formatted)
+     * properties located at the given path.
+     * 
      * @param propertiesPath the path to the configuration file
      */
     public HTTPServerSettings(String propertiesPath)
@@ -51,8 +52,8 @@ public class HTTPServerSettings extends Settings
     }
 
     /**
-    * Initializes the Settings with values from properties, or defaults.
-    */
+     * Initializes the Settings with values from properties, or defaults.
+     */
     protected void initialize()
     {
         setHttpserverClassname(this.properties.getProperty("programd.httpserver.httpserver-classname", "org.aitools.programd.server.JettyWrapper"));
@@ -88,7 +89,8 @@ public class HTTPServerSettings extends Settings
     }
 
     /**
-     * @param httpserverClassnameToSet   the value to which to set httpserverClassname
+     * @param httpserverClassnameToSet the value to which to set
+     *            httpserverClassname
      */
     public void setHttpserverClassname(String httpserverClassnameToSet)
     {
@@ -96,7 +98,7 @@ public class HTTPServerSettings extends Settings
     }
 
     /**
-     * @param httpserverConfigToSet   the value to which to set httpserverConfig
+     * @param httpserverConfigToSet the value to which to set httpserverConfig
      */
     public void setHttpserverConfig(String httpserverConfigToSet)
     {
@@ -104,7 +106,7 @@ public class HTTPServerSettings extends Settings
     }
 
     /**
-     * @param logPathPatternToSet   the value to which to set logPathPattern
+     * @param logPathPatternToSet the value to which to set logPathPattern
      */
     public void setLogPathPattern(String logPathPatternToSet)
     {

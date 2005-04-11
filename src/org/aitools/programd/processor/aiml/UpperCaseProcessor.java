@@ -31,13 +31,14 @@ public class UpperCaseProcessor extends AIMLProcessor
 
     /**
      * Creates a new UpperCaseProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public UpperCaseProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */

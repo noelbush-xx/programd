@@ -11,12 +11,14 @@ package org.aitools.programd.listener;
 
 /**
  * An exception indicating that a listener parameter was invalid.
+ * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class InvalidListenerParameterException extends Exception
 {
     /**
      * Creates a new InvalidListenerParameterException with the given message.
+     * 
      * @param message the message describing the exception
      */
     public InvalidListenerParameterException(String message)

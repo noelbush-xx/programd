@@ -10,9 +10,10 @@
 package org.aitools.programd.util;
 
 /**
- * This exception is thrown by {@link org.aitools.programd.util.ClassRegistry#get ClassRegistry.get}
- * when its <code>label</code> does not correspond to a class that is registered by the
- * {@link org.aitools.programd.util.ClassRegistry ClassRegistry}.
+ * This exception is thrown by
+ * {@link org.aitools.programd.util.ClassRegistry#get ClassRegistry.get} when
+ * its <code>label</code> does not correspond to a class that is registered by
+ * the {@link org.aitools.programd.util.ClassRegistry ClassRegistry}.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
@@ -20,6 +21,7 @@ public class NotARegisteredClassException extends Exception
 {
     /**
      * Creates a new NotARegisteredClassException.
+     * 
      * @param classname the classname that is not registered.
      */
     public NotARegisteredClassException(String classname)

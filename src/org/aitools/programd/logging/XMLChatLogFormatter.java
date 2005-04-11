@@ -19,32 +19,49 @@ import org.aitools.programd.util.XMLKit;
 
 /**
  * Formats a ChatLogRecord by printing a number of extra fields as we like them.
+ * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.5
  */
 public class XMLChatLogFormatter extends XMLFormatter
 {
     private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-    
+
     private static final String RECORD_START = "<record>\n";
+
     private static final String RECORD_END = "</record>\n";
+
     private static final String DATE_START = "  <date>";
+
     private static final String DATE_END = "</date>\n";
+
     private static final String MILLIS_START = "  <millis>";
+
     private static final String MILLIS_END = "</millis>\n";
+
     private static final String SEQUENCE_START = "  <sequence>";
+
     private static final String SEQUENCE_END = "</sequence>\n";
+
     private static final String BOTID_START = "  <botid>";
+
     private static final String BOTID_END = "</botid>\n";
+
     private static final String USERID_START = "  <userid>";
+
     private static final String USERID_END = "</userid>\n";
+
     private static final String INPUT_START = "  <input>";
+
     private static final String INPUT_END = "</input>\n";
+
     private static final String REPLY_START = "  <reply>";
+
     private static final String REPLY_END = "</reply>\n";
-    
+
     /**
      * We insist that the record be a ChatLogRecord.
+     * 
      * @see java.util.logging.XMLFormatter#format
      * @param record the ChatLogRecord to format
      * @return the result of formatting the given ChatLogRecord
@@ -58,7 +75,7 @@ public class XMLChatLogFormatter extends XMLFormatter
         }
         return format((ChatLogRecord) record);
     }
-    
+
     /**
      * @see java.util.logging.XMLFormatter#format
      * @param record the ChatLogRecord to format
@@ -80,23 +97,23 @@ public class XMLChatLogFormatter extends XMLFormatter
         result.append(SEQUENCE_START);
         result.append(record.getSequenceNumber());
         result.append(SEQUENCE_END);
-        
+
         result.append(BOTID_START);
         result.append(record.getBotID());
         result.append(BOTID_END);
-        
+
         result.append(USERID_START);
         result.append(record.getUserID());
         result.append(USERID_END);
-        
+
         result.append(INPUT_START);
         result.append(XMLKit.escapeXMLChars(record.getInput()));
         result.append(INPUT_END);
-        
+
         result.append(REPLY_START);
         result.append(XMLKit.escapeXMLChars(record.getReply()));
         result.append(REPLY_END);
-        
+
         result.append(RECORD_END);
         return result.toString();
     }

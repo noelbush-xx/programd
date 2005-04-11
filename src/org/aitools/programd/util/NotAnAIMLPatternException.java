@@ -29,16 +29,14 @@ public class NotAnAIMLPatternException extends Exception
     /**
      * Records the pattern and error message for this exception.
      * 
-     * @param message
-     *            the explanation why this pattern is invalid
-     * @param patternToUse
-     *            the pattern itself
+     * @param message the explanation why this pattern is invalid
+     * @param patternToUse the pattern itself
      */
     public NotAnAIMLPatternException(String message, String patternToUse)
     {
         super(message);
         this.pattern = patternToUse;
-    } 
+    }
 
     /**
      * @see java.lang.Throwable#getMessage()
@@ -46,5 +44,5 @@ public class NotAnAIMLPatternException extends Exception
     public String getMessage()
     {
         return MSG_PART_ONE + this.pattern + MSG_PART_TWO + super.getMessage();
-    } 
+    }
 }

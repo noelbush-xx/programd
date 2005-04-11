@@ -53,8 +53,9 @@ public class Nodemaster implements Nodemapper
 
     /**
      * Puts the given object into the Nodemaster, associated with the given key.
-     * @param keyToUse  the key to use
-     * @param valueToPut    the value to put
+     * 
+     * @param keyToUse the key to use
+     * @param valueToPut the value to put
      * @return the same object that was put into the Nodemaster
      */
     public Object put(String keyToUse, Object valueToPut)
@@ -64,7 +65,7 @@ public class Nodemaster implements Nodemapper
             this.key = keyToUse.toUpperCase().intern();
             if (valueToPut instanceof String)
             {
-                this.value = ((String)valueToPut).intern();
+                this.value = ((String) valueToPut).intern();
             }
             else
             {
@@ -72,7 +73,7 @@ public class Nodemaster implements Nodemapper
             }
             this.size = 1;
             return this.value;
-        } 
+        }
         else if (this.size == 1)
         {
             this.hidden = Collections.checkedMap(new HashMap<String, Object>(), String.class, Object.class);
@@ -80,25 +81,26 @@ public class Nodemaster implements Nodemapper
             this.size = 2;
             if (valueToPut instanceof String)
             {
-                return this.hidden.put(keyToUse.toUpperCase().intern(), ((String)valueToPut).intern());
+                return this.hidden.put(keyToUse.toUpperCase().intern(), ((String) valueToPut).intern());
             }
             // otherwise...
             return this.hidden.put(keyToUse.toUpperCase().intern(), valueToPut);
-        } 
+        }
         else
         {
             this.size++;
             if (valueToPut instanceof String)
             {
-                return this.hidden.put(keyToUse.toUpperCase().intern(), ((String)valueToPut).intern());
+                return this.hidden.put(keyToUse.toUpperCase().intern(), ((String) valueToPut).intern());
             }
             // otherwise...
             return this.hidden.put(keyToUse.toUpperCase().intern(), valueToPut);
-        } 
-    } 
+        }
+    }
 
     /**
      * Removes the given object from the Nodemaster.
+     * 
      * @param valueToRemove the object to remove
      */
     public void remove(Object valueToRemove)
@@ -114,20 +116,20 @@ public class Nodemaster implements Nodemapper
                     // Found it.
                     keyToRemove = item.getKey();
                     break;
-                } 
-            } 
+                }
+            }
             if (keyToRemove == null)
             {
                 // We didn't find a key.
                 throw new DeveloperError("Key was not found for value when trying to remove " + valueToRemove, new NullPointerException());
-            } 
+            }
             if (this.size > 2)
             {
                 // Remove the value from the HashMap (ignore the primary
                 // value/key pair).
                 this.hidden.remove(keyToRemove);
                 this.size--;
-            } 
+            }
             else
             {
                 // Remove this item from the HashMap.
@@ -139,18 +141,19 @@ public class Nodemaster implements Nodemapper
                 // Remove the empty HashMap to save space.
                 this.hidden = null;
                 this.size = 1;
-            } 
-        } 
+            }
+        }
         else if (this.size == 1)
         {
             this.value = null;
             this.key = null;
             this.size = 0;
-        } 
-    } 
+        }
+    }
 
     /**
      * Gets the object associated with the specified key.
+     * 
      * @param keyToGet the key to use
      * @return the object associated with the given key
      */
@@ -159,21 +162,21 @@ public class Nodemaster implements Nodemapper
         if (this.size == 0)
         {
             return null;
-        } 
+        }
         else if (this.size == 1)
         {
             if (keyToGet.equalsIgnoreCase(this.key))
             {
                 return this.value;
-            } 
-            //          (otherwise...)
+            }
+            // (otherwise...)
             return null;
-        } 
+        }
         else
         {
             return this.hidden.get(keyToGet.toUpperCase());
-        } 
-    } 
+        }
+    }
 
     /**
      * @return the keyset of the Nodemaster
@@ -186,12 +189,12 @@ public class Nodemaster implements Nodemapper
             if (this.key != null)
             {
                 result.add(this.key);
-            } 
+            }
             return result;
-        } 
+        }
         // (otherwise...)
         return this.hidden.keySet();
-    } 
+    }
 
     /**
      * @param keyToCheck the key to check
@@ -202,13 +205,13 @@ public class Nodemaster implements Nodemapper
         if (this.size == 0)
         {
             return false;
-        } 
+        }
         else if (this.size == 1)
         {
             return (keyToCheck.equalsIgnoreCase(this.key));
-        } 
+        }
         return this.hidden.containsKey(keyToCheck.toUpperCase());
-    } 
+    }
 
     /**
      * @return the size of the Nodemaster
@@ -216,16 +219,17 @@ public class Nodemaster implements Nodemapper
     public int size()
     {
         return this.size;
-    } 
+    }
 
     /**
      * Sets the parent of the Nodemaster.
+     * 
      * @param parentToSet the parent to set
      */
     public void setParent(Nodemapper parentToSet)
     {
         this.parent = parentToSet;
-    } 
+    }
 
     /**
      * @return the parent of the Nodemaster
@@ -233,7 +237,7 @@ public class Nodemaster implements Nodemapper
     public Nodemapper getParent()
     {
         return this.parent;
-    } 
+    }
 
     /**
      * @return the height of the Nodemaster
@@ -241,7 +245,7 @@ public class Nodemaster implements Nodemapper
     public int getHeight()
     {
         return this.height;
-    } 
+    }
 
     /**
      * Sets the Nodemaster as being at the top.
@@ -249,25 +253,24 @@ public class Nodemaster implements Nodemapper
     public void setTop()
     {
         this.fillInHeight(0);
-    } 
+    }
 
     /**
      * Sets the <code>height</code> of this <code>Nodemaster</code> to
      * <code>height</code>, and calls <code>fillInHeight()</code> on its
      * parent (if not null) with a height <code>height + 1</code>.
      * 
-     * @param heightToFillIn
-     *            the height for this node
+     * @param heightToFillIn the height for this node
      */
     private void fillInHeight(int heightToFillIn)
     {
         if (this.height > heightToFillIn)
         {
             this.height = heightToFillIn;
-        } 
+        }
         if (this.parent != null)
         {
             ((Nodemaster) this.parent).fillInHeight(heightToFillIn + 1);
-        } 
-    } 
+        }
+    }
 }

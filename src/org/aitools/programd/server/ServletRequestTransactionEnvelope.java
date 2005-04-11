@@ -23,9 +23,10 @@ import org.aitools.programd.util.UserError;
 
 /**
  * <p>
- * The <code>ServletRequestTransactionEnvelope</code> is a broker for requests coming into the
- * server. Its goal is to accept and process a response and format it for the
- * appropriate device, formatting the output as needed through the appropriate Responder.
+ * The <code>ServletRequestTransactionEnvelope</code> is a broker for requests
+ * coming into the server. Its goal is to accept and process a response and
+ * format it for the appropriate device, formatting the output as needed through
+ * the appropriate Responder.
  * </p>
  * <p>
  * In general a Responder must have:
@@ -34,8 +35,8 @@ import org.aitools.programd.util.UserError;
  * <li>A method of output (text output, speech, XML)</li>
  * <li>A method of input (text input, speech, XML)</li>
  * <p>
- * The main method of this class is {@link #process} , which will process
- * the HttpRequest as needed.
+ * The main method of this class is {@link #process} , which will process the
+ * HttpRequest as needed.
  * </p>
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -46,9 +47,9 @@ import org.aitools.programd.util.UserError;
 public class ServletRequestTransactionEnvelope
 {
     // Instance variables.
-    
+
     protected Core core;
-    
+
     protected ServletRequestResponderManagerRegistry managerRegistry;
 
     /** The service response. */
@@ -77,7 +78,7 @@ public class ServletRequestTransactionEnvelope
 
     /** The output stream for writing the response. */
     private ServletOutputStream serviceOutputStream;
-    
+
     // Convenience constants.
 
     /** An empty string. */
@@ -114,17 +115,17 @@ public class ServletRequestTransactionEnvelope
     private static final String TEMPLATE = "template";
 
     /**
-     * Constructs a new <code>ServletRequestTransactionEnvelope</code> from a given servlet
-     * request, and given a servlet response object to send back.
+     * Constructs a new <code>ServletRequestTransactionEnvelope</code> from a
+     * given servlet request, and given a servlet response object to send back.
      * 
-     * @param request
-     *            the servlet request
-     * @param response
-     *            the response to modify
+     * @param request the servlet request
+     * @param response the response to modify
      * @param coreToUse the core to use
-     * @param managerRegistryToUse the ServletRequestResponderManagerRegistry in which to find responders
+     * @param managerRegistryToUse the ServletRequestResponderManagerRegistry in
+     *            which to find responders
      */
-    public ServletRequestTransactionEnvelope(HttpServletRequest request, HttpServletResponse response, Core coreToUse, ServletRequestResponderManagerRegistry managerRegistryToUse)
+    public ServletRequestTransactionEnvelope(HttpServletRequest request, HttpServletResponse response, Core coreToUse,
+            ServletRequestResponderManagerRegistry managerRegistryToUse)
     {
         this.core = coreToUse;
         checkStaticVariables();
@@ -141,51 +142,51 @@ public class ServletRequestTransactionEnvelope
         if (this.responseEncoding == null)
         {
             this.responseEncoding = ENC_UTF8;
-        } 
+        }
 
         // If no text parameter then we assume a new connection.
         if (this.userRequest == null)
         {
             this.userRequest = connectString;
-        } 
+        }
         // Check for blank request.
         else if (this.userRequest.equals(EMPTY_STRING))
         {
             this.userRequest = inactivityString;
-        } 
+        }
         // Convert to UTF-8.
         else
         {
             try
             {
                 this.userRequest = new String(this.userRequest.getBytes(ENC_8859_1), ENC_UTF8);
-            } 
+            }
             catch (UnsupportedEncodingException e)
             {
                 throw new DeveloperError("Encodings are not properly supported!", e);
-            } 
-        } 
+            }
+        }
 
         // Check for no userid.
         if (this.userid == null)
         {
             this.userid = request.getRemoteHost();
-        } 
+        }
 
         // Check for no bot id.
         if (this.botid == null)
         {
             this.botid = this.core.getBots().getABot().getID();
-        } 
+        }
 
         // Look for a named template.
         this.templateName = request.getParameter(TEMPLATE);
         if (this.templateName == null)
         {
             this.templateName = EMPTY_STRING;
-        } 
+        }
     }
-    
+
     private void checkStaticVariables()
     {
         if (connectString == null)
@@ -200,51 +201,53 @@ public class ServletRequestTransactionEnvelope
 
     /**
      * Invokes a response.
-     * @throws NoResponderHandlesThisException if no responder can be found to handle the request
+     * 
+     * @throws NoResponderHandlesThisException if no responder can be found to
+     *             handle the request
      */
     public void process() throws NoResponderHandlesThisException
     {
         try
         {
             this.serviceOutputStream = this.serviceResponse.getOutputStream();
-        } 
+        }
         catch (IOException e)
         {
             throw new DeveloperError("Error getting service response output stream.", e);
         }
-        
+
         this.botResponse = this.managerRegistry.getHandlerFor(this.serviceRequest).getResponseFor(this);
 
         try
         {
             this.serviceOutputStream.write(this.botResponse.getBytes(this.responseEncoding));
-        } 
+        }
         catch (UnsupportedEncodingException e0)
         {
             throw new UserError("UTF-8 encoding is not supported on your platform!", e0);
-        } 
+        }
         catch (IOException e1)
         {
             throw new DeveloperError("Error writing to service output stream.", e1);
-        } 
+        }
         try
         {
             this.serviceOutputStream.flush();
-        } 
+        }
         catch (IOException e)
         {
             throw new DeveloperError("Error flushing service output stream.", e);
-        } 
+        }
         try
         {
             this.serviceOutputStream.close();
-        } 
+        }
         catch (IOException e)
         {
             throw new DeveloperError("Error closing service output stream.", e);
-        } 
+        }
     }
-    
+
     /**
      * @return the servlet request object
      */
@@ -252,7 +255,7 @@ public class ServletRequestTransactionEnvelope
     {
         return this.serviceRequest;
     }
-    
+
     /**
      * @return the servlet response object
      */
@@ -260,7 +263,7 @@ public class ServletRequestTransactionEnvelope
     {
         return this.serviceResponse;
     }
-    
+
     /**
      * @return the Core object
      */
@@ -268,7 +271,7 @@ public class ServletRequestTransactionEnvelope
     {
         return this.core;
     }
-    
+
     /**
      * @return the user request
      */
@@ -276,8 +279,7 @@ public class ServletRequestTransactionEnvelope
     {
         return this.userRequest;
     }
-    
-    
+
     /**
      * @return the userid
      */
@@ -285,7 +287,7 @@ public class ServletRequestTransactionEnvelope
     {
         return this.userid;
     }
-    
+
     /**
      * @return the botid
      */
@@ -293,7 +295,7 @@ public class ServletRequestTransactionEnvelope
     {
         return this.botid;
     }
-    
+
     /**
      * @return the template name
      */

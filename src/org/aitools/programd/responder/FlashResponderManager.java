@@ -38,9 +38,9 @@ public class FlashResponderManager extends AbstractXMLResponderManager implement
     private static final String TEXT_PLAIN = "text/plain";
 
     /**
-     * Creates a new <code>FlashResponderManager</code>,
-     * reading in templates and preparing them for use
-     * by <code>FlashResponders</code>.
+     * Creates a new <code>FlashResponderManager</code>, reading in templates
+     * and preparing them for use by <code>FlashResponders</code>.
+     * 
      * @param coreToUse the Core from which to read some items
      */
     public FlashResponderManager(Core coreToUse)
@@ -50,12 +50,13 @@ public class FlashResponderManager extends AbstractXMLResponderManager implement
         this.settings = new FlashResponderSettings(coreSettings.getConfLocationHtmlResponder());
         setDefaultTemplateName(this.settings.getChatDefaultTemplateName());
         // Scan and register other templates.
-        registerTemplates( FileManager.getExistingFile(this.settings.getTemplateDirectory()).getAbsolutePath(), FILENAME_FILTER);
+        registerTemplates(FileManager.getExistingFile(this.settings.getTemplateDirectory()).getAbsolutePath(), FILENAME_FILTER);
     }
 
     /**
-     * This will return true if <code>request</code>
-     * contains a parameter with the name &quot;flash&quot;.
+     * This will return true if <code>request</code> contains a parameter with
+     * the name &quot;flash&quot;.
+     * 
      * @see ServletRequestResponderManager#responderHandles(ServletRequest)
      */
     public boolean responderHandles(ServletRequest request)

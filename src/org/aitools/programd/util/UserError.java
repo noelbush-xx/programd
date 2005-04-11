@@ -18,16 +18,18 @@ public class UserError extends Error
 {
     /**
      * Creates a new UserError with the given cause.
+     * 
      * @param cause the cause of the UserError
      */
     public UserError(Throwable cause)
     {
         super("Developer did not describe exception.");
         initCause(cause);
-    } 
+    }
 
     /**
      * Creates a new UserError with the given message cause.
+     * 
      * @param message a message about the UserError
      * @param cause the cause of the UserError
      */

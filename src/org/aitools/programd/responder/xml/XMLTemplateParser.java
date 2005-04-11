@@ -20,18 +20,19 @@ import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.NotARegisteredClassException;
 
 /**
- * <code>XMLTemplateParser</code> processes an HTML template,
- * such as used by {@link org.aitools.programd.responder.HTMLResponder HTMLResponder}.
+ * <code>XMLTemplateParser</code> processes an HTML template, such as used by
+ * {@link org.aitools.programd.responder.HTMLResponder HTMLResponder}.
  */
 public class XMLTemplateParser extends GenericParser
 {
     /** The responder that invoked this parser. */
     private AbstractXMLResponder responder;
-    
+
     private static final Logger logger = Logger.getLogger("programd");
-    
+
     /**
      * Initializes an <code>BotsConfigurationFileParser</code>.
+     * 
      * @param registry the registry of XML template processors
      * @param responderSource the responder that is invoking this parser
      */
@@ -40,13 +41,12 @@ public class XMLTemplateParser extends GenericParser
         super(registry);
         this.responder = responderSource;
     }
-    
+
     /**
-     * Initializes an <code>BotsConfigurationFileParser</code>
-     * <i>without</i> a responder source.  This means that some
-     * tags will not be handled.  It only makes sense to create
-     * a parser this way if the goal is just to parse a template,
-     * not process it.
+     * Initializes an <code>BotsConfigurationFileParser</code> <i>without</i>
+     * a responder source. This means that some tags will not be handled. It
+     * only makes sense to create a parser this way if the goal is just to parse
+     * a template, not process it.
      * 
      * @param registry the registry of XML template processors
      */
@@ -54,7 +54,7 @@ public class XMLTemplateParser extends GenericParser
     {
         super(registry);
     }
-    
+
     /**
      * @return the responder that invoked this parser
      */
@@ -64,11 +64,13 @@ public class XMLTemplateParser extends GenericParser
         {
             return this.responder;
         }
-        throw new DeveloperError("Trying to get the responder from an XMLTemplateParser that was not initialized with one!", new NullPointerException());
+        throw new DeveloperError("Trying to get the responder from an XMLTemplateParser that was not initialized with one!",
+                new NullPointerException());
     }
 
     /**
      * Ignores the unknown element and prints a warning message.
+     * 
      * @param element the unknown element
      * @param e will be ignored
      * @see GenericParser#handleUnknownElement

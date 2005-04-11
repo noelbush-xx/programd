@@ -25,18 +25,19 @@ import org.aitools.programd.util.UnspecifiedParameterError;
 import org.aitools.programd.util.UserError;
 
 /**
- * An HTTP server interface to Program D.  This class manages
- * the creation and use of an actual HTTP server (it is not itself the server).
+ * An HTTP server interface to Program D. This class manages the creation and
+ * use of an actual HTTP server (it is not itself the server).
+ * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class HTTPServer implements ManagedProcess
 {
     /** The Core to which this is attached. */
     private Core core;
-    
+
     /** The HTTPServer settings. */
     private HTTPServerSettings settings;
-    
+
     /** The registry of Responders that can handle ServletRequests. */
     private ServletRequestResponderManagerRegistry servletRequestResponderRegistry;
 
@@ -48,6 +49,7 @@ public class HTTPServer implements ManagedProcess
 
     /**
      * Creates a new HTTPServer.
+     * 
      * @param coreToUse the core to use
      * @param webServerPropertiesPath the path to the config file
      */
@@ -58,7 +60,7 @@ public class HTTPServer implements ManagedProcess
         this.settings = new HTTPServerSettings(webServerPropertiesPath);
         this.logger = this.core.setupLogger("programd.web-server", this.settings.getLogPathPattern());
     }
-    
+
     /**
      * Runs the HTTPServer interface.
      */
@@ -94,8 +96,8 @@ public class HTTPServer implements ManagedProcess
     }
 
     /**
-     * Tries to instantiate an http server of unpredetermined type
-     * (although it must extend the ProgramDCompatibleHttpServer class).
+     * Tries to instantiate an http server of unpredetermined type (although it
+     * must extend the ProgramDCompatibleHttpServer class).
      * 
      * @param className the classname of the http server to instantiate
      * @param configParameters the parameters need to configure the http server
@@ -117,8 +119,10 @@ public class HTTPServer implements ManagedProcess
             throw new UserError("\"" + className + "\" is not a subclass of ProgramDCompatibleHttpServer.", e);
         }
 
-        // Get the constructor that takes a Core, a ServletRequestResponderManagerRegistry, and a HTTPServerSettings as arguments.
-        Constructor<? extends ProgramDCompatibleHttpServer> constructor;
+        // Get the constructor that takes a Core, a
+        // ServletRequestResponderManagerRegistry, and a HTTPServerSettings as
+        // arguments.
+        Constructor< ? extends ProgramDCompatibleHttpServer> constructor;
         try
         {
             constructor = serverClass.getDeclaredConstructor(Core.class, ServletRequestResponderManagerRegistry.class, HTTPServerSettings.class);

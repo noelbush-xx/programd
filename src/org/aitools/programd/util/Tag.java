@@ -11,9 +11,7 @@ package org.aitools.programd.util;
 
 /**
  * A simple little utility class for working with a pseudo-XML concept of
- * &quot;tag&quot;.
- * 
- * TODO: Get rid of this!
+ * &quot;tag&quot;. TODO: Get rid of this!
  * 
  * @author Jon Baer
  */
@@ -34,14 +32,13 @@ public class Tag
     /**
      * Creates a new tag.
      * 
-     * @param nameToUse
-     *            the name of the tag
+     * @param nameToUse the name of the tag
      */
     public Tag(String nameToUse)
     {
         this.name = nameToUse;
         this.toString = LEFT_ANGLE_BRACKET + this.name + RIGHT_ANGLE_BRACKET;
-    } 
+    }
 
     /**
      * @return the tag's name surrounded by angle brackets
@@ -49,7 +46,7 @@ public class Tag
     public String toString()
     {
         return this.toString;
-    } 
+    }
 
     /**
      * @return the tag's name
@@ -57,5 +54,5 @@ public class Tag
     public String getName()
     {
         return this.name;
-    } 
+    }
 }

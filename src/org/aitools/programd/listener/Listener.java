@@ -25,7 +25,7 @@ public abstract class Listener implements ManagedProcess
 {
     /** The Core object in use. */
     protected Core core;
-    
+
     /** The bot for which this listener works. */
     protected Bot bot;
 
@@ -34,19 +34,18 @@ public abstract class Listener implements ManagedProcess
 
     /** The parameters that can be set for this listener. */
     protected Map<String, String> parameters = Collections.checkedMap(new HashMap<String, String>(), String.class, String.class);
-    
+
     /** The logger to use. */
     protected Logger logger;
 
     /**
      * Creates a new listener with name <code>name</code>.
      * 
-     * @param coreToUse
-     *            the Core object in use
+     * @param coreToUse the Core object in use
      * @param botToListenFor the bot for whom to listen
-     * @param listenerParameters
-     *            the parameters for the listener and their default values
-     * @throws InvalidListenerParameterException 
+     * @param listenerParameters the parameters for the listener and their
+     *            default values
+     * @throws InvalidListenerParameterException
      */
     public Listener(Core coreToUse, Bot botToListenFor, HashMap<String, String> listenerParameters) throws InvalidListenerParameterException
     {
@@ -56,10 +55,11 @@ public abstract class Listener implements ManagedProcess
         this.parameters = listenerParameters;
         this.logger = Logger.getLogger("programd");
         checkParameters();
-    } 
+    }
 
     /**
      * Validates parameters.
+     * 
      * @throws InvalidListenerParameterException if a parameter is not valid
      */
     abstract public void checkParameters() throws InvalidListenerParameterException;

@@ -37,7 +37,9 @@ public class SubstitutionsProcessor extends BotConfigurationElementProcessor
     private static final String REPLACE = "replace";
 
     // Package-visibility enum for specifying substitution type.
-    static enum SubstitutionType {/**
+    static enum SubstitutionType
+    {
+    /**
      * 
      */
     INPUT, /**
@@ -49,19 +51,22 @@ public class SubstitutionsProcessor extends BotConfigurationElementProcessor
     PERSON, /**
      * 
      */
-    PERSON2 }
+    PERSON2
+    }
 
     /**
      * Creates a new SubstitutionsProcessor using the given Core.
+     * 
      * @param coreToUse the Core object to use
      */
     public SubstitutionsProcessor(Core coreToUse)
     {
         super(coreToUse);
     }
-    
+
     /**
-     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element,
+     *      BotsConfigurationFileParser)
      */
     public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
@@ -74,17 +79,14 @@ public class SubstitutionsProcessor extends BotConfigurationElementProcessor
         {
             parser.evaluate(element.getChildNodes());
         }
-    } 
+    }
 
     /**
      * Adds substitutions of the specified type.
      * 
-     * @param type
-     *            the type of substitution to add
-     * @param element
-     *            the container of the &lt;substitute/&gt; elements
-     * @param parser
-     *            the parser handling this
+     * @param type the type of substitution to add
+     * @param element the container of the &lt;substitute/&gt; elements
+     * @param parser the parser handling this
      */
     static void addSubstitutions(SubstitutionType type, Element element, BotsConfigurationFileParser parser)
     {
@@ -94,7 +96,7 @@ public class SubstitutionsProcessor extends BotConfigurationElementProcessor
 
         for (int index = substituteCount; index > 0; index--)
         {
-            Element substitution = (Element)parser.getNode(SUBSTITUTE, element.getChildNodes(), index);
+            Element substitution = (Element) parser.getNode(SUBSTITUTE, element.getChildNodes(), index);
             String find = substitution.getAttribute(FIND);
             String replace = substitution.getAttribute(REPLACE);
             switch (type)
@@ -111,13 +113,12 @@ public class SubstitutionsProcessor extends BotConfigurationElementProcessor
                 case PERSON2:
                     bot.addPerson2Substitution(find, replace);
                     break;
-            } 
+            }
         }
         /*
-        if (Settings.showConsole())
-        {
-            Log.userinfo("Loaded " + substituteCount + " " + element.getNodeName() + " substitutions.", Log.STARTUP);
-        }
-        */
-    } 
+         * if (Settings.showConsole()) { Log.userinfo("Loaded " +
+         * substituteCount + " " + element.getNodeName() + " substitutions.",
+         * Log.STARTUP); }
+         */
+    }
 }

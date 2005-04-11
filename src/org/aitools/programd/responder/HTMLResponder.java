@@ -9,13 +9,13 @@
 
 package org.aitools.programd.responder;
 
-
 /**
  * Responsible for handling requests that come via HTTP, and delivering the
  * response via dynamically-generated HTML based on user-designed templates.
- * This has been totally re-worked from older versions.  The authentication stuff
- * is now handled by {@link HTMLResponderManager}, so someone could more easily replace
- * all that without disturbing the HTMLResponder code (which is obviously quite simple).
+ * This has been totally re-worked from older versions. The authentication stuff
+ * is now handled by {@link HTMLResponderManager}, so someone could more easily
+ * replace all that without disturbing the HTMLResponder code (which is
+ * obviously quite simple).
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @version 4.5
@@ -24,7 +24,9 @@ public class HTMLResponder extends AbstractXMLResponder implements ServletReques
 {
     /**
      * Creates a new HTMLResponder.
-     * @param responsibleManager the manager that is responsible for this responder
+     * 
+     * @param responsibleManager the manager that is responsible for this
+     *            responder
      * @param botidToRespondFor the botid to respond for
      * @param templateName the template name to use
      */

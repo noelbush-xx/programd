@@ -31,10 +31,9 @@ public class StringTripleMatrix
      */
     public StringTripleMatrix()
     {
-        this.vertical = new LinkedList[]
-            { new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>() } ;
+        this.vertical = new LinkedList[] { new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>() };
         this.horizontal = new LinkedList<StringTriple>();
-    } 
+    }
 
     /**
      * @return the horizontal component of the StringTripleMatrix
@@ -42,7 +41,7 @@ public class StringTripleMatrix
     public LinkedList<StringTriple> getAll()
     {
         return this.horizontal;
-    } 
+    }
 
     /**
      * @return an iterator over the horizontal component
@@ -50,7 +49,7 @@ public class StringTripleMatrix
     public Iterator iterator()
     {
         return this.horizontal.iterator();
-    } 
+    }
 
     /**
      * @return a list iterator for this StringTripleMatrix
@@ -58,7 +57,7 @@ public class StringTripleMatrix
     public ListIterator listIterator()
     {
         return this.horizontal.listIterator();
-    } 
+    }
 
     /**
      * @param tuple the tuple to look for in this StringTripleMatrix
@@ -67,34 +66,38 @@ public class StringTripleMatrix
     public boolean contains(StringTriple tuple)
     {
         return this.horizontal.contains(tuple);
-    } 
+    }
 
     /**
-     * @return the first-position elements of the vertical component of this StringTripleMatrix
+     * @return the first-position elements of the vertical component of this
+     *         StringTripleMatrix
      */
     public LinkedList<String> getFirsts()
     {
         return this.vertical[0];
-    } 
+    }
 
     /**
-     * @return the second-position elements of the vertical component of this StringTripleMatrix
+     * @return the second-position elements of the vertical component of this
+     *         StringTripleMatrix
      */
     public LinkedList<String> getSeconds()
     {
         return this.vertical[1];
-    } 
+    }
 
     /**
-     * @return the third-position elements of the vertical component of this StringTripleMatrix
+     * @return the third-position elements of the vertical component of this
+     *         StringTripleMatrix
      */
     public LinkedList<String> getThirds()
     {
         return this.vertical[2];
-    } 
+    }
 
     /**
      * Adds the given StringTuple to this StringTripleMatrix.
+     * 
      * @param tuple the tuple to add
      */
     public void add(StringTriple tuple)
@@ -103,10 +106,11 @@ public class StringTripleMatrix
         this.vertical[0].add(tuple.getFirst());
         this.vertical[1].add(tuple.getSecond());
         this.vertical[2].add(tuple.getThird());
-    } 
+    }
 
     /**
      * Adds the contents of the given StringTripleMatrix to this one.
+     * 
      * @param matrix the matrix whose contents we want to add
      */
     public void addAll(StringTripleMatrix matrix)
@@ -115,24 +119,24 @@ public class StringTripleMatrix
         this.vertical[0].addAll(matrix.getFirsts());
         this.vertical[1].addAll(matrix.getSeconds());
         this.vertical[2].addAll(matrix.getThirds());
-    } 
+    }
 
     /**
      * @return the size of the StringTripleMatrix
      */
     public int size()
     {
-        if (!((this.vertical[0].size() == this.vertical[1].size())
-                && (this.vertical[1].size() == this.vertical[2].size()) && (this.vertical[2].size() == this.horizontal
-                .size())))
+        if (!((this.vertical[0].size() == this.vertical[1].size()) && (this.vertical[1].size() == this.vertical[2].size()) && (this.vertical[2]
+                .size() == this.horizontal.size())))
         {
             throw new DeveloperError(new IllegalObjectStateException("Triple matrix integrity violated!"));
-        } 
+        }
         return this.horizontal.size();
-    } 
+    }
 
     /**
      * Ensures that the StringTripleMatrix has the given size.
+     * 
      * @param size the size to ensure
      */
     public void ensureSize(int size)
@@ -140,15 +144,15 @@ public class StringTripleMatrix
         if (size() >= size)
         {
             return;
-        } 
+        }
         for (int index = 3; --index >= 0;)
         {
             Vector<String> newVertical = new Vector<String>(this.vertical[index]);
             newVertical.setSize(size);
             this.vertical[index] = new LinkedList<String>(newVertical);
-        } 
+        }
         Vector<StringTriple> newHorizontal = new Vector<StringTriple>(this.horizontal);
         newHorizontal.setSize(size);
         this.horizontal = new LinkedList<StringTriple>(newHorizontal);
-    } 
+    }
 }

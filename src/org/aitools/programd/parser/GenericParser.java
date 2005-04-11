@@ -50,10 +50,10 @@ abstract public class GenericParser
 {
     /** Set by subclasses. */
     private ProcessorRegistry processorRegistry;
-    
+
     /** The URL of this document. */
     protected URL docURL;
-    
+
     /** The Core in use. */
     protected Core core;
 
@@ -67,21 +67,23 @@ abstract public class GenericParser
 
     /** A comma, for convenience. */
     protected static final String COMMA = ",";
-	
-	/** A DocumentBuilder for producing new Documents. */
-	protected static DocumentBuilder utilDocBuilder;
-    
+
+    /** A DocumentBuilder for producing new Documents. */
+    protected static DocumentBuilder utilDocBuilder;
+
     /**
      * Creates a new GenericParser with no Core.
+     * 
      * @param registry the registry of processors
      */
     public GenericParser(ProcessorRegistry registry)
     {
         initialize(registry);
     }
-    
+
     /**
      * Creates a new GenericParser with the given Core as its owner.
+     * 
      * @param registry the registry of processors
      * @param coreToUse the Core that owns this
      */
@@ -90,7 +92,7 @@ abstract public class GenericParser
         this.core = coreToUse;
         initialize(registry);
     }
-    
+
     private void initialize(ProcessorRegistry registry)
     {
         this.processorRegistry = registry;
@@ -108,7 +110,7 @@ abstract public class GenericParser
             }
         }
     }
-    
+
     /**
      * <p>
      * Processes a given URL.
@@ -117,11 +119,9 @@ abstract public class GenericParser
      * This is the general access method for external classes.
      * </p>
      * 
-     * @param url
-     *            the XML content
+     * @param url the XML content
      * @return the DOM produced by parsing
-     * @throws ProcessorException
-     *             if the content cannot be processed
+     * @throws ProcessorException if the content cannot be processed
      */
     public Document parse(URL url) throws ProcessorException
     {
@@ -156,9 +156,11 @@ abstract public class GenericParser
 
     /**
      * Processes whatever is at the given URL and returns a response.
+     * 
      * @param url where to find what is to be processed
      * @return the result of processing whatever is found at the URL
-     * @throws ProcessorException if there is a problem processing what is found at the URL
+     * @throws ProcessorException if there is a problem processing what is found
+     *             at the URL
      */
     public String processResponse(URL url) throws ProcessorException
     {
@@ -166,11 +168,13 @@ abstract public class GenericParser
         Document document = parse(this.docURL);
         return evaluate(document);
     }
-    
+
     /**
      * Processes whatever is at the given URL, returning nothing.
+     * 
      * @param url the URL at which to find whatever is to be processed
-     * @throws ProcessorException if there is a problem processing whatever is at the given URL
+     * @throws ProcessorException if there is a problem processing whatever is
+     *             at the given URL
      */
     public void process(URL url) throws ProcessorException
     {
@@ -178,7 +182,7 @@ abstract public class GenericParser
         Document document = parse(this.docURL);
         evaluate(document);
     }
-    
+
     private void contextualize(URL url)
     {
         if (url != null)
@@ -197,39 +201,40 @@ abstract public class GenericParser
             throw new DeveloperError("Passed a null URL to GenericParser.contextualize!", new NullPointerException());
         }
     }
-    
-	/**
-	 * Processes an XML fragment provided in a string.
-	 * @param input the string from which to create the document fragment
-	 * @return the result of processing the document fragment created from the given string
-	 * @throws ProcessorException if there was a problem processing the document fragment created from the given string
-	 */
-	public String processResponse(String input) throws ProcessorException
-	{
-		Document template;
-		try
-		{
-			template = utilDocBuilder.parse(new InputSource(new StringReader(input)));
-		}
-		catch (IOException e)
-		{
-			throw new ProcessorException("I/O Error processing XML fragment.", e, input);
-		}
-		catch (SAXException e)
-		{
-			throw new ProcessorException("SAX Exception processing XML fragment.", e, input);
-		}
-		return evaluate(template);
-	}
+
+    /**
+     * Processes an XML fragment provided in a string.
+     * 
+     * @param input the string from which to create the document fragment
+     * @return the result of processing the document fragment created from the
+     *         given string
+     * @throws ProcessorException if there was a problem processing the document
+     *             fragment created from the given string
+     */
+    public String processResponse(String input) throws ProcessorException
+    {
+        Document template;
+        try
+        {
+            template = utilDocBuilder.parse(new InputSource(new StringReader(input)));
+        }
+        catch (IOException e)
+        {
+            throw new ProcessorException("I/O Error processing XML fragment.", e, input);
+        }
+        catch (SAXException e)
+        {
+            throw new ProcessorException("SAX Exception processing XML fragment.", e, input);
+        }
+        return evaluate(template);
+    }
 
     /**
      * Processes a given XML node.
      * 
-     * @param element
-     *            the element being evaluated
+     * @param element the element being evaluated
      * @return the result of processing the element
-     * @throws ProcessorException
-     *             if the content cannot be processed
+     * @throws ProcessorException if the content cannot be processed
      */
     public String processElement(Element element) throws ProcessorException
     {
@@ -258,7 +263,8 @@ abstract public class GenericParser
             Processor processor = null;
             if (processorClass != null)
             {
-                // Get the processor constructor that takes a Core as an argument.
+                // Get the processor constructor that takes a Core as an
+                // argument.
                 Constructor<Processor> constructor = null;
                 try
                 {
@@ -272,28 +278,28 @@ abstract public class GenericParser
                 {
                     throw new DeveloperError("Permission denied to create new Processor with specified constructor", e);
                 }
-                
+
                 // Get a new instance of the processor.
                 try
                 {
                     processor = constructor.newInstance(this.core);
-                } 
+                }
                 catch (IllegalAccessException e)
                 {
                     throw new DeveloperError("Underlying constructor for Processor is inaccessible", e);
-                } 
+                }
                 catch (InstantiationException e)
                 {
                     throw new DeveloperError("Could not instantiate Processor", e);
-                } 
+                }
                 catch (IllegalArgumentException e)
                 {
                     throw new DeveloperError("Illegal argument exception when creating Processor.", e);
-                } 
+                }
                 catch (InvocationTargetException e)
                 {
                     throw new DeveloperError("Constructor threw an exception when getting a Processor instance from it", e);
-                } 
+                }
             }
 
             // Return the results of processing the tag.
@@ -312,14 +318,15 @@ abstract public class GenericParser
         // otherwise...
         return XMLKit.renderStartTag(element, true) + evaluate(element.getChildNodes()) + XMLKit.renderEndTag(element);
     }
-    
+
     /**
-     * Handles an unknown element.  By default it throws an exception.
-     * This can be overridden by subclasses that want to do something else,
-     * like ignore it, and/or just print a warning message.
+     * Handles an unknown element. By default it throws an exception. This can
+     * be overridden by subclasses that want to do something else, like ignore
+     * it, and/or just print a warning message.
      * 
      * @param element the element that could not be handled
-     * @param e the exception generated by trying to find a processor for the element
+     * @param e the exception generated by trying to find a processor for the
+     *            element
      */
     protected void handleUnknownElement(Element element, NotARegisteredClassException e)
     {
@@ -328,6 +335,7 @@ abstract public class GenericParser
 
     /**
      * Evaluates the given document and returns the result.
+     * 
      * @param document the document to evaluate
      * @return the result of evaluating the document
      * @throws ProcessorException if there is an error in processing
@@ -339,6 +347,7 @@ abstract public class GenericParser
 
     /**
      * Evaluates the given node list and returns the result.
+     * 
      * @param list the list of nodes to evaluate
      * @return the result of evaluating the given list of nodes
      * @throws ProcessorException if there is an error in processing
@@ -399,6 +408,7 @@ abstract public class GenericParser
 
     /**
      * Checks whether the given node list has an element with the given name.
+     * 
      * @param tagname the name of the element to look for
      * @param list the list of nodes to look in
      * @return whether the given node list has an element with the given name
@@ -410,9 +420,11 @@ abstract public class GenericParser
 
     /**
      * Counts the number of elements with the given name in the given node list.
+     * 
      * @param tagname the name of the element to look for
      * @param list the list in which to look
-     * @return the number of elements with the given name in the given list (may be 0)
+     * @return the number of elements with the given name in the given list (may
+     *         be 0)
      */
     public int elementCount(String tagname, NodeList list)
     {
@@ -429,12 +441,9 @@ abstract public class GenericParser
      * upper limit on the random number roll.
      * </p>
      * 
-     * @param tagname
-     *            the name of the tag sought
-     * @param list
-     *            the XML trie
-     * @param allnodes
-     *            if false, only count one of the desired type (just see if
+     * @param tagname the name of the tag sought
+     * @param list the XML trie
+     * @param allnodes if false, only count one of the desired type (just see if
      *            <i>any </i> are there)
      * @return the number of nodes of the given type at this level (or
      *         <code>1</code> if at least one node is present and
@@ -483,12 +492,9 @@ abstract public class GenericParser
      * (e.g., an &lt;li/&gt; beneath a &lt;random/&gt;).
      * </p>
      * 
-     * @param tagname
-     *            the name of the tag sought
-     * @param list
-     *            the XML trie
-     * @param ordernode
-     *            index of the node we sought
+     * @param tagname the name of the tag sought
+     * @param list the XML trie
+     * @param ordernode index of the node we sought
      * @return the node sought
      */
     public Node getNode(String tagname, NodeList list, int ordernode)
@@ -539,12 +545,10 @@ abstract public class GenericParser
      * elements </a>).
      * </p>
      * 
-     * @param element    the element to modify
-     * @param newElementName  the new name to give the element
-     * @param childContent
-     *            the name or content for the child to add
-     * @param childType
-     *            the type of the child
+     * @param element the element to modify
+     * @param newElementName the new name to give the element
+     * @param childContent the name or content for the child to add
+     * @param childType the type of the child
      * @return the result of processing this structure
      * @throws ProcessorException if there is an error in processing
      */
@@ -564,8 +568,8 @@ abstract public class GenericParser
          */
         if ((!childContent.equals(EMPTY_STRING)) && ((childType == Node.ELEMENT_NODE) || (childType == Node.TEXT_NODE)))
         {
-			Document ownerDoc = element.getOwnerDocument();
-			Element newElement = ownerDoc.createElementNS(element.getNamespaceURI(), newElementName);
+            Document ownerDoc = element.getOwnerDocument();
+            Element newElement = ownerDoc.createElementNS(element.getNamespaceURI(), newElementName);
             /*
              * Create an XML node for the child tag. Note that we assume that
              * the child is an empty tag with no attributes. This is reasonable
@@ -573,7 +577,7 @@ abstract public class GenericParser
              */
             if (childType == Node.ELEMENT_NODE)
             {
-				newElement.appendChild(ownerDoc.createElementNS(element.getNamespaceURI(), childContent));
+                newElement.appendChild(ownerDoc.createElementNS(element.getNamespaceURI(), childContent));
             }
             else if (childType == Node.TEXT_NODE)
             {
@@ -586,10 +590,11 @@ abstract public class GenericParser
 
         return response;
     }
-    
+
     /**
-     * Verifies that the given URL points to something real/accessible,
-     * then processes it (not returning anything).
+     * Verifies that the given URL points to something real/accessible, then
+     * processes it (not returning anything).
+     * 
      * @param urlString the URL to check
      * @throws ProcessorException if there is an error in processing
      */
@@ -604,8 +609,9 @@ abstract public class GenericParser
     }
 
     /**
-     * Verifies that the given URL points to something real/accessible,
-     * then processes it, returning a response.
+     * Verifies that the given URL points to something real/accessible, then
+     * processes it, returning a response.
+     * 
      * @param urlString the URL to check
      * @return the response produced by processing whatever is at the URL
      * @throws ProcessorException if there is an error in processing
@@ -621,8 +627,9 @@ abstract public class GenericParser
     }
 
     /**
-     * Verifies that the given URL points to something real/accessible,
-     * then processes it (not returning anything).
+     * Verifies that the given URL points to something real/accessible, then
+     * processes it (not returning anything).
+     * 
      * @param url the URL to check
      * @throws ProcessorException if there is an error in processing
      */
@@ -640,8 +647,9 @@ abstract public class GenericParser
     }
 
     /**
-     * Verifies that the given URL points to something real/accessible,
-     * then processes it (not returning anything).
+     * Verifies that the given URL points to something real/accessible, then
+     * processes it (not returning anything).
+     * 
      * @param url the URL to check
      * @return the result of processing whatever is at the URL
      * @throws ProcessorException if there is an error in processing
@@ -662,8 +670,8 @@ abstract public class GenericParser
     /**
      * Corrects a tag to use a valid 2-dimensional index, and returns the
      * indices. If either index is invalid or missing, it is set to 1.
-     * @param element the element for which to get a valid 2-dimensional index
      * 
+     * @param element the element for which to get a valid 2-dimensional index
      * @since 4.1.3
      * @return a valid 2-dimensional index
      */
@@ -716,8 +724,8 @@ abstract public class GenericParser
     /**
      * Corrects a tag to use a valid 1-dimensional index, and returns the index.
      * If the index is missing or valid, 1 is returned.
-     * @param element the element for which to get a valid 1-dimensional index
      * 
+     * @param element the element for which to get a valid 1-dimensional index
      * @since 4.1.3
      * @return a valid 1-dimensional index
      */
@@ -733,7 +741,7 @@ abstract public class GenericParser
             return 1;
         }
     }
-    
+
     /**
      * @return the Core
      */
