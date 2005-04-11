@@ -350,7 +350,6 @@ public class XMLKit
      *            the input stream
      * @return the declared encoding
      * @throws IOException if there was a problem reading the input stream
-     * @result the declared encoding string
      */
     public static String getDeclaredXMLEncoding(InputStream in) throws IOException
     {
@@ -386,14 +385,15 @@ public class XMLKit
     } 
 
     /**
-     * Formats AIML from a single long string into a nicely indented multi-line
+     * Formats XML from a single long string into a nicely indented multi-line
      * string.
      * 
      * @param content
-     *            the AIML content to format
-     * @return the formatted AIML
+     *            the XML content to format
+     * @param includeNamespaceAttribute whether to include the namespace attribute
+     * @return the formatted XML
      */
-    public static String formatAIML(String content)
+    public static String formatXML(String content, boolean includeNamespaceAttribute)
     {
         Document document;
         try
@@ -402,18 +402,18 @@ public class XMLKit
         }
         catch (IOException e)
         {
-            throw new DeveloperError("I/O error creating a document for formatting AIML.", e);
+            throw new DeveloperError("I/O error creating a document for formatting XML.", e);
         }
         catch (SAXException e)
         {
-            throw new DeveloperError("I/O error creating a document for formatting AIML.", e);
+            throw new DeveloperError("I/O error creating a document for formatting XML.", e);
         }
         StringBuffer result = new StringBuffer();
-        formatAIML(document.getDocumentElement(), 0, true, result);
+        formatXML(document.getDocumentElement(), 0, true, result, includeNamespaceAttribute);
         return result.toString();
     }
    
-    private static void formatAIML(Node node, int level, boolean atStart, StringBuffer result)
+    private static void formatXML(Node node, int level, boolean atStart, StringBuffer result, boolean includeNamespaceAttribute)
     {
         switch (node.getNodeType())
         {
@@ -426,28 +426,17 @@ public class XMLKit
                 else
                 {
                     atStart = false;
-                } 
-                result.append(StringKit.tab(level) + MARKER_START + node.getNodeName());
-                if (node.hasAttributes())
-                {
-                    NamedNodeMap attributes = node.getAttributes();
-                    int attributeCount = attributes.getLength();
-                    for (int index = 0; index < attributeCount; index++)
-                    {
-                        Node attribute = attributes.item(index);
-                        result.append(SPACE + attribute.getNodeName() + EQUAL_QUOTE + attribute.getNodeValue() + QUOTE_MARK);
-                    }
                 }
-                String contents = formatAIML(node.getChildNodes(), level + 1, true);
+                String contents = formatXML(node.getChildNodes(), level + 1, true, includeNamespaceAttribute);
                 if (contents.trim().length() > 0)
                 {
-                    result.append(MARKER_END);
+                    result.append(StringKit.tab(level) + renderStartTag((Element)node, includeNamespaceAttribute));
                     result.append(LINE_SEPARATOR + contents);
-                    result.append(LINE_SEPARATOR + StringKit.tab(level) + MARKER_START + '/' + node.getNodeName() + MARKER_END);
+                    result.append(LINE_SEPARATOR + StringKit.tab(level) + renderEndTag((Element)node));
                 } 
                 else
                 {
-                    result.append(EMPTY_ELEMENT_TAG_END);
+                    result.append(StringKit.tab(level) + renderEmptyElement((Element)node, includeNamespaceAttribute));
                 }
                 break;
 
@@ -491,16 +480,29 @@ public class XMLKit
     }
     
     /**
-     * Formats AIML from a node list into a nicely indented multi-line string.
+     * Formats XML from a node list into a nicely indented multi-line string.
+     * This method assumes that we should include namespace attributes.
      * 
-     * @param list the list of AIML nodes
+     * @param list the list of XML nodes
+     * @return the formatted XML
+     */
+    public static String formatXML(NodeList list)
+    {
+        return formatXML(list, 0, true, true);
+    }
+    
+    /**
+     * Formats XML from a node list into a nicely indented multi-line string.
+     * 
+     * @param list the list of XML nodes
      * @param level
      *            the level (for indenting)
      * @param atStart
      *            whether the whole XML string is at its beginning
-     * @return the formatted AIML
+     * @param includeNamespaceAttribute whether to include the namespace attribute
+     * @return the formatted XML
      */
-    public static String formatAIML(NodeList list, int level, boolean atStart)
+    public static String formatXML(NodeList list, int level, boolean atStart, boolean includeNamespaceAttribute)
     {
         StringBuffer result = new StringBuffer();
 
@@ -509,7 +511,7 @@ public class XMLKit
         for (int index = 0; index < listLength; index++)
         {
             Node node = list.item(index);
-            formatAIML(node, level, atStart, result);
+            formatXML(node, level, atStart, result, includeNamespaceAttribute);
         }
         return result.toString();
     } 
@@ -724,7 +726,7 @@ public class XMLKit
     {
         StringBuffer result = new StringBuffer();
         result.append(MARKER_START);
-        result.append(element.getTagName());
+        result.append(element.getLocalName());
         if (includeNamespaceAttribute)
         {
             result.append(SPACE_XMLNS_EQUALS_QUOTE + element.getNamespaceURI() + QUOTE_MARK);
@@ -792,7 +794,7 @@ public class XMLKit
     {
         StringBuffer result = new StringBuffer();
         result.append(MARKER_START);
-        result.append(element.getTagName());
+        result.append(element.getLocalName());
         if (includeNamespaceAttribute)
         {
             result.append(SPACE_XMLNS_EQUALS_QUOTE + element.getNamespaceURI() + QUOTE_MARK);
@@ -820,6 +822,6 @@ public class XMLKit
      */
     public static String renderEndTag(Element element)
     {
-        return END_TAG_START + element.getTagName() + MARKER_END;
+        return END_TAG_START + element.getLocalName() + MARKER_END;
     }
 }
