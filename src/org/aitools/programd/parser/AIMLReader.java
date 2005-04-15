@@ -83,7 +83,7 @@ public class AIMLReader extends DefaultHandler
     private static final String THAT = "that";
 
     /** The string &quot;{@value}&quot;. */
-    private static final String TOPIC = "topic";
+    //private static final String TOPIC = "topic";
 
     /** The string &quot;{@value}&quot;. */
     private static final String TEMPLATE = "template";
@@ -98,7 +98,7 @@ public class AIMLReader extends DefaultHandler
     private StringBuffer thatBuffer;
 
     /** The most recently collected &lt;topic&gt;&lt;/topic&gt; contents. */
-    private StringBuffer topicBuffer;
+    //private StringBuffer topicBuffer;
 
     /** The most recently collected &lt;template&gt;&lt;/template&gt; contents. */
     private StringBuffer templateBuffer;
