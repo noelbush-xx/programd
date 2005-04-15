@@ -9,6 +9,7 @@
 
 package org.aitools.programd;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -60,8 +61,8 @@ public class Core extends Thread
     /** Version of this package. */
     public static final String VERSION = "4.5";
 
-    /** Build Number of this package (internal regression test control). */
-    public static final String BUILD = "00";
+    /** Build identifier. */
+    public static final String BUILD = "alpha-01";
 
     /** The Settings. */
     private CoreSettings settings;
@@ -113,6 +114,12 @@ public class Core extends Thread
     {
     /** The Core has not yet started. */
     NOT_STARTED,
+
+    /** The Core has been properly intialized (internal, by constructor). */
+    INITIALIZED,
+
+    /** The Core has been properly set up (external, by user). */
+    SET_UP,
 
     /** The Core is running. */
     RUNNING,
@@ -254,6 +261,9 @@ public class Core extends Thread
         {
             this.hostname = "unknown-host";
         }
+        
+        // Set the status indicator.
+        this.status = Status.INITIALIZED;
     }
 
     /**
@@ -262,7 +272,11 @@ public class Core extends Thread
      */
     public void setup()
     {
-        this.logger.log(Level.INFO, "Starting Program D version " + VERSION);
+        if (this.status != Status.INITIALIZED)
+        {
+            throw new DeveloperError(new IllegalStateException("Core has not been initialized; cannot set up."));
+        }
+        this.logger.log(Level.INFO, "Starting Program D version " + VERSION + " [" + BUILD + ']');
         this.logger.log(Level.INFO, "Using Java VM " + System.getProperty("java.vm.version") + " from " + System.getProperty("java.vendor"));
         this.logger.log(Level.INFO, "On " + System.getProperty("os.name") + " version " + System.getProperty("os.version") + " ("
                 + System.getProperty("os.arch") + ")");
@@ -362,6 +376,9 @@ public class Core extends Thread
         {
             fail("unforeseen problem", e);
         }
+        
+        // Set the status indicator.
+        this.status = Status.SET_UP;
     }
 
     /**
@@ -370,10 +387,10 @@ public class Core extends Thread
      */
     public void run()
     {
-        // Notify the listeners that the Core is ready.
-        /*
-         * for (CoreListener listener : this.listeners) { listener.coreReady(); }
-         */
+        if (this.status != Status.SET_UP)
+        {
+            throw new DeveloperError(new IllegalStateException("Core has not been set up; cannot run."));
+        }
 
         this.status = Status.RUNNING;
 
@@ -515,9 +532,10 @@ public class Core extends Thread
         {
             throwableDescription += ".";
         }
-        this.logger.log(Level.SEVERE, "Exiting abnormally due to " + description + ":\n" + throwableDescription);
+        this.logger.log(Level.SEVERE, "Core is exiting abnormally due to " + description + ":\n" + throwableDescription);
 
         System.err.println();
+        //TODO: Make it possible to toggle off stack trace printing.
         if (e instanceof UserError || e instanceof DeveloperError)
         {
             e.getCause().printStackTrace(System.err);
@@ -539,7 +557,8 @@ public class Core extends Thread
          */
         public void uncaughtException(Thread t, Throwable e)
         {
-            fail(t, e);
+            System.err.println("Uncaught exception " + e.getClass().getSimpleName() + " in thread \"" + t.getName() + "\".");
+            e.printStackTrace(System.err);
         }
     }
 
@@ -555,6 +574,7 @@ public class Core extends Thread
     public Logger setupLogger(String name, String pattern)
     {
         Logger newLogger = Logger.getLogger(name);
+        FileManager.checkOrCreateDirectory((new File(pattern)).getParent(), "log file directory");
         FileHandler newHandler = null;
         try
         {
