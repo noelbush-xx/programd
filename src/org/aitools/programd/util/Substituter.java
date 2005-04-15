@@ -151,8 +151,8 @@ public class Substituter
         StringBuffer result = new StringBuffer();
 
         // Iterate through the untouched pieces and the replacements.
-        ListIterator untouchedIterator = untouchedPieces.listIterator(0);
-        ListIterator replaceIterator = replacements.listIterator(0);
+        ListIterator<String> untouchedIterator = untouchedPieces.listIterator(0);
+        ListIterator<String> replaceIterator = replacements.listIterator(0);
         while (untouchedIterator.hasNext())
         {
             result.append(untouchedIterator.next());
