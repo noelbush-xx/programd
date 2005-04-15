@@ -225,7 +225,7 @@ public class Graphmaster
      *            should be appended
      * @return <code>Nodemapper</code> which is the result of adding the node
      */
-    private Nodemapper add(ListIterator pathIterator, Nodemapper parent)
+    private Nodemapper add(ListIterator<String> pathIterator, Nodemapper parent)
     {
         // If there are no more words in the path, return the parent node
         if (!pathIterator.hasNext())
@@ -234,7 +234,7 @@ public class Graphmaster
             return parent;
         }
         // Otherwise, get the next word.
-        String word = (String) pathIterator.next();
+        String word = pathIterator.next();
 
         Nodemapper node;
 

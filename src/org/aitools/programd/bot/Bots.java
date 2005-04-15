@@ -147,7 +147,7 @@ public class Bots
      * 
      * @return an iterator over the key set
      */
-    public Iterator keysIterator()
+    public Iterator<String> keysIterator()
     {
         return this.botList.keySet().iterator();
     }

@@ -109,7 +109,7 @@ public class Nodemaster implements Nodemapper
         {
             // Find the key for this value.
             Object keyToRemove = null;
-            for (Map.Entry item : this.hidden.entrySet())
+            for (Map.Entry<String, Object> item : this.hidden.entrySet())
             {
                 if (item.getValue().equals(valueToRemove))
                 {
