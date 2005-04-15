@@ -25,6 +25,7 @@ import org.aitools.programd.graph.Nodemapper;
 import org.aitools.programd.logging.SimpleChatLogFormatter;
 import org.aitools.programd.logging.XMLChatLogFormatter;
 import org.aitools.programd.multiplexor.PredicateInfo;
+import org.aitools.programd.multiplexor.PredicateMap;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.InputNormalizer;
@@ -70,7 +71,7 @@ public class Bot
     private List<String> sentenceSplitters = Collections.checkedList(new ArrayList<String>(), String.class);
 
     /** Holds cached predicates, keyed by userid. */
-    private Map<String, Map<String, Object>> predicateCache = Collections.synchronizedMap(new HashMap<String, Map<String, Object>>());
+    private Map<String, PredicateMap> predicateCache = Collections.synchronizedMap(new HashMap<String, PredicateMap>());
 
     /** The predicate empty default. */
     protected String predicateEmptyDefault;
@@ -252,10 +253,7 @@ public class Bot
      */
     public void addPredicateInfo(String name, String defaultValue, boolean returnNameWhenSet)
     {
-        PredicateInfo info = new PredicateInfo();
-        info.name = name;
-        info.defaultValue = defaultValue;
-        info.returnNameWhenSet = returnNameWhenSet;
+        PredicateInfo info = new PredicateInfo(name, defaultValue, returnNameWhenSet);
         this.predicatesInfo.put(name, info);
     }
 
@@ -264,7 +262,7 @@ public class Bot
      * 
      * @return the predicates info map
      */
-    public Map getPredicatesInfo()
+    public Map<String, PredicateInfo> getPredicatesInfo()
     {
         return this.predicatesInfo;
     }
@@ -274,7 +272,7 @@ public class Bot
      * 
      * @return the predicate cache
      */
-    public Map<String, Map<String, Object>> getPredicateCache()
+    public Map<String, PredicateMap> getPredicateCache()
     {
         return this.predicateCache;
     }
@@ -286,15 +284,15 @@ public class Bot
      * @param userid
      * @return the map of predicates for the given userid
      */
-    public Map<String, Object> predicatesFor(String userid)
+    public PredicateMap predicatesFor(String userid)
     {
-        Map<String, Object> userPredicates;
+        PredicateMap userPredicates;
 
         // Find out if any predicates for this userid are cached.
         if (!this.predicateCache.containsKey(userid))
         {
             // Create them if not.
-            userPredicates = Collections.synchronizedMap(new HashMap<String, Object>());
+            userPredicates = new PredicateMap();
             this.predicateCache.put(userid, userPredicates);
         }
         else
