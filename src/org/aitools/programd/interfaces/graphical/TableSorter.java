@@ -13,7 +13,6 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.IllegalObjectStateException;
 
 /**
  * A sorter for TableModels. The sorter has a model (conforming to TableModel)
@@ -77,7 +76,7 @@ public class TableSorter extends TableMap
      */
     public int compareRowsByColumn(int row1, int row2, int column)
     {
-        Class type = this.model.getColumnClass(column);
+        Class<?> type = this.model.getColumnClass(column);
         TableModel data = this.model;
 
         // Check for nulls.
@@ -270,7 +269,7 @@ public class TableSorter extends TableMap
     {
         if (this.indexes.length != this.model.getRowCount())
         {
-            throw new DeveloperError(new IllegalObjectStateException("Sorter not informed of a change in model."));
+            throw new DeveloperError(new IllegalStateException("Sorter not informed of a change in model."));
         }
     }
 
