@@ -106,9 +106,6 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
     /** The string &quot;{@value}&quot;. */
     private static final String REQUEST = "request";
 
-    /** The string &quot;{@value}&quot;. */
-    private static final String LOGGED_IN = "logged_in";
-
     /**
      * Creates this object.
      * 
@@ -722,7 +719,6 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
     private static String getCookieValue(HttpServletRequest request, String cookieName)
     {
         Cookie[] cookies = request.getCookies();
-        String result = null;
         if (cookies != null)
         {
             int cookiesLength = cookies.length;
