@@ -238,7 +238,7 @@ abstract public class Multiplexor
         List<String> sentenceList = bot.sentenceSplit(bot.applyInputSubstitutions(responder.preprocess(input)));
 
         // Get an iterator on the replies.
-        Iterator replies = getReplies(sentenceList, userid, botid).iterator();
+        Iterator<String> replies = getReplies(sentenceList, userid, botid).iterator();
 
         // Start by assuming an empty response.
         String response = EMPTY_STRING;
@@ -248,7 +248,7 @@ abstract public class Multiplexor
         {
             // ...ask the responder to append the reply to the response, and
             // accumulate the result.
-            response = responder.append(sentence, (String) replies.next(), response);
+            response = responder.append(sentence, replies.next(), response);
         }
 
         // Finally, ask the responder to postprocess the response, and return
@@ -277,7 +277,7 @@ abstract public class Multiplexor
         List<String> sentenceList = bot.sentenceSplit(bot.applyInputSubstitutions(input));
 
         // Get an iterator on the replies.
-        Iterator replies = getReplies(sentenceList, userid, botid).iterator();
+        Iterator<String> replies = getReplies(sentenceList, userid, botid).iterator();
 
         // Start by assuming an empty response.
         String response = EMPTY_STRING;
@@ -286,7 +286,7 @@ abstract public class Multiplexor
         for (String sentence : sentenceList)
         {
             // Append the reply to the response.
-            response += (String) replies.next();
+            response += replies.next();
         }
 
         // Return the response (may be just EMPTY_STRING!)
@@ -318,8 +318,8 @@ abstract public class Multiplexor
         Bot bot = this.bots.getBot(botid);
 
         // Ready the that and topic predicates for constructing the match path.
-        List thatSentences = bot.sentenceSplit(this.predicateMaster.get(THAT, 1, userid, botid));
-        String that = InputNormalizer.patternFitIgnoreCase((String) thatSentences.get(thatSentences.size() - 1));
+        List<String> thatSentences = bot.sentenceSplit(this.predicateMaster.get(THAT, 1, userid, botid));
+        String that = InputNormalizer.patternFitIgnoreCase(thatSentences.get(thatSentences.size() - 1));
 
         if (that.equals(EMPTY_STRING) || that.equals(this.predicateEmptyDefault))
         {
@@ -345,7 +345,7 @@ abstract public class Multiplexor
      * @param botid
      * @return the list of replies to the input sentences
      */
-    private List getReplies(List<String> sentenceList, String userid, String botid)
+    private List<String> getReplies(List<String> sentenceList, String userid, String botid)
     {
         // All replies will be assembled in this ArrayList.
         List<String> replies = Collections.checkedList(new ArrayList<String>(sentenceList.size()), String.class);
@@ -354,8 +354,8 @@ abstract public class Multiplexor
         Bot bot = this.bots.getBot(botid);
 
         // Ready the that and topic predicates for constructing the match path.
-        List thatSentences = bot.sentenceSplit(this.predicateMaster.get(THAT, 1, userid, botid));
-        String that = InputNormalizer.patternFitIgnoreCase((String) thatSentences.get(thatSentences.size() - 1));
+        List<String> thatSentences = bot.sentenceSplit(this.predicateMaster.get(THAT, 1, userid, botid));
+        String that = InputNormalizer.patternFitIgnoreCase(thatSentences.get(thatSentences.size() - 1));
 
         if (that.equals(EMPTY_STRING) || that.equals(this.predicateEmptyDefault))
         {
