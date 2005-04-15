@@ -82,11 +82,11 @@ public class InputNormalizer
 
         // Iterate through the indices and remove (all previous of) consecutive
         // values.
-        ListIterator indices = splitterIndices.listIterator();
-        int previousIndex = ((Integer) indices.next()).intValue();
+        ListIterator<Integer> indices = splitterIndices.listIterator();
+        int previousIndex = indices.next();
         while (indices.hasNext())
         {
-            int nextIndex = ((Integer) indices.next()).intValue();
+            int nextIndex = indices.next();
             if (nextIndex == previousIndex + 1)
             {
                 indices.previous();
@@ -102,7 +102,7 @@ public class InputNormalizer
         int endIndex = inputLength - 1;
         while (indices.hasNext())
         {
-            endIndex = ((Integer) indices.next()).intValue();
+            endIndex = indices.next();
             result.add(input.substring(startIndex, endIndex + 1).trim());
             startIndex = endIndex + 1;
         }
