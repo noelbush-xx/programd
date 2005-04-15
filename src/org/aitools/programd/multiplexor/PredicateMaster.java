@@ -21,7 +21,6 @@ import org.aitools.programd.CoreSettings;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.IllegalObjectStateException;
 
 /**
  * <p>
@@ -104,10 +103,10 @@ public class PredicateMaster
     public String set(String name, String value, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        Map<String, Object> userPredicates = this.bots.getBot(botid).predicatesFor(userid);
+        PredicateMap userPredicates = this.bots.getBot(botid).predicatesFor(userid);
 
         // Put the new value into the predicate.
-        userPredicates.put(name, value);
+        userPredicates.put(name, new PredicateValue(value));
 
         // Increment the cache count.
         cacheSize++;
@@ -136,7 +135,7 @@ public class PredicateMaster
     public synchronized String set(String name, int index, String value, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        Map<String, Object> userPredicates = this.bots.getBot(botid).predicatesFor(userid);
+        PredicateMap userPredicates = this.bots.getBot(botid).predicatesFor(userid);
 
         // Get, load or create the list of values.
         ArrayList<String> values = getLoadOrCreateValueList(name, userPredicates, userid, botid);
@@ -179,7 +178,7 @@ public class PredicateMaster
     public synchronized String push(String name, String value, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        Map<String, Object> userPredicates = this.bots.getBot(botid).predicatesFor(userid);
+        PredicateMap userPredicates = this.bots.getBot(botid).predicatesFor(userid);
 
         // Get, load or create the list of values.
         ArrayList<String> values = getLoadOrCreateValueList(name, userPredicates, userid, botid);
@@ -209,64 +208,44 @@ public class PredicateMaster
      */
     public synchronized String get(String name, String userid, String botid)
     {
-        String value;
-
         // Get existing or new predicates map for userid.
-        Map<String, Object> userPredicates = this.bots.getBot(botid).predicatesFor(userid);
+        PredicateMap userPredicates = this.bots.getBot(botid).predicatesFor(userid);
 
         // Try to get the predicate value from the cache.
-        Object valueObject = userPredicates.get(name);
-
-        // If it is null, try loading the predicate.
-        if (valueObject == null)
+        PredicateValue value;
+        
+        try
         {
+            value = userPredicates.get(name);
+        }
+        catch (NoSuchPredicateException e0)
+        {
+            String loadedValue;
             try
             {
-                value = this.multiplexor.loadPredicate(name, userid, botid);
+                loadedValue = this.multiplexor.loadPredicate(name, userid, botid);
             }
-            catch (NoSuchPredicateException e0)
+            catch (NoSuchPredicateException e1)
             {
                 // If not found, set and cache the best available default.
-                value = bestAvailableDefault(name, botid);
+                loadedValue = bestAvailableDefault(name, botid);
             }
 
-            // Check that the result is not null.
-            if (value != null)
-            {
-                // Cache it.
-                userPredicates.put(name, value);
-            }
-            else
-            {
-                // This should never, ever happen!
-                throw new DeveloperError("Null string found in user predicates cache!", new NullPointerException());
-            }
-
-        }
-
-        // Determine whether this is an indexed or unindexed predicate.
-        else if (valueObject instanceof String)
-        {
-            // This is an unindexed predicate.
-            value = (String) valueObject;
-        }
-        else if (valueObject instanceof ArrayList)
-        {
-            // This is an indexed predicate.
-            ArrayList values = (ArrayList) valueObject;
-            value = (String) values.get(0);
-        }
-        else
-        {
-            // This should never, ever happen!
-            throw new DeveloperError(new IllegalObjectStateException("Something other than a String or a ArrayList found in user predicates cache!"));
+            // Cache it.
+            userPredicates.put(name, new PredicateValue(loadedValue));
+            
+            // Check the cache.
+            checkCache();
+            
+            // Return the loaded value.
+            return loadedValue;
         }
 
         // Check the cache.
         checkCache();
 
-        // Cache and return the value.
-        return value;
+        // Return the cached value.
+        return value.getFirstValue();
     }
 
     /**
@@ -285,23 +264,23 @@ public class PredicateMaster
     public synchronized String get(String name, int index, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        Map<String, Object> userPredicates = this.bots.getBot(botid).predicatesFor(userid);
+        PredicateMap userPredicates = this.bots.getBot(botid).predicatesFor(userid);
 
         String value = null;
 
         // Get the list of values.
-        ArrayList values = null;
+        ArrayList<String> valueList = null;
 
         try
         {
-            values = getValueList(name, userPredicates);
+            valueList = getValueList(name, userPredicates);
         }
         catch (NoSuchPredicateException e0)
         {
             // No values cached; try loading.
             try
             {
-                values = loadValueList(name, userPredicates, userid, botid);
+                valueList = loadValueList(name, userPredicates, userid, botid);
             }
             catch (NoSuchPredicateException e1)
             {
@@ -311,13 +290,13 @@ public class PredicateMaster
             }
         }
 
-        if (values != null)
+        if (valueList != null)
         {
             // The index may be invalid.
             try
             {
                 // Get the value at index (minus one -- no zero index in AIML).
-                value = (String) values.get(index - 1);
+                value = valueList.get(index - 1);
             }
             catch (IndexOutOfBoundsException e)
             {
@@ -363,28 +342,11 @@ public class PredicateMaster
      * @throws NoSuchPredicateException if no values are assigned to the
      *             <code>name</code>
      */
-    private static ArrayList<String> getValueList(String name, Map<String, Object> userPredicates) throws NoSuchPredicateException
+    private static ArrayList<String> getValueList(String name, PredicateMap userPredicates) throws NoSuchPredicateException
     {
         if (userPredicates.size() > 0 && userPredicates.containsKey(name))
         {
-            Object valueObject = userPredicates.get(name);
-            if (valueObject != null)
-            {
-                if (valueObject instanceof String)
-                {
-                    ArrayList<String> values = createValueList(name, userPredicates);
-                    values.add((String) valueObject);
-                    return values;
-                }
-                else if (valueObject instanceof ArrayList)
-                {
-                    return (ArrayList<String>) valueObject;
-                }
-                // This should never happen!
-                throw new DeveloperError(new IllegalObjectStateException("Something other than a String or ArrayList found in predicates!"));
-            }
-            // This should never, ever happen!
-            throw new DeveloperError("Null String found as value in predicates!", new NullPointerException());
+            return userPredicates.get(name).asList();
         }
         // If the predicate is not found, throw an exception.
         throw new NoSuchPredicateException(name);
@@ -407,7 +369,7 @@ public class PredicateMaster
      *             <code>name</code>
      * @throws NullPointerException if <code>userPredicates</code> is null
      */
-    private ArrayList<String> loadValueList(String name, Map<String, Object> userPredicates, String userid, String botid)
+    private ArrayList<String> loadValueList(String name, PredicateMap userPredicates, String userid, String botid)
             throws NoSuchPredicateException, NullPointerException
     {
         // Prevent this from being called with a null predicates map.
@@ -418,21 +380,21 @@ public class PredicateMaster
 
         // Try to load the predicate as an indexed predicate.
         int index = 1;
-        String value;
+        String loadedValue;
         try
         {
-            value = this.multiplexor.loadPredicate(name + '.' + index, userid, botid);
+            loadedValue = this.multiplexor.loadPredicate(name + '.' + index, userid, botid);
         }
         catch (NoSuchPredicateException e0)
         {
             throw new NoSuchPredicateException(name);
         }
 
-        // If this succeeded, create the new values list in the predicates.
-        ArrayList<String> values = createValueList(name, userPredicates);
+        // If this succeeded, get/create the new values list in the predicates.
+        PredicateValue value = userPredicates.get(name);
 
         // Add the first value that was found.
-        values.add(value);
+        value.add(loadedValue);
 
         // Now load as many more as possible up to MAX_INDEX.
         try
@@ -441,7 +403,7 @@ public class PredicateMaster
             while (index <= MAX_INDEX)
             {
                 index++;
-                values.add(this.multiplexor.loadPredicate(name + '.' + index, userid, botid));
+                value.add(this.multiplexor.loadPredicate(name + '.' + index, userid, botid));
             }
         }
         catch (NoSuchPredicateException e1)
@@ -450,7 +412,7 @@ public class PredicateMaster
             // least one).
         }
 
-        return values;
+        return value.asList();
     }
 
     /**
@@ -461,7 +423,7 @@ public class PredicateMaster
      * @param userPredicates the predicates map to which to add the list
      * @return the new list
      */
-    private static ArrayList<String> createValueList(String name, Map<String, Object> userPredicates)
+    private static ArrayList<String> createValueList(String name, PredicateMap userPredicates)
     {
         // Create the new list.
         ArrayList<String> values = new ArrayList<String>();
@@ -481,7 +443,7 @@ public class PredicateMaster
      * @return a value list in <code>userPredicates</code> for
      *         <code>name</code> for <code>userid</code>
      */
-    private ArrayList<String> getLoadOrCreateValueList(String name, Map<String, Object> userPredicates, String userid, String botid)
+    private ArrayList<String> getLoadOrCreateValueList(String name, PredicateMap userPredicates, String userid, String botid)
     {
         ArrayList<String> values;
 
@@ -515,16 +477,12 @@ public class PredicateMaster
      */
     private String bestAvailableDefault(String name, String botid)
     {
-        Map predicatesInfo = this.bots.getBot(botid).getPredicatesInfo();
+        Map<String, PredicateInfo> predicatesInfo = this.bots.getBot(botid).getPredicatesInfo();
 
         // There may be an individual default defined.
         if (predicatesInfo.containsKey(name))
         {
-            String value = ((PredicateInfo) predicatesInfo.get(name)).defaultValue;
-            if (value != null)
-            {
-                return value;
-            }
+            return predicatesInfo.get(name).getDefaultValue();
         }
         // If not, return the global empty default.
         return this.predicateEmptyDefault;
@@ -542,13 +500,13 @@ public class PredicateMaster
      */
     private String nameOrValue(String name, String value, String botid)
     {
-        Map predicatesInfo = this.bots.getBot(botid).getPredicatesInfo();
+        Map<String, PredicateInfo> predicatesInfo = this.bots.getBot(botid).getPredicatesInfo();
 
         // Check if any info is known about this predicate.
         if (predicatesInfo.containsKey(name))
         {
             // If so, find out whether to return its name or the value.
-            if (((PredicateInfo) predicatesInfo.get(name)).returnNameWhenSet)
+            if ((predicatesInfo.get(name)).returnNameWhenSet())
             {
                 return name;
             }
@@ -567,24 +525,24 @@ public class PredicateMaster
     {
         int saveCount = 0;
 
-        Iterator botsIterator = this.bots.keysIterator();
+        Iterator<String> botsIterator = this.bots.keysIterator();
 
         while (botsIterator.hasNext() && saveCount < dumpCount)
         {
-            String botid = (String) botsIterator.next();
+            String botid = botsIterator.next();
             Bot bot = this.bots.getBot(botid);
-            Map<String, Map<String, Object>> cache = bot.getPredicateCache();
+            Map<String, PredicateMap> cache = bot.getPredicateCache();
 
             if (!cache.isEmpty())
             {
-                Iterator userids = cache.keySet().iterator();
+                Iterator<String> userids = cache.keySet().iterator();
                 while (userids.hasNext() && saveCount < dumpCount)
                 {
                     // Get a userid.
                     String userid = null;
                     try
                     {
-                        userid = (String) userids.next();
+                        userid = userids.next();
                     }
                     catch (ConcurrentModificationException e)
                     {
@@ -592,49 +550,50 @@ public class PredicateMaster
                     }
 
                     // Get the cached predicates for this user.
-                    Map<String, Object> userPredicates = cache.get(userid);
+                    PredicateMap userPredicates = cache.get(userid);
 
                     // Iterate over all cached predicates and save them.
                     for (String name : userPredicates.keySet())
                     {
-                        Object valueObject = userPredicates.get(name);
-
-                        // Save single-valued predicates.
-                        if (valueObject instanceof String)
+                        try
                         {
-                            String value = (String) userPredicates.get(name);
-
-                            // Do not save default values.
-                            if (!value.equals(bestAvailableDefault(name, botid)))
+                            PredicateValue value = userPredicates.get(name);
+    
+                            // Save single-valued predicates.
+                            if (!value.isMultiValued())
                             {
-                                this.multiplexor.savePredicate(name, value, userid, botid);
-                                saveCount++;
-                            }
-                        }
-                        // Save indexed predicates.
-                        else if (valueObject instanceof ArrayList)
-                        {
-                            // Try to get this as an indexed predicate.
-                            ArrayList values = (ArrayList) userPredicates.get(name);
-
-                            int valueCount = values.size();
-
-                            for (int index = valueCount; --index > 0;)
-                            {
+                                String singleValue = value.getFirstValue();
+    
                                 // Do not save default values.
-                                String value = (String) values.get(index - 1);
-                                if (!value.equals(bestAvailableDefault(name, botid)))
+                                if (!singleValue.equals(bestAvailableDefault(name, botid)))
                                 {
-                                    this.multiplexor.savePredicate(name + '.' + index, value, userid, botid);
+                                    this.multiplexor.savePredicate(name, singleValue, userid, botid);
                                     saveCount++;
                                 }
                             }
+                            // Save indexed predicates.
+                            else
+                            {
+                                // Try to get this as an indexed predicate.
+                                ArrayList<String> values = value.asList();
+    
+                                int valueCount = values.size();
+    
+                                for (int index = valueCount; --index > 0;)
+                                {
+                                    // Do not save default values.
+                                    String aValue = values.get(index - 1);
+                                    if (!aValue.equals(bestAvailableDefault(name, botid)))
+                                    {
+                                        this.multiplexor.savePredicate(name + '.' + index, aValue, userid, botid);
+                                        saveCount++;
+                                    }
+                                }
+                            }
                         }
-                        else
+                        catch (NoSuchPredicateException e)
                         {
-                            // This should never, ever happen.
-                            throw new DeveloperError(new IllegalObjectStateException(
-                                    "Something other than a String or ArrayList found in predicates!"));
+                            throw new DeveloperError("Asked to store a predicate with no value!", new NullPointerException());
                         }
                     }
 
