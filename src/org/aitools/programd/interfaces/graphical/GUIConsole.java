@@ -458,7 +458,7 @@ public class GUIConsole extends JPanel
             this.enter.setEnabled(enabled);
         }
 
-        private class InputSender extends ParentAwareActionListener
+        private class InputSender extends ParentAwareActionListener<InputPanel>
         {
             /**
              * Creates a new InputSender
@@ -476,9 +476,9 @@ public class GUIConsole extends JPanel
             public void actionPerformed(ActionEvent ae)
             {
                 String inputText = ae.getActionCommand();
-                ((InputPanel) this.parent).parent.display.append(((InputPanel) this.parent).prompt.getText() + inputText + LINE_SEPARATOR);
-                ((InputPanel) this.parent).parent.inStream.receive(inputText);
-                ((InputPanel) this.parent).input.setText(null);
+                this.parent.parent.display.append(this.parent.prompt.getText() + inputText + LINE_SEPARATOR);
+                this.parent.parent.inStream.receive(inputText);
+                this.parent.input.setText(null);
             }
         }
     }
