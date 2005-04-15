@@ -14,9 +14,6 @@ public abstract class ObjectPool
     /** The time after which an object should expire. */
     private long expirationTime;
 
-    /** The last time an object was checked out. */
-    private long lastCheckOut;
-
     /** The objects that are locked by this pool. */
     private Hashtable<Object, Long> locked;
 
@@ -36,8 +33,6 @@ public abstract class ObjectPool
 
         this.locked = new Hashtable<Object, Long>();
         this.unlocked = new Hashtable<Object, Long>();
-
-        this.lastCheckOut = System.currentTimeMillis();
 
         this.cleaner = new CleanUpThread(this, this.expirationTime);
         this.cleaner.setDaemon(true);
@@ -66,12 +61,11 @@ public abstract class ObjectPool
     protected Object checkOut()
     {
         long now = System.currentTimeMillis();
-        this.lastCheckOut = now;
         Object object;
 
         if (this.unlocked.size() > 0)
         {
-            Enumeration e = this.unlocked.keys();
+            Enumeration<Object> e = this.unlocked.keys();
 
             while (e.hasMoreElements())
             {
@@ -105,7 +99,7 @@ public abstract class ObjectPool
 
         long now = System.currentTimeMillis();
 
-        Enumeration e = this.unlocked.keys();
+        Enumeration<Object> e = this.unlocked.keys();
 
         while (e.hasMoreElements())
         {
