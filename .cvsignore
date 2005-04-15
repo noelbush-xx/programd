@@ -4,6 +4,5 @@ doc
 ffm
 logs/*
 .classpath
-.project
 secret.key
-.settings
+logs
