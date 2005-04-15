@@ -620,24 +620,24 @@ public class LRUCache<K, V>
     /**
      * A cache item
      * 
-     * @param <K> the key
-     * @param <V> the value
+     * @param <K_> the key
+     * @param <V_> the value
      */
-    static class CacheItem<K, V>
+    static class CacheItem<K_, V_>
     {
-        LRUCache.CacheItem<K, V> _prev;
+        LRUCache.CacheItem<K_, V_> _prev;
 
-        LRUCache.CacheItem<K, V> _next;
+        LRUCache.CacheItem<K_, V_> _next;
 
-        K _key;
+        K_ _key;
 
-        V _value;
+        V_ _value;
 
         int _index;
 
         boolean _isOnce;
 
-        CacheItem(K key, V value)
+        CacheItem(K_ key, V_ value)
         {
             this._key = key;
             this._value = value;
@@ -648,21 +648,21 @@ public class LRUCache<K, V>
     /**
      * Iterator of cache keys
      * 
-     * @param <K> the key
-     * @param <V> the value
+     * @param <K_> the key
+     * @param <V_> the value
      */
-    static class KeyIterator<K, V> implements Iterator<K>
+    static class KeyIterator<K_, V_> implements Iterator<K_>
     {
-        private LRUCache<K, V> _cache;
+        private LRUCache<K_, V_> _cache;
 
         private int _i = -1;
 
-        KeyIterator(LRUCache<K, V> cache)
+        KeyIterator(LRUCache<K_, V_> cache)
         {
             this._cache = cache;
         }
 
-        void init(LRUCache<K, V> cache)
+        void init(LRUCache<K_, V_> cache)
         {
             this._cache = cache;
             this._i = -1;
@@ -673,7 +673,7 @@ public class LRUCache<K, V>
          */
         public boolean hasNext()
         {
-            CacheItem<K, V>[] entries = this._cache._entries;
+            CacheItem<K_, V_>[] entries = this._cache._entries;
             int length = entries.length;
 
             for (this._i++; this._i < length; this._i++)
@@ -691,14 +691,14 @@ public class LRUCache<K, V>
         /**
          * @return the next value
          */
-        public K next()
+        public K_ next()
         {
-            CacheItem<K, V>[] entries = this._cache._entries;
+            CacheItem<K_, V_>[] entries = this._cache._entries;
             int length = entries.length;
 
             for (this._i++; this._i < length; this._i++)
             {
-                CacheItem<K, V> entry = entries[this._i];
+                CacheItem<K_, V_> entry = entries[this._i];
 
                 if (entry != null)
                 {
@@ -721,21 +721,21 @@ public class LRUCache<K, V>
     /**
      * Iterator of cache values
      * 
-     * @param <K> the key
-     * @param <V> the value
+     * @param <K_> the key
+     * @param <V_> the value
      */
-    static class ValueIterator<K, V> implements Iterator<V>
+    static class ValueIterator<K_, V_> implements Iterator<V_>
     {
-        private LRUCache<K, V> _cache;
+        private LRUCache<K_, V_> _cache;
 
         private int _i = -1;
 
-        ValueIterator(LRUCache<K, V> cache)
+        ValueIterator(LRUCache<K_, V_> cache)
         {
             init(cache);
         }
 
-        void init(LRUCache<K, V> cache)
+        void init(LRUCache<K_, V_> cache)
         {
             this._cache = cache;
             this._i = -1;
@@ -746,7 +746,7 @@ public class LRUCache<K, V>
          */
         public boolean hasNext()
         {
-            CacheItem<K, V>[] entries = this._cache._entries;
+            CacheItem<K_, V_>[] entries = this._cache._entries;
             int length = entries.length;
 
             int i = this._i + 1;
@@ -767,15 +767,15 @@ public class LRUCache<K, V>
         /**
          * @return the next value
          */
-        public V next()
+        public V_ next()
         {
-            CacheItem<K, V>[] entries = this._cache._entries;
+            CacheItem<K_, V_>[] entries = this._cache._entries;
             int length = entries.length;
 
             int i = this._i + 1;
             for (; i < length; i++)
             {
-                CacheItem<K, V> entry = entries[i];
+                CacheItem<K_, V_> entry = entries[i];
 
                 if (entry != null)
                 {
@@ -800,20 +800,20 @@ public class LRUCache<K, V>
     /**
      * Interface for entry iterator;
      * 
-     * @param <K> the key
-     * @param <V> the value
+     * @param <K_> the key
+     * @param <V_> the value
      */
-    public interface Entry<K, V>
+    public interface Entry<K_, V_>
     {
         /**
          * @return the key
          */
-        public K getKey();
+        public K_ getKey();
 
         /**
          * @return the value
          */
-        public V getValue();
+        public V_ getValue();
     }
 
     /**
