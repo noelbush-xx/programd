@@ -18,7 +18,7 @@ import org.aitools.programd.util.ClassRegistry;
  * @since 4.1.3
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class ProcessorRegistry<B> extends ClassRegistry
+public class ProcessorRegistry<B> extends ClassRegistry<B>
 {
     /**
      * The namespace URI of the content type for which this registry is

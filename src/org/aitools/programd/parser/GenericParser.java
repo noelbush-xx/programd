@@ -41,15 +41,16 @@ import org.aitools.programd.util.XMLKit;
 /**
  * A generic parser that allows us to register processors for any element type.
  * This has been heavily modified (simplified) to use DOM.
+ * @param <P> the base class of Processor to be used
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.1.3
  * @version 4.5
  */
-abstract public class GenericParser
+abstract public class GenericParser<P extends Processor>
 {
     /** Set by subclasses. */
-    private ProcessorRegistry processorRegistry;
+    private ProcessorRegistry<P> processorRegistry;
 
     /** The URL of this document. */
     protected URL docURL;
@@ -76,7 +77,7 @@ abstract public class GenericParser
      * 
      * @param registry the registry of processors
      */
-    public GenericParser(ProcessorRegistry registry)
+    public GenericParser(ProcessorRegistry<P> registry)
     {
         initialize(registry);
     }
@@ -87,13 +88,13 @@ abstract public class GenericParser
      * @param registry the registry of processors
      * @param coreToUse the Core that owns this
      */
-    public GenericParser(ProcessorRegistry registry, Core coreToUse)
+    public GenericParser(ProcessorRegistry<P> registry, Core coreToUse)
     {
         this.core = coreToUse;
         initialize(registry);
     }
 
-    private void initialize(ProcessorRegistry registry)
+    private void initialize(ProcessorRegistry<P> registry)
     {
         this.processorRegistry = registry;
         if (utilDocBuilder == null)
@@ -245,7 +246,7 @@ abstract public class GenericParser
         }
 
         // Search for the tag in the processor registry.
-        Class processorClass = null;
+        Class<? extends P> processorClass = null;
 
         String elementNamespaceURI = element.getNamespaceURI();
         if (elementNamespaceURI == null || this.processorRegistry.getNamespaceURI().equals(elementNamespaceURI))
@@ -265,7 +266,7 @@ abstract public class GenericParser
             {
                 // Get the processor constructor that takes a Core as an
                 // argument.
-                Constructor<Processor> constructor = null;
+                Constructor<? extends P> constructor = null;
                 try
                 {
                     constructor = processorClass.getDeclaredConstructor(Core.class);

@@ -76,7 +76,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
 
         // Split predicate into sentences.
         Bot bot = parser.getCore().getBots().getBot(parser.getBotID());
-        List sentenceList = bot.sentenceSplit(value);
+        List<String> sentenceList = bot.sentenceSplit(value);
 
         int sentenceCount = sentenceList.size();
 
@@ -92,7 +92,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
             return EMPTY_STRING;
         }
         // Get the nth "sentence" (1 is most recent, 2 just before that, etc.)
-        return XMLKit.removeMarkup((String) sentenceList.get(sentenceCount - indexes[1])).trim();
+        return XMLKit.removeMarkup(sentenceList.get(sentenceCount - indexes[1])).trim();
     }
 
     /**
@@ -111,7 +111,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
      * @param dimensions the number of dimensions (<code>1</code> only)
      * @return the result of processing the element
      */
-    public String process(Element element, TemplateParser parser, ArrayList predicates, int dimensions)
+    public String process(Element element, TemplateParser parser, ArrayList<String> predicates, int dimensions)
     {
         // Only 1 dimension is supported.
         if (dimensions != 1)
@@ -138,6 +138,6 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         }
 
         // Retrieve and prettify the result.
-        return XMLKit.removeMarkup((String) predicates.get(index)).trim();
+        return XMLKit.removeMarkup(predicates.get(index)).trim();
     }
 }

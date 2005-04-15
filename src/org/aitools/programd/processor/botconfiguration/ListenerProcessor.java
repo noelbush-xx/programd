@@ -79,7 +79,7 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         String type = element.getAttribute(TYPE);
 
         // Does its type correspond to a registered listener type?
-        Class listenerClass = null;
+        Class<? extends Listener> listenerClass = null;
         try
         {
             listenerClass = parser.getCore().getListenerRegistry().get(type);
@@ -116,7 +116,7 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         Listener listener;
         try
         {
-            listener = (Listener) listenerClass.getConstructor(Core.class, Bot.class, String.class, HashMap.class).newInstance(this.core, bot);
+            listener = listenerClass.getConstructor(Core.class, Bot.class, String.class, HashMap.class).newInstance(this.core, bot);
         }
         catch (IllegalAccessException e)
         {

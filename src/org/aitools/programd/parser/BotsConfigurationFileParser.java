@@ -11,12 +11,13 @@ package org.aitools.programd.parser;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
+import org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessor;
 
 /**
  * <code>BotsConfigurationFileParser</code> processes a bots configuration
  * file.
  */
-public class BotsConfigurationFileParser extends GenericParser
+public class BotsConfigurationFileParser extends GenericParser<BotConfigurationElementProcessor>
 {
     private Bot currentBot;
 

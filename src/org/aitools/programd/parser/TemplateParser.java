@@ -16,13 +16,14 @@ import java.util.logging.Logger;
 import org.w3c.dom.Element;
 import org.aitools.programd.Core;
 import org.aitools.programd.processor.ProcessorException;
+import org.aitools.programd.processor.aiml.AIMLProcessor;
 
 /**
  * <code>TemplateParser</code> has been rewritten (starting in 4.5) to use DOM
  * for parsing. It also eliminates handling of "deprecated AIML" (this will be
  * possible to handle again later with an extensible version of D).
  */
-public class TemplateParser extends GenericParser
+public class TemplateParser extends GenericParser<AIMLProcessor>
 {
     /**
      * The values captured from the input by wildcards in the
@@ -134,7 +135,7 @@ public class TemplateParser extends GenericParser
      * @return the values captured from the input path by wildcards in the
      *         <code>pattern</code>
      */
-    public ArrayList getInputStars()
+    public ArrayList<String> getInputStars()
     {
         return this.inputStars;
     }
@@ -146,7 +147,7 @@ public class TemplateParser extends GenericParser
      * @return the values captured from the input path by wildcards in the
      *         <code>that</code>
      */
-    public ArrayList getThatStars()
+    public ArrayList<String> getThatStars()
     {
         return this.thatStars;
     }
@@ -158,7 +159,7 @@ public class TemplateParser extends GenericParser
      * @return the values captured from the input path by wildcards in the
      *         <code>topic name</code>
      */
-    public ArrayList getTopicStars()
+    public ArrayList<String> getTopicStars()
     {
         return this.topicStars;
     }
