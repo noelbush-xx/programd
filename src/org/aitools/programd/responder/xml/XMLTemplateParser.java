@@ -16,6 +16,7 @@ import org.w3c.dom.Element;
 
 import org.aitools.programd.parser.GenericParser;
 import org.aitools.programd.responder.AbstractXMLResponder;
+import org.aitools.programd.responder.xml.XMLTemplateProcessor;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.NotARegisteredClassException;
 
@@ -23,7 +24,7 @@ import org.aitools.programd.util.NotARegisteredClassException;
  * <code>XMLTemplateParser</code> processes an HTML template, such as used by
  * {@link org.aitools.programd.responder.HTMLResponder HTMLResponder}.
  */
-public class XMLTemplateParser extends GenericParser
+public class XMLTemplateParser extends GenericParser<XMLTemplateProcessor>
 {
     /** The responder that invoked this parser. */
     private AbstractXMLResponder responder;

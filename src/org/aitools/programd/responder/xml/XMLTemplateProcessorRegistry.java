@@ -9,10 +9,7 @@
 
 package org.aitools.programd.responder.xml;
 
-import java.util.logging.Logger;
-
 import org.aitools.programd.processor.ProcessorRegistry;
-import org.aitools.programd.processor.aiml.AIMLProcessor;
 
 /**
  * Registers {@link XMLTemplateProcessor}s.
@@ -20,7 +17,7 @@ import org.aitools.programd.processor.aiml.AIMLProcessor;
  * @since 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class XMLTemplateProcessorRegistry extends ProcessorRegistry<AIMLProcessor>
+public class XMLTemplateProcessorRegistry extends ProcessorRegistry<XMLTemplateProcessor>
 {
     /** The XML namespace URI for AIML. */
     private static final String XMLNS = "http://aitools.org/programd/html-responder-template";
@@ -30,8 +27,6 @@ public class XMLTemplateProcessorRegistry extends ProcessorRegistry<AIMLProcesso
                                                      "org.aitools.programd.responder.xml.UserInputProcessor",
                                                      "org.aitools.programd.responder.xml.ReplyProcessor",
                                                      "org.aitools.programd.responder.xml.ResponseProcessor" };
-
-    private static final Logger logger = Logger.getLogger("programd");
 
     /**
      * Creates a new <code>XMLTemplateProcessorRegistry</code>.

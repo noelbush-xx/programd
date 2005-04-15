@@ -112,7 +112,7 @@ abstract public class ClassRegistry<B>
      * @return the Class corresponding to the given label.
      * @throws NotARegisteredClassException if the given class is not registered
      */
-    public synchronized Class< ? extends B> get(String label) throws NotARegisteredClassException
+    public synchronized Class<? extends B> get(String label) throws NotARegisteredClassException
     {
         if (label != null)
         {
