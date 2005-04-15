@@ -129,7 +129,7 @@ public class StringTripleMatrix
         if (!((this.vertical[0].size() == this.vertical[1].size()) && (this.vertical[1].size() == this.vertical[2].size()) && (this.vertical[2]
                 .size() == this.horizontal.size())))
         {
-            throw new DeveloperError(new IllegalObjectStateException("Triple matrix integrity violated!"));
+            throw new DeveloperError(new IllegalStateException("Triple matrix integrity violated!"));
         }
         return this.horizontal.size();
     }
