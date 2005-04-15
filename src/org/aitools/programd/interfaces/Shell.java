@@ -399,22 +399,6 @@ public class Shell extends Thread
 
     /**
      * <p>
-     * Displays a multi-line error message (no prompt) in an interactive
-     * console.
-     * </p>
-     * 
-     * @param message the message to display
-     */
-    private void showError(String[] message)
-    {
-        for (int index = 0; index < message.length; index++)
-        {
-            printlnErr(message[index]);
-        }
-    }
-
-    /**
-     * <p>
      * Displays an error message (no prompt) in an interactive console.
      * </p>
      * 
@@ -423,19 +407,6 @@ public class Shell extends Thread
     private void showError(String message)
     {
         printlnErr(message);
-    }
-
-    /**
-     * <p>
-     * Displays a message (after a prompt) in an interactive console.
-     * </p>
-     * 
-     * @param preprompt the text to show before the prompt
-     * @param message the multi-line message to display
-     */
-    private void showConsole(String preprompt, String message)
-    {
-        printlnOut(preprompt + PROMPT + message);
     }
 
     /**
