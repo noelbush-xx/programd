@@ -19,7 +19,7 @@
 								that must contain a simple pattern expression. A topic element may
 								contain one or more category elements.</xs:documentation>
 						</xs:annotation>
-						<xs:sequence>
+						<xs:sequence maxOccurs="unbounded">
 							<xs:element name="category" type="Category"/>
 						</xs:sequence>
 						<xs:attribute name="name" type="SimplePatternExpression" use="required"/>
@@ -99,7 +99,7 @@
 		</xs:annotation>
 		<xs:restriction base="xs:string">
 			<xs:minLength value="1"/>
-			<xs:pattern value="((\d|\p{Lu})+|\*|_)( +((\d|\p{Lu})+|\*|_))?"/>
+			<xs:pattern value="((\d|\p{Lu})+|\*|_)( +((\d|\p{Lu})+|\*|_))*"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:complexType name="MixedTemplateContentContainer" mixed="true">
@@ -229,21 +229,21 @@
 				</xs:annotation>
 			</xs:element>
 			<!--
-			<xs:element name="person" xsi:type="atomicElement">
+			<xs:element name="person" xsi:type="IndexedElement">
 				<xs:annotation>
 					<xs:documentation>The atomic version of the person element is a shortcut for:
 						&lt;person&gt;&lt;star/&gt;&lt;/person&gt; The
 						atomic person does not have any content. </xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="person2" xsi:type="atomicElement">
+			<xs:element name="person2" xsi:type="IndexedElement">
 				<xs:annotation>
 					<xs:documentation>The atomic version of the person2 element is a shortcut for:
 						&lt;person2&gt;&lt;star/&gt;&lt;/person2&gt; The
 						atomic person does not have any content. </xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="gender" xsi:type="atomicElement">
+			<xs:element name="gender" xsi:type="IndexedElement">
 				<xs:annotation>
 					<xs:documentation>The atomic version of the gender element is a shortcut for:
 						&lt;gender&gt;&lt;star/&gt;&lt;/gender&gt; The
@@ -332,7 +332,7 @@
 							</xs:element>
 						</xs:sequence>
 						-->
-						<xs:sequence maxOccurs="unbounded">
+						<xs:sequence minOccurs="0" maxOccurs="unbounded">
 							<xs:any namespace="##any" processContents="lax"/>
 						</xs:sequence>
 					<!--
