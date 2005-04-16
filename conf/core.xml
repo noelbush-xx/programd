@@ -108,13 +108,6 @@ GENERAL NOTES
     <!--The maximum size of the cache before writing to disk/database. [int: 500]-->
     <entry key="programd.predicate-cache.max">500</entry>
     
-    <!--The command line to launch your preferred browser (for testing)
-        * leaving this value blank or commented out disables the feature [String: ]-->
-    <!--<entry key="programd.browser-launch">/usr/bin/mozilla</entry>-->
-    <!--<entry key="programd.browser-launch">C:\\Program Files\\Opera\\opera.exe</entry>-->
-    <!--<entry key="programd.browser-launch">C:\\Program Files\\Netscape\\Netscape 6\\netscp6.exe</entry>-->
-    <!--<entry key="programd.browser-launch">C:\\Program Files\\Internet Explorer\\iexplore.exe</entry>-->
-    
         
     <!--
     INTERPRETER CONFIGURATION
@@ -155,14 +148,20 @@ GENERAL NOTES
     <!--The log file for matching activity. [String: logs/matching.log]-->
     <entry key="programd.matching.log.pattern">logs/matching-%g.log</entry>
     
-    <!--The subdirectory for chat logs. [String: logs/chat]-->
-    <entry key="programd.chat.log.directory">logs/chat</entry>
-
-    <!--The date-time format to use in logging. [String: yyyy-MM-dd H:mm:ss]
-        * See http://java.sun.com/jdk1.5.0_02/docs/api/java/text/SimpleDateFormat.html
+    <!--The date-time format to use in general logs. [String: yyyy-MM-dd H:mm:ss]
+        * See http://java.sun.com/jdk1.5.0/docs/api/java/text/SimpleDateFormat.html
           for formatting codes.
         * Setting the value to blank means no timestamp will be displayed.-->
     <entry key="programd.log.timestamp-format">yyyy-MM-dd H:mm:ss</entry>
+
+    <!--The subdirectory for chat logs. [String: logs/chat]-->
+    <entry key="programd.chat.log.directory">logs/chat</entry>
+
+    <!--The date-time format to use in chat logs. [String: yyyy-MM-dd H:mm:ss]
+        * See http://java.sun.com/jdk1.5.0/docs/api/java/text/SimpleDateFormat.html
+          for formatting codes.
+        * Setting the value to blank means no timestamp will be displayed.-->
+    <entry key="programd.chat.log.timestamp-format"></entry>
 
     <!--
     Database logs
