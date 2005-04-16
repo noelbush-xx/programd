@@ -81,21 +81,23 @@ public class PredicateValue
     
     /**
      * If this <code>PredicateValue</code> is multi-valued,
-     * returns the list of values.  If it is single-valued,
-     * returns the value inside of a list.
+     * returns itself.  If it is single-valued,
+     * converts itself to multivalued and then returns itself.
      * 
      * @return the list of values (or only value)
      */
-    public ArrayList<String> asList()
+    public PredicateValue becomeMultiValued()
     {
         if (this.multiValued)
         {
-            return this.valueList;
+            return this;
         }
         // otherwise...
-        ArrayList<String> result = new ArrayList<String>(1);
-        result.add(this.singleValue);
-        return result;
+        this.multiValued = true;
+        this.valueList = new ArrayList<String>(1);
+        this.valueList.add(this.singleValue);
+        this.singleValue = null;
+        return this;
     }
     
     /**
@@ -114,5 +116,73 @@ public class PredicateValue
             this.valueList = new ArrayList<String>(5);
             this.valueList.add(value);
         }
+    }
+    
+    /**
+     * Adds the given value into the value list
+     * at the given index.
+     * 
+     * @param index the index at which to add a value
+     * @param value the new value
+     */
+    public void add(int index, String value)
+    {
+        if (!this.multiValued)
+        {
+            becomeMultiValued();
+        }
+        try
+        {
+            this.valueList.add(index - 1, value);
+        }
+        catch (IndexOutOfBoundsException e)
+        {
+            this.valueList.add(0, value);
+        }
+    }
+    
+    /**
+     * Pushes a value onto the front of a list, and pops off any values at the
+     * end of the list so that the list size is no more than {@link PredicateMaster#MAX_INDEX}.
+     * 
+     * @param value the value to push
+     */
+    public void push(String value)
+    {
+        if (!this.multiValued)
+        {
+            becomeMultiValued();
+        }
+        this.valueList.add(0, value);
+        while (this.valueList.size() > PredicateMaster.MAX_INDEX)
+        {
+            this.valueList.remove(this.valueList.size() - 1);
+        }
+    }
+    
+    /**
+     * @param index the index whose value is wanted
+     * @return the value at the given index
+     */
+    public String get(int index)
+    {
+        if (!this.multiValued)
+        {
+            throw new IndexOutOfBoundsException();
+        }
+        return this.valueList.get(index - 1);
+    }
+    
+    /**
+     * @return the number of values stored
+     */
+    public int size()
+    {
+        if (!this.multiValued)
+        {
+            return 1;
+        }
+        // otherwise...
+        return this.valueList.size();
     }
 }
