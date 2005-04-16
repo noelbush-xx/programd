@@ -400,7 +400,7 @@ public class IRCListener extends Listener implements ShellCommandable
                         logMessage("Got a message from [" + this.nick + "]: " + message);
                         sendServerMessage("/MSG " + " " + this.channel + " :" + message);
 
-                        String[] response = XMLKit.breakLinesAtTags(this.core.getResponse(message, this.nick + "_IRC", this.botID,
+                        String[] response = XMLKit.filterViaHTMLTags(this.core.getResponse(message, this.nick + "_IRC", this.botID,
                                 new TextResponder()));
                         if (response.length > 0)
                         {
@@ -1003,7 +1003,7 @@ public class IRCListener extends Listener implements ShellCommandable
                     sendMessage(NONE, "*" + targetnick + "* " + gitter);
                     logMessage("Request: [" + targetnick + "]: " + gitter);
 
-                    String[] response = XMLKit.breakLinesAtTags(this.core.getResponse(gitter, targetnick + "_IRC", this.botID, new TextResponder()));
+                    String[] response = XMLKit.filterViaHTMLTags(this.core.getResponse(gitter, targetnick + "_IRC", this.botID, new TextResponder()));
                     if (response.length > 0)
                     {
                         for (int line = 0; line < response.length; line++)

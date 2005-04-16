@@ -422,7 +422,7 @@ public class AIMListener extends Listener
             }
             else
             {
-                String[] response = XMLKit.breakLinesAtTags(this.core.getResponse(request, from + _AIM, this.botID, this.responder));
+                String[] response = XMLKit.filterViaHTMLTags(this.core.getResponse(request, from + _AIM, this.botID, this.responder));
                 if (response.length > 0)
                 {
                     for (int line = 0; line < response.length; line++)
@@ -446,7 +446,7 @@ public class AIMListener extends Listener
             String request = XMLKit.removeMarkup(mesg.toString());
             if (request.indexOf(this.screenname) > 0)
             {
-                String[] response = XMLKit.breakLinesAtTags(this.core.getResponse(request, from + _AIM, this.botID, this.responder));
+                String[] response = XMLKit.filterViaHTMLTags(this.core.getResponse(request, from + _AIM, this.botID, this.responder));
                 if (response.length > 0)
                 {
                     for (int line = 0; line < response.length; line++)
