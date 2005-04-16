@@ -116,7 +116,7 @@ public class Bot
         FileHandler xmlChatLogFileHandler;
         try
         {
-            xmlChatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id + "%g.xml", 1048576, 10, true);
+            xmlChatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id + "-%g.xml", 1048576, 10, true);
         }
         catch (IOException e)
         {
