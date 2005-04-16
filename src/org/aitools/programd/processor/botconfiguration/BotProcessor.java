@@ -14,7 +14,6 @@ import java.util.logging.Level;
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
-import org.aitools.programd.CoreSettings;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
@@ -54,8 +53,7 @@ public class BotProcessor extends BotConfigurationElementProcessor
             Bots bots = parser.getCore().getBots();
             if (!bots.include(botID))
             {
-                CoreSettings coreSettings = parser.getCore().getSettings();
-                Bot bot = new Bot(botID, coreSettings.getPredicateEmptyDefault(), coreSettings.getChatLogDirectory());
+                Bot bot = new Bot(botID, parser.getCore().getSettings());
                 logger.log(Level.INFO, "Configuring bot \"" + botID + "\".");
                 parser.setCurrentBot(bot);
                 bots.addBot(botID, bot);
