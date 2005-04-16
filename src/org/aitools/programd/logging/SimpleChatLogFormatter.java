@@ -13,8 +13,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.LogRecord;
 import java.util.logging.SimpleFormatter;
-
+import org.aitools.programd.CoreSettings;
 import org.aitools.programd.logging.ChatLogRecord;
+import org.aitools.programd.util.XMLKit;
 
 /**
  * Formats a ChatLogRecord by printing a number of extra fields as we like them.
@@ -24,7 +25,9 @@ import org.aitools.programd.logging.ChatLogRecord;
  */
 public class SimpleChatLogFormatter extends SimpleFormatter
 {
-    private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    private SimpleDateFormat timestampFormat;
+
+    private boolean showTimestamp;
 
     private static final String RBRACKET_SPACE = "] ";
 
@@ -33,32 +36,82 @@ public class SimpleChatLogFormatter extends SimpleFormatter
     private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
 
     /**
+     * Creates a new SimpleFormatter with the given Core settings.
+     * 
+     * @param coreSettings
+     *            the settings of the Core to consult
+     */
+    public SimpleChatLogFormatter(CoreSettings coreSettings)
+    {
+        super();
+        String timestampFormatString = coreSettings.getChatLogTimestampFormat();
+        if (timestampFormatString.length() > 0)
+        {
+            this.timestampFormat = new SimpleDateFormat(timestampFormatString);
+            this.showTimestamp = true;
+        }
+        else
+        {
+            this.showTimestamp = false;
+        }
+    }
+
+    /**
      * We insist that the record be a ChatLogRecord.
      * 
      * @see java.util.logging.SimpleFormatter#format
-     * @param record the ChatLogRecord to format
+     * @param record
+     *            the ChatLogRecord to format
      * @return the result of formatting the given ChatLogRecord
-     * @throws IllegalArgumentException if the record is not a ChatLogRecord
+     * @throws IllegalArgumentException
+     *             if the record is not a ChatLogRecord
      */
     public String format(LogRecord record)
     {
         if (!(record instanceof ChatLogRecord))
         {
-            throw new IllegalArgumentException("XMLChatLogFormatter is intended to handle ChatRecords only.");
+            throw new IllegalArgumentException(
+                    "XMLChatLogFormatter is intended to handle ChatRecords only.");
         }
         return format((ChatLogRecord) record);
     }
 
     /**
      * @see java.util.logging.XMLFormatter#format
-     * @param record the ChatLogRecord to format
+     * @param record
+     *            the ChatLogRecord to format
      * @return the result of formatting the given ChatLogRecord
      */
     public String format(ChatLogRecord record)
     {
-        String datetime = dateFormatter.format(new Date(record.getMillis()));
-        return '[' + datetime + RBRACKET_SPACE + record.getUserID() + RANGLE_BRACKET_SPACE + record.getInput() + LINE_SEPARATOR + '[' + datetime
-                + RBRACKET_SPACE + record.getBotID() + RANGLE_BRACKET_SPACE + record.getReply();
+        String[] responseLines = XMLKit.filterViaHTMLTags(record.getReply());
+        StringBuffer result = new StringBuffer();
+        int responseLineCount = responseLines.length;
+        String datetime = null;
+        if (this.showTimestamp)
+        {
+            datetime = this.timestampFormat.format(new Date(record.getMillis()));
+            result.append('[' + datetime + RBRACKET_SPACE + record.getUserID()
+                    + RANGLE_BRACKET_SPACE + record.getInput() + LINE_SEPARATOR);
+        }
+        else
+        {
+            result.append(record.getUserID() + RANGLE_BRACKET_SPACE + record.getInput()
+                    + LINE_SEPARATOR);
+        }
+        for (int index = 0; index < responseLineCount; index++)
+        {
+            if (this.showTimestamp)
+            {
+                result.append('[' + datetime + RBRACKET_SPACE + record.getBotID()
+                        + RANGLE_BRACKET_SPACE + responseLines[index] + LINE_SEPARATOR);
+            }
+            else
+            {
+                result.append(record.getBotID() + RANGLE_BRACKET_SPACE + responseLines[index]
+                        + LINE_SEPARATOR);
+            }
+        }
+        return result.toString();
     }
-
 }
