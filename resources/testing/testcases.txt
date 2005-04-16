@@ -1,34 +1,33 @@
-my name is client
-testatomic
-testdisplayset
-testhide
-testget
-testsetx
-testalter
+#my name is client
+#testatomic
+#testdisplayset
+#testhide
+#testget
+#testalter
 testsettopic
 test6a
 test6b
-testsimplecondition
-testsimpleconditiona
-testsimpleconditionmatch
+#testsimplecondition
+#testsimpleconditiona
+#testsimpleconditionmatch
 testconditionlist
 testconditionlistmatch
 testconditionlistdefault
 testconditionlistname
 testconditionlistnamematch
-teststar Test passed
-teststar Test passed one and Test passed two and Test passed three and Test passed four
-testunderscore Test passed one and Test passed two and Test passed three and Test passed four
-testrandom
-testrandom
-testrandom
-testrandom
-testrandom
-testrandom
-testwordformat
-testnestedwordformat
-testsimplemultisentencethat
-testthat
+#teststar Test passed
+#teststar Test passed one and Test passed two and Test passed three and Test passed four
+#testunderscore Test passed one and Test passed two and Test passed three and Test passed four
+#testrandom
+#testrandom
+#testrandom
+#testrandom
+#testrandom
+#testrandom
+#testwordformat
+#testnestedwordformat
+#testsimplemultisentencethat
+#testthat
 testarray4multisentencethat
 testarray3multisentencethat
 testarray2multisentencethat
@@ -42,34 +41,34 @@ testnestedcondition
 testnestedcondition1
 testnestedcondition2
 testsetcondition
-testversion
-testsrai
-testsr sraisucceeded
-testnestedsrai
-testthinksrai
-teststarset Test passed
-testidsizedate
+#testversion
+#testsrai
+#testsr sraisucceeded
+#testnestedsrai
+#testthinksrai
+#teststarset Test passed
+#testidsizedate
 testgossip
 testname
-testinput
-testinput1
-testinput2
-testinput3
-testgender he said
-testgender she was
-testgender give to him
-testgender or for him
-testgender together with him
-testgender something on him
-testgender in him is light
-testgender send to her
-testgender gift for her
-testgender someone with her
-testgender curse on her
-testgender monster in her
-testgender his wishes
-testgender her demands
-testgender of him
+#testinput
+#testinput1
+#testinput2
+#testinput3
+#testgender he said
+#testgender she was
+#testgender give to him
+#testgender or for him
+#testgender together with him
+#testgender something on him
+#testgender in him is light
+#testgender send to her
+#testgender gift for her
+#testgender someone with her
+#testgender curse on her
+#testgender monster in her
+#testgender his wishes
+#testgender her demands
+#testgender of him
 testthatstar
 testthatstar1
 testmultithatstar
@@ -78,9 +77,7 @@ testtopicstar
 test34
 testmultitopicstar
 test35
-testoldtopic
-test36
-testextremesrai
+#testextremesrai
 testperson i was there
 testperson he was away
 testperson she was kind
