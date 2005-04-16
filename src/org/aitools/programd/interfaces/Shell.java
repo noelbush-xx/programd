@@ -269,7 +269,11 @@ public class Shell extends Thread
             this.midLine = false;
 
             // Handle commands.
-            if (theLine.indexOf('/') == 0)
+            if (theLine.indexOf('#') == 0)
+            {
+                // Ignore this -- it's a comment.
+            }
+            else if (theLine.indexOf('/') == 0)
             {
                 // Exit command
                 if (theLine.toLowerCase().equals(EXIT))
@@ -336,7 +340,7 @@ public class Shell extends Thread
             }
             else if (theLine.length() > 0)
             {
-                showConsole(this.botName, XMLKit.breakLinesAtTags(this.core.getResponse(theLine, this.hostname, this.botid)));
+                showConsole(this.botName, XMLKit.filterViaHTMLTags(this.core.getResponse(theLine, this.hostname, this.botid)));
             }
         }
     }
@@ -602,7 +606,7 @@ public class Shell extends Thread
         this.botName = this.bots.getBot(newBotID).getPropertyValue(this.botNamePredicate);
         showMessage("Switched to bot \"" + newBotID + "\" (name: \"" + this.botName + "\").");
         // Send the connect string and print the first response.
-        showConsole(this.botName, XMLKit.breakLinesAtTags(this.core.getResponse(this.core.getSettings().getConnectString(), this.hostname,
+        showConsole(this.botName, XMLKit.filterViaHTMLTags(this.core.getResponse(this.core.getSettings().getConnectString(), this.hostname,
                 this.botid, new TextResponder())));
     }
 
