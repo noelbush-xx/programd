@@ -21,89 +21,77 @@ function start_programd()
 
   # Set up the Java environment.
   setup_java
-
-  # Set up other paths to other needed jars and check their existence.
-  check_programd_lib
-
-  # Set SQL_LIB to the location of your database driver.
-  # No warning is provided if it cannot be found.
-  SQL_LIB=$LIBS/mysql_comp.jar
-
+  
   # Concatenate all paths into the classpath to be used.
-  PROGRAMD_CLASSPATH=$SERVLET_LIB:$PROGRAMD_LIB:$JS_LIB:$SQL_LIB:$HTTP_SERVER_LIB
+  PROGRAMD_CLASSPATH=$PROGRAMD_LIBS:$JS_LIB:$SQL_LIB:$HTTP_SERVER_LIBS
 
-  # Change to the Program D bin directory and start the main class.
-  cd $BASE/bin
-  $JVM_COMMAND -classpath $PROGRAMD_CLASSPATH -Xms256m -Xmx512m $1 $3
+  # Change to the Program D directory and start the main class.
+  cd $BASE
+  $JVM_COMMAND -classpath $PROGRAMD_CLASSPATH -Xms$2 -Xmx$3 $1 -c $4 -n $5
 }
 
-# Checks that the programd.jar exists.
-function check_programd_lib()
+# Sets up some variables used to run Program D.
+function setup_programd()
 {
   # Set lib directory (jars)
   setup_lib_dir
   
-  PROGRAMD_LIB=$LIBS/programd.jar
-  if [ ! -r $PROGRAMD_LIB ]
+  PROGRAMD_MAIN_LIB=$LIBS/programd-main.jar
+  if [ ! -r $PROGRAMD_MAIN_LIB ]
   then
-    echo I can\'t find your programd.jar file.  Have you compiled it?
+    echo I can\'t find your programd-main.jar file.  Have you compiled it?
     echo If you downloaded the source-only version but don\'t have
     echo a Java compiler, you can download a pre-compiled version from
     echo http://aitools.org/downloads/
     echo
     exit 1
   fi
+  
+  # Define the other programd jars, but don't worry if they don't exist.
+  PROGRAMD_JETTY_LIB=$LIBS/programd-jetty.jar
+  PROGRAMD_JS_LIB=$LIBS/programd-js.jar
+  
+  # Set up external jars.
+  setup_other_libs
+
+  PROGRAMD_LIBS=$PROGRAMD_MAIN_LIB:$PROGRAMD_JETTY_LIB:$PROGRAMD_JS_LIB:$OTHER_LIBS
+}
+
+# Sets up other required included libs.
+function setup_other_libs()
+{
+  # Set lib directory (jars)
+  setup_lib_dir
+  
+  GETOPT_LIB=$LIBS/gnu.getopt-1.0.10.jar
+  if [ ! -r $GETOPT_LIB ]
+  then
+    echo
+    echo I can\'t find the gnu.getopt-1.0.10.jar that ships with Program D.
+    exit 1
+  fi
+
+  # Optional components:
+
+  # Set SQL_LIB to the location of your database driver.
+  # No warning is provided if it cannot be found (since it is optional).
+  SQL_LIB=$LIBS/mysql_comp.jar
+
+  # Set JS_LIB to the location of the Rhino JavaScript interpreter.
+  # No warning is provided if it cannot be found (since it is optional).
+  JS_LIB=$LIBS/js.jar
+
+  # Set JETTY_LIBS to the location of the Jetty jars.
+  # No warning is provided if they cannot be found (since they are optional).
+  JETTY_LIBS=$LIBS/commons-logging.jar:$LIBS/org.mortbay.jetty.jar:$LIBS/servlet.jar
+  
+  OTHER_LIBS=$GETOPT_LIB:$SQL_LIB:$JS_LIB:$JETTY_LIBS
 }
 
 # Sets up the lib directory.
 function setup_lib_dir()
 {
   LIBS=$BASE/lib
-}
-
-# Sets up some variables used to run/build Program D.
-# First argument should be "building" or just blank;
-# will affect some messages.
-function setup_programd()
-{
-  # Set lib directory (jars)
-  setup_lib_dir
-  
-  SERVLET_LIB=$LIBS/servlet.jar
-  if [ ! -r $SERVLET_LIB ]
-  then
-    echo
-    echo I can\'t find the servlet.jar that ships with Program D.
-    echo Please see http://aitools.org/downloads/.
-    echo
-    exit 1
-  fi
-
-  JS_LIB=$LIBS/js.jar
-  if [ ! -r $JS_LIB ]
-  then
-    echo
-    echo I can\'t find the js.jar that ships with Program D.
-    if [ $1 == "building" ]
-    then
-      echo You must exclude RhinoInterpreter.java in order to successfully build.
-    else
-      echo Your server-side javascript functions may not work.
-    fi
-  fi
-
-  HTTP_SERVER_LIB=$LIBS/org.mortbay.jetty.jar
-  if [ ! -r $HTTP_SERVER_LIB ]
-  then
-    echo
-    echo I can\'t find the org.mortbay.jetty.jar that ships with Program D.
-    if [ $1 == "building" ]
-    then
-      echo You must exclude JettyWrapper.java in order to successfully build.
-    else
-      echo You may not be able to use the Jetty http server.
-    fi
-  fi
 }
 
 # Sets up a Java execution environment
@@ -127,11 +115,11 @@ function set_java_vars()
     echo JAVA_HOME is not set in your environment.
   
     # Try the standard JDK 5.0 install location.
-    if [ -x /usr/java/jdk1.5.0/bin/java ]
+    if [ -x /usr/java/jdk1.5.0_02/bin/java ]
     then
-      export JAVA_HOME=/usr/java/jdk1.5.0
+      export JAVA_HOME=/usr/java/jdk1.5.0_02
       JVM_COMMAND=$JAVA_HOME/bin/java
-      echo I have set JAVA_HOME to \"/usr/java/jdk1.5.0\".
+      echo I have set JAVA_HOME to \"/usr/java/jdk1.5.0_02\".
     else 
       # See if any java command exists.
       JVM_COMMAND=`which java 2>&1 | sed -e 's/.*which: no java in.*//'`
