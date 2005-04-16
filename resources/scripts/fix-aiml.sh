@@ -6,7 +6,7 @@ perl -pi -e '
 
 # Look for any (likely) HTML elements, add prefixes to them, and define this prefix in the root element of the containing documents.
     s/\<a /\<html:a /gi; s/\<\/a\>/\<\/html:a\>/gi;
-    s/\<img (.+" *)\>/\<html:img $1\/\>/gi;
+    s/\<img (.+" *)\/?\>/\<html:img $1\/\>/gi;
     s/\<\/img\>//gi;
     s/\<br ?\/\>/\<html:br\/\>/gi;
     s/\<p\>/\<html:p\>/gi; s/\<\/p\>/\<\/html:p\>/gi;
