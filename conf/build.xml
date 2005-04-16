@@ -4,9 +4,8 @@
     <target name="init">
         <tstamp/>
         <property name="Name" value="Program D"/>
-        <property name="name" value="programd"/>
-        <property name="version" value="4.2"/>
-        <property name="year" value="2003"/>
+        <property name="version" value="4.5rc1"/>
+        <property name="year" value="2005"/>
         
         <echo message="Building ${Name} ${version}...."/>
         
@@ -17,12 +16,14 @@
         
         <property name="src.dir" value="../src"/>
         <property name="lib.dir" value="../lib"/>
-        <property name="packages" value="org.aitools.programd.*"/>
         
-        <property name="build.dir" value="../classes"/>
-        <property name="build.src" value="../src"/>
-        <property name="build.dest" value="../classes"/>
-        <property name="build.javadocs" value="../docs/api"/>
+        <property name="build.dir" value="../build.tmp"/>
+    	<property name="build.classpath" value="${lib.dir}/commons-logging.jar:${lib.dir}/gnu.getopt-1.0.10.jar:${lib.dir}/js.jar:${lib.dir}/org.mortbay.jetty.jar:${lib.dir}/servlet.jar"/>
+        <property name="javadoc.dir" value="../docs/api"/>
+    	
+    	<property name="main.jar" value="programd-main.jar"/>
+    	<property name="jetty.jar" value="programd-jetty.jar"/>
+    	<property name="rhino.jar" value="programd-rhino.jar"/>
         
         <filter token="year" value="${year}"/>
         <filter token="version" value="${version}"/>
@@ -31,41 +32,18 @@
         <filter token="verbose" value="true"/>
         
     </target>
-    
-    <!--Help on usage-->
-    <target name="usage">
-        <echo message=""/>
-        <echo message=""/>
-        <echo message="Program D Build System"/>
-        <echo message="-------------------------------------------------------------"/>
-        <echo message=""/>
-        <echo message=" Available targets are:"/>
-        <echo message=""/>
-        <echo message="   package  --> generates the server.jar file (default)"/>
-        <echo message="   compile  --> compiles the source code"/>
-        <echo message="   javadoc  --> generates the API documentation"/>
-        <echo message="   clean    --> cleans up the directory"/>
-        <echo message=""/>
-        <echo message=" See the comments inside the build.xml file for more details."/>
-        <echo message="-------------------------------------------------------------"/>
-        <echo message=""/>
-        <echo message=""/>
-    </target>
-    
-    <!--Prepare the build directory.-->
+
+	<!--Prepare the build directory.-->
     <target name="prepare" depends="init">
         <mkdir dir="${build.dir}"/>
     </target>
     
     <!--Prepare the source code.-->
     <target name="prepare-src" depends="prepare">
-        
-        <mkdir dir="${build.dest}"/>
-        
-        <!-- copy over properties and xml files -->
-        <copy todir="${build.dest}">
-            <fileset dir="${build.src}">
-                <include name="**/*.properties"/>
+        <mkdir dir="${build.dir}"/>
+        <!-- copy over xml files -->
+        <copy todir="${build.dir}">
+            <fileset dir="${src.dir}">
                 <include name="**/*.xml"/>
             </fileset>
         </copy>
@@ -73,29 +51,33 @@
     
     <!--Compile the source directory.-->
     <target name="compile" depends="prepare-src">
-        <javac srcdir="${build.src}"
-            destdir="${build.dest}"
+        <javac srcdir="${src.dir}"
+            destdir="${build.dir}"
+        	classpath="${build.classpath}"
             debug="${debug}"
             deprecation="${deprecation}"
             optimize="${optimize}"/>
     </target>
     
-    <!--Create the class package.-->
+    <!--Create the jars.-->
     <target name="package" depends="compile">
-        <!--<fixcrlf srcdir="." includes="**/*.bat" cr="add"/>-->
-        <!--<fixcrlf srcdir="." includes="**/*.sh" cr="remove"/>-->
-        <jar jarfile="../lib/${name}.jar">
-            <fileset dir="${build.dest}/" includes="org/**"/>
-            <fileset dir="${build.src}/" includes="org/aitools/programd/gui/icons/**"/>
+        <jar jarfile="${lib.dir}/${main.jar}">
+            <fileset dir="${build.dir}/" includes="org/**" excludes="org/aitools/programd/server/jettyinterface/*"/>
+        </jar>
+        <jar jarfile="${lib.dir}/${jetty.jar}">
+            <fileset dir="${build.dir}/" includes="org/aitools/programd/server/jettyinterface/*"/>
+        </jar>
+        <jar jarfile="${lib.dir}/${rhino.jar}">
+            <fileset dir="${build.dir}/" includes="org/aitools/programd/interpreter/RhinoInterpreter.class"/>
         </jar>
     </target>
     
     <!--Create the API documentation.-->
     <target name="javadoc" depends="prepare-src">
-        <mkdir dir="${build.javadocs}"/>
+        <mkdir dir="${javadoc.dir}"/>
         <javadoc packagenames="${packages}"
-            sourcepath="${build.src}"
-            destdir="${build.javadocs}"
+            sourcepath="${src.dir}"
+            destdir="${javadoc.dir}"
             author="true"
             version="true"
             use="false"
