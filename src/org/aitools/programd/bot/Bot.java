@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
+import org.aitools.programd.CoreSettings;
 import org.aitools.programd.graph.Nodemapper;
 import org.aitools.programd.logging.SimpleChatLogFormatter;
 import org.aitools.programd.logging.XMLChatLogFormatter;
@@ -86,15 +87,13 @@ public class Bot
      * Creates a new Bot with the given id. The bot's chat log is also set up.
      * 
      * @param botID the id to use for the new bot
-     * @param predicateEmptyDefaultToUse the default value for empty predicates
-     *            for the new bot
-     * @param chatlogDirectory the directory in which to store chat logs for the
-     *            bot
+     * @param coreSettings the core settings to use
      */
-    public Bot(String botID, String predicateEmptyDefaultToUse, String chatlogDirectory)
+    public Bot(String botID, CoreSettings coreSettings)
     {
         this.id = botID;
-        this.predicateEmptyDefault = predicateEmptyDefaultToUse;
+        this.predicateEmptyDefault = coreSettings.getPredicateEmptyDefault();
+        String chatlogDirectory = coreSettings.getChatLogDirectory();
 
         this.logger = Logger.getLogger("programd.chat." + this.id);
         this.logger.setUseParentHandlers(false);
@@ -104,13 +103,13 @@ public class Bot
         FileHandler chatLogFileHandler;
         try
         {
-            chatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id + "-%g.log", 1048576, 10, true);
+            chatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id + "-%g.log", 1048576, 10, false);
         }
         catch (IOException e)
         {
             throw new UserError("Could not create XML chat log for bot \"" + this.id + "\" in \"" + chatlogDirectory + "\"!", e);
         }
-        chatLogFileHandler.setFormatter(new SimpleChatLogFormatter());
+        chatLogFileHandler.setFormatter(new SimpleChatLogFormatter(coreSettings));
         this.logger.addHandler(chatLogFileHandler);
 
         // Set up XML logging of chat.
