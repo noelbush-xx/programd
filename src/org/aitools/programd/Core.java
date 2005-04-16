@@ -62,7 +62,7 @@ public class Core extends Thread
     public static final String VERSION = "4.5";
 
     /** Build identifier. */
-    public static final String BUILD = "alpha-01";
+    public static final String BUILD = "rc1";
 
     /** The Settings. */
     private CoreSettings settings;
@@ -276,7 +276,7 @@ public class Core extends Thread
         {
             throw new DeveloperError(new IllegalStateException("Core has not been initialized; cannot set up."));
         }
-        this.logger.log(Level.INFO, "Starting Program D version " + VERSION + " [" + BUILD + ']');
+        this.logger.log(Level.INFO, "Starting Program D version " + VERSION + BUILD + '.');
         this.logger.log(Level.INFO, "Using Java VM " + System.getProperty("java.vm.version") + " from " + System.getProperty("java.vendor"));
         this.logger.log(Level.INFO, "On " + System.getProperty("os.name") + " version " + System.getProperty("os.version") + " ("
                 + System.getProperty("os.arch") + ")");
