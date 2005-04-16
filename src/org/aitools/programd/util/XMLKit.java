@@ -100,8 +100,17 @@ public class XMLKit
     /** The system default file encoding; defaults to UTF-8!!! */
     private static final String SYSTEM_ENCODING = System.getProperty("file.encoding", "UTF-8");
 
-    /** The string &apos; xmlns="&apos;. */
+    /** The string &apos;{@value}&apos;. */
     private static final String SPACE_XMLNS_EQUALS_QUOTE = " xmlns=\"";
+
+    /** The string &apos;{@value}&apos;. */
+    private static final String XMLNS = "xmlns";
+    
+    /** An HTML &lt;br/&gt; element, including namespace attribute. (&apos;{@value}&apos;) */
+    private static final String BR = "<br xmlns=\"http://www.w3.org/1999/xhtml\"/>";
+
+    /** An HTML &lt;/p&gt; end tag (<i>not</i> including namespace attribute). (&apos;{@value}&apos;) */
+    private static final String END_P = "</p>";
 
     /** The actual Map used to store prohibited-to-escaped mappings. */
     private static HashMap<String, String> xmlProhibited;
@@ -547,8 +556,9 @@ public class XMLKit
 
     /**
      * <p>
-     * Breaks a message into multiple lines at <i>any </i> tag, except if the
-     * tag comes at the beginning of the message.
+     * Breaks a message into multiple lines at an HTML &lt;br/&gt;, except if
+     * it comes at the beginning of the message, or ending HTML &lt;/p&gt;.
+     * Other tags are just removed.
      * </p>
      * <p>
      * Generally used to format output nicely for a console.
@@ -557,7 +567,7 @@ public class XMLKit
      * @param input the string to break
      * @return one line per array item
      */
-    public static String[] breakLinesAtTags(String input)
+    public static String[] filterViaHTMLTags(String input)
     {
         // Null inputs return an empty string array.
         if (input == null)
@@ -591,6 +601,9 @@ public class XMLKit
 
         // Results will be delivered by calling toArray() on this Vector.
         Vector<String> result = new Vector<String>();
+        
+        // This will hold each line as it is assembled.
+        StringBuffer line = new StringBuffer();
 
         // Break lines at tags.
         while ((tagStart > -1) && (tagEnd > -1))
@@ -598,11 +611,18 @@ public class XMLKit
             // Get the end of a tag.
             tagEnd = input.indexOf(MARKER_END, lastEnd);
 
-            // Add the input until the tag as a line, as long as the tag is not
+            // Add the input until the tag as an addition to the line, as long as the tag is not
             // the beginning.
             if (tagStart > 0)
             {
-                result.addElement(input.substring(lastEnd, tagStart).trim());
+                line.append(input.substring(lastEnd, tagStart).trim());
+            }
+            
+            // If the tag start begins a <br/> or a </p>, then this is the end of the line.
+            if (input.indexOf(BR, tagStart) == tagStart || input.indexOf(END_P, tagStart) == tagStart)
+            {
+                result.addElement(line.toString());
+                line = new StringBuffer();
             }
 
             // Set last end to the character following the end of the tag.
@@ -787,8 +807,11 @@ public class XMLKit
             {
                 Node attribute = attributes.item(index);
                 String attributeName = attribute.getLocalName();
-                result.append(SPACE);
-                result.append(attributeName + EQUAL_QUOTE + attribute.getNodeValue() + QUOTE_MARK);
+                if (!attributeName.equals(XMLNS))
+                {
+                    result.append(SPACE);
+                    result.append(attributeName + EQUAL_QUOTE + attribute.getNodeValue() + QUOTE_MARK);
+                }
             }
         }
         result.append(EMPTY_ELEMENT_TAG_END);
@@ -804,5 +827,19 @@ public class XMLKit
     public static String renderEndTag(Element element)
     {
         return END_TAG_START + element.getLocalName() + MARKER_END;
+    }
+    
+    /**
+     * @param count the number of spaces to return
+     * @return the given number of spaces.
+     */
+    public static String getSpaces(int count)
+    {
+        StringBuffer result = new StringBuffer(count);
+        for (int index = 0; index < count; index++)
+        {
+            result.append(' ');
+        }
+        return result.toString();
     }
 }
