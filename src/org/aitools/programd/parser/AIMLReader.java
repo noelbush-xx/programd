@@ -83,10 +83,16 @@ public class AIMLReader extends DefaultHandler
     private static final String THAT = "that";
 
     /** The string &quot;{@value}&quot;. */
-    //private static final String TOPIC = "topic";
+    private static final String TOPIC = "topic";
 
     /** The string &quot;{@value}&quot;. */
     private static final String TEMPLATE = "template";
+    
+    /** The wildcard (&quot;*&quot;). */
+    private static final String WILDCARD = "*";
+
+    /** The string &quot;{@value}&quot;. */
+    private static final String NAME = "name";
 
     /** The current state. */
     private State state = State.IN_UNHANDLED;
@@ -96,9 +102,6 @@ public class AIMLReader extends DefaultHandler
 
     /** The most recently collected &lt;that&gt;&lt;/that&gt; contents. */
     private StringBuffer thatBuffer;
-
-    /** The most recently collected &lt;topic&gt;&lt;/topic&gt; contents. */
-    //private StringBuffer topicBuffer;
 
     /** The most recently collected &lt;template&gt;&lt;/template&gt; contents. */
     private StringBuffer templateBuffer;
@@ -131,6 +134,7 @@ public class AIMLReader extends DefaultHandler
         this.listener = readerListener;
         this.defaultNamespaceURI = defaultNamespaceURIToUse;
         this.templateStartTag = OPEN_TEMPLATE_START_TAG + defaultNamespaceURIToUse + QUOTE_MARKER_END;
+        this.topic = WILDCARD;
     }
 
     /**
@@ -225,6 +229,10 @@ public class AIMLReader extends DefaultHandler
                 this.templateBuffer.append(MARKER_END);
             }
         }
+        else if (elementName.equals(TOPIC))
+        {
+            this.topic = WILDCARD;
+        }
     }
 
     /**
@@ -268,6 +276,11 @@ public class AIMLReader extends DefaultHandler
             // really here we are just reconstituting the XML text for later
             // processing.
             this.templateBuffer.append(XMLKit.renderStartTag(elementName, attributes, !uri.equals(this.defaultNamespaceURI), uri));
+        }
+        else if (elementName.equals(TOPIC))
+        {
+            // We don't check that it's valid, because it's supposed to have been schema-validated already!
+            this.topic = attributes.getValue(NAME);
         }
     }
 
