@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:d="http://aitools.org/programd/html-responder-template">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:d="http://aitools.org/programd/xml-responder-template">
 <!--This is a simple example of an HTML chat template for Program D.-->
     <head>
         <!--The value associated with a bot predicate, such as
@@ -9,7 +9,7 @@
             Dialogue with <d:bot name="name"/>
         </title>
         <!--This is a simple stylesheet to format the page.-->
-		<link rel="stylesheet" type="text/css" href="sample.css" />
+		<link rel="stylesheet" type="text/css" href="docs/sample.css" />
     </head>
     <!--The body element is set to automatically give focus to the
         input field each time the document is loaded.-->
@@ -70,7 +70,7 @@
                             <li>
                                 <p>
                                     <!--This link will request a logout.-->
-                                    <a href="?request=send-login-form">log out</a>.
+                                    <a href="?request=logout">log out</a>.
                                 </p>
                             </li>
                         </ul>
@@ -86,7 +86,7 @@
                             <li>
                                 <p>
                                     <!--This link will request a new user registration form.-->
-                                    <a href="?request-registration-form">register a new username and password</a>.
+                                    <a href="?request=send-registration-form">register a new username and password</a>.
                                 </p>
                             </li>
                         </ul>
