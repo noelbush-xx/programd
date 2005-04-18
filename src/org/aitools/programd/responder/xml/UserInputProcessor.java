@@ -20,7 +20,7 @@ public class UserInputProcessor extends XMLTemplateProcessor
     /**
      * Creates a new UserInputProcessor with the given Core.
      * 
-     * @param coreToUse the Core to use in creating the BotProcessor
+     * @param coreToUse the Core to use in creating the UserInputProcessor
      */
     public UserInputProcessor(Core coreToUse)
     {
