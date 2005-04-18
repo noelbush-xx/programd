@@ -232,7 +232,7 @@ public class Shell extends Thread
         this.botid = bot.getID();
         this.botName = bot.getPropertyValue(this.botNamePredicate);
 
-        while (true)
+        while (true && this.core.getStatus() == Core.Status.RUNNING)
         {
             showPrompt();
             String theLine = null;
