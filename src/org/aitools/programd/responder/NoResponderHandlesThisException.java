@@ -11,10 +11,8 @@ package org.aitools.programd.responder;
 
 import javax.servlet.ServletRequest;
 
-import org.aitools.programd.server.ServletRequestResponderManagerRegistry;
-
 /**
- * This exception is thrown when {@link ServletRequestResponderManagerRegistry}
+ * This exception is thrown when a {@link org.aitools.programd.server.ServletRequestResponderManagerRegistry ServletRequestResponderManagerRegistry}
  * does not have a {@link Responder} that can handle a given request.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
