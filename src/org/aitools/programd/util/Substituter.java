@@ -135,7 +135,7 @@ public class Substituter
 
                     // and put the remainder of the untouched input into the
                     // untouched list.
-                    if (startIndex + replacement.length() < untouchedTest.length())
+                    if (startIndex + replacement.length() <= untouchedTest.length())
                     {
                         untouchedIterator.add(untouchedTest.substring(startIndex + find.length()));
                     }
