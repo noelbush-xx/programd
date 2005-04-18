@@ -14,6 +14,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
@@ -245,12 +246,12 @@ public class GUIConsole extends JPanel
         JCheckBoxMenuItem pause = new JCheckBoxMenuItem("Pause Console");
         // pause.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         pause.setMnemonic(KeyEvent.VK_P);
-        pause.addActionListener(new ParentAwareActionEventIgnoringActionListener<GUIConsole>(this)
+        pause.addActionListener(new ActionEventIgnoringActionListener()
         {
             public void actionPerformed()
             {
-                this.parent.outDisplay.togglePause();
-                this.parent.errDisplay.togglePause();
+                GUIConsole.this.outDisplay.togglePause();
+                GUIConsole.this.errDisplay.togglePause();
             }
         });
 
@@ -268,22 +269,22 @@ public class GUIConsole extends JPanel
         JMenuItem botFiles = new JMenuItem("List bot files");
         // botFiles.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         botFiles.setMnemonic(KeyEvent.VK_F);
-        botFiles.addActionListener(new ParentAwareActionEventIgnoringActionListener<GUIConsole>(this)
+        botFiles.addActionListener(new ActionEventIgnoringActionListener()
         {
             public void actionPerformed()
             {
-                this.parent.shell.listBotFiles();
+                GUIConsole.this.shell.listBotFiles();
             }
         });
 
         JMenuItem listBots = new JMenuItem("List bots");
         // listBots.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         listBots.setMnemonic(KeyEvent.VK_L);
-        listBots.addActionListener(new ParentAwareActionEventIgnoringActionListener<GUIConsole>(this)
+        listBots.addActionListener(new ActionEventIgnoringActionListener()
         {
             public void actionPerformed()
             {
-                this.parent.shell.showBotList();
+                GUIConsole.this.shell.showBotList();
             }
         });
 
@@ -302,11 +303,11 @@ public class GUIConsole extends JPanel
         JMenuItem shellHelp = new JMenuItem("Shell Help...");
         // shellHelp.setFont(new Font("Sans-serif", Font.PLAIN, 12));
         shellHelp.setMnemonic(KeyEvent.VK_H);
-        shellHelp.addActionListener(new ParentAwareActionEventIgnoringActionListener<GUIConsole>(this)
+        shellHelp.addActionListener(new ActionEventIgnoringActionListener()
         {
             public void actionPerformed()
             {
-                this.parent.shell.help();
+                GUIConsole.this.shell.help();
             }
         });
         JMenuItem about = new JMenuItem("About Simple GUI Console...");
@@ -419,7 +420,7 @@ public class GUIConsole extends JPanel
             this.input.setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
             this.input.setHorizontalAlignment(SwingConstants.LEFT);
             this.input.setAlignmentY(Component.CENTER_ALIGNMENT);
-            this.input.addActionListener(new InputSender(this));
+            this.input.addActionListener(new InputSender());
 
             this.enter = new JButton("Enter");
             this.enter.setFont(new Font("Sans-serif", Font.PLAIN, 10));
@@ -427,7 +428,7 @@ public class GUIConsole extends JPanel
             this.enter.setMinimumSize(new Dimension(70, 20));
             this.enter.setPreferredSize(new Dimension(70, 20));
             this.enter.setMaximumSize(new Dimension(70, 20));
-            this.enter.addActionListener(new InputSender(this));
+            this.enter.addActionListener(new InputSender());
             this.enter.setAlignmentY(Component.CENTER_ALIGNMENT);
 
             this.add(this.prompt);
@@ -458,27 +459,17 @@ public class GUIConsole extends JPanel
             this.enter.setEnabled(enabled);
         }
 
-        private class InputSender extends ParentAwareActionListener<InputPanel>
+        private class InputSender implements ActionListener
         {
             /**
-             * Creates a new InputSender
-             * 
-             * @param parentToUse the InputPanel parent to use
-             */
-            public InputSender(InputPanel parentToUse)
-            {
-                super(parentToUse);
-            }
-
-            /**
-             * @see org.aitools.programd.interfaces.graphical.ParentAwareActionListener#actionPerformed(java.awt.event.ActionEvent)
+             * @see ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent ae)
             {
                 String inputText = ae.getActionCommand();
-                this.parent.parent.display.append(this.parent.prompt.getText() + inputText + LINE_SEPARATOR);
-                this.parent.parent.inStream.receive(inputText);
-                this.parent.input.setText(null);
+                GUIConsole.this.display.append(InputPanel.this.prompt.getText() + inputText + LINE_SEPARATOR);
+                GUIConsole.this.inStream.receive(inputText);
+                InputPanel.this.input.setText(null);
             }
         }
     }
@@ -519,8 +510,8 @@ public class GUIConsole extends JPanel
                     // Nothing to do.
                 }
             }
-            this.parent.display.append(new String(b, off, len));
-            this.parent.display.setCaretPosition(this.parent.display.getText().length());
+            GUIConsole.this.display.append(new String(b, off, len));
+            GUIConsole.this.display.setCaretPosition(GUIConsole.this.display.getText().length());
         }
 
         /**
@@ -539,8 +530,8 @@ public class GUIConsole extends JPanel
                     // Do nothing.
                 }
             }
-            this.parent.display.append(String.valueOf((char) b));
-            this.parent.display.setCaretPosition(this.parent.display.getText().length());
+            GUIConsole.this.display.append(String.valueOf((char) b));
+            GUIConsole.this.display.setCaretPosition(GUIConsole.this.display.getText().length());
         }
 
         protected void togglePause()
@@ -570,7 +561,7 @@ public class GUIConsole extends JPanel
          */
         public void write(byte[] b, int off, int len)
         {
-            this.parent.inputPanel.setPrompt(new String(b, off, len));
+            GUIConsole.this.inputPanel.setPrompt(new String(b, off, len));
         }
 
         /**
@@ -578,7 +569,7 @@ public class GUIConsole extends JPanel
          */
         public void write(int b)
         {
-            this.parent.inputPanel.setPrompt(String.valueOf((char) b));
+            GUIConsole.this.inputPanel.setPrompt(String.valueOf((char) b));
         }
     }
 

@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -91,11 +90,11 @@ public class ListDialog extends JDialog
                 dialog.setVisible(false);
             }
         });
-        setButton.addActionListener(new ParentAwareActionListener<ListDialog>(this)
+        setButton.addActionListener(new ActionEventIgnoringActionListener()
         {
-            public void actionPerformed(ActionEvent e)
+            public void actionPerformed()
             {
-                ListDialog.value = (String) this.parent.list.getSelectedValue();
+                ListDialog.value = (String) ListDialog.this.list.getSelectedValue();
                 ListDialog.dialog.setVisible(false);
             }
         });
