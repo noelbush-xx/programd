@@ -75,16 +75,17 @@
     <!--Create the API documentation.-->
     <target name="javadoc" depends="prepare-src">
         <mkdir dir="${javadoc.dir}"/>
-        <javadoc packagenames="${packages}"
+        <javadoc packagenames="*"
             sourcepath="${src.dir}"
             destdir="${javadoc.dir}"
             author="true"
             version="true"
-            use="false"
+            use="true"
             splitindex="true"
             noindex="false"
             windowtitle="${Name} API"
             doctitle="${Name} API"
+        	link="http://java.sun.com/j2se/1.5.0/docs/api/"
             />
     </target>
     
