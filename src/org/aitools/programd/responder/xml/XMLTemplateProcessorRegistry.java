@@ -20,10 +20,13 @@ import org.aitools.programd.processor.ProcessorRegistry;
 public class XMLTemplateProcessorRegistry extends ProcessorRegistry<XMLTemplateProcessor>
 {
     /** The XML namespace URI for AIML. */
-    private static final String XMLNS = "http://aitools.org/programd/html-responder-template";
+    private static final String XMLNS = "http://aitools.org/programd/xml-responder-template";
 
     /** The list of processors (fully-qualified class names). */
     private static final String[] PROCESSOR_LIST = { "org.aitools.programd.responder.xml.BotProcessor",
+                                                     "org.aitools.programd.responder.xml.HostnameProcessor",
+                                                     "org.aitools.programd.responder.xml.LoggedInProcessor",
+                                                     "org.aitools.programd.responder.xml.NotLoggedInProcessor",
                                                      "org.aitools.programd.responder.xml.UserInputProcessor",
                                                      "org.aitools.programd.responder.xml.ReplyProcessor",
                                                      "org.aitools.programd.responder.xml.ResponseProcessor" };
