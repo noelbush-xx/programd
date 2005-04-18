@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import org.w3c.dom.Element;
 
+import org.aitools.programd.Core;
 import org.aitools.programd.parser.GenericParser;
 import org.aitools.programd.responder.AbstractXMLResponder;
 import org.aitools.programd.responder.xml.XMLTemplateProcessor;
@@ -39,7 +40,7 @@ public class XMLTemplateParser extends GenericParser<XMLTemplateProcessor>
      */
     public XMLTemplateParser(XMLTemplateProcessorRegistry registry, AbstractXMLResponder responderSource)
     {
-        super(registry);
+        super(registry, responderSource.getManager().getCore());
         this.responder = responderSource;
     }
 
@@ -50,10 +51,11 @@ public class XMLTemplateParser extends GenericParser<XMLTemplateProcessor>
      * a template, not process it.
      * 
      * @param registry the registry of XML template processors
+     * @param coreToUse the core to use
      */
-    public XMLTemplateParser(XMLTemplateProcessorRegistry registry)
+    public XMLTemplateParser(XMLTemplateProcessorRegistry registry, Core coreToUse)
     {
-        super(registry);
+        super(registry, coreToUse);
     }
 
     /**
