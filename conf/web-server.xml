@@ -28,16 +28,16 @@ GENERAL NOTES
 -->
 
 <properties version="1.0">
-    <!--[generate: org.aitools.programd.configurations.WebServerSettings]
-        [strip-prefix: programd.webserver.]-->
+    <!--[generate: org.aitools.programd.interfaces.HTTPServerSettings]
+        [strip-prefix: programd.httpserver.]-->
     
     <!-- HTTP server (wrapper) to use (fully-qualified class name) [String: org.aitools.programd.server.JettyWrapper]-->
-    <entry key="programd.webserver.httpserver-classname">org.aitools.programd.server.jettyinterface.JettyWrapper</entry>
+    <entry key="programd.httpserver.classname">org.aitools.programd.server.jettyinterface.JettyWrapper</entry>
     
     <!-- configuration parameter for the HTTP server (not always applicable) [String: conf/jetty.xml]-->
-    <entry key="programd.webserver.httpserver-config">conf/jetty.xml</entry>
+    <entry key="programd.httpserver.config">conf/jetty.xml</entry>
     
     <!-- Pattern for naming the log file for web server messages. [String: logs/web-server-%g.log]-->
-    <entry key="programd.webserver.log.path-pattern">logs/web-server-%g.log</entry>
+    <entry key="programd.httpserver.log.path-pattern">logs/web-server-%g.log</entry>
     
 </properties>
