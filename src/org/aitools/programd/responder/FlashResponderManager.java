@@ -71,6 +71,6 @@ public class FlashResponderManager extends AbstractXMLResponderManager implement
     {
         envelope.getServiceResponse().setContentType(TEXT_PLAIN);
         return envelope.getCore().getResponse(envelope.getUserRequest(), envelope.getUserID(), envelope.getBotID(),
-                new FlashResponder(this, envelope.getBotID(), envelope.getTemplateName()));
+                new FlashResponder(this, envelope));
     }
 }
