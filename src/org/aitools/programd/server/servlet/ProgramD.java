@@ -39,7 +39,7 @@ public class ProgramD extends HttpServlet
 {
     /** The string &quot;{@value}&quot;. */
     private static final String CORE = "core";
-
+    
     /** The string &quot;{@value}&quot;. */
     private static final String RESPONDER_REGISTRY = "responder-registry";
 
@@ -73,10 +73,13 @@ public class ProgramD extends HttpServlet
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     {
-        ServletRequestTransactionEnvelope envelope = new ServletRequestTransactionEnvelope(request, response, this.core, this.responderRegistry);
+        if (!request.getServletPath().substring(1).equals(request.getContextPath()))
+        {
+            return;
+        }
         try
         {
-            envelope.process();
+            new ServletRequestTransactionEnvelope(request, response, this.core, this.responderRegistry).process();
         }
         catch (Throwable e)
         {
