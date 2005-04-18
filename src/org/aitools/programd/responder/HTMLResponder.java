@@ -9,6 +9,8 @@
 
 package org.aitools.programd.responder;
 
+import org.aitools.programd.server.ServletRequestTransactionEnvelope;
+
 /**
  * Responsible for handling requests that come via HTTP, and delivering the
  * response via dynamically-generated HTML based on user-designed templates.
@@ -22,16 +24,26 @@ package org.aitools.programd.responder;
  */
 public class HTMLResponder extends AbstractXMLResponder implements ServletRequestResponder
 {
+    private ServletRequestTransactionEnvelope envelope;
+    
     /**
      * Creates a new HTMLResponder.
      * 
      * @param responsibleManager the manager that is responsible for this
      *            responder
-     * @param botidToRespondFor the botid to respond for
-     * @param templateName the template name to use
+     * @param sourceEnvelope the envelope that generated the request
      */
-    public HTMLResponder(HTMLResponderManager responsibleManager, String botidToRespondFor, String templateName)
+    public HTMLResponder(HTMLResponderManager responsibleManager, ServletRequestTransactionEnvelope sourceEnvelope)
     {
-        super(responsibleManager, botidToRespondFor, templateName);
+        super(responsibleManager, sourceEnvelope.getBotID(), sourceEnvelope.getTemplateName());
+        this.envelope = sourceEnvelope;
+    }
+    
+    /**
+     * @return the envelope that generated the request
+     */
+    public ServletRequestTransactionEnvelope getEnvelope()
+    {
+        return this.envelope;
     }
 }
