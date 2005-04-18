@@ -1,5 +1,5 @@
 <?xml version="1.0"  encoding="ISO-8859-1"?> 
-<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure 1.0//EN" "http://jetty.mortbay.org/configure_1_1.dtd">
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure 1.0//EN" "http://jetty.mortbay.org/configure_1_3.dtd">
 <Configure class="org.mortbay.jetty.Server">
     <Call name="addListener">
         <Arg>
@@ -8,7 +8,6 @@
                 <Set name="MinThreads">5</Set>
                 <Set name="MaxThreads">255</Set>
                 <Set name="MaxIdleTimeMs">60000</Set>
-                <Set name="MaxReadTimeMs">60000</Set>
                 <Set name="LowResourcePersistTimeMs">5000</Set>
             </New>
         </Arg>
@@ -19,6 +18,17 @@
             <Arg>ProgramD</Arg>
             <Arg>/</Arg>
             <Arg>org.aitools.programd.server.servlet.ProgramD</Arg>
+        </Call>
+    </Call>
+    <Call name="addContext">
+        <Arg>/docs/</Arg>
+        <Set name="ResourceBase">./templates/html/docroot/</Set>
+        <Call name="addHandler">
+            <Arg>
+                <New class="org.mortbay.http.handler.ResourceHandler">
+                    <Set name="DirAllowed">FALSE</Set>
+                </New>
+            </Arg>
         </Call>
     </Call>
 </Configure>
