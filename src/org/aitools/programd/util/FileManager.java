@@ -433,11 +433,7 @@ public class FileManager
         {
             pattern = path.substring(separatorIndex + 1);
             dirName = path.substring(0, separatorIndex + 1);
-            dir = new File(dirName);
-            if (!dir.isDirectory())
-            {
-                dir = new File(workingDirectory.peek().getPath() + dirName);
-            }
+            dir = new File(workingDirectory.peek().getPath() + dirName);
         }
         else
         {
