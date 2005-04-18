@@ -9,6 +9,8 @@
 
 package org.aitools.programd.responder;
 
+import org.aitools.programd.server.ServletRequestTransactionEnvelope;
+
 /**
  * Implements a {@link Responder} for a Flash client.
  * 
@@ -18,16 +20,26 @@ package org.aitools.programd.responder;
  */
 public class FlashResponder extends AbstractXMLResponder implements ServletRequestResponder
 {
+    private ServletRequestTransactionEnvelope envelope;
+    
     /**
      * Creates a new FlashResponder.
      * 
      * @param responsibleManager the manager that is responsible for this
      *            responder
-     * @param botidToRespondFor the botid to respond for
-     * @param templateName the template name to use
+     * @param sourceEnvelope the envelope that generated the request
      */
-    public FlashResponder(FlashResponderManager responsibleManager, String botidToRespondFor, String templateName)
+    public FlashResponder(FlashResponderManager responsibleManager, ServletRequestTransactionEnvelope sourceEnvelope)
     {
-        super(responsibleManager, botidToRespondFor, templateName);
+        super(responsibleManager, sourceEnvelope.getBotID(), sourceEnvelope.getTemplateName());
+        this.envelope = sourceEnvelope;
+    }
+    
+    /**
+     * @return the envelope that generated the request
+     */
+    public ServletRequestTransactionEnvelope getEnvelope()
+    {
+        return this.envelope;
     }
 }
