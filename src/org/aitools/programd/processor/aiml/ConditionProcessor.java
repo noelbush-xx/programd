@@ -71,7 +71,7 @@ public class ConditionProcessor extends AIMLProcessor
          * Process a multiPredicateCondition: <condition>
          * <li name="xxx" value="xxx"> ... </li><li> ... </li> </condition>
          */
-        if ((element.getAttribute(NAME) == null) && (element.getAttribute(VALUE) == null))
+        if (name.equals(EMPTY_STRING) && value.equals(EMPTY_STRING))
         {
             return processListItem(parser, element.getChildNodes(), NAME_VALUE_LI, name);
         }
@@ -80,7 +80,7 @@ public class ConditionProcessor extends AIMLProcessor
          * Process a blockCondition: <condition name="xxx" value="yyy"> ...
          * </condition>
          */
-        if ((element.getAttribute(NAME) != null) && (element.getAttribute(VALUE) != null))
+        if (!name.equals(EMPTY_STRING) && !value.equals(EMPTY_STRING))
         {
             try
             {
@@ -101,7 +101,7 @@ public class ConditionProcessor extends AIMLProcessor
          * Process a singlePredicateCondition: <condition name="xxx">
          * <li value="yyy"> ... </li><li> ... </li> </condition>
          */
-        if ((element.getAttribute(NAME) != null) && (element.getAttribute(VALUE) == null))
+        if (!name.equals(EMPTY_STRING) && value.equals(EMPTY_STRING))
         {
             return processListItem(parser, element.getChildNodes(), VALUE_ONLY_LI, name);
         }
