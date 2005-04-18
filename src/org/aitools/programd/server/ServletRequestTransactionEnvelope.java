@@ -15,6 +15,7 @@ import java.io.UnsupportedEncodingException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.responder.NoResponderHandlesThisException;
@@ -113,7 +114,7 @@ public class ServletRequestTransactionEnvelope
 
     /** The string &quot;{@value}&quot;. */
     private static final String TEMPLATE = "template";
-
+    
     /**
      * Constructs a new <code>ServletRequestTransactionEnvelope</code> from a
      * given servlet request, and given a servlet response object to send back.
@@ -132,17 +133,32 @@ public class ServletRequestTransactionEnvelope
         this.serviceRequest = request;
         this.serviceResponse = response;
         this.managerRegistry = managerRegistryToUse;
+    }
 
-        this.userRequest = request.getParameter(TEXT_PARAM);
-        this.userid = request.getParameter(USERID_PARAM);
-        this.botid = request.getParameter(BOTID_PARAM);
-        this.responseEncoding = request.getParameter(RESPONSE_ENCODING_PARAM);
-
-        // If no response encoding specified, use UTF-8.
-        if (this.responseEncoding == null)
+    private void checkStaticVariables()
+    {
+        if (connectString == null)
         {
-            this.responseEncoding = ENC_UTF8;
+            connectString = this.core.getSettings().getConnectString();
         }
+        if (inactivityString == null)
+        {
+            inactivityString = this.core.getSettings().getInactivityString();
+        }
+    }
+
+    /**
+     * Invokes a response.
+     * 
+     * @throws NoResponderHandlesThisException if no responder can be found to
+     *             handle the request
+     */
+    public void process() throws NoResponderHandlesThisException
+    {
+        this.userRequest = this.serviceRequest.getParameter(TEXT_PARAM);
+        this.userid = this.serviceRequest.getParameter(USERID_PARAM);
+        this.botid = this.serviceRequest.getParameter(BOTID_PARAM);
+        this.responseEncoding = this.serviceRequest.getParameter(RESPONSE_ENCODING_PARAM);
 
         // If no text parameter then we assume a new connection.
         if (this.userRequest == null)
@@ -167,10 +183,16 @@ public class ServletRequestTransactionEnvelope
             }
         }
 
+        // If no response encoding specified, use UTF-8.
+        if (this.responseEncoding == null)
+        {
+            this.responseEncoding = ENC_UTF8;
+        }
+
         // Check for no userid.
         if (this.userid == null)
         {
-            this.userid = request.getRemoteHost();
+            this.userid = this.serviceRequest.getRemoteHost();
         }
 
         // Check for no bot id.
@@ -180,33 +202,12 @@ public class ServletRequestTransactionEnvelope
         }
 
         // Look for a named template.
-        this.templateName = request.getParameter(TEMPLATE);
+        this.templateName = this.serviceRequest.getParameter(TEMPLATE);
         if (this.templateName == null)
         {
             this.templateName = EMPTY_STRING;
         }
-    }
 
-    private void checkStaticVariables()
-    {
-        if (connectString == null)
-        {
-            connectString = this.core.getSettings().getConnectString();
-        }
-        if (inactivityString == null)
-        {
-            inactivityString = this.core.getSettings().getInactivityString();
-        }
-    }
-
-    /**
-     * Invokes a response.
-     * 
-     * @throws NoResponderHandlesThisException if no responder can be found to
-     *             handle the request
-     */
-    public void process() throws NoResponderHandlesThisException
-    {
         try
         {
             this.serviceOutputStream = this.serviceResponse.getOutputStream();
@@ -302,5 +303,22 @@ public class ServletRequestTransactionEnvelope
     public String getTemplateName()
     {
         return this.templateName;
+    }
+
+    /**
+     * @param name the attribute name to look for
+     * @param value the value to look for
+     * @return whether the given request has a session with an attribute with the given name and value
+     */
+    public boolean sessionAttributeEquals(String name, Object value)
+    {
+        HttpSession session = this.serviceRequest.getSession(true);
+        Object attributeValue = session.getAttribute(name);
+        if (attributeValue == null)
+        {
+            return false;
+        }
+        // otherwise...
+        return (attributeValue.equals(value));
     }
 }
