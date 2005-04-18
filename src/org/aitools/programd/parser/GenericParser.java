@@ -73,16 +73,6 @@ abstract public class GenericParser<P extends Processor>
     protected static DocumentBuilder utilDocBuilder;
 
     /**
-     * Creates a new GenericParser with no Core.
-     * 
-     * @param registry the registry of processors
-     */
-    public GenericParser(ProcessorRegistry<P> registry)
-    {
-        initialize(registry);
-    }
-
-    /**
      * Creates a new GenericParser with the given Core as its owner.
      * 
      * @param registry the registry of processors
@@ -91,11 +81,6 @@ abstract public class GenericParser<P extends Processor>
     public GenericParser(ProcessorRegistry<P> registry, Core coreToUse)
     {
         this.core = coreToUse;
-        initialize(registry);
-    }
-
-    private void initialize(ProcessorRegistry<P> registry)
-    {
         this.processorRegistry = registry;
         if (utilDocBuilder == null)
         {
