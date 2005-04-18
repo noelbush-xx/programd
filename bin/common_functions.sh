@@ -83,7 +83,7 @@ function setup_other_libs()
 
   # Set JETTY_LIBS to the location of the Jetty jars.
   # No warning is provided if they cannot be found (since they are optional).
-  JETTY_LIBS=$LIBS/commons-logging.jar:$LIBS/org.mortbay.jetty.jar:$LIBS/servlet.jar
+  JETTY_LIBS=$LIBS/commons-logging.jar:$LIBS/org.mortbay.jetty.jar:$LIBS/javax.servlet.jar
   
   OTHER_LIBS=$GETOPT_LIB:$SQL_LIB:$JS_LIB:$JETTY_LIBS
 }
