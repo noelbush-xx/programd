@@ -75,11 +75,14 @@ GENERAL NOTES
     <!-- Log/display match trace messages? [boolean: true]-->
     <entry key="programd.record-match-trace">true</entry>
     
+    <!-- Print stack trace on uncaught exceptions? [boolean: false]-->
+    <entry key="programd.on-uncaught-exceptions.print-stack-trace">true</entry>
+    
     <!--Allow use of <system> element? [boolean: false]-->
-    <entry key="programd.os-access-allowed">false</entry>
+    <entry key="programd.os-access-allowed">true</entry>
     
     <!--Allow use of <javascript> element? [boolean: false]-->
-    <entry key="programd.javascript-allowed">false</entry>
+    <entry key="programd.javascript-allowed">true</entry>
     
     <!--The string to send when first connecting to the bot. [String: CONNECT]
          * If this value is empty or not defined, no value
