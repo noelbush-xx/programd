@@ -9,6 +9,8 @@
 
 package org.aitools.programd.responder;
 
+import org.aitools.programd.server.ServletRequestTransactionEnvelope;
+
 /**
  * A <code>ServletRequestResponder</code> is a Responder specifically able to
  * handle certain servlet requests. Its {@link ServletRequestResponderManager}
@@ -19,5 +21,8 @@ package org.aitools.programd.responder;
  */
 abstract public interface ServletRequestResponder
 {
-    // No methods specified.
+    /**
+     * @return the envelope that generated the request
+     */
+    public ServletRequestTransactionEnvelope getEnvelope();
 }
