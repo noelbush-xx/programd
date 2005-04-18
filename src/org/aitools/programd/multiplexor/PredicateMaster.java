@@ -20,6 +20,7 @@ import org.aitools.programd.CoreSettings;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.util.DeveloperError;
+import org.aitools.programd.util.XMLKit;
 
 /**
  * <p>
@@ -174,7 +175,7 @@ public class PredicateMaster
         PredicateValue value = getLoadOrCreateMultivaluedPredicateValue(name, userPredicates, userid, botid);
 
         // Push the new value onto the indexed predicate list.
-        value.push(newValue);
+        value.push(XMLKit.removeMarkup(newValue));
 
         // Increment the cache count.
         cacheSize++;
