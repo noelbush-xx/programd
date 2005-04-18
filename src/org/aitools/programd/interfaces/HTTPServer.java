@@ -66,7 +66,7 @@ public class HTTPServer implements ManagedProcess
      */
     public void run()
     {
-        String className = this.settings.getHttpserverClassname();
+        String className = this.settings.getClassname();
 
         // Fail if http server class name is not specified.
         if (className == null)
@@ -77,7 +77,7 @@ public class HTTPServer implements ManagedProcess
         this.logger.log(Level.INFO, "Starting web server " + className + ".");
 
         // Start the http server.
-        startHttpServer(className, this.settings.getHttpserverConfig());
+        startHttpServer(className, this.settings.getConfig());
 
         // Figure out what the full server address is.
         InetAddress localhost;

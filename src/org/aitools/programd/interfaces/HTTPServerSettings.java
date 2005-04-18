@@ -6,44 +6,43 @@
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-
+ 
 package org.aitools.programd.interfaces;
 
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-04-10T10:20:36.865-04:00
+ * Automatically generated from properties file, 2005-04-16T12:02:50.358-04:00
  */
 public class HTTPServerSettings extends Settings
 {
     /**
-     * HTTP server (wrapper) to use (fully-qualified class name)
+     * HTTP server (wrapper) to use (fully-qualified class name) 
      */
-    private String httpserverClassname;
+    private String classname;
 
     /**
-     * configuration parameter for the HTTP server (not always applicable)
+     * configuration parameter for the HTTP server (not always applicable) 
      */
-    private String httpserverConfig;
+    private String config;
 
     /**
-     * Pattern for naming the log file for web server messages.
+     * Pattern for naming the log file for web server messages. 
      */
     private String logPathPattern;
 
     /**
-     * Creates a <code>HTTPServerSettings</code> using default property
-     * values.
+     * Creates a <code>HTTPServerSettings</code> using default property values.
      */
     public HTTPServerSettings()
     {
         super();
     }
-
+    
     /**
-     * Creates a <code>HTTPServerSettings</code> with the (XML-formatted)
-     * properties located at the given path.
-     * 
+     * Creates a <code>HTTPServerSettings</code> with the (XML-formatted) properties
+     * located at the given path.
+     *
      * @param propertiesPath the path to the configuration file
      */
     public HTTPServerSettings(String propertiesPath)
@@ -52,32 +51,32 @@ public class HTTPServerSettings extends Settings
     }
 
     /**
-     * Initializes the Settings with values from properties, or defaults.
-     */
+    * Initializes the Settings with values from properties, or defaults.
+    */
     protected void initialize()
     {
-        setHttpserverClassname(this.properties.getProperty("programd.httpserver.httpserver-classname", "org.aitools.programd.server.JettyWrapper"));
+        setClassname(this.properties.getProperty("programd.httpserver.classname", "org.aitools.programd.server.JettyWrapper"));
 
-        setHttpserverConfig(this.properties.getProperty("programd.httpserver.httpserver-config", "conf/jetty.xml"));
+        setConfig(this.properties.getProperty("programd.httpserver.config", "conf/jetty.xml"));
 
         setLogPathPattern(this.properties.getProperty("programd.httpserver.log.path-pattern", "logs/web-server-%g.log"));
 
     }
 
     /**
-     * @return the value of httpserverClassname
+     * @return the value of classname
      */
-    public String getHttpserverClassname()
+    public String getClassname()
     {
-        return this.httpserverClassname;
+        return this.classname;
     }
 
     /**
-     * @return the value of httpserverConfig
+     * @return the value of config
      */
-    public String getHttpserverConfig()
+    public String getConfig()
     {
-        return this.httpserverConfig;
+        return this.config;
     }
 
     /**
@@ -89,24 +88,23 @@ public class HTTPServerSettings extends Settings
     }
 
     /**
-     * @param httpserverClassnameToSet the value to which to set
-     *            httpserverClassname
+     * @param classnameToSet   the value to which to set classname
      */
-    public void setHttpserverClassname(String httpserverClassnameToSet)
+    public void setClassname(String classnameToSet)
     {
-        this.httpserverClassname = httpserverClassnameToSet;
+        this.classname = classnameToSet;
     }
 
     /**
-     * @param httpserverConfigToSet the value to which to set httpserverConfig
+     * @param configToSet   the value to which to set config
      */
-    public void setHttpserverConfig(String httpserverConfigToSet)
+    public void setConfig(String configToSet)
     {
-        this.httpserverConfig = httpserverConfigToSet;
+        this.config = configToSet;
     }
 
     /**
-     * @param logPathPatternToSet the value to which to set logPathPattern
+     * @param logPathPatternToSet   the value to which to set logPathPattern
      */
     public void setLogPathPattern(String logPathPatternToSet)
     {
