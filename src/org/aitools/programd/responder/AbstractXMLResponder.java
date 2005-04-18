@@ -186,5 +186,12 @@ abstract public class AbstractXMLResponder implements Responder
     {
         return this.bot;
     }
-
+    
+    /**
+     * @return the manager
+     */
+    public AbstractXMLResponderManager getManager()
+    {
+        return this.manager;
+    }
 }
