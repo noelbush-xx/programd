@@ -18,6 +18,11 @@ This file contains test cases to verify the correct operations of Program D.
 Each test case is documented with what is expected to be the correct response.
 -->
 
+<category>
+    <pattern>CONNECT</pattern>
+    <template>Connected to test case AIML set.</template>
+</category>
+
 <!-- Test case #01.
 
 This testcase tests the ability to output a simple atomic statement from the bot.
@@ -81,29 +86,8 @@ BOT)    Test case #04.
 <template>Test case #04.<html:br/>
 <think><set name="test">Test passed</set></think>
 <get name="test"/>.<html:br/>
-<!--<get_test/> 2.-->
 </template>
 </category>
-
-<!-- Test case #04a.
-
-This testcase tests the ability to use the set_xxx deprecated tag.
-
-TESTER) testsetx
-BOT)    Test case #04a.
-        Test passed.
--->
-
-<!--
-<category>
-<pattern>TESTSETX</pattern>
-<template>Test case #04a.<html:br/>
-<think><set name="test">Test failed</set></think>
-<think><set_test>Test passed</set_test></think>
-<get name="test"/>. 
-</template>
-</category>
--->
 
 <!-- Test case #05.
 
@@ -146,7 +130,6 @@ BOT)    Test case #06b.
 <pattern>TESTSETTOPIC</pattern>
 <template>Test case #06.<html:br/>
 <think><set name="topic">Test passed topic</set></think>
-<!--<gettopic/> 1.<html:br/>-->
 <get name="topic"/>.
 </template>
 </category>
@@ -154,7 +137,7 @@ BOT)    Test case #06b.
 <topic name="TEST PASSED TOPIC">
 <category>
 <pattern>TEST6A</pattern>
-<that>TEST PASSED TOPIC 2</that>
+<that>TEST PASSED TOPIC</that>
 <template>
 Test case #06a.<html:br/>
 Test with THAT passed.
@@ -609,7 +592,6 @@ THAT+1: <that index="1,2"/><html:br/>
 THAT+2: <that index="1,3"/><html:br/>
 Array 2<html:br/>
 THAT:   <that index="2,1"/><html:br/>
-<!--test of justbeforethat tag: <justbeforethat/><html:br/>-->
 THAT+1: <that index="2,2"/><html:br/>
 THAT+2: <that index="2,3"/><html:br/>
 Array 3<html:br/>
@@ -699,9 +681,27 @@ BOT)    Test case #18.
 
 <!-- Test case #19.
 
-Test case #19 has been removed.
+This testcase test's the bot's ability to process javascript.
 
 -->
+<category>
+    <pattern>TESTJAVASCRIPT</pattern>
+    <template>
+        <javascript>"T" + "est pa" + "ssed."</javascript>
+    </template>
+</category>
+
+<!-- Test case #19a.
+
+This testcase test's the bot's ability to process the system tag.
+
+-->
+<category>
+    <pattern>TESTSYSTEM</pattern>
+    <template>
+        <system>echo Test passed.</system>
+    </template>
+</category>
 
 <!-- Test case #20.
 
@@ -814,7 +814,6 @@ BOT)    Test case #22.
 <category>
 <pattern>TESTVERSION</pattern>
 <template>Test case #22.<html:br/>
-<!--Test of "getversion": <getversion/><html:br/>-->
 Test of "version": <version/>
 </template>
 </category>
@@ -939,9 +938,7 @@ BOT)    Test case #27.
 <pattern>TESTIDSIZEDATE</pattern>
 <template>Test case #27.<html:br/>
 Result of Test ID = <id/><html:br/>
-<!--OLD TAG: Result of Test GET_IP = <get_ip/><html:br/>-->
 Result of Test SIZE = <size/><html:br/>
-<!--OLD TAG: Result of Test GETSIZE = <getsize/><html:br/>-->
 Result of Test DATE = <date/>
 </template>
 </category>
@@ -967,7 +964,7 @@ Test complete. Check the gossip log.
 
 <!-- Test case #29.
 
-This testcase tests the bot's ability to use the old and new <setname> and <getname> tags. 
+This testcase tests the bot's ability to use the set and get tags. 
 
 TESTER) testname
 BOT)    Test case #29.
@@ -978,13 +975,8 @@ BOT)    Test case #29.
 <category>
 <pattern>TESTNAME</pattern>
 <template>Test case #29.<html:br/>
-<think><set name="name">test passed</set></think>
-<!--Old form: <getname/><html:br/>-->
+<think><set name="name">Test passed.</set></think>
 <get name="name"/><html:br/>
-<!--<think><setname>TEST PASSED</setname></think>-->
-<!--Old form: <getname/><html:br/>-->
-<get name="name"/><html:br/>
-<think><set name="name">Client</set></think>
 </template>
 </category>
 
@@ -1011,8 +1003,6 @@ BOT)    Test case #30.
 <pattern>TESTINPUT3</pattern>
 <template>Test case #30.<html:br/>
 Test (input) passed if this says testinput3: <input/>.<html:br/>
-<!--Test (justthat) passed if this says testinput2: <justthat/>.<html:br/>-->
-<!--Test (beforethat) passed if this says testinput1: <beforethat/>.<html:br/>-->
 Test (input index 1) passed if this says testinput3: <input index="1"/>.<html:br/>
 Test (input index 2) passed if this says testinput2: <input index="2"/>.<html:br/>
 Test (input index 3) passed if this says testinput1: <input index="3"/>.<html:br/>
@@ -1231,38 +1221,6 @@ TOPICSTAR INDEX="3": <topicstar index="3"/>
 </category>
 
 </topic>
-
-<!-- Test case #36.
-
-This testcase tests the bot's ability to set the topic with the deprecated <settopic> tag.
-
-TESTER) testoldtopic
-BOT)    Test case #36 setup okay.
-TESTER) test36
-BOT)    Test case #36.
-        test passed
--->
-<!--
-<category>
-<pattern>TESTOLDTOPIC</pattern>
-<template>
-Test case #36 setup okay.
-<think><settopic>oldtopic</settopic></think>
-</template>
-</category>
-
-
-<topic name="OLDTOPIC">
-<category>
-<pattern>TEST36</pattern>
-<template>Test case #36.<html:br/>
-Test passed.
-<think><settopic></settopic></think>
-</template>
-</category>
-
-</topic>
--->
 
 <!-- Test case #37.
  
