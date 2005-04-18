@@ -65,7 +65,7 @@ public class Core extends Thread
     public static final String BUILD = "rc1";
 
     /** The Settings. */
-    private CoreSettings settings;
+    protected CoreSettings settings;
 
     /** The Graphmaster. */
     private Graphmaster graphmaster;
@@ -107,7 +107,7 @@ public class Core extends Thread
     private Heart heart;
 
     /** The status of the Core. */
-    private Status status = Status.NOT_STARTED;
+    protected Status status = Status.NOT_STARTED;
 
     /** Possible values for status. */
     public static enum Status
@@ -125,7 +125,10 @@ public class Core extends Thread
     RUNNING,
 
     /** The Core has shut down. */
-    SHUT_DOWN
+    SHUT_DOWN,
+    
+    /** The Core has crashed. */
+    CRASHED
     }
 
     // Convenience constants.
@@ -178,7 +181,7 @@ public class Core extends Thread
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
         this.graphmaster = new Graphmaster(this);
         this.bots = new Bots();
-        this.processes = new ManagedProcesses();
+        this.processes = new ManagedProcesses(this);
         // Get the class for the settings-specified Multiplexor.
         Class< ? extends Multiplexor> multiplexorClass = null;
         try
@@ -394,9 +397,8 @@ public class Core extends Thread
 
         this.status = Status.RUNNING;
 
-        // Now just run until the status flag has been set to SHUT_DOWN (check
-        // each second).
-        while (this.status != Status.SHUT_DOWN)
+        // Now just run as long as the status flag stays at RUNNING.
+        while (this.status == Status.RUNNING)
         {
             try
             {
@@ -535,14 +537,17 @@ public class Core extends Thread
         this.logger.log(Level.SEVERE, "Core is exiting abnormally due to " + description + ":\n" + throwableDescription);
 
         System.err.println();
-        //TODO: Make it possible to toggle off stack trace printing.
-        if (e instanceof UserError || e instanceof DeveloperError)
+        
+        if (this.settings.onUncaughtExceptionsPrintStackTrace())
         {
-            e.getCause().printStackTrace(System.err);
-        }
-        else
-        {
-            e.printStackTrace(System.err);
+            if (e instanceof UserError || e instanceof DeveloperError)
+            {
+                e.getCause().printStackTrace(System.err);
+            }
+            else
+            {
+                e.printStackTrace(System.err);
+            }
         }
         shutdown();
     }
@@ -558,7 +563,12 @@ public class Core extends Thread
         public void uncaughtException(Thread t, Throwable e)
         {
             System.err.println("Uncaught exception " + e.getClass().getSimpleName() + " in thread \"" + t.getName() + "\".");
-            e.printStackTrace(System.err);
+            if (Core.this.settings.onUncaughtExceptionsPrintStackTrace())
+            {
+                e.printStackTrace(System.err);
+            }
+            Core.this.status = Core.Status.CRASHED;
+            System.err.println("Core has crashed.  Shutdown may not have completed properly.");
         }
     }
 
