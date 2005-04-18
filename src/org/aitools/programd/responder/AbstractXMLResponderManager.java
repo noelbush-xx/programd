@@ -79,7 +79,7 @@ abstract public class AbstractXMLResponderManager extends ResponderManager
     protected void registerTemplates(String directoryName, SuffixFilenameFilter filter)
     {
         File directory = FileManager.getFile(directoryName);
-        XMLTemplateParser parser = new XMLTemplateParser(this.templateProcessorRegistry);
+        XMLTemplateParser parser = new XMLTemplateParser(this.templateProcessorRegistry, this.core);
         if (directory.isDirectory())
         {
             String[] templateFilenames = directory.list(filter);
@@ -143,5 +143,13 @@ abstract public class AbstractXMLResponderManager extends ResponderManager
     public XMLTemplateProcessorRegistry getProcessorRegistry()
     {
         return this.templateProcessorRegistry;
+    }
+    
+    /**
+     * @return the Core in use
+     */
+    public Core getCore()
+    {
+        return this.core;
     }
 }
