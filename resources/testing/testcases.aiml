@@ -1099,7 +1099,8 @@ TESTER) testthatstar
 BOT)    Test case #32 setup.
         Check next to see if test passed.
 TESTER) testthatstar1
-BOT)    THATSTAR: test passed THATSTAR INDEX="1": test passed
+BOT)    THATSTAR: Test passed
+        THATSTAR INDEX="1": Test passed
 -->
 
 <category>
@@ -1195,9 +1196,9 @@ BOT)    Test case #35 setup okay.
 TESTER) test35
 BOT)    Test case #35.
         TOPICSTAR: test passed1
-        TOPICSTAR INDEX="1": test passed1
-        TOPICSTAR INDEX="2": test passed2
-        TOPICSTAR INDEX="3": test passed3
+        TOPICSTAR INDEX="1": Test passed1
+        TOPICSTAR INDEX="2": Test passed2
+        TOPICSTAR INDEX="3": Test passed3
 -->
 
 <category>
@@ -1383,33 +1384,33 @@ BOT)    Test case #37.
 
 This testcase tests the bot's ability to use the <person> tag.
 
-TESTER) testperson i was
+TESTER) testperson i was there
 BOT)    Test case #38.
-        i was becomes he or she was
-TESTER) testperson he was
+        i was becomes he or she was there
+TESTER) testperson he was away
 BOT)    Test case #38.
-        he was becomes I was
-TESTER) testperson she was
+        he was becomes I was away
+TESTER) testperson she was kind
 BOT)    Test case #38.
-        she was becomes I was
-TESTER) testperson i am
+        she was becomes I was kind
+TESTER) testperson i am sleepy
 BOT)    Test case #38.
-        i am becomes he or she is
-TESTER) testperson i
+        i am becomes he or she is sleepy
+TESTER) testperson i will
 BOT)    Test case #38.
-        i becomes he or she
-TESTER) testperson me
+        i becomes he or she will
+TESTER) testperson for me
 BOT)    Test case #38.
-        me becomes him or her
-TESTER) testperson my
+        me becomes for him or her
+TESTER) testperson my bot
 BOT)    Test case #38.
-        my becomes his or her
-TESTER) testperson myself
+        my becomes his or her bot
+TESTER) testperson beside myself
 BOT)    Test case #38.
-        myself becomes him or herself
-TESTER) testperson mine
+        myself becomes beside him or herself
+TESTER) testperson is mine
 BOT)    Test case #38.
-        mine becomes his or hers
+        mine becomes is his or hers
 -->
 
 <category>
@@ -1425,60 +1426,60 @@ Test case #38.<html:br/>
 
 This testcase tests the bot's ability to use the <person2> tag.
 
-TESTER) testperson2 with you
+TESTER) testperson2 along with you
 BOT)    Test case #39.
-        with you becomes with me
-TESTER) testperson2 with me
+        with you becomes along with me
+TESTER) testperson2 something is with me
 BOT)    Test case #39.
-        with me becomes with you
-TESTER) testperson2 to you
+        with me becomes something is with you
+TESTER) testperson2 send to you
 BOT)    Test case #39.
-        to you becomes to me
-TESTER) testperson2 to me
+        to you becomes send to me
+TESTER) testperson2 present to me
 BOT)    Test case #39.
-        to me becomes to you
-TESTER) testperson2 of you
+        to me becomes present to you
+TESTER) testperson2 picture of you
 BOT)    Test case #39.
-        of you becomes of me
-TESTER) testperson2 of me
+        of you becomes picture of me
+TESTER) testperson2 reminder of me
 BOT)    Test case #39.
-        of me becomes of you
-TESTER) testperson2 for you
+        of me becomes reminder of you
+TESTER) testperson2 best wishes for you
 BOT)    Test case #39.
-        for you becomes for me
-TESTER) testperson2 for me
+        for you becomes best wishes for me
+TESTER) testperson2 for me this is
 BOT)    Test case #39.
-        for me becomes for you
-TESTER) testperson2 give you
+        for me becomes for you this is
+TESTER) testperson2 give you something
 BOT)    Test case #39.
-        give you becomes give me
-TESTER) testperson2 give me
+        give you becomes give me something
+TESTER) testperson2 give me that
 BOT)    Test case #39.
-        give me becomes give you
-TESTER) testperson2 giving you
+        give me becomes give you that
+TESTER) testperson2 giving you a hand
 BOT)    Test case #39.
-        giving you becomes giving me
-TESTER) testperson2 giving me
+        giving you becomes giving me a hand
+TESTER) testperson2 giving me a lift
 BOT)    Test case #39.
-        giving me becomes giving you
-TESTER) testperson2 gave you
+        giving me becomes giving you a lift
+TESTER) testperson2 gave you a fork
 BOT)    Test case #39.
-        gave you becomes gave me
-TESTER) testperson2 gave me
+        gave you becomes gave me a fork
+TESTER) testperson2 gave me an idea
 BOT)    Test case #39.
-        gave me becomes gave you
-TESTER) testperson2 make you
+        gave me becomes gave you an idea
+TESTER) testperson2 make you happy
 BOT)    Test case #39.
-        make you becomes make me
-TESTER) testperson2 make me
+        make you becomes make me happy
+TESTER) testperson2 make me sad
 BOT)    Test case #39.
-        make me becomes make you
-TESTER) testperson2 made you
+        make me becomes make you sad
+TESTER) testperson2 made you aware
 BOT)    Test case #39.
-        made you becomes made me
-TESTER) testperson2 made me
+        made you becomes made me aware
+TESTER) testperson2 made me cognizant
 BOT)    Test case #39.
-        made me becomes made you
+        made me becomes made you cognizant
 -->
 
 <category>
