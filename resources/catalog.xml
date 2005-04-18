@@ -4,5 +4,6 @@
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
   <system systemId="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" uri="./DTD/xhtml1-transitional.dtd"/>
   <system systemId="http://java.sun.com/dtd/properties.dtd" uri="./DTD/java-properties.dtd"/>
+  <system systemId="http://jetty.mortbay.org/configure_1_3.dtd" uri="./DTD/jetty-configure_1_3.dtd"/>
   <system systemId="http://aitools.org/aiml/schema/AIML.xsd" uri="./schema/AIML.xsd"/>
 </catalog>
