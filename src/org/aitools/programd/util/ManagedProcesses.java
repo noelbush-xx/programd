@@ -16,12 +16,17 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.aitools.programd.Core;
+
 /**
  * Controls processes that run in separate threads and need to be shut down
  * before the bot exits.
  */
 public class ManagedProcesses
 {
+    /** The Core to which this is attached. */
+    private Core core;
+    
     /** The registry of all processes. */
     private Map<String, ManagedProcess> registry = Collections.checkedMap(new HashMap<String, ManagedProcess>(), String.class, ManagedProcess.class);
 
@@ -39,8 +44,15 @@ public class ManagedProcesses
         // Set the thread as a daemon, in case the server terminates abnormally.
         botProcess.setDaemon(true);
 
-        // Start the thread.
-        botProcess.start();
+        try
+        {
+            // Start the thread.
+            botProcess.start();
+        }
+        catch (Throwable e)
+        {
+            this.core.fail(e);
+        }
     }
 
     /**
@@ -81,9 +93,10 @@ public class ManagedProcesses
 
     /**
      * Creates a ManagedProcesses object.
+     * @param coreToUse the Core to which to attach this
      */
-    public ManagedProcesses()
+    public ManagedProcesses(Core coreToUse)
     {
-        // Nothing to do.
+        this.core = coreToUse;
     }
 }
