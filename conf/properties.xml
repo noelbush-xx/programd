@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<properties>
+<properties xmlns="http://aitools.org/programd/startup/2005/02/06">
 <!--This is an example properties set definition.-->
     <property name="name" value="YourBot"/> 
     <property name="gender" value="unknown"/> 
@@ -25,6 +25,5 @@
     <property name="wear" value="unknown"/> 
     <property name="website" value="unknown"/> 
     <property name="email" value="unknown"/> 
-    <property name="language" value="unknown"/> 
-    <property name="msagent" value="unknown"/>
+    <property name="language" value="unknown"/>
 </properties>

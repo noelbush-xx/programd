@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--Substitutions are grouped according to several AIML interpreter functions.-->
-<substitutions>
+<substitutions xmlns="http://aitools.org/programd/startup/2005/02/06">
     <!--Input substitutions correct spelling mistakes and convert
         "sentence"-ending characters into characters that will not be
         identified as sentence enders.-->
