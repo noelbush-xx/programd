@@ -6,230 +6,237 @@
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-
+ 
 package org.aitools.programd;
 
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-04-15T21:28:47.103-04:00
+ * Automatically generated from properties file, 2005-04-16T10:00:14.167-04:00
  */
 public class CoreSettings extends Settings
 {
     /**
-     * The root directory for all paths. This is generally relative to the
-     * current directory (i.e., the conf directory), although you can change
+     *The root directory for all paths. 
+     * This is generally relative to the current directory
+     * (i.e., the conf directory), although you can change
      * that in your startup script.
      */
     private String rootDirectory;
 
     /**
-     * The namespace URI of AIML to use.
+     *The namespace URI of AIML to use. 
      */
     private String aimlSchemaNamespaceUri;
 
     /**
-     * The location of the AIML schema (or a copy of it).
+     *The location of the AIML schema (or a copy of it). 
      */
     private String aimlSchemaLocation;
 
     /**
-     * The bot configuration startup file.
+     *The bot configuration startup file. 
      */
     private String startupFilePath;
 
     /**
-     * Overwrite categories with identical pattern:that:topic?
+     *Overwrite categories with identical pattern:that:topic? 
      */
     private boolean mergePolicy;
 
     /**
-     * The default value for undefined predicates.
+     *The default value for undefined predicates. 
      */
     private String predicateEmptyDefault;
 
     /**
-     * The maximum allowable time (in milliseconds) to get a response.
+     *The maximum allowable time (in milliseconds) to get a response. 
      */
     private int responseTimeout;
 
     /**
-     * How many categories will be loaded before a message is displayed? Only
-     * meaningful if programd.enable-console == true.
+     * How many categories will be loaded before a message is displayed? 
+     * Only meaningful if programd.enable-console == true.
      */
     private int categoryLoadNotifyInterval;
 
     /**
-     * The input to match if an infinite loop is found.
+     *The input to match if an infinite loop is found. 
      */
     private String infiniteLoopInput;
 
     /**
-     * Which bot predicate contains the client's name?
+     * Which bot predicate contains the client's name? 
      */
     private String clientNamePredicate;
 
     /**
-     * Which bot predicate contains the bot's name?
+     * Which bot predicate contains the bot's name? 
      */
     private String botNamePredicate;
 
     /**
-     * Log/display match trace messages?
+     * Log/display match trace messages? 
      */
     private boolean recordMatchTrace;
 
     /**
-     * Allow use of <system> element?
+     * Print stack trace on uncaught exceptions? 
+     */
+    private boolean onUncaughtExceptionsPrintStackTrace;
+
+    /**
+     *Allow use of <system> element? 
      */
     private boolean osAccessAllowed;
 
     /**
-     * Allow use of <javascript> element?
+     *Allow use of <javascript> element? 
      */
     private boolean javascriptAllowed;
 
     /**
-     * The string to send when first connecting to the bot. If this value is
-     * empty or not defined, no value will be sent.
+     *The string to send when first connecting to the bot. 
+     * If this value is empty or not defined, no value
+           will be sent.
      */
     private String connectString;
 
     /**
-     * The string to send after an inactivity timeout.
+     *The string to send after an inactivity timeout. 
      */
     private String inactivityString;
 
     /**
-     * The Multiplexor to use.
+     *The Multiplexor to use. 
      */
     private String multiplexorClassname;
 
     /**
-     * The subdirectory in which to save flat-file predicates (FFM only).
+     *The subdirectory in which to save flat-file predicates (FFM only). 
      */
     private String multiplexorFfmDir;
 
     /**
-     * Enable the heart? The heart can beat and let you know the bot is alive.
-     * Right now the only kind of pulse is a message "I'm alive!" printed to the
-     * console. You can write a "Pulse" that can do something more useful, like
-     * ping a server.
+     *Enable the heart? 
+    * The heart can beat and let you know the bot is alive.
+    * Right now the only kind of pulse is a message "I'm alive!" printed to the console.
+    * You can write a "Pulse" that can do something more useful, like ping a server.
      */
     private boolean heartEnabled;
 
     /**
-     * The pulse rate for the heart (beats per minute).
+     *The pulse rate for the heart (beats per minute). 
      */
     private int heartPulserate;
 
     /**
-     * The maximum size of the cache before writing to disk/database.
+     *The maximum size of the cache before writing to disk/database. 
      */
     private int predicateCacheMax;
 
     /**
-     * The directory in which to execute <system> commands.
+     *The directory in which to execute <system> commands. 
      */
     private String systemInterpreterDirectory;
 
     /**
-     * The string to prepend to all <system> calls (platform-specific). Windows
-     * requires something like "cmd /c "; Linux doesn't (just comment out)
+     *The string to prepend to all <system> calls (platform-specific). 
+     * Windows requires something like "cmd /c "; Linux doesn't (just comment out)
      */
     private String systemInterpreterPrefix;
 
     /**
-     * The JavaScript interpreter (fully-qualified class name).
+     *The JavaScript interpreter (fully-qualified class name). 
      */
     private String javascriptInterpreterClassname;
 
     /**
-     * Enable the AIML Watcher? This will automatically load your AIML files if
-     * they are changed.
+     *Enable the AIML Watcher? 
+    * This will automatically load your AIML files if they are changed.
      */
     private boolean useWatcher;
 
     /**
-     * The delay period when checking changed AIML (milliseconds). Only
-     * applicable if the AIML Watcher is enabled.
+     *The delay period when checking changed AIML (milliseconds). 
+    * Only applicable if the AIML Watcher is enabled.
      */
     private int watcherTimer;
 
     /**
-     * The general activity log file.
+     *The general activity log file. 
      */
     private String activityLogPattern;
 
     /**
-     * The log file for matching activity.
+     *The log file for matching activity. 
      */
     private String matchingLogPattern;
 
     /**
-     * The date-time format to use in general logs. See
-     * http://java.sun.com/jdk1.5.0/docs/api/java/text/SimpleDateFormat.html for
-     * formatting codes. Setting the value to blank means no timestamp will be
-     * displayed.
+     *The date-time format to use in general logs. 
+    * See http://java.sun.com/jdk1.5.0/docs/api/java/text/SimpleDateFormat.html
+          for formatting codes.
+    * Setting the value to blank means no timestamp will be displayed.
      */
     private String logTimestampFormat;
 
     /**
-     * The subdirectory for chat logs.
+     *The subdirectory for chat logs. 
      */
     private String chatLogDirectory;
 
     /**
-     * The date-time format to use in chat logs. See
-     * http://java.sun.com/jdk1.5.0/docs/api/java/text/SimpleDateFormat.html for
-     * formatting codes. Setting the value to blank means no timestamp will be
-     * displayed.
+     *The date-time format to use in chat logs. 
+    * See http://java.sun.com/jdk1.5.0/docs/api/java/text/SimpleDateFormat.html
+          for formatting codes.
+    * Setting the value to blank means no timestamp will be displayed.
      */
     private String chatLogTimestampFormat;
 
     /**
-     * Enable chat logging to the database? Be sure that the database
-     * configuration (later in this file) is valid.
+     *Enable chat logging to the database? 
+    * Be sure that the database configuration (later in this file) is valid.
      */
     private boolean loggingToDatabaseChat;
 
     /**
-     * The URL of the database to use.
+     *The URL of the database to use. 
      */
     private String databaseUrl;
 
     /**
-     * The database driver to use.
+     *The database driver to use. 
      */
     private String databaseDriver;
 
     /**
-     * The maximum number of simultaneous connections to the database.
+     *The maximum number of simultaneous connections to the database. 
      */
     private int databaseConnections;
 
     /**
-     * The username which with to access the database.
+     *The username which with to access the database. 
      */
     private String databaseUser;
 
     /**
-     * The password for the database.
+     *The password for the database. 
      */
     private String databasePassword;
 
     /**
-     * Configuration file for HTMLResponder.
+     *Configuration file for HTMLResponder. 
      */
     private String confLocationHtmlResponder;
 
     /**
-     * Configuration file for FlashResponder.
+     *Configuration file for FlashResponder. 
      */
     private String confLocationFlashResponder;
 
     /**
-     * Configuration file for HTTPServer.
+     *Configuration file for HTTPServer. 
      */
     private String confLocationHttpServer;
 
@@ -240,13 +247,12 @@ public class CoreSettings extends Settings
     {
         super();
     }
-
+    
     /**
      * Creates a <code>CoreSettings</code> with the (XML-formatted) properties
      * located at the given path.
-     * 
-     * @param propertiesPath
-     *            the path to the configuration file
+     *
+     * @param propertiesPath the path to the configuration file
      */
     public CoreSettings(String propertiesPath)
     {
@@ -254,32 +260,25 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * Initializes the Settings with values from properties, or defaults.
-     */
+    * Initializes the Settings with values from properties, or defaults.
+    */
     protected void initialize()
     {
         setRootDirectory(this.properties.getProperty("programd.root-directory", ".."));
 
-        setAimlSchemaNamespaceUri(this.properties.getProperty("programd.aiml-schema.namespace-uri",
-                "http://alicebot.org/2001/AIML-1.0.1"));
+        setAimlSchemaNamespaceUri(this.properties.getProperty("programd.aiml-schema.namespace-uri", "http://alicebot.org/2001/AIML-1.0.1"));
 
-        setAimlSchemaLocation(this.properties.getProperty("programd.aiml-schema.location",
-                "resources/schema/AIML.xsd"));
+        setAimlSchemaLocation(this.properties.getProperty("programd.aiml-schema.location", "resources/schema/AIML.xsd"));
 
-        setStartupFilePath(this.properties.getProperty("programd.startup-file-path",
-                "conf/bots.xml"));
+        setStartupFilePath(this.properties.getProperty("programd.startup-file-path", "conf/bots.xml"));
 
-        setMergePolicy(Boolean
-                .valueOf(this.properties.getProperty("programd.merge-policy", "true"))
-                .booleanValue());
+        setMergePolicy(Boolean.valueOf(this.properties.getProperty("programd.merge-policy", "true")).booleanValue());
 
-        setPredicateEmptyDefault(this.properties.getProperty("programd.predicate-empty-default",
-                "undefined"));
+        setPredicateEmptyDefault(this.properties.getProperty("programd.predicate-empty-default", "undefined"));
 
         try
         {
-            setResponseTimeout(Integer.parseInt(this.properties.getProperty(
-                    "programd.response-timeout", "1000")));
+            setResponseTimeout(Integer.parseInt(this.properties.getProperty("programd.response-timeout", "1000")));
         }
         catch (NumberFormatException e)
         {
@@ -288,47 +287,40 @@ public class CoreSettings extends Settings
 
         try
         {
-            setCategoryLoadNotifyInterval(Integer.parseInt(this.properties.getProperty(
-                    "programd.category-load-notify-interval", "5000")));
+            setCategoryLoadNotifyInterval(Integer.parseInt(this.properties.getProperty("programd.category-load-notify-interval", "5000")));
         }
         catch (NumberFormatException e)
         {
             setCategoryLoadNotifyInterval(5000);
         }
 
-        setInfiniteLoopInput(this.properties.getProperty("programd.infinite-loop-input",
-                "INFINITE LOOP"));
+        setInfiniteLoopInput(this.properties.getProperty("programd.infinite-loop-input", "INFINITE LOOP"));
 
-        setClientNamePredicate(this.properties
-                .getProperty("programd.client-name-predicate", "name"));
+        setClientNamePredicate(this.properties.getProperty("programd.client-name-predicate", "name"));
 
         setBotNamePredicate(this.properties.getProperty("programd.bot-name-predicate", "name"));
 
-        setRecordMatchTrace(Boolean.valueOf(
-                this.properties.getProperty("programd.record-match-trace", "true")).booleanValue());
+        setRecordMatchTrace(Boolean.valueOf(this.properties.getProperty("programd.record-match-trace", "true")).booleanValue());
 
-        setOsAccessAllowed(Boolean.valueOf(
-                this.properties.getProperty("programd.os-access-allowed", "false")).booleanValue());
+        setOnUncaughtExceptionsPrintStackTrace(Boolean.valueOf(this.properties.getProperty("programd.on-uncaught-exceptions.print-stack-trace", "false")).booleanValue());
 
-        setJavascriptAllowed(Boolean.valueOf(
-                this.properties.getProperty("programd.javascript-allowed", "false")).booleanValue());
+        setOsAccessAllowed(Boolean.valueOf(this.properties.getProperty("programd.os-access-allowed", "false")).booleanValue());
+
+        setJavascriptAllowed(Boolean.valueOf(this.properties.getProperty("programd.javascript-allowed", "false")).booleanValue());
 
         setConnectString(this.properties.getProperty("programd.connect-string", "CONNECT"));
 
         setInactivityString(this.properties.getProperty("programd.inactivity-string", "INACTIVITY"));
 
-        setMultiplexorClassname(this.properties.getProperty("programd.multiplexor-classname",
-                "org.aitools.programd.multiplexor.FlatFileMultiplexor"));
+        setMultiplexorClassname(this.properties.getProperty("programd.multiplexor-classname", "org.aitools.programd.multiplexor.FlatFileMultiplexor"));
 
         setMultiplexorFfmDir(this.properties.getProperty("programd.multiplexor.ffm-dir", "ffm"));
 
-        setHeartEnabled(Boolean.valueOf(
-                this.properties.getProperty("programd.heart.enabled", "false")).booleanValue());
+        setHeartEnabled(Boolean.valueOf(this.properties.getProperty("programd.heart.enabled", "false")).booleanValue());
 
         try
         {
-            setHeartPulserate(Integer.parseInt(this.properties.getProperty(
-                    "programd.heart.pulserate", "5")));
+            setHeartPulserate(Integer.parseInt(this.properties.getProperty("programd.heart.pulserate", "5")));
         }
         catch (NumberFormatException e)
         {
@@ -337,65 +329,49 @@ public class CoreSettings extends Settings
 
         try
         {
-            setPredicateCacheMax(Integer.parseInt(this.properties.getProperty(
-                    "programd.predicate-cache.max", "500")));
+            setPredicateCacheMax(Integer.parseInt(this.properties.getProperty("programd.predicate-cache.max", "500")));
         }
         catch (NumberFormatException e)
         {
             setPredicateCacheMax(500);
         }
 
-        setSystemInterpreterDirectory(this.properties.getProperty(
-                "programd.system-interpreter.directory", "."));
+        setSystemInterpreterDirectory(this.properties.getProperty("programd.system-interpreter.directory", "."));
 
-        setSystemInterpreterPrefix(this.properties.getProperty(
-                "programd.system-interpreter.prefix", ""));
+        setSystemInterpreterPrefix(this.properties.getProperty("programd.system-interpreter.prefix", ""));
 
-        setJavascriptInterpreterClassname(this.properties.getProperty(
-                "programd.javascript-interpreter.classname",
-                "org.aitools.programd.interpreter.RhinoInterpreter"));
+        setJavascriptInterpreterClassname(this.properties.getProperty("programd.javascript-interpreter.classname", "org.aitools.programd.interpreter.RhinoInterpreter"));
 
-        setUseWatcher(Boolean.valueOf(this.properties.getProperty("programd.use-watcher", "false"))
-                .booleanValue());
+        setUseWatcher(Boolean.valueOf(this.properties.getProperty("programd.use-watcher", "false")).booleanValue());
 
         try
         {
-            setWatcherTimer(Integer.parseInt(this.properties.getProperty("programd.watcher.timer",
-                    "2000")));
+            setWatcherTimer(Integer.parseInt(this.properties.getProperty("programd.watcher.timer", "2000")));
         }
         catch (NumberFormatException e)
         {
             setWatcherTimer(2000);
         }
 
-        setActivityLogPattern(this.properties.getProperty("programd.activity.log.pattern",
-                "logs/activity.log"));
+        setActivityLogPattern(this.properties.getProperty("programd.activity.log.pattern", "logs/activity.log"));
 
-        setMatchingLogPattern(this.properties.getProperty("programd.matching.log.pattern",
-                "logs/matching.log"));
+        setMatchingLogPattern(this.properties.getProperty("programd.matching.log.pattern", "logs/matching.log"));
 
-        setLogTimestampFormat(this.properties.getProperty("programd.log.timestamp-format",
-                "yyyy-MM-dd H:mm:ss"));
+        setLogTimestampFormat(this.properties.getProperty("programd.log.timestamp-format", "yyyy-MM-dd H:mm:ss"));
 
         setChatLogDirectory(this.properties.getProperty("programd.chat.log.directory", "logs/chat"));
 
-        setChatLogTimestampFormat(this.properties.getProperty("programd.chat.log.timestamp-format",
-                "yyyy-MM-dd H:mm:ss"));
+        setChatLogTimestampFormat(this.properties.getProperty("programd.chat.log.timestamp-format", "yyyy-MM-dd H:mm:ss"));
 
-        setLoggingToDatabaseChat(Boolean.valueOf(
-                this.properties.getProperty("programd.logging.to-database.chat", "false"))
-                .booleanValue());
+        setLoggingToDatabaseChat(Boolean.valueOf(this.properties.getProperty("programd.logging.to-database.chat", "false")).booleanValue());
 
-        setDatabaseUrl(this.properties.getProperty("programd.database.url",
-                "jdbc:mysql:///programdbot"));
+        setDatabaseUrl(this.properties.getProperty("programd.database.url", "jdbc:mysql:///programdbot"));
 
-        setDatabaseDriver(this.properties.getProperty("programd.database.driver",
-                "org.gjt.mm.mysql.Driver"));
+        setDatabaseDriver(this.properties.getProperty("programd.database.driver", "org.gjt.mm.mysql.Driver"));
 
         try
         {
-            setDatabaseConnections(Integer.parseInt(this.properties.getProperty(
-                    "programd.database.connections", "25")));
+            setDatabaseConnections(Integer.parseInt(this.properties.getProperty("programd.database.connections", "25")));
         }
         catch (NumberFormatException e)
         {
@@ -404,17 +380,13 @@ public class CoreSettings extends Settings
 
         setDatabaseUser(this.properties.getProperty("programd.database.user", "programd"));
 
-        setDatabasePassword(this.properties.getProperty("programd.database.password",
-                "yourpassword"));
+        setDatabasePassword(this.properties.getProperty("programd.database.password", "yourpassword"));
 
-        setConfLocationHtmlResponder(this.properties.getProperty(
-                "programd.conf-location.html-responder", "conf/html-responder.xml"));
+        setConfLocationHtmlResponder(this.properties.getProperty("programd.conf-location.html-responder", "conf/html-responder.xml"));
 
-        setConfLocationFlashResponder(this.properties.getProperty(
-                "programd.conf-location.flash-responder", "conf/flash-responder.xml"));
+        setConfLocationFlashResponder(this.properties.getProperty("programd.conf-location.flash-responder", "conf/flash-responder.xml"));
 
-        setConfLocationHttpServer(this.properties.getProperty("programd.conf-location.http-server",
-                "conf/http-server.xml"));
+        setConfLocationHttpServer(this.properties.getProperty("programd.conf-location.http-server", "conf/http-server.xml"));
 
     }
 
@@ -512,6 +484,14 @@ public class CoreSettings extends Settings
     public boolean recordMatchTrace()
     {
         return this.recordMatchTrace;
+    }
+
+    /**
+     * @return the value of onUncaughtExceptionsPrintStackTrace
+     */
+    public boolean onUncaughtExceptionsPrintStackTrace()
+    {
+        return this.onUncaughtExceptionsPrintStackTrace;
     }
 
     /**
@@ -739,8 +719,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param rootDirectoryToSet
-     *            the value to which to set rootDirectory
+     * @param rootDirectoryToSet   the value to which to set rootDirectory
      */
     public void setRootDirectory(String rootDirectoryToSet)
     {
@@ -748,8 +727,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param aimlSchemaNamespaceUriToSet
-     *            the value to which to set aimlSchemaNamespaceUri
+     * @param aimlSchemaNamespaceUriToSet   the value to which to set aimlSchemaNamespaceUri
      */
     public void setAimlSchemaNamespaceUri(String aimlSchemaNamespaceUriToSet)
     {
@@ -757,8 +735,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param aimlSchemaLocationToSet
-     *            the value to which to set aimlSchemaLocation
+     * @param aimlSchemaLocationToSet   the value to which to set aimlSchemaLocation
      */
     public void setAimlSchemaLocation(String aimlSchemaLocationToSet)
     {
@@ -766,8 +743,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param startupFilePathToSet
-     *            the value to which to set startupFilePath
+     * @param startupFilePathToSet   the value to which to set startupFilePath
      */
     public void setStartupFilePath(String startupFilePathToSet)
     {
@@ -775,8 +751,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param mergePolicyToSet
-     *            the value to which to set mergePolicy
+     * @param mergePolicyToSet   the value to which to set mergePolicy
      */
     public void setMergePolicy(boolean mergePolicyToSet)
     {
@@ -784,8 +759,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param predicateEmptyDefaultToSet
-     *            the value to which to set predicateEmptyDefault
+     * @param predicateEmptyDefaultToSet   the value to which to set predicateEmptyDefault
      */
     public void setPredicateEmptyDefault(String predicateEmptyDefaultToSet)
     {
@@ -793,8 +767,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param responseTimeoutToSet
-     *            the value to which to set responseTimeout
+     * @param responseTimeoutToSet   the value to which to set responseTimeout
      */
     public void setResponseTimeout(int responseTimeoutToSet)
     {
@@ -802,8 +775,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param categoryLoadNotifyIntervalToSet
-     *            the value to which to set categoryLoadNotifyInterval
+     * @param categoryLoadNotifyIntervalToSet   the value to which to set categoryLoadNotifyInterval
      */
     public void setCategoryLoadNotifyInterval(int categoryLoadNotifyIntervalToSet)
     {
@@ -811,8 +783,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param infiniteLoopInputToSet
-     *            the value to which to set infiniteLoopInput
+     * @param infiniteLoopInputToSet   the value to which to set infiniteLoopInput
      */
     public void setInfiniteLoopInput(String infiniteLoopInputToSet)
     {
@@ -820,8 +791,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param clientNamePredicateToSet
-     *            the value to which to set clientNamePredicate
+     * @param clientNamePredicateToSet   the value to which to set clientNamePredicate
      */
     public void setClientNamePredicate(String clientNamePredicateToSet)
     {
@@ -829,8 +799,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param botNamePredicateToSet
-     *            the value to which to set botNamePredicate
+     * @param botNamePredicateToSet   the value to which to set botNamePredicate
      */
     public void setBotNamePredicate(String botNamePredicateToSet)
     {
@@ -838,8 +807,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param recordMatchTraceToSet
-     *            the value to which to set recordMatchTrace
+     * @param recordMatchTraceToSet   the value to which to set recordMatchTrace
      */
     public void setRecordMatchTrace(boolean recordMatchTraceToSet)
     {
@@ -847,8 +815,15 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param osAccessAllowedToSet
-     *            the value to which to set osAccessAllowed
+     * @param onUncaughtExceptionsPrintStackTraceToSet   the value to which to set onUncaughtExceptionsPrintStackTrace
+     */
+    public void setOnUncaughtExceptionsPrintStackTrace(boolean onUncaughtExceptionsPrintStackTraceToSet)
+    {
+        this.onUncaughtExceptionsPrintStackTrace = onUncaughtExceptionsPrintStackTraceToSet;
+    }
+
+    /**
+     * @param osAccessAllowedToSet   the value to which to set osAccessAllowed
      */
     public void setOsAccessAllowed(boolean osAccessAllowedToSet)
     {
@@ -856,8 +831,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param javascriptAllowedToSet
-     *            the value to which to set javascriptAllowed
+     * @param javascriptAllowedToSet   the value to which to set javascriptAllowed
      */
     public void setJavascriptAllowed(boolean javascriptAllowedToSet)
     {
@@ -865,8 +839,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param connectStringToSet
-     *            the value to which to set connectString
+     * @param connectStringToSet   the value to which to set connectString
      */
     public void setConnectString(String connectStringToSet)
     {
@@ -874,8 +847,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param inactivityStringToSet
-     *            the value to which to set inactivityString
+     * @param inactivityStringToSet   the value to which to set inactivityString
      */
     public void setInactivityString(String inactivityStringToSet)
     {
@@ -883,8 +855,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param multiplexorClassnameToSet
-     *            the value to which to set multiplexorClassname
+     * @param multiplexorClassnameToSet   the value to which to set multiplexorClassname
      */
     public void setMultiplexorClassname(String multiplexorClassnameToSet)
     {
@@ -892,8 +863,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param multiplexorFfmDirToSet
-     *            the value to which to set multiplexorFfmDir
+     * @param multiplexorFfmDirToSet   the value to which to set multiplexorFfmDir
      */
     public void setMultiplexorFfmDir(String multiplexorFfmDirToSet)
     {
@@ -901,8 +871,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param heartEnabledToSet
-     *            the value to which to set heartEnabled
+     * @param heartEnabledToSet   the value to which to set heartEnabled
      */
     public void setHeartEnabled(boolean heartEnabledToSet)
     {
@@ -910,8 +879,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param heartPulserateToSet
-     *            the value to which to set heartPulserate
+     * @param heartPulserateToSet   the value to which to set heartPulserate
      */
     public void setHeartPulserate(int heartPulserateToSet)
     {
@@ -919,8 +887,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param predicateCacheMaxToSet
-     *            the value to which to set predicateCacheMax
+     * @param predicateCacheMaxToSet   the value to which to set predicateCacheMax
      */
     public void setPredicateCacheMax(int predicateCacheMaxToSet)
     {
@@ -928,8 +895,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param systemInterpreterDirectoryToSet
-     *            the value to which to set systemInterpreterDirectory
+     * @param systemInterpreterDirectoryToSet   the value to which to set systemInterpreterDirectory
      */
     public void setSystemInterpreterDirectory(String systemInterpreterDirectoryToSet)
     {
@@ -937,8 +903,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param systemInterpreterPrefixToSet
-     *            the value to which to set systemInterpreterPrefix
+     * @param systemInterpreterPrefixToSet   the value to which to set systemInterpreterPrefix
      */
     public void setSystemInterpreterPrefix(String systemInterpreterPrefixToSet)
     {
@@ -946,8 +911,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param javascriptInterpreterClassnameToSet
-     *            the value to which to set javascriptInterpreterClassname
+     * @param javascriptInterpreterClassnameToSet   the value to which to set javascriptInterpreterClassname
      */
     public void setJavascriptInterpreterClassname(String javascriptInterpreterClassnameToSet)
     {
@@ -955,8 +919,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param useWatcherToSet
-     *            the value to which to set useWatcher
+     * @param useWatcherToSet   the value to which to set useWatcher
      */
     public void setUseWatcher(boolean useWatcherToSet)
     {
@@ -964,8 +927,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param watcherTimerToSet
-     *            the value to which to set watcherTimer
+     * @param watcherTimerToSet   the value to which to set watcherTimer
      */
     public void setWatcherTimer(int watcherTimerToSet)
     {
@@ -973,8 +935,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param activityLogPatternToSet
-     *            the value to which to set activityLogPattern
+     * @param activityLogPatternToSet   the value to which to set activityLogPattern
      */
     public void setActivityLogPattern(String activityLogPatternToSet)
     {
@@ -982,8 +943,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param matchingLogPatternToSet
-     *            the value to which to set matchingLogPattern
+     * @param matchingLogPatternToSet   the value to which to set matchingLogPattern
      */
     public void setMatchingLogPattern(String matchingLogPatternToSet)
     {
@@ -991,8 +951,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param logTimestampFormatToSet
-     *            the value to which to set logTimestampFormat
+     * @param logTimestampFormatToSet   the value to which to set logTimestampFormat
      */
     public void setLogTimestampFormat(String logTimestampFormatToSet)
     {
@@ -1000,8 +959,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param chatLogDirectoryToSet
-     *            the value to which to set chatLogDirectory
+     * @param chatLogDirectoryToSet   the value to which to set chatLogDirectory
      */
     public void setChatLogDirectory(String chatLogDirectoryToSet)
     {
@@ -1009,8 +967,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param chatLogTimestampFormatToSet
-     *            the value to which to set chatLogTimestampFormat
+     * @param chatLogTimestampFormatToSet   the value to which to set chatLogTimestampFormat
      */
     public void setChatLogTimestampFormat(String chatLogTimestampFormatToSet)
     {
@@ -1018,8 +975,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param loggingToDatabaseChatToSet
-     *            the value to which to set loggingToDatabaseChat
+     * @param loggingToDatabaseChatToSet   the value to which to set loggingToDatabaseChat
      */
     public void setLoggingToDatabaseChat(boolean loggingToDatabaseChatToSet)
     {
@@ -1027,8 +983,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param databaseUrlToSet
-     *            the value to which to set databaseUrl
+     * @param databaseUrlToSet   the value to which to set databaseUrl
      */
     public void setDatabaseUrl(String databaseUrlToSet)
     {
@@ -1036,8 +991,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param databaseDriverToSet
-     *            the value to which to set databaseDriver
+     * @param databaseDriverToSet   the value to which to set databaseDriver
      */
     public void setDatabaseDriver(String databaseDriverToSet)
     {
@@ -1045,8 +999,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param databaseConnectionsToSet
-     *            the value to which to set databaseConnections
+     * @param databaseConnectionsToSet   the value to which to set databaseConnections
      */
     public void setDatabaseConnections(int databaseConnectionsToSet)
     {
@@ -1054,8 +1007,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param databaseUserToSet
-     *            the value to which to set databaseUser
+     * @param databaseUserToSet   the value to which to set databaseUser
      */
     public void setDatabaseUser(String databaseUserToSet)
     {
@@ -1063,8 +1015,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param databasePasswordToSet
-     *            the value to which to set databasePassword
+     * @param databasePasswordToSet   the value to which to set databasePassword
      */
     public void setDatabasePassword(String databasePasswordToSet)
     {
@@ -1072,8 +1023,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param confLocationHtmlResponderToSet
-     *            the value to which to set confLocationHtmlResponder
+     * @param confLocationHtmlResponderToSet   the value to which to set confLocationHtmlResponder
      */
     public void setConfLocationHtmlResponder(String confLocationHtmlResponderToSet)
     {
@@ -1081,8 +1031,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param confLocationFlashResponderToSet
-     *            the value to which to set confLocationFlashResponder
+     * @param confLocationFlashResponderToSet   the value to which to set confLocationFlashResponder
      */
     public void setConfLocationFlashResponder(String confLocationFlashResponderToSet)
     {
@@ -1090,8 +1039,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param confLocationHttpServerToSet
-     *            the value to which to set confLocationHttpServer
+     * @param confLocationHttpServerToSet   the value to which to set confLocationHttpServer
      */
     public void setConfLocationHttpServer(String confLocationHttpServerToSet)
     {
