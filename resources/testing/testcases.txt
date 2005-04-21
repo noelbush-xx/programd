@@ -4,17 +4,17 @@
 #testhide
 #testget
 #testalter
-testsettopic
-test6a
-test6b
+#testsettopic
+#test6a
+#test6b
 #testsimplecondition
 #testsimpleconditiona
 #testsimpleconditionmatch
-testconditionlist
-testconditionlistmatch
-testconditionlistdefault
-testconditionlistname
-testconditionlistnamematch
+#testconditionlist
+#testconditionlistmatch
+#testconditionlistdefault
+#testconditionlistname
+#testconditionlistnamematch
 #teststar Test passed
 #teststar Test passed one and Test passed two and Test passed three and Test passed four
 #testunderscore Test passed one and Test passed two and Test passed three and Test passed four
@@ -28,19 +28,19 @@ testconditionlistnamematch
 #testnestedwordformat
 #testsimplemultisentencethat
 #testthat
-testarray4multisentencethat
-testarray3multisentencethat
-testarray2multisentencethat
-testarray1multisentencethat
-testthatarray
-testbotproperties
-testconditionsetvalue
-testjavascript
-testsystem
-testnestedcondition
-testnestedcondition1
-testnestedcondition2
-testsetcondition
+#testarray4multisentencethat
+#testarray3multisentencethat
+#testarray2multisentencethat
+#testarray1multisentencethat
+#testthatarray
+#testbotproperties
+#testconditionsetvalue
+#testjavascript
+#testsystem
+#testnestedcondition
+#testnestedcondition1
+#testnestedcondition2
+#testsetcondition
 #testversion
 #testsrai
 #testsr sraisucceeded
@@ -49,7 +49,7 @@ testsetcondition
 #teststarset Test passed
 #testidsizedate
 testgossip
-testname
+#testname
 #testinput
 #testinput1
 #testinput2
@@ -69,42 +69,42 @@ testname
 #testgender his wishes
 #testgender her demands
 #testgender of him
-testthatstar
-testthatstar1
-testmultithatstar
-testmultithatstar1
-testtopicstar
-test34
-testmultitopicstar
-test35
+#testthatstar
+#testthatstar1
+#testmultithatstar
+#testmultithatstar1
+#testtopicstar
+#test34
+#testmultitopicstar
+#test35
 #testextremesrai
-testperson i was there
-testperson he was away
-testperson she was kind
-testperson i am sleepy
-testperson i will
-testperson for me
-testperson my bot
-testperson beside myself
-testperson is mine
-testperson2 along with you
-testperson2 something is with me
-testperson2 send to you
-testperson2 present to me
-testperson2 picture of you
-testperson2 reminder of me
-testperson2 best wishes for you
-testperson2 for me this is
-testperson2 give you something
-testperson2 give me that
-testperson2 giving you a hand
-testperson2 giving me a lift
-testperson2 gave you a fork
-testperson2 gave me an idea
-testperson2 make you happy
-testperson2 make me sad
-testperson2 made you aware
-testperson2 made me cognizant
+#testperson i was there
+#testperson he was away
+#testperson she was kind
+#testperson i am sleepy
+#testperson i will
+#testperson for me
+#testperson my bot
+#testperson beside myself
+#testperson is mine
+#testperson2 along with you
+#testperson2 something is with me
+#testperson2 send to you
+#testperson2 present to me
+#testperson2 picture of you
+#testperson2 reminder of me
+#testperson2 best wishes for you
+#testperson2 for me this is
+#testperson2 give you something
+#testperson2 give me that
+#testperson2 giving you a hand
+#testperson2 giving me a lift
+#testperson2 gave you a fork
+#testperson2 gave me an idea
+#testperson2 make you happy
+#testperson2 make me sad
+#testperson2 made you aware
+#testperson2 made me cognizant
 testcasereturnnamewhenset
 testcaseinfiniteloop
 testcaseinfiniteloop2
