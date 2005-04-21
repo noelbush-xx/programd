@@ -366,18 +366,22 @@ public class Core extends Thread
         catch (DeveloperError e)
         {
             fail("developer error", e);
+            return;
         }
         catch (UserError e)
         {
             fail("user error", e);
+            return;
         }
         catch (RuntimeException e)
         {
             fail("unforeseen runtime exception", e);
+            return;
         }
         catch (Throwable e)
         {
             fail("unforeseen problem", e);
+            return;
         }
         
         // Set the status indicator.
