@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import org.aitools.programd.CoreSettings;
 import org.aitools.programd.graph.Nodemapper;
@@ -27,6 +28,7 @@ import org.aitools.programd.logging.SimpleChatLogFormatter;
 import org.aitools.programd.logging.XMLChatLogFormatter;
 import org.aitools.programd.multiplexor.PredicateInfo;
 import org.aitools.programd.multiplexor.PredicateMap;
+import org.aitools.programd.processor.Processor;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.InputNormalizer;
@@ -50,29 +52,27 @@ public class Bot
     private HashMap<URL, HashSet<Nodemapper>> loadedFiles = new HashMap<URL, HashSet<Nodemapper>>();
 
     /** The bot's properties. */
-    private Map<String, String> properties = Collections.checkedMap(new HashMap<String, String>(), String.class, String.class);
+    private Map<String, String> properties = Collections.checkedMap(new HashMap<String, String>(),
+            String.class, String.class);
 
     /** The bot's predicate infos. */
-    private Map<String, PredicateInfo> predicatesInfo = Collections.checkedMap(new HashMap<String, PredicateInfo>(), String.class,
-            PredicateInfo.class);
+    private Map<String, PredicateInfo> predicatesInfo = Collections.checkedMap(
+            new HashMap<String, PredicateInfo>(), String.class, PredicateInfo.class);
 
-    /** The bot's input substitutions map. */
-    private Map<String, String> inputSubstitutions = Collections.checkedMap(new HashMap<String, String>(), String.class, String.class);
+    /** The bot's processor-specific substitution maps. */
+    private Map<Class<? extends Processor>, Map<Pattern, String>> substitutionMaps = new HashMap<Class<? extends Processor>, Map<Pattern, String>>();
 
-    /** The bot's person substitutions map. */
-    private Map<String, String> personSubstitutions = Collections.checkedMap(new HashMap<String, String>(), String.class, String.class);
-
-    /** The bot's person2 substitutions map. */
-    private Map<String, String> person2Substitutions = Collections.checkedMap(new HashMap<String, String>(), String.class, String.class);
-
-    /** The bot's gender substitutions map. */
-    private Map<String, String> genderSubstitutions = Collections.checkedMap(new HashMap<String, String>(), String.class, String.class);
+    /** The bot's input substitution map. */
+    private Map<Pattern, String> inputSubstitutions = Collections.checkedMap(
+            new HashMap<Pattern, String>(), Pattern.class, String.class);
 
     /** The bot's sentence splitter map. */
-    private List<String> sentenceSplitters = Collections.checkedList(new ArrayList<String>(), String.class);
+    private List<String> sentenceSplitters = Collections.checkedList(new ArrayList<String>(),
+            String.class);
 
     /** Holds cached predicates, keyed by userid. */
-    private Map<String, PredicateMap> predicateCache = Collections.synchronizedMap(new HashMap<String, PredicateMap>());
+    private Map<String, PredicateMap> predicateCache = Collections
+            .synchronizedMap(new HashMap<String, PredicateMap>());
 
     /** The predicate empty default. */
     protected String predicateEmptyDefault;
@@ -86,8 +86,10 @@ public class Bot
     /**
      * Creates a new Bot with the given id. The bot's chat log is also set up.
      * 
-     * @param botID the id to use for the new bot
-     * @param coreSettings the core settings to use
+     * @param botID
+     *            the id to use for the new bot
+     * @param coreSettings
+     *            the core settings to use
      */
     public Bot(String botID, CoreSettings coreSettings)
     {
@@ -103,11 +105,13 @@ public class Bot
         FileHandler chatLogFileHandler;
         try
         {
-            chatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id + "-%g.log", 1048576, 10, false);
+            chatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id
+                    + "-%g.log", 1048576, 10, false);
         }
         catch (IOException e)
         {
-            throw new UserError("Could not create XML chat log for bot \"" + this.id + "\" in \"" + chatlogDirectory + "\"!", e);
+            throw new UserError("Could not create XML chat log for bot \"" + this.id + "\" in \""
+                    + chatlogDirectory + "\"!", e);
         }
         chatLogFileHandler.setFormatter(new SimpleChatLogFormatter(coreSettings));
         this.logger.addHandler(chatLogFileHandler);
@@ -116,11 +120,13 @@ public class Bot
         FileHandler xmlChatLogFileHandler;
         try
         {
-            xmlChatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id + "-%g.xml", 1048576, 10, true);
+            xmlChatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id
+                    + "-%g.xml", 1048576, 10, true);
         }
         catch (IOException e)
         {
-            throw new UserError("Could not create XML chat log for bot \"" + this.id + "\" in \"" + chatlogDirectory + "\"!", e);
+            throw new UserError("Could not create XML chat log for bot \"" + this.id + "\" in \""
+                    + chatlogDirectory + "\"!", e);
         }
         xmlChatLogFileHandler.setFormatter(new XMLChatLogFormatter());
         this.logger.addHandler(xmlChatLogFileHandler);
@@ -157,7 +163,8 @@ public class Bot
     /**
      * Returns whether the bot has loaded the given file(name).
      * 
-     * @param filename the filename to check
+     * @param filename
+     *            the filename to check
      * @return whether the bot has loaded the given file(name)
      */
     public boolean hasLoaded(String filename)
@@ -168,8 +175,10 @@ public class Bot
     /**
      * Adds a nodemapper to the filename map.
      * 
-     * @param filename the filename
-     * @param nodemapper the mapper for the node to add
+     * @param filename
+     *            the filename
+     * @param nodemapper
+     *            the mapper for the node to add
      */
     public void addToFilenameMap(String filename, Nodemapper nodemapper)
     {
@@ -183,7 +192,8 @@ public class Bot
     /**
      * Retrieves the value of a named bot property.
      * 
-     * @param name the name of the bot property to get
+     * @param name
+     *            the name of the bot property to get
      * @return the value of the bot property
      */
     public String getPropertyValue(String name)
@@ -207,8 +217,10 @@ public class Bot
     /**
      * Sets the value of a bot property.
      * 
-     * @param name the name of the bot predicate to set
-     * @param value the value to set
+     * @param name
+     *            the name of the bot predicate to set
+     * @param value
+     *            the value to set
      */
     public void setPropertyValue(String name, String value)
     {
@@ -233,7 +245,8 @@ public class Bot
     /**
      * Sets the bot's properties.
      * 
-     * @param map the properties to set.
+     * @param map
+     *            the properties to set.
      */
     public void setProperties(HashMap<String, String> map)
     {
@@ -245,10 +258,12 @@ public class Bot
      * just used when it is necessary to specify a default value for a predicate
      * and/or specify its type as return-name-when-set.
      * 
-     * @param name the name of the predicate
-     * @param defaultValue the default value (if any) for the predicate
-     * @param returnNameWhenSet whether the predicate should return its name
-     *            when set
+     * @param name
+     *            the name of the predicate
+     * @param defaultValue
+     *            the default value (if any) for the predicate
+     * @param returnNameWhenSet
+     *            whether the predicate should return its name when set
      */
     public void addPredicateInfo(String name, String defaultValue, boolean returnNameWhenSet)
     {
@@ -307,70 +322,48 @@ public class Bot
     }
 
     /**
-     * Adds the given input substitution.
+     * Adds a substitution to the indicated map. If the map does not yet exist,
+     * it is created. The <code>find</code> parameter is stored in uppercase,
+     * to do case-insensitive comparisons. The <code>replace</code> parameter
+     * is stored as is.
      * 
-     * @param find the find-string part of the substitution
-     * @param replace the replace-string part of the substitution
+     * @param processor
+     *            the processor with which the map is associated
+     * @param find
+     *            the find-string part of the substitution
+     * @param replace
+     *            the replace-string part of the substitution
      */
-    public void addInputSubstitution(String find, String replace)
+    public void addSubstitution(Class<? extends Processor> processor, Pattern find, String replace)
     {
-        addSubstitution(this.inputSubstitutions, find, replace);
+        if (!this.substitutionMaps.containsKey(processor))
+        {
+            this.substitutionMaps.put(processor, Collections.checkedMap(
+                    new HashMap<Pattern, String>(), Pattern.class, String.class));
+        }
+        this.substitutionMaps.get(processor).put(find, replace);
     }
 
     /**
-     * Adds the given gender substitution.
-     * 
-     * @param find the find-string part of the substitution
-     * @param replace the replace-string part of the substitution
-     */
-    public void addGenderSubstitution(String find, String replace)
-    {
-        addSubstitution(this.genderSubstitutions, find, replace);
-    }
-
-    /**
-     * Adds the given person substitution.
-     * 
-     * @param find the find-string part of the substitution
-     * @param replace the replace-string part of the substitution
-     */
-    public void addPersonSubstitution(String find, String replace)
-    {
-        addSubstitution(this.personSubstitutions, find, replace);
-    }
-
-    /**
-     * Adds the given person2 substitution.
-     * 
-     * @param find the find-string part of the substitution
-     * @param replace the replace-string part of the substitution
-     */
-    public void addPerson2Substitution(String find, String replace)
-    {
-        addSubstitution(this.person2Substitutions, find, replace);
-    }
-
-    /**
-     * Adds a substitution to the substitutions map. The <code>find</code>
-     * parameter is stored in uppercase, to do case-insensitive comparisons. The
+     * Adds an input substitution. The <code>find</code> parameter is stored
+     * in uppercase, to do case-insensitive comparisons. The
      * <code>replace</code> parameter is stored as is.
      * 
-     * @param substitutionMap
-     * @param find the string to find in the input
-     * @param replace the string with which to replace the found string
+     * @param find
+     *            the find-string part of the substitution
+     * @param replace
+     *            the replace-string part of the substitution
      */
-    private void addSubstitution(Map<String, String> substitutionMap, String find, String replace)
+    public void addInputSubstitution(Pattern find, String replace)
     {
-        if (find != null && replace != null)
-        {
-            substitutionMap.put(find.toUpperCase(), replace);
-        }
+        this.inputSubstitutions.put(find, replace);
     }
 
     /**
      * Adds a sentence splitter to the sentence splitters list.
      * 
-     * @param splitter the string on which to divide sentences
+     * @param splitter
+     *            the string on which to divide sentences
      */
     public void addSentenceSplitter(String splitter)
     {
@@ -381,35 +374,13 @@ public class Bot
     }
 
     /**
-     * @return the input substitution map
+     * @param processor
+     *            the processor whose substitution map is desired
+     * @return the substitution map associated with the given processor class.
      */
-    public Map<String, String> getInputSubstitutionsMap()
+    public Map<Pattern, String> getSubstitutionMap(Class<? extends Processor> processor)
     {
-        return this.inputSubstitutions;
-    }
-
-    /**
-     * @return the gender substitution map
-     */
-    public Map<String, String> getGenderSubstitutionsMap()
-    {
-        return this.genderSubstitutions;
-    }
-
-    /**
-     * @return the person substitution map
-     */
-    public Map<String, String> getPersonSubstitutionsMap()
-    {
-        return this.personSubstitutions;
-    }
-
-    /**
-     * @return the person2 substitution map
-     */
-    public Map<String, String> getPerson2SubstitutionsMap()
-    {
-        return this.person2Substitutions;
+        return this.substitutionMaps.get(processor);
     }
 
     /**
@@ -423,7 +394,8 @@ public class Bot
     /**
      * Splits the given input into sentences.
      * 
-     * @param input the input to split
+     * @param input
+     *            the input to split
      * @return the sentences of the input
      */
     public List<String> sentenceSplit(String input)
@@ -434,7 +406,8 @@ public class Bot
     /**
      * Applies input substitutions to the given input
      * 
-     * @param input the input to which to apply substitutions
+     * @param input
+     *            the input to which to apply substitutions
      * @return the processed input
      */
     public String applyInputSubstitutions(String input)
