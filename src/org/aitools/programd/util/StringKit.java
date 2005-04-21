@@ -27,66 +27,6 @@ public class StringKit
     private static final String EMPTY_STRING = "";
 
     /**
-     * Filters out multiple consecutive instances of a given string.
-     * 
-     * @param input the string to filter
-     * @param filter the string to filter out
-     * @return the string without multiple consecutive instances of
-     *         <code>filterChar</code>
-     */
-    public static String filterMultipleConsecutive(String input, String filter)
-    {
-        // Null inputs return an empty string.
-        if (input == null)
-        {
-            return EMPTY_STRING;
-        }
-
-        // trim() removes all whitespace, not only spaces.
-        input = input.trim();
-
-        // Empty inputs return an empty string.
-        if (input.equals((EMPTY_STRING)))
-        {
-            return EMPTY_STRING;
-        }
-
-        // Index the input length.
-        int inputLength = input.length();
-
-        // Index the filter length.
-        int filterLength = filter.length();
-
-        // Calculate maximum index.
-        int maxIndex = inputLength - filterLength + 1;
-
-        // The result will be constructed in this StringBuffer.
-        StringBuffer result = new StringBuffer(inputLength);
-
-        if (maxIndex > -1)
-        {
-            // Previous strings will be compared using this String.
-            String previous = input.substring(0, filterLength);
-
-            // Append the first character no matter what.
-            result.append(previous);
-
-            for (int index = filterLength; index < maxIndex; index++)
-            {
-                String current = input.substring(index, index + filterLength);
-                if (!(current.equals(previous) && current.equals(filter)))
-                {
-                    result.append(current);
-                }
-                previous = current;
-            }
-            return result.toString();
-        }
-        // (otherwise...)
-        return input;
-    }
-
-    /**
      * Returns a tab of the specified length.
      * 
      * @param level the level of the tab
