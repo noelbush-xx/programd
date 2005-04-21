@@ -7,3 +7,5 @@ logs/*
 secret.key
 logs
 *~
+build.tmp
+docs
