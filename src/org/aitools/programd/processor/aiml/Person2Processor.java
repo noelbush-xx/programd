@@ -10,14 +10,12 @@
 package org.aitools.programd.processor.aiml;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import java.util.HashMap;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.Substituter;
 
 /**
  * <p>
@@ -31,7 +29,7 @@ import org.aitools.programd.util.Substituter;
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class Person2Processor extends AIMLProcessor
+public class Person2Processor extends SubstitutionProcessor
 {
     /** The label (as required by the registration scheme). */
     public static final String label = "person2";
@@ -54,13 +52,7 @@ public class Person2Processor extends AIMLProcessor
      */
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        if (element.getChildNodes().getLength() > 0)
-        {
-            // Return the processed contents of the element, properly
-            // substituted.
-            return applySubstitutions(parser.evaluate(element.getChildNodes()), parser.getBotID());
-        }
-        return parser.shortcutTag(element, label, StarProcessor.label, Node.ELEMENT_NODE);
+        return process(Person2Processor.class, element, parser);
     }
 
     /**
@@ -73,22 +65,6 @@ public class Person2Processor extends AIMLProcessor
      */
     public String applySubstitutions(String input, String botid)
     {
-        return Substituter.applySubstitutions(this.core.getBots().getBot(botid).getPerson2SubstitutionsMap(), input);
-    }
-
-    /**
-     * Adds a substitution to the substitutions map. The <code>find</code>
-     * parameter is stored in uppercase, to do case-insensitive comparisons. The
-     * <code>replace</code> parameter is stored as is.
-     * 
-     * @param find the string to find in the input
-     * @param replace the string with which to replace the found string
-     */
-    public static void addSubstitution(String find, String replace)
-    {
-        if (find != null && replace != null)
-        {
-            substitutionMap.put(find.toUpperCase(), replace);
-        }
+        return applySubstitutions(Person2Processor.class, input, botid);
     }
 }

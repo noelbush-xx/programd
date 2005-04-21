@@ -10,13 +10,10 @@
 package org.aitools.programd.processor.aiml;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.Substituter;
-import org.aitools.programd.util.UserError;
 
 /**
  * <p>
@@ -30,7 +27,7 @@ import org.aitools.programd.util.UserError;
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class PersonProcessor extends AIMLProcessor
+public class PersonProcessor extends SubstitutionProcessor
 {
     /** The label (as required by the registration scheme). */
     public static final String label = "person";
@@ -50,22 +47,7 @@ public class PersonProcessor extends AIMLProcessor
      */
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        if (element.getChildNodes().getLength() > 0)
-        {
-            try
-            {
-                // Return the processed contents of the element, properly
-                // substituted.
-                return applySubstitutions(parser.evaluate(element.getChildNodes()), parser.getBotID());
-            }
-            catch (ProcessorException e)
-            {
-                // return EMPTY_STRING;
-                throw new UserError(e.getExplanatoryMessage(), e);
-            }
-        }
-        // (otherwise...)
-        return parser.shortcutTag(element, label, StarProcessor.label, Node.ELEMENT_NODE);
+        return process(PersonProcessor.class, element, parser);
     }
 
     /**
@@ -78,6 +60,6 @@ public class PersonProcessor extends AIMLProcessor
      */
     public String applySubstitutions(String input, String botid)
     {
-        return Substituter.applySubstitutions(this.core.getBots().getBot(botid).getPersonSubstitutionsMap(), input);
+        return applySubstitutions(PersonProcessor.class, input, botid);
     }
 }
