@@ -18,6 +18,7 @@ import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -81,6 +82,9 @@ public class XMLKit
 
     /** A quote mark, for convenience. */
     protected static final char QUOTE_MARK = '"';
+    
+    /** The regex for whitespace. */
+    protected static final String WHITESPACE_REGEX = "\\s+";
 
     /**
      * Mapping between XML chars prohibited in some contexts and their escaped
@@ -113,10 +117,10 @@ public class XMLKit
     private static final String END_P = "</p>";
 
     /** The actual Map used to store prohibited-to-escaped mappings. */
-    private static HashMap<String, String> xmlProhibited;
+    private static HashMap<Pattern, String> xmlProhibited;
 
     /** The actual Map used to store escaped-to-prohibited mappings. */
-    private static HashMap<String, String> xmlEscapes;
+    private static HashMap<Pattern, String> xmlEscapes;
 
     /** A DocumentBuilder for producing new documents. */
     protected static DocumentBuilder utilBuilder;
@@ -165,10 +169,10 @@ public class XMLKit
          */
         if (xmlEscapes == null)
         {
-            xmlEscapes = new HashMap<String, String>(XML_ESCAPES.length);
+            xmlEscapes = new HashMap<Pattern, String>(XML_ESCAPES.length);
             for (int index = XML_ESCAPES.length; --index >= 0;)
             {
-                xmlEscapes.put(XML_ESCAPES[index][0], XML_ESCAPES[index][1]);
+                xmlEscapes.put(Pattern.compile(XML_ESCAPES[index][0], Pattern.LITERAL), XML_ESCAPES[index][1]);
             }
         }
         return Substituter.applySubstitutions(xmlEscapes, input);
@@ -201,10 +205,10 @@ public class XMLKit
          */
         if (xmlProhibited == null)
         {
-            xmlProhibited = new HashMap<String, String>(XML_ESCAPES.length);
+            xmlProhibited = new HashMap<Pattern, String>(XML_ESCAPES.length);
             for (int index = XML_ESCAPES.length; --index >= 0;)
             {
-                xmlProhibited.put(XML_ESCAPES[index][1], XML_ESCAPES[index][0]);
+                xmlProhibited.put(Pattern.compile(XML_ESCAPES[index][1], Pattern.LITERAL), XML_ESCAPES[index][0]);
             }
         }
         return Substituter.applySubstitutions(xmlProhibited, input);
@@ -530,8 +534,7 @@ public class XMLKit
         // In the most common case (not), filter the whole string in one pass.
         if (cdataStart == -1)
         {
-            return StringKit.filterMultipleConsecutive(Substituter.replace(TAB, SPACE, Substituter.replace(LINE_SEPARATOR, SPACE, filterXML(input))),
-                    SPACE).trim();
+            return filterXML(input.trim()).replace(WHITESPACE_REGEX, SPACE);
         }
         // If there is a cdata start marker, this will be slower!
         // Ensure that there is a cdata end marker.
@@ -550,8 +553,7 @@ public class XMLKit
         }
         // If there was no cdata end marker, we have wasted our time. Duplicate
         // code from above.
-        return StringKit.filterMultipleConsecutive(Substituter.replace(TAB, SPACE, Substituter.replace(LINE_SEPARATOR, SPACE, filterXML(input))),
-                SPACE).trim();
+        return filterXML(input.trim()).replace(WHITESPACE_REGEX, SPACE);
     }
 
     /**
