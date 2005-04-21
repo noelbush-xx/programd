@@ -7,190 +7,190 @@
     <input>
         <substitute find="=reply" replace=""/>
         <substitute find="name=reset" replace=""/>
-        <substitute find=":-)" replace=" smile "/>
-        <substitute find=":)" replace=" smile "/>
-        <substitute find=",)" replace=" smile "/>
-        <substitute find=";)" replace=" smile "/>
-        <substitute find=";-)" replace=" smile "/>
+        <substitute find=":\-\)" replace=" smile "/>
+        <substitute find=":\)" replace=" smile "/>
+        <substitute find=",\)" replace=" smile "/>
+        <substitute find=";\)" replace=" smile "/>
+        <substitute find=";-\)" replace=" smile "/>
         <substitute find="&quot;" replace=""/>
         <substitute find="/" replace=" "/>
         <substitute find="&gt;" replace=" gt "/>
         <substitute find="&lt;" replace=" lt "/>
-        <substitute find="(" replace=" "/>
-        <substitute find=")" replace=" "/>
+        <substitute find="\(" replace=" "/>
+        <substitute find="\)" replace=" "/>
         <substitute find="`" replace=" "/>
         <substitute find="," replace=" "/>
         <substitute find=":" replace=" "/>
         <substitute find="&amp;" replace=" "/>
-        <substitute find="-" replace="-"/>
+        <substitute find="\-" replace="-"/>
         <substitute find="=" replace=" "/>
         <substitute find="," replace=" "/>
         <substitute find="  " replace=" "/>
-        <substitute find=" l a " replace=" la "/>
-        <substitute find=" o k " replace=" ok "/>
-        <substitute find=" p s " replace=" ps "/>
-        <substitute find=" ohh" replace=" oh"/>
-        <substitute find=" hehe" replace=" he"/>
-        <substitute find=" haha" replace=" ha"/>    
-        <substitute find=" hellp " replace=" help "/>
-        <substitute find=" becuse " replace=" because "/>
-        <substitute find=" beleive " replace=" believe "/>
-        <substitute find=" becasue " replace=" because "/>
-        <substitute find=" becuase " replace=" because "/>
-        <substitute find=" becouse " replace=" because "/>
-        <substitute find=" practice " replace=" practise "/>
-        <substitute find=" reductionalism " replace=" reductionism "/>
-        <substitute find=" loebner price " replace=" loebner prize "/>
-        <substitute find=" its a " replace=" it is a "/>
-        <substitute find=" noi " replace=" yes I "/>
-        <substitute find=" fav " replace=" favorite "/>
-        <substitute find=" yesi " replace=" yes I "/>
-        <substitute find=" yesit " replace=" yes it "/>
-        <substitute find=" iam " replace=" I am "/>
-        <substitute find=" welli " replace=" well I "/>
-        <substitute find=" wellit " replace=" well it "/>
-        <substitute find=" amfine " replace=" am fine "/>
-        <substitute find=" aman " replace=" am an "/>
-        <substitute find=" amon " replace=" am on "/>
-        <substitute find=" amnot " replace=" am not "/>
-        <substitute find=" realy " replace=" really "/>
-        <substitute find=" iamusing " replace=" I am using "/>
-        <substitute find=" amleaving " replace=" am leaving "/>
-        <substitute find=" yeah " replace=" yes "/>
-        <substitute find=" yep " replace=" yes "/>
-        <substitute find=" yha " replace=" yes "/>
-        <substitute find=" yuo " replace=" you "/>
-        <substitute find=" wanna " replace=" want to "/>
-        <substitute find=" you'd " replace=" you would "/>
-        <substitute find=" you're " replace=" you are "/>
-        <substitute find=" you re " replace=" you are "/>
-        <substitute find=" you've " replace=" you have "/>
-        <substitute find=" you ve " replace=" you have "/>
-        <substitute find=" you'll " replace=" you will "/>
-        <substitute find=" you ll " replace=" you will "/>
-        <substitute find=" youre " replace=" you are "/>
-        <substitute find=" didnt " replace=" did not "/>
-        <substitute find=" didn't " replace=" did not "/>
-        <substitute find=" did'nt " replace=" did not "/>
-        <substitute find=" couldn't " replace=" could not "/>
-        <substitute find=" couldn t " replace=" could not "/>
-        <substitute find=" didn't " replace=" did not "/>
-        <substitute find=" didn t " replace=" did not "/>
-        <substitute find=" ain't " replace=" is not "/>
-        <substitute find=" ain t " replace=" is not "/>
-        <substitute find=" isn't " replace=" is not "/>
-        <substitute find=" isn t " replace=" is not "/>
-        <substitute find=" isnt " replace=" is not "/>
-        <substitute find=" it's " replace=" it is "/>
-        <substitute find=" it s " replace=" it is "/>
-        <substitute find=" are'nt " replace=" are not "/>
-        <substitute find=" arent " replace=" are not "/>
-        <substitute find=" aren't " replace=" are not "/>
-        <substitute find=" aren t " replace=" are not "/>
-        <substitute find=" arn t " replace=" are not "/>
-        <substitute find=" where's " replace=" where is "/>
-        <substitute find=" where s " replace=" where is "/>
-        <substitute find=" haven't " replace=" have not "/>
-        <substitute find=" havent " replace=" have not "/>
-        <substitute find=" hasn't " replace=" has not "/>
-        <substitute find=" hasn t " replace=" has not "/>
-        <substitute find=" weren t " replace=" were not "/>
-        <substitute find=" weren't " replace=" were not "/>
-        <substitute find=" werent " replace=" were not "/>
-        <substitute find=" can't " replace=" can not "/>
-        <substitute find=" can t " replace=" can not "/>
-        <substitute find=" cant " replace=" can not "/>
-        <substitute find=" cannot " replace=" can not "/>
-        <substitute find=" whos " replace=" who is "/>
-        <substitute find=" how's " replace=" how is "/>
-        <substitute find=" how s " replace=" how is "/>
-        <substitute find=" how'd " replace=" how did "/>
-        <substitute find=" how d " replace=" how did "/>
-        <substitute find=" hows " replace=" how is "/>
-        <substitute find=" whats " replace=" what is "/>
-        <substitute find=" name's " replace=" name is "/>
-        <substitute find=" who's " replace=" who is "/>
-        <substitute find=" who s " replace=" who is "/>
-        <substitute find=" what's " replace=" what is "/>
-        <substitute find=" what s " replace=" what is "/>
-        <substitute find=" that's " replace=" that is "/>
-        <substitute find=" there's " replace=" there is "/>
-        <substitute find=" there s " replace=" there is "/>
-        <substitute find=" theres " replace=" there is "/>
-        <substitute find=" thats " replace=" that is "/>
-        <substitute find=" whats " replace=" what is "/>
-        <substitute find=" doesn't " replace=" does not "/>
-        <substitute find=" doesn t " replace=" does not "/>
-        <substitute find=" doesnt " replace=" does not "/>
-        <substitute find=" don't " replace=" do not "/>
-        <substitute find=" don t " replace=" do not "/>
-        <substitute find=" dont " replace=" do not "/>
-        <substitute find=" do nt " replace=" do not "/>
-        <substitute find=" do'nt " replace=" do not "/>
-        <substitute find=" won't " replace=" will not "/>
-        <substitute find=" wont " replace=" will not "/>
-        <substitute find=" won t " replace=" will not "/>
-        <substitute find=" let's " replace=" let us "/>
-        <substitute find=" they're " replace=" they are "/>
-        <substitute find=" they re " replace=" they are "/>
-        <substitute find=" wasn't " replace=" was not "/>
-        <substitute find=" wasn t " replace=" was not "/>
-        <substitute find=" wasnt " replace=" was not "/>
-        <substitute find=" hadn't " replace=" had not "/>
-        <substitute find=" hadn t " replace=" had not "/>
-        <substitute find=" wouldn't " replace=" would not "/>
-        <substitute find=" wouldn t " replace=" would not "/>
-        <substitute find=" wouldnt " replace=" would not "/>
-        <substitute find=" shouldn't " replace=" should not "/>
-        <substitute find=" shouldnt " replace=" should not "/>
-        <substitute find=" favourite " replace=" favorite "/>
-        <substitute find=" colour " replace=" color "/>
-        <substitute find=" we'll " replace=" we will "/>
-        <substitute find=" we ll " replace=" we will "/>
-        <substitute find=" he'll " replace=" he will "/>
-        <substitute find=" he ll " replace=" he will "/>
-        <substitute find=" i'll " replace=" I will "/>
-        <substitute find=" ive " replace=" I have "/>
-        <substitute find=" i've " replace=" I have "/>
-        <substitute find=" i ve " replace=" I have "/>
-        <substitute find=" i'd " replace=" I would "/>
-        <substitute find=" i'm " replace=" I am "/>
-        <substitute find=" i m " replace=" I am "/>
-        <substitute find=" we've " replace=" we have "/>
-        <substitute find=" we're " replace=" we are "/>
-        <substitute find=" she's " replace=" she is "/>
-        <substitute find=" shes " replace=" she is "/>
-        <substitute find=" she'd " replace=" she would "/>
-        <substitute find=" she d " replace=" she would "/>
-        <substitute find=" shed " replace=" she would "/>
-        <substitute find=" he'd " replace=" he would "/>
-        <substitute find=" he d " replace=" he would "/>
-        <substitute find=" hed " replace=" he would "/>
-        <substitute find=" he's " replace=" he is "/>
-        <substitute find=" we ve " replace=" we have "/>
-        <substitute find=" we re " replace=" we are "/>
-        <substitute find=" she s " replace=" she is "/>
-        <substitute find=" he s " replace=" he is "/>
-        <substitute find=" iama " replace=" I am a "/>
-        <substitute find=" iamasking " replace=" I am asking "/>
-        <substitute find=" iamdoing " replace=" I am doing "/>
-        <substitute find=" iamfrom " replace=" I am from "/>
-        <substitute find=" iamin " replace=" I am in "/>
-        <substitute find=" iamok " replace=" I am ok "/>
-        <substitute find=" iamsorry " replace=" I am sorry "/>
-        <substitute find=" iamtalking " replace=" I am talking "/>
-        <substitute find=" iamtired " replace=" I am tired "/>
-        <substitute find=" down load " replace=" download "/>
-        <substitute find=" remeber " replace=" remember "/>
-        <substitute find=" waht " replace=" what "/>
-        <substitute find=" wallance " replace=" wallace "/>
-        <substitute find=" you r " replace=" you are "/>
-        <substitute find=" u " replace=" you "/>
-        <substitute find=" ur " replace=" your "/>
+        <substitute find="\bl a\b" replace="la"/>
+        <substitute find="\bo k\b" replace="ok"/>
+        <substitute find="\bp s\b" replace="ps"/>
+        <substitute find="\bohh" replace=" oh"/>
+        <substitute find="\bhehe" replace=" he"/>
+        <substitute find="\bhaha" replace=" ha"/>    
+        <substitute find="\bhellp\b" replace="help"/>
+        <substitute find="\bbecuse\b" replace="because"/>
+        <substitute find="\bbeleive\b" replace="believe"/>
+        <substitute find="\bbecasue\b" replace="because"/>
+        <substitute find="\bbecuase\b" replace="because"/>
+        <substitute find="\bbecouse\b" replace="because"/>
+        <substitute find="\bpractice\b" replace="practise"/>
+        <substitute find="\breductionalism\b" replace="reductionism"/>
+        <substitute find="\bloebner price\b" replace="loebner prize"/>
+        <substitute find="\bits a\b" replace="it is a"/>
+        <substitute find="\bnoi\b" replace="yes I"/>
+        <substitute find="\bfav\b" replace="favorite"/>
+        <substitute find="\byesi\b" replace="yes I"/>
+        <substitute find="\byesit\b" replace="yes it"/>
+        <substitute find="\biam\b" replace="I am"/>
+        <substitute find="\bwelli\b" replace="well I"/>
+        <substitute find="\bwellit\b" replace="well it"/>
+        <substitute find="\bamfine\b" replace="am fine"/>
+        <substitute find="\baman\b" replace="am an"/>
+        <substitute find="\bamon\b" replace="am on"/>
+        <substitute find="\bamnot\b" replace="am not"/>
+        <substitute find="\brealy\b" replace="really"/>
+        <substitute find="\biamusing\b" replace="I am using"/>
+        <substitute find="\bamleaving\b" replace="am leaving"/>
+        <substitute find="\byeah\b" replace="yes"/>
+        <substitute find="\byep\b" replace="yes"/>
+        <substitute find="\byha\b" replace="yes"/>
+        <substitute find="\byuo\b" replace="you"/>
+        <substitute find="\bwanna\b" replace="want to"/>
+        <substitute find="\byou'd\b" replace="you would"/>
+        <substitute find="\byou're\b" replace="you are"/>
+        <substitute find="\byou re\b" replace="you are"/>
+        <substitute find="\byou've\b" replace="you have"/>
+        <substitute find="\byou ve\b" replace="you have"/>
+        <substitute find="\byou'll\b" replace="you will"/>
+        <substitute find="\byou ll\b" replace="you will"/>
+        <substitute find="\byoure\b" replace="you are"/>
+        <substitute find="\bdidnt\b" replace="did not"/>
+        <substitute find="\bdidn't\b" replace="did not"/>
+        <substitute find="\bdid'nt\b" replace="did not"/>
+        <substitute find="\bcouldn't\b" replace="could not"/>
+        <substitute find="\bcouldn t\b" replace="could not"/>
+        <substitute find="\bdidn't\b" replace="did not"/>
+        <substitute find="\bdidn t\b" replace="did not"/>
+        <substitute find="\bain't\b" replace="is not"/>
+        <substitute find="\bain t\b" replace="is not"/>
+        <substitute find="\bisn't\b" replace="is not"/>
+        <substitute find="\bisn t\b" replace="is not"/>
+        <substitute find="\bisnt\b" replace="is not"/>
+        <substitute find="\bit's\b" replace="it is"/>
+        <substitute find="\bit s\b" replace="it is"/>
+        <substitute find="\bare'nt\b" replace="are not"/>
+        <substitute find="\barent\b" replace="are not"/>
+        <substitute find="\baren't\b" replace="are not"/>
+        <substitute find="\baren t\b" replace="are not"/>
+        <substitute find="\barn t\b" replace="are not"/>
+        <substitute find="\bwhere's\b" replace="where is"/>
+        <substitute find="\bwhere s\b" replace="where is"/>
+        <substitute find="\bhaven't\b" replace="have not"/>
+        <substitute find="\bhavent\b" replace="have not"/>
+        <substitute find="\bhasn't\b" replace="has not"/>
+        <substitute find="\bhasn t\b" replace="has not"/>
+        <substitute find="\bweren t\b" replace="were not"/>
+        <substitute find="\bweren't\b" replace="were not"/>
+        <substitute find="\bwerent\b" replace="were not"/>
+        <substitute find="\bcan't\b" replace="can not"/>
+        <substitute find="\bcan t\b" replace="can not"/>
+        <substitute find="\bcant\b" replace="can not"/>
+        <substitute find="\bcannot\b" replace="can not"/>
+        <substitute find="\bwhos\b" replace="who is"/>
+        <substitute find="\bhow's\b" replace="how is"/>
+        <substitute find="\bhow s\b" replace="how is"/>
+        <substitute find="\bhow'd\b" replace="how did"/>
+        <substitute find="\bhow d\b" replace="how did"/>
+        <substitute find="\bhows\b" replace="how is"/>
+        <substitute find="\bwhats\b" replace="what is"/>
+        <substitute find="\bname's\b" replace="name is"/>
+        <substitute find="\bwho's\b" replace="who is"/>
+        <substitute find="\bwho s\b" replace="who is"/>
+        <substitute find="\bwhat's\b" replace="what is"/>
+        <substitute find="\bwhat s\b" replace="what is"/>
+        <substitute find="\bthat's\b" replace="that is"/>
+        <substitute find="\bthere's\b" replace="there is"/>
+        <substitute find="\bthere s\b" replace="there is"/>
+        <substitute find="\btheres\b" replace="there is"/>
+        <substitute find="\bthats\b" replace="that is"/>
+        <substitute find="\bwhats\b" replace="what is"/>
+        <substitute find="\bdoesn't\b" replace="does not"/>
+        <substitute find="\bdoesn t\b" replace="does not"/>
+        <substitute find="\bdoesnt\b" replace="does not"/>
+        <substitute find="\bdon't\b" replace="do not"/>
+        <substitute find="\bdon t\b" replace="do not"/>
+        <substitute find="\bdont\b" replace="do not"/>
+        <substitute find="\bdo nt\b" replace="do not"/>
+        <substitute find="\bdo'nt\b" replace="do not"/>
+        <substitute find="\bwon't\b" replace="will not"/>
+        <substitute find="\bwont\b" replace="will not"/>
+        <substitute find="\bwon t\b" replace="will not"/>
+        <substitute find="\blet's\b" replace="let us"/>
+        <substitute find="\bthey're\b" replace="they are"/>
+        <substitute find="\bthey re\b" replace="they are"/>
+        <substitute find="\bwasn't\b" replace="was not"/>
+        <substitute find="\bwasn t\b" replace="was not"/>
+        <substitute find="\bwasnt\b" replace="was not"/>
+        <substitute find="\bhadn't\b" replace="had not"/>
+        <substitute find="\bhadn t\b" replace="had not"/>
+        <substitute find="\bwouldn't\b" replace="would not"/>
+        <substitute find="\bwouldn t\b" replace="would not"/>
+        <substitute find="\bwouldnt\b" replace="would not"/>
+        <substitute find="\bshouldn't\b" replace="should not"/>
+        <substitute find="\bshouldnt\b" replace="should not"/>
+        <substitute find="\bfavourite\b" replace="favorite"/>
+        <substitute find="\bcolour\b" replace="color"/>
+        <substitute find="\bwe'll\b" replace="we will"/>
+        <substitute find="\bwe ll\b" replace="we will"/>
+        <substitute find="\bhe'll\b" replace="he will"/>
+        <substitute find="\bhe ll\b" replace="he will"/>
+        <substitute find="\bi'll\b" replace="I will"/>
+        <substitute find="\bive\b" replace="I have"/>
+        <substitute find="\bi've\b" replace="I have"/>
+        <substitute find="\bi ve\b" replace="I have"/>
+        <substitute find="\bi'd\b" replace="I would"/>
+        <substitute find="\bi'm\b" replace="I am"/>
+        <substitute find="\bi m\b" replace="I am"/>
+        <substitute find="\bwe've\b" replace="we have"/>
+        <substitute find="\bwe're\b" replace="we are"/>
+        <substitute find="\bshe's\b" replace="she is"/>
+        <substitute find="\bshes\b" replace="she is"/>
+        <substitute find="\bshe'd\b" replace="she would"/>
+        <substitute find="\bshe d\b" replace="she would"/>
+        <substitute find="\bshed\b" replace="she would"/>
+        <substitute find="\bhe'd\b" replace="he would"/>
+        <substitute find="\bhe d\b" replace="he would"/>
+        <substitute find="\bhed\b" replace="he would"/>
+        <substitute find="\bhe's\b" replace="he is"/>
+        <substitute find="\bwe ve\b" replace="we have"/>
+        <substitute find="\bwe re\b" replace="we are"/>
+        <substitute find="\bshe s\b" replace="she is"/>
+        <substitute find="\bhe s\b" replace="he is"/>
+        <substitute find="\biama\b" replace="I am a"/>
+        <substitute find="\biamasking\b" replace="I am asking"/>
+        <substitute find="\biamdoing\b" replace="I am doing"/>
+        <substitute find="\biamfrom\b" replace="I am from"/>
+        <substitute find="\biamin\b" replace="I am in"/>
+        <substitute find="\biamok\b" replace="I am ok"/>
+        <substitute find="\biamsorry\b" replace="I am sorry"/>
+        <substitute find="\biamtalking\b" replace="I am talking"/>
+        <substitute find="\biamtired\b" replace="I am tired"/>
+        <substitute find="\bdown load\b" replace="download"/>
+        <substitute find="\bremeber\b" replace="remember"/>
+        <substitute find="\bwaht\b" replace="what"/>
+        <substitute find="\bwallance\b" replace="wallace"/>
+        <substitute find="\byou r\b" replace="you are"/>
+        <substitute find="\bu\b" replace="you"/>
+        <substitute find="\bur\b" replace="your"/>
         <!--sentence protection-->
-        <substitute find="{" replace=" beginscript "/>
-        <substitute find="}" replace=" endscript "/>
-        <substitute find="\" replace=" "/>
+        <substitute find="\{" replace=" beginscript "/>
+        <substitute find="\}" replace=" endscript "/>
+        <substitute find="\\" replace=" "/>
         <substitute find=":0" replace=" 0"/>
         <substitute find=": 0" replace=" 0"/>
         <substitute find=":1" replace=" 1"/>
@@ -203,82 +203,82 @@
         <substitute find=": 4" replace=" 4"/>
         <substitute find=":5" replace=" 5"/>
         <substitute find=": 5" replace=" 5"/>
-        <substitute find=".0" replace=" point 0"/>
-        <substitute find=".1" replace=" point 1"/>
-        <substitute find=".2" replace=" point 3"/>
-        <substitute find=".4" replace=" point 4"/>
-        <substitute find=".5" replace=" point 5"/>
-        <substitute find=".6" replace=" point 6"/>
-        <substitute find=".7" replace=" point 7"/>
-        <substitute find=".8" replace=" point 8"/>
-        <substitute find=".9" replace=" point 9"/>
-        <substitute find=" dr. " replace=" Dr "/>
-        <substitute find=" dr.w" replace=" Dr w"/>
-        <substitute find=" dr . " replace=" Dr "/>
-        <substitute find=" mr. " replace=" Mr "/>
-        <substitute find=" mrs. " replace=" Mrs "/>
-        <substitute find=" st. " replace=" St "/>
-        <substitute find=" www." replace=" www dot "/>
-        <substitute find=" botspot." replace=" botspot dot "/>
-        <substitute find=" amused.com" replace=" amused dot com "/>
-        <substitute find=" whatis." replace=" whatis dot "/>
-        <substitute find=".com " replace=" dot com "/>
-        <substitute find=".net " replace=" dot net "/>
-        <substitute find=".org " replace=" dot org "/>
-        <substitute find=".edu " replace=" dot edu "/>
-        <substitute find=".uk " replace=" dot uk "/>
-        <substitute find=".jp " replace=" dot jp "/>
-        <substitute find=".au " replace=" dot au "/>
-        <substitute find=".co " replace=" dot co "/>
-        <substitute find=".ac " replace=" dot ac "/>
-        <substitute find=" o.k. " replace=" ok "/>
-        <substitute find=" o. k. " replace=" ok "/>
-        <substitute find=" l.l. " replace=" l l "/>
-        <substitute find=" p.s. " replace=" ps "/>
-        <substitute find=" alicebot " replace=" ALICE "/>
-        <substitute find=" a l i c e " replace=" ALICE "/>
-        <substitute find=" a.l.i.c.e. " replace=" ALICE "/>
-        <substitute find=" a.l.i.c.e " replace=" ALICE "/>
-        <substitute find=" i.c.e " replace=" i c e "/>
-        <substitute find=" e l v i s " replace=" ELVIS "/>
-        <substitute find=" e.l.v.i.s. " replace=" ELVIS "/>
-        <substitute find=" e.l.v.i.s " replace=" ELVIS "/>
-        <substitute find=" v.i.s " replace=" v i s "/>
-        <substitute find=" h a l " replace=" hal "/>
-        <substitute find=" h.a.l. " replace=" hal "/>
-        <substitute find=" u s a " replace=" USA "/>
-        <substitute find=" u. s. a. " replace=" USA "/>
-        <substitute find=" u.s.a. " replace=" USA "/>
-        <substitute find=" u.s. " replace=" USA "/>
-        <substitute find=" ph.d. " replace=" PhD "/>
-        <substitute find=" a." replace=" a "/>
-        <substitute find=" b." replace=" b "/>
-        <substitute find=" c." replace=" c "/>
-        <substitute find=" d." replace=" d "/>
-        <substitute find=" e." replace=" e "/>
-        <substitute find=" f." replace=" f "/>
-        <substitute find=" g." replace=" g "/>
-        <substitute find=" h." replace=" h "/>
-        <substitute find=" i." replace=" i "/>
-        <substitute find=" j." replace=" j "/>
-        <substitute find=" k." replace=" k "/>
-        <substitute find=" l." replace=" l "/>
-        <substitute find=" m." replace=" m "/>
-        <substitute find=" n." replace=" n "/>
-        <substitute find=" p." replace=" p "/>
-        <substitute find=" o." replace=" o "/>
-        <substitute find=" q." replace=" q "/>
-        <substitute find=" r." replace=" r "/>
-        <substitute find=" s." replace=" s "/>
-        <substitute find=" t." replace=" t "/>
-        <substitute find=" u." replace=" u "/>
-        <substitute find=" v." replace=" v "/>
-        <substitute find=" x." replace=" x "/>
-        <substitute find=" y." replace=" y "/>
-        <substitute find=" w." replace=" w "/>
-        <substitute find=" z." replace=" z "/>
-        <substitute find=".jar" replace=" jar"/>
-        <substitute find=".zip" replace=" zip"/>
+        <substitute find="\.0" replace=" point 0"/>
+        <substitute find="\.1" replace=" point 1"/>
+        <substitute find="\.2" replace=" point 3"/>
+        <substitute find="\.4" replace=" point 4"/>
+        <substitute find="\.5" replace=" point 5"/>
+        <substitute find="\.6" replace=" point 6"/>
+        <substitute find="\.7" replace=" point 7"/>
+        <substitute find="\.8" replace=" point 8"/>
+        <substitute find="\.9" replace=" point 9"/>
+        <substitute find="\bdr\.\b" replace="Dr"/>
+        <substitute find="\bdr\.w" replace=" Dr w"/>
+        <substitute find="\bdr \.\b" replace="Dr"/>
+        <substitute find="\bmr\.\b" replace="Mr"/>
+        <substitute find="\bmrs\.\b" replace="Mrs"/>
+        <substitute find="\bst\.\b" replace="St"/>
+        <substitute find="\bwww\." replace=" www dot"/>
+        <substitute find="\bbotspot\." replace=" botspot dot"/>
+        <substitute find="\bamused\.com" replace=" amused dot com"/>
+        <substitute find="\bwhatis\." replace=" whatis dot"/>
+        <substitute find="\.com\b" replace="dot com"/>
+        <substitute find="\.net\b" replace="dot net"/>
+        <substitute find="\.org\b" replace="dot org"/>
+        <substitute find="\.edu\b" replace="dot edu"/>
+        <substitute find="\.uk\b" replace="dot uk"/>
+        <substitute find="\.jp\b" replace="dot jp"/>
+        <substitute find="\.au\b" replace="dot au"/>
+        <substitute find="\.co\b" replace="dot co"/>
+        <substitute find="\.ac\b" replace="dot ac"/>
+        <substitute find="\bo\.k\.\b" replace="ok"/>
+        <substitute find="\bo\. k\.\b" replace="ok"/>
+        <substitute find="\bl\.l\.\b" replace="l l"/>
+        <substitute find="\bp\.s\.\b" replace="ps"/>
+        <substitute find="\balicebot\b" replace="ALICE"/>
+        <substitute find="\ba l i c e\b" replace="ALICE"/>
+        <substitute find="\ba\.l\.i\.c\.e\.\b" replace="ALICE"/>
+        <substitute find="\ba\.l\.i\.c\.e\b" replace="ALICE"/>
+        <substitute find="\bi\.c\.e\b" replace="i c e"/>
+        <substitute find="\be l v i s\b" replace="ELVIS"/>
+        <substitute find="\be\.l\.v\.i\.s\.\b" replace="ELVIS"/>
+        <substitute find="\be\.l\.v\.i\.s\b" replace="ELVIS"/>
+        <substitute find="\bv\.i\.s\b" replace="v i s"/>
+        <substitute find="\bh a l\b" replace="hal"/>
+        <substitute find="\bh\.a\.l\.\b" replace="hal"/>
+        <substitute find="\bu s a\b" replace="USA"/>
+        <substitute find="\bu\. s\. a\.\b" replace="USA"/>
+        <substitute find="\bu\.s\.a\.\b" replace="USA"/>
+        <substitute find="\bu\.s\.\b" replace="USA"/>
+        <substitute find="\bph\.d\. " replace=" PhD"/>
+        <substitute find="\ba\." replace="a"/>
+        <substitute find="\bb\." replace="b"/>
+        <substitute find="\bc\." replace="c"/>
+        <substitute find="\bd\." replace="d"/>
+        <substitute find="\be\." replace="e"/>
+        <substitute find="\bf\." replace="f"/>
+        <substitute find="\bg\." replace="g"/>
+        <substitute find="\bh\." replace="h"/>
+        <substitute find="\bi\." replace="i"/>
+        <substitute find="\bj\." replace="j"/>
+        <substitute find="\bk\." replace="k"/>
+        <substitute find="\bl\." replace="l"/>
+        <substitute find="\bm\." replace="m"/>
+        <substitute find="\bn\." replace="n"/>
+        <substitute find="\bp\." replace="p"/>
+        <substitute find="\bo\." replace="o"/>
+        <substitute find="\bq\." replace="q"/>
+        <substitute find="\br\." replace="r"/>
+        <substitute find="\bs\." replace="s"/>
+        <substitute find="\bt\." replace="t"/>
+        <substitute find="\bu\." replace="u"/>
+        <substitute find="\bv\." replace="v"/>
+        <substitute find="\bw\." replace="w"/>
+        <substitute find="\bx\." replace="x"/>
+        <substitute find="\by\." replace="y"/>
+        <substitute find="\bz\." replace="z"/>
+        <substitute find="\.jar" replace=" jar"/>
+        <substitute find="\.zip" replace=" zip"/>
         <substitute find=", but " replace=".  "/>
         <substitute find=", and " replace=".  "/>
         <substitute find=",but " replace=".  "/>
@@ -295,97 +295,97 @@
         <substitute find=",do " replace=".  do "/>
     </input>
     <gender>
-        <substitute find=" he " replace=" she "/>
-        <substitute find=" she " replace=" he "/>
-        <substitute find=" to him " replace=" to her "/>
-        <substitute find=" for him " replace=" for her "/>
-        <substitute find=" with him " replace=" with her "/>
-        <substitute find=" on him " replace=" on her "/>
-        <substitute find=" in him " replace=" in her "/>
-        <substitute find=" to her " replace=" to him "/>
-        <substitute find=" for her " replace=" for him "/>
-        <substitute find=" with her " replace=" with him "/>
-        <substitute find=" on her " replace=" on him "/>
-        <substitute find=" in her " replace=" in him "/>
-        <substitute find=" his " replace=" her "/>
-        <substitute find=" her " replace=" his "/>
-        <substitute find=" him " replace=" her "/>
-        <substitute find=" er " replace=" Sie "/>
-        <substitute find=" ihm " replace=" ihr "/>
-        <substitute find=" sein " replace=" ihr "/>
-        <substitute find=" ihn " replace=" Sie "/>
+        <substitute find="\bhe\b" replace="she"/>
+        <substitute find="\bshe\b" replace="he"/>
+        <substitute find="\bto him\b" replace="to her"/>
+        <substitute find="\bfor him\b" replace="for her"/>
+        <substitute find="\bwith him\b" replace="with her"/>
+        <substitute find="\bon him\b" replace="on her"/>
+        <substitute find="\bin him\b" replace="in her"/>
+        <substitute find="\bto her\b" replace="to him"/>
+        <substitute find="\bfor her\b" replace="for him"/>
+        <substitute find="\bwith her\b" replace="with him"/>
+        <substitute find="\bon her\b" replace="on him"/>
+        <substitute find="\bin her\b" replace="in him"/>
+        <substitute find="\bhis\b" replace="her"/>
+        <substitute find="\bher\b" replace="his"/>
+        <substitute find="\bhim\b" replace="her"/>
+        <substitute find="\ber\b" replace="Sie"/>
+        <substitute find="\bihm\b" replace="ihr"/>
+        <substitute find="\bsein\b" replace="ihr"/>
+        <substitute find="\bihn\b" replace="Sie"/>
     </gender>
     <person>
-        <substitute find=" I was " replace=" he or she was "/>
-        <substitute find=" he was " replace=" I was "/>
-        <substitute find=" she was " replace=" I was "/>
-        <substitute find=" I am " replace=" he or she is "/>
-        <substitute find=" I " replace=" he or she "/>
-        <substitute find=" me " replace=" him or her "/>
-        <substitute find=" my " replace=" his or her "/>
-        <substitute find=" myself " replace=" him or herself "/>
-        <substitute find=" mine " replace=" his or hers "/>
+        <substitute find="\bI was\b" replace="he or she was"/>
+        <substitute find="\bhe was\b" replace="I was"/>
+        <substitute find="\bshe was\b" replace="I was"/>
+        <substitute find="\bI am\b" replace="he or she is"/>
+        <substitute find="\bI\b" replace="he or she"/>
+        <substitute find="\bme\b" replace="him or her"/>
+        <substitute find="\bmy\b" replace="his or her"/>
+        <substitute find="\bmyself\b" replace="him or herself"/>
+        <substitute find="\bmine\b" replace="his or hers"/>
     </person>
     <person2>
-        <substitute find=" with you " replace=" with me "/>
-        <substitute find=" with me " replace=" with you "/>
-        <substitute find=" to you " replace=" to me "/>
-        <substitute find=" to me " replace=" to you "/>
-        <substitute find=" of you " replace=" of me "/>
-        <substitute find=" of me " replace=" of you "/>
-        <substitute find=" for you " replace=" for me "/>
-        <substitute find=" for me " replace=" for you "/>
-        <substitute find=" give you " replace=" give me "/>
-        <substitute find=" give me " replace=" give you "/>
-        <substitute find=" giving you " replace=" giving me "/>
-        <substitute find=" giving me " replace=" giving you "/>
-        <substitute find=" gave you " replace=" gave me "/>
-        <substitute find=" gave me " replace=" gave you "/>
-        <substitute find=" make you " replace=" make me "/>
-        <substitute find=" make me " replace=" make you "/>
-        <substitute find=" made you " replace=" made me "/>
-        <substitute find=" made me " replace=" made you "/>
-        <substitute find=" take you " replace=" take me "/>
-        <substitute find=" take me " replace=" take you "/>
-        <substitute find=" save you " replace=" save me "/>
-        <substitute find=" save me " replace=" save you "/>
-        <substitute find=" tell you " replace=" tell me "/>
-        <substitute find=" tell me " replace=" tell you "/>
-        <substitute find=" telling you " replace=" telling me "/>
-        <substitute find=" telling me " replace=" telling you "/>
-        <substitute find=" told you " replace=" told me "/>
-        <substitute find=" told me " replace=" told you "/>
-        <substitute find=" are you " replace=" am I "/>
-        <substitute find=" am I " replace=" are you "/>
-        <substitute find=" you are " replace=" I am "/>
-        <substitute find=" I am " replace=" you are "/>
-        <substitute find=" you " replace=" me "/>
-        <substitute find=" me " replace=" you "/>
-        <substitute find=" your " replace=" my "/>
-        <substitute find=" my " replace=" your "/>
-        <substitute find=" yours " replace=" mine "/>
-        <substitute find=" mine " replace=" yours "/>
-        <substitute find=" yourself " replace=" myself "/>
-        <substitute find=" myself " replace=" yourself "/>
-        <substitute find=" I was " replace=" you were "/>
-        <substitute find=" you were " replace=" I was "/>
-        <substitute find=" I am " replace=" you are "/>
-        <substitute find=" you are " replace=" I am "/>
-        <substitute find=" I " replace=" you "/>
-        <substitute find=" me " replace=" you "/>
-        <substitute find=" my " replace=" your "/>
-        <substitute find=" your " replace=" my "/>
-        <substitute find=" ich war " replace=" er war "/>
-        <substitute find=" ich bin " replace=" er ist "/>
-        <substitute find=" ich " replace=" er "/>
-        <substitute find=" mein " replace=" sein "/>
-        <substitute find=" meins " replace=" seins "/>
-        <substitute find=" mit dir " replace=" mit mir "/>
-        <substitute find=" dir " replace=" mir "/>
-        <substitute find=" fuer dich " replace=" fuer mich "/>
-        <substitute find=" bist du " replace=" bin ich "/>
-        <substitute find=" du " replace=" ich "/>
-        <substitute find=" dein " replace=" mein "/>
-        <substitute find=" deins " replace=" meins "/>
+        <substitute find="\bwith you\b" replace="with me"/>
+        <substitute find="\bwith me\b" replace="with you"/>
+        <substitute find="\bto you\b" replace="to me"/>
+        <substitute find="\bto me\b" replace="to you"/>
+        <substitute find="\bof you\b" replace="of me"/>
+        <substitute find="\bof me\b" replace="of you"/>
+        <substitute find="\bfor you\b" replace="for me"/>
+        <substitute find="\bfor me\b" replace="for you"/>
+        <substitute find="\bgive you\b" replace="give me"/>
+        <substitute find="\bgive me\b" replace="give you"/>
+        <substitute find="\bgiving you\b" replace="giving me"/>
+        <substitute find="\bgiving me\b" replace="giving you"/>
+        <substitute find="\bgave you\b" replace="gave me"/>
+        <substitute find="\bgave me\b" replace="gave you"/>
+        <substitute find="\bmake you\b" replace="make me"/>
+        <substitute find="\bmake me\b" replace="make you"/>
+        <substitute find="\bmade you\b" replace="made me"/>
+        <substitute find="\bmade me\b" replace="made you"/>
+        <substitute find="\btake you\b" replace="take me"/>
+        <substitute find="\btake me\b" replace="take you"/>
+        <substitute find="\bsave you\b" replace="save me"/>
+        <substitute find="\bsave me\b" replace="save you"/>
+        <substitute find="\btell you\b" replace="tell me"/>
+        <substitute find="\btell me\b" replace="tell you"/>
+        <substitute find="\btelling you\b" replace="telling me"/>
+        <substitute find="\btelling me\b" replace="telling you"/>
+        <substitute find="\btold you\b" replace="told me"/>
+        <substitute find="\btold me\b" replace="told you"/>
+        <substitute find="\bare you\b" replace="am I"/>
+        <substitute find="\bam I\b" replace="are you"/>
+        <substitute find="\byou are\b" replace="I am"/>
+        <substitute find="\bI am\b" replace="you are"/>
+        <substitute find="\byou\b" replace="me"/>
+        <substitute find="\bme\b" replace="you"/>
+        <substitute find="\byour\b" replace="my"/>
+        <substitute find="\bmy\b" replace="your"/>
+        <substitute find="\byours\b" replace="mine"/>
+        <substitute find="\bmine\b" replace="yours"/>
+        <substitute find="\byourself\b" replace="myself"/>
+        <substitute find="\bmyself\b" replace="yourself"/>
+        <substitute find="\bI was\b" replace="you were"/>
+        <substitute find="\byou were\b" replace="I was"/>
+        <substitute find="\bI am\b" replace="you are"/>
+        <substitute find="\byou are\b" replace="I am"/>
+        <substitute find="\bI\b" replace="you"/>
+        <substitute find="\bme\b" replace="you"/>
+        <substitute find="\bmy\b" replace="your"/>
+        <substitute find="\byour\b" replace="my"/>
+        <substitute find="\bich war\b" replace="er war"/>
+        <substitute find="\bich bin\b" replace="er ist"/>
+        <substitute find="\bich\b" replace="er"/>
+        <substitute find="\bmein\b" replace="sein"/>
+        <substitute find="\bmeins\b" replace="seins"/>
+        <substitute find="\bmit dir\b" replace="mit mir"/>
+        <substitute find="\bdir\b" replace="mir"/>
+        <substitute find="\bfuer dich\b" replace="fuer mich"/>
+        <substitute find="\bbist du\b" replace="bin ich"/>
+        <substitute find="\bdu\b" replace="ich"/>
+        <substitute find="\bdein\b" replace="mein"/>
+        <substitute find="\bdeins\b" replace="meins"/>
     </person2>
 </substitutions>
