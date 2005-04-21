@@ -1490,4 +1490,57 @@ Test case #39.<html:br/>
 </template>
 </category>
 
+<!-- Test case #40.
+
+This testcase tests the bot's ability to
+return the name of a return-name-when-set
+predicate when it is set, and to return the
+value when a non-return-name-when-set predicate
+is set.  It depends on the proper definition
+of the "passed" and "failed" predicates in
+
+
+TESTER) testreturnnamewhenset
+BOT)    Test case #40.
+        Test passed 1.
+        Test passed 2.
+-->
+
+<category>
+<pattern>TESTRETURNNAMEWHENSET</pattern>
+<template>
+Test case #40.<html:br/>
+Test <set name="passed">failed</set> 1.<html:br/>
+Test <set name="failed">passed</set> 2.
+</template>
+</category>
+
+<!-- Test case #41.
+
+This testcase tests the bot's ability to
+detect a simple kind of infinite loop, and
+avoid it by substituting the phrase "INFINITE LOOP"
+(or whatever is configured).
+
+TESTER) testinfiniteloop
+BOT)    Test case #41.
+        Test passed.
+
+-->
+
+<category>
+<pattern>TESTINFINITELOOP</pattern>
+<template>
+Test case #41.<html:br/>
+<srai>TESTINFINITELOOP</srai>
+</template>
+</category>
+
+<category>
+<pattern>INFINITE LOOP</pattern>
+<template>
+Test passed.
+</template>
+</category>
+
 </aiml>
