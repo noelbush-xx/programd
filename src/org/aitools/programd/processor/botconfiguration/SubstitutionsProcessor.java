@@ -12,7 +12,6 @@ package org.aitools.programd.processor.botconfiguration;
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
-import org.aitools.programd.bot.Bot;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
 
@@ -24,35 +23,6 @@ public class SubstitutionsProcessor extends BotConfigurationElementProcessor
 {
     /** The label (as required by the registration scheme). */
     public static final String label = "substitutions";
-
-    // Convenience constants.
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String SUBSTITUTE = "substitute";
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String FIND = "find";
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String REPLACE = "replace";
-
-    // Package-visibility enum for specifying substitution type.
-    static enum SubstitutionType
-    {
-    /**
-     * 
-     */
-    INPUT, /**
-     * 
-     */
-    GENDER, /**
-     * 
-     */
-    PERSON, /**
-     * 
-     */
-    PERSON2
-    }
 
     /**
      * Creates a new SubstitutionsProcessor using the given Core.
@@ -79,46 +49,5 @@ public class SubstitutionsProcessor extends BotConfigurationElementProcessor
         {
             parser.evaluate(element.getChildNodes());
         }
-    }
-
-    /**
-     * Adds substitutions of the specified type.
-     * 
-     * @param type the type of substitution to add
-     * @param element the container of the &lt;substitute/&gt; elements
-     * @param parser the parser handling this
-     */
-    static void addSubstitutions(SubstitutionType type, Element element, BotsConfigurationFileParser parser)
-    {
-        int substituteCount = element.getElementsByTagName(SUBSTITUTE).getLength();
-
-        Bot bot = parser.getCurrentBot();
-
-        for (int index = substituteCount; index > 0; index--)
-        {
-            Element substitution = (Element) parser.getNode(SUBSTITUTE, element.getChildNodes(), index);
-            String find = substitution.getAttribute(FIND);
-            String replace = substitution.getAttribute(REPLACE);
-            switch (type)
-            {
-                case INPUT:
-                    bot.addInputSubstitution(find, replace);
-                    break;
-                case GENDER:
-                    bot.addGenderSubstitution(find, replace);
-                    break;
-                case PERSON:
-                    bot.addPersonSubstitution(find, replace);
-                    break;
-                case PERSON2:
-                    bot.addPerson2Substitution(find, replace);
-                    break;
-            }
-        }
-        /*
-         * if (Settings.showConsole()) { Log.userinfo("Loaded " +
-         * substituteCount + " " + element.getNodeName() + " substitutions.",
-         * Log.STARTUP); }
-         */
     }
 }

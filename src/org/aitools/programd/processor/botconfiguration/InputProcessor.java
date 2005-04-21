@@ -22,7 +22,7 @@ import org.aitools.programd.parser.BotsConfigurationFileParser;
  * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class InputProcessor extends BotConfigurationElementProcessor
+public class InputProcessor extends SubstitutionElementProcessor
 {
     /** The label (as required by the registration scheme). */
     public static final String label = "input";
@@ -43,6 +43,6 @@ public class InputProcessor extends BotConfigurationElementProcessor
      */
     public void process(Element element, BotsConfigurationFileParser parser)
     {
-        SubstitutionsProcessor.addSubstitutions(SubstitutionsProcessor.SubstitutionType.INPUT, element, parser);
+        addSubstitutions(SubstitutionType.INPUT, element, parser);
     }
 }

@@ -19,7 +19,7 @@ import org.aitools.programd.parser.BotsConfigurationFileParser;
  * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-person2">person2 </a>
  * substitutions to be performed on a string.
  */
-public class Person2Processor extends BotConfigurationElementProcessor
+public class Person2Processor extends SubstitutionElementProcessor
 {
     /** The label (as required by the registration scheme). */
     public static final String label = "person2";
@@ -39,8 +39,7 @@ public class Person2Processor extends BotConfigurationElementProcessor
      *      BotsConfigurationFileParser)
      */
     public void process(Element element, BotsConfigurationFileParser parser)
-
     {
-        SubstitutionsProcessor.addSubstitutions(SubstitutionsProcessor.SubstitutionType.PERSON2, element, parser);
+        addSubstitutions(SubstitutionType.PERSON2, element, parser);
     }
 }
