@@ -9,7 +9,7 @@
         <substitutions href="substitutions.xml"/>
         <sentence-splitters href="sentence-splitters.xml"/>
         <!--
-        All listeners currently have problems due to protocol changes (see release notes).
+        The two IM listeners (AIM and ICQ) currently have problems due to protocol changes (see release notes).
         <listeners>
             <listener type="ProgramD-AIM" enabled="true">
                 <parameter name="owner" value="MyOwner"/>
@@ -28,8 +28,8 @@
             <listener type="ProgramD-IRC" enabled="true">
                 <parameter name="host" value="irc.freenode.net"/>
                 <parameter name="port" value="6667"/>
-                <parameter name="nick" value="your-nick"/>
-                <parameter name="channel" value="#some-channel"/>
+                <parameter name="nick" value="programd"/>
+                <parameter name="channel" value="#programd"/>
             </listener>
         </listeners>
         -->
