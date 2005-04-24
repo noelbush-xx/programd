@@ -34,6 +34,11 @@ public class Substituter
      */
     public static String applySubstitutions(Map<Pattern, String> substitutionMap, String input)
     {
+        if (substitutionMap == null)
+        {
+            return input;
+        }
+        
         // This will contain all pieces of the input untouched by substitution.
         List<String> untouchedPieces = Collections.checkedList(new LinkedList<String>(), String.class);
         untouchedPieces.add(input);
