@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-
+<!DOCTYPE aiml [
+<!ENTITY gossip SYSTEM "../../logs/gossip.txt">
+]>
 <aiml version="1.0.1" xmlns="http://alicebot.org/2001/AIML-1.0.1"
       xmlns:html="http://www.w3.org/1999/xhtml"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -8,7 +10,6 @@
 <!-- This program is free software released under -->
 <!-- the terms of the GNU General Public License -->
 <!-- as published by the Free Software Foundation. -->
-<!-- Derived from a file that was (c) 2001 ALICE AI Foundation. -->
 
 <!-- current editor: Noel Bush -->
 <!-- original author: Thomas Ringate -->
@@ -949,16 +950,25 @@ This testcase tests the bot's ability to use the <gossip> tags.
 
 TESTER) testgossip
 BOT)    Test case #28.
-        Test complete.
-
-Check the "gossip.log file to ensure a new line was added with the current date and time.
+        Test complete.  Check the gossip log.
 -->
 
 <category>
 <pattern>TESTGOSSIP</pattern>
 <template>Test case #28.<html:br/>
-<think><gossip>This line should appear in the gossip log file <date/>.</gossip></think>
+<think><gossip>This is some gossip saved <date/>.</gossip></think>
 Test complete. Check the gossip log.
+</template>
+</category>
+
+<!--This category will randomly return one of the stored lines of gossip from gossip.txt.
+But the contents won't be updated until restart.-->
+<category>
+<pattern>TESTGETGOSSIP</pattern>
+<template>
+<random>
+&gossip;
+</random>
 </template>
 </category>
 
