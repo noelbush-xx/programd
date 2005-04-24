@@ -17,7 +17,7 @@ import java.io.InterruptedIOException;
 import java.net.Socket;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 
@@ -220,9 +220,8 @@ public class AIMListener extends Listener
      * @param botToListenFor the bot for whom to listen
      * @param parametersToUse the parameters for the listener and their default
      *            values
-     * @throws InvalidListenerParameterException
      */
-    public AIMListener(Core coreToUse, Bot botToListenFor, HashMap<String, String> parametersToUse) throws InvalidListenerParameterException
+    public AIMListener(Core coreToUse, Bot botToListenFor, Map<String, String> parametersToUse)
     {
         super(coreToUse, botToListenFor, parametersToUse);
         /*

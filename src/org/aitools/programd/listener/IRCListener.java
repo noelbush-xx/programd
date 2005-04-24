@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.aitools.programd.Core;
@@ -104,7 +104,7 @@ public class IRCListener extends Listener implements ShellCommandable
      *            values
      * @throws InvalidListenerParameterException
      */
-    public IRCListener(Core coreToUse, Bot botToListenFor, HashMap<String, String> parametersToUse) throws InvalidListenerParameterException
+    public IRCListener(Core coreToUse, Bot botToListenFor, Map<String, String> parametersToUse) throws InvalidListenerParameterException
     {
         super(coreToUse, botToListenFor, parametersToUse);
         /*

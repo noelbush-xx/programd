@@ -17,7 +17,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.aitools.programd.Core;
@@ -93,7 +93,7 @@ public class ICQListener extends Listener
      *            values
      * @throws InvalidListenerParameterException
      */
-    public ICQListener(Core coreToUse, Bot botToListenFor, HashMap<String, String> parametersToUse) throws InvalidListenerParameterException
+    public ICQListener(Core coreToUse, Bot botToListenFor, Map<String, String> parametersToUse) throws InvalidListenerParameterException
     {
         super(coreToUse, botToListenFor, parametersToUse);
         this.responder = new TextResponder();
