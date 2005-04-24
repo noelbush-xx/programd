@@ -203,7 +203,16 @@ a:active
         <a href="#v4.5.whatsnew.xml-templates">XML Templating for Responders</a>
       </li>
       <li>
+        <a href="#v4.5.whatsnew.regex-substitutions">Regular Expressions for Substitutions</a>
+      </li>
+      <li>
         <a href="#v4.5.whatsnew.responder-refactoring">Improved Responder Architecture</a>
+      </li>
+      <li>
+        <a href="#v4.5.whatsnew.graphmaster-unload">Graphmaster.unload()</a>
+      </li>
+      <li>
+        <a href="#v4.5.whatsnew.irc-listener-fixes">IRC Listener fixes</a>
       </li>
       <li>
         <a href="#v4.5.whatsnew.java-language">Type Safety and Other JDK-Supported Enhancements</a>
@@ -213,12 +222,6 @@ a:active
       </li>
       <li>
         <a href="#v4.5.whatsnew.error-checking">Better Error Checking</a>
-      </li>
-      <li>
-        <a href="#v4.5.whatsnew.graphmaster-unload">Graphmaster.unload()</a>
-      </li>
-      <li>
-        <a href="#v4.5.whatsnew.irc-listener-fixes">IRC Listener fixes</a>
       </li>
       <li>
         <a href="#v4.5.whatsnew.unknown-bug-fixes">Unknown Bug Fixes</a>
@@ -250,7 +253,7 @@ String response = core.processResponse("hello");</pre>
           those that allow the specification of a particular bot, and the use of a <span
             class="literal">Responder</span> object to format input and output.</p>
         <p>For examples, see the classes provided in the <span class="literal"
-            >org.aitools.programd.configurations</span> package.</p>
+          >org.aitools.programd.configurations</span> package.</p>
       </li>
       <li>
         <h4>
@@ -259,7 +262,7 @@ String response = core.processResponse("hello");</pre>
         <p>The old <span class="literal">.properties</span> file has been replaced with several
           XML-formatted equivalents. Configuration is broken up among optional
           components&mdash;all configuration of the Core happens in <span class="literal"
-            >conf/core.xml</span>, of the console in <span class="literal">conf/console.xml</span>,
+          >conf/core.xml</span>, of the console in <span class="literal">conf/console.xml</span>,
           and so on.</p>
         <p>Each of these configuration files corresponds to a class which is automatically generated
           using a simple (included) XSLT file. (The classes only need to be regenerated when the
@@ -320,8 +323,22 @@ core.setPredicateEmptyDefault("unknown");
         <p>The templates used by XML-oriented responders, like the HTMLResponder, now have a
           bonafide XML template language of their own. This template language includes a couple of
           new elements, <span class="literal">logged-in</span> and <span class="literal"
-            >not-logged-in</span>, which can be used to provide conditional output depending on the
+          >not-logged-in</span>, which can be used to provide conditional output depending on the
           user's login status.</p>
+      </li>
+      <li>
+        <h4>
+          <a id="v4.5.whatsnew.regex-substitutions">Regular Expressions for Substitutions</a>
+        </h4>
+        <p>Substitutions (for <span class="literal">input</span>, <span class="literal"
+          >gender</span>, <span class="literal">person</span> and <span class="literal"
+          >person2</span>) are now specified as regular expressions. This lends a great deal more
+          power and precision to the input normalization step, and to the <span class="literal"
+          >gender</span>, <span class="literal">person</span> and <span class="literal"
+          >person2</span> processors. For a guide to the regular expression syntax that is
+          available, see the <a
+            href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html#sum">JDK
+            documentation</a>.</p>
       </li>
       <li>
         <h4>
@@ -335,8 +352,29 @@ core.setPredicateEmptyDefault("unknown");
           last it is possible to say that the authentication system (a) makes sense as coded, (b) is
           decoupled from input and output formatting, and (c) is reasonably reusable. A complete set
           of example files to support user authentication is include in <span class="literal"
-            >templates/html</span>, and some important properties can be adjusted in <span
+          >templates/html</span>, and some important properties can be adjusted in <span
             class="literal">conf/html-responder.xml</span>.</p>
+      </li>
+      <li>
+        <h4>
+          <a id="v4.5.whatsnew.graphmaster-unload">Graphmaster.unload()</a>
+        </h4>
+        <p>Eion Robb submitted a patch to 4.1.5 that fixed a fundamental problem with the <span
+            class="literal">Graphmaster.unload()</span> method&mdash;namely, that it didn't
+          work. His contribution has been incorporated into the current release.</p>
+      </li>
+      <li>
+        <h4>
+          <a id="v4.5.whatsnew.irc-listener-fixes">IRC Listener fixes</a>
+        </h4>
+        <p>A person known to me only as "Kevin W." submitted a patch for the IRC listener that did
+          the following:</p>
+        <ul>
+          <li>allowed joining multiple channels</li>
+          <li>recognises nick in any part of message</li>
+          <li>delay implemented (the "delay" IRC listener property)</li>
+          <li>fixed parameters bug with processMessageCommand</li>
+        </ul>
       </li>
       <li>
         <h4>
@@ -379,27 +417,6 @@ core.setPredicateEmptyDefault("unknown");
       </li>
       <li>
         <h4>
-          <a id="v4.5.whatsnew.graphmaster-unload">Graphmaster.unload()</a>
-        </h4>
-        <p>Eion Robb submitted a patch to 4.1.5 that fixed a fundamental problem with the <span
-            class="literal">Graphmaster.unload()</span> method&mdash;namely, that it didn't
-          work. His contribution has been incorporated into the current release.</p>
-      </li>
-      <li>
-        <h4>
-          <a id="v4.5.whatsnew.irc-listener-fixes">IRC Listener fixes</a>
-        </h4>
-        <p>A person known to me only as "Kevin W." submitted a patch for the IRC listener that did
-          the following:</p>
-        <ul>
-          <li>allowed joining multiple channels</li>
-          <li>recognises nick in any part of message</li>
-          <li>delay implemented (the "delay" IRC listener property)</li>
-          <li>fixed parameters bug with processMessageCommand</li>
-        </ul>
-      </li>
-      <li>
-        <h4>
           <a id="v4.5.whatsnew.unknown-bug-fixes">Unknown Bug Fixes</a>
         </h4>
         <p>Numerous bugs that were never widely known or reported have been fixed. Going forward,
@@ -423,28 +440,43 @@ core.setPredicateEmptyDefault("unknown");
     </h3>
     <ul>
       <li>
+        <p>The database features (database predicate storage and chat logging) have not been tested
+          in this release candidate. They will be shortly. We would welcome all bug reports about
+          problems with this functionality at <a href="http://bugs.aitools.org"
+            >http://bugs.aitools.org</a>. </p>
+      </li>
+      <li>
+        <p>The AIML Watcher has not been tested.</p>
+      </li>
+      <li>
+        <p>The "readme" doc ("Getting Started with Program D") has been simplified, since quite a
+          lot needed to be updated to reflect changes in property names, etc. Any help in this is
+          greatly appreciated, or it will get back to its full glory sooner or later in any
+        case.</p>
+      </li>
+      <li>
+        <p>The two included IM listeners fail to function, due to changes in protocols for the
+          various services. Someone with knowledge of these services is invited to take a look and
+          submit patches. The problems, which can be easily reproduced by enabling the listeners in
+          the <span class="literal">bots.xml</span> file (and filling in some valid account
+          information), are:</p>
+        <ul>
+          <li>
+            <p>AIMListener: Loops with a "Error in main AIMListener loop." message (haven't tracked
+              this down in the debugger yet as of beta1).</p>
+          </li>
+          <li>
+            <p>ICQListener: Starts contacting the server, but never succeeds in logging in.</p>
+          </li>
+        </ul>
+      </li>
+      <li>
         <p>The issue of "merge policies", as for so long, has not yet been addressed. And does
           anyone care? Well, probably. But this author thinks that "merge policy" is just a small
           part of a much larger issue of knowledge base quality issues. Addressing these should be a
           project unto itself. Nonetheless, when there's a spare moment, we'll update the merge
           policy handling. Or feel free to <a href="mailto:programd@aitools.org">submit a patch</a>.
         </p>
-      </li>
-      <li>
-        <p>The two included IM listeners fail to function, due to changes in protocols for
-          the various services. Someone with knowledge of these services is invited to take a look
-          and submit patches. The problems, which can be easily reproduced by enabling the listeners
-          in the <span class="literal">bots.xml</span> file (and filling in some valid account
-          information), are:</p>
-        <ul>
-          <li>
-            <p>AIMListener: Loops with a "Error in main AIMListener loop." message (haven't tracked
-              this down in the debugger yet as of rc1).</p>
-          </li>
-          <li>
-            <p>ICQListener: Starts contacting the server, but never succeeds in logging in.</p>
-          </li>
-        </ul>
       </li>
       <li>
         <p>The AIML schema is technically incomplete. It allows certain constructs that are not
@@ -500,12 +532,12 @@ core.setPredicateEmptyDefault("unknown");
         <h4>Separable/Shareable Substitution, Splitter, Predicate Definitions</h4>
         <p> The <span class="literal">&lt;substitutions&gt;/*</span> elements (<span
             class="literal">&lt;input&gt;</span>, <span class="literal"
-            >&lt;gender&gt;</span>, <span class="literal">&lt;person&gt;</span>,
-            <span class="literal">&lt;person2&gt;</span>) as well as the <span
-            class="literal">&lt;predicates&gt;</span>, <span class="literal"
-            >&lt;properties&gt;</span>, and <span class="literal"
-            >&lt;sentence-splitters&gt;</span> elements of the <span class="literal"
-            >startup.xml</span> file can each be assigned an <span class="literal">href</span>
+          >&lt;gender&gt;</span>, <span class="literal">&lt;person&gt;</span>, <span
+            class="literal">&lt;person2&gt;</span>) as well as the <span class="literal"
+          >&lt;predicates&gt;</span>, <span class="literal"
+          >&lt;properties&gt;</span>, and <span class="literal"
+          >&lt;sentence-splitters&gt;</span> elements of the <span class="literal"
+          >startup.xml</span> file can each be assigned an <span class="literal">href</span>
           attribute pointing to a local file that contains the actual definitions. This allows
           multiple bots to share such definitions, or portions thereof, without needless
           duplication. </p>
@@ -530,7 +562,7 @@ core.setPredicateEmptyDefault("unknown");
           released separately. </p>
         <p class="additional-notes"> You can enable database-based logging by setting <span
             class="literal">programd.logging.to-database.chat=true</span> in <span class="literal"
-            >server.properties</span>. You must first create the chatlog table as per the <span
+          >server.properties</span>. You must first create the chatlog table as per the <span
             class="literal">database/logtables.script</span> file. You also must configure your
           database settings properly in <span class="literal">server.properties</span>. </p>
       </li>
@@ -548,7 +580,7 @@ core.setPredicateEmptyDefault("unknown");
           all characters, not only ASCII/ISO-8859-1, correctly. The GUI provides menu commands for a
           couple of common shell commands, but otherwise no additional functionality. </p>
         <p class="additional-notes"> The console can be invoked with <span class="literal"
-            >console.bat</span> (Windows) or <span class="literal">console.sh</span> (*nix). </p>
+          >console.bat</span> (Windows) or <span class="literal">console.sh</span> (*nix). </p>
       </li>
       <li>
         <h4>Artificial "Heart"</h4>
@@ -564,7 +596,7 @@ core.setPredicateEmptyDefault("unknown");
           parameter for tuning scaleability of the server. </p>
         <p class="additional-notes"> Set the response timeout by editing/adding the <span
             class="literal">programd.response-timeout</span> property in <span class="literal"
-            >server.properties</span>. </p>
+          >server.properties</span>. </p>
       </li>
       <li>
         <h4>Graphmaster "Node Height" Optimization</h4>
@@ -580,7 +612,7 @@ core.setPredicateEmptyDefault("unknown");
           connection or inactivity. Also, the connect string is sent to the console user session on
           starting up (or switching to a new bot) so that you don't have to type it. </p>
         <p class="additional-notes"> Customize these parameters in the <span class="literal"
-            >server.properties</span> file. </p>
+          >server.properties</span> file. </p>
       </li>
       <li>
         <h4>Targeting Tool</h4>

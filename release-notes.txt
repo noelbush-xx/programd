@@ -60,12 +60,13 @@ What's New
     * Schema-Based Validation
     * Revised Logging Scheme
     * XML Templating for Responders
+    * Regular Expressions for Substitutions
     * Improved Responder Architecture
+    * Graphmaster.unload()
+    * IRC Listener fixes
     * Type Safety and Other JDK-Supported Enhancements
     * Tighter Coding Standards
     * Better Error Checking
-    * Graphmaster.unload()
-    * IRC Listener fixes
     * Unknown Bug Fixes
 
     *
@@ -158,6 +159,14 @@ now have a bonafide XML template language of their own. This template language
 includes a couple of new elements, logged-in and not-logged-in, which can be 
 used to provide conditional output depending on the user's login status.
     *
+      Regular Expressions for Substitutions
+
+      Substitutions (for input, gender, person and person2) are now specified 
+as regular expressions. This lends a great deal more power and precision to the 
+input normalization step, and to the gender, person and person2 processors. For 
+a guide to the regular expression syntax that is available, see the JDK 
+documentation.
+    *
       Improved Responder Architecture
 
       The Responder architecture, especially the class formerly known as 
@@ -169,6 +178,21 @@ that the authentication system (a) makes sense as coded, (b) is decoupled from
 input and output formatting, and (c) is reasonably reusable. A complete set of 
 example files to support user authentication is include in templates/html, and 
 some important properties can be adjusted in conf/html-responder.xml.
+    *
+      Graphmaster.unload()
+
+      Eion Robb submitted a patch to 4.1.5 that fixed a fundamental problem 
+with the Graphmaster.unload() method—namely, that it didn't work. His 
+contribution has been incorporated into the current release.
+    *
+      IRC Listener fixes
+
+      A person known to me only as "Kevin W." submitted a patch for the IRC 
+listener that did the following:
+          o allowed joining multiple channels
+          o recognises nick in any part of message
+          o delay implemented (the "delay" IRC listener property)
+          o fixed parameters bug with processMessageCommand
     *
       Type Safety and Other JDK-Supported Enhancements
 
@@ -205,21 +229,6 @@ fixing the error until I've found a satisfactory way to trap it, and if at all
 possible, log it. This kind of progress is always good, although I do think 
 that Program D was already pretty well along with the last release.
     *
-      Graphmaster.unload()
-
-      Eion Robb submitted a patch to 4.1.5 that fixed a fundamental problem 
-with the Graphmaster.unload() method—namely, that it didn't work. His 
-contribution has been incorporated into the current release.
-    *
-      IRC Listener fixes
-
-      A person known to me only as "Kevin W." submitted a patch for the IRC 
-listener that did the following:
-          o allowed joining multiple channels
-          o recognises nick in any part of message
-          o delay implemented (the "delay" IRC listener property)
-          o fixed parameters bug with processMessageCommand
-    *
       Unknown Bug Fixes
 
       Numerous bugs that were never widely known or reported have been fixed. 
@@ -240,12 +249,19 @@ Significant Open Issues
 
     *
 
-      The issue of "merge policies", as for so long, has not yet been 
-addressed. And does anyone care? Well, probably. But this author thinks that 
-"merge policy" is just a small part of a much larger issue of knowledge base 
-quality issues. Addressing these should be a project unto itself. Nonetheless, 
-when there's a spare moment, we'll update the merge policy handling. Or feel 
-free to submit a patch.
+      The database features (database predicate storage and chat logging) have 
+not been tested in this release candidate. They will be shortly. We would 
+welcome all bug reports about problems with this functionality at 
+http://bugs.aitools.org.
+    *
+
+      The AIML Watcher has not been tested.
+    *
+
+      The "readme" doc ("Getting Started with Program D") has been simplified, 
+since quite a lot needed to be updated to reflect changes in property names, 
+etc. Any help in this is greatly appreciated, or it will get back to its full 
+glory sooner or later in any case.
     *
 
       The two included IM listeners fail to function, due to changes in 
@@ -256,11 +272,19 @@ valid account information), are:
           o
 
             AIMListener: Loops with a "Error in main AIMListener loop." message 
-(haven't tracked this down in the debugger yet as of rc1).
+(haven't tracked this down in the debugger yet as of beta1).
           o
 
             ICQListener: Starts contacting the server, but never succeeds in 
 logging in.
+    *
+
+      The issue of "merge policies", as for so long, has not yet been 
+addressed. And does anyone care? Well, probably. But this author thinks that 
+"merge policy" is just a small part of a much larger issue of knowledge base 
+quality issues. Addressing these should be a project unto itself. Nonetheless, 
+when there's a spare moment, we'll update the merge policy handling. Or feel 
+free to submit a patch.
     *
 
       The AIML schema is technically incomplete. It allows certain constructs 
