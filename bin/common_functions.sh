@@ -27,7 +27,12 @@ function start_programd()
 
   # Change to the Program D directory and start the main class.
   cd $BASE
-  $JVM_COMMAND -classpath $PROGRAMD_CLASSPATH -Xms$2 -Xmx$3 $1 -c $4 -n $5
+  if [ -z "$6" ]
+  then
+    $JVM_COMMAND -classpath $PROGRAMD_CLASSPATH -Xms$2 -Xmx$3 $1 -c $4 -n $5
+  else
+    $JVM_COMMAND -classpath $PROGRAMD_CLASSPATH -Xms$2 -Xmx$3 $1 -c $4 -n $5 -w $6
+  fi
 }
 
 # Sets up some variables used to run Program D.
