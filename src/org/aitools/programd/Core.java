@@ -677,6 +677,11 @@ public class Core extends Thread
      */
     public ListenerRegistry getListenerRegistry()
     {
+        // Lazy initialization, since someone might not be using any listeners.
+        if (this.listenerRegistry == null)
+        {
+            this.listenerRegistry = new ListenerRegistry();
+        }
         return this.listenerRegistry;
     }
 
