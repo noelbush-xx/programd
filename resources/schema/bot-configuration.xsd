@@ -59,7 +59,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="property" minOccurs="0">
+                <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
                     <xs:annotation>
                         <xs:documentation>A property has a name and a value.</xs:documentation>
                     </xs:annotation>
@@ -89,7 +89,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="predicate" minOccurs="0">
+                <xs:element name="predicate" minOccurs="0" maxOccurs="unbounded">
                     <xs:annotation>
                         <xs:documentation>A predicate has a name, a default value, and a setting
                             indicating whether a set element should return the predicate's name or
@@ -118,32 +118,40 @@
                 used.</xs:documentation>
             <xs:appinfo>
                 <sch:pattern name="href xor element content">
-                    <sch:rule context="bc:predicates">
+                    <sch:rule context="bc:substitutions">
                         <sch:assert
-                            test="(@href and not(bc:substitution)) or (not(@href) and bc:substitution)"
-                            > A substitutions element should have an href attribute, or substitution
-                            element content, but not both. </sch:assert>
+                            test="(@href and not(bc:input or bc:gender or bc:person or bc:person2)) or (not(@href) and (bc:input or bc:gender or bc:person or bc:person2))"
+                            > A substitutions element should have an href attribute, or a set of
+                            substitution elements (input, gender, person or person2), but not both.
+                        </sch:assert>
                     </sch:rule>
                 </sch:pattern>
             </xs:appinfo>
         </xs:annotation>
         <xs:complexType>
-            <xs:sequence>
-                <xs:element name="substitution" minOccurs="0">
-                    <xs:annotation>
-                        <xs:documentation>A substitution has a find value, which should be a regular
-                            expression, and a replace value which is what to substitute for matches
-                            of the find value.</xs:documentation>
-                    </xs:annotation>
-                    <xs:complexType>
-                        <xs:attribute name="find" type="xs:string" use="required"/>
-                        <xs:attribute name="replace" type="xs:string" use="required"/>
-                    </xs:complexType>
-                </xs:element>
-            </xs:sequence>
+            <xs:all>
+                <xs:element name="input" type="SubstitutionElementSet"/>
+                <xs:element name="gender" type="SubstitutionElementSet"/>
+                <xs:element name="person" type="SubstitutionElementSet"/>
+                <xs:element name="person2" type="SubstitutionElementSet"/>
+            </xs:all>
             <xs:attribute name="href" type="xs:anyURI"/>
         </xs:complexType>
     </xs:element>
+    <xs:complexType name="SubstitutionElementSet">
+        <xs:sequence>
+            <xs:element name="substitute" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>A substitution has a find value, which should be a regular
+                        expression, and a replace value which is what to substitute for matches
+                        of the find value.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:attribute name="find" type="xs:string" use="required"/>
+                    <xs:attribute name="replace" type="xs:string" use="required"/>
+                </xs:complexType>
+            </xs:element>
+</xs:sequence></xs:complexType>
     <xs:element name="sentence-splitters">
         <xs:annotation>
             <xs:documentation>A sentence-splitters element lists markers that should be used to
@@ -161,7 +169,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="splitter" minOccurs="0">
+                <xs:element name="splitter" minOccurs="0" maxOccurs="unbounded">
                     <xs:annotation>
                         <xs:documentation>A splitter indicates a single value.</xs:documentation>
                     </xs:annotation>
