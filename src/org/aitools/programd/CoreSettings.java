@@ -12,7 +12,7 @@ package org.aitools.programd;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-04-16T10:00:14.167-04:00
+ * Automatically generated from properties file, 2005-04-24T09:47:16.382-04:00
  */
 public class CoreSettings extends Settings
 {
@@ -94,6 +94,16 @@ public class CoreSettings extends Settings
      *Allow use of <javascript> element? 
      */
     private boolean javascriptAllowed;
+
+    /**
+     *Where to write gossip entries.                       
+        Gossip entries will be written like this:
+        <li>the gossip</li>
+        This enables you to use XInclude to provide runtime access to the
+        contents of the gossip file.  See resources/aiml/gossip.aiml
+        for an example.
+     */
+    private String gossipPath;
 
     /**
      *The string to send when first connecting to the bot. 
@@ -308,6 +318,8 @@ public class CoreSettings extends Settings
 
         setJavascriptAllowed(Boolean.valueOf(this.properties.getProperty("programd.javascript-allowed", "false")).booleanValue());
 
+        setGossipPath(this.properties.getProperty("programd.gossip.path", "logs/gossip.txt"));
+
         setConnectString(this.properties.getProperty("programd.connect-string", "CONNECT"));
 
         setInactivityString(this.properties.getProperty("programd.inactivity-string", "INACTIVITY"));
@@ -508,6 +520,14 @@ public class CoreSettings extends Settings
     public boolean javascriptAllowed()
     {
         return this.javascriptAllowed;
+    }
+
+    /**
+     * @return the value of gossipPath
+     */
+    public String getGossipPath()
+    {
+        return this.gossipPath;
     }
 
     /**
@@ -836,6 +856,14 @@ public class CoreSettings extends Settings
     public void setJavascriptAllowed(boolean javascriptAllowedToSet)
     {
         this.javascriptAllowed = javascriptAllowedToSet;
+    }
+
+    /**
+     * @param gossipPathToSet   the value to which to set gossipPath
+     */
+    public void setGossipPath(String gossipPathToSet)
+    {
+        this.gossipPath = gossipPathToSet;
     }
 
     /**
