@@ -49,6 +49,7 @@ testthinksrai
 teststarset Test passed
 testidsizedate
 testgossip
+testgetgossip
 testname
 testinput
 testinput1
