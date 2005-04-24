@@ -107,10 +107,6 @@ public class IRCListener extends Listener implements ShellCommandable
     public IRCListener(Core coreToUse, Bot botToListenFor, Map<String, String> parametersToUse) throws InvalidListenerParameterException
     {
         super(coreToUse, botToListenFor, parametersToUse);
-        /*
-         * new String[][] { { "host", "" } , { "port", "6667" } , { "nick", "" } , {
-         * "channel", "" } } );
-         */
         this.host = this.parameters.get("host");
         try
         {
