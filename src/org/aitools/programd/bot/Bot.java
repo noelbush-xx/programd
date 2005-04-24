@@ -106,7 +106,7 @@ public class Bot
         try
         {
             chatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id
-                    + "-%g.log", 1048576, 10, false);
+                    + "-%g.log", 1048576, 10, true);
         }
         catch (IOException e)
         {
@@ -121,7 +121,7 @@ public class Bot
         try
         {
             xmlChatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id
-                    + "-%g.xml", 1048576, 10, true);
+                    + "-%g.xml", 1048576, 10, false);
         }
         catch (IOException e)
         {
