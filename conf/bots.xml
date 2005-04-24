@@ -33,7 +33,7 @@
             </listener>
         </listeners>
         -->
-        <learn>../aiml/*.aiml</learn>
-        <!--<learn>../resources/testing/testcases.aiml</learn>-->
+        <!--<learn>../aiml/*.aiml</learn>-->
+        <learn>../resources/testing/testcases.aiml</learn>
     </bot>
 </bots>
