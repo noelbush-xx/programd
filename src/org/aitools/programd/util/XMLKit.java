@@ -47,9 +47,6 @@ public class XMLKit
     /** A space, for convenience. */
     private static final String SPACE = " ";
 
-    /** A tab, for convenience. */
-    private static final String TAB = new Character('\u0009').toString();
-
     /** The system line separator. */
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
