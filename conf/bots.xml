@@ -9,6 +9,7 @@
         <substitutions href="substitutions.xml"/>
         <sentence-splitters href="sentence-splitters.xml"/>
         <!--
+        All listeners currently have problems due to protocol changes (see release notes).
         <listeners>
             <listener type="ProgramD-AIM" enabled="true">
                 <parameter name="owner" value="MyOwner"/>
@@ -21,14 +22,14 @@
                 <parameter name="buddies" value="Buddy1,Buddy2,Buddy3"/>
             </listener>
             <listener type="ProgramD-ICQ" enabled="true">
-                <parameter name="number" value="0"/>
-                <parameter name="password" value="password"/>
+                <parameter name="number" value="your-uin"/>
+                <parameter name="password" value="your-password"/>
             </listener>
             <listener type="ProgramD-IRC" enabled="true">
-                <parameter name="host" value="ar.chatjunkies.org"/>
+                <parameter name="host" value="irc.freenode.net"/>
                 <parameter name="port" value="6667"/>
-                <parameter name="nick" value="programd"/>
-                <parameter name="channel" value="#bots"/>
+                <parameter name="nick" value="your-nick"/>
+                <parameter name="channel" value="#some-channel"/>
             </listener>
         </listeners>
         -->
