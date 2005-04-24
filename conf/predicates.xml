@@ -8,4 +8,7 @@
     <predicate name="she" default="somebody" set-return="name"/>
     <predicate name="it" default="something" set-return="name"/>
     <predicate name="they" default="something" set-return="name"/>
+    <!--To support test case 40.-->
+    <predicate name="passed" default="" set-return="name"/>
+    <predicate name="failed" default="" set-return="value"/>
 </predicates>
