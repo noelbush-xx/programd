@@ -30,6 +30,4 @@ CORE_CONF=$BASE/conf/core.xml
 CONSOLE_CONF=$BASE/conf/console.xml
 
 # Start Program D using the SimpleConsole main class.
-# You can change the second argument to set the maximum memory
-# (in MB) allocated to the JVM.
 start_programd $MAIN_CLASS $START_MEM $MAX_MEM $CORE_CONF $CONSOLE_CONF
