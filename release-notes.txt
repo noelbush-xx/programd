@@ -124,6 +124,14 @@ built-in well-formedness checking and schema validation (see next note). The
 standard XML parsing technology is used in all aspects of the program where it 
 applies: reading in AIML, parsing AIML templates at runtime, parsing bot 
 configuration files, and parsing HTML templates (if used).
+
+      Additionally, the XML parsers in use have been configured to be namespace 
+aware, which moves us farther in the direction of being a highly interoperable 
+platform. For instance, any embedded HTML or XHTML must now be properly notated 
+as to its namespace; this enables Responders and other tools to easily filter 
+out (or not) markup belonging to one or another namespace, and to do it in an 
+intelligent, configurable way, rather than relying on ad hoc heuristics that 
+keep specific "knowledge" of HTML or some other format embedded in the engine.
     *
       Schema-Based Validation
 
@@ -211,9 +219,6 @@ listener that did the following:
           o recognises nick in any part of message
           o delay implemented (the "delay" IRC listener property)
           o fixed parameters bug with processMessageCommand
-
-      But since I have not tested the listeners since the code overhaul, Kevin 
-should not be held accountable for any problems in the IRC listener.
     *
       Unknown Bug Fixes
 
@@ -243,10 +248,19 @@ when there's a spare moment, we'll update the merge policy handling. Or feel
 free to submit a patch.
     *
 
-      Very little (all right, no) testing has been done this iteration on the 
-IM listeners. Perhaps by the time we finish going through release candidates, 
-this will have been rectified. Feel free to submit bugs on this topic (or any, 
-of course).
+      The two included IM listeners fail to function, due to changes in 
+protocols for the various services. Someone with knowledge of these services is 
+invited to take a look and submit patches. The problems, which can be easily 
+reproduced by enabling the listeners in the bots.xml file (and filling in some 
+valid account information), are:
+          o
+
+            AIMListener: Loops with a "Error in main AIMListener loop." message 
+(haven't tracked this down in the debugger yet as of rc1).
+          o
+
+            ICQListener: Starts contacting the server, but never succeeds in 
+logging in.
     *
 
       The AIML schema is technically incomplete. It allows certain constructs 
@@ -709,3 +723,5 @@ First release out of the CVS, included Jon Baer's AIML set.
     * Cleanup of source, unused libraries and miscellaneous files
     * compiles 'out of the box'
     * speech support moved to another branch (development stopped)
+
+Valid XHTML 1.0!
