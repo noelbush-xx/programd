@@ -20,10 +20,12 @@ import org.w3c.dom.Element;
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.listener.Listener;
+import org.aitools.programd.listener.InvalidListenerParameterException;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.NotARegisteredClassException;
+import org.aitools.programd.util.UserError;
 
 /**
  * The <code>listener</code> element is a container for defining parameters of
@@ -116,7 +118,7 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         Listener listener;
         try
         {
-            listener = listenerClass.getConstructor(Core.class, Bot.class, String.class, HashMap.class).newInstance(this.core, bot);
+            listener = listenerClass.getConstructor(Core.class, Bot.class, Map.class).newInstance(this.core, bot, parameters);
         }
         catch (IllegalAccessException e)
         {
@@ -137,6 +139,16 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         catch (InvocationTargetException e)
         {
             throw new DeveloperError("The constructor for the \"" + type + "\" listener class threw an exception.", e);
+        }
+        
+        // Check listener parameters.
+        try
+        {
+            listener.checkParameters();
+        }
+        catch (InvalidListenerParameterException e)
+        {
+            throw new UserError("Listener is not properly configured!", e);
         }
 
         // Start listener
