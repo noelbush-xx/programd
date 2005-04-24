@@ -397,8 +397,6 @@ core.setPredicateEmptyDefault("unknown");
           <li>delay implemented (the "delay" IRC listener property)</li>
           <li>fixed parameters bug with processMessageCommand</li>
         </ul>
-        <p>But since I have not tested the listeners since the code overhaul, Kevin should not be
-          held accountable for any problems in the IRC listener.</p>
       </li>
       <li>
         <h4>
@@ -433,10 +431,20 @@ core.setPredicateEmptyDefault("unknown");
         </p>
       </li>
       <li>
-        <p>Very little (all right, no) testing has been done this iteration on the IM listeners.
-          Perhaps by the time we finish going through release candidates, this will have been
-          rectified. Feel free to <a href="http://bugs.aitools.org/">submit bugs</a> on this topic
-          (or any, of course).</p>
+        <p>The two included IM listeners fail to function, due to changes in protocols for
+          the various services. Someone with knowledge of these services is invited to take a look
+          and submit patches. The problems, which can be easily reproduced by enabling the listeners
+          in the <span class="literal">bots.xml</span> file (and filling in some valid account
+          information), are:</p>
+        <ul>
+          <li>
+            <p>AIMListener: Loops with a "Error in main AIMListener loop." message (haven't tracked
+              this down in the debugger yet as of rc1).</p>
+          </li>
+          <li>
+            <p>ICQListener: Starts contacting the server, but never succeeds in logging in.</p>
+          </li>
+        </ul>
       </li>
       <li>
         <p>The AIML schema is technically incomplete. It allows certain constructs that are not
