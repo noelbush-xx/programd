@@ -9,14 +9,17 @@
 
 package org.aitools.programd.processor.aiml;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
+import org.aitools.programd.util.DeveloperError;
+import org.aitools.programd.util.FileManager;
+import org.aitools.programd.util.UserError;
 
 /**
  * Handles a
@@ -32,7 +35,11 @@ public class GossipProcessor extends AIMLProcessor
     /** The label (as required by the registration scheme). */
     public static final String label = "gossip";
 
-    private static final Logger logger = Logger.getLogger("programd");
+    private static FileWriter gossipFile;
+    
+    private static final String LI_START = "<li>";
+
+    private static final String LI_END_LINE_SEPARATOR = "</li>" + System.getProperty("line.separator", "\n");
 
     /**
      * Creates a new GossipProcessor using the given Core.
@@ -51,9 +58,30 @@ public class GossipProcessor extends AIMLProcessor
     {
         // Get the gossip.
         String response = parser.evaluate(element.getChildNodes());
+        
+        // Initialize the FileWriter if necessary.
+        if (gossipFile == null)
+        {
+            try
+            {
+                gossipFile = new FileWriter(FileManager.checkOrCreate(parser.getCore().getSettings().getGossipPath(), "gossip file"));
+            }
+            catch (IOException e)
+            {
+                throw new UserError(e);
+            }
+        }
 
         // Put the gossip in the log.
-        logger.log(Level.INFO, response);
+        try
+        {
+            gossipFile.append(LI_START + response + LI_END_LINE_SEPARATOR);
+            gossipFile.flush();
+        }
+        catch (IOException e)
+        {
+            throw new DeveloperError(e);
+        }
         return EMPTY_STRING;
     }
 }
