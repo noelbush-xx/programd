@@ -85,11 +85,11 @@ GENERAL NOTES
     <entry key="programd.javascript-allowed">true</entry>
     
     <!--Where to write gossip entries.                       [String: logs/gossip.txt]
-        Gossip entries will be written like this:
-        <li>the gossip</li>
-        This enables you to use XInclude to provide runtime access to the
-        contents of the gossip file.  See resources/aiml/gossip.aiml
-        for an example.-->
+        * Gossip entries will be written like this:
+          <li>the gossip</li>
+          This enables you to use an XML entity (unfortunately not XInclude)
+          to provide runtime access to the contents of the gossip file. 
+          See resources/testing/testcases.aiml for an example.-->
     <entry key="programd.gossip.path">logs/gossip.txt</entry>
     
     <!--The string to send when first connecting to the bot. [String: CONNECT]
@@ -174,13 +174,19 @@ GENERAL NOTES
         * Setting the value to blank means no timestamp will be displayed.-->
     <entry key="programd.chat.log.timestamp-format"></entry>
 
+    <!--Enable chat logging to plain text files? [boolean: true]-->
+    <entry key="programd.chat.log.to-plain-text">true</entry>
+    
+    <!--Enable chat logging to XML? [boolean: true]-->
+    <entry key="programd.chat.log.to-xml">true</entry>
+    
     <!--
-    Database logs
+    Database logging
     -->
     
     <!--Enable chat logging to the database? [boolean: false]
         * Be sure that the database configuration (later in this file) is valid.-->
-    <entry key="programd.logging.to-database.chat">false</entry>
+    <entry key="programd.chat.log.to-database">false</entry>
     
     
     <!--
