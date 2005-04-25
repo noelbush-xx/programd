@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE aiml [
-<!ENTITY gossip SYSTEM "../../logs/gossip.txt">
-]>
 <aiml version="1.0.1" xmlns="http://alicebot.org/2001/AIML-1.0.1"
       xmlns:html="http://www.w3.org/1999/xhtml"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -726,9 +723,9 @@ BOT)    Test case #20c.
 <think><set name="test">test</set></think>
 <think><set name="test1">test1</set></think>
 <condition> 
-<li name="test" value="test"> 
+<li name="test" value="TEST"> 
 <condition> 
-<li name="test1" value="nomatch">Test failed.</li> 
+<li name="test1" value="NOMATCH">Test failed.</li> 
 <li>Test passed.</li> 
 </condition></li> 
 <li>Test failed.</li> 
@@ -744,9 +741,9 @@ BOT)    Test case #20c.
 <think><set name="test">test</set></think>
 <think><set name="test1">test1</set></think>
 <condition> 
-<li name="test" value="test"> 
+<li name="test" value="TEST"> 
 <condition> 
-<li name="test1" value="test1">Test passed.</li> 
+<li name="test1" value="TEST1">Test passed.</li> 
 <li>Test failed.</li> 
 </condition></li> 
 <li>Test failed.</li> 
@@ -762,9 +759,9 @@ BOT)    Test case #20c.
 <think><set name="test">test</set></think>
 <think><set name="test1">test1</set></think>
 <condition> 
-<li name="test" value="nomatch"> 
+<li name="test" value="NOMATCH"> 
 <condition> 
-<li name="test1" value="nomatch">Test failed.</li> 
+<li name="test1" value="NOMATCH">Test failed.</li> 
 <li>Test failed.</li> 
 </condition></li> 
 <li>Test passed.</li> 
@@ -792,9 +789,9 @@ BOT)    Test case #21.
 </think>
 <set name="testcase">
 <condition name="test1">
-<li value="nomatch">Test failed 1.</li>
-<li value="pass">Test passed.</li>
-<li value="nomatch">Test failed 2.</li>
+<li value="NOMATCH">Test failed 1.</li>
+<li value="PASS">Test passed.</li>
+<li value="NOMATCH">Test failed 2.</li>
 <li>Test failed 3</li>
 </condition>
 </set>
@@ -958,17 +955,6 @@ BOT)    Test case #28.
 <template>Test case #28.<html:br/>
 <think><gossip>This is some gossip saved <date/>.</gossip></think>
 Test complete. Check the gossip log.
-</template>
-</category>
-
-<!--This category will randomly return one of the stored lines of gossip from gossip.txt.
-But the contents won't be updated until restart.-->
-<category>
-<pattern>TESTGETGOSSIP</pattern>
-<template>
-<random>
-&gossip;
-</random>
 </template>
 </category>
 
