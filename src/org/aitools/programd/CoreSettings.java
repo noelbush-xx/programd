@@ -12,7 +12,7 @@ package org.aitools.programd;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-04-24T09:47:16.382-04:00
+ * Automatically generated from properties file, 2005-04-24T19:51:43.602-04:00
  */
 public class CoreSettings extends Settings
 {
@@ -205,10 +205,20 @@ public class CoreSettings extends Settings
     private String chatLogTimestampFormat;
 
     /**
+     *Enable chat logging to plain text files? 
+     */
+    private boolean chatLogToPlainText;
+
+    /**
+     *Enable chat logging to XML? 
+     */
+    private boolean chatLogToXml;
+
+    /**
      *Enable chat logging to the database? 
     * Be sure that the database configuration (later in this file) is valid.
      */
-    private boolean loggingToDatabaseChat;
+    private boolean chatLogToDatabase;
 
     /**
      *The URL of the database to use. 
@@ -375,7 +385,11 @@ public class CoreSettings extends Settings
 
         setChatLogTimestampFormat(this.properties.getProperty("programd.chat.log.timestamp-format", "yyyy-MM-dd H:mm:ss"));
 
-        setLoggingToDatabaseChat(Boolean.valueOf(this.properties.getProperty("programd.logging.to-database.chat", "false")).booleanValue());
+        setChatLogToPlainText(Boolean.valueOf(this.properties.getProperty("programd.chat.log.to-plain-text", "true")).booleanValue());
+
+        setChatLogToXml(Boolean.valueOf(this.properties.getProperty("programd.chat.log.to-xml", "true")).booleanValue());
+
+        setChatLogToDatabase(Boolean.valueOf(this.properties.getProperty("programd.chat.log.to-database", "false")).booleanValue());
 
         setDatabaseUrl(this.properties.getProperty("programd.database.url", "jdbc:mysql:///programdbot"));
 
@@ -667,11 +681,27 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @return the value of loggingToDatabaseChat
+     * @return the value of chatLogToPlainText
      */
-    public boolean loggingToDatabaseChat()
+    public boolean chatLogToPlainText()
     {
-        return this.loggingToDatabaseChat;
+        return this.chatLogToPlainText;
+    }
+
+    /**
+     * @return the value of chatLogToXml
+     */
+    public boolean chatLogToXml()
+    {
+        return this.chatLogToXml;
+    }
+
+    /**
+     * @return the value of chatLogToDatabase
+     */
+    public boolean chatLogToDatabase()
+    {
+        return this.chatLogToDatabase;
     }
 
     /**
@@ -1003,11 +1033,27 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param loggingToDatabaseChatToSet   the value to which to set loggingToDatabaseChat
+     * @param chatLogToPlainTextToSet   the value to which to set chatLogToPlainText
      */
-    public void setLoggingToDatabaseChat(boolean loggingToDatabaseChatToSet)
+    public void setChatLogToPlainText(boolean chatLogToPlainTextToSet)
     {
-        this.loggingToDatabaseChat = loggingToDatabaseChatToSet;
+        this.chatLogToPlainText = chatLogToPlainTextToSet;
+    }
+
+    /**
+     * @param chatLogToXmlToSet   the value to which to set chatLogToXml
+     */
+    public void setChatLogToXml(boolean chatLogToXmlToSet)
+    {
+        this.chatLogToXml = chatLogToXmlToSet;
+    }
+
+    /**
+     * @param chatLogToDatabaseToSet   the value to which to set chatLogToDatabase
+     */
+    public void setChatLogToDatabase(boolean chatLogToDatabaseToSet)
+    {
+        this.chatLogToDatabase = chatLogToDatabaseToSet;
     }
 
     /**
