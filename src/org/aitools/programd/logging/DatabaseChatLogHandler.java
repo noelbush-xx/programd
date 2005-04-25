@@ -61,7 +61,12 @@ public class DatabaseChatLogHandler extends Handler
      */
     public void publish(LogRecord record)
     {
-        // Regular LogRecords are ignored.
+        if (!(record instanceof ChatLogRecord))
+        {
+            throw new IllegalArgumentException(
+                    "DatabaseChatLogHandler is intended to handle ChatRecords only.");
+        }
+        publish((ChatLogRecord) record);
     }
 
     /**
