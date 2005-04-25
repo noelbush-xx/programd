@@ -64,9 +64,14 @@ rem Starts Program D using a given main class.
 
   rem Change to the Program D directory and start the main class.
   pushd %BASE%
+  if "%6%"=="" goto no_web_server
+  %JVM_COMMAND% -classpath %PROGRAMD_CLASSPATH% -Xms%2 -Xmx%3 %1 -c %4 -n %5 -w %6
+  goto finished
+  :no_web_server
   %JVM_COMMAND% -classpath %PROGRAMD_CLASSPATH% -Xms%2 -Xmx%3 %1 -c %4 -n %5
 
   rem On exit, leave the base directory.
+  :finished
   popd
 goto end
 
