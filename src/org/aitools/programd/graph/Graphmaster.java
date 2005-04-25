@@ -733,12 +733,6 @@ public class Graphmaster
             return;
         }
 
-        // Add it to the AIMLWatcher, if active (and not the startup
-        // file).
-        if (this.coreSettings.useWatcher())
-        {
-            this.core.getAIMLWatcher().addWatchFile(path, botid);
-        }
 
         if (!url.getProtocol().equals(FILE))
         {
@@ -747,6 +741,11 @@ public class Graphmaster
         else
         {
             localFile = true;
+            // Add it to the AIMLWatcher, if active.
+            if (this.coreSettings.useWatcher())
+            {
+                this.core.getAIMLWatcher().addWatchFile(url.getPath(), botid);
+            }
             FileManager.pushFileParentAsWorkingDirectory(path);
         }
 
