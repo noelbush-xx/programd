@@ -18,7 +18,7 @@
         <property name="lib.dir" value="../lib"/>
         
         <property name="build.dir" value="../build.tmp"/>
-    	<property name="build.classpath" value="${lib.dir}/commons-logging.jar:${lib.dir}/gnu.getopt-1.0.10.jar:${lib.dir}/js.jar:${lib.dir}/org.mortbay.jetty.jar:${lib.dir}/servlet.jar"/>
+    	<property name="build.classpath" value="${lib.dir}/commons-logging.jar:${lib.dir}/gnu.getopt-1.0.10.jar:${lib.dir}/js.jar:${lib.dir}/org.mortbay.jetty.jar:${lib.dir}/javax.servlet.jar"/>
         <property name="javadoc.dir" value="../docs/api"/>
     	
     	<property name="main.jar" value="programd-main.jar"/>
@@ -79,15 +79,19 @@
         <javadoc packagenames="*"
             sourcepath="${src.dir}"
             destdir="${javadoc.dir}"
+        	classpath="${build.classpath}"
             author="true"
             version="true"
             use="true"
             splitindex="true"
             noindex="false"
             windowtitle="${Name} API"
-            doctitle="${Name} API"
-        	link="http://java.sun.com/j2se/1.5.0/docs/api/"
-            />
+            doctitle="${Name} API">
+        	<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+        	<link href="http://jetty.mortbay.org/javadoc/"/>
+        	<link href="http://www.urbanophile.com/arenn/hacking/getopt/"/>
+        	<link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
+        </javadoc>
     </target>
     
     <!--Clean target.-->
