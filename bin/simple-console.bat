@@ -17,6 +17,9 @@ rem You can pipe input to stdin, and output and error from stdout and stderr.
 rem Reset the quit variable.
 set quit=
 
+rem Enter the bin directory.
+pushd %~p0
+
 rem Check for needed environment space.
 call common_functions.bat check_env %1 %2 %3 %4
 
@@ -27,8 +30,12 @@ rem Configuration
 set MAIN_CLASS=org.aitools.programd.configurations.SimpleConsole
 set START_MEM=256m
 set MAX_MEM=512m
-set CORE_CONF=$BASE\conf\core.xml
-set CONSOLE_CONF=$BASE\conf\console.xml
+set CORE_CONF=%BASE%\conf\core.xml
+set CONSOLE_CONF=%BASE%\conf\console.xml
 
 rem Start Program D using the SimpleConsole main class.
 if "%quit%"=="" call common_functions.bat start_programd %MAIN_CLASS% %START_MEM% %MAX_MEM% %CORE_CONF% %CONSOLE_CONF%
+
+:end
+rem On exit, go back to the original directory.
+popd

@@ -64,11 +64,11 @@ rem Starts Program D using a given main class.
 
   rem Change to the Program D directory and start the main class.
   pushd %BASE%
-  if "%6%"=="" goto no_web_server
-  %JVM_COMMAND% -classpath %PROGRAMD_CLASSPATH% -Xms%2 -Xmx%3 %1 -c %4 -n %5 -w %6
+  if "%7%"=="" goto no_web_server
+  %JVM_COMMAND% -classpath %PROGRAMD_CLASSPATH% -Xms%3 -Xmx%4 %2 -c %5 -n %6 -w %7
   goto finished
   :no_web_server
-  %JVM_COMMAND% -classpath %PROGRAMD_CLASSPATH% -Xms%2 -Xmx%3 %1 -c %4 -n %5
+  %JVM_COMMAND% -classpath %PROGRAMD_CLASSPATH% -Xms%3 -Xmx%4 %2 -c %5 -n %6
 
   rem On exit, leave the base directory.
   :finished
@@ -100,10 +100,9 @@ rem Sets up some variables used to run/build Program D.
   rem Set up external jars.
   call %0 setup_other_libs
   
-  set PROGRAMD_LIBS=%PROGRAMD_MAIN_LIB%;%PROGRAMD_JETTY_LIB%;%PROGRAMD_JS_LIB%
+  set PROGRAMD_LIBS=%PROGRAMD_MAIN_LIB%;%PROGRAMD_JETTY_LIB%;%PROGRAMD_JS_LIB%;%OTHER_LIBS%
 goto end
 
-rem Sets up other required included libs.
 :setup_other_libs
 
   rem Set lib directory (jars)
@@ -129,7 +128,7 @@ rem Sets up other required included libs.
 
   rem Set JETTY_LIBS to the location of the Jetty jars.
   rem No warning is provided if they cannot be found (since they are optional).
-  set JETTY_LIBS=%LIBS%\commons-logging.jar:%LIBS%\org.mortbay.jetty.jar:%LIBS%\javax.servlet.jar
+  set JETTY_LIBS=%LIBS%\commons-logging.jar;%LIBS%\org.mortbay.jetty.jar;%LIBS%\javax.servlet.jar
   
   set OTHER_LIBS=%GETOPT_LIB%;%SQL_LIB%;%JS_LIB%;%JETTY_LIBS%
 goto end
@@ -163,13 +162,13 @@ rem Tries to find/set JAVA_HOME.
   rem Try the standard JDK 5.0 install location.
   if not exist c:\jdk1.5.0_02\bin\java.exe goto seek_known_javas
 
-  set JAVA_HOME=c:\jdk1.5.0_02\
+  set JAVA_HOME=c:Progra~1\Java\\jdk1.5.0_02\
   set JVM_COMMAND=%JAVA_HOME%\bin\java.exe
   goto successful
 
   :seek_known_javas
   rem Common paths for compatible Java SDKs (or JREs) should go here.
-  if exist d:\jdk1.5.0_02\bin\java.exe set JAVA_HOME=d:\jdk1.5.0_02
+  if exist d:Progra~1\Java\\jdk1.5.0_02\bin\java.exe set JAVA_HOME=d:\jdk1.5.0_02
    if not defined JAVA_HOME goto cannot_find
 
   :successful

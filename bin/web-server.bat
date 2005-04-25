@@ -18,6 +18,9 @@ rem and shell.
 rem Reset the quit variable.
 set quit=
 
+rem Enter the bin directory.
+pushd %~p0
+
 rem Check for needed environment space.
 call common_functions.bat check_env %1 %2 %3 %4
 
@@ -25,12 +28,16 @@ rem Get "base" directory (root of Program D installation)
 if "%quit%"=="" call common_functions.bat set_base
 
 rem Configuration
-set MAIN_CLASS=org.aitools.programd.configurations.SimpleConsole
+set MAIN_CLASS=org.aitools.programd.configurations.WebServer
 set START_MEM=256m
 set MAX_MEM=512m
-set CORE_CONF=$BASE\conf\core.xml
-set CONSOLE_CONF=$BASE\conf\console.xml
-set WEBSERVER_CONF=$BASE\conf\web-server.xml
+set CORE_CONF=%BASE%\conf\core.xml
+set CONSOLE_CONF=%BASE%\conf\console.xml
+set WEBSERVER_CONF=%BASE%\conf\web-server.xml
 
 rem Start Program D using the SimpleConsole main class.
 if "%quit%"=="" call common_functions.bat start_programd %MAIN_CLASS% %START_MEM% %MAX_MEM% %CORE_CONF% %CONSOLE_CONF% %WEBSERVER_CONF%
+
+:end
+rem On exit, go back to the original directory.
+popd
