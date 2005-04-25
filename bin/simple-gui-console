@@ -1,4 +1,4 @@
-#!/bin/sh
+W#!/bin/sh
 # ==========================================================================
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -11,7 +11,7 @@
 # USA.
 # ==========================================================================
 
-# This script launches a server-based version of
+# This script launches a console version of
 # Program D, with a very simple Swing GUI
 # that supports most character sets and automates a
 # few interaction tasks.

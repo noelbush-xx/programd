@@ -11,10 +11,9 @@
 # USA.
 # ==========================================================================
 
-# This script launches a server-based version of
-# Program D, with a very simple Swing GUI
-# that supports most character sets and automates a
-# few interaction tasks.
+# This script launches a version of Program D with a web interface.
+# If you leave config settings to default, you will also get a console
+# and shell.
 
 # Get "base" directory (root of Program D installation)
 BASE=`cd \`dirname $0\`/.. && echo \`pwd\``
