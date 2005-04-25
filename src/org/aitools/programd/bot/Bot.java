@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 import org.aitools.programd.CoreSettings;
 import org.aitools.programd.graph.Nodemapper;
+import org.aitools.programd.logging.DatabaseChatLogHandler;
 import org.aitools.programd.logging.SimpleChatLogFormatter;
 import org.aitools.programd.logging.XMLChatLogFormatter;
 import org.aitools.programd.multiplexor.PredicateInfo;
@@ -101,35 +102,47 @@ public class Bot
         this.logger.setUseParentHandlers(false);
         FileManager.checkOrCreateDirectory(chatlogDirectory, "chat log directory");
 
-        // Set up regular logging of chat.
-        FileHandler chatLogFileHandler;
-        try
+        // Set up plain text logging of chat.
+        if (coreSettings.chatLogToPlainText())
         {
-            chatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id
-                    + "-%g.log", 1048576, 10, true);
+            FileHandler chatLogFileHandler;
+            try
+            {
+                chatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id
+                        + "-%g.log", 1048576, 10, true);
+            }
+            catch (IOException e)
+            {
+                throw new UserError("Could not create XML chat log for bot \"" + this.id + "\" in \""
+                        + chatlogDirectory + "\"!", e);
+            }
+            chatLogFileHandler.setFormatter(new SimpleChatLogFormatter(coreSettings));
+            this.logger.addHandler(chatLogFileHandler);
         }
-        catch (IOException e)
-        {
-            throw new UserError("Could not create XML chat log for bot \"" + this.id + "\" in \""
-                    + chatlogDirectory + "\"!", e);
-        }
-        chatLogFileHandler.setFormatter(new SimpleChatLogFormatter(coreSettings));
-        this.logger.addHandler(chatLogFileHandler);
 
         // Set up XML logging of chat.
-        FileHandler xmlChatLogFileHandler;
-        try
+        if (coreSettings.chatLogToXml())
         {
-            xmlChatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id
-                    + "-%g.xml", 1048576, 10, false);
+            FileHandler xmlChatLogFileHandler;
+            try
+            {
+                xmlChatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id
+                        + "-%g.xml", 1048576, 10, false);
+            }
+            catch (IOException e)
+            {
+                throw new UserError("Could not create XML chat log for bot \"" + this.id + "\" in \""
+                        + chatlogDirectory + "\"!", e);
+            }
+            xmlChatLogFileHandler.setFormatter(new XMLChatLogFormatter());
+            this.logger.addHandler(xmlChatLogFileHandler);
         }
-        catch (IOException e)
+
+        // Set up XML logging of chat.
+        if (coreSettings.chatLogToDatabase())
         {
-            throw new UserError("Could not create XML chat log for bot \"" + this.id + "\" in \""
-                    + chatlogDirectory + "\"!", e);
+            this.logger.addHandler(new DatabaseChatLogHandler(coreSettings));
         }
-        xmlChatLogFileHandler.setFormatter(new XMLChatLogFormatter());
-        this.logger.addHandler(xmlChatLogFileHandler);
     }
 
     /**
