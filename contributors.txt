@@ -41,6 +41,7 @@ Yiannis Paschalidis improved Bawt.java and StringSorter.add().
 Andrew Phillips wrote some content for Knowledge.aiml.
 Andrew Potgieter wrote a text wrapper and created the <think> tag.
 Thomas Ringate made ProgramD reference AIML 1.0 compliant.
+Eionn Robb contributed a fix to Graphmaster.unload().
 Timothy F. Rohaly proofread the Java code and suggested numerous improvements.
 Karolyn Schalk contributed content to Knowledge.aiml.
 Karlheinz Schuhmacher modified Substiter.replace() to prevent endless loops.
@@ -51,7 +52,7 @@ Kim Sullivan cleaned AIML and code, wrote a new HTML responder, and wrote docume
 Anthony Taylor made Jacco's C/C++ a platform-independent program.
 Andrew Teal contributed to the AIML specification.
 Stan Wallace wrote some content for Knowledge.aiml.
-Additional graphics were created by Sage Greco, Darren Langley and Larry Hauser.
+Kevin W. provided fixes for the IRC listener.
 
 We gratefully acknowledge these contributions and the people who made them.
 We are actively seeking to re-include credits for contributors who were dropped or never added.
