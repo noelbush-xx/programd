@@ -131,7 +131,7 @@ function set_java_vars()
       if [ -z "$JVM_COMMAND" ]
       then
         echo I cannot find a java executable in your path.
-        echo Please check that you hava a JDK 5.0 compatible SDK installed.
+        echo Please check that you have a JDK 5.0 compatible SDK installed.
         echo
         exit 1
       else
