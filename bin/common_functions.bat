@@ -21,7 +21,7 @@ rem Checks for needed environment space and increases it if necessary.
   set ENVTEST=This just checks whether there is additional environment space.
   if "%ENVTEST%"=="" goto increase_env
   set ENVTEST=
-  goto end
+goto end
 
 rem Increases environment space.
 :increase_env
@@ -59,24 +59,73 @@ rem Starts Program D using a given main class.
   rem Set up the Java environment.
   if "%quit%"=="" call %0 setup_java
 
-  rem Set up other paths to other needed jars and check their existence.
-  if "%quit%"=="" call %0 check_programd_lib
-
-  if not "%quit%"=="" goto end
-
-  rem Set SQL_LIB to the location of your database driver.
-  rem No warning is provided if it cannot be found.
-  set SQL_LIB=%LIBS%\mysql_comp.jar
-
   rem Concatenate all paths into the classpath to be used.
-  set PROGRAMD_CLASSPATH=%SERVLET_LIB%;%PROGRAMD_LIB%;%JS_LIB%;%SQL_LIB%;%HTTP_SERVER_LIB%
+  set PROGRAMD_CLASSPATH=%PROGRAMD_LIBS%;%JS_LIB%;%SQL_LIB%;%HTTP_SERVER_LIBS%
 
-  rem Change to the Program D bin directory and start the main class.
-  pushd %BASE%\bin
-  %JVM_COMMAND% -classpath %PROGRAMD_CLASSPATH% -Xms64m -Xmx%3m %2 %4
+  rem Change to the Program D directory and start the main class.
+  pushd %BASE%
+  %JVM_COMMAND% -classpath %PROGRAMD_CLASSPATH% -Xms%2 -Xmx%3 %1 -c %4 -n %5
 
   rem On exit, leave the base directory.
   popd
+goto end
+
+rem Sets up some variables used to run/build Program D.
+:setup_programd
+
+  rem Set lib directory (jars)
+  call %0 setup_lib_dir
+  
+  set PROGRAMD_MAIN_LIB=%LIBS%\programd-main.jar
+  if exist %PROGRAMD_MAIN_LIB% goto check_other_programd_jars
+  
+  echo.
+  echo I can't find your programd-main.jar file.  Have you compiled it?
+  echo If you downloaded the source-only version but don't have
+  echo a Java compiler, you can download a pre-compiled version from
+  echo http://aitools.org/downloads/
+  set quit=yes
+  goto end
+  
+  :check_other_programd_jars
+  rem Define the other programd jars, but don't worry if they don't exist.
+  set PROGRAMD_JETTY_LIB=%LIBS%\programd-jetty.jar
+  set PROGRAMD_JS_LIB=%LIBS%\programd-js.jar
+  
+  rem Set up external jars.
+  call %0 setup_other_libs
+  
+  set PROGRAMD_LIBS=%PROGRAMD_MAIN_LIB%;%PROGRAMD_JETTY_LIB%;%PROGRAMD_JS_LIB%
+goto end
+
+rem Sets up other required included libs.
+  
+  rem Set lib directory (jars)
+  call %0 setup_lib_dir
+  
+  set GETOPT_LIB=%LIBS%\gnu.getopt-1.0.10.jar
+  if exist %GETOPT_LIB% goto check_optional_components
+  echo.
+  echo I can't find the gnu.getopt-1.0.10.jar that ships with Program D.
+  set quit=yes
+  goto end
+
+  :check_optional_components
+  rem Optional components:
+
+  rem Set SQL_LIB to the location of your database driver.
+  rem No warning is provided if it cannot be found (since it is optional).
+  set SQL_LIB=%LIBS%\mysql_comp.jar
+
+  rem Set JS_LIB to the location of the Rhino JavaScript interpreter.
+  rem No warning is provided if it cannot be found (since it is optional).
+  set JS_LIB=%LIBS%\js.jar
+
+  rem Set JETTY_LIBS to the location of the Jetty jars.
+  rem No warning is provided if they cannot be found (since they are optional).
+  set JETTY_LIBS=%LIBS%\commons-logging.jar:%LIBS%\org.mortbay.jetty.jar:%LIBS%\javax.servlet.jar
+  
+  set OTHER_LIBS=%GETOPT_LIB%;%SQL_LIB%;%JS_LIB%;%JETTY_LIBS%
 goto end
 
 
@@ -85,66 +134,16 @@ rem Sets up the lib directory.
   set LIBS=%BASE%\lib
 goto end
 
-
-rem Checks that the programd.jar exists.
-:check_programd_lib
-
-  rem Set lib directory (jars)
-  call %0 setup_lib_dir
-  
-  set PROGRAMD_LIB=%LIBS%\programd.jar
-  if exist "%PROGRAMD_LIB%" goto end
-  echo I can\'t find your programd.jar file.  Have you compiled it?
-  echo If you downloaded the source-only version but don\'t have
-  echo a Java compiler, you can download a pre-compiled version from
-  echo http://aitools.org/downloads/
-  echo
-  set quit=yes
-goto end
-
-
-rem Sets up some variables used to run/build Program D.
-rem First argument should be "building" or just blank;
-rem will affect some messages.
-:setup_programd
-
-  rem Set lib directory (jars)
-  call %0 setup_lib_dir
-  
-  set SERVLET_LIB=%LIBS%\servlet.jar
-  if exist %SERVLET_LIB% goto check_js_lib
-
-  echo.
-  echo I can't find the servlet.jar that ships with Program D.
-  echo Please see http://aitools.org/downloads/.
-  set quit=yes
-  goto end
-
-  :check_js_lib
-  set JS_LIB=%LIBS%\js.jar
-  if exist %JS_LIB% goto check_http_server_lib
-
-  echo.
-  echo I can't find the js.jar that ships with Program D.
-  if /i "%2%"=="building" (echo You must exclude RhinoInterpreter.java in order to successfully build.&echo.) else (echo Your server-side javascript functions may not work.&echo.)
-
-  :check_http_server_lib
-  set HTTP_SERVER_LIB=%LIBS%\org.mortbay.jetty.jar
-  if exist %HTTP_SERVER_LIB% goto end
-
-  echo.
-  echo I can't find the org.mortbay.jetty.jar that ships with Program D.
-  if /i "%2%"=="building" (echo You must exclude JettyWrapper.java in order to successfully build.&echo.) else (echo You may not be able to use the Jetty http server.&echo.)
-goto end
-
-
-rem Sets up a JDK 5.0 - compatible execution environment
+rem Sets up a Java execution environment
 rem (or fails informatively).
 :setup_java
   set quit=
   if "%quit%"=="" call %0 set_java_vars
   if "%quit%"=="" call %0 check_java_home
   if "%quit%"=="" call %0 set_jvm_command
+  rem We don't check JVM version because
+  rem I don't know equivalent text manipulation
+  rem tools in DOS for parsing java -version output.
 goto end
 
 
@@ -156,15 +155,15 @@ rem Tries to find/set JAVA_HOME.
   echo JAVA_HOME is not set in your environment.
 
   rem Try the standard JDK 5.0 install location.
-  if not exist c:\jdk1.5.0\bin\java.exe goto seek_known_javas
+  if not exist c:\jdk1.5.0_02\bin\java.exe goto seek_known_javas
 
-  set JAVA_HOME=c:\jdk1.5.0\
+  set JAVA_HOME=c:\jdk1.5.0_02\
   set JVM_COMMAND=%JAVA_HOME%\bin\java.exe
   goto successful
 
   :seek_known_javas
   rem Common paths for compatible Java SDKs (or JREs) should go here.
-  if exist d:\jdk1.5.0\bin\java.exe set JAVA_HOME=d:\jdk1.5.0
+  if exist d:\jdk1.5.0_02\bin\java.exe set JAVA_HOME=d:\jdk1.5.0_02
    if not defined JAVA_HOME goto cannot_find
 
   :successful

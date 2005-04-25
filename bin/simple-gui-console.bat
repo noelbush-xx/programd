@@ -11,8 +11,10 @@ rem Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
 rem USA.
 rem ==========================================================================
 
-rem This script launches a simple console-based version of Program D.
-rem You can pipe input to stdin, and output and error from stdout and stderr.
+rem This script launches a console version of
+rem Program D, with a very simple Swing GUI
+rem that supports most character sets and automates a
+rem few interaction tasks.
 
 rem Reset the quit variable.
 set quit=
@@ -24,11 +26,11 @@ rem Get "base" directory (root of Program D installation)
 if "%quit%"=="" call common_functions.bat set_base
 
 rem Configuration
-set MAIN_CLASS=org.aitools.programd.configurations.SimpleConsole
+set MAIN_CLASS=org.aitools.programd.configurations.SimpleGUIConsole
 set START_MEM=256m
 set MAX_MEM=512m
 set CORE_CONF=$BASE\conf\core.xml
 set CONSOLE_CONF=$BASE\conf\console.xml
 
-rem Start Program D using the SimpleConsole main class.
+rem Start Program D using the SimpleGUIConsole main class.
 if "%quit%"=="" call common_functions.bat start_programd %MAIN_CLASS% %START_MEM% %MAX_MEM% %CORE_CONF% %CONSOLE_CONF%

@@ -11,8 +11,9 @@ rem Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
 rem USA.
 rem ==========================================================================
 
-rem This script launches a simple console-based version of Program D.
-rem You can pipe input to stdin, and output and error from stdout and stderr.
+rem This script launches a version of Program D with a web interface.
+rem If you leave config settings to default, you will also get a console
+rem and shell.
 
 rem Reset the quit variable.
 set quit=
@@ -29,6 +30,7 @@ set START_MEM=256m
 set MAX_MEM=512m
 set CORE_CONF=$BASE\conf\core.xml
 set CONSOLE_CONF=$BASE\conf\console.xml
+set WEBSERVER_CONF=$BASE\conf\web-server.xml
 
 rem Start Program D using the SimpleConsole main class.
-if "%quit%"=="" call common_functions.bat start_programd %MAIN_CLASS% %START_MEM% %MAX_MEM% %CORE_CONF% %CONSOLE_CONF%
+if "%quit%"=="" call common_functions.bat start_programd %MAIN_CLASS% %START_MEM% %MAX_MEM% %CORE_CONF% %CONSOLE_CONF% %WEBSERVER_CONF%

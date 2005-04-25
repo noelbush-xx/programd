@@ -25,8 +25,8 @@ call common_functions.bat check_env %1 %2 %3 %4
 rem Get "base" directory (root of Program D installation)
 if "%quit%"=="" call common_functions.bat set_base
 
-rem Set up the Program D variables.
-if "%quit%"=="" call common_functions.bat setup_programd building
+rem Set up the third party libraries.
+if "%quit%"=="" call common_functions.bat setup_other_libs
 
 rem Set up the Java environment.
 if "%quit%"=="" call common_functions.bat setup_java
@@ -35,7 +35,7 @@ if not "%quit%"=="" goto end
 
 rem Set up other paths to needed jars and check their existence.
 set ANT_MAIN_LIB=%LIBS%\ant.jar
-set ANT_LAUNCHER_LIB=%LIBS%\ant.jar
+set ANT_LAUNCHER_LIB=%LIBS%\ant-launcher.jar
 if exist %ANT_MAIN_LIB% goto check_ant_launcher_lib
 
 echo.
@@ -44,7 +44,6 @@ echo This is necessary for the build process.
 goto end
 
 :check_ant_launcher_lib
-
 if exist %ANT_LAUNCHER_LIB% goto set_ant_path
 
 echo.
@@ -53,20 +52,20 @@ echo This is necessary for the build process.
 goto end
 
 :set_ant_path
-set ANT_LIB=%ANT_MAIN_LIB%;%ANT_LAUNCHER_LIB%
+set ANT_LIBS=%ANT_MAIN_LIB%;%ANT_LAUNCHER_LIB%
 
 :check_java_tools
 set JAVA_TOOLS=%JAVA_HOME%\lib\tools.jar
 if exist %JAVA_TOOLS% goto concat_class_path
 
 echo.
-echo I can't find the tools.jar that ships with the Java SDK.
-echo You must be sure that this is available in "%JAVA_HOME%\lib".
+echo I can't find the tools.jar.
+echo This is necessary for the build process.
 goto end
 
 :concat_class_path
 rem Concatenate all paths into the classpath to be used.
-set BUILD_CLASSPATH=%JAVA_TOOLS%;%ANT_LIB%;%SERVLET_LIB%;%JS_LIB%;%HTTP_SERVER_LIB%
+set BUILD_CLASSPATH=%JAVA_TOOLS%;%ANT_LIBS%;%OTHER_LIBS%
 
 %JVM_COMMAND% -Dant.home=%BASE% -classpath %BUILD_CLASSPATH% org.apache.tools.ant.Main -buildfile %BASE%\conf\build.xml %1 %2 %3 %4
 
