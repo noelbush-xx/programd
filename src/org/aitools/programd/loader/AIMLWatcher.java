@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.aitools.programd.graph.Graphmaster;
+import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
 
 /**
@@ -39,7 +40,7 @@ public class AIMLWatcher
     /** Used for storing information about file changes. */
     protected HashMap<String, Map<File, Long>> watchMaps = new HashMap<String, Map<File, Long>>();
 
-    private static final Logger logger = Logger.getLogger("programd");
+    protected static final Logger logger = Logger.getLogger("programd");
 
     /**
      * Creates a new AIMLWatcher using the given Graphmaster
@@ -56,19 +57,10 @@ public class AIMLWatcher
      */
     public void start()
     {
-        this.startTimer();
-    }
-
-    /**
-     * Initializes the AIMLWatcher timer as a daemon. Waits 10 seconds before
-     * starting it.
-     */
-    private void startTimer()
-    {
         if (this.timer == null)
         {
             this.timer = new Timer(true);
-            this.timer.schedule(new CheckAIMLTask(this.watchMaps), 0, this.graphmaster.getCore().getSettings().getWatcherTimer());
+            this.timer.schedule(new CheckAIMLTask(), 0, this.graphmaster.getCore().getSettings().getWatcherTimer());
         }
     }
 
@@ -89,7 +81,7 @@ public class AIMLWatcher
         {
             return;
         }
-        logger.log(Level.INFO, "Reloading \"" + path + "\".");
+        logger.log(Level.INFO, "AIMLWatcher reloading \"" + path + "\".");
         this.graphmaster.load(path, botid);
     }
 
@@ -110,6 +102,10 @@ public class AIMLWatcher
             }
             this.watchMaps.get(botid).put(theFile, new Long(theFile.lastModified()));
         }
+        else
+        {
+            throw new DeveloperError("AIMLWatcher cannot read path \"" + path + "\"", new IOException());
+        }
     }
 
     /**
@@ -117,17 +113,12 @@ public class AIMLWatcher
      */
     private class CheckAIMLTask extends TimerTask
     {
-        HashMap<String, Map<File, Long>> watcherWatchMaps;
-
         /**
-         * Creates a new CheckAIMLTask using the given watchmaps.
-         * 
-         * @param watchMapsToUse the watchmaps to use
+         * Creates a new CheckAIMLTask.
          */
-        public CheckAIMLTask(HashMap<String, Map<File, Long>> watchMapsToUse)
+        public CheckAIMLTask()
         {
             super();
-            this.watcherWatchMaps = watchMapsToUse;
         }
 
         /**
@@ -135,9 +126,9 @@ public class AIMLWatcher
          */
         public void run()
         {
-            for (String botid : this.watcherWatchMaps.keySet())
+            for (String botid : AIMLWatcher.this.watchMaps.keySet())
             {
-                Map<File, Long> watchMap = this.watcherWatchMaps.get(botid);
+                Map<File, Long> watchMap = AIMLWatcher.this.watchMaps.get(botid);
 
                 for (File theFile : watchMap.keySet())
                 {
