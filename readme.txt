@@ -526,7 +526,7 @@ chmod +x simple-console
 
 Starting the server script should look something like this:
 
-[17:06:40] Starting Program D version 4.5beta1.
+[17:06:40] Starting Program D version 4.5rc1.
 [17:06:40] Using Java VM 1.5.0_02-b09 from Sun Microsystems Inc.
 [17:06:40] On Linux version 2.6.11-1.14_FC3smp (i386)
 [17:06:40] Predicates with no values defined will return: "undefined".

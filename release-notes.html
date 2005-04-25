@@ -440,21 +440,6 @@ core.setPredicateEmptyDefault("unknown");
     </h3>
     <ul>
       <li>
-        <p>The database features (database predicate storage and chat logging) have not been tested
-          in this release candidate. They will be shortly. We would welcome all bug reports about
-          problems with this functionality at <a href="http://bugs.aitools.org"
-            >http://bugs.aitools.org</a>. </p>
-      </li>
-      <li>
-        <p>The AIML Watcher has not been tested.</p>
-      </li>
-      <li>
-        <p>The "readme" doc ("Getting Started with Program D") has been simplified, since quite a
-          lot needed to be updated to reflect changes in property names, etc. Any help in this is
-          greatly appreciated, or it will get back to its full glory sooner or later in any
-        case.</p>
-      </li>
-      <li>
         <p>The two included IM listeners fail to function, due to changes in protocols for the
           various services. Someone with knowledge of these services is invited to take a look and
           submit patches. The problems, which can be easily reproduced by enabling the listeners in
@@ -463,7 +448,7 @@ core.setPredicateEmptyDefault("unknown");
         <ul>
           <li>
             <p>AIMListener: Loops with a "Error in main AIMListener loop." message (haven't tracked
-              this down in the debugger yet as of beta1).</p>
+              this down in the debugger yet as of rc1).</p>
           </li>
           <li>
             <p>ICQListener: Starts contacting the server, but never succeeds in logging in.</p>
@@ -479,13 +464,25 @@ core.setPredicateEmptyDefault("unknown");
         </p>
       </li>
       <li>
-        <p>The AIML schema is technically incomplete. It allows certain constructs that are not
-          valid AIML&mdash;most notably, malformed <span class="literal">condition</span>
-          elemnents, since there are in fact three different variations on this element, a situation
-          that <a href="http://lists.w3.org/Archives/Public/xmlschema-dev/2001Jun/0026.html">cannot
-            be fully modeled by the current W3C Schema specification</a>. Again, if I can find the
-          time, I will incorporate a little bit of Schematron to handle this, by the final release
-          of 4.5 if possible.</p>
+        <p>The AIML schema includes embedded <a
+            href="http://xml.ascc.net/resource/schematron/schematron.html" target="_blank"
+            >Schematron</a> directives that fill in a validation gap that <a
+            href="http://lists.w3.org/Archives/Public/xmlschema-dev/2001Jun/0026.html">W3C XML
+            Schemas cannot address</a>&mdash;namely, the three forms of <span class="literal"
+          >condition</span>. A similar approach could probably take care of the other remaining gap
+          of which I'm aware: the text part of mixed pattern expressions, which is currently not
+          fully constrained by the schema. However, as of this writing, I haven't found how to
+          process the Schematron directives as part of the loadtime validation process, so you still
+          have the possibility of loading some limited forms of &quot;bad AIML&quot;. You
+          may, of course, validate your AIML using any good modern XML tool, and it will be able to
+          use the embedded Schematron directives. Coincidentally, the reprocessed AAA AIML set
+          available on aitools.org does pass this additional test when validated manually.</p>
+      </li>
+      <li>
+        <p>The "readme" doc ("Getting Started with Program D") has been somewhat over-redacted,
+          since quite a lot needed to be updated to reflect changes in property names, etc. Any help
+          in this is greatly appreciated, or it will get back to its full glory sooner or later in
+          any case.</p>
       </li>
       <li>
         <p>I have a strong desire to include unit testing, but just haven't gotten to it yet. The

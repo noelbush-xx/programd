@@ -249,21 +249,6 @@ Significant Open Issues
 
     *
 
-      The database features (database predicate storage and chat logging) have 
-not been tested in this release candidate. They will be shortly. We would 
-welcome all bug reports about problems with this functionality at 
-http://bugs.aitools.org.
-    *
-
-      The AIML Watcher has not been tested.
-    *
-
-      The "readme" doc ("Getting Started with Program D") has been simplified, 
-since quite a lot needed to be updated to reflect changes in property names, 
-etc. Any help in this is greatly appreciated, or it will get back to its full 
-glory sooner or later in any case.
-    *
-
       The two included IM listeners fail to function, due to changes in 
 protocols for the various services. Someone with knowledge of these services is 
 invited to take a look and submit patches. The problems, which can be easily 
@@ -272,7 +257,7 @@ valid account information), are:
           o
 
             AIMListener: Loops with a "Error in main AIMListener loop." message 
-(haven't tracked this down in the debugger yet as of beta1).
+(haven't tracked this down in the debugger yet as of rc1).
           o
 
             ICQListener: Starts contacting the server, but never succeeds in 
@@ -287,12 +272,23 @@ when there's a spare moment, we'll update the merge policy handling. Or feel
 free to submit a patch.
     *
 
-      The AIML schema is technically incomplete. It allows certain constructs 
-that are not valid AIML—most notably, malformed condition elemnents, since 
-there are in fact three different variations on this element, a situation that 
-cannot be fully modeled by the current W3C Schema specification. Again, if I 
-can find the time, I will incorporate a little bit of Schematron to handle 
-this, by the final release of 4.5 if possible.
+      The AIML schema includes embedded Schematron directives that fill in a 
+validation gap that W3C XML Schemas cannot address—namely, the three forms of 
+condition. A similar approach could probably take care of the other remaining 
+gap of which I'm aware: the text part of mixed pattern expressions, which is 
+currently not fully constrained by the schema. However, as of this writing, I 
+haven't found how to process the Schematron directives as part of the loadtime 
+validation process, so you still have the possibility of loading some limited 
+forms of "bad AIML". You may, of course, validate your AIML using any good 
+modern XML tool, and it will be able to use the embedded Schematron directives. 
+Coincidentally, the reprocessed AAA AIML set available on aitools.org does pass 
+this additional test when validated manually.
+    *
+
+      The "readme" doc ("Getting Started with Program D") has been somewhat 
+over-redacted, since quite a lot needed to be updated to reflect changes in 
+property names, etc. Any help in this is greatly appreciated, or it will get 
+back to its full glory sooner or later in any case.
     *
 
       I have a strong desire to include unit testing, but just haven't gotten 
