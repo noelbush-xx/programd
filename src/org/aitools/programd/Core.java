@@ -62,7 +62,7 @@ public class Core extends Thread
     public static final String VERSION = "4.5";
 
     /** Build identifier. */
-    public static final String BUILD = "beta1";
+    public static final String BUILD = "rc1";
 
     /** The Settings. */
     protected CoreSettings settings;
@@ -293,6 +293,12 @@ public class Core extends Thread
             // Initialize the Multiplexor.
             this.multiplexor.initialize();
 
+            // Create the AIMLWatcher if configured to do so.
+            if (this.settings.useWatcher())
+            {
+                this.aimlWatcher = new AIMLWatcher(this.graphmaster);
+            }
+            
             this.logger.log(Level.INFO, "Starting up the Graphmaster.");
 
             // Index the start time before loading.
@@ -306,10 +312,9 @@ public class Core extends Thread
 
             this.logger.log(Level.INFO, this.graphmaster.getTotalCategories() + " categories loaded in " + time / 1000.00 + " seconds.");
 
-            // Run AIMLWatcher if configured to do so.
+            // Start the AIMLWatcher if configured to do so.
             if (this.settings.useWatcher())
             {
-                this.aimlWatcher = new AIMLWatcher(this.graphmaster);
                 this.aimlWatcher.start();
                 this.logger.log(Level.INFO, "The AIML Watcher is active.");
             }
