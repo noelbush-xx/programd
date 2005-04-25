@@ -104,7 +104,8 @@ rem Sets up some variables used to run/build Program D.
 goto end
 
 rem Sets up other required included libs.
-  
+:setup_other_libs
+
   rem Set lib directory (jars)
   call %0 setup_lib_dir
   
