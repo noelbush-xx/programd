@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * a predicate.  It can either have a single String value,
  * or a list of values.
  * 
- * @author <a href="mailto:noel@alicebot.org">Noel Bush</a>
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.5
  */
 public class PredicateValue

@@ -15,7 +15,7 @@ import java.util.HashMap;
 /**
  * A map of predicate names to values.
  *
- * @author <a href="mailto:noel@alicebot.org">Noel Bush</a>
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.5
  */
 public class PredicateMap extends HashMap<String, PredicateValue>
