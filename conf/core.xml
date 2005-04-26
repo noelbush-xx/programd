@@ -221,7 +221,7 @@ GENERAL NOTES
     <!--Configuration file for FlashResponder. [String: conf/flash-responder.xml]-->
     <entry key="programd.conf-location.flash-responder">conf/flash-responder.xml</entry>
 
-    <!--Configuration file for HTTPServer. [String: conf/http-server.xml]-->
-    <entry key="programd.conf-location.http-server">conf/http-server.xml</entry>
+    <!--Configuration file for HTTPServer. [String: conf/web-server.xml]-->
+    <entry key="programd.conf-location.http-server">conf/web-server.xml</entry>
 
 </properties>
