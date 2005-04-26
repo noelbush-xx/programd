@@ -9,3 +9,7 @@ logs
 *~
 build.tmp
 docs
+distributable.bin.tmp
+distributable.src.tmp
+*.bz2
+*.zip
