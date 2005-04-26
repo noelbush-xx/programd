@@ -96,11 +96,13 @@ public class Bot
     {
         this.id = botID;
         this.predicateEmptyDefault = coreSettings.getPredicateEmptyDefault();
-        String chatlogDirectory = coreSettings.getChatLogDirectory();
+        String chatlogDirectoryName = coreSettings.getChatLogDirectory();
 
         this.logger = Logger.getLogger("programd.chat." + this.id);
         this.logger.setUseParentHandlers(false);
-        FileManager.checkOrCreateDirectory(chatlogDirectory, "chat log directory");
+        File chatlogDirectory = FileManager.checkOrCreateDirectory(chatlogDirectoryName, "chat log directory");
+        
+        String chatlogDirectoryPath = chatlogDirectory.getAbsolutePath();
 
         // Set up plain text logging of chat.
         if (coreSettings.chatLogToPlainText())
@@ -108,7 +110,7 @@ public class Bot
             FileHandler chatLogFileHandler;
             try
             {
-                chatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id
+                chatLogFileHandler = new FileHandler(chatlogDirectoryPath + File.separator + this.id
                         + "-%g.log", 1048576, 10, true);
             }
             catch (IOException e)
@@ -126,7 +128,7 @@ public class Bot
             FileHandler xmlChatLogFileHandler;
             try
             {
-                xmlChatLogFileHandler = new FileHandler(chatlogDirectory + File.separator + this.id
+                xmlChatLogFileHandler = new FileHandler(chatlogDirectoryPath + File.separator + this.id
                         + "-%g.xml", 1048576, 10, false);
             }
             catch (IOException e)
