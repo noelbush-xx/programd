@@ -68,12 +68,86 @@ called ProgramD that will contain all the program files.
 
 Linux users may type:
 
-tar xvzf d-bin-current.tar.gz
+tar xvjf programd-4.5rc1-bin.tar.bz2
 
-Windows users could try a free unzip utility such as 7-Zip.
+Windows 95-2000 users could try a free unzip utility such as 7-Zip. Windows XP 
+users will find that XP is able to open the zip file and guide you through 
+extracting it using a "wizard".
 
 We'll refer to the root directory created by the unzip/untar (such as 
 /usr/alice/ProgramD) as PROGRAMD.
+1.1.1 Compile (source downloads only)
+
+If you downloaded the binary version of Program D (programd-4.5rc1-bin.tar.bz2 
+or programd-4.5rc1-bin.zip), you can skip this step.
+
+If you downloaded the source version of Program D (programd-4.5rc1-src.tar.bz2 
+or programd-4.5rc1-src.zip), you will need to compile the code before you can 
+run it. This is very easily done by running the build shell script (Linux) or 
+build.bat batch file (Windows). Here's what will happen:
+
+[noel@emery ProgramD]$ chmod +x bin/build
+[noel@emery ProgramD]$ bin/build
+
+JAVA_HOME is not set in your environment.
+I have set JAVA_HOME to "/usr/java/jdk1.5.0_02".
+Please consider setting your JAVA_HOME environment variable.
+
+Buildfile: /home/noel/d-test/ProgramD/conf/build.xml
+
+init:
+     [echo] Building Program D 4.5rc1....
+
+prepare:
+    [mkdir] Created dir: /home/noel/d-test/ProgramD/build.tmp
+
+prepare-src:
+
+compile:
+    [javac] Compiling 186 source files to /home/noel/d-test/ProgramD/build.tmp
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+
+package:
+      [jar] Building jar: /home/noel/d-test/ProgramD/lib/programd-main.jar
+      [jar] Building jar: /home/noel/d-test/ProgramD/lib/programd-jetty.jar
+      [jar] Building jar: /home/noel/d-test/ProgramD/lib/programd-rhino.jar
+
+BUILD SUCCESSFUL
+Total time: 4 seconds
+
+1.1.2 Verify Installation
+
+The Program D distribution includes the set of test cases used to check AIML 
+interpreter functionality, and as shipped, it is configured to load this small 
+AIML set. Therefore, you can verify the installation "out of the box" if you 
+wish, by running the simple console immediately. See First Startup for tips on 
+running the simple console. If all is well, you should see something like this:
+
+[21:54:58] Starting Program D version 4.5rc1.
+[21:54:58] Using Java VM 1.5.0_02-b09 from Sun Microsystems Inc.
+[21:54:58] On Linux version 2.6.11-1.14_FC3smp (i386)
+[21:54:58] Predicates with no values defined will return: "undefined".
+[21:54:58] Initializing FlatFileMultiplexor.
+[21:54:58] Starting up the Graphmaster.
+[21:54:58] Configuring bot "yourbot".
+[21:54:59] Loaded 287 input substitutions.
+[21:54:59] Loaded 19 gender substitutions.
+[21:54:59] Loaded 9 person substitutions.
+[21:54:59] Loaded 60 person2 substitutions.
+[21:54:59] 91 categories loaded in 0.602 seconds.
+[21:54:59] The AIML Watcher is not active.
+[21:54:59] JavaScript interpreter not started.
+[21:54:59] emery> CONNECT : * : * : yourbot
+[21:54:59] Match: CONNECT : * : * : yourbot
+[21:54:59] Filename: "../resources/testing/testcases.aiml"
+[21:54:59] Response 1 in 9 ms. (Average: 9.0 ms.)
+[21:54:59] Interactive shell: type "/exit" to shut down; "/help" for help.
+
+The fourth line from the bottom ("") indicates that a category from the 
+testcases.aiml set has been matched. Now that you know you have a working 
+installation, please skim through the rest of these notes and decide what else 
+you want to configure.
 1.2. AIML
 
 We suggest creating a subdirectory called "aiml" in your PROGRAMD directory, 

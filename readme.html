@@ -223,11 +223,79 @@ Java HotSpot(TM) Client VM (build 1.5.0_02-b09, mixed mode)</pre>
       will create a directory called <span class="literal">ProgramD</span> that will contain all the
       program files.</p>
     <p>Linux users may type:</p>
-    <p class="example"> tar xvzf d-bin-current.tar.gz</p>
-    <p>Windows users could try a free unzip utility such as <a href="http://www.7-zip.org"
-      >7-Zip</a>.</p>
+    <p class="example"> tar xvjf programd-4.5rc1-bin.tar.bz2</p>
+    <p>Windows 95-2000 users could try a free unzip utility such as <a href="http://www.7-zip.org"
+      >7-Zip</a>.  Windows XP users will find that XP is able to open the zip file and guide you
+      through extracting it using a &quot;wizard&quot;.</p>
     <p>We'll refer to the root directory created by the unzip/untar (such as <span class="literal"
       >/usr/alice/ProgramD</span>) as <span class="user-value">PROGRAMD</span>.</p>
+    <h4>1.1.1 Compile (source downloads only)</h4>
+    <p>If you downloaded the binary version of Program D (<span class="literal">programd-4.5rc1-bin.tar.bz2</span>
+    or <span class="literal">programd-4.5rc1-bin.zip</span>), you can skip this step.</p>
+    <p>If you downloaded the source version of Program D (<span class="literal">programd-4.5rc1-src.tar.bz2</span>
+    or <span class="literal">programd-4.5rc1-src.zip</span>), you will need to compile the code
+    before you can run it.  This is very easily done by running the <span class="literal">build</span>
+    shell script (Linux) or <span class="literal">build.bat</span> batch file (Windows).  Here's what
+    will happen:</p>
+    <pre class="example">
+[noel@emery ProgramD]$ chmod +x bin/build
+[noel@emery ProgramD]$ bin/build
+
+JAVA_HOME is not set in your environment.
+I have set JAVA_HOME to "/usr/java/jdk1.5.0_02".
+Please consider setting your JAVA_HOME environment variable.
+
+Buildfile: /home/noel/d-test/ProgramD/conf/build.xml
+
+init:
+     [echo] Building Program D 4.5rc1....
+
+prepare:
+    [mkdir] Created dir: /home/noel/d-test/ProgramD/build.tmp
+
+prepare-src:
+
+compile:
+    [javac] Compiling 186 source files to /home/noel/d-test/ProgramD/build.tmp
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+
+package:
+      [jar] Building jar: /home/noel/d-test/ProgramD/lib/programd-main.jar
+      [jar] Building jar: /home/noel/d-test/ProgramD/lib/programd-jetty.jar
+      [jar] Building jar: /home/noel/d-test/ProgramD/lib/programd-rhino.jar
+
+BUILD SUCCESSFUL
+Total time: 4 seconds</pre>
+    <h4>1.1.2 Verify Installation</h4>
+    <p>The Program D distribution includes the set of test cases used to check AIML interpreter
+        functionality, and as shipped, it is configured to load this small AIML set.  Therefore, you
+        can verify the installation &quot;out of the box&quot; if you wish, by running the simple
+        console immediately.  See <a href="#startup">First Startup</a> for tips on running the simple
+        console.  If all is well, you should see something like this:</p>
+    <pre class="example">
+[21:54:58] Starting Program D version 4.5rc1.
+[21:54:58] Using Java VM 1.5.0_02-b09 from Sun Microsystems Inc.
+[21:54:58] On Linux version 2.6.11-1.14_FC3smp (i386)
+[21:54:58] Predicates with no values defined will return: "undefined".
+[21:54:58] Initializing FlatFileMultiplexor.
+[21:54:58] Starting up the Graphmaster.
+[21:54:58] Configuring bot "yourbot".
+[21:54:59] Loaded 287 input substitutions.
+[21:54:59] Loaded 19 gender substitutions.
+[21:54:59] Loaded 9 person substitutions.
+[21:54:59] Loaded 60 person2 substitutions.
+[21:54:59] 91 categories loaded in 0.602 seconds.
+[21:54:59] The AIML Watcher is not active.
+[21:54:59] JavaScript interpreter not started.
+[21:54:59] emery&gt; CONNECT : * : * : yourbot
+[21:54:59] Match: CONNECT : * : * : yourbot
+[21:54:59] Filename: "../resources/testing/testcases.aiml"
+[21:54:59] Response 1 in 9 ms. (Average: 9.0 ms.)
+[21:54:59] Interactive shell: type "/exit" to shut down; "/help" for help.</pre>
+    <p>The fourth line from the bottom ("") indicates that a category from the testcases.aiml
+        set has been matched.  Now that you know you have a working installation, please
+        skim through the rest of these notes and decide what else you want to configure.</p>
     <h3>1.2. AIML</h3>
     <p>We suggest creating a subdirectory called &quot;<span class="literal"
       >aiml</span>&quot; in your <span class="user-value">PROGRAMD</span> directory, and then

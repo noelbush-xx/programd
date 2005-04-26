@@ -14,8 +14,9 @@
         <property name="optimize" value="on"/>
         <property name="deprecation" value="on"/>
         
-        <property name="src.dir" value="../src"/>
-        <property name="lib.dir" value="../lib"/>
+    	<property name="base.dir" value=".."/>
+        <property name="src.dir" value="${base.dir}/src"/>
+        <property name="lib.dir" value="${base.dir}/lib"/>
         
         <property name="build.dir" value="../build.tmp"/>
     	<property name="build.classpath" value="${lib.dir}/commons-logging.jar:${lib.dir}/gnu.getopt-1.0.10.jar:${lib.dir}/js.jar:${lib.dir}/org.mortbay.jetty.jar:${lib.dir}/javax.servlet.jar"/>
@@ -24,6 +25,13 @@
     	<property name="main.jar" value="programd-main.jar"/>
     	<property name="jetty.jar" value="programd-jetty.jar"/>
     	<property name="rhino.jar" value="programd-rhino.jar"/>
+    	
+    	<property name="distributable.src.dir" value="${base.dir}/distributable.src.tmp"/>
+    	<property name="distributable.bin.dir" value="${base.dir}/distributable.bin.tmp"/>
+    	<property name="distributable.src.zip" value="${base.dir}/programd-${version}-src.zip"/>
+    	<property name="distributable.bin.zip" value="${base.dir}/programd-${version}-bin.zip"/>
+    	<property name="distributable.src.tar.bz2" value="${base.dir}/programd-${version}-src.tar.bz2"/>
+    	<property name="distributable.bin.tar.bz2" value="${base.dir}/programd-${version}-bin.tar.bz2"/>
         
         <filter token="year" value="${year}"/>
         <filter token="version" value="${version}"/>
@@ -98,6 +106,65 @@
     <target name="clean" depends="init">
         <delete dir="${build.dir}"/>
     </target>
+	
+	<!--Make the distributables.-->
+	<target name="distributables" depends="package">
+		<!--The source distributables.-->
+    	<delete dir="${distributable.src.dir}"/>
+    	<copy todir="${distributable.src.dir}">
+    		<fileset dir="${base.dir}">
+    			<exclude name="aiml/**"/>
+    			<exclude name="build.tmp/**"/>
+    			<exclude name="classes/**"/>
+    			<exclude name="distributable*.tmp/**"/>
+    			<exclude name="docs/**"/>
+    			<exclude name="ffm/**"/>
+    			<exclude name="logs/**"/>
+    			<exclude name="**/programd-*.jar"/>
+    			<exclude name="programd-*.zip"/>
+    			<exclude name="programd-*.tar.bz2"/>
+    			<exclude name="secret.key"/>
+    		</fileset>
+    	</copy>
+		<zip destfile="${distributable.src.zip}">
+			<zipfileset dir="${distributable.src.dir}"
+				prefix="ProgramD/"/>
+		</zip>
+		<tar destfile="${distributable.src.tar.bz2}"
+			compression="bzip2">
+			<tarfileset dir="${distributable.src.dir}"
+				prefix="ProgramD/"/>
+		</tar>
+		<!--The binary distributables.-->
+    	<delete dir="${distributable.bin.dir}"/>
+    	<copy todir="${distributable.bin.dir}">
+    		<fileset dir="${base.dir}">
+    			<exclude name="aiml/**"/>
+    			<exclude name="build.tmp/**"/>
+    			<exclude name="classes/**"/>
+    			<exclude name="distributable*.tmp/**"/>
+    			<exclude name="docs/**"/>
+    			<exclude name="ffm/**"/>
+    			<exclude name="logs/**"/>
+    			<exclude name="programd-*.zip"/>
+    			<exclude name="programd-*.tar.bz2"/>
+    			<exclude name="src/**"/>
+    			<exclude name=".classpath"/>
+    			<exclude name=".project"/>
+    			<exclude name="build.xml"/>
+    			<exclude name="secret.key"/>
+    		</fileset>
+    	</copy>
+		<zip destfile="${distributable.bin.zip}">
+			<zipfileset dir="${distributable.bin.dir}"
+				prefix="ProgramD/"/>
+		</zip>
+		<tar destfile="${distributable.bin.tar.bz2}"
+			compression="bzip2">
+			<tarfileset dir="${distributable.bin.dir}"
+				prefix="ProgramD/"/>
+		</tar>
+	</target>
     
     <target name="distclean" depends="clean">
         <deltree dir="${dist.root}"/>
