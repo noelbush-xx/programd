@@ -12,7 +12,7 @@ package org.aitools.programd;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-04-24T19:51:43.602-04:00
+ * Automatically generated from properties file, 2005-04-26T11:42:53.949-04:00
  */
 public class CoreSettings extends Settings
 {
@@ -97,11 +97,8 @@ public class CoreSettings extends Settings
 
     /**
      *Where to write gossip entries.                       
-        Gossip entries will be written like this:
-        <li>the gossip</li>
-        This enables you to use XInclude to provide runtime access to the
-        contents of the gossip file.  See resources/aiml/gossip.aiml
-        for an example.
+    * Gossip entries will be written like this:
+          <li>the gossip</li>.
      */
     private String gossipPath;
 
@@ -412,7 +409,7 @@ public class CoreSettings extends Settings
 
         setConfLocationFlashResponder(this.properties.getProperty("programd.conf-location.flash-responder", "conf/flash-responder.xml"));
 
-        setConfLocationHttpServer(this.properties.getProperty("programd.conf-location.http-server", "conf/http-server.xml"));
+        setConfLocationHttpServer(this.properties.getProperty("programd.conf-location.http-server", "conf/web-server.xml"));
 
     }
 
