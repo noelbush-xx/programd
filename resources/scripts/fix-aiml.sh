@@ -10,6 +10,7 @@ perl -pi -e '
     s/\<\/img\>//gi;
     s/\<br ?\/\>/\<html:br\/\>/gi;
     s/\<p\>/\<html:p\>/gi; s/\<\/p\>/\<\/html:p\>/gi;
+    s/\<b\>/\<html:b\>/gi; s/\<\/b\>/\<\/html:b\>/gi;
     s/\<em\>/\<html:em\>/gi; s/\<\/em\>/\<\/html:em\>/gi;
     s/\<ul\>/\<html:ul\>/gi; s/\<\/ul\>/\<\/html:ul\>/gi;
     s/\<html:ul\>\<li\>/\<html:ul\>\<html:li\>/gi; s/\<\/li\>\<\/html:ul\>/\<\/html:li\>\<\/html:ul\>/gi;
@@ -23,6 +24,7 @@ perl -pi -e '
     s/condition name="ip" value="localhost"/condition name="ip" value="LOCALHOST"/g;
     s/\<\/category\>  n/\<\/category\>/g;
     s/\<\/li\>\. *\<\/random\>/\<\/li\>\<\/random\>./g;
+    s/value="om"/value="OM"/g;
     s/\<person index="([0-9]+)"\/\>/\<person\>\<star index="$1"\/\>\<\/person\>/g' $1
 
 # Add HTML namespace (this will add it each time, so don't run more than once).
