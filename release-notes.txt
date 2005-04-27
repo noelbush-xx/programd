@@ -3,7 +3,7 @@ Program D Release Notes
 
 maintainer: Noel Bush
 previous authors: Noel Bush, Kim Sullivan, Thomas Ringate, Pedro E. Colla
-Last updated: 23 April 2005
+Last updated: 26 April 2005
 
 The latest version of this document can always be found at 
 http://aitools.org/programd/release-notes.html. Probably.
@@ -49,6 +49,7 @@ published with the previous version, as well as a few more.
 Following are details of what has been addressed.
 
     * What's New
+    * Release Candidate Notes
     * Important Notes on System Requirements
     * Significant Open Issues
 
@@ -237,6 +238,29 @@ there are no plans at the moment to retroactively publicly document all the
 problems that have already been found and corrected. Suffice it to say that the 
 current codebase is significantly less error-prone, and more secure, than 
 previous releases.
+
+Release Candidate Notes
+
+Here are notes about the release candidates.
+
+    *
+      Release Candidate 2
+
+      This one follows hot on the heels of rc1, and includes the following 
+fixes:
+          o
+
+            AIML Schema bug—The AIML Schema released with the previous version 
+did not allow non-li content in condition elements; as a result, some valid 
+AIML was rejected.
+          o
+
+            Bad default value for web-server conf—The default value of the web 
+server configuration file, specified in core.xml, named a non-existent file. 
+This would have caused confusion.
+
+      The first one is pretty critical, which is why this release is so soon 
+after rc1.
 
 Important Notes on System Requirements
 

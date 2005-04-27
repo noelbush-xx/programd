@@ -113,7 +113,7 @@ a:active
     <h1>Program D Release Notes</h1>
     <p class="docinfo"> maintainer: <a href="mailto:noel@aitools.org">Noel Bush</a>
       <br/>previous authors: <a href="mailto:noel@aitools.org">Noel Bush</a>, Kim Sullivan, Thomas
-      Ringate, Pedro E. Colla<br/> Last updated: 23 April 2005</p>
+      Ringate, Pedro E. Colla<br/> Last updated: 26 April 2005</p>
     <p class="docinfo"> The latest version of this document can always be found at <a
         href="http://aitools.org/programd/release-notes.html"
         >http://aitools.org/programd/release-notes.html</a>. Probably.</p>
@@ -172,6 +172,9 @@ a:active
     <ul>
       <li>
         <a href="#v4.5.whatsnew">What's New</a>
+      </li>
+      <li>
+        <a href="#v4.5.rc-notes">Release Candidate Notes</a>
       </li>
       <li>
         <a href="#v4.5.requirements">Important Notes on System Requirements</a>
@@ -428,6 +431,25 @@ core.setPredicateEmptyDefault("unknown");
       </li>
     </ul>
     <h3>
+      <a id="v4.5.rc-notes">Release Candidate Notes</a>
+    </h3>
+    <p>Here are notes about the release candidates.</p>
+    <ul>
+        <li>
+            <h4>Release Candidate 2</h4>
+            <p>This one follows hot on the heels of rc1, and includes the following fixes:</p>
+            <ul>
+                <li><p><b>AIML Schema bug</b>&mdash;The AIML Schema released with the previous
+                version did not allow non-<span class="literal">li</span> content in <span class="literal">condition</span>
+                elements; as a result, some valid AIML was rejected.</p></li>
+                <li><p><b>Bad default value for web-server conf</b>&mdash;The default value of
+                the web server configuration file, specified in <span class="literal">core.xml</span>,
+                named a non-existent file.  This would have caused confusion.</p></li>
+            </ul>
+            <p>The first one is pretty critical, which is why this release is so soon after rc1.</p>
+        </li>
+    </ul>
+    <h3>
       <a id="v4.5.requirements">Important Notes on System Requirements</a>
     </h3>
     <p>Program D requires <a href="http://java.sun.com/j2se/1.5.0/">JDK 5</a>. See <a
@@ -479,11 +501,11 @@ core.setPredicateEmptyDefault("unknown");
           available on aitools.org does pass this additional test when validated manually.</p>
       </li>
       <li>
-        <p>The Flash interface has not been tested.  Since it has been updated to use an XML
-            template, I doubt it will work with the old Flash interface from Chris Fahey, but
-            it's worth a shot.  If somebody with a copy of the Flash authoring tool (yow! that's
-            expensive!) will get in touch with me, I would be glad to coordinate getting this
-            interface working again.</p>
+        <p>The Flash interface has not been tested. Since it has been updated to use an XML
+          template, I doubt it will work with the old Flash interface from Chris Fahey, but it's
+          worth a shot. If somebody with a copy of the Flash authoring tool (yow! that's expensive!)
+          will get in touch with me, I would be glad to coordinate getting this interface working
+          again.</p>
       </li>
       <li>
         <p>The "readme" doc ("Getting Started with Program D") has been somewhat over-redacted,
