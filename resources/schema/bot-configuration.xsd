@@ -129,7 +129,7 @@
             </xs:appinfo>
         </xs:annotation>
         <xs:complexType>
-            <xs:all>
+            <xs:all minOccurs="0">
                 <xs:element name="input" type="SubstitutionElementSet"/>
                 <xs:element name="gender" type="SubstitutionElementSet"/>
                 <xs:element name="person" type="SubstitutionElementSet"/>
@@ -197,7 +197,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="listener" maxOccurs="unbounded">
+                <xs:element name="listener" minOccurs="0" maxOccurs="unbounded">
                     <xs:annotation>
                         <xs:documentation>A listener element contains parameter values for a
                             listener.</xs:documentation>
@@ -215,7 +215,7 @@
                                 </xs:complexType>
                             </xs:element>
                         </xs:sequence>
-                        <xs:attribute name="type" type="xs:string" use="required"/>
+                        <xs:attribute name="class" type="javaClassname" use="required"/>
                         <xs:attribute name="enabled" type="xs:boolean" use="required"/>
                     </xs:complexType>
                 </xs:element>
@@ -223,4 +223,9 @@
             <xs:attribute name="href" type="xs:anyURI"/>
         </xs:complexType>
     </xs:element>
+    <xs:simpleType name="javaClassname">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(\p{L}+\.)*\p{L}+"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>
