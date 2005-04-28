@@ -24,7 +24,6 @@ import java.util.logging.Logger;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.interpreter.Interpreter;
-import org.aitools.programd.listener.ListenerRegistry;
 import org.aitools.programd.loader.AIMLWatcher;
 import org.aitools.programd.logging.ChatLogRecord;
 import org.aitools.programd.logging.SimpleFormatter;
@@ -87,9 +86,6 @@ public class Core extends Thread
 
     /** The AIML processor registry. */
     private AIMLProcessorRegistry aimlProcessorRegistry;
-
-    /** The Listener registry. */
-    private ListenerRegistry listenerRegistry;
 
     /** An AIMLWatcher. */
     private AIMLWatcher aimlWatcher;
@@ -675,19 +671,6 @@ public class Core extends Thread
     public AIMLProcessorRegistry getAIMLProcessorRegistry()
     {
         return this.aimlProcessorRegistry;
-    }
-
-    /**
-     * @return the listener registry.
-     */
-    public ListenerRegistry getListenerRegistry()
-    {
-        // Lazy initialization, since someone might not be using any listeners.
-        if (this.listenerRegistry == null)
-        {
-            this.listenerRegistry = new ListenerRegistry();
-        }
-        return this.listenerRegistry;
     }
 
     /**
