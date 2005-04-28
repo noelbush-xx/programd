@@ -8,32 +8,8 @@
         <predicates href="predicates.xml"/>
         <substitutions href="substitutions.xml"/>
         <sentence-splitters href="sentence-splitters.xml"/>
-        <!--
-        The two IM listeners (AIM and ICQ) currently have problems due to protocol changes (see release notes).
-        <listeners>
-            <listener type="ProgramD-AIM" enabled="true">
-                <parameter name="owner" value="MyOwner"/>
-                <parameter name="screenname" value="Me"/>
-                <parameter name="password" value="password"/>
-                <parameter name="bgcolor" value="White"/>
-                <parameter name="fontface" value="Verdana,Arial"/>
-                <parameter name="fontsize" value="2"/>
-                <parameter name="fontcolor" value="Black"/>
-                <parameter name="buddies" value="Buddy1,Buddy2,Buddy3"/>
-            </listener>
-            <listener type="ProgramD-ICQ" enabled="true">
-                <parameter name="number" value="your-uin"/>
-                <parameter name="password" value="your-password"/>
-            </listener>
-            <listener type="ProgramD-IRC" enabled="true">
-                <parameter name="host" value="irc.freenode.net"/>
-                <parameter name="port" value="6667"/>
-                <parameter name="nick" value="programd"/>
-                <parameter name="channel" value="#programd"/>
-            </listener>
-        </listeners>
-        -->
-        <!--<learn>../aiml/*.aiml</learn>-->
-        <learn>../resources/testing/testcases.aiml</learn>
+        <listeners href="listeners.xml"/>
+        <learn>../aiml/*.aiml</learn>
+        <!--<learn>../resources/testing/testcases.aiml</learn>-->
     </bot>
 </bots>
