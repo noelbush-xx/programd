@@ -1,177 +1,164 @@
 <project default="package" basedir=".">
 
-    <!--Initialization Target-->
-    <target name="init">
-        <tstamp/>
-        <property name="Name" value="Program D"/>
-        <property name="version" value="4.5rc2"/>
-        <property name="year" value="2005"/>
-        
-        <echo message="Building ${Name} ${version}...."/>
-        
-        <property name="build.compiler" value="modern"/>
-        <property name="debug" value="off"/>
-        <property name="optimize" value="on"/>
-        <property name="deprecation" value="on"/>
-        
-    	<property name="base.dir" value=".."/>
-        <property name="src.dir" value="${base.dir}/src"/>
-        <property name="lib.dir" value="${base.dir}/lib"/>
-        
-        <property name="build.dir" value="../build.tmp"/>
-    	<property name="build.classpath" value="${lib.dir}/commons-logging.jar:${lib.dir}/gnu.getopt-1.0.10.jar:${lib.dir}/js.jar:${lib.dir}/org.mortbay.jetty.jar:${lib.dir}/javax.servlet.jar"/>
-        <property name="javadoc.dir" value="../docs/api"/>
-    	
-    	<property name="main.jar" value="programd-main.jar"/>
-    	<property name="jetty.jar" value="programd-jetty.jar"/>
-    	<property name="rhino.jar" value="programd-rhino.jar"/>
-    	
-    	<property name="distributable.src.dir" value="${base.dir}/distributable.src.tmp"/>
-    	<property name="distributable.bin.dir" value="${base.dir}/distributable.bin.tmp"/>
-    	<property name="distributable.src.zip" value="${base.dir}/programd-${version}-src.zip"/>
-    	<property name="distributable.bin.zip" value="${base.dir}/programd-${version}-bin.zip"/>
-    	<property name="distributable.src.tar.bz2" value="${base.dir}/programd-${version}-src.tar.bz2"/>
-    	<property name="distributable.bin.tar.bz2" value="${base.dir}/programd-${version}-bin.tar.bz2"/>
-        
-        <filter token="year" value="${year}"/>
-        <filter token="version" value="${version}"/>
-        <filter token="date" value="${TODAY}"/>
-        <filter token="log" value="true"/>
-        <filter token="verbose" value="true"/>
-        
-    </target>
+	<!--Initialization Target-->
+	<target name="init">
+		<tstamp/>
+		<property name="Name" value="Program D"/>
+		<property name="version" value="4.5rc2"/>
+		<property name="year" value="2005"/>
+		
+		<echo message="Building ${Name} ${version}...."/>
+		
+		<property name="build.compiler" value="modern"/>
+		<property name="debug" value="off"/>
+		<property name="optimize" value="on"/>
+		<property name="deprecation" value="on"/>
+		
+		<property name="base.dir" value=".."/>
+		<property name="src.dir" value="${base.dir}/src"/>
+		<property name="lib.dir" value="${base.dir}/lib"/>
+		
+		<property name="build.dir" value="../build.tmp"/>
+		<property name="build.classpath" value="${lib.dir}/commons-logging.jar:${lib.dir}/gnu.getopt-1.0.10.jar:${lib.dir}/js.jar:${lib.dir}/org.mortbay.jetty.jar:${lib.dir}/javax.servlet.jar"/>
+		<property name="javadoc.dir" value="../docs/api"/>
+		
+		<property name="main.jar" value="programd-main.jar"/>
+		<property name="listeners.jar" value="programd-listeners.jar"/>
+		<property name="jetty.jar" value="programd-jetty.jar"/>
+		<property name="rhino.jar" value="programd-rhino.jar"/>
+		
+		<property name="distributable.src.dir" value="${base.dir}/distributable.src.tmp"/>
+		<property name="distributable.bin.dir" value="${base.dir}/distributable.bin.tmp"/>
+		<property name="distributable.src.zip" value="${base.dir}/programd-${version}-src.zip"/>
+		<property name="distributable.bin.zip" value="${base.dir}/programd-${version}-bin.zip"/>
+		<property name="distributable.src.tar.bz2" value="${base.dir}/programd-${version}-src.tar.bz2"/>
+		<property name="distributable.bin.tar.bz2" value="${base.dir}/programd-${version}-bin.tar.bz2"/>
+		
+		<filter token="year" value="${year}"/>
+		<filter token="version" value="${version}"/>
+		<filter token="date" value="${TODAY}"/>
+		<filter token="log" value="true"/>
+		<filter token="verbose" value="true"/>
+		
+	</target>
 
 	<!--Prepare the build directory.-->
-    <target name="prepare" depends="init">
-        <mkdir dir="${build.dir}"/>
-    </target>
-    
-    <!--Prepare the source code.-->
-    <target name="prepare-src" depends="prepare">
-        <mkdir dir="${build.dir}"/>
-        <!-- copy over xml files -->
-        <copy todir="${build.dir}">
-            <fileset dir="${src.dir}">
-                <include name="**/*.xml"/>
-            </fileset>
-        </copy>
-    </target>
-    
-    <!--Compile the source directory.-->
-    <target name="compile" depends="prepare-src">
-        <javac srcdir="${src.dir}"
-            destdir="${build.dir}"
-        	classpath="${build.classpath}"
-            debug="${debug}"
-            deprecation="${deprecation}"
-            optimize="${optimize}"/>
-    </target>
-    
-    <!--Create the jars.-->
-    <target name="package" depends="compile">
-        <jar jarfile="${lib.dir}/${main.jar}">
-            <fileset dir="${build.dir}/" includes="org/**" excludes="org/aitools/programd/server/jettyinterface/*"/>
-        	<fileset dir="${src.dir}/" includes="org/aitools/programd/gui/icons/**"/>
-        </jar>
-        <jar jarfile="${lib.dir}/${jetty.jar}">
-            <fileset dir="${build.dir}/" includes="org/aitools/programd/server/jettyinterface/*"/>
-        </jar>
-        <jar jarfile="${lib.dir}/${rhino.jar}">
-            <fileset dir="${build.dir}/" includes="org/aitools/programd/interpreter/RhinoInterpreter.class"/>
-        </jar>
-    </target>
-    
-    <!--Create the API documentation.-->
-    <target name="javadoc" depends="prepare-src">
-        <mkdir dir="${javadoc.dir}"/>
-        <javadoc packagenames="*"
-            sourcepath="${src.dir}"
-            destdir="${javadoc.dir}"
-        	classpath="${build.classpath}"
-            author="true"
-            version="true"
-            use="true"
-            splitindex="true"
-            noindex="false"
-            windowtitle="${Name} API"
-            doctitle="${Name} API">
-        	<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
-        	<link href="http://jetty.mortbay.org/javadoc/"/>
-        	<link href="http://www.urbanophile.com/arenn/hacking/getopt/"/>
-        	<link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
-        </javadoc>
-    </target>
-    
-    <!--Clean target.-->
-    <target name="clean" depends="init">
-        <delete dir="${build.dir}"/>
-    </target>
+	<target name="prepare" depends="init">
+		<mkdir dir="${build.dir}"/>
+	</target>
+	
+	<!--Prepare the source code.-->
+	<target name="prepare-src" depends="prepare">
+		<mkdir dir="${build.dir}"/>
+		<!-- copy over xml files -->
+		<copy todir="${build.dir}">
+			<fileset dir="${src.dir}">
+				<include name="**/*.xml"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<!--Compile the source directory.-->
+	<target name="compile" depends="prepare-src">
+		<javac srcdir="${src.dir}" destdir="${build.dir}" classpath="${build.classpath}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}"/>
+	</target>
+	
+	<!--Create the jars.-->
+	<target name="package" depends="compile">
+		<jar jarfile="${lib.dir}/${main.jar}">
+			<fileset dir="${build.dir}/"
+				includes="org/**"
+				excludes="org/aitools/programd/server/jettyinterface/* org/aitools/programd/interpreter/RhinoInterpreter.class org/aitools/programd/listener/*Listener"/>
+			<fileset dir="${src.dir}/" includes="org/aitools/programd/gui/icons/**"/>
+		</jar>
+		<jar jarfile="${lib.dir}/${listeners.jar}">
+			<fileset dir="${build.dir}/"
+				includes="org/aitools/programd/listener/*Listener"/>
+		</jar>
+		<jar jarfile="${lib.dir}/${jetty.jar}">
+			<fileset dir="${build.dir}/"
+				includes="org/aitools/programd/server/jettyinterface/*"/>
+		</jar>
+		<jar jarfile="${lib.dir}/${rhino.jar}">
+			<fileset dir="${build.dir}/"
+				includes="org/aitools/programd/interpreter/RhinoInterpreter.class"/>
+		</jar>
+	</target>
+	
+	<!--Create the API documentation.-->
+	<target name="javadoc" depends="prepare-src">
+		<mkdir dir="${javadoc.dir}"/>
+		<javadoc packagenames="*" sourcepath="${src.dir}" destdir="${javadoc.dir}" classpath="${build.classpath}" author="true" version="true" use="true" splitindex="true" noindex="false" windowtitle="${Name} API" doctitle="${Name} API">
+			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+			<link href="http://jetty.mortbay.org/javadoc/"/>
+			<link href="http://www.urbanophile.com/arenn/hacking/getopt/"/>
+			<link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
+		</javadoc>
+	</target>
+	
+	<!--Clean target.-->
+	<target name="clean" depends="init">
+		<delete dir="${build.dir}"/>
+	</target>
 	
 	<!--Make the distributables.-->
 	<target name="distributables" depends="package">
 		<!--The source distributables.-->
-    	<delete dir="${distributable.src.dir}"/>
-    	<copy todir="${distributable.src.dir}">
-    		<fileset dir="${base.dir}">
-    			<exclude name="aiml/**"/>
-    			<exclude name="build.tmp/**"/>
-    			<exclude name="classes/**"/>
-    			<exclude name="distributable*.tmp/**"/>
-    			<exclude name="docs/**"/>
-    			<exclude name="ffm/**"/>
-    			<exclude name="logs/**"/>
-    			<exclude name="**/programd-*.jar"/>
-    			<exclude name="programd-*.zip"/>
-    			<exclude name="programd-*.tar.bz2"/>
-    			<exclude name="secret.key"/>
-    		</fileset>
-    	</copy>
+		<delete dir="${distributable.src.dir}"/>
+		<copy todir="${distributable.src.dir}">
+			<fileset dir="${base.dir}">
+				<exclude name="aiml/**"/>
+				<exclude name="build.tmp/**"/>
+				<exclude name="classes/**"/>
+				<exclude name="distributable*.tmp/**"/>
+				<exclude name="docs/**"/>
+				<exclude name="ffm/**"/>
+				<exclude name="logs/**"/>
+				<exclude name="**/programd-*.jar"/>
+				<exclude name="programd-*.zip"/>
+				<exclude name="programd-*.tar.bz2"/>
+				<exclude name="secret.key"/>
+			</fileset>
+		</copy>
 		<zip destfile="${distributable.src.zip}">
-			<zipfileset dir="${distributable.src.dir}"
-				prefix="ProgramD/"/>
+			<zipfileset dir="${distributable.src.dir}" prefix="ProgramD/"/>
 		</zip>
-		<tar destfile="${distributable.src.tar.bz2}"
-			compression="bzip2">
-			<tarfileset dir="${distributable.src.dir}"
-				prefix="ProgramD/"/>
+		<tar destfile="${distributable.src.tar.bz2}" compression="bzip2">
+			<tarfileset dir="${distributable.src.dir}" prefix="ProgramD/"/>
 		</tar>
 		<!--The binary distributables.-->
-    	<delete dir="${distributable.bin.dir}"/>
-    	<copy todir="${distributable.bin.dir}">
-    		<fileset dir="${base.dir}">
-    			<exclude name="aiml/**"/>
-    			<exclude name="build.tmp/**"/>
-    			<exclude name="classes/**"/>
-    			<exclude name="distributable*.tmp/**"/>
-    			<exclude name="docs/**"/>
-    			<exclude name="ffm/**"/>
-    			<exclude name="logs/**"/>
-    			<exclude name="programd-*.zip"/>
-    			<exclude name="programd-*.tar.bz2"/>
-    			<exclude name="src/**"/>
-    			<exclude name=".classpath"/>
-    			<exclude name=".project"/>
-    			<exclude name="build.xml"/>
-    			<exclude name="secret.key"/>
-    		</fileset>
-    	</copy>
+		<delete dir="${distributable.bin.dir}"/>
+		<copy todir="${distributable.bin.dir}">
+			<fileset dir="${base.dir}">
+				<exclude name="aiml/**"/>
+				<exclude name="build.tmp/**"/>
+				<exclude name="classes/**"/>
+				<exclude name="distributable*.tmp/**"/>
+				<exclude name="docs/**"/>
+				<exclude name="ffm/**"/>
+				<exclude name="logs/**"/>
+				<exclude name="programd-*.zip"/>
+				<exclude name="programd-*.tar.bz2"/>
+				<exclude name="src/**"/>
+				<exclude name=".classpath"/>
+				<exclude name=".project"/>
+				<exclude name="build.xml"/>
+				<exclude name="secret.key"/>
+			</fileset>
+		</copy>
 		<zip destfile="${distributable.bin.zip}">
-			<zipfileset dir="${distributable.bin.dir}"
-				prefix="ProgramD/"/>
+			<zipfileset dir="${distributable.bin.dir}" prefix="ProgramD/"/>
 		</zip>
-		<tar destfile="${distributable.bin.tar.bz2}"
-			compression="bzip2">
-			<tarfileset dir="${distributable.bin.dir}"
-				prefix="ProgramD/"/>
+		<tar destfile="${distributable.bin.tar.bz2}" compression="bzip2">
+			<tarfileset dir="${distributable.bin.dir}" prefix="ProgramD/"/>
 		</tar>
 	</target>
-    
-    <target name="distclean" depends="clean">
-        <deltree dir="${dist.root}"/>
-        <delete file="${Name}-${version}.tar.gz"/>
-        <delete file="${Name}-${version}.tar"/>
-        <delete file="${Name}-${version}.zip"/>
-    </target>
-    
+	
+	<target name="distclean" depends="clean">
+		<deltree dir="${dist.root}"/>
+		<delete file="${Name}-${version}.tar.gz"/>
+		<delete file="${Name}-${version}.tar"/>
+		<delete file="${Name}-${version}.zip"/>
+	</target>
+	
 </project>
-
