@@ -155,10 +155,22 @@
 	</target>
 	
 	<target name="distclean" depends="clean">
-		<deltree dir="${dist.root}"/>
-		<delete file="${Name}-${version}.tar.gz"/>
-		<delete file="${Name}-${version}.tar"/>
-		<delete file="${Name}-${version}.zip"/>
+		<delete dir="${dist.root}"/>
+		<delete dir="${build.dir}"/>
+		<delete dir="${javadoc.dir}"/>
+		
+		<delete file="${main.jar}"/>
+		<delete file="${listeners.jar}"/>
+		<delete file="${jetty.jar}"/>
+		<delete file="${rhino.jar}"/>
+		
+		<delete dir="${distributable.src.dir}"/>
+		<delete dir="${distributable.bin.dir}"/>
+		
+		<delete file="${distributable.src.zip}"/>
+		<delete file="${distributable.bin.zip}"/>
+		<delete file="${distributable.src.tar.bz2}"/>
+		<delete file="${distributable.bin.tar.bz2}"/>
 	</target>
 	
 </project>
