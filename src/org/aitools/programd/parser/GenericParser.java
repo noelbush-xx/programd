@@ -14,6 +14,8 @@ import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -242,7 +244,9 @@ abstract public class GenericParser<P extends Processor>
             }
             catch (NotARegisteredClassException e)
             {
-                handleUnknownElement(element, e);
+                // Ignore (pass through) the unknown tag, just noting this fact.
+                Logger.getLogger("programd").log(Level.WARNING, "Ignoring unknown element \"" + element.getTagName() + "\".");
+                return XMLKit.filterWhitespace(evaluate(element.getChildNodes()));
             }
 
             // Create a new instance of the processor.
@@ -288,13 +292,7 @@ abstract public class GenericParser<P extends Processor>
                 }
             }
 
-            // Return the results of processing the tag.
-            if (processor != null)
-            {
-                return XMLKit.filterWhitespace(processor.process(element, this));
-            }
-            // or ignore the unknown tag.
-            return XMLKit.filterWhitespace(evaluate(element.getChildNodes()));
+            return XMLKit.filterWhitespace(processor.process(element, this));
         }
         // otherwise (if this element is from a different namespace)
         if (element.getChildNodes().getLength() == 0)
