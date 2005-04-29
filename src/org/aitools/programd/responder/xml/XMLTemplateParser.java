@@ -16,10 +16,12 @@ import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.GenericParser;
+import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.responder.AbstractXMLResponder;
 import org.aitools.programd.responder.xml.XMLTemplateProcessor;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.NotARegisteredClassException;
+import org.aitools.programd.util.UserError;
 
 /**
  * <code>XMLTemplateParser</code> processes an HTML template, such as used by
@@ -72,14 +74,23 @@ public class XMLTemplateParser extends GenericParser<XMLTemplateProcessor>
     }
 
     /**
-     * Ignores the unknown element and prints a warning message.
+     * Ignores the unknown element, processes children, and prints a warning message.
      * 
      * @param element the unknown element
      * @param e will be ignored
+     * @return the result of processing the children
      * @see GenericParser#handleUnknownElement
      */
-    protected void handleUnknownElement(Element element, NotARegisteredClassException e)
+    protected String handleUnknownElement(Element element, NotARegisteredClassException e)
     {
         logger.log(Level.WARNING, "Ignoring unknown element \"" + element.getTagName() + "\".");
+        try
+        {
+            return evaluate(element.getChildNodes());
+        }
+        catch (ProcessorException e0)
+        {
+            throw new UserError("Could not process contents of unknown element \"" + element.getTagName() + "\".", e);
+        }
     }
 }
