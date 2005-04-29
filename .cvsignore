@@ -2,13 +2,12 @@ aiml
 classes
 docs
 ffm
-logs/*
+logs
 .classpath
 secret.key
 logs
 *~
 build.tmp
-docs
 distributable.bin.tmp
 distributable.src.tmp
 *.bz2
