@@ -27,7 +27,7 @@ public class FlashResponderManager extends AbstractXMLResponderManager implement
     private FlashResponderSettings settings;
 
     /** A filename filter for finding html templates. */
-    private final static SuffixFilenameFilter FILENAME_FILTER = new SuffixFilenameFilter(new String[] { ".flash", ".data" });
+    private final static SuffixFilenameFilter FILENAME_FILTER = new SuffixFilenameFilter(new String[] { ".flash", ".data", ".xml" });
 
     // Convenience constants.
 
