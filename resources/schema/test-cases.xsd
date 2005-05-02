@@ -21,27 +21,27 @@
                                 </xs:annotation>
                             </xs:element>
                             <xs:choice maxOccurs="unbounded">
-                                <xs:element name="AlertKeywords" type="xs:string">
+                                <xs:element name="AlertKeywords" type="Checker">
                                     <xs:annotation>
                                         <xs:documentation>An AlertKeywords checker alerts us if a
                                             response does *not* contain any of the comma-separated
                                             keywords.</xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
-                                <xs:element name="ExpectedAnswer" type="xs:string">
+                                <xs:element name="ExpectedAnswer" type="Checker">
                                     <xs:annotation>
                                         <xs:documentation>An ExpectedAnswer checker tells us if a
                                             response matches an expected answer.</xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
-                                <xs:element name="ExpectedKeywords" type="xs:string">
+                                <xs:element name="ExpectedKeywords" type="Checker">
                                     <xs:annotation>
                                         <xs:documentation>An ExpectedKeywords checker tells us if a
                                             response *does* contain one or more of the comma-separated
                                             keywords.</xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
-                                <xs:element name="Length" type="xs:string">
+                                <xs:element name="Length" type="Checker">
                                     <xs:annotation>
                                         <xs:documentation>A Length checker tells us if a response is
                                             exactly the specified length.</xs:documentation>
@@ -66,4 +66,13 @@
             </xs:attribute>
         </xs:complexType>
     </xs:element>
+    <xs:complexType name="Checker" mixed="true">
+        <xs:annotation>
+            <xs:documentation>A Checker can contain text, or any elements from any namespace.  So
+                basically anything.  :-)</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##any" processContents="lax"/>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>
