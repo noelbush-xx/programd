@@ -195,7 +195,7 @@ public class Tester
                 }
                 catch (SAXException e)
                 {
-                    throw new DeveloperError("SAX exception trying to parse test suite file.", e);
+                    throw new UserError("SAX exception trying to parse test suite file: " + e.getMessage(), e);
                 }
             }
         }
