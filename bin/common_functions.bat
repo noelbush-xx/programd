@@ -95,7 +95,7 @@ rem Sets up some variables used to run/build Program D.
   :check_other_programd_jars
   rem Define the other programd jars, but don't worry if they don't exist.
   set PROGRAMD_JETTY_LIB=%LIBS%\programd-jetty.jar
-  set PROGRAMD_JS_LIB=%LIBS%\programd-js.jar
+  set PROGRAMD_JS_LIB=%LIBS%\programd-rhino.jar
   
   rem Set up external jars.
   call %0 setup_other_libs
