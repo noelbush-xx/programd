@@ -223,13 +223,13 @@ public class ServletRequestTransactionEnvelope
         {
             this.serviceOutputStream.write(this.botResponse.getBytes(this.responseEncoding));
         }
-        catch (UnsupportedEncodingException e0)
+        catch (UnsupportedEncodingException e)
         {
-            throw new UserError("UTF-8 encoding is not supported on your platform!", e0);
+            throw new UserError("UTF-8 encoding is not supported on your platform!", e);
         }
-        catch (IOException e1)
+        catch (IOException e)
         {
-            throw new DeveloperError("Error writing to service output stream.", e1);
+            throw new DeveloperError("Error writing to service output stream.", e);
         }
         try
         {

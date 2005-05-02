@@ -88,9 +88,9 @@ public class XMLTemplateParser extends GenericParser<XMLTemplateProcessor>
         {
             return evaluate(element.getChildNodes());
         }
-        catch (ProcessorException e0)
+        catch (ProcessorException ee)
         {
-            throw new UserError("Could not process contents of unknown element \"" + element.getTagName() + "\".", e);
+            throw new UserError("Could not process contents of unknown element \"" + element.getTagName() + "\".", ee);
         }
     }
 }
