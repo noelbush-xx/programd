@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--Substitutions are grouped according to several AIML interpreter functions.-->
-<substitutions xmlns="http://aitools.org/programd/4.1.5/bot-configuration"
+<substitutions xmlns="http://aitools.org/programd/4.5/bot-configuration"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://aitools.org/programd/4.1.5/bot-configuration http://aitools.org/programd/4.1.5/bot-configuration.xsd">
+    xsi:schemaLocation="http://aitools.org/programd/4.5/bot-configuration http://aitools.org/programd/4.5/bot-configuration.xsd">
     <!--Input substitutions correct spelling mistakes and convert
         "sentence"-ending characters into characters that will not be
         identified as sentence enders.-->
