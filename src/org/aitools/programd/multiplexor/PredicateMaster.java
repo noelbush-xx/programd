@@ -209,14 +209,14 @@ public class PredicateMaster
         {
             value = userPredicates.get(name);
         }
-        catch (NoSuchPredicateException e0)
+        catch (NoSuchPredicateException e)
         {
             String loadedValue;
             try
             {
                 loadedValue = this.multiplexor.loadPredicate(name, userid, botid);
             }
-            catch (NoSuchPredicateException e1)
+            catch (NoSuchPredicateException ee)
             {
                 // If not found, set and cache the best available default.
                 loadedValue = bestAvailableDefault(name, botid);
@@ -266,14 +266,14 @@ public class PredicateMaster
         {
             value = getMultivaluedPredicateValue(name, userPredicates);
         }
-        catch (NoSuchPredicateException e0)
+        catch (NoSuchPredicateException e)
         {
             // No values cached; try loading.
             try
             {
                 value = loadMultivaluedPredicateValue(name, userPredicates, userid, botid);
             }
-            catch (NoSuchPredicateException e1)
+            catch (NoSuchPredicateException ee)
             {
                 // Still no list, so set and cache default.
                 result = bestAvailableDefault(name, botid);
@@ -360,7 +360,7 @@ public class PredicateMaster
         {
             loadedValue = this.multiplexor.loadPredicate(name + '.' + index, userid, botid);
         }
-        catch (NoSuchPredicateException e0)
+        catch (NoSuchPredicateException e)
         {
             throw new NoSuchPredicateException(name);
         }
@@ -381,7 +381,7 @@ public class PredicateMaster
                 value.add(this.multiplexor.loadPredicate(name + '.' + index, userid, botid));
             }
         }
-        catch (NoSuchPredicateException e1)
+        catch (NoSuchPredicateException e)
         {
             // Do nothing if the exception is thrown; that's fine (there is at
             // least one).
@@ -410,14 +410,14 @@ public class PredicateMaster
         {
             value = getMultivaluedPredicateValue(name, userPredicates);
         }
-        catch (NoSuchPredicateException e0)
+        catch (NoSuchPredicateException e)
         {
             // No list found in cache; try load.
             try
             {
                 value = loadMultivaluedPredicateValue(name, userPredicates, userid, botid);
             }
-            catch (NoSuchPredicateException e1)
+            catch (NoSuchPredicateException ee)
             {
                 // Still no list, so create new one.
                 value = new PredicateValue(this.predicateEmptyDefault).becomeMultiValued();
@@ -540,12 +540,16 @@ public class PredicateMaster
                                 for (int index = valueCount; --index > 0;)
                                 {
                                     // Do not save default values.
+                                    /*
+                                     * This check has been disabled, per bug report from
+                                     * Albertas Mickensas, pending further investigation.
+                                     */
                                     String aValue = value.get(index);
-                                    if (!aValue.equals(bestAvailableDefault(name, botid)))
-                                    {
+                                    //if (!aValue.equals(bestAvailableDefault(name, botid)))
+                                    //{
                                         this.multiplexor.savePredicate(name + '.' + index, aValue, userid, botid);
                                         saveCount++;
-                                    }
+                                    //}
                                 }
                             }
                         }
