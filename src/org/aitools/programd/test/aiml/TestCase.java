@@ -46,10 +46,12 @@ public class TestCase
     /**
      * Creates a new TestCase with the given input.
      * 
+     * @param nameToUse the name of this test case
      * @param inputToUse the input that this test case should send
      */
-    public TestCase(String inputToUse)
+    public TestCase(String nameToUse, String inputToUse)
     {
+        this.name = nameToUse;
         this.input = inputToUse;
     }
 

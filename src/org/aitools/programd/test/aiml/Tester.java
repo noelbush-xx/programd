@@ -228,7 +228,7 @@ public class Tester
             Element testCaseElement = (Element) testCases.item(index);
             Element input = (Element) testCaseElement.getElementsByTagName(TestCase.TAG_INPUT)
                     .item(0);
-            TestCase testCase = new TestCase(input.getTextContent());
+            TestCase testCase = new TestCase(testCaseElement.getAttribute("name"), input.getTextContent());
             suite.addTestCase(testCase);
 
             NodeList children = testCaseElement.getChildNodes();
