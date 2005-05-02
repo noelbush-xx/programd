@@ -49,7 +49,11 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.aitools.programd.Core;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.interfaces.Console;
-import org.aitools.programd.interfaces.Shell;
+import org.aitools.programd.interfaces.shell.BotListCommand;
+import org.aitools.programd.interfaces.shell.HelpCommand;
+import org.aitools.programd.interfaces.shell.ListBotFilesCommand;
+import org.aitools.programd.interfaces.shell.NoSuchCommandException;
+import org.aitools.programd.interfaces.shell.Shell;
 import org.aitools.programd.util.DeveloperError;
 
 /**
@@ -273,7 +277,14 @@ public class GUIConsole extends JPanel
         {
             public void actionPerformed()
             {
-                GUIConsole.this.shell.listBotFiles();
+                try
+                {
+                    GUIConsole.this.shell.processCommandLine(ListBotFilesCommand.COMMAND_STRING);
+                }
+                catch (NoSuchCommandException e)
+                {
+                    throw new DeveloperError("GUIConsole sent an invalid command string to the shell!", e);
+                }
             }
         });
 
@@ -284,7 +295,14 @@ public class GUIConsole extends JPanel
         {
             public void actionPerformed()
             {
-                GUIConsole.this.shell.showBotList();
+                try
+                {
+                    GUIConsole.this.shell.processCommandLine(BotListCommand.COMMAND_STRING);
+                }
+                catch (NoSuchCommandException e)
+                {
+                    throw new DeveloperError("GUIConsole sent an invalid command string to the shell!", e);
+                }
             }
         });
 
@@ -307,7 +325,14 @@ public class GUIConsole extends JPanel
         {
             public void actionPerformed()
             {
-                GUIConsole.this.shell.help();
+                try
+                {
+                    GUIConsole.this.shell.processCommandLine(HelpCommand.COMMAND_STRING);
+                }
+                catch (NoSuchCommandException e)
+                {
+                    throw new DeveloperError("GUIConsole sent an invalid command string to the shell!", e);
+                }
             }
         });
         JMenuItem about = new JMenuItem("About Simple GUI Console...");
