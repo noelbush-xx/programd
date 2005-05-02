@@ -31,6 +31,17 @@
             </Arg>
         </Call>
     </Call>
+    <Call name="addContext">
+        <Arg>/flash/</Arg>
+        <Set name="ResourceBase">./templates/flash/docroot/</Set>
+        <Call name="addHandler">
+            <Arg>
+                <New class="org.mortbay.http.handler.ResourceHandler">
+                    <Set name="DirAllowed">FALSE</Set>
+                </New>
+            </Arg>
+        </Call>
+    </Call>
 </Configure>
 
 
