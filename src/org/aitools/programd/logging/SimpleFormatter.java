@@ -14,8 +14,6 @@ import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
-import org.aitools.programd.CoreSettings;
-
 //
 /**
  * Our own version of the SimpleFormatter, which has the appearance we like for
@@ -37,14 +35,13 @@ public class SimpleFormatter extends Formatter
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     /**
-     * Creates a new SimpleFormatter with the given Core settings.
+     * Creates a new SimpleFormatter.
      * 
-     * @param coreSettings the settings of the Core to consult
+     * @param timestampFormatString the timestamp format
      */
-    public SimpleFormatter(CoreSettings coreSettings)
+    public SimpleFormatter(String timestampFormatString)
     {
         super();
-        String timestampFormatString = coreSettings.getLogTimestampFormat();
         if (timestampFormatString.length() > 0)
         {
             this.timestampFormat = new SimpleDateFormat(timestampFormatString);
