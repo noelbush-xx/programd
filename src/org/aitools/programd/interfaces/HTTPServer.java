@@ -9,8 +9,6 @@
 
 package org.aitools.programd.interfaces;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
@@ -19,6 +17,7 @@ import java.util.logging.Logger;
 import org.aitools.programd.Core;
 import org.aitools.programd.server.ProgramDCompatibleHttpServer;
 import org.aitools.programd.server.ServletRequestResponderManagerRegistry;
+import org.aitools.programd.util.ClassUtils;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.ManagedProcess;
 import org.aitools.programd.util.UnspecifiedParameterError;
@@ -66,18 +65,18 @@ public class HTTPServer implements ManagedProcess
      */
     public void run()
     {
-        String className = this.settings.getClassname();
+        String classname = this.settings.getClassname();
 
         // Fail if http server class name is not specified.
-        if (className == null)
+        if (classname == null)
         {
             throw new UserError(new UnspecifiedParameterError("httpserver-classname"));
         }
 
-        this.logger.log(Level.INFO, "Starting web server " + className + ".");
+        this.logger.log(Level.INFO, "Starting web server " + classname + ".");
 
         // Start the http server.
-        startHttpServer(className, this.settings.getConfig());
+        startHttpServer(classname, this.settings.getConfig());
 
         // Figure out what the full server address is.
         InetAddress localhost;
@@ -99,65 +98,18 @@ public class HTTPServer implements ManagedProcess
      * Tries to instantiate an http server of unpredetermined type (although it
      * must extend the ProgramDCompatibleHttpServer class).
      * 
-     * @param className the classname of the http server to instantiate
+     * @param classname the classname of the http server to instantiate
      * @param configParameters the parameters need to configure the http server
      */
-    private void startHttpServer(String className, Object... configParameters)
+    private void startHttpServer(String classname, Object... configParameters)
     {
-        // First, see if the http server class can be found.
-        Class< ? extends ProgramDCompatibleHttpServer> serverClass;
-        try
-        {
-            serverClass = (Class< ? extends ProgramDCompatibleHttpServer>) Class.forName(className);
-        }
-        catch (ClassNotFoundException e)
-        {
-            throw new UserError("Could not find http server \"" + className + "\".", e);
-        }
-        catch (ClassCastException e)
-        {
-            throw new UserError("\"" + className + "\" is not a subclass of ProgramDCompatibleHttpServer.", e);
-        }
-
-        // Get the constructor that takes a Core, a
-        // ServletRequestResponderManagerRegistry, and a HTTPServerSettings as
-        // arguments.
-        Constructor< ? extends ProgramDCompatibleHttpServer> constructor;
-        try
-        {
-            constructor = serverClass.getDeclaredConstructor(Core.class, ServletRequestResponderManagerRegistry.class, HTTPServerSettings.class);
-        }
-        catch (NoSuchMethodException e)
-        {
-            throw new DeveloperError("Requested constructor not found for web server class.", e);
-        }
-
         /*
          * Any http server must implement ProgramDCompatibleHttpServer. The
          * interface itself is very trivial, and is just a way for us to isolate
          * dependencies on particular http servers (non-GPL) to a single wrapper
          * class.
          */
-        try
-        {
-            this.server = constructor.newInstance(this.core, this.servletRequestResponderRegistry, this.settings);
-        }
-        catch (InstantiationException e)
-        {
-            throw new UserError("Couldn't instantiate http server \"" + className + "\".", e);
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new DeveloperError("The constructor for \"" + className + "\" or the class itself is not available.", e);
-        }
-        catch (ClassCastException e)
-        {
-            throw new DeveloperError("\"" + className + "\" is not an implementation ofProgramDCompatibleHttpServer.", e);
-        }
-        catch (InvocationTargetException e)
-        {
-            throw new DeveloperError("The web server constructor threw an exception.", e);
-        }
+        this.server = ClassUtils.getSubclassInstance(classname, "http server", this.core, this.servletRequestResponderRegistry, this.settings);
 
         /*
          * If the server config parameter was defined, and if the http server is
