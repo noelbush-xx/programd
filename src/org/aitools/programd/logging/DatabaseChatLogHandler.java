@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import org.aitools.programd.CoreSettings;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.UserError;
+import org.aitools.programd.util.XMLKit;
 import org.aitools.programd.util.sql.DbAccess;
 import org.aitools.programd.util.sql.DbAccessRefsPoolMgr;
 
@@ -92,7 +93,7 @@ public class DatabaseChatLogHandler extends Handler
         {
             dbaRef.executeQuery("insert into chatlog (userid, botid, input, response) values ('" + URLEncoder.encode(record.getUserID(), ENC_UTF8)
                     + "', '" + URLEncoder.encode(record.getBotID(), ENC_UTF8) + "', '" + URLEncoder.encode(record.getInput(), ENC_UTF8) + "', '"
-                    + URLEncoder.encode(record.getReply(), ENC_UTF8) + "')");
+                    + URLEncoder.encode(XMLKit.removeMarkup(record.getReply()), ENC_UTF8) + "')");
         }
         catch (UnsupportedEncodingException e)
         {
