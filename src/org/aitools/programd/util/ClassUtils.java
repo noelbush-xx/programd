@@ -26,11 +26,12 @@ public class ClassUtils
      * instantiated using a constructor that takes the arguments given.
      * @param classname the classname to instantiate
      * @param <T> the class of which the instantiated class must be a subclass
+     * @param baseType the base class type
      * @param description a short (one word or so) description of the desired class
      * @param constructorArgs the arguments to the constructor (actual arguments, not types)
      * @return the desired class
      */
-    public static <T> T getSubclassInstance(String classname, String description, Object ... constructorArgs)
+    public static <T> T getSubclassInstance(Class<T> baseType, String classname, String description, Object ... constructorArgs)
     {
         // Get the subclass.
         Class<? extends T> subclass = null;

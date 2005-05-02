@@ -18,6 +18,9 @@ import java.util.Hashtable;
  */
 abstract public class ObjectExemplarRegistry<B>
  {
+    /** The type of B (why, oh why, should I have to do this? */
+    private Class<B> type;
+    
     /** The Hashtable that stores the objects. */
     protected Hashtable<String, B> registry;
 
@@ -25,10 +28,13 @@ abstract public class ObjectExemplarRegistry<B>
      * Loads the registry with a set of exemplar objects.
      * 
      * @param classnames the classnames for which to register exemplar objects
+     * @param objectType the type of B (seems stupid to have to pass this in, but necessary to avoid some compiler errors)
      * @param constructorArguments the arguments for B's constructor
      */
-    public ObjectExemplarRegistry(String[] classnames, Object... constructorArguments)
+    public ObjectExemplarRegistry(String[] classnames, Class<B> objectType, Object... constructorArguments)
     {
+        this.type = objectType;
+        
         // Initialize the backing Hashtable.
         this.registry = new Hashtable<String, B>(classnames.length);
 
@@ -48,7 +54,7 @@ abstract public class ObjectExemplarRegistry<B>
     public void register(String classname, Object ... constructorArguments)
     {
         // Create an instance of the class.
-        B exemplar = ClassUtils.getSubclassInstance(classname, classname, constructorArguments);
+        B exemplar = ClassUtils.getSubclassInstance(this.type, classname, classname, constructorArguments);
 
         // Register an instance of the class.
         this.registry.put(classname, exemplar);
