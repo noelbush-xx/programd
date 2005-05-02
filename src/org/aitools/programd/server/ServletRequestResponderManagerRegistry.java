@@ -40,7 +40,7 @@ public class ServletRequestResponderManagerRegistry extends ObjectExemplarRegist
      */
     public ServletRequestResponderManagerRegistry(Core core)
     {
-        super(MANAGER_LIST, core);
+        super(MANAGER_LIST, ServletRequestResponderManager.class, core);
     }
 
     /**

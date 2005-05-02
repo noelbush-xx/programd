@@ -38,7 +38,7 @@ public class ShellCommandRegistry extends ObjectExemplarRegistry<ShellCommand>
      */
     public ShellCommandRegistry()
     {
-        super(COMMAND_LIST);
+        super(COMMAND_LIST, ShellCommand.class);
     }
 
     /**

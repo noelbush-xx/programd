@@ -100,7 +100,7 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
 
         // Instantiate a new listener for the bot.
         String classname = element.getAttribute(CLASS);
-        Listener listener = ClassUtils.getSubclassInstance(classname, "listener", this.core, bot, parameters);
+        Listener listener = ClassUtils.getSubclassInstance(Listener.class, classname, "listener", this.core, bot, parameters);
         
         // Check listener parameters.
         try

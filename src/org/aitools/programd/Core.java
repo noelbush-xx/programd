@@ -194,7 +194,7 @@ public class Core extends Thread
         this.processes = new ManagedProcesses(this);
 
         // Get an instance of the settings-specified Multiplexor.
-        this.multiplexor = ClassUtils.getSubclassInstance(this.settings.getMultiplexorClassname(),
+        this.multiplexor = ClassUtils.getSubclassInstance(Multiplexor.class, this.settings.getMultiplexorClassname(),
                 "Multiplexor", this);
 
         // Initialize the PredicateMaster and attach it to the Multiplexor.

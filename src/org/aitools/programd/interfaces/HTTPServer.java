@@ -109,7 +109,7 @@ public class HTTPServer implements ManagedProcess
          * dependencies on particular http servers (non-GPL) to a single wrapper
          * class.
          */
-        this.server = ClassUtils.getSubclassInstance(classname, "http server", this.core, this.servletRequestResponderRegistry, this.settings);
+        this.server = ClassUtils.getSubclassInstance(ProgramDCompatibleHttpServer.class, classname, "http server", this.core, this.servletRequestResponderRegistry, this.settings);
 
         /*
          * If the server config parameter was defined, and if the http server is
