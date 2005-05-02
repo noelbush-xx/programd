@@ -78,9 +78,6 @@ public class ICQListener extends Listener
     /** ? */
     private int clientport;
 
-    /** The label (as required by the registration scheme). */
-    public static final String label = "ProgramD-ICQ";
-
     /** ? */
     private static final String MSG = "ProgramD-ICQ: ";
 

@@ -11,7 +11,7 @@ import java.util.logging.Level;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
-import org.aitools.programd.interfaces.ShellCommandable;
+import org.aitools.programd.interfaces.shell.ShellCommandable;
 import org.aitools.programd.responder.TextResponder;
 import org.aitools.programd.util.XMLKit;
 
@@ -92,9 +92,6 @@ public class IRCListener extends Listener implements ShellCommandable
     /** Please document. */
     private static final String MSG = "ProgramD-IRC: ";
 
-    /** The label (as required by the registration scheme). */
-    public static final String label = "ProgramD-IRC";
-
     /**
      * Creates a new IRCListener chat listener for a given bot.
      * 
@@ -164,7 +161,7 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     * @see org.aitools.programd.interfaces.ShellCommandable#getShellID()
+     * @see org.aitools.programd.interfaces.shell.ShellCommandable#getShellID()
      */
     public String getShellID()
     {
@@ -172,7 +169,7 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     * @see org.aitools.programd.interfaces.ShellCommandable#getShellDescription()
+     * @see org.aitools.programd.interfaces.shell.ShellCommandable#getShellDescription()
      */
     public String getShellDescription()
     {
@@ -180,7 +177,7 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     * @see org.aitools.programd.interfaces.ShellCommandable#getShellCommands()
+     * @see org.aitools.programd.interfaces.shell.ShellCommandable#getShellCommands()
      */
     public String getShellCommands()
     {
@@ -188,7 +185,7 @@ public class IRCListener extends Listener implements ShellCommandable
     }
 
     /**
-     * @see org.aitools.programd.interfaces.ShellCommandable#processShellCommand(java.lang.String)
+     * @see org.aitools.programd.interfaces.shell.ShellCommandable#processShellCommand(java.lang.String)
      */
     public void processShellCommand(String command)
     {
@@ -235,12 +232,12 @@ public class IRCListener extends Listener implements ShellCommandable
                 logMessage("Connected to " + this.host + ":" + this.port);
 
             }
-            catch (UnknownHostException e0)
+            catch (UnknownHostException e)
             {
                 logMessage("Cannot connect; unknown server.");
                 this.clientStatus = NOTCONNECTED;
             }
-            catch (IOException e1)
+            catch (IOException e)
             {
                 logMessage("Cannot connect; the server is down or not responding.");
                 this.clientStatus = NOTCONNECTED;
@@ -254,7 +251,7 @@ public class IRCListener extends Listener implements ShellCommandable
                     this.writer = new PrintWriter(this.socket.getOutputStream(), true);
                     this.clientStatus = CONNECTED;
                 }
-                catch (IOException e0)
+                catch (IOException ee)
                 {
                     logMessage("Cannot connect: I/O error.");
                     this.clientStatus = DISCONNECTING;
@@ -263,7 +260,7 @@ public class IRCListener extends Listener implements ShellCommandable
                     {
                         this.socket.close();
                     }
-                    catch (IOException e1)
+                    catch (IOException eee)
                     {
                         // !
                     }

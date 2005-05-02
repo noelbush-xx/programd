@@ -209,9 +209,6 @@ public class AIMListener extends Listener
     /** &quot;\&quot;\0&quot; */
     private static final String QUOTE_NULL = "\"\0";
 
-    /** The label (as required by the registration scheme). */
-    public static final String label = "ProgramD-AIM";
-
     /**
      * Constructs a new <code>AIMListener</code> listener and sets up
      * parameters.
@@ -224,11 +221,6 @@ public class AIMListener extends Listener
     public AIMListener(Core coreToUse, Bot botToListenFor, Map<String, String> parametersToUse)
     {
         super(coreToUse, botToListenFor, parametersToUse);
-        /*
-         * new String[][] { { "owner", "" }, { "screenname", "" }, { "password", "" }, {
-         * "bgcolor", "White" }, { "fontface", "Verdana,Arial" }, { "fontsize",
-         * "2" }, { "fontcolor", "Black" }, { "buddies", "" } });
-         */
         // Get parameters.
         this.owner = this.parameters.get("owner");
         this.screenname = this.parameters.get("screenname");
