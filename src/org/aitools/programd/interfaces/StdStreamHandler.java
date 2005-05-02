@@ -14,6 +14,8 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.StreamHandler;
 
+import org.aitools.programd.interfaces.shell.Shell;
+
 /**
  * A <code>StdStreamHandler</code> publishes any record it's passed to the
  * given <code>stream</code>, except those messages which are discarded by

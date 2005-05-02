@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
+import org.aitools.programd.interfaces.shell.Shell;
 
 /**
  * Creating a Console essentially means that loggers (as configured) will (may)
