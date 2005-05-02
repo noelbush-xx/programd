@@ -9,14 +9,10 @@
 
 package org.aitools.programd;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
-import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,14 +21,14 @@ import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.interpreter.Interpreter;
 import org.aitools.programd.loader.AIMLWatcher;
-import org.aitools.programd.logging.ChatLogRecord;
-import org.aitools.programd.logging.SimpleFormatter;
+import org.aitools.programd.logging.LogUtils;
 import org.aitools.programd.multiplexor.Multiplexor;
 import org.aitools.programd.multiplexor.PredicateMaster;
 import org.aitools.programd.processor.aiml.AIMLProcessorRegistry;
 import org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessorRegistry;
 import org.aitools.programd.responder.Responder;
 import org.aitools.programd.responder.TextResponder;
+import org.aitools.programd.util.ClassUtils;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.Heart;
@@ -40,6 +36,9 @@ import org.aitools.programd.util.ManagedProcesses;
 import org.aitools.programd.util.UnspecifiedParameterError;
 import org.aitools.programd.util.URITools;
 import org.aitools.programd.util.UserError;
+import org.aitools.programd.util.XMLKit;
+import org.xml.sax.SAXException;
+import org.w3c.dom.Document;
 
 /**
  * The "core" of Program D, independent of any interfaces.
@@ -52,16 +51,22 @@ public class Core extends Thread
 
     /** Copyright notice. */
     public static final String[] COPYLEFT = { "Program D",
-                                              "This program is free software; you can redistribute it and/or",
-                                              "modify it under the terms of the GNU General Public License",
-                                              "as published by the Free Software Foundation; either version 2",
-                                              "of the License, or (at your option) any later version." };
+            "This program is free software; you can redistribute it and/or",
+            "modify it under the terms of the GNU General Public License",
+            "as published by the Free Software Foundation; either version 2",
+            "of the License, or (at your option) any later version." };
 
     /** Version of this package. */
     public static final String VERSION = "4.5";
 
     /** Build identifier. */
     public static final String BUILD = "rc2";
+
+    /** The namespace URI of the bot configuration. */
+    public static final String BOT_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.5/bot-configuration";
+
+    /** The namespace URI of the plugin configuration. */
+    public static final String PLUGIN_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.5/plugins";
 
     /** The Settings. */
     protected CoreSettings settings;
@@ -102,33 +107,39 @@ public class Core extends Thread
     /** A heart. */
     private Heart heart;
 
+    /** The plugin config. */
+    private Document pluginConfig;
+
     /** The status of the Core. */
     protected Status status = Status.NOT_STARTED;
 
     /** Possible values for status. */
     public static enum Status
     {
-    /** The Core has not yet started. */
-    NOT_STARTED,
+        /** The Core has not yet started. */
+        NOT_STARTED,
 
-    /** The Core has been properly intialized (internal, by constructor). */
-    INITIALIZED,
+        /** The Core has been properly intialized (internal, by constructor). */
+        INITIALIZED,
 
-    /** The Core has been properly set up (external, by user). */
-    SET_UP,
+        /** The Core has been properly set up (external, by user). */
+        SET_UP,
 
-    /** The Core is running. */
-    RUNNING,
+        /** The Core is running. */
+        RUNNING,
 
-    /** The Core has shut down. */
-    SHUT_DOWN,
-    
-    /** The Core has crashed. */
-    CRASHED
+        /** The Core has shut down. */
+        SHUT_DOWN,
+
+        /** The Core has crashed. */
+        CRASHED
     }
 
     // Convenience constants.
     private static final String EMPTY_STRING = "";
+
+    /** The location of the plugin configuration schema. */
+    private static final String PLUGIN_CONFIG_SCHEMA = "./resources/schema/plugins.xsd";
 
     /**
      * Initializes a new Core object with the properties from the given file.
@@ -139,7 +150,8 @@ public class Core extends Thread
     {
         super("Core");
         this.settings = new CoreSettings(propertiesPath);
-        FileManager.setRootPath(URITools.contextualize(URITools.createValidURL(propertiesPath), this.settings.getRootDirectory()));
+        FileManager.setRootPath(URITools.contextualize(URITools.createValidURL(propertiesPath),
+                this.settings.getRootDirectory()));
         initialize();
     }
 
@@ -152,7 +164,8 @@ public class Core extends Thread
     {
         super("Core");
         this.settings = settingsToUse;
-        FileManager.setRootPath(URITools.contextualize(FileManager.getWorkingDirectory(), this.settings.getRootDirectory()));
+        FileManager.setRootPath(URITools.contextualize(FileManager.getWorkingDirectory(),
+                this.settings.getRootDirectory()));
         initialize();
     }
 
@@ -163,7 +176,8 @@ public class Core extends Thread
     {
         super("Core");
         this.settings = new CoreSettings();
-        FileManager.setRootPath(URITools.contextualize(FileManager.getWorkingDirectory(), this.settings.getRootDirectory()));
+        FileManager.setRootPath(URITools.contextualize(FileManager.getWorkingDirectory(),
+                this.settings.getRootDirectory()));
         initialize();
     }
 
@@ -178,58 +192,12 @@ public class Core extends Thread
         this.graphmaster = new Graphmaster(this);
         this.bots = new Bots();
         this.processes = new ManagedProcesses(this);
-        // Get the class for the settings-specified Multiplexor.
-        Class< ? extends Multiplexor> multiplexorClass = null;
-        try
-        {
-            multiplexorClass = (Class< ? extends Multiplexor>) Class.forName(this.settings.getMultiplexorClassname());
-        }
-        catch (ClassNotFoundException e)
-        {
-            throw new UserError("Specified multiplexor (\"" + this.settings.getMultiplexorClassname() + "\") could not be found.", e);
-        }
-        catch (ClassCastException e)
-        {
-            throw new UserError("\"" + this.settings.getMultiplexorClassname() + "\" is not a subclass of Multiplexor.", e);
-        }
 
-        // Get the Multiplexor constructor that takes a Core as an argument.
-        Constructor< ? extends Multiplexor> constructor = null;
-        try
-        {
-            constructor = multiplexorClass.getDeclaredConstructor(Core.class);
-        }
-        catch (NoSuchMethodException e)
-        {
-            throw new DeveloperError("Developed specified an invalid constructor for Multiplexor.", e);
-        }
-        catch (SecurityException e)
-        {
-            throw new DeveloperError("Permission denied to create new Multiplexor with specified constructor.", e);
-        }
+        // Get an instance of the settings-specified Multiplexor.
+        this.multiplexor = ClassUtils.getSubclassInstance(this.settings.getMultiplexorClassname(),
+                "Multiplexor", this);
 
-        // Get a new instance of the Multiplexor.
-        try
-        {
-            this.multiplexor = constructor.newInstance(this);
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new DeveloperError("Underlying constructor for Multiplexor is inaccessible.", e);
-        }
-        catch (InstantiationException e)
-        {
-            throw new DeveloperError("Could not instantiate Multiplexor.", e);
-        }
-        catch (IllegalArgumentException e)
-        {
-            throw new DeveloperError("Illegal argument exception when creating Multiplexor.", e);
-        }
-        catch (InvocationTargetException e)
-        {
-            throw new DeveloperError("Constructor threw an exception when getting a Multiplexor instance from it.", e);
-        }
-
+        // Initialize the PredicateMaster and attach it to the Multiplexor.
         this.predicateMaster = new PredicateMaster(this);
         this.multiplexor.attach(this.predicateMaster);
 
@@ -245,7 +213,8 @@ public class Core extends Thread
         this.logger = setupLogger("programd", this.settings.getActivityLogPattern());
         this.logger.setLevel(Level.ALL);
 
-        Logger matchingLogger = setupLogger("programd.matching", this.settings.getMatchingLogPattern());
+        Logger matchingLogger = setupLogger("programd.matching", this.settings
+                .getMatchingLogPattern());
         if (this.settings.recordMatchTrace())
         {
             matchingLogger.setLevel(Level.FINE);
@@ -260,7 +229,24 @@ public class Core extends Thread
         {
             this.hostname = "unknown-host";
         }
-        
+
+        // Load the plugin config.
+        try
+        {
+            this.pluginConfig = XMLKit.getDocumentBuilder(PLUGIN_CONFIG_SCHEMA,
+                    "plugin configuration").parse(
+                    URITools.createValidURL(this.settings.getConfLocationPlugins())
+                            .toExternalForm());
+        }
+        catch (IOException e)
+        {
+            throw new DeveloperError("IO error trying to read plugin configuration.", e);
+        }
+        catch (SAXException e)
+        {
+            throw new DeveloperError("Error trying to parse plugin configuration.", e);
+        }
+
         // Set the status indicator.
         this.status = Status.INITIALIZED;
     }
@@ -273,18 +259,33 @@ public class Core extends Thread
     {
         if (this.status != Status.INITIALIZED)
         {
-            throw new DeveloperError(new IllegalStateException("Core has not been initialized; cannot set up."));
+            throw new DeveloperError(new IllegalStateException(
+                    "Core has not been initialized; cannot set up."));
         }
         this.logger.log(Level.INFO, "Starting Program D version " + VERSION + BUILD + '.');
-        this.logger.log(Level.INFO, "Using Java VM " + System.getProperty("java.vm.version") + " from " + System.getProperty("java.vendor"));
-        this.logger.log(Level.INFO, "On " + System.getProperty("os.name") + " version " + System.getProperty("os.version") + " ("
-                + System.getProperty("os.arch") + ")");
+        this.logger.log(Level.INFO, "Using Java VM " + System.getProperty("java.vm.version")
+                + " from " + System.getProperty("java.vendor"));
+        Runtime runtime = Runtime.getRuntime();
+        this.logger.log(Level.INFO, "On " + System.getProperty("os.name") + " version "
+                + System.getProperty("os.version") + " (" + System.getProperty("os.arch")
+                + ") with " + runtime.availableProcessors() + " processor(s) available.");
+        this.logger
+                .log(
+                        Level.INFO,
+                        String
+                                .format(
+                                        "%.1f MB of memory free out of %.1f MB total in JVM.  Configured maximum: %.1f MB.",
+                                        (runtime.freeMemory() / 1048576.0),
+                                        (runtime.totalMemory() / 1048576.0),
+                                        (runtime.maxMemory() / 1048576.0)));
 
-        this.logger.log(Level.INFO, "Predicates with no values defined will return: \"" + this.settings.getPredicateEmptyDefault() + "\".");
+        this.logger.log(Level.INFO, "Predicates with no values defined will return: \""
+                + this.settings.getPredicateEmptyDefault() + "\".");
 
         try
         {
-            this.logger.log(Level.INFO, "Initializing " + this.multiplexor.getClass().getSimpleName() + ".");
+            this.logger.log(Level.INFO, "Initializing "
+                    + this.multiplexor.getClass().getSimpleName() + ".");
 
             // Initialize the Multiplexor.
             this.multiplexor.initialize();
@@ -294,7 +295,7 @@ public class Core extends Thread
             {
                 this.aimlWatcher = new AIMLWatcher(this.graphmaster);
             }
-            
+
             this.logger.log(Level.INFO, "Starting up the Graphmaster.");
 
             // Index the start time before loading.
@@ -306,7 +307,8 @@ public class Core extends Thread
             // Calculate the time used to load all categories.
             time = new Date().getTime() - time;
 
-            this.logger.log(Level.INFO, this.graphmaster.getTotalCategories() + " categories loaded in " + time / 1000.00 + " seconds.");
+            this.logger.log(Level.INFO, this.graphmaster.getTotalCategories()
+                    + " categories loaded in " + time / 1000.00 + " seconds.");
 
             // Start the AIMLWatcher if configured to do so.
             if (this.settings.useWatcher())
@@ -324,25 +326,30 @@ public class Core extends Thread
             {
                 if (this.settings.getJavascriptInterpreterClassname() == null)
                 {
-                    throw new UserError(new UnspecifiedParameterError("javascript-interpreter.classname"));
+                    throw new UserError(new UnspecifiedParameterError(
+                            "javascript-interpreter.classname"));
                 }
 
-                String javascriptInterpreterClassname = this.settings.getJavascriptInterpreterClassname();
+                String javascriptInterpreterClassname = this.settings
+                        .getJavascriptInterpreterClassname();
 
                 if (javascriptInterpreterClassname.equals(EMPTY_STRING))
                 {
-                    throw new UserError(new UnspecifiedParameterError("javascript-interpreter.classname"));
+                    throw new UserError(new UnspecifiedParameterError(
+                            "javascript-interpreter.classname"));
                 }
 
                 this.logger.log(Level.INFO, "Initializing " + javascriptInterpreterClassname + ".");
 
                 try
                 {
-                    this.interpreter = (Interpreter) Class.forName(javascriptInterpreterClassname).newInstance();
+                    this.interpreter = (Interpreter) Class.forName(javascriptInterpreterClassname)
+                            .newInstance();
                 }
                 catch (Exception e)
                 {
-                    throw new DeveloperError("Error while creating new instance of JavaScript interpreter.", e);
+                    throw new DeveloperError(
+                            "Error while creating new instance of JavaScript interpreter.", e);
                 }
             }
             else
@@ -384,7 +391,7 @@ public class Core extends Thread
             fail("unforeseen problem", e);
             return;
         }
-        
+
         // Set the status indicator.
         this.status = Status.SET_UP;
     }
@@ -397,7 +404,8 @@ public class Core extends Thread
     {
         if (this.status != Status.SET_UP)
         {
-            throw new DeveloperError(new IllegalStateException("Core has not been set up; cannot run."));
+            throw new DeveloperError(new IllegalStateException(
+                    "Core has not been set up; cannot run."));
         }
 
         this.status = Status.RUNNING;
@@ -425,9 +433,7 @@ public class Core extends Thread
      */
     public synchronized void processResponse(String input)
     {
-        String botid = this.bots.getABot().getID();
-        String response = this.multiplexor.getResponse(input, this.hostname, botid);
-        logResponse(input, response, this.hostname, botid);
+        this.multiplexor.getResponse(input, this.hostname, this.bots.getABot().getID());
     }
 
     /**
@@ -442,7 +448,6 @@ public class Core extends Thread
     public synchronized String getResponse(String input, String userid, String botid)
     {
         String response = this.multiplexor.getResponse(input, userid, botid, new TextResponder());
-        logResponse(input, response, userid, botid);
         return response;
     }
 
@@ -456,24 +461,11 @@ public class Core extends Thread
      * @param responder the Responder who cares about this response
      * @return the response
      */
-    public synchronized String getResponse(String input, String userid, String botid, Responder responder)
+    public synchronized String getResponse(String input, String userid, String botid,
+            Responder responder)
     {
         String response = this.multiplexor.getResponse(input, userid, botid, responder);
-        logResponse(input, response, userid, botid);
         return response;
-    }
-
-    /**
-     * Logs a response to the chat log.
-     * 
-     * @param input the input that produced the response
-     * @param response the response
-     * @param userid the userid for whom the response was produced
-     * @param botid the botid that produced the response
-     */
-    private void logResponse(String input, String response, String userid, String botid)
-    {
-        this.bots.getBot(botid).getLogger().log(new ChatLogRecord(botid, userid, input, response));
     }
 
     /**
@@ -530,7 +522,8 @@ public class Core extends Thread
      */
     public void fail(String description, Thread t, Throwable e)
     {
-        String throwableDescription = e.getClass().getSimpleName() + " in thread \"" + t.getName() + "\"";
+        String throwableDescription = e.getClass().getSimpleName() + " in thread \"" + t.getName()
+                + "\"";
         if (e.getMessage() != null)
         {
             throwableDescription += ": " + e.getMessage();
@@ -539,10 +532,11 @@ public class Core extends Thread
         {
             throwableDescription += ".";
         }
-        this.logger.log(Level.SEVERE, "Core is exiting abnormally due to " + description + ":\n" + throwableDescription);
+        this.logger.log(Level.SEVERE, "Core is exiting abnormally due to " + description + ":\n"
+                + throwableDescription);
 
         System.err.println();
-        
+
         if (this.settings.onUncaughtExceptionsPrintStackTrace())
         {
             if (e instanceof UserError || e instanceof DeveloperError)
@@ -567,7 +561,8 @@ public class Core extends Thread
          */
         public void uncaughtException(Thread t, Throwable e)
         {
-            System.err.println("Uncaught exception " + e.getClass().getSimpleName() + " in thread \"" + t.getName() + "\".");
+            System.err.println("Uncaught exception " + e.getClass().getSimpleName()
+                    + " in thread \"" + t.getName() + "\".");
             if (Core.this.settings.onUncaughtExceptionsPrintStackTrace())
             {
                 e.printStackTrace(System.err);
@@ -588,20 +583,7 @@ public class Core extends Thread
      */
     public Logger setupLogger(String name, String pattern)
     {
-        Logger newLogger = Logger.getLogger(name);
-        FileManager.checkOrCreateDirectory((new File(pattern)).getParent(), "log file directory");
-        FileHandler newHandler = null;
-        try
-        {
-            newHandler = new FileHandler(pattern, 1048576, 10, true);
-        }
-        catch (IOException e)
-        {
-            throw new UserError("I/O Error setting up a logger: ", e);
-        }
-        newHandler.setFormatter(new SimpleFormatter(this.settings));
-        newLogger.addHandler(newHandler);
-        return newLogger;
+        return LogUtils.setupLogger(name, pattern, this.settings.getLogTimestampFormat());
     }
 
     /*
@@ -630,7 +612,8 @@ public class Core extends Thread
         {
             return this.graphmaster;
         }
-        throw new NullPointerException("The Core's Graphmaster object has not yet been initialized!");
+        throw new NullPointerException(
+                "The Core's Graphmaster object has not yet been initialized!");
     }
 
     /**
@@ -642,7 +625,8 @@ public class Core extends Thread
         {
             return this.multiplexor;
         }
-        throw new NullPointerException("The Core's Multiplexor object has not yet been initialized!");
+        throw new NullPointerException(
+                "The Core's Multiplexor object has not yet been initialized!");
     }
 
     /**
@@ -654,7 +638,8 @@ public class Core extends Thread
         {
             return this.predicateMaster;
         }
-        throw new NullPointerException("The Core's PredicateMaster object has not yet been initialized!");
+        throw new NullPointerException(
+                "The Core's PredicateMaster object has not yet been initialized!");
     }
 
     /**
@@ -682,7 +667,8 @@ public class Core extends Thread
         {
             return this.aimlWatcher;
         }
-        throw new NullPointerException("The Core's AIMLWatcher object has not yet been initialized!");
+        throw new NullPointerException(
+                "The Core's AIMLWatcher object has not yet been initialized!");
     }
 
     /**
@@ -694,7 +680,8 @@ public class Core extends Thread
         {
             return this.settings;
         }
-        throw new NullPointerException("The Core's CoreSettings object has not yet been initialized!");
+        throw new NullPointerException(
+                "The Core's CoreSettings object has not yet been initialized!");
     }
 
     /**
@@ -706,7 +693,8 @@ public class Core extends Thread
         {
             return this.interpreter;
         }
-        throw new NullPointerException("The Core's Interpreter object has not yet been initialized!");
+        throw new NullPointerException(
+                "The Core's Interpreter object has not yet been initialized!");
     }
 
     /**
@@ -731,5 +719,13 @@ public class Core extends Thread
     public Status getStatus()
     {
         return this.status;
+    }
+
+    /**
+     * @return the plugin config
+     */
+    public Document getPluginConfig()
+    {
+        return this.pluginConfig;
     }
 }
