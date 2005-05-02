@@ -158,7 +158,7 @@ public class Bot
     }
 
     /**
-     * @return the XML chat logger for this bot
+     * @return the chat logger for this bot
      */
     public Logger getLogger()
     {
