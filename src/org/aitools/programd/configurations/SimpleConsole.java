@@ -20,7 +20,7 @@ import org.aitools.programd.interfaces.Console;
  * A <code>SimpleConsole</code> gives you a running
  * {@link org.aitools.programd.Core Core} with a regular
  * {@link org.aitools.programd.interfaces.Console Console} and just a basic
- * {@link org.aitools.programd.interfaces.Shell Shell} attached (if you enable
+ * {@link org.aitools.programd.interfaces.shell.Shell Shell} attached (if you enable
  * it). Input, output and error are routed via standard system objects.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
