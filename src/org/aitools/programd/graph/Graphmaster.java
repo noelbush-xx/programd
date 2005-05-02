@@ -20,12 +20,7 @@ import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
@@ -34,11 +29,11 @@ import org.aitools.programd.loader.AIMLLoader;
 import org.aitools.programd.parser.AIMLReader;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.NoMatchException;
 import org.aitools.programd.util.StringKit;
 import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.XMLKit;
 
 import org.xml.sax.SAXException;
 
@@ -156,36 +151,8 @@ public class Graphmaster
         this.core = coreToUse;
         this.coreSettings = this.core.getSettings();
         this.logger = Logger.getLogger("programd");
+        this.parser = XMLKit.getSAXParser(this.coreSettings.getAimlSchemaLocation(), "AIML");
 
-        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
-        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-        parserFactory.setNamespaceAware(true);
-        parserFactory.setXIncludeAware(true);
-
-        Schema aimlSchema;
-        try
-        {
-            aimlSchema = schemaFactory.newSchema(URITools.createValidURL(this.coreSettings.getAimlSchemaLocation()));
-        }
-        catch (SAXException e)
-        {
-            throw new DeveloperError("SAX error occurred while parsing AIML schema.", e);
-        }
-        parserFactory.setSchema(aimlSchema);
-
-        try
-        {
-            this.parser = parserFactory.newSAXParser();
-        }
-        catch (SAXException e)
-        {
-            throw new DeveloperError("SAX exception occurred while creating parser for Graphmaster.", e);
-        }
-        catch (ParserConfigurationException e)
-        {
-            throw new DeveloperError("Parser configuration exception occurred while creating parser for Graphmaster.", e);
-        }
 
         this.responseTimeout = this.coreSettings.getResponseTimeout();
     }
