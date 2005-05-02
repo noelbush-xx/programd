@@ -20,9 +20,14 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -840,5 +845,80 @@ public class XMLKit
             result.append(' ');
         }
         return result.toString();
+    }
+    
+    /**
+     * Sets up a SAX parser that is schema-aware,
+     * processes XIncludes, and is set to use the
+     * schema at the given location.
+     * @param schemaLocation location of the schema to use
+     * @param schemaDescription short (one word or so) description of the schema
+     * @return the parser
+     */
+    public static SAXParser getSAXParser(String schemaLocation, String schemaDescription)
+    {
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setNamespaceAware(true);
+        factory.setXIncludeAware(true);
+
+        factory.setSchema(getSchema(schemaLocation, schemaDescription));
+
+        try
+        {
+            return factory.newSAXParser();
+        }
+        catch (SAXException e)
+        {
+            throw new DeveloperError("SAX exception occurred while creating parser for Graphmaster.", e);
+        }
+        catch (ParserConfigurationException e)
+        {
+            throw new DeveloperError("Parser configuration exception occurred while creating parser for Graphmaster.", e);
+        }
+    }
+    
+    /**
+     * Sets up a SAX parser that is schema-aware,
+     * processes XIncludes, and is set to use the
+     * schema at the given location.
+     * @param schemaLocation location of the schema to use
+     * @param schemaDescription short (one word or so) description of the schema
+     * @return the parser
+     */
+    public static DocumentBuilder getDocumentBuilder(String schemaLocation, String schemaDescription)
+    {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        factory.setXIncludeAware(true);
+
+        factory.setSchema(getSchema(schemaLocation, schemaDescription));
+
+        try
+        {
+            return factory.newDocumentBuilder();
+        }
+        catch (ParserConfigurationException e)
+        {
+            throw new DeveloperError("Parser configuration exception occurred while creating parser for Graphmaster.", e);
+        }
+    }
+    
+    /**
+     * Attempts to get the schema at the given location.
+     * @param schemaLocation location of the schema to use
+     * @param schemaDescription short (one word or so) description of the schema
+     * @return the schema
+     */
+    public static Schema getSchema(String schemaLocation, String schemaDescription)
+    {
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        try
+        {
+            return schemaFactory.newSchema(URITools.createValidURL(schemaLocation));
+        }
+        catch (SAXException e)
+        {
+            throw new DeveloperError("SAX error occurred while parsing " + schemaDescription + " schema.", e);
+        }
     }
 }
