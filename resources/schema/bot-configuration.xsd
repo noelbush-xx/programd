@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://aitools.org/programd/4.1.5/bot-configuration"
+    xmlns="http://aitools.org/programd/4.5/bot-configuration"
+    xmlns:d="http://aitools.org/programd/4.5"
     xmlns:sch="http://www.ascc.net/xml/schematron"
-    targetNamespace="http://aitools.org/programd/4.1.5/bot-configuration"
+    targetNamespace="http://aitools.org/programd/4.5/bot-configuration"
     elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xml:lang="EN">
     <xs:annotation>
         <xs:documentation>This is the schema for bot configuration files for Program D.</xs:documentation>
         <xs:appinfo>
             <sch:title>Schematron validation</sch:title>
-            <sch:ns prefix="bc" uri="http://aitools.org/programd/4.1.5/bot-configuration"/>
+            <sch:ns prefix="bc" uri="http://aitools.org/programd/4.5/bot-configuration"/>
         </xs:appinfo>
     </xs:annotation>
+    <xs:import namespace="http://aitools.org/programd/4.5" schemaLocation="http://aitools.org/programd/4.5/common-types.xsd"/>
     <xs:element name="bots">
         <xs:annotation>
             <xs:documentation>The bots element contains all configuration
@@ -143,15 +145,16 @@
             <xs:element name="substitute" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation>A substitution has a find value, which should be a regular
-                        expression, and a replace value which is what to substitute for matches
-                        of the find value.</xs:documentation>
+                        expression, and a replace value which is what to substitute for matches of
+                        the find value.</xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
                     <xs:attribute name="find" type="xs:string" use="required"/>
                     <xs:attribute name="replace" type="xs:string" use="required"/>
                 </xs:complexType>
             </xs:element>
-</xs:sequence></xs:complexType>
+        </xs:sequence>
+    </xs:complexType>
     <xs:element name="sentence-splitters">
         <xs:annotation>
             <xs:documentation>A sentence-splitters element lists markers that should be used to
@@ -204,18 +207,9 @@
                     </xs:annotation>
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="parameter" minOccurs="0" maxOccurs="unbounded">
-                                <xs:annotation>
-                                    <xs:documentation> A parameter has a name and a
-                                    value.</xs:documentation>
-                                </xs:annotation>
-                                <xs:complexType>
-                                    <xs:attribute name="name" type="xs:string"/>
-                                    <xs:attribute name="value" type="xs:string"/>
-                                </xs:complexType>
-                            </xs:element>
+                            <xs:element name="parameter" minOccurs="0" maxOccurs="unbounded" type="d:Parameter"/>
                         </xs:sequence>
-                        <xs:attribute name="class" type="javaClassname" use="required"/>
+                        <xs:attribute name="class" type="d:JavaClassname" use="required"/>
                         <xs:attribute name="enabled" type="xs:boolean" use="required"/>
                     </xs:complexType>
                 </xs:element>
@@ -223,9 +217,4 @@
             <xs:attribute name="href" type="xs:anyURI"/>
         </xs:complexType>
     </xs:element>
-    <xs:simpleType name="javaClassname">
-        <xs:restriction base="xs:string">
-            <xs:pattern value="(\p{L}+\.)*\p{L}+"/>
-        </xs:restriction>
-    </xs:simpleType>
 </xs:schema>
