@@ -9,7 +9,6 @@
 
 package org.aitools.programd.processor.botconfiguration;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +22,7 @@ import org.aitools.programd.listener.Listener;
 import org.aitools.programd.listener.InvalidListenerParameterException;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.DeveloperError;
+import org.aitools.programd.util.ClassUtils;
 import org.aitools.programd.util.UserError;
 
 /**
@@ -76,20 +75,6 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         }
         // otherwise...
 
-        // Get class name attribute
-        String className = element.getAttribute(CLASS);
-
-        // Does its type correspond to a registered listener type?
-        Class<? extends Listener> listenerClass = null;
-        try
-        {
-            listenerClass = (Class<? extends Listener>)Class.forName(className);
-        }
-        catch (ClassNotFoundException e)
-        {
-            throw new DeveloperError("Unknown listener \"" + className + "\".", e);
-        }
-
         // Get enabled attribute
         String enabled = element.getAttribute(ENABLED);
 
@@ -114,31 +99,8 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         }
 
         // Instantiate a new listener for the bot.
-        Listener listener;
-        try
-        {
-            listener = listenerClass.getConstructor(Core.class, Bot.class, Map.class).newInstance(this.core, bot, parameters);
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new DeveloperError("The constructor for the \"" + className + "\" listener class is inaccessible.", e);
-        }
-        catch (IllegalArgumentException e)
-        {
-            throw new DeveloperError("The constructor for the \"" + className + "\" listener class is incorrectly specifed.", e);
-        }
-        catch (InstantiationException e)
-        {
-            throw new DeveloperError("The \"" + className + "\" listener class is abstract.", e);
-        }
-        catch (NoSuchMethodException e)
-        {
-            throw new DeveloperError("The constructor for the \"" + className + "\" listener class is incorrectly specifed.", e);
-        }
-        catch (InvocationTargetException e)
-        {
-            throw new DeveloperError("The constructor for the \"" + className + "\" listener class threw an exception.", e);
-        }
+        String classname = element.getAttribute(CLASS);
+        Listener listener = ClassUtils.getSubclassInstance(classname, "listener", this.core, bot, parameters);
         
         // Check listener parameters.
         try
@@ -151,8 +113,8 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         }
 
         // Start listener
-        this.core.getManagedProcesses().start(listener, className + SEPARATOR + bot.getID());
+        this.core.getManagedProcesses().start(listener, classname + SEPARATOR + bot.getID());
 
-        logger.log(Level.INFO, "Started \"" + className + "\" listener for bot \"" + bot.getID() + "\".");
+        logger.log(Level.INFO, "Started \"" + classname + "\" listener for bot \"" + bot.getID() + "\".");
     }
 }
