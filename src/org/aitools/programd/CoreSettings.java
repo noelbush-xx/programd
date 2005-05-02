@@ -12,7 +12,7 @@ package org.aitools.programd;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-04-26T11:42:53.949-04:00
+ * Automatically generated from properties file, 2005-05-01T15:24:42.118-04:00
  */
 public class CoreSettings extends Settings
 {
@@ -243,6 +243,11 @@ public class CoreSettings extends Settings
     private String databasePassword;
 
     /**
+     *Configuration file for plugins. 
+     */
+    private String confLocationPlugins;
+
+    /**
      *Configuration file for HTMLResponder. 
      */
     private String confLocationHtmlResponder;
@@ -251,11 +256,6 @@ public class CoreSettings extends Settings
      *Configuration file for FlashResponder. 
      */
     private String confLocationFlashResponder;
-
-    /**
-     *Configuration file for HTTPServer. 
-     */
-    private String confLocationHttpServer;
 
     /**
      * Creates a <code>CoreSettings</code> using default property values.
@@ -372,9 +372,9 @@ public class CoreSettings extends Settings
             setWatcherTimer(2000);
         }
 
-        setActivityLogPattern(this.properties.getProperty("programd.activity.log.pattern", "logs/activity.log"));
+        setActivityLogPattern(this.properties.getProperty("programd.activity.log.pattern", "logs/activity-%g.log"));
 
-        setMatchingLogPattern(this.properties.getProperty("programd.matching.log.pattern", "logs/matching.log"));
+        setMatchingLogPattern(this.properties.getProperty("programd.matching.log.pattern", "logs/matching-%g.log"));
 
         setLogTimestampFormat(this.properties.getProperty("programd.log.timestamp-format", "yyyy-MM-dd H:mm:ss"));
 
@@ -405,11 +405,11 @@ public class CoreSettings extends Settings
 
         setDatabasePassword(this.properties.getProperty("programd.database.password", "yourpassword"));
 
+        setConfLocationPlugins(this.properties.getProperty("programd.conf-location.plugins", "conf/plugins.xml"));
+
         setConfLocationHtmlResponder(this.properties.getProperty("programd.conf-location.html-responder", "conf/html-responder.xml"));
 
         setConfLocationFlashResponder(this.properties.getProperty("programd.conf-location.flash-responder", "conf/flash-responder.xml"));
-
-        setConfLocationHttpServer(this.properties.getProperty("programd.conf-location.http-server", "conf/web-server.xml"));
 
     }
 
@@ -742,6 +742,14 @@ public class CoreSettings extends Settings
     }
 
     /**
+     * @return the value of confLocationPlugins
+     */
+    public String getConfLocationPlugins()
+    {
+        return this.confLocationPlugins;
+    }
+
+    /**
      * @return the value of confLocationHtmlResponder
      */
     public String getConfLocationHtmlResponder()
@@ -755,14 +763,6 @@ public class CoreSettings extends Settings
     public String getConfLocationFlashResponder()
     {
         return this.confLocationFlashResponder;
-    }
-
-    /**
-     * @return the value of confLocationHttpServer
-     */
-    public String getConfLocationHttpServer()
-    {
-        return this.confLocationHttpServer;
     }
 
     /**
@@ -1094,6 +1094,14 @@ public class CoreSettings extends Settings
     }
 
     /**
+     * @param confLocationPluginsToSet   the value to which to set confLocationPlugins
+     */
+    public void setConfLocationPlugins(String confLocationPluginsToSet)
+    {
+        this.confLocationPlugins = confLocationPluginsToSet;
+    }
+
+    /**
      * @param confLocationHtmlResponderToSet   the value to which to set confLocationHtmlResponder
      */
     public void setConfLocationHtmlResponder(String confLocationHtmlResponderToSet)
@@ -1107,14 +1115,6 @@ public class CoreSettings extends Settings
     public void setConfLocationFlashResponder(String confLocationFlashResponderToSet)
     {
         this.confLocationFlashResponder = confLocationFlashResponderToSet;
-    }
-
-    /**
-     * @param confLocationHttpServerToSet   the value to which to set confLocationHttpServer
-     */
-    public void setConfLocationHttpServer(String confLocationHttpServerToSet)
-    {
-        this.confLocationHttpServer = confLocationHttpServerToSet;
     }
 
 }
