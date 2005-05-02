@@ -27,6 +27,7 @@ import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.graph.Match;
+import org.aitools.programd.logging.ChatLogRecord;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.parser.TemplateParserException;
 import org.aitools.programd.processor.ProcessorException;
@@ -251,6 +252,9 @@ abstract public class Multiplexor
             response = responder.append(sentence, replies.next(), response);
         }
 
+        // Log the response.
+        logResponse(input, response, userid, botid);
+
         // Finally, ask the responder to postprocess the response, and return
         // the result.
         response = responder.postprocess(response);
@@ -288,6 +292,9 @@ abstract public class Multiplexor
             // Append the reply to the response.
             response += replies.next();
         }
+        
+        // Log the response.
+        logResponse(input, response, userid, botid);
 
         // Return the response (may be just EMPTY_STRING!)
         return response;
@@ -550,6 +557,19 @@ abstract public class Multiplexor
          * Graphmaster.activatedNode(match.getNodemapper()); } } }
          */
         return reply;
+    }
+
+    /**
+     * Logs a response to the chat log.
+     * 
+     * @param input the input that produced the response
+     * @param response the response
+     * @param userid the userid for whom the response was produced
+     * @param botid the botid that produced the response
+     */
+    private void logResponse(String input, String response, String userid, String botid)
+    {
+        this.bots.getBot(botid).getLogger().log(new ChatLogRecord(botid, userid, input, response));
     }
 
     /**
