@@ -108,6 +108,39 @@ public class FileManager
             throw new DeveloperError("I/O Error creating the canonical form of file \"" + path + "\".", e);
         }
     }
+    
+    /**
+     * Sames as {@link #getExistingFile} except that it also
+     * checks that the given path is a directory.
+     * 
+     * @param path the path for the directory (may be absolute or relative to root directory)
+     * @return the directory
+     */
+    public static File getExistingDirectory(String path)
+    {
+        File file = getFile(path);
+        if (!file.exists())
+        {
+            file = getFile(workingDirectory.peek().getPath() + path);
+            if (!file.exists())
+            {
+                throw new DeveloperError(new FileNotFoundException("Couldn't find \"" + path + "\"."));
+            }
+        }
+        try
+        {
+            if (!file.isDirectory())
+            {
+                throw new DeveloperError(new FileAlreadyExistsAsFileException(file));
+            }
+            // otherwise...
+            return file.getCanonicalFile();
+        }
+        catch (IOException e)
+        {
+            throw new DeveloperError("I/O Error creating the canonical form of file \"" + path + "\".", e);
+        }
+    }
 
     /**
      * Opens and returns a FileInputStream for a given path. If the specified
