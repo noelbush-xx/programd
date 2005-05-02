@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://aitools.org/programd/4.5/test-cases"
+    targetNamespace="http://aitools.org/programd/4.5/test-cases" elementFormDefault="qualified"
+    attributeFormDefault="unqualified" version="1.0" xml:lang="EN">
+    <xs:element name="TestSuite">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="TestCase" maxOccurs="unbounded">
+                    <xs:annotation>
+                        <xs:documentation>A TestCase has a single input that it sends to the engine,
+                            and a set of Checkers that are used to validate the response to that
+                            input.</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Input" type="xs:string">
+                                <xs:annotation>
+                                    <xs:documentation>An Input is a string that will be sent to the
+                                        engine when this test case is run.</xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:choice maxOccurs="unbounded">
+                                <xs:element name="AlertKeywords" type="xs:string">
+                                    <xs:annotation>
+                                        <xs:documentation>An AlertKeywords checker alerts us if a
+                                            response does *not* contain any of the comma-separated
+                                            keywords.</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                <xs:element name="ExpectedAnswer" type="xs:string">
+                                    <xs:annotation>
+                                        <xs:documentation>An ExpectedAnswer checker tells us if a
+                                            response matches an expected answer.</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                <xs:element name="ExpectedKeywords" type="xs:string">
+                                    <xs:annotation>
+                                        <xs:documentation>An ExpectedKeywords checker tells us if a
+                                            response *does* contain one or more of the comma-separated
+                                            keywords.</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                <xs:element name="Length" type="xs:string">
+                                    <xs:annotation>
+                                        <xs:documentation>A Length checker tells us if a response is
+                                            exactly the specified length.</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:Name" use="required">
+                <xs:annotation>
+                    <xs:documentation>The name of the test suite is a convenient way to refer to
+                    it.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="clearInput" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation>The clearInput is sent to the engine at the beginning of a
+                        test case run.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
