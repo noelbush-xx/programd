@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<plugins xmlns="http://aitools.org/programd/4.5/plugins"
+    xmlns:d="http://aitools.org/programd/4.5"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://aitools.org/programd/4.5/plugins http://aitools.org/programd/4.5/plugins.xsd">
+    <shell-commands>
+        <command class="org.aitools.programd.test.aiml.TestCommand" enabled="true">
+            <parameter name="test-suite-directory" value="resources/testing"/>
+            <parameter name="log-pattern" value="logs/testing-%g.log"/>
+            <parameter name="log-timestamp-format" value="yyyy-MM-dd H:mm:ss"/>
+        </command>
+    </shell-commands>
+</plugins>
