@@ -11,8 +11,6 @@ package org.aitools.programd.parser;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -32,6 +30,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.processor.Processor;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.processor.ProcessorRegistry;
+import org.aitools.programd.util.ClassUtils;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.NotARegisteredClassException;
 import org.aitools.programd.util.URITools;
@@ -245,50 +244,8 @@ abstract public class GenericParser<P extends Processor>
                 return handleUnknownElement(element, e);
             }
 
-            // Create a new instance of the processor.
-            Processor processor = null;
-            if (processorClass != null)
-            {
-                // Get the processor constructor that takes a Core as an
-                // argument.
-                Constructor<? extends P> constructor = null;
-                try
-                {
-                    constructor = processorClass.getDeclaredConstructor(Core.class);
-                }
-                catch (NoSuchMethodException e)
-                {
-                    throw new DeveloperError("Developed specified an invalid constructor for Processor", e);
-                }
-                catch (SecurityException e)
-                {
-                    throw new DeveloperError("Permission denied to create new Processor with specified constructor", e);
-                }
-
-                // Get a new instance of the processor.
-                try
-                {
-                    processor = constructor.newInstance(this.core);
-                }
-                catch (IllegalAccessException e)
-                {
-                    throw new DeveloperError("Underlying constructor for Processor is inaccessible", e);
-                }
-                catch (InstantiationException e)
-                {
-                    throw new DeveloperError("Could not instantiate Processor", e);
-                }
-                catch (IllegalArgumentException e)
-                {
-                    throw new DeveloperError("Illegal argument exception when creating Processor.", e);
-                }
-                catch (InvocationTargetException e)
-                {
-                    throw new DeveloperError("Constructor threw an exception when getting a Processor instance from it", e);
-                }
-            }
-
-            return XMLKit.filterWhitespace(processor.process(element, this));
+            // Process the element with a new instance of the processor.
+            return XMLKit.filterWhitespace(ClassUtils.getNewInstance(processorClass, "Processor", this.core).process(element, this));
         }
         // otherwise (if this element is from a different namespace)
         if (element.getChildNodes().getLength() == 0)
