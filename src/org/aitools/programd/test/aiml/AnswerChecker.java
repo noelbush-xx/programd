@@ -1,5 +1,9 @@
 package org.aitools.programd.test.aiml;
 
+import org.w3c.dom.Element;
+
+import org.aitools.programd.util.XMLKit;
+
 /**
  * Tests whether a given input equals an expected string.
  * 
@@ -12,11 +16,11 @@ public class AnswerChecker extends Checker
     /**
      * Creates a new AnswerChecked with the given expected answer.
      * 
-     * @param answer the expected answer
+     * @param element the element containing the expected answer
      */
-    public AnswerChecker(String answer)
+    public AnswerChecker(Element element)
     {
-        this.expectedAnswer = answer;
+        this.expectedAnswer = XMLKit.renderXML(element.getChildNodes(), false);
     }
 
     /**
