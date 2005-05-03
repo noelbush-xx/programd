@@ -1,29 +1,26 @@
 package org.aitools.programd.test.aiml;
 
-import org.w3c.dom.Element;
-
 /**
- * Tests whether a given input does not
- * contain all of a list of expected keywords.
+ * Tests whether a given input does <i>not</i> contain all of a list of
+ * expected keywords.
  * 
  * @author Albertas Mickensas
  */
 public class AlertKeywordChecker extends ExpectedKeywordChecker
 {
     /**
-     * Creates a new AlertKeywordChecker with
-     * the given list of keywords.
+     * Creates a new AlertKeywordChecker with the given list of keywords.
      * 
-     * @param element the keyword (possibly a nested set) to add
+     * @param list the comma-separated list of keywords
      */
-    public AlertKeywordChecker(Element element)
+    public AlertKeywordChecker(String list)
     {
-        super(element);
+        super(list);
     }
 
     /**
-     * Tests whether a given input does not
-     * contain all of a list of expected keywords.
+     * Tests whether a given input does <i>not</i> contain all of a list of
+     * expected keywords.
      * 
      * @see org.aitools.programd.test.aiml.ExpectedKeywordChecker#test(java.lang.String)
      */

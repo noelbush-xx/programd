@@ -5,8 +5,6 @@
     name="infiniteLoopChecker" clearInput="CLEAR VARS">
 	<TestCase>
 		<Input>tell me more</Input>
-		<AlertKeywords>
-			<Keyword>INFINITE LOOP</Keyword>
-		</AlertKeywords>
+		<AlertKeywords>INFINITE LOOP</AlertKeywords>
 	</TestCase>
 </TestSuite>

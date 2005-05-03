@@ -1,39 +1,40 @@
 package org.aitools.programd.test.aiml;
 
-import org.w3c.dom.Element;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * Checks that a string contains all of a list
- * of expected keywords.
+ * Checks that a string contains all of a list of expected keywords.
  * 
  * @author Albertas Mickensas
  */
-public class ExpectedKeywordChecker extends CheckerBase
+public class ExpectedKeywordChecker extends Checker
 {
-    private Keyword keywords;
+    private List<String> keywords;
 
     /**
-     * Creates a new ExpectedKeyWordChecker with a given
-     * list of expected keywords.
+     * Creates a new ExpectedKeyWordChecker with a given list of expected
+     * keywords.
      * 
-     * @param element the keyword (possibly a nested set) to add
+     * @param list the comma-separated list of keywords
      */
-    public ExpectedKeywordChecker(Element element)
+    public ExpectedKeywordChecker(String list)
     {
-        this.keywords = KeywordFactory.create(element);
+        this.keywords = Arrays.asList(list.split(","));
     }
 
     /**
-     * Checks that the given <code>input</code> contains all of this
-     * checker's configured list of expected keywords.
+     * Checks that the given <code>input</code> contains all of this checker's
+     * configured list of expected keywords.
+     * 
      * @see org.aitools.programd.test.aiml.Checker#test(java.lang.String)
      */
     public boolean test(String input)
     {
-        boolean result = false;
+        boolean result = true;
         for (String keyword : this.keywords)
         {
-            result |= input.contains(keyword);
+            result &= input.contains(keyword);
         }
         return result;
     }

@@ -9,14 +9,10 @@
 	</TestCase>
 	<TestCase>
 		<Input>MY NAME IS ALBERT</Input>
-		<ExpectedKeywords>
-			<Or>
-				<Keyword>Nice to meet</Keyword>
-				<Keyword>pleasure</Keyword>
-				<Keyword>Glad to know</Keyword>
-				<Keyword>disposal</Keyword>
-			</Or>
-		</ExpectedKeywords>
+		<ExpectedKeywords>Nice to meet</ExpectedKeywords>
+		<ExpectedKeywords>pleasure</ExpectedKeywords>
+		<ExpectedKeywords>Glad to know</ExpectedKeywords>
+		<ExpectedKeywords>disposal</ExpectedKeywords>
 	</TestCase>
 	<TestCase>
 		<Input>tell me more</Input>

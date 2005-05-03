@@ -94,7 +94,8 @@ public class Tester
     {
         if (null == botid)
         {
-            this.logger.log(Level.WARNING, "No botid defined for tests; select a bot with /talkto.");
+            this.logger
+                    .log(Level.WARNING, "No botid defined for tests; select a bot with /talkto.");
             return;
         }
         if (this.suites.size() == 0)
@@ -194,7 +195,8 @@ public class Tester
                 }
                 catch (SAXException e)
                 {
-                    throw new UserError("SAX exception trying to parse test suite file: " + e.getMessage(), e);
+                    throw new UserError("SAX exception trying to parse test suite file: "
+                            + e.getMessage(), e);
                 }
             }
         }

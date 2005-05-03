@@ -1,7 +1,5 @@
 package org.aitools.programd.test.aiml;
 
-import org.w3c.dom.Element;
-
 import org.aitools.programd.util.DeveloperError;
 
 /**
@@ -9,18 +7,20 @@ import org.aitools.programd.util.DeveloperError;
  * 
  * @author Albertas Mickensas
  */
-public class LengthChecker extends CheckerBase
+public class LengthChecker extends Checker
 {
     private int expectedLength = -1;
 
     /**
-     * @param element
+     * Creates a new LengthChecker with the given length.
+     * 
+     * @param length the length to check for
      */
-    public LengthChecker(Element element)
+    public LengthChecker(String length)
     {
         try
         {
-            this.expectedLength = Integer.parseInt(element.getTextContent());
+            this.expectedLength = Integer.parseInt(length);
         }
         catch (NumberFormatException e)
         {
@@ -30,9 +30,9 @@ public class LengthChecker extends CheckerBase
 
     /**
      * Tests whether the given input has the expected length.
+     * 
      * @param input the input to test
      * @return whether the given input has the expected length
-     * 
      * @see org.aitools.programd.test.aiml.Checker#test(java.lang.String)
      */
     public boolean test(String input)

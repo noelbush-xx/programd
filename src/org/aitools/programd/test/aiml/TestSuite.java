@@ -1,7 +1,6 @@
 package org.aitools.programd.test.aiml;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -98,13 +97,10 @@ public class TestSuite
             boolean caseSuccessful = testCase.run(this.multiplexor, TESTER_ID, botid);
             if (!caseSuccessful)
             {
-                HashMap<String, String> exchanges = testCase.getExchanges();
-                for (String input : exchanges.keySet())
-                {
-                    registerFailure(this.name, testCase.getName(), input, exchanges.get(input));
-                }
+                registerFailure(this.name, testCase.getName(), testCase.getInput(), testCase
+                        .getLastResponse());
             }
-            suiteSuccessful = suiteSuccessful && caseSuccessful;
+            suiteSuccessful &= caseSuccessful;
         }
         return suiteSuccessful;
     }
