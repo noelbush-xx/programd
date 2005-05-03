@@ -37,7 +37,7 @@ abstract public class Checker
         }
         else if (tagName.equals(TestCase.TAG_EXPECTED_ANSWER))
         {
-            return new AnswerChecker(element.getTextContent());
+            return new AnswerChecker(element);
         }
         else if (tagName.equals(TestCase.TAG_EXPECTED_KEYWORDS))
         {
