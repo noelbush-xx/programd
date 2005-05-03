@@ -86,7 +86,7 @@ public class XMLKit
 
     /** A quote mark, for convenience. */
     protected static final char QUOTE_MARK = '"';
-    
+
     /** The regex for whitespace. */
     protected static final String WHITESPACE_REGEX = "\\s+";
 
@@ -94,7 +94,8 @@ public class XMLKit
      * Mapping between XML chars prohibited in some contexts and their escaped
      * equivalents.
      */
-    private static final String[][] XML_ESCAPES = { { "&amp;", "&" }, { "&lt;", "<" }, { "&gt;", ">" }, { "&apos;", "'" }, { "&quot;", "\"" } };
+    private static final String[][] XML_ESCAPES = { { "&amp;", "&" }, { "&lt;", "<" },
+            { "&gt;", ">" }, { "&apos;", "'" }, { "&quot;", "\"" } };
 
     /** The start of an XML processing instruction. */
     private static final String XML_PI_START = "<?xml version=\"1.0\"";
@@ -113,11 +114,14 @@ public class XMLKit
 
     /** The string &apos;{@value}&apos;. */
     private static final String XMLNS = "xmlns";
-    
+
     /** An HTML &lt;br/&gt; element, including namespace attribute. (&apos;{@value}&apos;) */
     private static final String BR = "<br xmlns=\"http://www.w3.org/1999/xhtml\"/>";
 
-    /** An HTML &lt;/p&gt; end tag (<i>not</i> including namespace attribute). (&apos;{@value}&apos;) */
+    /**
+     * An HTML &lt;/p&gt; end tag (<i>not</i> including namespace attribute).
+     * (&apos;{@value}&apos;)
+     */
     private static final String END_P = "</p>";
 
     /** The actual Map used to store prohibited-to-escaped mappings. */
@@ -176,7 +180,8 @@ public class XMLKit
             xmlEscapes = new HashMap<Pattern, String>(XML_ESCAPES.length);
             for (int index = XML_ESCAPES.length; --index >= 0;)
             {
-                xmlEscapes.put(Pattern.compile(XML_ESCAPES[index][0], Pattern.LITERAL), XML_ESCAPES[index][1]);
+                xmlEscapes.put(Pattern.compile(XML_ESCAPES[index][0], Pattern.LITERAL),
+                        XML_ESCAPES[index][1]);
             }
         }
         return Substituter.applySubstitutions(xmlEscapes, input);
@@ -212,7 +217,8 @@ public class XMLKit
             xmlProhibited = new HashMap<Pattern, String>(XML_ESCAPES.length);
             for (int index = XML_ESCAPES.length; --index >= 0;)
             {
-                xmlProhibited.put(Pattern.compile(XML_ESCAPES[index][1], Pattern.LITERAL), XML_ESCAPES[index][0]);
+                xmlProhibited.put(Pattern.compile(XML_ESCAPES[index][1], Pattern.LITERAL),
+                        XML_ESCAPES[index][0]);
             }
         }
         return Substituter.applySubstitutions(xmlProhibited, input);
@@ -250,10 +256,12 @@ public class XMLKit
         StringCharacterIterator iterator = new StringCharacterIterator(input);
 
         // Iterate over the input.
-        for (char aChar = iterator.first(); aChar != CharacterIterator.DONE; aChar = iterator.next())
+        for (char aChar = iterator.first(); aChar != CharacterIterator.DONE; aChar = iterator
+                .next())
         {
             // Determine if this is a valid XML Character.
-            if ((aChar == '\u0009') || (aChar == '\n') || (aChar == '\r') || (('\u0020' <= aChar) && (aChar <= '\uD7FF'))
+            if ((aChar == '\u0009') || (aChar == '\n') || (aChar == '\r')
+                    || (('\u0020' <= aChar) && (aChar <= '\uD7FF'))
                     || (('\uE000' <= aChar) && (aChar <= '\uFFFD')))
             {
                 result.append(aChar);
@@ -307,7 +315,8 @@ public class XMLKit
                             {
                                 // Integer.decode from pointer + 2 includes the
                                 // "x".
-                                result.append((char) Integer.decode(input.substring(pointer + 2, semicolon)).intValue());
+                                result.append((char) Integer.decode(
+                                        input.substring(pointer + 2, semicolon)).intValue());
                                 pointer += (semicolon - pointer + 1);
                             }
                             catch (NumberFormatException e)
@@ -328,7 +337,8 @@ public class XMLKit
                             {
                                 // Integer.parseInt from pointer + 2 excludes
                                 // the "&#".
-                                result.append((char) Integer.parseInt(input.substring(pointer + 2, semicolon)));
+                                result.append((char) Integer.parseInt(input.substring(pointer + 2,
+                                        semicolon)));
                                 pointer += (semicolon - pointer + 1);
                                 continue;
                             }
@@ -375,10 +385,12 @@ public class XMLKit
             int attributeStart = firstLine.indexOf(ENCODING_EQUALS_QUOTE);
             if (attributeStart >= 0)
             {
-                int nextQuote = firstLine.indexOf(QUOTE_MARK, attributeStart + ENCODING_EQUALS_QUOTE_LENGTH);
+                int nextQuote = firstLine.indexOf(QUOTE_MARK, attributeStart
+                        + ENCODING_EQUALS_QUOTE_LENGTH);
                 if (nextQuote >= 0)
                 {
-                    String encoding = firstLine.substring(attributeStart + ENCODING_EQUALS_QUOTE_LENGTH, nextQuote);
+                    String encoding = firstLine.substring(attributeStart
+                            + ENCODING_EQUALS_QUOTE_LENGTH, nextQuote);
                     return encoding.trim();
                 }
             }
@@ -389,14 +401,17 @@ public class XMLKit
 
     /**
      * Formats XML from a single long string into a nicely indented multi-line
-     * string.
+     * string (if <code>indent</code> is <code>true</code>), or just a long
+     * string (if <code>indent</code> is <code>false</code>).
      * 
      * @param content the XML content to format
      * @param includeNamespaceAttribute whether to include the namespace
      *            attribute
+     * @param indent whether to render the string in an indented, multiline
+     *            fashion
      * @return the formatted XML
      */
-    public static String formatXML(String content, boolean includeNamespaceAttribute)
+    public static String renderXML(String content, boolean includeNamespaceAttribute, boolean indent)
     {
         Document document;
         try
@@ -412,40 +427,61 @@ public class XMLKit
             throw new DeveloperError("I/O error creating a document for formatting XML.", e);
         }
         StringBuffer result = new StringBuffer();
-        formatXML(document.getDocumentElement(), 0, true, result, includeNamespaceAttribute);
+        renderXML(document.getDocumentElement(), 0, true, result, includeNamespaceAttribute, indent);
         return result.toString();
     }
 
-    private static void formatXML(Node node, int level, boolean atStart, StringBuffer result, boolean includeNamespaceAttribute)
+    private static void renderXML(Node node, int level, boolean atStart, StringBuffer result,
+            boolean includeNamespaceAttribute, boolean indent)
     {
         switch (node.getNodeType())
         {
             // Append a start tag.
             case Node.ELEMENT_NODE:
-                if (!atStart)
+                if (indent)
                 {
-                    result.append(LINE_SEPARATOR);
+                    if (!atStart)
+                    {
+                        result.append(LINE_SEPARATOR);
+                    }
+                    else
+                    {
+                        atStart = false;
+                    }
                 }
-                else
-                {
-                    atStart = false;
-                }
-                String contents = formatXML(node.getChildNodes(), level + 1, true, includeNamespaceAttribute);
+                String contents = renderXML(node.getChildNodes(), level + 1, true,
+                        includeNamespaceAttribute, indent);
                 if (contents.trim().length() > 0)
                 {
-                    result.append(StringKit.tab(level) + renderStartTag((Element) node, includeNamespaceAttribute));
-                    result.append(LINE_SEPARATOR + contents);
-                    result.append(LINE_SEPARATOR + StringKit.tab(level) + renderEndTag((Element) node));
+                    if (indent)
+                    {
+                        result.append(StringKit.tab(level));
+                    }
+                    result.append(renderStartTag((Element) node, includeNamespaceAttribute));
+                    if (indent)
+                    {
+                        result.append(LINE_SEPARATOR);
+                    }
+                    result.append(contents);
+                    if (indent)
+                    {
+                        result.append(LINE_SEPARATOR + StringKit.tab(level));
+                    }
+                    result.append(renderEndTag((Element) node));
                 }
                 else
                 {
-                    result.append(StringKit.tab(level) + renderEmptyElement((Element) node, includeNamespaceAttribute));
+                    if (indent)
+                    {
+                        result.append(StringKit.tab(level));
+                    }
+                    result.append(renderEmptyElement((Element) node, includeNamespaceAttribute));
                 }
                 break;
 
             // Append text content.
             case Node.TEXT_NODE:
-                if (atStart)
+                if (indent && atStart)
                 {
                     if (node.getTextContent().trim().length() > 0)
                     {
@@ -460,49 +496,66 @@ public class XMLKit
 
             // Append CDATA.
             case Node.CDATA_SECTION_NODE:
-                if (atStart)
+                if (indent)
                 {
-                    result.append(StringKit.tab(level));
-                    atStart = false;
+                    if (atStart)
+                    {
+                        result.append(StringKit.tab(level));
+                        atStart = false;
+                    }
+                    result.append(LINE_SEPARATOR + StringKit.tab(level));
                 }
-                result.append(LINE_SEPARATOR + StringKit.tab(level) + MARKER_START + CDATA_START + node.getNodeValue() + CDATA_END);
+                result.append(CDATA_START + node.getNodeValue() + CDATA_END);
                 break;
 
             // Append comments.
             case Node.COMMENT_NODE:
-                if (atStart)
+                if (indent)
                 {
-                    result.append(StringKit.tab(level));
-                    atStart = false;
+                    if (atStart)
+                    {
+                        result.append(StringKit.tab(level));
+                        atStart = false;
+                    }
+                    result.append(LINE_SEPARATOR + StringKit.tab(level));
                 }
-                result.append(LINE_SEPARATOR + StringKit.tab(level) + MARKER_START + COMMENT_START + node.getNodeValue() + COMMENT_END);
+                result.append(MARKER_START + COMMENT_START + node.getNodeValue() + COMMENT_END);
                 break;
         }
     }
 
     /**
-     * Formats XML from a node list into a nicely indented multi-line string.
-     * This method assumes that we should include namespace attributes.
+     * Formats XML from a node list into a nicely indented multi-line string (if
+     * <code>indent</code> is <code>true</code>), or just a long string (if
+     * <code>indent</code> is <code>false</code>). This method assumes that
+     * we should include namespace attributes.
      * 
      * @param list the list of XML nodes
+     * @param indent whether to render the string in an indented, multiline
+     *            fashion
      * @return the formatted XML
      */
-    public static String formatXML(NodeList list)
+    public static String renderXML(NodeList list, boolean indent)
     {
-        return formatXML(list, 0, true, true);
+        return renderXML(list, 0, true, true, indent);
     }
 
     /**
-     * Formats XML from a node list into a nicely indented multi-line string.
+     * Formats XML from a node list into a nicely indented multi-line string (if
+     * <code>indent</code> is <code>true</code>), or just a long string (if
+     * <code>indent</code> is <code>false</code>).
      * 
      * @param list the list of XML nodes
-     * @param level the level (for indenting)
+     * @param level the level (for indenting; no meaning if indenting is off)
      * @param atStart whether the whole XML string is at its beginning
      * @param includeNamespaceAttribute whether to include the namespace
      *            attribute
+     * @param indent whether to render the string in an indented, multiline
+     *            fashion
      * @return the formatted XML
      */
-    public static String formatXML(NodeList list, int level, boolean atStart, boolean includeNamespaceAttribute)
+    public static String renderXML(NodeList list, int level, boolean atStart,
+            boolean includeNamespaceAttribute, boolean indent)
     {
         StringBuffer result = new StringBuffer();
 
@@ -511,7 +564,7 @@ public class XMLKit
         for (int index = 0; index < listLength; index++)
         {
             Node node = list.item(index);
-            formatXML(node, level, atStart, result, includeNamespaceAttribute);
+            renderXML(node, level, atStart, result, includeNamespaceAttribute, indent);
         }
         return result.toString();
     }
@@ -538,7 +591,7 @@ public class XMLKit
         // In the most common case (not), filter the whole string in one pass.
         if (cdataStart == -1)
         {
-            return filterXML(input.trim()).replace(WHITESPACE_REGEX, SPACE);
+            return filterXML(input.trim()).replaceAll(WHITESPACE_REGEX, SPACE);
         }
         // If there is a cdata start marker, this will be slower!
         // Ensure that there is a cdata end marker.
@@ -549,11 +602,13 @@ public class XMLKit
             if (cdataEnd < input.length())
             {
                 // Most likely (?) that it doesn't.
-                return filterWhitespace(input.substring(0, cdataStart)) + input.substring(cdataStart, cdataEnd)
+                return filterWhitespace(input.substring(0, cdataStart))
+                        + input.substring(cdataStart, cdataEnd)
                         + filterWhitespace(input.substring(cdataEnd));
             }
             // As above, in either case, don't filter the cdata part.
-            return filterWhitespace(input.substring(0, cdataStart)) + input.substring(cdataStart, cdataEnd);
+            return filterWhitespace(input.substring(0, cdataStart))
+                    + input.substring(cdataStart, cdataEnd);
         }
         // If there was no cdata end marker, we have wasted our time. Duplicate
         // code from above.
@@ -562,9 +617,9 @@ public class XMLKit
 
     /**
      * <p>
-     * Breaks a message into multiple lines at an HTML &lt;br/&gt;, except if
-     * it comes at the beginning of the message, or ending HTML &lt;/p&gt;.
-     * Other tags are just removed.
+     * Breaks a message into multiple lines at an HTML &lt;br/&gt;, except if it
+     * comes at the beginning of the message, or ending HTML &lt;/p&gt;. Other
+     * tags are just removed.
      * </p>
      * <p>
      * Generally used to format output nicely for a console.
@@ -607,7 +662,7 @@ public class XMLKit
 
         // Results will be delivered by calling toArray() on this Vector.
         Vector<String> result = new Vector<String>();
-        
+
         // This will hold each line as it is assembled.
         StringBuffer line = new StringBuffer();
 
@@ -617,15 +672,18 @@ public class XMLKit
             // Get the end of a tag.
             tagEnd = input.indexOf(MARKER_END, lastEnd);
 
-            // Add the input until the tag as an addition to the line, as long as the tag is not
+            // Add the input until the tag as an addition to the line, as long
+            // as the tag is not
             // the beginning.
             if (tagStart > 0)
             {
                 line.append(input.substring(lastEnd, tagStart).trim());
             }
-            
-            // If the tag start begins a <br/> or a </p>, then this is the end of the line.
-            if (input.indexOf(BR, tagStart) == tagStart || input.indexOf(END_P, tagStart) == tagStart)
+
+            // If the tag start begins a <br/> or a </p>, then this is the end
+            // of the line.
+            if (input.indexOf(BR, tagStart) == tagStart
+                    || input.indexOf(END_P, tagStart) == tagStart)
             {
                 result.addElement(line.toString());
                 line = new StringBuffer();
@@ -762,7 +820,8 @@ public class XMLKit
      * @param namespaceURI the namespace URI
      * @return the rendering result
      */
-    public static String renderStartTag(String elementName, Attributes attributes, boolean includeNamespaceAttribute, String namespaceURI)
+    public static String renderStartTag(String elementName, Attributes attributes,
+            boolean includeNamespaceAttribute, String namespaceURI)
     {
         StringBuffer result = new StringBuffer();
         result.append(MARKER_START);
@@ -781,7 +840,9 @@ public class XMLKit
                     attributeName = attributes.getQName(index);
                 }
                 result.append(SPACE);
-                result.append(attributeName + EQUAL_QUOTE + attributes.getValue(index) + QUOTE_MARK);
+                result
+                        .append(attributeName + EQUAL_QUOTE + attributes.getValue(index)
+                                + QUOTE_MARK);
             }
         }
         result.append(MARKER_END);
@@ -816,7 +877,8 @@ public class XMLKit
                 if (!attributeName.equals(XMLNS))
                 {
                     result.append(SPACE);
-                    result.append(attributeName + EQUAL_QUOTE + attribute.getNodeValue() + QUOTE_MARK);
+                    result.append(attributeName + EQUAL_QUOTE + attribute.getNodeValue()
+                            + QUOTE_MARK);
                 }
             }
         }
@@ -834,7 +896,7 @@ public class XMLKit
     {
         return END_TAG_START + element.getLocalName() + MARKER_END;
     }
-    
+
     /**
      * @param count the number of spaces to return
      * @return the given number of spaces.
@@ -848,11 +910,11 @@ public class XMLKit
         }
         return result.toString();
     }
-    
+
     /**
-     * Sets up a SAX parser that is schema-aware,
-     * processes XIncludes, and is set to use the
-     * schema at the given location.
+     * Sets up a SAX parser that is schema-aware, processes XIncludes, and is
+     * set to use the schema at the given location.
+     * 
      * @param schemaLocation location of the schema to use
      * @param schemaDescription short (one word or so) description of the schema
      * @return the parser
@@ -871,18 +933,21 @@ public class XMLKit
         }
         catch (SAXException e)
         {
-            throw new DeveloperError("SAX exception occurred while creating parser for Graphmaster.", e);
+            throw new DeveloperError(
+                    "SAX exception occurred while creating parser for Graphmaster.", e);
         }
         catch (ParserConfigurationException e)
         {
-            throw new DeveloperError("Parser configuration exception occurred while creating parser for Graphmaster.", e);
+            throw new DeveloperError(
+                    "Parser configuration exception occurred while creating parser for Graphmaster.",
+                    e);
         }
     }
-    
+
     /**
-     * Sets up a SAX parser that is schema-aware,
-     * processes XIncludes, and is set to use the
-     * schema at the given location.
+     * Sets up a SAX parser that is schema-aware, processes XIncludes, and is
+     * set to use the schema at the given location.
+     * 
      * @param schemaLocation location of the schema to use
      * @param schemaDescription short (one word or so) description of the schema
      * @return the parser
@@ -901,12 +966,15 @@ public class XMLKit
         }
         catch (ParserConfigurationException e)
         {
-            throw new DeveloperError("Parser configuration exception occurred while creating parser for Graphmaster.", e);
+            throw new DeveloperError(
+                    "Parser configuration exception occurred while creating parser for Graphmaster.",
+                    e);
         }
     }
-    
+
     /**
      * Attempts to get the schema at the given location.
+     * 
      * @param schemaLocation location of the schema to use
      * @param schemaDescription short (one word or so) description of the schema
      * @return the schema
@@ -920,10 +988,11 @@ public class XMLKit
         }
         catch (SAXException e)
         {
-            throw new DeveloperError("SAX error occurred while parsing " + schemaDescription + " schema.", e);
+            throw new DeveloperError("SAX error occurred while parsing " + schemaDescription
+                    + " schema.", e);
         }
     }
-    
+
     /**
      * Returns the element children of the given element.
      * 
@@ -940,7 +1009,7 @@ public class XMLKit
             Node child = children.item(index);
             if (child.getNodeType() == Node.ELEMENT_NODE)
             {
-                result.add((Element)child);
+                result.add((Element) child);
             }
         }
         return result;
