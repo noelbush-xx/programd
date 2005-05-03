@@ -97,7 +97,7 @@ public class TestCase
      */
     public boolean run(Multiplexor multiplexor, String userid, String botid)
     {
-        this.lastResponse = multiplexor.getResponse(this.input, userid, botid);
+        this.lastResponse = XMLKit.filterWhitespace(multiplexor.getResponse(this.input, userid, botid));
         return responseIsValid(this.lastResponse);
     }
 
