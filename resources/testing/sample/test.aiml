@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<aiml version="1.0.1" xmlns="http://alicebot.org/2001/AIML-1.0.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://alicebot.org/2001/AIML-1.0.1 http://aitools.org/aiml/schema/AIML.xsd">
+	<category>
+		<pattern>CONNECT</pattern>
+		<template> Hello! My name is ROBOT. Won't you tell me your name? </template>
+	</category>
+	<category>
+		<pattern>MY NAME IS *</pattern>
+		<template>
+			<think>
+				<set name="userName">
+					<star index="1"/>
+				</set>
+			</think>
+			<random>
+				<li>Nice to meet you, <get name="userName"/>! </li>
+				<li>A pleasure, <get name="userName"/>.</li>
+				<li>Glad to know you, <get name="userName"/>! </li>
+				<li>I am at your disposal, <get name="userName"/>.</li>
+			</random>
+		</template>
+	</category>
+	<category>
+		<pattern>*</pattern>
+		<that>* YOUR NAME</that>
+		<template>
+			<srai>MY NAME IS <star/>
+			</srai>
+		</template>
+	</category>
+	<category>
+		<pattern>*</pattern>
+		<template>
+			<condition name="userName">
+				<li value="">Who are you? What is your name?</li>
+				<li>Ahh yes yes, <get name="userName"/>, i know you... whatever... </li>
+			</condition>
+		</template>
+	</category>
+	<category>
+		<pattern>CLEAR VARS</pattern>
+		<template>
+			<think>
+				<set name="userName"/>
+			</think>
+		</template>
+	</category>
+</aiml>

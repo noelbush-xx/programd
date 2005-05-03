@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestSuite xmlns="http://aitools.org/programd/4.5/test-cases"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://aitools.org/programd/4.5/test-cases http://aitools.org/programd/4.5/test-cases.xsd"
+    name="suite2" clearInput="CLEAR VARS">
+	<TestCase>
+		<Input>tell me more</Input>
+		<ExpectedAnswer>Who are you? What is your name?</ExpectedAnswer>
+	</TestCase>
+</TestSuite>
