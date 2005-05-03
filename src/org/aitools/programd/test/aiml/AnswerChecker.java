@@ -5,9 +5,8 @@ package org.aitools.programd.test.aiml;
  * 
  * @author Albertas Mickensas
  */
-public class AnswerChecker implements Checker
+public class AnswerChecker extends CheckerBase
 {
-
     private String expectedAnswer = null;
 
     /**
@@ -16,12 +15,13 @@ public class AnswerChecker implements Checker
      */
     public AnswerChecker(String answer)
     {
-        super();
-        this.expectedAnswer = answer.toUpperCase().trim();
+        this.expectedAnswer = answer;
     }
 
     /**
      * Tests whether the given input matches the expected answer.
+     * @param input the input to test
+     * @return whether the given input matches the expected answer
      * 
      * @see org.aitools.programd.test.aiml.Checker#test(java.lang.String)
      */
@@ -29,7 +29,7 @@ public class AnswerChecker implements Checker
     {
         if (null != this.expectedAnswer)
         {
-            if (input.toUpperCase().trim().equals(this.expectedAnswer))
+            if (input.equals(this.expectedAnswer))
             {
                 return true;
             }

@@ -1,6 +1,6 @@
 package org.aitools.programd.test.aiml;
 
-import java.util.List;
+import org.w3c.dom.Element;
 
 /**
  * Tests whether a given input does not
@@ -14,11 +14,11 @@ public class AlertKeywordChecker extends ExpectedKeywordChecker
      * Creates a new AlertKeywordChecker with
      * the given list of keywords.
      * 
-     * @param list the list of keywords
+     * @param element the keyword (possibly a nested set) to add
      */
-    public AlertKeywordChecker(List<String> list)
+    public AlertKeywordChecker(Element element)
     {
-        super(list);
+        super(element);
     }
 
     /**

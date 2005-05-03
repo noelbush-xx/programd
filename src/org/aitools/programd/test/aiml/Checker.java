@@ -4,14 +4,15 @@ package org.aitools.programd.test.aiml;
  * Performs a specific test on a given input.
  * 
  * @author Albertas Mickensas
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
+ * @since 4.5
  */
-public interface Checker
+public interface Checker extends Item<Checker, Checker>
 {
     /**
-     * Performs the Checker's defined test on the given input.
-     * 
+     * Determines whether the given input passes the Checker's test.
      * @param input the input to test
-     * @return whether or not the input passes the test
+     * @return whether the given input passes the Checker's test
      */
-    public abstract boolean test(String input);
+    public boolean test(String input);
 }

@@ -11,7 +11,6 @@ import javax.xml.parsers.DocumentBuilder;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -31,7 +30,7 @@ import org.aitools.programd.util.XMLKit;
 public class Tester
 {
     /** The test cases namespace URI. */
-    private static final String TESTCASE_NAMESPACE_URI = "http://aitools.org/programd/4.5/test-cases";
+    public static final String TESTCASE_NAMESPACE_URI = "http://aitools.org/programd/4.5/test-cases";
 
     /** The test cases schema location (local). */
     private static final String SCHEMA_LOCATION = "resources/schema/test-cases.xsd";
@@ -226,47 +225,8 @@ public class Tester
         for (int index = 0; index < testCaseCount; index++)
         {
             Element testCaseElement = (Element) testCases.item(index);
-            Element input = (Element) testCaseElement.getElementsByTagName(TestCase.TAG_INPUT)
-                    .item(0);
-            TestCase testCase = new TestCase(testCaseElement.getAttribute("name"), input.getTextContent());
+            TestCase testCase = new TestCase(testCaseElement);
             suite.addTestCase(testCase);
-
-            NodeList children = testCaseElement.getChildNodes();
-            int childCount = children.getLength();
-
-            // Start at 1 (skip the pattern).
-            for (int checkerIndex = 1; checkerIndex < childCount; checkerIndex++)
-            {
-                Node node = children.item(checkerIndex);
-                if (node instanceof Element)
-                {
-                    Element checker = (Element)node;
-                    String checkerName = checker.getTagName();
-                    if (checkerName.equals(TestCase.TAG_ALERT_KEYWORDS))
-                    {
-                        testCase.addAlertKeywords(checker.getTextContent().split(","));
-                    }
-                    else if (checkerName.equals(TestCase.TAG_EXPECTED_ANSWER))
-                    {
-                        testCase.addExpectedAnswer(checker.getTextContent());
-                    }
-                    else if (checkerName.equals(TestCase.TAG_EXPECTED_KEYWORDS))
-                    {
-                        testCase.addExpectedKeywords(checker.getTextContent().split(","));
-                    }
-                    else if (checkerName.equals(TestCase.TAG_EXPECTED_LENGTH))
-                    {
-                        try
-                        {
-                            testCase.addExpectedLength(Integer.parseInt(checker.getTextContent()));
-                        }
-                        catch (NumberFormatException e)
-                        {
-                            throw new DeveloperError("A non-integer slipped by: schema must be bad!", e);
-                        }
-                    }
-                }
-            }
         }
     }
 }

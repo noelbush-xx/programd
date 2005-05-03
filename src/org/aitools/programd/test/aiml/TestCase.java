@@ -1,13 +1,16 @@
 package org.aitools.programd.test.aiml;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import org.w3c.dom.Element;
 
 import org.aitools.programd.multiplexor.Multiplexor;
+import org.aitools.programd.util.XMLKit;
 
 /**
- * A TestCase contains an input and a set of checkers
- * that test the response to that input.
+ * A TestCase contains an inputs and a set of checkers
+ * that test the response to that inputs.
  * 
  * @author Albertas Mickensas
  */
@@ -17,7 +20,10 @@ public class TestCase
     public static String TAG_TESTCASE = "TestCase";
 
     /** The string &quot;{@value}&quot;. */
-    public static String TAG_INPUT = "Input";
+    public static String TAG_INPUT = "ItemBase";
+
+    /** The string &quot;{@value}&quot;. */
+    public static String TAG_INPUTS = "Inputs";
 
     /** The string &quot;{@value}&quot;. */
     public static String TAG_EXPECTED_ANSWER = "ExpectedAnswer";
@@ -34,65 +40,29 @@ public class TestCase
     /** The name of this test case. */
     private String name;
 
-    /** The input that this test case should send. */ 
-    private String input;
+    /** The inputs(s) that this test case should send. */
+    private Input inputs;
 
-    /** The last response received by this test case. */
-    private String lastResponse;
+    /** The checker(s) contained in this test case. */
+    private Checker checkers;
 
-    /** The checkers contained in this test case. */
-    ArrayList<Checker> checkers = new ArrayList<Checker>();
-    
-    /**
-     * Creates a new TestCase with the given input.
-     * 
-     * @param nameToUse the name of this test case
-     * @param inputToUse the input that this test case should send
-     */
-    public TestCase(String nameToUse, String inputToUse)
-    {
-        this.name = nameToUse;
-        this.input = inputToUse;
-    }
+    /** The actual input and response pairs sent and received by this test case. */
+    private HashMap<String, String> exchanges = new HashMap<String, String>();
 
     /**
-     * Adds an ExpectedAnswer checker to this test case.
+     * Creates a new TestCase from the given XML element.
      * 
-     * @param answer the expected answer to add
+     * @param element the TestCase element
      */
-    public void addExpectedAnswer(String answer)
+    public TestCase(Element element)
     {
-        this.checkers.add(new AnswerChecker(answer));
-    }
+        this.name = element.getAttribute("name");
 
-    /**
-     * Adds an ExpectedKeywords checker to this test case.
-     * 
-     * @param keywords the keywords to add
-     */
-    public void addExpectedKeywords(String[] keywords)
-    {
-        this.checkers.add(new ExpectedKeywordChecker(Arrays.asList(keywords)));
-    }
+        List<Element> elements = XMLKit.getElementChildrenOf(element);
 
-    /**
-     * Adds an AlertKeywords checker to this test case.
-     * 
-     * @param keywords the keywords to add
-     */
-    public void addAlertKeywords(String[] keywords)
-    {
-        this.checkers.add(new AlertKeywordChecker(Arrays.asList(keywords)));
-    }
+        this.inputs = InputFactory.create(elements.get(0));
+        this.checkers = CheckerFactory.create(elements.get(1));
 
-    /**
-     * Adds an ExpectedLength checker to this test case.
-     * 
-     * @param length the expected length to add
-     */
-    public void addExpectedLength(int length)
-    {
-        this.checkers.add(new LengthChecker(length));
     }
 
     /**
@@ -104,21 +74,21 @@ public class TestCase
     }
 
     /**
-     * @return the input to be sent by this test case
+     * @return the inputs to be sent by this test case
      */
-    public String getInput()
+    public Input getInputs()
     {
-        return this.input;
+        return this.inputs;
     }
 
     /**
-     * @return the last response received by this test case
+     * @return the actual input and response pairs received by this test case
      */
-    public String getLastResponse()
+    public HashMap<String, String> getExchanges()
     {
-        return this.lastResponse;
+        return this.exchanges;
     }
-    
+
     /**
      * Runs this test case for the given botid.
      * 
@@ -129,29 +99,29 @@ public class TestCase
      */
     public boolean run(Multiplexor multiplexor, String userid, String botid)
     {
-        this.lastResponse = multiplexor.getResponse(this.input, userid, botid);
-        return responseIsValid(this.lastResponse);
+        boolean result = true;
+        
+        for (String input : this.inputs)
+        {
+            String response = multiplexor.getResponse(input, userid, botid); 
+            this.exchanges.put(input, response);
+            result &= responseIsValid(response);
+        }
+        return result;
     }
 
     /**
-     * Response is valid if none of the checkers return negative.
+     * Response is valid if the checkers return a positive result.
      * 
      * @param response the response to check
      * @return whether or not the response is valud
      */
     private boolean responseIsValid(String response)
     {
-        boolean result = false;
-        if (null != this.checkers && this.checkers.size() > 0)
+        boolean result = true;
+        for (Checker checker : this.checkers)
         {
-            for (Checker checker : this.checkers)
-            {
-                result = result || checker.test(response);
-            }
-        }
-        else
-        {
-            result = true;
+            result &= checker.test(response);
         }
         return result;
     }

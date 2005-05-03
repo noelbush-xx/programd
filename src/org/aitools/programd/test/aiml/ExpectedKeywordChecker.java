@@ -1,6 +1,6 @@
 package org.aitools.programd.test.aiml;
 
-import java.util.List;
+import org.w3c.dom.Element;
 
 /**
  * Checks that a string contains all of a list
@@ -8,19 +8,19 @@ import java.util.List;
  * 
  * @author Albertas Mickensas
  */
-public class ExpectedKeywordChecker implements Checker
+public class ExpectedKeywordChecker extends CheckerBase
 {
-    private List<String> expectedKeywords = null;
+    private Keyword keywords;
 
     /**
      * Creates a new ExpectedKeyWordChecker with a given
      * list of expected keywords.
      * 
-     * @param list the list of keywords that are expected to appear in tested inputs
+     * @param element the keyword (possibly a nested set) to add
      */
-    public ExpectedKeywordChecker(List<String> list)
+    public ExpectedKeywordChecker(Element element)
     {
-        this.expectedKeywords = list;
+        this.keywords = KeywordFactory.create(element);
     }
 
     /**
@@ -30,19 +30,11 @@ public class ExpectedKeywordChecker implements Checker
      */
     public boolean test(String input)
     {
-        if (null != this.expectedKeywords)
+        boolean result = false;
+        for (String keyword : this.keywords)
         {
-            boolean containsAllKeywords = true;
-            String testInput = input.toUpperCase();
-            for (String s : this.expectedKeywords)
-            {
-                containsAllKeywords = containsAllKeywords
-                        && (testInput.indexOf(s) > -1);
-            }
-            return containsAllKeywords;
+            result |= input.contains(keyword);
         }
-        // otherwise...
-        return false;
+        return result;
     }
-
 }
