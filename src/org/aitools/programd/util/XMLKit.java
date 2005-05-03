@@ -16,7 +16,9 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
@@ -920,5 +922,38 @@ public class XMLKit
         {
             throw new DeveloperError("SAX error occurred while parsing " + schemaDescription + " schema.", e);
         }
+    }
+    
+    /**
+     * Returns the element children of the given element.
+     * 
+     * @param element the element whose children are wanted
+     * @return the element children of the given element
+     */
+    public static List<Element> getElementChildrenOf(Element element)
+    {
+        ArrayList<Element> result = new ArrayList<Element>();
+        NodeList children = element.getChildNodes();
+        int childCount = children.getLength();
+        for (int index = 0; index < childCount; index++)
+        {
+            Node child = children.item(index);
+            if (child.getNodeType() == Node.ELEMENT_NODE)
+            {
+                result.add((Element)child);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns the first element child of the given element.
+     * 
+     * @param element the element whose child is wanted
+     * @return the first element child of the given element
+     */
+    public static Element getFirstElementChildOf(Element element)
+    {
+        return getElementChildrenOf(element).get(0);
     }
 }
