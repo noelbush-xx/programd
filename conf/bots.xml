@@ -10,6 +10,7 @@
         <sentence-splitters href="sentence-splitters.xml"/>
         <listeners href="listeners.xml"/>
         <!--<learn>../aiml/*.aiml</learn>-->
-        <learn>../resources/testing/testcases.aiml</learn>
+        <!--<learn>../resources/testing/testcases.aiml</learn>-->
+        <learn>../resources/testing/sample/test.aiml</learn>
     </bot>
 </bots>
