@@ -32,11 +32,16 @@
                                             contain any of the comma-separated keywords.</xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
-                                <xs:element name="ExpectedAnswer" type="xs:string">
+                                <xs:element name="ExpectedAnswer">
                                     <xs:annotation>
                                         <xs:documentation>An ExpectedAnswer checker tells us if a response matches an
                                             expected answer.</xs:documentation>
                                     </xs:annotation>
+                                    <xs:complexType mixed="true">
+                                        <xs:sequence>
+                                            <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##any" processContents="lax"/>
+                                        </xs:sequence>
+                                    </xs:complexType>
                                 </xs:element>
                                 <xs:element name="ExpectedKeywords" type="KeywordList">
                                     <xs:annotation>
