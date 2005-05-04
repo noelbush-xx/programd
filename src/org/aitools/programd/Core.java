@@ -60,7 +60,7 @@ public class Core extends Thread
     public static final String VERSION = "4.5";
 
     /** Build identifier. */
-    public static final String BUILD = "rc2";
+    public static final String BUILD = "rc3";
 
     /** The namespace URI of the bot configuration. */
     public static final String BOT_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.5/bot-configuration";
