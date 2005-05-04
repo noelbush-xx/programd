@@ -6,6 +6,7 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 import org.aitools.programd.multiplexor.Multiplexor;
+import org.aitools.programd.util.StringKit;
 import org.aitools.programd.util.XMLKit;
 
 /**
@@ -18,6 +19,12 @@ public class TestCase
 {
     /** The string &quot;{@value}&quot;. */
     public static String TAG_TESTCASE = "TestCase";
+
+    /** The string &quot;{@value}&quot;. */
+    public static String TAG_DESCRIPTION = "Description";
+
+    /** The string &quot;{@value}&quot;. */
+    public static String TAG_INPUT = "Input";
 
     /** The string &quot;{@value}&quot;. */
     public static String TAG_EXPECTED_ANSWER = "ExpectedAnswer";
@@ -47,16 +54,35 @@ public class TestCase
      * Creates a new TestCase from the given XML element.
      * 
      * @param element the TestCase element
+     * @param index a default index to use for automatically naming this case
      */
-    public TestCase(Element element)
+    public TestCase(Element element, int index)
     {
-        this.name = element.getAttribute("name");
+        if (element.hasAttribute("name"))
+        {
+            this.name = element.getAttribute("name");
+        }
+        else
+        {
+            this.name = "case-" + index;
+        }
 
-        List<Element> elements = XMLKit.getElementChildrenOf(element);
+        List<Element> children = XMLKit.getElementChildrenOf(element);
 
-        // We rely on the schema here!
-        this.input = elements.get(0).getTextContent();
-        for (Element checker : elements.subList(1, elements.size()))
+        int checkersStart = 0;
+        // Might be a description here.
+        Element child = children.get(0);
+        if (child.getTagName().equals(TAG_DESCRIPTION))
+        {
+            checkersStart = 2;
+        }
+        else
+        {
+            checkersStart = 1;
+        }
+
+        this.input = children.get(checkersStart - 1).getTextContent();
+        for (Element checker : children.subList(checkersStart, children.size()))
         {
             this.checkers.add(Checker.create(checker));
         }
@@ -97,7 +123,8 @@ public class TestCase
      */
     public boolean run(Multiplexor multiplexor, String userid, String botid)
     {
-        this.lastResponse = XMLKit.filterWhitespace(multiplexor.getResponse(this.input, userid, botid));
+        this.lastResponse = StringKit.renderAsLines(XMLKit.filterViaHTMLTags(XMLKit
+                .filterWhitespace(multiplexor.getResponse(this.input, userid, botid))));
         return responseIsValid(this.lastResponse);
     }
 
