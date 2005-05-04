@@ -807,17 +807,7 @@ public class XMLKit
         {
             result.append(SPACE_XMLNS_EQUALS_QUOTE + element.getNamespaceURI() + QUOTE_MARK);
         }
-        NamedNodeMap attributes = element.getAttributes();
-        if (attributes != null)
-        {
-            for (int index = 0; index < attributes.getLength(); index++)
-            {
-                Node attribute = attributes.item(index);
-                String attributeName = attribute.getLocalName();
-                result.append(SPACE);
-                result.append(attributeName + EQUAL_QUOTE + attribute.getNodeValue() + QUOTE_MARK);
-            }
-        }
+        result.append(renderAttributes(element.getAttributes()));
         result.append(MARKER_END);
         return result.toString();
     }
@@ -843,21 +833,7 @@ public class XMLKit
         {
             result.append(SPACE_XMLNS_EQUALS_QUOTE + namespaceURI + QUOTE_MARK);
         }
-        if (attributes != null)
-        {
-            for (int index = 0; index < attributes.getLength(); index++)
-            {
-                String attributeName = attributes.getLocalName(index);
-                if (EMPTY_STRING.equals(attributeName))
-                {
-                    attributeName = attributes.getQName(index);
-                }
-                result.append(SPACE);
-                result
-                        .append(attributeName + EQUAL_QUOTE + attributes.getValue(index)
-                                + QUOTE_MARK);
-            }
-        }
+        result.append(renderAttributes(attributes));
         result.append(MARKER_END);
         return result.toString();
     }
@@ -880,22 +856,71 @@ public class XMLKit
         {
             result.append(SPACE_XMLNS_EQUALS_QUOTE + element.getNamespaceURI() + QUOTE_MARK);
         }
-        NamedNodeMap attributes = element.getAttributes();
+        result.append(renderAttributes(element.getAttributes()));
+        result.append(EMPTY_ELEMENT_TAG_END);
+        return result.toString();
+    }
+    
+    /**
+     * Renders a set of attributes.
+     * 
+     * @param attributes the attributes to render
+     * @return the rendered attributes
+     */
+    private static String renderAttributes(Attributes attributes)
+    {
+        StringBuffer result = new StringBuffer();
         if (attributes != null)
         {
-            for (int index = 0; index < attributes.getLength(); index++)
+            int attributeCount = attributes.getLength();
+            for (int index = 0; index < attributeCount; index++)
             {
-                Node attribute = attributes.item(index);
-                String attributeName = attribute.getLocalName();
-                if (!attributeName.equals(XMLNS))
+                String attributeName = attributes.getLocalName(index);
+                if (EMPTY_STRING.equals(attributeName))
+                {
+                    attributeName = attributes.getQName(index);
+                }
+                if (!attributeName.equals(XMLNS) && !attributes.getQName(index).contains(XMLNS))
                 {
                     result.append(SPACE);
-                    result.append(attributeName + EQUAL_QUOTE + attribute.getNodeValue()
-                            + QUOTE_MARK);
+                    result
+                            .append(attributeName + EQUAL_QUOTE + attributes.getValue(index)
+                                    + QUOTE_MARK);
                 }
             }
         }
-        result.append(EMPTY_ELEMENT_TAG_END);
+        return result.toString();
+    }
+
+    /**
+     * Renders a set of attributes.
+     * 
+     * @param attributes the attributes to render
+     * @return the rendered attributes
+     */
+    private static String renderAttributes(NamedNodeMap attributes)
+    {
+        StringBuffer result = new StringBuffer();
+        if (attributes != null)
+        {
+            int attributeCount = attributes.getLength();
+            for (int index = 0; index < attributeCount; index++)
+            {
+                Node attribute = attributes.item(index);
+                String attributeName = attribute.getLocalName();
+                if (EMPTY_STRING.equals(attributeName))
+                {
+                    attributeName = attribute.getNodeName();
+                }
+                if (!attributeName.equals(XMLNS) && !XMLNS.equals(attribute.getPrefix()))
+                {
+                    result.append(SPACE);
+                    result
+                            .append(attributeName + EQUAL_QUOTE + attribute.getNodeValue()
+                                    + QUOTE_MARK);
+                }
+            }
+        }
         return result.toString();
     }
 
