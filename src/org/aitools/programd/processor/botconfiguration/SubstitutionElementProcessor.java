@@ -9,6 +9,7 @@
 
 package org.aitools.programd.processor.botconfiguration;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -19,6 +20,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.util.UserError;
+import org.aitools.programd.util.XMLKit;
 
 /**
  * @version 4.5
@@ -45,9 +47,6 @@ abstract public class SubstitutionElementProcessor extends BotConfigurationEleme
     // Convenience constants.
 
     /** The string &quot;{@value}&quot;. */
-    private static final String SUBSTITUTE = "substitute";
-
-    /** The string &quot;{@value}&quot;. */
     private static final String FIND = "find";
 
     /** The string &quot;{@value}&quot;. */
@@ -72,13 +71,11 @@ abstract public class SubstitutionElementProcessor extends BotConfigurationEleme
      */
     protected void addSubstitutions(SubstitutionType type, Element element, BotsConfigurationFileParser parser)
     {
-        int substituteCount = element.getElementsByTagName(SUBSTITUTE).getLength();
-
         Bot bot = parser.getCurrentBot();
+        List<Element> substitutions = XMLKit.getElementChildrenOf(element);
 
-        for (int index = substituteCount; index > 0; index--)
+        for (Element substitution : substitutions)
         {
-            Element substitution = (Element) parser.getNode(SUBSTITUTE, element.getChildNodes(), index);
             String find = substitution.getAttribute(FIND);
             
             // Compile the find pattern.
@@ -108,9 +105,6 @@ abstract public class SubstitutionElementProcessor extends BotConfigurationEleme
                     break;
             }
         }
-        if (this.core.getSettings().recordMatchTrace())
-        {
-           logger.log(Level.INFO, "Loaded " + substituteCount + " " + element.getNodeName() + " substitutions.");
-        }
+        logger.log(Level.INFO, "Loaded " + substitutions.size() + " " + element.getNodeName() + " substitutions.");
     }
 }
