@@ -540,16 +540,15 @@ public class PredicateMaster
                                 for (int index = valueCount; --index > 0;)
                                 {
                                     // Do not save default values.
-                                    /*
-                                     * This check has been disabled, per bug report from
-                                     * Albertas Mickensas, pending further investigation.
-                                     */
                                     String aValue = value.get(index);
-                                    //if (!aValue.equals(bestAvailableDefault(name, botid)))
-                                    //{
+                                    if (!aValue.equals(bestAvailableDefault(name, botid)))
+                                    {
                                         this.multiplexor.savePredicate(name + '.' + index, aValue, userid, botid);
-                                        saveCount++;
-                                    //}
+                                    }
+                                    /* Increment the saveCount regardless of whether the value is the default,
+                                     * to avoid the reported bug http://bugs.aitools.org/view.php?id=9
+                                     */
+                                    saveCount++;
                                 }
                             }
                         }
