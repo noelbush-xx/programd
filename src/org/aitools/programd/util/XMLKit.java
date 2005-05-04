@@ -428,9 +428,67 @@ public class XMLKit
         }
         StringBuffer result = new StringBuffer();
         renderXML(document.getDocumentElement(), 0, true, result, includeNamespaceAttribute, indent);
+        return filterWhitespace(result.toString());
+    }
+
+
+    /**
+     * Formats XML from a node list into a nicely indented multi-line string (if
+     * <code>indent</code> is <code>true</code>), or just a long string (if
+     * <code>indent</code> is <code>false</code>). This is a convenience method
+     * that assumes that we should include namespace attributes.
+     * 
+     * @param list the list of XML nodes
+     * @param indent whether to render the string in an indented, multiline
+     *            fashion
+     * @return the formatted XML
+     */
+    public static String renderXML(NodeList list, boolean indent)
+    {
+        return filterWhitespace(renderXML(list, 0, true, true, indent));
+    }
+
+    /**
+     * Formats XML from a node list into a nicely indented multi-line string (if
+     * <code>indent</code> is <code>true</code>), or just a long string (if
+     * <code>indent</code> is <code>false</code>).
+     * 
+     * @param list the list of XML nodes
+     * @param level the level (for indenting; no meaning if indenting is off)
+     * @param atStart whether the whole XML string is at its beginning
+     * @param includeNamespaceAttribute whether to include the namespace
+     *            attribute
+     * @param indent whether to render the string in an indented, multiline
+     *            fashion
+     * @return the formatted XML
+     */
+    private static String renderXML(NodeList list, int level, boolean atStart,
+            boolean includeNamespaceAttribute, boolean indent)
+    {
+        StringBuffer result = new StringBuffer();
+
+        int listLength = list.getLength();
+
+        for (int index = 0; index < listLength; index++)
+        {
+            Node node = list.item(index);
+            renderXML(node, level, atStart, result, includeNamespaceAttribute, indent);
+        }
         return result.toString();
     }
 
+    /**
+     * Formats an XML node, putting the result into the buffer passed as an argument.
+     * 
+     * @param node the node to format
+     * @param level the level (for indenting; no meaning if indenting is off)
+     * @param atStart whether the whole XML string is at its beginning
+     * @param result the buffer into which to place the result
+     * @param includeNamespaceAttribute whether to include the namespace
+     *            attribute
+     * @param indent whether to render the string in an indented, multiline
+     *            fashion
+     */
     private static void renderXML(Node node, int level, boolean atStart, StringBuffer result,
             boolean includeNamespaceAttribute, boolean indent)
     {
@@ -522,51 +580,6 @@ public class XMLKit
                 result.append(MARKER_START + COMMENT_START + node.getNodeValue() + COMMENT_END);
                 break;
         }
-    }
-
-    /**
-     * Formats XML from a node list into a nicely indented multi-line string (if
-     * <code>indent</code> is <code>true</code>), or just a long string (if
-     * <code>indent</code> is <code>false</code>). This method assumes that
-     * we should include namespace attributes.
-     * 
-     * @param list the list of XML nodes
-     * @param indent whether to render the string in an indented, multiline
-     *            fashion
-     * @return the formatted XML
-     */
-    public static String renderXML(NodeList list, boolean indent)
-    {
-        return renderXML(list, 0, true, true, indent);
-    }
-
-    /**
-     * Formats XML from a node list into a nicely indented multi-line string (if
-     * <code>indent</code> is <code>true</code>), or just a long string (if
-     * <code>indent</code> is <code>false</code>).
-     * 
-     * @param list the list of XML nodes
-     * @param level the level (for indenting; no meaning if indenting is off)
-     * @param atStart whether the whole XML string is at its beginning
-     * @param includeNamespaceAttribute whether to include the namespace
-     *            attribute
-     * @param indent whether to render the string in an indented, multiline
-     *            fashion
-     * @return the formatted XML
-     */
-    public static String renderXML(NodeList list, int level, boolean atStart,
-            boolean includeNamespaceAttribute, boolean indent)
-    {
-        StringBuffer result = new StringBuffer();
-
-        int listLength = list.getLength();
-
-        for (int index = 0; index < listLength; index++)
-        {
-            Node node = list.item(index);
-            renderXML(node, level, atStart, result, includeNamespaceAttribute, indent);
-        }
-        return result.toString();
     }
 
     /**
