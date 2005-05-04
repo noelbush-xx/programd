@@ -11,8 +11,6 @@ package org.aitools.programd.processor.aiml;
 
 import org.w3c.dom.Element;
 
-import java.util.HashMap;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
@@ -34,9 +32,6 @@ public class Person2Processor extends SubstitutionProcessor
     /** The label (as required by the registration scheme). */
     public static final String label = "person2";
 
-    /** The map of substitutions to be performed on an input. */
-    private static HashMap<String, String> substitutionMap = new HashMap<String, String>();
-
     /**
      * Creates a new Person2Processor using the given Core.
      * 
@@ -53,18 +48,5 @@ public class Person2Processor extends SubstitutionProcessor
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         return process(Person2Processor.class, element, parser);
-    }
-
-    /**
-     * Applies substitutions as defined in the {@link #substitutionMap} .
-     * Comparisons are case-insensitive.
-     * 
-     * @param input the input on which to perform substitutions
-     * @param botid the botid whose substitutions should be applied
-     * @return the input with substitutions performed
-     */
-    public String applySubstitutions(String input, String botid)
-    {
-        return applySubstitutions(Person2Processor.class, input, botid);
     }
 }

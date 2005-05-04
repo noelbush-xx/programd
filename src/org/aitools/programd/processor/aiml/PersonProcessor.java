@@ -49,17 +49,4 @@ public class PersonProcessor extends SubstitutionProcessor
     {
         return process(PersonProcessor.class, element, parser);
     }
-
-    /**
-     * Applies substitutions as defined in the substitution map. Comparisons are
-     * case-insensitive.
-     * 
-     * @param input the input on which to perform substitutions
-     * @param botid the botid whose substitutions should be applied
-     * @return the input with substitutions performed
-     */
-    public String applySubstitutions(String input, String botid)
-    {
-        return applySubstitutions(PersonProcessor.class, input, botid);
-    }
 }
