@@ -9,6 +9,8 @@
 
 package org.aitools.programd.processor.aiml;
 
+import java.util.List;
+
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
@@ -16,6 +18,7 @@ import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.LRUCache;
 import org.aitools.programd.util.MersenneTwisterFast;
+import org.aitools.programd.util.XMLKit;
 
 /**
  * <p>
@@ -59,9 +62,6 @@ public class RandomProcessor extends AIMLProcessor
     /** The label (as required by the registration scheme). */
     public static final String label = "random";
 
-    /** The string &quot;{@value}&quot;, for convenience. */
-    private static final String LI = "li";
-
     /**
      * The map in which MersenneTwisterFast random number generators will be
      * stored for each unique botid + userid + random element.
@@ -95,15 +95,16 @@ public class RandomProcessor extends AIMLProcessor
             generators.put(identifier, generator);
         }
 
-        int nodeCount = element.getElementsByTagName(LI).getLength();
+        List<Element> listitems = XMLKit.getElementChildrenOf(element);
+        int nodeCount = listitems.size();
 
         // Only one <li></li> child means we don't have to pick anything.
         if (nodeCount == 1)
         {
-            return parser.evaluate(parser.getNode(LI, element.getChildNodes(), 1).getChildNodes());
+            return parser.evaluate(listitems.get(0).getChildNodes());
         }
 
         // Otherwise, select a random element of the listitem.
-        return parser.evaluate(parser.getNode(LI, element.getChildNodes(), generator.nextInt(nodeCount) + 1).getChildNodes());
+        return parser.evaluate(listitems.get(generator.nextInt(nodeCount)).getChildNodes());
     }
 }

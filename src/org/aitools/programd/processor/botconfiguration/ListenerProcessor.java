@@ -11,6 +11,7 @@ package org.aitools.programd.processor.botconfiguration;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -24,6 +25,7 @@ import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.ClassUtils;
 import org.aitools.programd.util.UserError;
+import org.aitools.programd.util.XMLKit;
 
 /**
  * The <code>listener</code> element is a container for defining parameters of
@@ -38,9 +40,6 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
     public static final String label = "listener";
 
     // Convenience constants.
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String PARAMETER = "parameter";
 
     /** The string &quot;{@value}&quot;. */
     private static final String CLASS = "class";
@@ -87,14 +86,13 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         // Get the current bot.
         Bot bot = parser.getCurrentBot();
 
-        // Count the parameters
-        int parameterCount = element.getElementsByTagName(PARAMETER).getLength();
-
         // Set up the parameters for the listener.
-        Map<String, String> parameters = Collections.checkedMap(new HashMap<String, String>(parameterCount), String.class, String.class);
-        for (int index = parameterCount; index > 0; index--)
+        List<Element> parameterElements = XMLKit.getElementChildrenOf(element);
+        
+        Map<String, String> parameters = Collections.checkedMap(new HashMap<String, String>(parameterElements.size()), String.class, String.class);
+        
+        for (Element parameter : parameterElements)
         {
-            Element parameter = (Element) parser.getNode(PARAMETER, element.getChildNodes(), index);
             parameters.put(parameter.getAttribute(NAME), parameter.getAttribute(VALUE));
         }
 

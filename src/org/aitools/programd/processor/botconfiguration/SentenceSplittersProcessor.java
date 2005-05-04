@@ -9,12 +9,16 @@
 
 package org.aitools.programd.processor.botconfiguration;
 
+import java.util.List;
+import java.util.logging.Level;
+
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
+import org.aitools.programd.util.XMLKit;
 
 /**
  * The <code>sentence-splitters</code> element is a container for defining
@@ -27,11 +31,6 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
 {
     /** The label (as required by the registration scheme). */
     public static final String label = "sentence-splitters";
-
-    // Convenience constants.
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String SPLITTER = "splitter";
 
     /**
      * Creates a new SentenceSplittersProcessor using the given Core.
@@ -58,15 +57,13 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
         // (otherwise...)
         Bot bot = parser.getCurrentBot();
 
-        int splitterCount = element.getElementsByTagName(SPLITTER).getLength();
-        for (int index = splitterCount; --index > 0;)
+        List<Element> splitters = XMLKit.getElementChildrenOf(element);
+
+        for (Element splitter : splitters)
         {
-            bot.addSentenceSplitter(((Element) parser.getNode(SPLITTER, element.getChildNodes(), index)).getAttribute(VALUE));
+            bot.addSentenceSplitter(splitter.getAttribute(VALUE));
         }
 
-        /*
-         * if (Settings.showConsole()) { Log.userinfo("Loaded " + splitterCount + "
-         * sentence-splitters.", Log.STARTUP); }
-         */
+        logger.log(Level.INFO, "Loaded " + splitters.size() + " sentence-splitters.");
     }
 }
