@@ -26,6 +26,9 @@ public class StringKit
     /** An empty string. */
     private static final String EMPTY_STRING = "";
 
+    /** The system line separator. */
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
+
     /**
      * Returns a tab of the specified length.
      * 
@@ -80,4 +83,27 @@ public class StringKit
         return result;
     }
 
+    /**
+     * Turns an array of strings into a single string with
+     * line separators between each of the original strings.
+     * 
+     * @param strings the strings to render
+     * @return the rendered strings
+     */
+    public static String renderAsLines(String[] strings)
+    {
+        int stringCount = strings.length;
+        if (stringCount == 0)
+        {
+            return strings[0];
+        }
+        StringBuffer result = new StringBuffer();
+        for (int index = 0; index < stringCount - 1; index++)
+        {
+            result.append(strings[index]);
+            result.append(LINE_SEPARATOR);
+        }
+        result.append(strings[stringCount - 1]);
+        return result.toString();
+    }
 }
