@@ -54,6 +54,21 @@ public class TestSuite
     }
 
     /**
+     * Creates a new TestSuite (with no clearInput).
+     * 
+     * @param nameToUse the name to give the test suite
+     * @param multiplexorToUse the multiplexor to use
+     * @param loggerToUse the logger to use
+     */
+    public TestSuite(String nameToUse, Multiplexor multiplexorToUse,
+            Logger loggerToUse)
+    {
+        this.name = nameToUse;
+        this.multiplexor = multiplexorToUse;
+        this.logger = loggerToUse;
+    }
+
+    /**
      * Adds a test case to this suite.
      * 
      * @param testCase the test case to add.
@@ -87,7 +102,10 @@ public class TestSuite
      */
     public boolean run(String botid)
     {
-        this.multiplexor.getResponse(this.clearInput, TESTER_ID, botid);
+        if (this.clearInput != null)
+        {
+            this.multiplexor.getResponse(this.clearInput, TESTER_ID, botid);
+        }
 
         this.failures.clear();
         boolean suiteSuccessful = true;
