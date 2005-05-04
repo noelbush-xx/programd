@@ -22,41 +22,9 @@ source $BASE/bin/common_functions.sh
 # Set up the third party libraries.
 setup_other_libs
 
-# Set up the Java environment.
-setup_java
-
-# Set up other paths to other needed jars and check their existence.
-ANT_MAIN_LIB=$LIBS/ant.jar
-ANT_LAUNCHER_LIB=$LIBS/ant-launcher.jar
-if [ ! -r $ANT_MAIN_LIB ]
-then
-  echo
-  echo I can\'t find the main Ant jar.
-  echo This is necessary for the build process.
-  echo
-  exit 1
-fi
-if [ ! -r $ANT_LAUNCHER_LIB ]
-then
-  echo
-  echo I can\'t find the Ant launcher jar.
-  echo This is necessary for the build process.
-  echo
-  exit 1
-fi
-ANT_LIBS=$ANT_MAIN_LIB:$ANT_LAUNCHER_LIB
-
-JAVA_TOOLS_LIB=$JAVA_HOME/lib/tools.jar
-if [ ! -r $JAVA_TOOLS_LIB ]
-then
-  echo
-  echo I can\'t find the Java tools jar.
-  echo This is necessary for the build process.
-  echo
-  exit 1
-fi
-
 # Concatenate all paths into the classpath to be used.
-BUILD_CLASSPATH=$JAVA_TOOLS_LIB:$ANT_LIBS:$OTHER_LIBS
+BUILD_CLASSPATH=$OTHER_LIBS
 
-$JVM_COMMAND -Dant.home=$BASE -classpath $BUILD_CLASSPATH org.apache.tools.ant.Main -buildfile $BASE/conf/build.xml $1 $2 $3 $4
+# We expect Ant to be installed and on the PATH.
+
+ant -buildfile $BASE/conf/build.xml $1
