@@ -339,6 +339,11 @@ from this new release far outweigh the problem that JDK 5 is not yet available
 for all platforms. If you are a user of a platform that does not yet have JDK 5 
 support, you are strongly encouraged to get involved in hastening the day when 
 it does.
+
+If you want to build Program D from the source distribution, you can easily 
+import it into a Java IDE such as Eclipse. Or you can use the included Ant 
+buildfile, which is the same file used to create the binary distributions. 
+Starting with 4.5(rc3), you will need to have your own copy of Ant installed.
 Significant Open Issues
 
     *
