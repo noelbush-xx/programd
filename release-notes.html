@@ -436,7 +436,17 @@ core.setPredicateEmptyDefault("unknown");
     <p>Here are notes about the release candidates.</p>
     <ul>
       <li>
-        <h4>Release Candidate 2</h4>
+        <a href="#v4.5.rc-notes.rc2">Release Candidate 2</a>
+      </li>
+      <li>
+        <a href="#v4.5.rc-notes.rc3">Release Candidate 3</a>
+      </li>
+    </ul>
+    <ul>
+      <li>
+        <h4>
+          <a id="v4.5.rc-notes.rc2">Release Candidate 2</a>
+        </h4>
         <p>This one follows hot on the heels of rc1, and includes the following fixes:</p>
         <ul>
           <li>
@@ -455,18 +465,10 @@ core.setPredicateEmptyDefault("unknown");
         <p>The first one is pretty critical, which is why this release is so soon after rc1.</p>
       </li>
       <li>
-        <h4>Release Candidate 3</h4>
+        <h4>
+          <a id="v4.5.rc-notes.rc3">Release Candidate 3</a>
+        </h4>
         <ul>
-          <li>
-            <p>
-              <b>Listener configuration</b>&mdash;Listeners are now configured by specifying a
-              class name, rather than a special &quot;label&quot; string which is supposed
-              to be matched by a listener class. Internally, the &quot;<span class="literal"
-              >ListenerRegistry</span>&quot; has been eliminated. This makes the listener
-              architecture properly pluggable&mdash;you can literally write your own listener,
-              add it to the classpath, and put configuration parameters in the configuration file,
-              all without doing anything to the core of Program D.</p>
-          </li>
           <li>
             <p>
               <b>Flash interface</b>&mdash;Some problems that were preventing the Flash
@@ -476,10 +478,16 @@ core.setPredicateEmptyDefault("unknown");
           </li>
           <li>
             <p>
-              <b>Database chat logging</b>&mdash;The database chat logging feature was,
-              ridiculously, logging the <i>entire content</i> of each and every HTML response page,
-              when the web server interface was used. Big oops. Thanks to
-              &quot;WildFox&quot; for uncovering this one. It has been corrected.</p>
+              <b>AIML testing system</b>&mdash;Albertas Mickensas's AIML testing system has been
+              adapted to version 4.5. Now you can create test cases and test your AIML from the
+              shell. (Uses the new shell command interface.) </p>
+          </li>
+          <li>
+            <p>
+              <b>AIML Compliance Test Suite</b>&mdash;The old set of AIML compliance test cases
+              has been ported to the new test case framework. These are included in the Program D
+              distribution. You can test Program D's adherence to the spec simply by typing <span
+                class="literal">/test</span> in the shell.</p>
           </li>
           <li>
             <p>
@@ -497,11 +505,55 @@ core.setPredicateEmptyDefault("unknown");
           </li>
           <li>
             <p>
-              <b>AIML testing system</b>&mdash;Albertas Mickensas's AIML testing system has been
-              adapted to version 4.5. Even though Albertas himself is stuck waiting for JDK 1.5 to
-              be fully ported to FreeBSD, his code is alive today as part of Program D 4.5! Now you
-              can create test cases and test your AIML from the shell. (Uses the new shell command
-              interface.) </p>
+              <b>Listener configuration</b>&mdash;Listeners are now configured by specifying a
+              class name, rather than a special &quot;label&quot; string which is supposed
+              to be matched by a listener class. Internally, the &quot;<span class="literal"
+              >ListenerRegistry</span>&quot; has been eliminated. This makes the listener
+              architecture properly pluggable&mdash;you can literally write your own listener,
+              add it to the classpath, and put configuration parameters in the configuration file,
+              all without doing anything to the core of Program D.</p>
+          </li>
+          <li>
+            <p>
+              <b>other corrected bugs</b>&mdash;Other bugs reported and discovered during the
+              life of rc2 have been corrected, including:</p>
+            <ul>
+              <li>
+                <p>
+                  <a href="http://bugs.aitools.org/view.php?id=4">0000004: omitting trailing slash
+                    on absolute path value for programd.root-directory causes paths to fail</a>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <a href="http://bugs.aitools.org/view.php?id=5">0000005: Should do better error
+                    checking on file paths</a>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <a href="http://bugs.aitools.org/view.php?id=6">0000006: XML templates reprint
+                    namespace URIs over and over again</a>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <a href="http://bugs.aitools.org/view.php?id=8">0000008: Entire HTML response gets
+                    logged to database!</a> (Thanks to &quot;WildFox&quot; for uncovering
+                  this one.) </p>
+              </li>
+              <li>
+                <p>
+                  <a href="http://bugs.aitools.org/view.php?id=9">0000009: PredicateMaster fails to
+                    save predicates after a while</a> (Thanks to Albertas Mickensas for reporting
+                  this.) </p>
+              </li>
+              <li>
+                <p>The AIML schema did not permit element content inside the <span class="literal"
+                  >javascript</span> or <span class="literal">system</span> elements. This has been
+                  corrected. Thanks to Daniel Ireland for discovering this.</p>
+              </li>
+            </ul>
           </li>
         </ul>
       </li>
@@ -558,23 +610,17 @@ core.setPredicateEmptyDefault("unknown");
           available on aitools.org does pass this additional test when validated manually.</p>
       </li>
       <li>
-        <p>The Flash interface has not been tested. Since it has been updated to use an XML
-          template, I doubt it will work with the old Flash interface from Chris Fahey, but it's
-          worth a shot. If somebody with a copy of the Flash authoring tool (yow! that's expensive!)
-          will get in touch with me, I would be glad to coordinate getting this interface working
-          again.</p>
-      </li>
-      <li>
         <p>The "readme" doc ("Getting Started with Program D") has been somewhat over-redacted,
           since quite a lot needed to be updated to reflect changes in property names, etc. Any help
           in this is greatly appreciated, or it will get back to its full glory sooner or later in
           any case.</p>
       </li>
       <li>
-        <p>I have a strong desire to include unit testing, but just haven't gotten to it yet. The
-          included test cases do do a pretty good job of testing key AIML interpreter functionality,
-          but of course it would be very desirable to have a complete testing framework that would
-          cover all aspects of the application. Again, it's in the pipeline....</p>
+        <p>I have a strong desire to include unit testing at the class level, but just haven't
+          gotten to it yet. The new test case framework (as of rc3) does a great job of testing key
+          AIML interpreter functionality, but of course it would be very desirable to have a
+          complete testing framework that would cover all aspects of the application. Again, it's in
+          the pipeline....</p>
       </li>
     </ul>
     <h2>

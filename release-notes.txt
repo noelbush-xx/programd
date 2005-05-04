@@ -243,6 +243,9 @@ Release Candidate Notes
 
 Here are notes about the release candidates.
 
+    * Release Candidate 2
+    * Release Candidate 3
+
     *
       Release Candidate 2
 
@@ -261,6 +264,73 @@ This would have caused confusion.
 
       The first one is pretty critical, which is why this release is so soon 
 after rc1.
+    *
+      Release Candidate 3
+          o
+
+            Flash interface—Some problems that were preventing the Flash 
+interface from working have been fixed. Daniel Ireland gave Chris Fahey's old 
+Flash toolkit a full working-over, and now for the first time this is offered 
+as part of the standard Program D distribution. Thanks, Dan!
+          o
+
+            AIML testing system—Albertas Mickensas's AIML testing system has 
+been adapted to version 4.5. Now you can create test cases and test your AIML 
+from the shell. (Uses the new shell command interface.)
+          o
+
+            AIML Compliance Test Suite—The old set of AIML compliance test 
+cases has been ported to the new test case framework. These are included in the 
+Program D distribution. You can test Program D's adherence to the spec simply 
+by typing /test in the shell.
+          o
+
+            Plugin architecture—A plugin architecture of sorts has been 
+introduced; at first, this is geared only to plug-in shell commands. You can 
+easily add a new command to be available from the shell by implementing a 
+simple interface. To be documented.
+          o
+
+            /aiml shell command—Added a new shell command /aiml that allows you 
+to directly "execute" AIML template contents from the command line. Try, for 
+example, typing: /aiml <date/>.
+          o
+
+            Listener configuration—Listeners are now configured by specifying a 
+class name, rather than a special "label" string which is supposed to be 
+matched by a listener class. Internally, the "ListenerRegistry" has been 
+eliminated. This makes the listener architecture properly pluggable—you can 
+literally write your own listener, add it to the classpath, and put 
+configuration parameters in the configuration file, all without doing anything 
+to the core of Program D.
+          o
+
+            other corrected bugs—Other bugs reported and discovered during the 
+life of rc2 have been corrected, including:
+                +
+
+                  0000004: omitting trailing slash on absolute path value for 
+programd.root-directory causes paths to fail
+                +
+
+                  0000005: Should do better error checking on file paths
+                +
+
+                  0000006: XML templates reprint namespace URIs over and over 
+again
+                +
+
+                  0000008: Entire HTML response gets logged to database! 
+(Thanks to "WildFox" for uncovering this one.)
+                +
+
+                  0000009: PredicateMaster fails to save predicates after a 
+while (Thanks to Albertas Mickensas for reporting this.)
+                +
+
+                  The AIML schema did not permit element content inside the 
+javascript or system elements. This has been corrected. Thanks to Daniel 
+Ireland for discovering this.
 
 Important Notes on System Requirements
 
@@ -309,24 +379,17 @@ Coincidentally, the reprocessed AAA AIML set available on aitools.org does pass
 this additional test when validated manually.
     *
 
-      The Flash interface has not been tested. Since it has been updated to use 
-an XML template, I doubt it will work with the old Flash interface from Chris 
-Fahey, but it's worth a shot. If somebody with a copy of the Flash authoring 
-tool (yow! that's expensive!) will get in touch with me, I would be glad to 
-coordinate getting this interface working again.
-    *
-
       The "readme" doc ("Getting Started with Program D") has been somewhat 
 over-redacted, since quite a lot needed to be updated to reflect changes in 
 property names, etc. Any help in this is greatly appreciated, or it will get 
 back to its full glory sooner or later in any case.
     *
 
-      I have a strong desire to include unit testing, but just haven't gotten 
-to it yet. The included test cases do do a pretty good job of testing key AIML 
-interpreter functionality, but of course it would be very desirable to have a 
-complete testing framework that would cover all aspects of the application. 
-Again, it's in the pipeline....
+      I have a strong desire to include unit testing at the class level, but 
+just haven't gotten to it yet. The new test case framework (as of rc3) does a 
+great job of testing key AIML interpreter functionality, but of course it would 
+be very desirable to have a complete testing framework that would cover all 
+aspects of the application. Again, it's in the pipeline....
 
 4.1.5
 
