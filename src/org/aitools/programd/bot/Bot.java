@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.FileHandler;
@@ -61,11 +62,11 @@ public class Bot
             new HashMap<String, PredicateInfo>(), String.class, PredicateInfo.class);
 
     /** The bot's processor-specific substitution maps. */
-    private Map<Class<? extends Processor>, Map<Pattern, String>> substitutionMaps = new HashMap<Class<? extends Processor>, Map<Pattern, String>>();
+    private Map<Class<? extends Processor>, LinkedHashMap<Pattern, String>> substitutionMaps = new HashMap<Class<? extends Processor>, LinkedHashMap<Pattern, String>>();
 
     /** The bot's input substitution map. */
     private Map<Pattern, String> inputSubstitutions = Collections.checkedMap(
-            new HashMap<Pattern, String>(), Pattern.class, String.class);
+            new LinkedHashMap<Pattern, String>(), Pattern.class, String.class);
 
     /** The bot's sentence splitter map. */
     private List<String> sentenceSplitters = Collections.checkedList(new ArrayList<String>(),
@@ -87,10 +88,8 @@ public class Bot
     /**
      * Creates a new Bot with the given id. The bot's chat log is also set up.
      * 
-     * @param botID
-     *            the id to use for the new bot
-     * @param coreSettings
-     *            the core settings to use
+     * @param botID the id to use for the new bot
+     * @param coreSettings the core settings to use
      */
     public Bot(String botID, CoreSettings coreSettings)
     {
@@ -100,8 +99,9 @@ public class Bot
 
         this.logger = Logger.getLogger("programd.chat." + this.id);
         this.logger.setUseParentHandlers(false);
-        File chatlogDirectory = FileManager.checkOrCreateDirectory(chatlogDirectoryName, "chat log directory");
-        
+        File chatlogDirectory = FileManager.checkOrCreateDirectory(chatlogDirectoryName,
+                "chat log directory");
+
         String chatlogDirectoryPath = chatlogDirectory.getAbsolutePath();
 
         // Set up plain text logging of chat.
@@ -110,13 +110,13 @@ public class Bot
             FileHandler chatLogFileHandler;
             try
             {
-                chatLogFileHandler = new FileHandler(chatlogDirectoryPath + File.separator + this.id
-                        + "-%g.log", 1048576, 10, true);
+                chatLogFileHandler = new FileHandler(chatlogDirectoryPath + File.separator
+                        + this.id + "-%g.log", 1048576, 10, true);
             }
             catch (IOException e)
             {
-                throw new UserError("Could not create XML chat log for bot \"" + this.id + "\" in \""
-                        + chatlogDirectory + "\"!", e);
+                throw new UserError("Could not create XML chat log for bot \"" + this.id
+                        + "\" in \"" + chatlogDirectory + "\"!", e);
             }
             chatLogFileHandler.setFormatter(new SimpleChatLogFormatter(coreSettings));
             this.logger.addHandler(chatLogFileHandler);
@@ -128,13 +128,13 @@ public class Bot
             FileHandler xmlChatLogFileHandler;
             try
             {
-                xmlChatLogFileHandler = new FileHandler(chatlogDirectoryPath + File.separator + this.id
-                        + "-%g.xml", 1048576, 10, false);
+                xmlChatLogFileHandler = new FileHandler(chatlogDirectoryPath + File.separator
+                        + this.id + "-%g.xml", 1048576, 10, false);
             }
             catch (IOException e)
             {
-                throw new UserError("Could not create XML chat log for bot \"" + this.id + "\" in \""
-                        + chatlogDirectory + "\"!", e);
+                throw new UserError("Could not create XML chat log for bot \"" + this.id
+                        + "\" in \"" + chatlogDirectory + "\"!", e);
             }
             xmlChatLogFileHandler.setFormatter(new XMLChatLogFormatter());
             this.logger.addHandler(xmlChatLogFileHandler);
@@ -178,8 +178,7 @@ public class Bot
     /**
      * Returns whether the bot has loaded the given file(name).
      * 
-     * @param filename
-     *            the filename to check
+     * @param filename the filename to check
      * @return whether the bot has loaded the given file(name)
      */
     public boolean hasLoaded(String filename)
@@ -190,10 +189,8 @@ public class Bot
     /**
      * Adds a nodemapper to the filename map.
      * 
-     * @param filename
-     *            the filename
-     * @param nodemapper
-     *            the mapper for the node to add
+     * @param filename the filename
+     * @param nodemapper the mapper for the node to add
      */
     public void addToFilenameMap(String filename, Nodemapper nodemapper)
     {
@@ -207,8 +204,7 @@ public class Bot
     /**
      * Retrieves the value of a named bot property.
      * 
-     * @param name
-     *            the name of the bot property to get
+     * @param name the name of the bot property to get
      * @return the value of the bot property
      */
     public String getPropertyValue(String name)
@@ -232,10 +228,8 @@ public class Bot
     /**
      * Sets the value of a bot property.
      * 
-     * @param name
-     *            the name of the bot predicate to set
-     * @param value
-     *            the value to set
+     * @param name the name of the bot predicate to set
+     * @param value the value to set
      */
     public void setPropertyValue(String name, String value)
     {
@@ -260,8 +254,7 @@ public class Bot
     /**
      * Sets the bot's properties.
      * 
-     * @param map
-     *            the properties to set.
+     * @param map the properties to set.
      */
     public void setProperties(HashMap<String, String> map)
     {
@@ -273,12 +266,10 @@ public class Bot
      * just used when it is necessary to specify a default value for a predicate
      * and/or specify its type as return-name-when-set.
      * 
-     * @param name
-     *            the name of the predicate
-     * @param defaultValue
-     *            the default value (if any) for the predicate
-     * @param returnNameWhenSet
-     *            whether the predicate should return its name when set
+     * @param name the name of the predicate
+     * @param defaultValue the default value (if any) for the predicate
+     * @param returnNameWhenSet whether the predicate should return its name
+     *            when set
      */
     public void addPredicateInfo(String name, String defaultValue, boolean returnNameWhenSet)
     {
@@ -342,19 +333,15 @@ public class Bot
      * to do case-insensitive comparisons. The <code>replace</code> parameter
      * is stored as is.
      * 
-     * @param processor
-     *            the processor with which the map is associated
-     * @param find
-     *            the find-string part of the substitution
-     * @param replace
-     *            the replace-string part of the substitution
+     * @param processor the processor with which the map is associated
+     * @param find the find-string part of the substitution
+     * @param replace the replace-string part of the substitution
      */
     public void addSubstitution(Class<? extends Processor> processor, Pattern find, String replace)
     {
         if (!this.substitutionMaps.containsKey(processor))
         {
-            this.substitutionMaps.put(processor, Collections.checkedMap(
-                    new HashMap<Pattern, String>(), Pattern.class, String.class));
+            this.substitutionMaps.put(processor, new LinkedHashMap<Pattern, String>());
         }
         this.substitutionMaps.get(processor).put(find, replace);
     }
@@ -364,10 +351,8 @@ public class Bot
      * in uppercase, to do case-insensitive comparisons. The
      * <code>replace</code> parameter is stored as is.
      * 
-     * @param find
-     *            the find-string part of the substitution
-     * @param replace
-     *            the replace-string part of the substitution
+     * @param find the find-string part of the substitution
+     * @param replace the replace-string part of the substitution
      */
     public void addInputSubstitution(Pattern find, String replace)
     {
@@ -377,8 +362,7 @@ public class Bot
     /**
      * Adds a sentence splitter to the sentence splitters list.
      * 
-     * @param splitter
-     *            the string on which to divide sentences
+     * @param splitter the string on which to divide sentences
      */
     public void addSentenceSplitter(String splitter)
     {
@@ -389,8 +373,7 @@ public class Bot
     }
 
     /**
-     * @param processor
-     *            the processor whose substitution map is desired
+     * @param processor the processor whose substitution map is desired
      * @return the substitution map associated with the given processor class.
      */
     public Map<Pattern, String> getSubstitutionMap(Class<? extends Processor> processor)
@@ -409,8 +392,7 @@ public class Bot
     /**
      * Splits the given input into sentences.
      * 
-     * @param input
-     *            the input to split
+     * @param input the input to split
      * @return the sentences of the input
      */
     public List<String> sentenceSplit(String input)
@@ -421,8 +403,7 @@ public class Bot
     /**
      * Applies input substitutions to the given input
      * 
-     * @param input
-     *            the input to which to apply substitutions
+     * @param input the input to which to apply substitutions
      * @return the processed input
      */
     public String applyInputSubstitutions(String input)
