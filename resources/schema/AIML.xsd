@@ -498,7 +498,7 @@
 				required.</xs:documentation>
 		</xs:annotation>
 		<xs:choice>
-			<xs:element name="system" type="xs:string">
+			<xs:element name="system" type="MixedTemplateContentContainer">
 				<xs:annotation>
 					<xs:documentation>The system element instructs the AIML interpreter to pass its
 						content (with any appropriate preprocessing) to the system command
@@ -506,7 +506,7 @@
 					running.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="javascript" type="xs:string">
+			<xs:element name="javascript" type="MixedTemplateContentContainer">
 				<xs:annotation>
 					<xs:documentation>The javascript element instructs the AIML interpreter to pass
 						its content (with any appropriate preprocessing, as noted above) to a
