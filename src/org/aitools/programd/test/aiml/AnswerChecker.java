@@ -2,6 +2,7 @@ package org.aitools.programd.test.aiml;
 
 import org.w3c.dom.Element;
 
+import org.aitools.programd.util.StringKit;
 import org.aitools.programd.util.XMLKit;
 
 /**
@@ -20,7 +21,8 @@ public class AnswerChecker extends Checker
      */
     public AnswerChecker(Element element)
     {
-        this.expectedAnswer = XMLKit.renderXML(element.getChildNodes(), false);
+        this.expectedAnswer = StringKit.renderAsLines(XMLKit.filterViaHTMLTags(XMLKit.renderXML(
+                element.getChildNodes(), false)));
     }
 
     /**
