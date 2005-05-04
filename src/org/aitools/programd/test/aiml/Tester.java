@@ -113,7 +113,7 @@ public class Tester
         }
         if (this.failures.size() > 0)
         {
-            this.logger.log(Level.WARNING, "There were failures while running tests.");
+            this.logger.log(Level.WARNING, this.failures.size() + " test case failure(s).");
             for (TestFailure failure : this.failures)
             {
                 this.logger.log(Level.WARNING, failure.toString());
@@ -121,7 +121,7 @@ public class Tester
         }
         else
         {
-            this.logger.log(Level.INFO, "Tests passed.");
+            this.logger.log(Level.INFO, "All tests passed.");
         }
 
     }
@@ -227,7 +227,7 @@ public class Tester
         for (int index = 0; index < testCaseCount; index++)
         {
             Element testCaseElement = (Element) testCases.item(index);
-            TestCase testCase = new TestCase(testCaseElement);
+            TestCase testCase = new TestCase(testCaseElement, index);
             suite.addTestCase(testCase);
         }
     }
