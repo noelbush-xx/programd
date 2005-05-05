@@ -54,6 +54,7 @@ function setup_programd()
   
   # Define the other programd jars, but don't worry if they don't exist.
   PROGRAMD_JETTY_LIB=$LIBS/programd-jetty.jar
+  PROGRAMD_JETTY_LIB=$LIBS/programd-listeners.jar
   PROGRAMD_JS_LIB=$LIBS/programd-rhino.jar
   
   # Set up external jars.
