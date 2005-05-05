@@ -12,6 +12,7 @@ package org.aitools.programd.responder.xml;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
@@ -21,7 +22,9 @@ import org.aitools.programd.responder.AbstractXMLResponder;
 import org.aitools.programd.responder.xml.XMLTemplateProcessor;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.NotARegisteredClassException;
+import org.aitools.programd.util.StringKit;
 import org.aitools.programd.util.UserError;
+import org.aitools.programd.util.XMLKit;
 
 /**
  * <code>XMLTemplateParser</code> processes an HTML template, such as used by
@@ -31,6 +34,12 @@ public class XMLTemplateParser extends GenericParser<XMLTemplateProcessor>
 {
     /** The responder that invoked this parser. */
     private AbstractXMLResponder responder;
+    
+    /** Whether to convert HTML line breakers to line breaks in the output. */
+    private boolean convertHTMLLineBreakers;
+    
+    /** Whether to strip markup from the output. */
+    private boolean stripMarkup;
 
     private static final Logger logger = Logger.getLogger("programd");
 
@@ -39,11 +48,15 @@ public class XMLTemplateParser extends GenericParser<XMLTemplateProcessor>
      * 
      * @param registry the registry of XML template processors
      * @param responderSource the responder that is invoking this parser
+     * @param convert whether to convert HTML line breakers to line breaks in output
+     * @param strip whether to strip markup from the output
      */
-    public XMLTemplateParser(XMLTemplateProcessorRegistry registry, AbstractXMLResponder responderSource)
+    public XMLTemplateParser(XMLTemplateProcessorRegistry registry, AbstractXMLResponder responderSource, boolean convert, boolean strip)
     {
         super(registry, responderSource.getManager().getCore());
         this.responder = responderSource;
+        this.convertHTMLLineBreakers = convert;
+        this.stripMarkup = strip;
     }
 
     /**
@@ -54,10 +67,34 @@ public class XMLTemplateParser extends GenericParser<XMLTemplateProcessor>
      * 
      * @param registry the registry of XML template processors
      * @param coreToUse the core to use
+     * @param convert whether to convert HTML line breakers to line breaks in output
+     * @param strip whether to strip markup from the output
      */
-    public XMLTemplateParser(XMLTemplateProcessorRegistry registry, Core coreToUse)
+    public XMLTemplateParser(XMLTemplateProcessorRegistry registry, Core coreToUse, boolean convert, boolean strip)
     {
         super(registry, coreToUse);
+        this.convertHTMLLineBreakers = convert;
+        this.stripMarkup = strip;
+    }
+
+    /**
+     * Processes a response, stripping markup and/or converting
+     * HTML line breakers as configured.
+     * 
+     * @see org.aitools.programd.parser.GenericParser#evaluate(Document)
+     */
+    public String evaluate(Document document) throws ProcessorException
+    {
+        String response = super.evaluate(document);
+        if (this.convertHTMLLineBreakers)
+        {
+            response = StringKit.renderAsLines(XMLKit.filterViaHTMLTags(response));
+        }
+        if (this.stripMarkup)
+        {
+            response = XMLKit.removeMarkup(response);
+        }
+        return response;
     }
 
     /**

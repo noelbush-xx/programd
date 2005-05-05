@@ -47,7 +47,9 @@ public class FlashResponderManager extends AbstractXMLResponderManager implement
     {
         super(coreToUse);
         CoreSettings coreSettings = this.core.getSettings();
-        this.settings = new FlashResponderSettings(coreSettings.getConfLocationHtmlResponder());
+        this.settings = new FlashResponderSettings(coreSettings.getConfLocationFlashResponder());
+        setConvertHTMLLineBreakers(this.settings.convertHtmlLineBreakers());
+        setStripMarkup(this.settings.stripMarkup());
         setDefaultTemplateName(this.settings.getChatDefaultTemplateName());
         // Scan and register other templates.
         registerTemplates(FileManager.getExistingFile(this.settings.getTemplateDirectory()).getAbsolutePath(), FILENAME_FILTER);

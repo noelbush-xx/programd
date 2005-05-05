@@ -47,6 +47,12 @@ abstract public class AbstractXMLResponderManager extends ResponderManager
 
     /** The template processor registry. */
     protected XMLTemplateProcessorRegistry templateProcessorRegistry;
+    
+    /** Whether to convert HTML line breakers to line breaks in the output. */
+    private boolean convertHTMLLineBreakers;
+    
+    /** Whether to strip markup from the output. */
+    private boolean stripMarkup;
 
     /**
      * @param coreToUse the core to use when getting some values
@@ -79,7 +85,7 @@ abstract public class AbstractXMLResponderManager extends ResponderManager
     protected void registerTemplates(String directoryName, SuffixFilenameFilter filter)
     {
         File directory = FileManager.getFile(directoryName);
-        XMLTemplateParser parser = new XMLTemplateParser(this.templateProcessorRegistry, this.core);
+        XMLTemplateParser parser = new XMLTemplateParser(this.templateProcessorRegistry, this.core, this.convertHTMLLineBreakers, this.stripMarkup);
         if (directory.isDirectory())
         {
             String[] templateFilenames = directory.list(filter);
@@ -152,4 +158,37 @@ abstract public class AbstractXMLResponderManager extends ResponderManager
     {
         return this.core;
     }
+    
+    /** 
+     * @return whether to convert HTML line breakers to line breaks in the output.
+     * */
+    public boolean convertHTMLLineBreakers()
+    {
+        return this.convertHTMLLineBreakers;
+    }
+    
+    /**
+     * @return whether to strip markup from the output.
+     */
+    public boolean stripMarkup()
+    {
+        return this.stripMarkup;
+    }
+
+    /** 
+     * @param setting whether to convert HTML line breakers to line breaks in the output.
+     * */
+    public void setConvertHTMLLineBreakers(boolean setting)
+    {
+        this.convertHTMLLineBreakers = setting;
+    }
+    
+    /**
+     * @param setting whether to strip markup from the output.
+     */
+    public void setStripMarkup(boolean setting)
+    {
+        this.stripMarkup = setting;
+    }
+
 }

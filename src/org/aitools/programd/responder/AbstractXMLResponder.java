@@ -65,11 +65,13 @@ abstract public class AbstractXMLResponder implements Responder
      * @param botidToRespondFor the botid to respond for
      * @param templateName the template name to use
      */
-    public AbstractXMLResponder(AbstractXMLResponderManager respnsibleManager, String botidToRespondFor, String templateName)
+    public AbstractXMLResponder(AbstractXMLResponderManager respnsibleManager,
+            String botidToRespondFor, String templateName)
     {
         if (templateName == null || templateName.equals(EMPTY_STRING))
         {
-            initialize(respnsibleManager, botidToRespondFor, respnsibleManager.getDefaultTemplateName());
+            initialize(respnsibleManager, botidToRespondFor, respnsibleManager
+                    .getDefaultTemplateName());
         }
         else
         {
@@ -77,7 +79,8 @@ abstract public class AbstractXMLResponder implements Responder
         }
     }
 
-    private void initialize(AbstractXMLResponderManager respnsibleManager, String botidToRespondFor, String templateName)
+    private void initialize(AbstractXMLResponderManager respnsibleManager,
+            String botidToRespondFor, String templateName)
     {
         this.botid = botidToRespondFor;
         this.manager = respnsibleManager;
@@ -131,7 +134,9 @@ abstract public class AbstractXMLResponder implements Responder
     {
         try
         {
-            return new XMLTemplateParser(this.manager.getProcessorRegistry(), this).evaluate(templateToProcess);
+            return new XMLTemplateParser(this.manager.getProcessorRegistry(), this, this.manager
+                    .convertHTMLLineBreakers(), this.manager.stripMarkup())
+                    .evaluate(templateToProcess);
         }
         catch (ProcessorException e)
         {
@@ -186,7 +191,7 @@ abstract public class AbstractXMLResponder implements Responder
     {
         return this.bot;
     }
-    
+
     /**
      * @return the manager
      */
