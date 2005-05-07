@@ -96,6 +96,33 @@
 		</javadoc>
 	</target>
 	
+	<!--Create the schema documentation.-->
+	<!--Note: You'll need the xs3p stylesheet
+	    (from http://titanium.dstc.edu.au/xml/xs3p/) to generate this.
+	    Change the xs3p property below to match wherever you install it.-->
+	<target name="schema-doc">
+		<property name="xs3p" value="/usr/local/xs3p/xs3p.xsl"/>
+		<property name="schema" value="../resources/schema"/>
+		<property name="schema-doc" value="../docs/schema"/>
+		<delete dir="${schema-doc}"/>
+		<xslt in="${schema}/AIML.xsd" out="${schema-doc}/AIML.html" style="${xs3p}">
+        	<param name="title" expression="A Schema for AIML 1.0.1"/>
+    		<param name="sortByComponent" expression="false"/>
+		</xslt>
+		<xslt in="${schema}/bot-configuration.xsd" out="${schema-doc}/bot-configuration.html" style="${xs3p}">
+        	<param name="title" expression="Program D Bot Configuration Schema"/>
+    		<param name="sortByComponent" expression="false"/>
+		</xslt>
+		<xslt in="${schema}/ChatLog.xsd" out="${schema-doc}/ChatLog.html" style="${xs3p}">
+        	<param name="title" expression="Program D Chat Log Schema"/>
+    		<param name="sortByComponent" expression="false"/>
+		</xslt>
+		<xslt in="${schema}/test-cases.xsd" out="${schema-doc}/test-cases.html" style="${xs3p}">
+        	<param name="title" expression="Program D Test Suite Schema"/>
+    		<param name="sortByComponent" expression="false"/>
+		</xslt>
+	</target>
+
 	<!--Clean target.-->
 	<target name="clean" depends="init">
 		<delete dir="${build.dir}"/>
