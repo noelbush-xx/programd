@@ -1,0 +1,2824 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>A Schema for AIML 1.0.1</title>
+<meta http-equiv="Content-Type" content="text/xml; charset=iso-8859-1"/>
+<style type="text/css">
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* More-configurable styles */
+
+/******** General ********/
+
+/* Document body */
+body {
+   color: Black;
+   background-color: White;
+   font-family: Arial, sans-serif;
+   font-size: 10pt;
+}
+/* Horizontal rules */
+hr {
+   color: black;
+}
+/* Document title */
+h1 {
+   font-size: 18pt;
+   letter-spacing: 2px;
+   border-bottom: 1px #ccc solid;
+   padding-top: 5px;
+   padding-bottom: 5px;
+}
+/* Main section headers */
+h2 {
+   font-size: 14pt;
+   letter-spacing: 1px;
+}
+/* Sub-section headers */
+h3, h3 a, h3 span {
+   font-size: 12pt;
+   font-weight: bold;
+   color: black;
+}
+/* Table displaying the properties of the schema components or the
+   schema document itself */
+table.properties th, table.properties th a {
+   color: black;
+   background-color: #F99; /* Pink */
+}
+table.properties td {
+   background-color: #eee; /* Gray */
+}
+
+
+/******** Table of Contents Section ********/
+
+/* Controls for switching between printing and viewing modes */
+div#printerControls {
+   color: #963; /* Orange-brown */
+}
+/* Controls that can collapse or expand all XML Instance
+   Representation and Schema Component Representation boxes */
+div#globalControls {
+   border: 2px solid #999;
+}
+
+
+/******** Schema Document Properties Section ********/
+
+/* Table displaying the namespaces declared in the schema */
+table.namespaces th {
+   background-color: #ccc;
+}
+table.namespaces td {
+   background-color: #eee;
+}
+/* Target namespace of the schema */
+span.targetNS {
+   color: #06C;
+   font-weight: bold;
+}
+
+
+/******** Schema Components' Sections ********/
+
+/* Name of schema component */
+.name {
+   color: #F93; /* Orange */
+}
+
+/* Hierarchy table */
+table.hierarchy {
+   border: 2px solid #999; /* Gray */
+}
+
+/* XML Instance Representation table */
+div.sample div.contents {
+   border: 2px dashed black;
+}
+
+/* Schema Component Representation table */
+div.schemaComponent div.contents {
+   border: 2px black solid;
+}
+
+
+/******** Glossary Section ********/
+
+/* Glossary Terms */
+.glossaryTerm {
+   color: #036; /* Blue */
+}
+
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* Printer-version styles */
+
+@media print {
+
+/* Ensures that controls are hidden when printing */
+div#printerControls {
+   visibility: hidden;
+}
+div#globalControls {
+   visibility: hidden;
+}
+#legend {
+   display: none;
+}
+#legendTOC {
+   display: none;
+}
+#glossary {
+   display: none;
+}
+#glossaryTOC {
+   display: none;
+}
+
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* Base styles */
+
+/******** General ********/
+
+/* Unordered lists */
+ul {
+   margin-left: 1.5em;
+   margin-bottom: 0em;
+}
+/* Tables */
+table {
+   margin-top: 10px;
+   margin-bottom: 10px;
+   margin-left: 2px;
+   margin-right: 2px;
+}
+table th, table td {
+   font-size: 10pt;
+   vertical-align: top;
+   padding-top: 3px;
+   padding-bottom: 3px;
+   padding-left: 10px;
+   padding-right: 10px;
+}
+table th {
+   font-weight: bold;
+   text-align: left;
+}
+/* Table displaying the properties of the schema components or the
+   schema document itself */
+table.properties {
+   width: 90%;
+}
+table.properties th {
+   width: 30%;
+}
+/* Boxes that can make its content appear and disappear*/
+div.box {
+   margin: 1em;
+}
+   /* Box caption */
+div.box span.caption {
+   font-weight: bold;
+}
+   /* Button to open and close the box */
+div.box input.control {
+   width: 1.4em;
+   height: 1.4em;
+   text-align: center;
+   vertical-align: middle;
+   font-size: 11pt;
+}
+   /* Box contents */
+div.box div.contents {
+   margin-top: 3px;
+}
+
+
+/******** Table of Contents Section ********/
+
+/* Controls for switching between printing and viewing modes */
+div#printerControls {
+   white-space: nowrap;
+   font-weight: bold;
+   padding: 5px;
+   margin: 5px;
+}
+/* Controls that can collapse or expand all XML Instance
+   Representation and Schema Component Representation boxes */
+div#globalControls {
+   padding: 10px;
+   margin: 5px;
+}
+
+
+/******** Schema Document Properties Section ********/
+
+/* Table displaying the namespaces declared in the schema */
+table.namespaces th {
+}
+table.namespaces td {
+}
+/* Target namespace of the schema */
+span.targetNS {
+}
+
+
+/******** Schema Components' Sections ********/
+
+/* Name of schema component */
+.name {
+}
+
+/* Hierarchy table */
+table.hierarchy {
+   width: 90%;
+}
+table.hierarchy th {
+   font-weight: normal;
+   font-style: italic;
+   width: 20%;
+}
+table.hierarchy th, table.hierarchy td {
+   padding: 5px;
+}
+
+/* XML Instance Representation table */
+div.sample {
+   width: 90%;
+}
+div.sample div.contents {
+   padding: 5px;
+   font-family: Courier New, sans-serif;
+   font-size: 10pt;
+}
+   /* Normal elements and attributes */
+div.sample div.contents, div.sample div.contents a {
+   color: black;
+}
+   /* Group Headers */
+div.sample div.contents .group, div.sample div.contents .group a {
+   color: #999; /* Light gray */
+}
+   /* Type Information */
+div.sample div.contents .type, div.sample div.contents .type a {
+   color: #999; /* Light gray */
+}
+   /* Occurrence Information */
+div.sample div.contents .occurs, div.sample div.contents .occurs a {
+   color: #999; /* Light gray */
+}
+   /* Fixed values */
+div.sample div.contents .fixed {
+   color: #063; /* Green */
+   font-weight: bold;
+}
+   /* Simple type constraints */
+div.sample div.contents .constraint, div.sample div.contents .constraint a {
+   color: #999; /* Light gray */
+}
+   /* Elements and attributes inherited from base type */
+div.sample div.contents .inherited, div.sample div.contents .inherited a {
+   color: #666; /* Dark gray */
+}
+   /* Elements and attributes added to or changed from base type */
+div.sample div.contents .newFields {
+   font-weight: bold;
+}
+   /* Other type of information */
+div.sample div.contents .other, div.sample div.contents .other a {
+   color: #369; /* Blue */
+   font-style: italic;
+}
+   /* Link to open up window displaying documentation */
+div.sample div.contents a.documentation {
+   text-decoration: none;
+   padding-left: 3px;
+   padding-right: 3px;
+   padding-top: 0px;
+   padding-bottom: 0px;
+   font-weight: bold;
+   font-size: 11pt;
+   background-color: #FFD;
+   color: #069;
+}
+   /* Invert colors when hovering over link to open up window 
+      displaying documentation */
+div.sample div.contents a.documentation:hover {
+   color: #FFD;
+   background-color: #069;
+}
+
+/* Schema Component Representation table */
+div.schemaComponent {
+   width: 90%;
+}
+div.schemaComponent div.contents {
+   font-family: Courier New, sans-serif;
+   font-size: 10pt;
+   padding: 5px;
+}
+   /* Syntax characters */
+div.schemaComponent div.contents {
+   color: #00f; /* blue */
+}
+   /* Element and attribute tags */
+div.schemaComponent div.contents .scTag {
+   color: #933; /* maroon */
+}
+   /* Element and attribute content */
+div.schemaComponent div.contents .scContent, div.schemaComponent div.contents .scContent a {
+   color: black;
+   font-weight: bold;
+}
+   /* Comments */
+div.schemaComponent div.contents .comment {
+   color: #999; /* Light gray */
+}
+
+/******** Legend Section ********/
+
+div#legend table, div#legend div {
+   margin-bottom: 3px;
+}
+div#legend div.hint {
+   color: #999; /* Light gray */
+   width: 90%;
+   margin-left: 1em;
+   margin-bottom: 2em;
+}
+
+
+/******** Glossary Section ********/
+
+/* Glossary Terms */
+.glossaryTerm {
+   font-weight: bold;
+}
+
+
+/******** Footer ********/
+
+.footer {
+   font-size: 8pt;
+}
+</style>
+<script type="text/javascript">
+<!--
+/* IDs of XML Instance Representation boxes */
+var xiBoxes = new Array('element_aiml_xibox', 'type_Category_xibox', 'type_MixedPatternExpression_xibox', 'type_SimplePatternExpression_xibox', 'type_MixedTemplateContentContainer_xibox', 'group_atomicElements_xibox', 'group_shortcutElements_xibox', 'group_systemDefinedPredicates_xibox', 'group_textFormattingElements_xibox', 'group_conditionalElements_xibox', 'group_captureElements_xibox', 'group_symbolicReductionElements_xibox', 'group_transformationalElements_xibox', 'group_covertElements_xibox', 'group_externalProcessorElements_xibox', 'type_OneOrTwoDIndexedElement_xibox', 'type_IndexedElement_xibox', 'type_PredicateName_xibox');
+/* IDs of Schema Component Representation boxes */
+var scBoxes = new Array('schema_scbox', 'element_aiml_scbox', 'type_Category_scbox', 'type_MixedPatternExpression_scbox', 'type_SimplePatternExpression_scbox', 'type_MixedTemplateContentContainer_scbox', 'group_atomicElements_scbox', 'group_shortcutElements_scbox', 'group_systemDefinedPredicates_scbox', 'group_textFormattingElements_scbox', 'group_conditionalElements_scbox', 'group_captureElements_scbox', 'group_symbolicReductionElements_scbox', 'group_transformationalElements_scbox', 'group_covertElements_scbox', 'group_externalProcessorElements_scbox', 'type_OneOrTwoDIndexedElement_scbox', 'type_IndexedElement_scbox', 'type_PredicateName_scbox');
+
+/**
+ * Can get the ID of the button controlling
+ * a collapseable box by concatenating
+ * this string onto the ID of the box itself.
+ */
+var B_SFIX = "_button";
+
+/**
+ * Counter of documentation windows
+ * Used to give each window a unique name
+ */
+var windowCount = 0;
+
+/**
+ * Returns an element in the current HTML document.
+ * 
+ * @param elementID Identifier of HTML element
+ * @return               HTML element object
+ */
+function getElementObject(elementID) {
+    var elemObj = null;
+    if (document.getElementById) {
+        elemObj = document.getElementById(elementID);
+    }
+    return elemObj;
+}             
+
+/**
+ * Closes a collapseable box.
+ * 
+ * @param boxObj       Collapseable box
+ * @param buttonObj Button controlling box
+ */
+function closeBox(boxObj, buttonObj) {
+  if (boxObj == null || buttonObj == null) {
+     // Box or button not found
+  } else {
+     // Change 'display' CSS property of box
+     boxObj.style.display="none";
+
+     // Change text of button 
+     if (boxObj.style.display=="none") {
+        buttonObj.value=" + ";
+     }
+  }
+}
+
+/**
+ * Opens a collapseable box.
+ * 
+ * @param boxObj       Collapseable box
+ * @param buttonObj Button controlling box
+ */
+function openBox(boxObj, buttonObj) {
+  if (boxObj == null || buttonObj == null) {
+     // Box or button not found
+  } else {
+     // Change 'display' CSS property of box
+     boxObj.style.display="block";
+
+     // Change text of button
+     if (boxObj.style.display=="block") {
+        buttonObj.value=" - ";
+     }
+  }
+}
+
+/**
+ * Sets the state of a collapseable box.
+ * 
+ * @param boxID Identifier of box
+ * @param open If true, box is "opened",
+ *             Otherwise, box is "closed".
+ */
+function setState(boxID, open) {
+  var boxObj = getElementObject(boxID);
+  var buttonObj = getElementObject(boxID+B_SFIX);
+  if (boxObj == null || buttonObj == null) {
+     // Box or button not found
+  } else if (open) {
+     openBox(boxObj, buttonObj);
+     // Make button visible
+     buttonObj.style.display="inline";
+  } else {
+     closeBox(boxObj, buttonObj);
+     // Make button visible
+     buttonObj.style.display="inline";
+  }
+}
+
+/**
+ * Switches the state of a collapseable box, e.g.
+ * if it's opened, it'll be closed, and vice versa.
+ * 
+ * @param boxID Identifier of box
+ */
+function switchState(boxID) {
+  var boxObj = getElementObject(boxID);
+  var buttonObj = getElementObject(boxID+B_SFIX);
+  if (boxObj == null || buttonObj == null) {
+     // Box or button not found
+  } else if (boxObj.style.display=="none") {
+     // Box is closed, so open it
+     openBox(boxObj, buttonObj);
+  } else if (boxObj.style.display=="block") {
+     // Box is opened, so close it
+     closeBox(boxObj, buttonObj);
+  }
+}
+
+/**
+ * Closes all boxes in a given list.
+ * 
+ * @param boxList Array of box IDs
+ */
+function collapseAll(boxList) {
+  var idx;
+  for (idx = 0; idx < boxList.length; idx++) {
+     var boxObj = getElementObject(boxList[idx]);
+     var buttonObj = getElementObject(boxList[idx]+B_SFIX);
+     closeBox(boxObj, buttonObj);
+  }
+}
+
+/**
+ * Open all boxes in a given list.
+ * 
+ * @param boxList Array of box IDs
+ */
+function expandAll(boxList) {
+  var idx;
+  for (idx = 0; idx < boxList.length; idx++) {
+     var boxObj = getElementObject(boxList[idx]);
+     var buttonObj = getElementObject(boxList[idx]+B_SFIX);
+     openBox(boxObj, buttonObj);
+  }
+}
+
+/**
+ * Makes all the control buttons of boxes appear.
+ * 
+ * @param boxList Array of box IDs
+ */
+function viewControlButtons(boxList) {
+    var idx;
+    for (idx = 0; idx < boxList.length; idx++) {
+        buttonObj = getElementObject(boxList[idx]+B_SFIX);
+        if (buttonObj != null) {
+            buttonObj.style.display = "inline";
+        }
+    }
+}
+
+/**
+ * Makes all the control buttons of boxes disappear.
+ * 
+ * @param boxList Array of box IDs
+ */
+function hideControlButtons(boxList) {
+    var idx;
+    for (idx = 0; idx < boxList.length; idx++) {
+        buttonObj = getElementObject(boxList[idx]+B_SFIX);
+        if (buttonObj != null) {
+            buttonObj.style.display = "none";
+        }
+    }
+}
+
+/**
+ * Sets the page for either printing mode
+ * or viewing mode. In printing mode, the page
+ * is made to be more readable when printing it out.
+ * In viewing mode, the page is more browsable.
+ *
+ * @param isPrinterVersion If true, display in
+ *                                 printing mode; otherwise, 
+ *                                 in viewing mode
+ */
+function displayMode(isPrinterVersion) {
+    var obj;
+    if (isPrinterVersion) {
+        // Hide global control buttons
+        obj = getElementObject("globalControls");
+        if (obj != null) {
+            obj.style.visibility = "hidden";
+        }
+        // Hide Legend
+        obj = getElementObject("legend");
+        if (obj != null) {
+            obj.style.display = "none";
+        }
+        obj = getElementObject("legendTOC");
+        if (obj != null) {
+            obj.style.display = "none";
+        }
+        // Hide Glossary
+        obj = getElementObject("glossary");
+        if (obj != null) {
+            obj.style.display = "none";
+        }
+        obj = getElementObject("glossaryTOC");
+        if (obj != null) {
+            obj.style.display = "none";
+        }
+
+        // Expand all XML Instance Representation tables
+        expandAll(xiBoxes);
+        // Expand all Schema Component Representation tables
+        expandAll(scBoxes);
+
+        // Hide Control buttons
+        hideControlButtons(xiBoxes);
+        hideControlButtons(scBoxes);
+    } else {
+        // View global control buttons
+        obj = getElementObject("globalControls");
+        if (obj != null) {
+            obj.style.visibility = "visible";
+        }
+        // View Legend
+        obj = getElementObject("legend");
+        if (obj != null) {
+            obj.style.display = "block";
+        }
+        obj = getElementObject("legendTOC");
+        if (obj != null) {
+            obj.style.display = "block";
+        }
+        // View Glossary
+        obj = getElementObject("glossary");
+        if (obj != null) {
+            obj.style.display = "block";
+        }
+        obj = getElementObject("glossaryTOC");
+        if (obj != null) {
+            obj.style.display = "block";
+        }
+
+        // Expand all XML Instance Representation tables
+        expandAll(xiBoxes);
+        // Collapse all Schema Component Representation tables
+        collapseAll(scBoxes);
+
+        // View Control buttons
+        viewControlButtons(xiBoxes);
+        viewControlButtons(scBoxes);
+    }
+}
+
+/**
+ * Opens up a window displaying the documentation
+ * of a schema component in the XML Instance
+ * Representation table.
+ * 
+ * @param compDesc      Description of schema component 
+ * @param compName      Name of schema component 
+ * @param docTextArray Array containing the paragraphs 
+ *                           of the new document
+ */
+function viewDocumentation(compDesc, compName, docTextArray) {
+  var width = 400;
+  var height = 200;
+  var locX = 100;
+  var locY = 200;
+
+  /* Generate content */
+  var actualText = "<html>";
+  actualText += "<head><title>";
+  actualText += compDesc;
+  if (compName != '') {
+     actualText += ": " + compName;
+  }
+  actualText += "</title></head>";
+  actualText += "<body bgcolor=\"#FFFFEE\">";
+  // Title
+  actualText += "<p style=\"font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold; letter-spacing:1px;\">";
+  actualText += compDesc;
+  if (compName != '') {
+     actualText += ": <span style=\"color:#006699\">" + compName + "</span>";
+  }
+  actualText += "</p>";
+  // Documentation
+  var idx;
+  for (idx = 0; idx < docTextArray.length; idx++) {
+     actualText += "<p style=\"font-family: Arial, sans-serif; font-size: 10pt;\">" + docTextArray[idx] + "</p>";
+  }
+  // Link to close window
+  actualText += "<a href=\"javascript:void(0)\" onclick=\"window.close();\" style=\"font-family: Arial, sans-serif; font-size: 8pt;\">Close</a>";
+  actualText += "</body></html>";
+
+  /* Display window */
+  windowCount++;
+  var docWindow = window.open("", "documentation"+windowCount, "toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable,alwaysRaised,dependent,titlebar=no,width="+width+",height="+height+",screenX="+locX+",left="+locX+",screenY="+locY+",top="+locY);
+  docWindow.document.write(actualText);
+}
+
+// -->
+</script>
+</head>
+<body>
+<h1>
+<a name="top">A Schema for AIML 1.0.1</a>
+</h1>
+<div style="float: right;">
+<div id="printerControls" style="display:none;">
+<input type="checkbox" onclick="displayMode(this.checked)"/>Printer-friendly Version</div>
+<script type="text/javascript">
+<!--
+
+var pc = getElementObject("printerControls");
+if (pc != null) {
+   pc.style.display="block";
+}
+               
+// -->
+</script>
+<div id="globalControls" style="display:none">
+<strong>XML Instance Representation:</strong>
+<br/>
+<span style="margin-left: 1em; white-space: nowrap">[ <a href="javascript:void(0)" onclick="expandAll(xiBoxes)">Expand All</a> | <a href="javascript:void(0)" onclick="collapseAll(xiBoxes)">Collapse All</a> ]</span>
+<br/>
+<br/>
+<strong>Schema Component Representation:</strong>
+<br/>
+<span style="margin-left: 1em; white-space: nowrap">[ <a href="javascript:void(0)" onclick="expandAll(scBoxes)">Expand All</a> | <a href="javascript:void(0)" onclick="collapseAll(scBoxes)">Collapse All</a> ]</span>
+</div>
+<script type="text/javascript">
+<!--
+
+var gc = getElementObject("globalControls");
+if (gc != null) {
+   gc.style.display="block";
+}
+               
+// -->
+</script>
+</div>
+<h2>Table of Contents</h2>
+<ul>
+<li>
+<a href="#SchemaProperties">Schema Document Properties</a>
+</li>
+<li>
+<a href="#SchemaComponents">Global Schema Components</a>
+<ul>
+<li>
+<a href="#element_aiml">Element: <strong>aiml</strong>
+</a>
+</li>
+<li>
+<a href="#type_Category">Complex Type: <strong>Category</strong>
+</a>
+</li>
+<li>
+<a href="#type_MixedPatternExpression">Complex Type: <strong>MixedPatternExpression</strong>
+</a>
+</li>
+<li>
+<a href="#type_SimplePatternExpression">Simple Type: <strong>SimplePatternExpression</strong>
+</a>
+</li>
+<li>
+<a href="#type_MixedTemplateContentContainer">Complex Type: <strong>MixedTemplateContentContainer</strong>
+</a>
+</li>
+<li>
+<a href="#group_atomicElements">Model Group: <strong>atomicElements</strong>
+</a>
+</li>
+<li>
+<a href="#group_shortcutElements">Model Group: <strong>shortcutElements</strong>
+</a>
+</li>
+<li>
+<a href="#group_systemDefinedPredicates">Model Group: <strong>systemDefinedPredicates</strong>
+</a>
+</li>
+<li>
+<a href="#group_textFormattingElements">Model Group: <strong>textFormattingElements</strong>
+</a>
+</li>
+<li>
+<a href="#group_conditionalElements">Model Group: <strong>conditionalElements</strong>
+</a>
+</li>
+<li>
+<a href="#group_captureElements">Model Group: <strong>captureElements</strong>
+</a>
+</li>
+<li>
+<a href="#group_symbolicReductionElements">Model Group: <strong>symbolicReductionElements</strong>
+</a>
+</li>
+<li>
+<a href="#group_transformationalElements">Model Group: <strong>transformationalElements</strong>
+</a>
+</li>
+<li>
+<a href="#group_covertElements">Model Group: <strong>covertElements</strong>
+</a>
+</li>
+<li>
+<a href="#group_externalProcessorElements">Model Group: <strong>externalProcessorElements</strong>
+</a>
+</li>
+<li>
+<a href="#type_OneOrTwoDIndexedElement">Complex Type: <strong>OneOrTwoDIndexedElement</strong>
+</a>
+</li>
+<li>
+<a href="#type_IndexedElement">Complex Type: <strong>IndexedElement</strong>
+</a>
+</li>
+<li>
+<a href="#type_PredicateName">Simple Type: <strong>PredicateName</strong>
+</a>
+</li>
+</ul>
+</li>
+</ul>
+<ul id="legendTOC" style="margin-top: 0em">
+<li>
+<a href="#Legend">Legend</a>
+</li>
+</ul>
+<ul id="glossaryTOC" style="margin-top: 0em">
+<li>
+<a href="#Glossary">Glossary</a>
+</li>
+</ul>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h2>
+<a name="SchemaProperties">Schema Document Properties</a>
+</h2>
+<table class="properties">
+<tr>
+<th>
+<a title="Look up 'Target Namespace' in glossary" href="#term_TargetNS">Target Namespace</a>
+</th>
+<td>
+<span class="targetNS">http://alicebot.org/2001/AIML-1.0.1</span>
+</td>
+</tr>
+<tr>
+<th>Version</th>
+<td>1.0</td>
+</tr>
+<tr>
+<th>Language</th>
+<td>EN</td>
+</tr>
+<tr>
+<th>Element and Attribute Namespaces</th>
+<td>
+<ul>
+<li>Global element and attribute declarations belong to this schema's target namespace.</li>
+<li>By default, local element declarations belong to this schema's target namespace.</li>
+<li>By default, local attribute declarations have no namespace.</li>
+</ul>
+</td>
+</tr>
+</table>
+<h3>Declared Namespaces</h3>
+<table class="namespaces">
+<tr>
+<th>Prefix</th>
+<th>Namespace</th>
+</tr>
+<tr>
+<td>
+<a name="ns_">Default namespace</a>
+</td>
+<td>
+<span class="targetNS">http://alicebot.org/2001/AIML-1.0.1</span>
+</td>
+</tr>
+<tr>
+<td>
+<a name="ns_xml">xml</a>
+</td>
+<td>http://www.w3.org/XML/1998/namespace</td>
+</tr>
+<tr>
+<td>
+<a name="ns_xs">xs</a>
+</td>
+<td>http://www.w3.org/2001/XMLSchema</td>
+</tr>
+<tr>
+<td>
+<a name="ns_xsi">xsi</a>
+</td>
+<td>http://www.w3.org/2001/XMLSchema-instance</td>
+</tr>
+<tr>
+<td>
+<a name="ns_sch">sch</a>
+</td>
+<td>http://www.ascc.net/xml/schematron</td>
+</tr>
+</table>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="schema_scbox_button" class="control" onclick="switchState('schema_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="schema_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:schema</span> <span class="scTag">xml:lang</span>="<span class="scContent">EN</span>" <span class="scTag">targetNamespace</span>="<span class="scContent">http://alicebot.org/2001/AIML-1.0.1</span>" <span class="scTag">elementFormDefault</span>="<span class="scContent">qualified</span>" <span class="scTag">attributeFormDefault</span>="<span class="scContent">unqualified</span>" <span class="scTag">version</span>="<span class="scContent">1.0</span>"&gt;<div class="scContent" style="margin-left: 1.5em">...</div>&lt;/<span class="scTag">xs:schema</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('schema_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h2>
+<a name="SchemaComponents">Global Schema Components</a>
+</h2>
+<h3>Element: <a name="element_aiml" class="name">aiml</a>
+</h3>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>aiml</td>
+</tr>
+<tr>
+<th>Type</th>
+<td>Locally-defined complex type</td>
+</tr>
+<tr>
+<th>
+<a title="Look up 'Nillable' in glossary" href="#term_Nillable">Nillable</a>
+</th>
+<td>no</td>
+</tr>
+<tr>
+<th>
+<a title="Look up 'Abstract' in glossary" href="#term_Abstract">Abstract</a>
+</th>
+<td>no</td>
+</tr>
+<tr>
+<th>Documentation</th>
+<td>An AIML object is represented by an aiml element in an XML document.</td>
+</tr>
+<tr>
+<th>Application Data</th>
+<td>
+				<code>&lt;<a href="#ns_sch" title="Find out namespace of 'sch' prefix">sch</a>:title&gt; <div style="margin-left: 1.5em">Schematron validation</div>&lt;/<a href="#ns_sch" title="Find out namespace of 'sch' prefix">sch</a>:title&gt;</code>
+				<code>&lt;<a href="#ns_sch" title="Find out namespace of 'sch' prefix">sch</a>:ns prefix="aiml" uri="http://alicebot.org/2001/AIML-1.0.1"/&gt;</code>
+			</td>
+</tr>
+</table>
+<div class="sample box">
+<div>
+<input type="button" id="element_aiml_xibox_button" class="control" onclick="switchState('element_aiml_xibox'); return false;" style="display: none"/> <span class="caption">XML Instance Representation</span>
+</div>
+<div id="element_aiml_xibox" class="contents">
+<div style="margin-left: 0em">&lt;aiml&gt; <br/>
+<span class="group" style="margin-left: 1.5em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1..*]</span>
+</span>
+<br/>
+<div style="margin-left: 3em">&lt;topic&gt;  <span class="occurs">[1]</span> <br/>
+<span class="group" style="margin-left: 1.5em">Start <a title="Look up 'Sequence' in glossary" href="#term_Sequence">Sequence</a> <span class="occurs">[1..*]</span>
+</span>
+<br/>
+<div style="margin-left: 3em">&lt;category&gt; <span class="type">
+<a title="Jump to &quot;Category&quot; type definition." href="#type_Category">Category</a>
+</span> &lt;/category&gt; <span class="occurs">[1]</span>
+</div>
+<span class="group" style="margin-left: 1.5em">End Sequence</span>
+<br/>&lt;/topic&gt;</div>
+<div style="margin-left: 3em">&lt;category&gt; <span class="type">
+<a title="Jump to &quot;Category&quot; type definition." href="#type_Category">Category</a>
+</span> &lt;/category&gt; <span class="occurs">[1]</span>
+</div>
+<span class="group" style="margin-left: 1.5em">End Choice</span>
+<br/>&lt;/aiml&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('element_aiml_xibox', true);
+// -->
+</script>
+</div>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="element_aiml_scbox_button" class="control" onclick="switchState('element_aiml_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="element_aiml_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">aiml</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:complexType</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:choice</span> <span class="scTag">minOccurs</span>="<span class="scContent">1</span>" <span class="scTag">maxOccurs</span>="<span class="scContent">unbounded</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">topic</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:complexType</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:sequence</span> <span class="scTag">maxOccurs</span>="<span class="scContent">unbounded</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">category</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;Category&quot; type definition." href="#type_Category">Category</a>
+</span>
+</span>"/&gt;</div>&lt;/<span class="scTag">xs:sequence</span>&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:attribute</span> <span class="scTag">name</span>="<span class="scContent">name</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;SimplePatternExpression&quot; type definition." href="#type_SimplePatternExpression">SimplePatternExpression</a>
+</span>
+</span>" <span class="scTag">use</span>="<span class="scContent">required</span>"/&gt;</div>&lt;/<span class="scTag">xs:complexType</span>&gt;</div>&lt;/<span class="scTag">xs:element</span>&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">category</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;Category&quot; type definition." href="#type_Category">Category</a>
+</span>
+</span>"/&gt;</div>&lt;/<span class="scTag">xs:choice</span>&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:attribute</span> <span class="scTag">name</span>="<span class="scContent">version</span>" <span class="scTag">use</span>="<span class="scContent">required</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:simpleType</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:restriction</span> <span class="scTag">base</span>="<span class="scContent">
+<span class="type">
+<a href="#ns_xs" title="Find out namespace of 'xs' prefix">xs</a>:string</span>
+</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:enumeration</span> <span class="scTag">value</span>="<span class="scContent">1.0.1</span>"/&gt;</div>&lt;/<span class="scTag">xs:restriction</span>&gt;</div>&lt;/<span class="scTag">xs:simpleType</span>&gt;</div>&lt;/<span class="scTag">xs:attribute</span>&gt;</div>&lt;/<span class="scTag">xs:complexType</span>&gt;</div>&lt;/<span class="scTag">xs:element</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('element_aiml_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Complex Type: <a name="type_Category" class="name">Category</a>
+</h3>
+<table class="hierarchy">
+<tr>
+<th>Super-types:</th>
+<td>None</td>
+</tr>
+<tr>
+<th>Sub-types:</th>
+<td>None</td>
+</tr>
+</table>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>Category</td>
+</tr>
+<tr>
+<th>
+<a title="Look up 'Abstract' in glossary" href="#term_Abstract">Abstract</a>
+</th>
+<td>no</td>
+</tr>
+<tr>
+<th>Documentation</th>
+<td>A category is a top-level (or second-level, if contained within a
+				topic) element that contains exactly one pattern and exactly one template. A
+				category does not have any attributes. All category elements that do not occur as
+				children of an explicit topic element must be assumed by the AIML interpreter to
+				occur as children of an "implied" topic whose name attribute has the value * (single
+				asterisk wildcard).</td>
+</tr>
+</table>
+<div class="sample box">
+<div>
+<input type="button" id="type_Category_xibox_button" class="control" onclick="switchState('type_Category_xibox'); return false;" style="display: none"/> <span class="caption">XML Instance Representation</span>
+</div>
+<div id="type_Category_xibox" class="contents">
+<div style="margin-left: 0em">&lt;...&gt; <br/>
+<div style="margin-left: 1.5em">&lt;pattern&gt; <span class="type">
+<a title="Jump to &quot;MixedPatternExpression&quot; type definition." href="#type_MixedPatternExpression">MixedPatternExpression</a>
+</span> &lt;/pattern&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('A pattern is an element whose content is a mixed pattern expression. Exactly one pattern must appear in each category. The pattern must always be the first child element of the category. A pattern does not have any attributes. The contents of the pattern are appended to the full match path that is constructed by the AIML interpreter at load time.'); viewDocumentation('Element', 'pattern', docArray);">?</a>
+</div>
+<div style="margin-left: 1.5em">&lt;that&gt; <span class="type">
+<a title="Jump to &quot;MixedPatternExpression&quot; type definition." href="#type_MixedPatternExpression">MixedPatternExpression</a>
+</span> &lt;/that&gt; <span class="occurs">[0..1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The pattern-side that element is a special type of pattern element used for context matching. The pattern-side that is optional in a category, but if it occurs it must occur no more than once, and must immediately follow the pattern and immediately precede the template. A pattern-side that element contains a simple pattern expression. The contents of the pattern-side that are appended to the full match path that is constructed by the AIML interpreter at load time. If a category does not contain a pattern-side that, the AIML interpreter must assume an \&quot;implied\&quot; pattern-side that containing the pattern expression * (single asterisk wildcard).'); viewDocumentation('Element', 'that', docArray);">?</a>
+</div>
+<div style="margin-left: 1.5em">&lt;template&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/template&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The majority of AIML content is within the template. The template may contain zero or more AIML template elements mixed with character data.'); viewDocumentation('Element', 'template', docArray);">?</a>
+</div>&lt;/...&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('type_Category_xibox', true);
+// -->
+</script>
+</div>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="type_Category_scbox_button" class="control" onclick="switchState('type_Category_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="type_Category_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:complexType</span> <span class="scTag">name</span>="<span class="scContent">Category</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:sequence</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">pattern</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedPatternExpression&quot; type definition." href="#type_MixedPatternExpression">MixedPatternExpression</a>
+</span>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">that</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedPatternExpression&quot; type definition." href="#type_MixedPatternExpression">MixedPatternExpression</a>
+</span>
+</span>" <span class="scTag">minOccurs</span>="<span class="scContent">0</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">template</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span>
+</span>"/&gt;</div>&lt;/<span class="scTag">xs:sequence</span>&gt;</div>&lt;/<span class="scTag">xs:complexType</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('type_Category_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Complex Type: <a name="type_MixedPatternExpression" class="name">MixedPatternExpression</a>
+</h3>
+<table class="hierarchy">
+<tr>
+<th>Super-types:</th>
+<td>None</td>
+</tr>
+<tr>
+<th>Sub-types:</th>
+<td>None</td>
+</tr>
+</table>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>MixedPatternExpression</td>
+</tr>
+<tr>
+<th>
+<a title="Look up 'Abstract' in glossary" href="#term_Abstract">Abstract</a>
+</th>
+<td>no</td>
+</tr>
+<tr>
+<th>Documentation</th>
+<td>A mixed pattern expression is composed from one or more mixed pattern
+				expression constituents, separated by XML spaces (&amp;#x20).</td>
+</tr>
+</table>
+<div class="sample box">
+<div>
+<input type="button" id="type_MixedPatternExpression_xibox_button" class="control" onclick="switchState('type_MixedPatternExpression_xibox'); return false;" style="display: none"/> <span class="caption">XML Instance Representation</span>
+</div>
+<div id="type_MixedPatternExpression_xibox" class="contents">
+<div style="margin-left: 0em">&lt;...&gt; <br/>
+<span class="other" style="margin-left: 1.5em">&lt;!-- Mixed content --&gt;</span>
+<br/>
+<span class="group" style="margin-left: 1.5em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[0..*]</span>
+</span>
+<br/>
+<div style="margin-left: 3em">&lt;bot&gt; <span class="type">
+<a title="Jump to &quot;PredicateName&quot; type definition." href="#type_PredicateName">PredicateName</a>
+</span> &lt;/bot&gt; <span class="occurs">[1]</span>
+</div>
+<span class="group" style="margin-left: 1.5em">End Choice</span>
+<br/>&lt;/...&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('type_MixedPatternExpression_xibox', true);
+// -->
+</script>
+</div>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="type_MixedPatternExpression_scbox_button" class="control" onclick="switchState('type_MixedPatternExpression_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="type_MixedPatternExpression_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:complexType</span> <span class="scTag">name</span>="<span class="scContent">MixedPatternExpression</span>" <span class="scTag">mixed</span>="<span class="scContent">true</span>"&gt;<div class="comment" style="margin-left: 1.5em">&lt;--&lt;xs:complexContent mixed="true"&gt;
+			&lt;xs:extension base="SimplePatternExpression"&gt;--&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:choice</span> <span class="scTag">minOccurs</span>="<span class="scContent">0</span>" <span class="scTag">maxOccurs</span>="<span class="scContent">unbounded</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">bot</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;PredicateName&quot; type definition." href="#type_PredicateName">PredicateName</a>
+</span>
+</span>"/&gt;</div>&lt;/<span class="scTag">xs:choice</span>&gt;</div>
+<div class="comment" style="margin-left: 1.5em">&lt;--&lt;/xs:extension&gt;
+		&lt;/xs:complexContent&gt;--&gt;</div>&lt;/<span class="scTag">xs:complexType</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('type_MixedPatternExpression_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Simple Type: <a name="type_SimplePatternExpression" class="name">SimplePatternExpression</a>
+</h3>
+<table class="hierarchy">
+<tr>
+<th>Super-types:</th>
+<td>
+<span class="type">
+<a href="#ns_xs" title="Find out namespace of 'xs' prefix">xs</a>:string</span> &lt; <strong>SimplePatternExpression</strong> (by restriction)</td>
+</tr>
+<tr>
+<th>Sub-types:</th>
+<td>None</td>
+</tr>
+</table>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>SimplePatternExpression</td>
+</tr>
+<tr>
+<th>Content</th>
+<td>
+<ul>
+<li>Base XSD Type: string</li>
+</ul>
+<ul>
+<li>
+<em>pattern</em> = ((\d|\p{Lu})+|\*|_)( +((\d|\p{Lu})+|\*|_))*</li>
+<li>
+<em>length</em> &gt;= 1</li>
+</ul>
+</td>
+</tr>
+<tr>
+<th>Documentation</th>
+<td>A simple pattern expression is composed from one or more simple
+				pattern expression constituents, separated by XML spaces (#x20).</td>
+</tr>
+</table>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="type_SimplePatternExpression_scbox_button" class="control" onclick="switchState('type_SimplePatternExpression_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="type_SimplePatternExpression_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:simpleType</span> <span class="scTag">name</span>="<span class="scContent">SimplePatternExpression</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:restriction</span> <span class="scTag">base</span>="<span class="scContent">
+<span class="type">
+<a href="#ns_xs" title="Find out namespace of 'xs' prefix">xs</a>:string</span>
+</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:minLength</span> <span class="scTag">value</span>="<span class="scContent">1</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:pattern</span> <span class="scTag">value</span>="<span class="scContent">((\d|\p{Lu})+|\*|_)( +((\d|\p{Lu})+|\*|_))*</span>"/&gt;</div>&lt;/<span class="scTag">xs:restriction</span>&gt;</div>&lt;/<span class="scTag">xs:simpleType</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('type_SimplePatternExpression_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Complex Type: <a name="type_MixedTemplateContentContainer" class="name">MixedTemplateContentContainer</a>
+</h3>
+<table class="hierarchy">
+<tr>
+<th>Super-types:</th>
+<td>None</td>
+</tr>
+<tr>
+<th>Sub-types:</th>
+<td>None</td>
+</tr>
+</table>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>MixedTemplateContentContainer</td>
+</tr>
+<tr>
+<th>
+<a title="Look up 'Abstract' in glossary" href="#term_Abstract">Abstract</a>
+</th>
+<td>no</td>
+</tr>
+</table>
+<div class="sample box">
+<div>
+<input type="button" id="type_MixedTemplateContentContainer_xibox_button" class="control" onclick="switchState('type_MixedTemplateContentContainer_xibox'); return false;" style="display: none"/> <span class="caption">XML Instance Representation</span>
+</div>
+<div id="type_MixedTemplateContentContainer_xibox" class="contents">
+<div style="margin-left: 0em">&lt;...&gt; <br/>
+<span class="other" style="margin-left: 1.5em">&lt;!-- Mixed content --&gt;</span>
+<br/>
+<span class="group" style="margin-left: 1.5em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[0..*]</span>
+</span>
+<br/>
+<span class="group" style="margin-left: 3em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 4.5em">&lt;star&gt; <span class="type">
+<a title="Jump to &quot;IndexedElement&quot; type definition." href="#type_IndexedElement">IndexedElement</a>
+</span> &lt;/star&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The star element indicates that an AIML interpreter should substitute the value \&quot;captured\&quot; by a particular wildcard from the pattern-specified portion of the match path when returning the template. The star element has an optional integer index attribute that indicates which wildcard to use. The minimum acceptable value for the index is \&quot;1\&quot; (the first wildcard), and the maximum acceptable value is equal to the number of wildcards in the pattern.'); viewDocumentation('Element', 'star', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;that&gt; <span class="type">
+<a title="Jump to &quot;OneOrTwoDIndexedElement&quot; type definition." href="#type_OneOrTwoDIndexedElement">OneOrTwoDIndexedElement</a>
+</span> &lt;/that&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The pattern-side that element is a special type of pattern element used for context matching. The pattern-side that is optional in a category, but if it occurs it must occur no more than once, and must immediately follow the pattern and immediately precede the template. A pattern-side that element contains a simple pattern expression. The contents of the pattern-side that are appended to the full match path that is constructed by the AIML interpreter at load time. If a category does not contain a pattern-side that, the AIML interpreter must assume an \&quot;implied\&quot; pattern-side that containing the pattern expression * (single asterisk wildcard).'); viewDocumentation('Element', 'that', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;input&gt; <span class="type">
+<a title="Jump to &quot;OneOrTwoDIndexedElement&quot; type definition." href="#type_OneOrTwoDIndexedElement">OneOrTwoDIndexedElement</a>
+</span> &lt;/input&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The input element tells the AIML interpreter that it should substitute the contents of a previous user input. The template-side input has an optional index attribute that may contain either a single integer or a comma-separated pair of integers. The minimum value for either of the integers in the index is \&quot;1\&quot;. The index tells the AIML interpreter which previous user input should be returned (first dimension), and optionally which \&quot;sentence\&quot; of the previous user input. The AIML interpreter should raise an error if either of the specified index dimensions is invalid at run-time. An unspecified index is the equivalent of \&quot;1,1\&quot;. An unspecified second dimension of the index is the equivalent of specifying a \&quot;1\&quot; for the second dimension.'); viewDocumentation('Element', 'input', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;thatstar&gt; <span class="type">
+<a title="Jump to &quot;IndexedElement&quot; type definition." href="#type_IndexedElement">IndexedElement</a>
+</span> &lt;/thatstar&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The thatstar element tells the AIML interpreter that it should substitute the contents of a wildcard from a pattern-side that element. The thatstar element has an optional integer index attribute that indicates which wildcard to use; the minimum acceptable value for the index is \&quot;1\&quot; (the first wildcard). An AIML interpreter should raise an error if the index attribute of a star specifies a wildcard that does not exist in the that element\'s pattern content. Not specifying the index is the same as specifying an index of \&quot;1\&quot;.'); viewDocumentation('Element', 'thatstar', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;topicstar&gt; <span class="type">
+<a title="Jump to &quot;IndexedElement&quot; type definition." href="#type_IndexedElement">IndexedElement</a>
+</span> &lt;/topicstar&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The topicstar element tells the AIML interpreter that it should substitute the contents of a wildcard from the current topic (if the topic contains any wildcards). The topicstar element has an optional integer index attribute that indicates which wildcard to use; the minimum acceptable value for the index is \&quot;1\&quot; (the first wildcard). Not specifying the index is the same as specifying an index of \&quot;1\&quot;.'); viewDocumentation('Element', 'topicstar', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;get/&gt;  <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The get element tells the AIML interpreter that it should substitute the contents of a predicate, if that predicate has a value defined. If the predicate has no value defined, the AIML interpreter should substitute the empty string \&quot;&quot;. The AIML interpreter implementation may optionally provide a mechanism that allows the AIML author to designate default values for certain predicates.'); viewDocumentation('Element', 'get', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;bot/&gt;  <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('An element called bot, which may be considered a restricted version of get, is used to tell the AIML interpreter that it should substitute the contents of a \&quot;bot predicate\&quot;. The value of a bot predicate is set at load-time, and cannot be changed at run-time. The AIML interpreter may decide how to set the values of bot predicate at load-time. If the bot predicate has no value defined, the AIML interpreter should substitute an empty string.'); viewDocumentation('Element', 'bot', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 4.5em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 6em">&lt;sr&gt; ... &lt;/sr&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The sr element is a shortcut for: &lt;srai&gt;&lt;star/&gt;&lt;/srai&gt; The atomic sr does not have any content.'); viewDocumentation('Element', 'sr', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 4.5em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 4.5em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 6em">&lt;date&gt; ... &lt;/date&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The date element tells the AIML interpreter that it should substitute the system local date and time. No formatting constraints on the output are specified.'); viewDocumentation('Element', 'date', docArray);">?</a>
+</div>
+<div style="margin-left: 6em">&lt;id&gt; ... &lt;/id&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The id element tells the AIML interpreter that it should substitute the user ID. The determination of the user ID is not specified, since it will vary by application. A suggested default return value is \&quot;localhost\&quot;.'); viewDocumentation('Element', 'id', docArray);">?</a>
+</div>
+<div style="margin-left: 6em">&lt;size&gt; ... &lt;/size&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The size element tells the AIML interpreter that it should substitute the number of categories currently loaded.'); viewDocumentation('Element', 'size', docArray);">?</a>
+</div>
+<div style="margin-left: 6em">&lt;version&gt; ... &lt;/version&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The version element tells the AIML interpreter that it should substitute the version number of the AIML interpreter.'); viewDocumentation('Element', 'version', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 4.5em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 3em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 3em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 4.5em">&lt;uppercase&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/uppercase&gt; <span class="occurs">[1]</span>
+</div>
+<div style="margin-left: 4.5em">&lt;lowercase&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/lowercase&gt; <span class="occurs">[1]</span>
+</div>
+<div style="margin-left: 4.5em">&lt;formal&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/formal&gt; <span class="occurs">[1]</span>
+</div>
+<div style="margin-left: 4.5em">&lt;sentence&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/sentence&gt; <span class="occurs">[1]</span>
+</div>
+<span class="group" style="margin-left: 3em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 3em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 4.5em">&lt;condition&gt;  <span class="occurs">[1]</span>  <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The condition element instructs the AIML interpreter to return specified contents depending upon the results of matching a predicate against a pattern. NOTE: The definition in this Schema is currently far too permissive. AIML conditions have several forms and constraints that can\'t be expressed using W3C Schema alone. For this reason, AIML objects that validate using this Schema alone may not actually be valid AIML.'); viewDocumentation('Element', 'condition', docArray);">?</a>
+<br/>
+<span class="other" style="margin-left: 1.5em">&lt;!-- Mixed content --&gt;</span>
+<br/>
+<span class="group" style="margin-left: 1.5em">Start <a title="Look up 'Sequence' in glossary" href="#term_Sequence">Sequence</a> <span class="occurs">[0..*]</span>
+</span>
+<br/>
+<div class="other" style="margin-left: 3em">Allow any elements from any namespace (lax validation). <span class="occurs">[1]</span>
+</div>
+<span class="group" style="margin-left: 1.5em">End Sequence</span>
+<br/>&lt;/condition&gt;</div>
+<div style="margin-left: 4.5em">&lt;random&gt;  <span class="occurs">[1]</span>  <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The random element instructs the AIML interpreter to return exactly one of its contained li elements randomly.'); viewDocumentation('Element', 'random', docArray);">?</a>
+<br/>
+<div style="margin-left: 1.5em">&lt;li&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/li&gt; <span class="occurs">[1..*]</span>
+</div>&lt;/random&gt;</div>
+<span class="group" style="margin-left: 3em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 3em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 4.5em">&lt;set<br/>
+<span style="margin-left: 0.5em"> name="<span class="type">
+<a title="Jump to &quot;PredicateName&quot; type definition." href="#type_PredicateName">PredicateName</a>
+</span> <span class="occurs">[0..1]</span>"</span>&gt;  <span class="occurs">[1]</span>  <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The set element instructs the AIML interpreter to set the value of a predicate to the result of processing the contents of the set element. The set element has a required attribute name, which must be a valid AIML predicate name. If the predicate has not yet been defined, the AIML interpreter should define it in memory.'); viewDocumentation('Element', 'set', docArray);">?</a>
+<br/>
+<div class="other" style="margin-left: 1.5em">&lt;-- Extends: <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> (Circular type hierarchy) --&gt;</div>&lt;/set&gt;</div>
+<div style="margin-left: 4.5em">&lt;gossip&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/gossip&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The gossip element instructs the AIML interpreter to capture the result of processing the contents of the gossip elements and to store these contents in a manner left up to the implementation. Most common uses of gossip have been to store captured contents in a separate file.'); viewDocumentation('Element', 'gossip', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 3em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 3em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 4.5em">&lt;srai&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/srai&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The srai element instructs the AIML interpreter to pass the result of processing the contents of the srai element to the AIML matching loop, as if the input had been produced by the user (this includes stepping through the entire input normalization process).'); viewDocumentation('Element', 'srai', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 3em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 3em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 4.5em">&lt;person&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/person&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The person element instructs the AIML interpreter to: 1. replace words with first-person aspect in the result of processing the contents of the person element with words with the grammatically-corresponding third-person aspect; and 2. replace words with third-person aspect in the result of processing the contents of the person element with words with the grammatically-corresponding first-person aspect. The definition of \&quot;grammatically-corresponding\&quot; is left up to the implementation.'); viewDocumentation('Element', 'person', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;person2&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/person2&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The person2 element instructs the AIML interpreter to: 1. replace words with first-person aspect in the result of processing the contents of the person2 element with words with the grammatically-corresponding second-person aspect; and 2. replace words with second-person aspect in the result of processing the contents of the person2 element with words with the grammatically-corresponding first-person aspect. The definition of \&quot;grammatically-corresponding\&quot; is left up to the implementation.'); viewDocumentation('Element', 'person2', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;gender&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/gender&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The gender element instructs the AIML interpreter to: 1. replace male-gendered words in the result of processing the contents of the gender element with the grammatically-corresponding female-gendered words; and 2. replace female-gendered words in the result of processing the contents of the gender element with the grammatically-corresponding male-gendered words. The definition of \&quot;grammatically-corresponding\&quot; is left up to the implementation. Historically, implementations of gender have exclusively dealt with pronouns, likely due to the fact that most AIML has been written in English. However, the decision about whether to transform gender of other words is left up to the implementation.'); viewDocumentation('Element', 'gender', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 3em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 3em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 4.5em">&lt;think&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/think&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The think element instructs the AIML interpreter to perform all usual processing of its contents, but to not return any value, regardless of whether the contents produce output.'); viewDocumentation('Element', 'think', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;learn&gt; <span class="constraint">
+<span class="type">
+<a href="#ns_xs" title="Find out namespace of 'xs' prefix">xs</a>:anyURI</span>
+</span> &lt;/learn&gt; <span class="occurs">[1]</span>
+</div>
+<span class="group" style="margin-left: 3em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 3em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 4.5em">&lt;system&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/system&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The system element instructs the AIML interpreter to pass its content (with any appropriate preprocessing) to the system command interpreter of the local machine on which the AIML interpreter is running.'); viewDocumentation('Element', 'system', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;javascript&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/javascript&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The javascript element instructs the AIML interpreter to pass its content (with any appropriate preprocessing, as noted above) to a server-side JavaScript interpreter on the local machine on which the AIML interpreter is running. The javascript element does not have any attributes. AIML does not require that an AIML interpreter include a server-side JavaScript interpreter, and does not require any particular behavior from the server-side JavaScript interpreter if it exists. The javascript element may return a value.'); viewDocumentation('Element', 'javascript', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 3em">End Choice</span>
+<br/>
+<div class="other" style="margin-left: 3em">Allow any elements from a namespace other than this schema's namespace (lax validation). <span class="occurs">[1]</span>
+</div>
+<span class="group" style="margin-left: 1.5em">End Choice</span>
+<br/>&lt;/...&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('type_MixedTemplateContentContainer_xibox', true);
+// -->
+</script>
+</div>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="type_MixedTemplateContentContainer_scbox_button" class="control" onclick="switchState('type_MixedTemplateContentContainer_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="type_MixedTemplateContentContainer_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:complexType</span> <span class="scTag">name</span>="<span class="scContent">MixedTemplateContentContainer</span>" <span class="scTag">mixed</span>="<span class="scContent">true</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:choice</span> <span class="scTag">minOccurs</span>="<span class="scContent">0</span>" <span class="scTag">maxOccurs</span>="<span class="scContent">unbounded</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:group</span> <span class="scTag">ref</span>="<span class="scContent">
+<a title="Jump to &quot;atomicElements&quot; group definition." href="#group_atomicElements">atomicElements</a>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:group</span> <span class="scTag">ref</span>="<span class="scContent">
+<a title="Jump to &quot;textFormattingElements&quot; group definition." href="#group_textFormattingElements">textFormattingElements</a>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:group</span> <span class="scTag">ref</span>="<span class="scContent">
+<a title="Jump to &quot;conditionalElements&quot; group definition." href="#group_conditionalElements">conditionalElements</a>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:group</span> <span class="scTag">ref</span>="<span class="scContent">
+<a title="Jump to &quot;captureElements&quot; group definition." href="#group_captureElements">captureElements</a>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:group</span> <span class="scTag">ref</span>="<span class="scContent">
+<a title="Jump to &quot;symbolicReductionElements&quot; group definition." href="#group_symbolicReductionElements">symbolicReductionElements</a>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:group</span> <span class="scTag">ref</span>="<span class="scContent">
+<a title="Jump to &quot;transformationalElements&quot; group definition." href="#group_transformationalElements">transformationalElements</a>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:group</span> <span class="scTag">ref</span>="<span class="scContent">
+<a title="Jump to &quot;covertElements&quot; group definition." href="#group_covertElements">covertElements</a>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:group</span> <span class="scTag">ref</span>="<span class="scContent">
+<a title="Jump to &quot;externalProcessorElements&quot; group definition." href="#group_externalProcessorElements">externalProcessorElements</a>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:any</span> <span class="scTag">namespace</span>="<span class="scContent">##other</span>" <span class="scTag">processContents</span>="<span class="scContent">lax</span>"/&gt;</div>&lt;/<span class="scTag">xs:choice</span>&gt;</div>&lt;/<span class="scTag">xs:complexType</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('type_MixedTemplateContentContainer_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Model Group: <a name="group_atomicElements" class="name">atomicElements</a>
+</h3>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>atomicElements</td>
+</tr>
+<tr>
+<th>Documentation</th>
+<td>An atomic template element in AIML indicates to an AIML interpreter
+				that it must return a value according to the functional meaning of the element.
+				Atomic elements do not have any content.</td>
+</tr>
+</table>
+<div class="sample box">
+<div>
+<input type="button" id="group_atomicElements_xibox_button" class="control" onclick="switchState('group_atomicElements_xibox'); return false;" style="display: none"/> <span class="caption">XML Instance Representation</span>
+</div>
+<div id="group_atomicElements_xibox" class="contents">
+<span class="group" style="margin-left: 0em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 1.5em">&lt;star&gt; <span class="type">
+<a title="Jump to &quot;IndexedElement&quot; type definition." href="#type_IndexedElement">IndexedElement</a>
+</span> &lt;/star&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The star element indicates that an AIML interpreter should substitute the value \&quot;captured\&quot; by a particular wildcard from the pattern-specified portion of the match path when returning the template. The star element has an optional integer index attribute that indicates which wildcard to use. The minimum acceptable value for the index is \&quot;1\&quot; (the first wildcard), and the maximum acceptable value is equal to the number of wildcards in the pattern.'); viewDocumentation('Element', 'star', docArray);">?</a>
+</div>
+<div style="margin-left: 1.5em">&lt;that&gt; <span class="type">
+<a title="Jump to &quot;OneOrTwoDIndexedElement&quot; type definition." href="#type_OneOrTwoDIndexedElement">OneOrTwoDIndexedElement</a>
+</span> &lt;/that&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The pattern-side that element is a special type of pattern element used for context matching. The pattern-side that is optional in a category, but if it occurs it must occur no more than once, and must immediately follow the pattern and immediately precede the template. A pattern-side that element contains a simple pattern expression. The contents of the pattern-side that are appended to the full match path that is constructed by the AIML interpreter at load time. If a category does not contain a pattern-side that, the AIML interpreter must assume an \&quot;implied\&quot; pattern-side that containing the pattern expression * (single asterisk wildcard).'); viewDocumentation('Element', 'that', docArray);">?</a>
+</div>
+<div style="margin-left: 1.5em">&lt;input&gt; <span class="type">
+<a title="Jump to &quot;OneOrTwoDIndexedElement&quot; type definition." href="#type_OneOrTwoDIndexedElement">OneOrTwoDIndexedElement</a>
+</span> &lt;/input&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The input element tells the AIML interpreter that it should substitute the contents of a previous user input. The template-side input has an optional index attribute that may contain either a single integer or a comma-separated pair of integers. The minimum value for either of the integers in the index is \&quot;1\&quot;. The index tells the AIML interpreter which previous user input should be returned (first dimension), and optionally which \&quot;sentence\&quot; of the previous user input. The AIML interpreter should raise an error if either of the specified index dimensions is invalid at run-time. An unspecified index is the equivalent of \&quot;1,1\&quot;. An unspecified second dimension of the index is the equivalent of specifying a \&quot;1\&quot; for the second dimension.'); viewDocumentation('Element', 'input', docArray);">?</a>
+</div>
+<div style="margin-left: 1.5em">&lt;thatstar&gt; <span class="type">
+<a title="Jump to &quot;IndexedElement&quot; type definition." href="#type_IndexedElement">IndexedElement</a>
+</span> &lt;/thatstar&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The thatstar element tells the AIML interpreter that it should substitute the contents of a wildcard from a pattern-side that element. The thatstar element has an optional integer index attribute that indicates which wildcard to use; the minimum acceptable value for the index is \&quot;1\&quot; (the first wildcard). An AIML interpreter should raise an error if the index attribute of a star specifies a wildcard that does not exist in the that element\'s pattern content. Not specifying the index is the same as specifying an index of \&quot;1\&quot;.'); viewDocumentation('Element', 'thatstar', docArray);">?</a>
+</div>
+<div style="margin-left: 1.5em">&lt;topicstar&gt; <span class="type">
+<a title="Jump to &quot;IndexedElement&quot; type definition." href="#type_IndexedElement">IndexedElement</a>
+</span> &lt;/topicstar&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The topicstar element tells the AIML interpreter that it should substitute the contents of a wildcard from the current topic (if the topic contains any wildcards). The topicstar element has an optional integer index attribute that indicates which wildcard to use; the minimum acceptable value for the index is \&quot;1\&quot; (the first wildcard). Not specifying the index is the same as specifying an index of \&quot;1\&quot;.'); viewDocumentation('Element', 'topicstar', docArray);">?</a>
+</div>
+<div style="margin-left: 1.5em">&lt;get/&gt;  <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The get element tells the AIML interpreter that it should substitute the contents of a predicate, if that predicate has a value defined. If the predicate has no value defined, the AIML interpreter should substitute the empty string \&quot;&quot;. The AIML interpreter implementation may optionally provide a mechanism that allows the AIML author to designate default values for certain predicates.'); viewDocumentation('Element', 'get', docArray);">?</a>
+</div>
+<div style="margin-left: 1.5em">&lt;bot/&gt;  <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('An element called bot, which may be considered a restricted version of get, is used to tell the AIML interpreter that it should substitute the contents of a \&quot;bot predicate\&quot;. The value of a bot predicate is set at load-time, and cannot be changed at run-time. The AIML interpreter may decide how to set the values of bot predicate at load-time. If the bot predicate has no value defined, the AIML interpreter should substitute an empty string.'); viewDocumentation('Element', 'bot', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 1.5em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 3em">&lt;sr&gt; ... &lt;/sr&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The sr element is a shortcut for: &lt;srai&gt;&lt;star/&gt;&lt;/srai&gt; The atomic sr does not have any content.'); viewDocumentation('Element', 'sr', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 1.5em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 1.5em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 3em">&lt;date&gt; ... &lt;/date&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The date element tells the AIML interpreter that it should substitute the system local date and time. No formatting constraints on the output are specified.'); viewDocumentation('Element', 'date', docArray);">?</a>
+</div>
+<div style="margin-left: 3em">&lt;id&gt; ... &lt;/id&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The id element tells the AIML interpreter that it should substitute the user ID. The determination of the user ID is not specified, since it will vary by application. A suggested default return value is \&quot;localhost\&quot;.'); viewDocumentation('Element', 'id', docArray);">?</a>
+</div>
+<div style="margin-left: 3em">&lt;size&gt; ... &lt;/size&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The size element tells the AIML interpreter that it should substitute the number of categories currently loaded.'); viewDocumentation('Element', 'size', docArray);">?</a>
+</div>
+<div style="margin-left: 3em">&lt;version&gt; ... &lt;/version&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The version element tells the AIML interpreter that it should substitute the version number of the AIML interpreter.'); viewDocumentation('Element', 'version', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 1.5em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 0em">End Choice</span>
+<br/>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_atomicElements_xibox', true);
+// -->
+</script>
+</div>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="group_atomicElements_scbox_button" class="control" onclick="switchState('group_atomicElements_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="group_atomicElements_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:group</span> <span class="scTag">name</span>="<span class="scContent">atomicElements</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:choice</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">star</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;IndexedElement&quot; type definition." href="#type_IndexedElement">IndexedElement</a>
+</span>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">that</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;OneOrTwoDIndexedElement&quot; type definition." href="#type_OneOrTwoDIndexedElement">OneOrTwoDIndexedElement</a>
+</span>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">input</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;OneOrTwoDIndexedElement&quot; type definition." href="#type_OneOrTwoDIndexedElement">OneOrTwoDIndexedElement</a>
+</span>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">thatstar</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;IndexedElement&quot; type definition." href="#type_IndexedElement">IndexedElement</a>
+</span>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">topicstar</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;IndexedElement&quot; type definition." href="#type_IndexedElement">IndexedElement</a>
+</span>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">get</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:complexType</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:attribute</span> <span class="scTag">name</span>="<span class="scContent">name</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;PredicateName&quot; type definition." href="#type_PredicateName">PredicateName</a>
+</span>
+</span>"/&gt;</div>&lt;/<span class="scTag">xs:complexType</span>&gt;</div>&lt;/<span class="scTag">xs:element</span>&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">bot</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:complexType</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:attribute</span> <span class="scTag">name</span>="<span class="scContent">name</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;PredicateName&quot; type definition." href="#type_PredicateName">PredicateName</a>
+</span>
+</span>"/&gt;</div>&lt;/<span class="scTag">xs:complexType</span>&gt;</div>&lt;/<span class="scTag">xs:element</span>&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:group</span> <span class="scTag">ref</span>="<span class="scContent">
+<a title="Jump to &quot;shortcutElements&quot; group definition." href="#group_shortcutElements">shortcutElements</a>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:group</span> <span class="scTag">ref</span>="<span class="scContent">
+<a title="Jump to &quot;systemDefinedPredicates&quot; group definition." href="#group_systemDefinedPredicates">systemDefinedPredicates</a>
+</span>"/&gt;</div>&lt;/<span class="scTag">xs:choice</span>&gt;</div>&lt;/<span class="scTag">xs:group</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_atomicElements_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Model Group: <a name="group_shortcutElements" class="name">shortcutElements</a>
+</h3>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>shortcutElements</td>
+</tr>
+<tr>
+<th>Documentation</th>
+<td>Several atomic AIML elements are "short-cuts" for combinations of
+				other AIML elements.</td>
+</tr>
+</table>
+<div class="sample box">
+<div>
+<input type="button" id="group_shortcutElements_xibox_button" class="control" onclick="switchState('group_shortcutElements_xibox'); return false;" style="display: none"/> <span class="caption">XML Instance Representation</span>
+</div>
+<div id="group_shortcutElements_xibox" class="contents">
+<span class="group" style="margin-left: 0em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 1.5em">&lt;sr&gt; ... &lt;/sr&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The sr element is a shortcut for: &lt;srai&gt;&lt;star/&gt;&lt;/srai&gt; The atomic sr does not have any content.'); viewDocumentation('Element', 'sr', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 0em">End Choice</span>
+<br/>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_shortcutElements_xibox', true);
+// -->
+</script>
+</div>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="group_shortcutElements_scbox_button" class="control" onclick="switchState('group_shortcutElements_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="group_shortcutElements_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:group</span> <span class="scTag">name</span>="<span class="scContent">shortcutElements</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:choice</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">sr</span>"/&gt;</div>
+<div class="comment" style="margin-left: 1.5em">&lt;--
+			&lt;xs:element name="person" xsi:type="IndexedElement"&gt;
+				&lt;xs:annotation&gt;
+					&lt;xs:documentation&gt;The atomic version of the person element is a shortcut for:
+						&amp;lt;person&amp;gt;&amp;lt;star/&amp;gt;&amp;lt;/person&amp;gt; The
+						atomic person does not have any content. &lt;/xs:documentation&gt;
+				&lt;/xs:annotation&gt;
+			&lt;/xs:element&gt;
+			&lt;xs:element name="person2" xsi:type="IndexedElement"&gt;
+				&lt;xs:annotation&gt;
+					&lt;xs:documentation&gt;The atomic version of the person2 element is a shortcut for:
+						&amp;lt;person2&amp;gt;&amp;lt;star/&amp;gt;&amp;lt;/person2&amp;gt; The
+						atomic person does not have any content. &lt;/xs:documentation&gt;
+				&lt;/xs:annotation&gt;
+			&lt;/xs:element&gt;
+			&lt;xs:element name="gender" xsi:type="IndexedElement"&gt;
+				&lt;xs:annotation&gt;
+					&lt;xs:documentation&gt;The atomic version of the gender element is a shortcut for:
+						&amp;lt;gender&amp;gt;&amp;lt;star/&amp;gt;&amp;lt;/gender&amp;gt; The
+						atomic gender does not have any content. &lt;/xs:documentation&gt;
+				&lt;/xs:annotation&gt;
+			&lt;/xs:element&gt;
+			--&gt;</div>&lt;/<span class="scTag">xs:choice</span>&gt;</div>&lt;/<span class="scTag">xs:group</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_shortcutElements_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Model Group: <a name="group_systemDefinedPredicates" class="name">systemDefinedPredicates</a>
+</h3>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>systemDefinedPredicates</td>
+</tr>
+<tr>
+<th>Documentation</th>
+<td>Several atomic AIML elements require the AIML interpreter to
+				substitute a value that is determined from the system, independently of the AIML
+				content.</td>
+</tr>
+</table>
+<div class="sample box">
+<div>
+<input type="button" id="group_systemDefinedPredicates_xibox_button" class="control" onclick="switchState('group_systemDefinedPredicates_xibox'); return false;" style="display: none"/> <span class="caption">XML Instance Representation</span>
+</div>
+<div id="group_systemDefinedPredicates_xibox" class="contents">
+<span class="group" style="margin-left: 0em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 1.5em">&lt;date&gt; ... &lt;/date&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The date element tells the AIML interpreter that it should substitute the system local date and time. No formatting constraints on the output are specified.'); viewDocumentation('Element', 'date', docArray);">?</a>
+</div>
+<div style="margin-left: 1.5em">&lt;id&gt; ... &lt;/id&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The id element tells the AIML interpreter that it should substitute the user ID. The determination of the user ID is not specified, since it will vary by application. A suggested default return value is \&quot;localhost\&quot;.'); viewDocumentation('Element', 'id', docArray);">?</a>
+</div>
+<div style="margin-left: 1.5em">&lt;size&gt; ... &lt;/size&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The size element tells the AIML interpreter that it should substitute the number of categories currently loaded.'); viewDocumentation('Element', 'size', docArray);">?</a>
+</div>
+<div style="margin-left: 1.5em">&lt;version&gt; ... &lt;/version&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The version element tells the AIML interpreter that it should substitute the version number of the AIML interpreter.'); viewDocumentation('Element', 'version', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 0em">End Choice</span>
+<br/>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_systemDefinedPredicates_xibox', true);
+// -->
+</script>
+</div>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="group_systemDefinedPredicates_scbox_button" class="control" onclick="switchState('group_systemDefinedPredicates_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="group_systemDefinedPredicates_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:group</span> <span class="scTag">name</span>="<span class="scContent">systemDefinedPredicates</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:choice</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">date</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">id</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">size</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">version</span>"/&gt;</div>&lt;/<span class="scTag">xs:choice</span>&gt;</div>&lt;/<span class="scTag">xs:group</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_systemDefinedPredicates_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Model Group: <a name="group_textFormattingElements" class="name">textFormattingElements</a>
+</h3>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>textFormattingElements</td>
+</tr>
+<tr>
+<th>Documentation</th>
+<td>Text-formatting elements instruct an AIML interpreter to perform
+				locale-specific post-processing of the textual results of the processing of their
+				contents.</td>
+</tr>
+</table>
+<div class="sample box">
+<div>
+<input type="button" id="group_textFormattingElements_xibox_button" class="control" onclick="switchState('group_textFormattingElements_xibox'); return false;" style="display: none"/> <span class="caption">XML Instance Representation</span>
+</div>
+<div id="group_textFormattingElements_xibox" class="contents">
+<span class="group" style="margin-left: 0em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 1.5em">&lt;uppercase&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/uppercase&gt; <span class="occurs">[1]</span>
+</div>
+<div style="margin-left: 1.5em">&lt;lowercase&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/lowercase&gt; <span class="occurs">[1]</span>
+</div>
+<div style="margin-left: 1.5em">&lt;formal&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/formal&gt; <span class="occurs">[1]</span>
+</div>
+<div style="margin-left: 1.5em">&lt;sentence&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/sentence&gt; <span class="occurs">[1]</span>
+</div>
+<span class="group" style="margin-left: 0em">End Choice</span>
+<br/>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_textFormattingElements_xibox', true);
+// -->
+</script>
+</div>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="group_textFormattingElements_scbox_button" class="control" onclick="switchState('group_textFormattingElements_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="group_textFormattingElements_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:group</span> <span class="scTag">name</span>="<span class="scContent">textFormattingElements</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:choice</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">uppercase</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">lowercase</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">formal</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">sentence</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span>
+</span>"/&gt;</div>&lt;/<span class="scTag">xs:choice</span>&gt;</div>&lt;/<span class="scTag">xs:group</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_textFormattingElements_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Model Group: <a name="group_conditionalElements" class="name">conditionalElements</a>
+</h3>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>conditionalElements</td>
+</tr>
+</table>
+<div class="sample box">
+<div>
+<input type="button" id="group_conditionalElements_xibox_button" class="control" onclick="switchState('group_conditionalElements_xibox'); return false;" style="display: none"/> <span class="caption">XML Instance Representation</span>
+</div>
+<div id="group_conditionalElements_xibox" class="contents">
+<span class="group" style="margin-left: 0em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 1.5em">&lt;condition&gt;  <span class="occurs">[1]</span>  <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The condition element instructs the AIML interpreter to return specified contents depending upon the results of matching a predicate against a pattern. NOTE: The definition in this Schema is currently far too permissive. AIML conditions have several forms and constraints that can\'t be expressed using W3C Schema alone. For this reason, AIML objects that validate using this Schema alone may not actually be valid AIML.'); viewDocumentation('Element', 'condition', docArray);">?</a>
+<br/>
+<span class="other" style="margin-left: 1.5em">&lt;!-- Mixed content --&gt;</span>
+<br/>
+<span class="group" style="margin-left: 1.5em">Start <a title="Look up 'Sequence' in glossary" href="#term_Sequence">Sequence</a> <span class="occurs">[0..*]</span>
+</span>
+<br/>
+<div class="other" style="margin-left: 3em">Allow any elements from any namespace (lax validation). <span class="occurs">[1]</span>
+</div>
+<span class="group" style="margin-left: 1.5em">End Sequence</span>
+<br/>&lt;/condition&gt;</div>
+<div style="margin-left: 1.5em">&lt;random&gt;  <span class="occurs">[1]</span>  <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The random element instructs the AIML interpreter to return exactly one of its contained li elements randomly.'); viewDocumentation('Element', 'random', docArray);">?</a>
+<br/>
+<div style="margin-left: 1.5em">&lt;li&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/li&gt; <span class="occurs">[1..*]</span>
+</div>&lt;/random&gt;</div>
+<span class="group" style="margin-left: 0em">End Choice</span>
+<br/>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_conditionalElements_xibox', true);
+// -->
+</script>
+</div>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="group_conditionalElements_scbox_button" class="control" onclick="switchState('group_conditionalElements_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="group_conditionalElements_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:group</span> <span class="scTag">name</span>="<span class="scContent">conditionalElements</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:choice</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">condition</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:complexType</span> <span class="scTag">mixed</span>="<span class="scContent">true</span>"&gt;<div class="comment" style="margin-left: 1.5em">&lt;--
+				    &lt;xs:choice&gt;
+						&lt;xs:sequence minOccurs="0" maxOccurs="unbounded"&gt;
+							&lt;xs:element name="li"&gt;
+								&lt;xs:complexType&gt;
+									&lt;xs:complexContent&gt;
+										&lt;xs:extension base="MixedTemplateContentContainer"&gt;
+											&lt;xs:attribute name="name" type="PredicateName"/&gt;
+											&lt;xs:attribute name="value" type="SimplePatternExpression"/&gt;
+										&lt;/xs:extension&gt;
+									&lt;/xs:complexContent&gt;
+								&lt;/xs:complexType&gt;
+							&lt;/xs:element&gt;
+						&lt;/xs:sequence&gt;
+						--&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:sequence</span> <span class="scTag">minOccurs</span>="<span class="scContent">0</span>" <span class="scTag">maxOccurs</span>="<span class="scContent">unbounded</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:any</span> <span class="scTag">namespace</span>="<span class="scContent">##any</span>" <span class="scTag">processContents</span>="<span class="scContent">lax</span>"/&gt;</div>&lt;/<span class="scTag">xs:sequence</span>&gt;</div>
+<div class="comment" style="margin-left: 1.5em">&lt;--
+					&lt;/xs:choice&gt;
+					--&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:attribute</span> <span class="scTag">name</span>="<span class="scContent">name</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;PredicateName&quot; type definition." href="#type_PredicateName">PredicateName</a>
+</span>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:attribute</span> <span class="scTag">name</span>="<span class="scContent">value</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;SimplePatternExpression&quot; type definition." href="#type_SimplePatternExpression">SimplePatternExpression</a>
+</span>
+</span>"/&gt;</div>&lt;/<span class="scTag">xs:complexType</span>&gt;</div>&lt;/<span class="scTag">xs:element</span>&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">random</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:complexType</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:sequence</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">li</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span>
+</span>" <span class="scTag">maxOccurs</span>="<span class="scContent">unbounded</span>"/&gt;</div>&lt;/<span class="scTag">xs:sequence</span>&gt;</div>&lt;/<span class="scTag">xs:complexType</span>&gt;</div>&lt;/<span class="scTag">xs:element</span>&gt;</div>&lt;/<span class="scTag">xs:choice</span>&gt;</div>&lt;/<span class="scTag">xs:group</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_conditionalElements_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Model Group: <a name="group_captureElements" class="name">captureElements</a>
+</h3>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>captureElements</td>
+</tr>
+<tr>
+<th>Documentation</th>
+<td>AIML defines two content-capturing elements, which tell the AIML
+				interpreter to capture their processed contents and perform some storage operation
+				with them.</td>
+</tr>
+</table>
+<div class="sample box">
+<div>
+<input type="button" id="group_captureElements_xibox_button" class="control" onclick="switchState('group_captureElements_xibox'); return false;" style="display: none"/> <span class="caption">XML Instance Representation</span>
+</div>
+<div id="group_captureElements_xibox" class="contents">
+<span class="group" style="margin-left: 0em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 1.5em">&lt;set<br/>
+<span style="margin-left: 0.5em"> name="<span class="type">
+<a title="Jump to &quot;PredicateName&quot; type definition." href="#type_PredicateName">PredicateName</a>
+</span> <span class="occurs">[0..1]</span>"</span>&gt;  <span class="occurs">[1]</span>  <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The set element instructs the AIML interpreter to set the value of a predicate to the result of processing the contents of the set element. The set element has a required attribute name, which must be a valid AIML predicate name. If the predicate has not yet been defined, the AIML interpreter should define it in memory.'); viewDocumentation('Element', 'set', docArray);">?</a>
+<br/>
+<span class="group" style="margin-left: 1.5em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[0..*]</span>
+</span>
+<br/>
+<span class="group" style="margin-left: 3em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 4.5em">&lt;star&gt; <span class="type">
+<a title="Jump to &quot;IndexedElement&quot; type definition." href="#type_IndexedElement">IndexedElement</a>
+</span> &lt;/star&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The star element indicates that an AIML interpreter should substitute the value \&quot;captured\&quot; by a particular wildcard from the pattern-specified portion of the match path when returning the template. The star element has an optional integer index attribute that indicates which wildcard to use. The minimum acceptable value for the index is \&quot;1\&quot; (the first wildcard), and the maximum acceptable value is equal to the number of wildcards in the pattern.'); viewDocumentation('Element', 'star', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;that&gt; <span class="type">
+<a title="Jump to &quot;OneOrTwoDIndexedElement&quot; type definition." href="#type_OneOrTwoDIndexedElement">OneOrTwoDIndexedElement</a>
+</span> &lt;/that&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The pattern-side that element is a special type of pattern element used for context matching. The pattern-side that is optional in a category, but if it occurs it must occur no more than once, and must immediately follow the pattern and immediately precede the template. A pattern-side that element contains a simple pattern expression. The contents of the pattern-side that are appended to the full match path that is constructed by the AIML interpreter at load time. If a category does not contain a pattern-side that, the AIML interpreter must assume an \&quot;implied\&quot; pattern-side that containing the pattern expression * (single asterisk wildcard).'); viewDocumentation('Element', 'that', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;input&gt; <span class="type">
+<a title="Jump to &quot;OneOrTwoDIndexedElement&quot; type definition." href="#type_OneOrTwoDIndexedElement">OneOrTwoDIndexedElement</a>
+</span> &lt;/input&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The input element tells the AIML interpreter that it should substitute the contents of a previous user input. The template-side input has an optional index attribute that may contain either a single integer or a comma-separated pair of integers. The minimum value for either of the integers in the index is \&quot;1\&quot;. The index tells the AIML interpreter which previous user input should be returned (first dimension), and optionally which \&quot;sentence\&quot; of the previous user input. The AIML interpreter should raise an error if either of the specified index dimensions is invalid at run-time. An unspecified index is the equivalent of \&quot;1,1\&quot;. An unspecified second dimension of the index is the equivalent of specifying a \&quot;1\&quot; for the second dimension.'); viewDocumentation('Element', 'input', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;thatstar&gt; <span class="type">
+<a title="Jump to &quot;IndexedElement&quot; type definition." href="#type_IndexedElement">IndexedElement</a>
+</span> &lt;/thatstar&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The thatstar element tells the AIML interpreter that it should substitute the contents of a wildcard from a pattern-side that element. The thatstar element has an optional integer index attribute that indicates which wildcard to use; the minimum acceptable value for the index is \&quot;1\&quot; (the first wildcard). An AIML interpreter should raise an error if the index attribute of a star specifies a wildcard that does not exist in the that element\'s pattern content. Not specifying the index is the same as specifying an index of \&quot;1\&quot;.'); viewDocumentation('Element', 'thatstar', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;topicstar&gt; <span class="type">
+<a title="Jump to &quot;IndexedElement&quot; type definition." href="#type_IndexedElement">IndexedElement</a>
+</span> &lt;/topicstar&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The topicstar element tells the AIML interpreter that it should substitute the contents of a wildcard from the current topic (if the topic contains any wildcards). The topicstar element has an optional integer index attribute that indicates which wildcard to use; the minimum acceptable value for the index is \&quot;1\&quot; (the first wildcard). Not specifying the index is the same as specifying an index of \&quot;1\&quot;.'); viewDocumentation('Element', 'topicstar', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;get/&gt;  <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The get element tells the AIML interpreter that it should substitute the contents of a predicate, if that predicate has a value defined. If the predicate has no value defined, the AIML interpreter should substitute the empty string \&quot;&quot;. The AIML interpreter implementation may optionally provide a mechanism that allows the AIML author to designate default values for certain predicates.'); viewDocumentation('Element', 'get', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;bot/&gt;  <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('An element called bot, which may be considered a restricted version of get, is used to tell the AIML interpreter that it should substitute the contents of a \&quot;bot predicate\&quot;. The value of a bot predicate is set at load-time, and cannot be changed at run-time. The AIML interpreter may decide how to set the values of bot predicate at load-time. If the bot predicate has no value defined, the AIML interpreter should substitute an empty string.'); viewDocumentation('Element', 'bot', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 4.5em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 6em">&lt;sr&gt; ... &lt;/sr&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The sr element is a shortcut for: &lt;srai&gt;&lt;star/&gt;&lt;/srai&gt; The atomic sr does not have any content.'); viewDocumentation('Element', 'sr', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 4.5em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 4.5em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 6em">&lt;date&gt; ... &lt;/date&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The date element tells the AIML interpreter that it should substitute the system local date and time. No formatting constraints on the output are specified.'); viewDocumentation('Element', 'date', docArray);">?</a>
+</div>
+<div style="margin-left: 6em">&lt;id&gt; ... &lt;/id&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The id element tells the AIML interpreter that it should substitute the user ID. The determination of the user ID is not specified, since it will vary by application. A suggested default return value is \&quot;localhost\&quot;.'); viewDocumentation('Element', 'id', docArray);">?</a>
+</div>
+<div style="margin-left: 6em">&lt;size&gt; ... &lt;/size&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The size element tells the AIML interpreter that it should substitute the number of categories currently loaded.'); viewDocumentation('Element', 'size', docArray);">?</a>
+</div>
+<div style="margin-left: 6em">&lt;version&gt; ... &lt;/version&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The version element tells the AIML interpreter that it should substitute the version number of the AIML interpreter.'); viewDocumentation('Element', 'version', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 4.5em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 3em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 3em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 4.5em">&lt;uppercase&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/uppercase&gt; <span class="occurs">[1]</span>
+</div>
+<div style="margin-left: 4.5em">&lt;lowercase&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/lowercase&gt; <span class="occurs">[1]</span>
+</div>
+<div style="margin-left: 4.5em">&lt;formal&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/formal&gt; <span class="occurs">[1]</span>
+</div>
+<div style="margin-left: 4.5em">&lt;sentence&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/sentence&gt; <span class="occurs">[1]</span>
+</div>
+<span class="group" style="margin-left: 3em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 3em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 4.5em">&lt;condition&gt;  <span class="occurs">[1]</span>  <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The condition element instructs the AIML interpreter to return specified contents depending upon the results of matching a predicate against a pattern. NOTE: The definition in this Schema is currently far too permissive. AIML conditions have several forms and constraints that can\'t be expressed using W3C Schema alone. For this reason, AIML objects that validate using this Schema alone may not actually be valid AIML.'); viewDocumentation('Element', 'condition', docArray);">?</a>
+<br/>
+<span class="other" style="margin-left: 1.5em">&lt;!-- Mixed content --&gt;</span>
+<br/>
+<span class="group" style="margin-left: 1.5em">Start <a title="Look up 'Sequence' in glossary" href="#term_Sequence">Sequence</a> <span class="occurs">[0..*]</span>
+</span>
+<br/>
+<div class="other" style="margin-left: 3em">Allow any elements from any namespace (lax validation). <span class="occurs">[1]</span>
+</div>
+<span class="group" style="margin-left: 1.5em">End Sequence</span>
+<br/>&lt;/condition&gt;</div>
+<div style="margin-left: 4.5em">&lt;random&gt;  <span class="occurs">[1]</span>  <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The random element instructs the AIML interpreter to return exactly one of its contained li elements randomly.'); viewDocumentation('Element', 'random', docArray);">?</a>
+<br/>
+<div style="margin-left: 1.5em">&lt;li&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/li&gt; <span class="occurs">[1..*]</span>
+</div>&lt;/random&gt;</div>
+<span class="group" style="margin-left: 3em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 3em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 4.5em">&lt;set<br/>
+<span style="margin-left: 0.5em"> name="<span class="type">
+<a title="Jump to &quot;PredicateName&quot; type definition." href="#type_PredicateName">PredicateName</a>
+</span> <span class="occurs">[0..1]</span>"</span>&gt;  <span class="occurs">[1]</span>  <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The set element instructs the AIML interpreter to set the value of a predicate to the result of processing the contents of the set element. The set element has a required attribute name, which must be a valid AIML predicate name. If the predicate has not yet been defined, the AIML interpreter should define it in memory.'); viewDocumentation('Element', 'set', docArray);">?</a>
+<br/>
+<div class="other" style="margin-left: 1.5em">&lt;-- Extends: <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> (Circular type hierarchy) --&gt;</div>&lt;/set&gt;</div>
+<div style="margin-left: 4.5em">&lt;gossip&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/gossip&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The gossip element instructs the AIML interpreter to capture the result of processing the contents of the gossip elements and to store these contents in a manner left up to the implementation. Most common uses of gossip have been to store captured contents in a separate file.'); viewDocumentation('Element', 'gossip', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 3em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 3em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 4.5em">&lt;srai&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/srai&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The srai element instructs the AIML interpreter to pass the result of processing the contents of the srai element to the AIML matching loop, as if the input had been produced by the user (this includes stepping through the entire input normalization process).'); viewDocumentation('Element', 'srai', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 3em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 3em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 4.5em">&lt;person&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/person&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The person element instructs the AIML interpreter to: 1. replace words with first-person aspect in the result of processing the contents of the person element with words with the grammatically-corresponding third-person aspect; and 2. replace words with third-person aspect in the result of processing the contents of the person element with words with the grammatically-corresponding first-person aspect. The definition of \&quot;grammatically-corresponding\&quot; is left up to the implementation.'); viewDocumentation('Element', 'person', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;person2&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/person2&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The person2 element instructs the AIML interpreter to: 1. replace words with first-person aspect in the result of processing the contents of the person2 element with words with the grammatically-corresponding second-person aspect; and 2. replace words with second-person aspect in the result of processing the contents of the person2 element with words with the grammatically-corresponding first-person aspect. The definition of \&quot;grammatically-corresponding\&quot; is left up to the implementation.'); viewDocumentation('Element', 'person2', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;gender&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/gender&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The gender element instructs the AIML interpreter to: 1. replace male-gendered words in the result of processing the contents of the gender element with the grammatically-corresponding female-gendered words; and 2. replace female-gendered words in the result of processing the contents of the gender element with the grammatically-corresponding male-gendered words. The definition of \&quot;grammatically-corresponding\&quot; is left up to the implementation. Historically, implementations of gender have exclusively dealt with pronouns, likely due to the fact that most AIML has been written in English. However, the decision about whether to transform gender of other words is left up to the implementation.'); viewDocumentation('Element', 'gender', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 3em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 3em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 4.5em">&lt;think&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/think&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The think element instructs the AIML interpreter to perform all usual processing of its contents, but to not return any value, regardless of whether the contents produce output.'); viewDocumentation('Element', 'think', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;learn&gt; <span class="constraint">
+<span class="type">
+<a href="#ns_xs" title="Find out namespace of 'xs' prefix">xs</a>:anyURI</span>
+</span> &lt;/learn&gt; <span class="occurs">[1]</span>
+</div>
+<span class="group" style="margin-left: 3em">End Choice</span>
+<br/>
+<span class="group" style="margin-left: 3em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 4.5em">&lt;system&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/system&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The system element instructs the AIML interpreter to pass its content (with any appropriate preprocessing) to the system command interpreter of the local machine on which the AIML interpreter is running.'); viewDocumentation('Element', 'system', docArray);">?</a>
+</div>
+<div style="margin-left: 4.5em">&lt;javascript&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/javascript&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The javascript element instructs the AIML interpreter to pass its content (with any appropriate preprocessing, as noted above) to a server-side JavaScript interpreter on the local machine on which the AIML interpreter is running. The javascript element does not have any attributes. AIML does not require that an AIML interpreter include a server-side JavaScript interpreter, and does not require any particular behavior from the server-side JavaScript interpreter if it exists. The javascript element may return a value.'); viewDocumentation('Element', 'javascript', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 3em">End Choice</span>
+<br/>
+<div class="other" style="margin-left: 3em">Allow any elements from a namespace other than this schema's namespace (lax validation). <span class="occurs">[1]</span>
+</div>
+<span class="group" style="margin-left: 1.5em">End Choice</span>
+<br/>&lt;/set&gt;</div>
+<div style="margin-left: 1.5em">&lt;gossip&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/gossip&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The gossip element instructs the AIML interpreter to capture the result of processing the contents of the gossip elements and to store these contents in a manner left up to the implementation. Most common uses of gossip have been to store captured contents in a separate file.'); viewDocumentation('Element', 'gossip', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 0em">End Choice</span>
+<br/>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_captureElements_xibox', true);
+// -->
+</script>
+</div>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="group_captureElements_scbox_button" class="control" onclick="switchState('group_captureElements_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="group_captureElements_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:group</span> <span class="scTag">name</span>="<span class="scContent">captureElements</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:choice</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">set</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:complexType</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:complexContent</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:extension</span> <span class="scTag">base</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span>
+</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:attribute</span> <span class="scTag">name</span>="<span class="scContent">name</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;PredicateName&quot; type definition." href="#type_PredicateName">PredicateName</a>
+</span>
+</span>"/&gt;</div>&lt;/<span class="scTag">xs:extension</span>&gt;</div>&lt;/<span class="scTag">xs:complexContent</span>&gt;</div>&lt;/<span class="scTag">xs:complexType</span>&gt;</div>&lt;/<span class="scTag">xs:element</span>&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">gossip</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span>
+</span>"/&gt;</div>&lt;/<span class="scTag">xs:choice</span>&gt;</div>&lt;/<span class="scTag">xs:group</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_captureElements_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Model Group: <a name="group_symbolicReductionElements" class="name">symbolicReductionElements</a>
+</h3>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>symbolicReductionElements</td>
+</tr>
+</table>
+<div class="sample box">
+<div>
+<input type="button" id="group_symbolicReductionElements_xibox_button" class="control" onclick="switchState('group_symbolicReductionElements_xibox'); return false;" style="display: none"/> <span class="caption">XML Instance Representation</span>
+</div>
+<div id="group_symbolicReductionElements_xibox" class="contents">
+<span class="group" style="margin-left: 0em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 1.5em">&lt;srai&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/srai&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The srai element instructs the AIML interpreter to pass the result of processing the contents of the srai element to the AIML matching loop, as if the input had been produced by the user (this includes stepping through the entire input normalization process).'); viewDocumentation('Element', 'srai', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 0em">End Choice</span>
+<br/>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_symbolicReductionElements_xibox', true);
+// -->
+</script>
+</div>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="group_symbolicReductionElements_scbox_button" class="control" onclick="switchState('group_symbolicReductionElements_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="group_symbolicReductionElements_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:group</span> <span class="scTag">name</span>="<span class="scContent">symbolicReductionElements</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:choice</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">srai</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span>
+</span>"/&gt;</div>&lt;/<span class="scTag">xs:choice</span>&gt;</div>&lt;/<span class="scTag">xs:group</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_symbolicReductionElements_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Model Group: <a name="group_transformationalElements" class="name">transformationalElements</a>
+</h3>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>transformationalElements</td>
+</tr>
+</table>
+<div class="sample box">
+<div>
+<input type="button" id="group_transformationalElements_xibox_button" class="control" onclick="switchState('group_transformationalElements_xibox'); return false;" style="display: none"/> <span class="caption">XML Instance Representation</span>
+</div>
+<div id="group_transformationalElements_xibox" class="contents">
+<span class="group" style="margin-left: 0em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 1.5em">&lt;person&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/person&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The person element instructs the AIML interpreter to: 1. replace words with first-person aspect in the result of processing the contents of the person element with words with the grammatically-corresponding third-person aspect; and 2. replace words with third-person aspect in the result of processing the contents of the person element with words with the grammatically-corresponding first-person aspect. The definition of \&quot;grammatically-corresponding\&quot; is left up to the implementation.'); viewDocumentation('Element', 'person', docArray);">?</a>
+</div>
+<div style="margin-left: 1.5em">&lt;person2&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/person2&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The person2 element instructs the AIML interpreter to: 1. replace words with first-person aspect in the result of processing the contents of the person2 element with words with the grammatically-corresponding second-person aspect; and 2. replace words with second-person aspect in the result of processing the contents of the person2 element with words with the grammatically-corresponding first-person aspect. The definition of \&quot;grammatically-corresponding\&quot; is left up to the implementation.'); viewDocumentation('Element', 'person2', docArray);">?</a>
+</div>
+<div style="margin-left: 1.5em">&lt;gender&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/gender&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The gender element instructs the AIML interpreter to: 1. replace male-gendered words in the result of processing the contents of the gender element with the grammatically-corresponding female-gendered words; and 2. replace female-gendered words in the result of processing the contents of the gender element with the grammatically-corresponding male-gendered words. The definition of \&quot;grammatically-corresponding\&quot; is left up to the implementation. Historically, implementations of gender have exclusively dealt with pronouns, likely due to the fact that most AIML has been written in English. However, the decision about whether to transform gender of other words is left up to the implementation.'); viewDocumentation('Element', 'gender', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 0em">End Choice</span>
+<br/>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_transformationalElements_xibox', true);
+// -->
+</script>
+</div>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="group_transformationalElements_scbox_button" class="control" onclick="switchState('group_transformationalElements_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="group_transformationalElements_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:group</span> <span class="scTag">name</span>="<span class="scContent">transformationalElements</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:choice</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">person</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">person2</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">gender</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span>
+</span>"/&gt;</div>&lt;/<span class="scTag">xs:choice</span>&gt;</div>&lt;/<span class="scTag">xs:group</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_transformationalElements_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Model Group: <a name="group_covertElements" class="name">covertElements</a>
+</h3>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>covertElements</td>
+</tr>
+<tr>
+<th>Documentation</th>
+<td>AIML defines two "covert" elements that instruct the AIML interpreter
+				to perform some processing on their contents, but to not return any
+			value.</td>
+</tr>
+</table>
+<div class="sample box">
+<div>
+<input type="button" id="group_covertElements_xibox_button" class="control" onclick="switchState('group_covertElements_xibox'); return false;" style="display: none"/> <span class="caption">XML Instance Representation</span>
+</div>
+<div id="group_covertElements_xibox" class="contents">
+<span class="group" style="margin-left: 0em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 1.5em">&lt;think&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/think&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The think element instructs the AIML interpreter to perform all usual processing of its contents, but to not return any value, regardless of whether the contents produce output.'); viewDocumentation('Element', 'think', docArray);">?</a>
+</div>
+<div style="margin-left: 1.5em">&lt;learn&gt; <span class="constraint">
+<span class="type">
+<a href="#ns_xs" title="Find out namespace of 'xs' prefix">xs</a>:anyURI</span>
+</span> &lt;/learn&gt; <span class="occurs">[1]</span>
+</div>
+<span class="group" style="margin-left: 0em">End Choice</span>
+<br/>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_covertElements_xibox', true);
+// -->
+</script>
+</div>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="group_covertElements_scbox_button" class="control" onclick="switchState('group_covertElements_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="group_covertElements_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:group</span> <span class="scTag">name</span>="<span class="scContent">covertElements</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:choice</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">think</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">learn</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:simpleType</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:restriction</span> <span class="scTag">base</span>="<span class="scContent">
+<span class="type">
+<a href="#ns_xs" title="Find out namespace of 'xs' prefix">xs</a>:anyURI</span>
+</span>"/&gt;</div>&lt;/<span class="scTag">xs:simpleType</span>&gt;</div>&lt;/<span class="scTag">xs:element</span>&gt;</div>&lt;/<span class="scTag">xs:choice</span>&gt;</div>&lt;/<span class="scTag">xs:group</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_covertElements_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Model Group: <a name="group_externalProcessorElements" class="name">externalProcessorElements</a>
+</h3>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>externalProcessorElements</td>
+</tr>
+<tr>
+<th>Documentation</th>
+<td>AIML defines two external processor elements, which instruct the AIML
+				interpreter to pass the contents of the elements to an external processor. External
+				processor elements may return a value, but are not required to do so. Contents of
+				external processor elements may consist of character data as well as AIML template
+				elements. If AIML template elements in the contents of an external processor element
+				are not enclosed as CDATA, then the AIML interpreter is required to substitute the
+				results of processing those elements before passing the contents to the external
+				processor. AIML does not require that any contents of an external processor element
+				are enclosed as CDATA. An AIML interpreter should assume that any unrecognized
+				content is character data, and simply pass it to the appropriate external processor
+				as-is, following any processing of AIML template elements not enclosed as CDATA. If
+				an external processor is not available to process the contents of an external
+				processor element, the AIML interpreter may return an error, but this is not
+				required.</td>
+</tr>
+</table>
+<div class="sample box">
+<div>
+<input type="button" id="group_externalProcessorElements_xibox_button" class="control" onclick="switchState('group_externalProcessorElements_xibox'); return false;" style="display: none"/> <span class="caption">XML Instance Representation</span>
+</div>
+<div id="group_externalProcessorElements_xibox" class="contents">
+<span class="group" style="margin-left: 0em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a> <span class="occurs">[1]</span>
+</span>
+<br/>
+<div style="margin-left: 1.5em">&lt;system&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/system&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The system element instructs the AIML interpreter to pass its content (with any appropriate preprocessing) to the system command interpreter of the local machine on which the AIML interpreter is running.'); viewDocumentation('Element', 'system', docArray);">?</a>
+</div>
+<div style="margin-left: 1.5em">&lt;javascript&gt; <span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span> &lt;/javascript&gt; <span class="occurs">[1]</span> <a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('The javascript element instructs the AIML interpreter to pass its content (with any appropriate preprocessing, as noted above) to a server-side JavaScript interpreter on the local machine on which the AIML interpreter is running. The javascript element does not have any attributes. AIML does not require that an AIML interpreter include a server-side JavaScript interpreter, and does not require any particular behavior from the server-side JavaScript interpreter if it exists. The javascript element may return a value.'); viewDocumentation('Element', 'javascript', docArray);">?</a>
+</div>
+<span class="group" style="margin-left: 0em">End Choice</span>
+<br/>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_externalProcessorElements_xibox', true);
+// -->
+</script>
+</div>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="group_externalProcessorElements_scbox_button" class="control" onclick="switchState('group_externalProcessorElements_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="group_externalProcessorElements_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:group</span> <span class="scTag">name</span>="<span class="scContent">externalProcessorElements</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:choice</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">system</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span>
+</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:element</span> <span class="scTag">name</span>="<span class="scContent">javascript</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a title="Jump to &quot;MixedTemplateContentContainer&quot; type definition." href="#type_MixedTemplateContentContainer">MixedTemplateContentContainer</a>
+</span>
+</span>"/&gt;</div>&lt;/<span class="scTag">xs:choice</span>&gt;</div>&lt;/<span class="scTag">xs:group</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('group_externalProcessorElements_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Complex Type: <a name="type_OneOrTwoDIndexedElement" class="name">OneOrTwoDIndexedElement</a>
+</h3>
+<table class="hierarchy">
+<tr>
+<th>Super-types:</th>
+<td>None</td>
+</tr>
+<tr>
+<th>Sub-types:</th>
+<td>None</td>
+</tr>
+</table>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>OneOrTwoDIndexedElement</td>
+</tr>
+<tr>
+<th>
+<a title="Look up 'Abstract' in glossary" href="#term_Abstract">Abstract</a>
+</th>
+<td>no</td>
+</tr>
+</table>
+<div class="sample box">
+<div>
+<input type="button" id="type_OneOrTwoDIndexedElement_xibox_button" class="control" onclick="switchState('type_OneOrTwoDIndexedElement_xibox'); return false;" style="display: none"/> <span class="caption">XML Instance Representation</span>
+</div>
+<div id="type_OneOrTwoDIndexedElement_xibox" class="contents">
+<div style="margin-left: 0em">&lt;...<br/>
+<span style="margin-left: 0.5em"> index="<span class="constraint">
+<span class="type">
+<a href="#ns_xs" title="Find out namespace of 'xs' prefix">xs</a>:string</span> (<em>pattern</em> = \d+|\d+,\d+) (<em>length</em> &gt;= 1)</span> <span class="occurs">[0..1]</span>"</span>/&gt; </div>
+</div>
+<script type="text/javascript">
+<!--
+setState('type_OneOrTwoDIndexedElement_xibox', true);
+// -->
+</script>
+</div>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="type_OneOrTwoDIndexedElement_scbox_button" class="control" onclick="switchState('type_OneOrTwoDIndexedElement_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="type_OneOrTwoDIndexedElement_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:complexType</span> <span class="scTag">name</span>="<span class="scContent">OneOrTwoDIndexedElement</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:attribute</span> <span class="scTag">name</span>="<span class="scContent">index</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:simpleType</span>&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:restriction</span> <span class="scTag">base</span>="<span class="scContent">
+<span class="type">
+<a href="#ns_xs" title="Find out namespace of 'xs' prefix">xs</a>:string</span>
+</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:minLength</span> <span class="scTag">value</span>="<span class="scContent">1</span>"/&gt;</div>
+<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:pattern</span> <span class="scTag">value</span>="<span class="scContent">\d+|\d+,\d+</span>"/&gt;</div>&lt;/<span class="scTag">xs:restriction</span>&gt;</div>&lt;/<span class="scTag">xs:simpleType</span>&gt;</div>&lt;/<span class="scTag">xs:attribute</span>&gt;</div>&lt;/<span class="scTag">xs:complexType</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('type_OneOrTwoDIndexedElement_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Complex Type: <a name="type_IndexedElement" class="name">IndexedElement</a>
+</h3>
+<table class="hierarchy">
+<tr>
+<th>Super-types:</th>
+<td>None</td>
+</tr>
+<tr>
+<th>Sub-types:</th>
+<td>None</td>
+</tr>
+</table>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>IndexedElement</td>
+</tr>
+<tr>
+<th>
+<a title="Look up 'Abstract' in glossary" href="#term_Abstract">Abstract</a>
+</th>
+<td>no</td>
+</tr>
+</table>
+<div class="sample box">
+<div>
+<input type="button" id="type_IndexedElement_xibox_button" class="control" onclick="switchState('type_IndexedElement_xibox'); return false;" style="display: none"/> <span class="caption">XML Instance Representation</span>
+</div>
+<div id="type_IndexedElement_xibox" class="contents">
+<div style="margin-left: 0em">&lt;...<br/>
+<span style="margin-left: 0.5em"> index="<span class="type">
+<a href="#ns_xs" title="Find out namespace of 'xs' prefix">xs</a>:integer</span> <span class="occurs">[0..1]</span>"</span>/&gt; </div>
+</div>
+<script type="text/javascript">
+<!--
+setState('type_IndexedElement_xibox', true);
+// -->
+</script>
+</div>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="type_IndexedElement_scbox_button" class="control" onclick="switchState('type_IndexedElement_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="type_IndexedElement_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:complexType</span> <span class="scTag">name</span>="<span class="scContent">IndexedElement</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:attribute</span> <span class="scTag">name</span>="<span class="scContent">index</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">
+<a href="#ns_xs" title="Find out namespace of 'xs' prefix">xs</a>:integer</span>
+</span>"/&gt;</div>&lt;/<span class="scTag">xs:complexType</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('type_IndexedElement_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<h3>Simple Type: <a name="type_PredicateName" class="name">PredicateName</a>
+</h3>
+<table class="hierarchy">
+<tr>
+<th>Super-types:</th>
+<td>
+<span class="type">
+<a href="#ns_xs" title="Find out namespace of 'xs' prefix">xs</a>:string</span> &lt; <strong>PredicateName</strong> (by restriction)</td>
+</tr>
+<tr>
+<th>Sub-types:</th>
+<td>None</td>
+</tr>
+</table>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>PredicateName</td>
+</tr>
+<tr>
+<th>Content</th>
+<td>
+<ul>
+<li>Base XSD Type: string</li>
+</ul>
+<ul>
+<li>
+<em>pattern</em> = \c+</li>
+</ul>
+</td>
+</tr>
+</table>
+<div class="schemaComponent box">
+<div>
+<input type="button" id="type_PredicateName_scbox_button" class="control" onclick="switchState('type_PredicateName_scbox'); return false;" style="display: none"/> <span class="caption">Schema Component Representation</span>
+</div>
+<div id="type_PredicateName_scbox" class="contents">
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:simpleType</span> <span class="scTag">name</span>="<span class="scContent">PredicateName</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:restriction</span> <span class="scTag">base</span>="<span class="scContent">
+<span class="type">
+<a href="#ns_xs" title="Find out namespace of 'xs' prefix">xs</a>:string</span>
+</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:pattern</span> <span class="scTag">value</span>="<span class="scContent">\c+</span>"/&gt;</div>&lt;/<span class="scTag">xs:restriction</span>&gt;</div>&lt;/<span class="scTag">xs:simpleType</span>&gt;</div>
+</div>
+<script type="text/javascript">
+<!--
+setState('type_PredicateName_scbox', false);
+// -->
+</script>
+</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+<div id="legend">
+<h2>
+<a name="Legend">Legend</a>
+</h2>
+<div style="float: left; width: 15em;">
+<h3 style="margin-bottom: 0px;">Complex Type:</h3>
+<div class="hint" style="margin-left: 0em;">Schema Component Type</div>
+</div>
+<div style="float: left; width: 15em;">
+<h3 style="margin-bottom: 0px;">
+<span class="name">AusAddress</span>
+</h3>
+<div class="hint" style="margin-left: 0em;">Schema Component Name</div>
+</div>
+<table class="hierarchy" style="clear : both">
+<tr>
+<th>Super-types:</th>
+<td>
+<span class="type" style="color: #0000FF; text-decoration:underline;">Address</span> &lt; <span class="current">AusAddress</span> (by extension)</td>
+</tr>
+<tr>
+<th>Sub-types:</th>
+<td>
+<ul>
+<li>
+<span class="type" style="color: #0000FF; text-decoration:underline;">QLDAddress</span> (by restriction)</li>
+</ul>
+</td>
+</tr>
+</table>
+<div class="hint">If this schema component is a type definition, its type hierarchy is shown in a gray-bordered box.</div>
+<table class="properties">
+<tr>
+<th>Name</th>
+<td>AusAddress</td>
+</tr>
+<tr>
+<th>
+<a title="Look up 'Abstract' in glossary" href="#term_Abstract">Abstract</a>
+</th>
+<td>no</td>
+</tr>
+</table>
+<div class="hint">The table above displays the properties of this schema component.</div>
+<div class="sample box">
+<div>
+<span class="caption">XML Instance Representation</span>
+</div>
+<div class="contents">
+<span style="margin-left: 0em">&lt;...</span>
+<span class="newFields">
+<span> country="<span class="fixed">Australia</span>"</span>
+</span>&gt; <br/>
+<span style="margin-left: 1.5em" class="inherited">&lt;unitNo&gt; <span class="type">string</span> &lt;/unitNo&gt; <span class="occurs">[0..1]</span>
+</span>
+<br/>
+<span style="margin-left: 1.5em" class="inherited">&lt;houseNo&gt; <span class="type">string</span> &lt;/houseNo&gt; <span class="occurs">[1]</span>
+</span>
+<br/>
+<span style="margin-left: 1.5em" class="inherited">&lt;street&gt; <span class="type">string</span> &lt;/street&gt; <span class="occurs">[1]</span>
+</span>
+<br/>
+<span class="group" style="margin-left: 1.5em">Start <a title="Look up 'Choice' in glossary" href="#term_Choice">Choice</a>
+<span class="occurs">[1]</span>
+</span>
+<br/>
+<span style="margin-left: 3em" class="inherited">&lt;city&gt; <span class="type">string</span> &lt;/city&gt; <span class="occurs">[1]</span>
+</span>
+<br/>
+<span style="margin-left: 3em" class="inherited">&lt;town&gt; <span class="type">string</span> &lt;/town&gt; <span class="occurs">[1]</span>
+</span>
+<br/>
+<span class="group" style="margin-left: 1.5em">End Choice</span>
+<br/>
+<span class="newFields">
+<span style="margin-left: 1.5em">&lt;state&gt; <span class="type" style="text-decoration:underline;">AusStates</span> &lt;/state&gt; <span class="occurs">[1]</span>
+</span>
+<br/>
+<span style="margin-left: 1.5em">&lt;postcode&gt; <span class="constraint">string &lt;&lt;<em>pattern</em> = [1-9][0-9]{3}&gt;&gt;</span> &lt;/postcode&gt; <span class="occurs">[1]</span>
+<a href="javascript:void(0)" title="View Documentation" class="documentation" onclick="docArray = new Array('Post code must be a four-digit number.'); viewDocumentation('Element', 'postcode', docArray);">?</a>
+</span>
+<br/>
+</span>
+<span style="margin-left: 0em">&lt;/...&gt;</span>
+<br/>
+</div>
+</div>
+<div class="hint">
+<p>The XML Instance Representation table above shows the schema component's content as an XML instance.</p>
+<ul>
+<li>The minimum and maximum occurrence of elements and attributes are provided in square brackets, e.g. [0..1].</li>
+<li>Model group information are shown in gray, e.g. Start Choice ... End Choice.</li>
+<li>For type derivations, the elements and attributes that have been added to or changed from the base type's content are shown in <span style="font-weight: bold">bold</span>.</li>
+<li>If an element/attribute has a fixed value, the fixed value is shown in green, e.g. country="Australia".</li>
+<li>Otherwise, the type of the element/attribute is displayed.
+               <ul>
+<li>If the element/attribute's type is in the schema, a link is provided to it.</li>
+<li>For local simple type definitions, the constraints are displayed in angle brackets, e.g. &lt;&lt;<em>pattern</em> = [1-9][0-9]{3}&gt;&gt;.</li>
+</ul>
+</li>
+<li>If a local element/attribute has documentation, it will be displayed in a window that pops up when the question mark inside the attribute or next to the element is clicked, e.g. &lt;postcode&gt;.</li>
+</ul>
+</div>
+<div class="schemaComponent box">
+<div>
+<span class="caption">Schema Component Representation</span>
+</div>
+<div class="contents">
+<span style="margin-left: 0em">&lt;<span class="scTag">complexType</span>
+<span class="scTag">name</span>="<span class="scContent">AusAddress</span>"&gt;</span>
+<br/>
+<span style="margin-left: 1.5em">&lt;<span class="scTag">complexContent</span>&gt;</span>
+<br/>
+<span style="margin-left: 3em">&lt;<span class="scTag">extension</span>
+<span class="scTag">base</span>="<span class="scContent">
+<span class="type" style="text-decoration:underline;">Address</span>
+</span>"&gt;</span>
+<br/>
+<span style="margin-left: 4.5em">&lt;<span class="scTag">sequence</span>&gt;</span>
+<br/>
+<span style="margin-left: 6em">&lt;<span class="scTag">element</span>
+<span class="scTag">name</span>="<span class="scContent">state</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type" style="text-decoration:underline;">AusStates</span>
+</span>"/&gt;</span>
+<br/>
+<span style="margin-left: 6em">&lt;<span class="scTag">element</span>
+<span class="scTag">name</span>="<span class="scContent">postcode</span>"&gt;</span>
+<br/>
+<span style="margin-left: 7.5em">&lt;<span class="scTag">simpleType</span>&gt;</span>
+<br/>
+<span style="margin-left: 9em">&lt;<span class="scTag">restriction</span>
+<span class="scTag">base</span>="<span class="scContent">
+<span class="type">string</span>
+</span>"&gt;</span>
+<br/>
+<span style="margin-left: 10.5em">&lt;<span class="scTag">pattern</span>
+<span class="scTag">value</span>="<span class="scContent">[1-9][0-9]{3}</span>"/&gt;</span>
+<br/>
+<span style="margin-left: 9em">&lt;/<span class="scTag">restriction</span>&gt;</span>
+<br/>
+<span style="margin-left: 7.5em">&lt;/<span class="scTag">simpleType</span>&gt;</span>
+<br/>
+<span style="margin-left: 6em">&lt;/<span class="scTag">element</span>&gt;</span>
+<br/>
+<span style="margin-left: 4.5em">&lt;/<span class="scTag">sequence</span>&gt;</span>
+<br/>
+<span style="margin-left: 4.5em">&lt;<span class="scTag">attribute</span>
+<span class="scTag">name</span>="<span class="scContent">country</span>" <span class="scTag">type</span>="<span class="scContent">
+<span class="type">string</span>
+</span>" <span class="scTag">fixed</span>="<span class="scContent">Australia</span>"/&gt;</span>
+<br/>
+<span style="margin-left: 3em">&lt;/<span class="scTag">extension</span>&gt;</span>
+<br/>
+<span style="margin-left: 1.5em">&lt;/<span class="scTag">complexContent</span>&gt;</span>
+<br/>
+<span style="margin-left: 0em">&lt;/<span class="scTag">complexType</span>&gt;</span>
+<br/>
+</div>
+</div>
+<div class="hint">The Schema Component Representation table above displays the underlying XML representation of the schema component. (Annotations are not shown.)</div>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+</div>
+<div id="glossary">
+<h2>
+<a name="Glossary">Glossary</a>
+</h2>
+<p>
+<span class="glossaryTerm">
+<a name="term_Abstract">Abstract</a> </span>(Applies to complex type definitions and element declarations). An abstract element or complex type cannot used to validate an element instance. If there is a reference to an abstract element, only element declarations that can substitute the abstract element can be used to validate the instance. For references to abstract type definitions, only derived types can be used.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_All">All Model Group</a> </span>Child elements can be provided <em>in any order</em> in instances. See: <a title="http://www.w3.org/TR/xmlschema-1/#element-all" href="http://www.w3.org/TR/xmlschema-1/#element-all">http://www.w3.org/TR/xmlschema-1/#element-all</a>.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_Choice">Choice Model Group</a> </span>
+<em>Only one</em> from the list of child elements and model groups can be provided in instances. See: <a title="http://www.w3.org/TR/xmlschema-1/#element-choice" href="http://www.w3.org/TR/xmlschema-1/#element-choice">http://www.w3.org/TR/xmlschema-1/#element-choice</a>.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_CollapseWS">Collapse Whitespace Policy</a> </span>Replace tab, line feed, and carriage return characters with space character (Unicode character 32). Then, collapse contiguous sequences of space characters into single space character, and remove leading and trailing space characters.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_ElemBlock">Disallowed Substitutions</a> </span>(Applies to element declarations). If <em>substitution</em> is specified, then <a title="Look up 'substitution group' in glossary" href="#term_SubGroup">substitution group</a> members cannot be used in place of the given element declaration to validate element instances. If <em>derivation methods</em>, e.g. extension, restriction, are specified, then the given element declaration will not validate element instances that have types derived from the element declaration's type using the specified derivation methods. Normally, element instances can override their declaration's type by specifying an <code>xsi:type</code> attribute.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_Key">Key Constraint</a> </span>Like <a title="Look up 'Uniqueness Constraint' in glossary" href="#term_Unique">Uniqueness Constraint</a>, but additionally requires that the specified value(s) must be provided. See: <a title="http://www.w3.org/TR/xmlschema-1/#cIdentity-constraint_Definitions" href="http://www.w3.org/TR/xmlschema-1/#cIdentity-constraint_Definitions">http://www.w3.org/TR/xmlschema-1/#cIdentity-constraint_Definitions</a>.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_KeyRef">Key Reference Constraint</a> </span>Ensures that the specified value(s) must match value(s) from a <a title="Look up 'Key Constraint' in glossary" href="#term_Key">Key Constraint</a> or <a title="Look up 'Uniqueness Constraint' in glossary" href="#term_Unique">Uniqueness Constraint</a>. See: <a title="http://www.w3.org/TR/xmlschema-1/#cIdentity-constraint_Definitions" href="http://www.w3.org/TR/xmlschema-1/#cIdentity-constraint_Definitions">http://www.w3.org/TR/xmlschema-1/#cIdentity-constraint_Definitions</a>.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_ModelGroup">Model Group</a> </span>Groups together element content, specifying the order in which the element content can occur and the number of times the group of element content may be repeated. See: <a title="http://www.w3.org/TR/xmlschema-1/#Model_Groups" href="http://www.w3.org/TR/xmlschema-1/#Model_Groups">http://www.w3.org/TR/xmlschema-1/#Model_Groups</a>.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_Nillable">Nillable</a> </span>(Applies to element declarations). If an element declaration is nillable, instances can use the <code>xsi:nil</code> attribute. The <code>xsi:nil</code> attribute is the boolean attribute, <em>nil</em>, from the <em>http://www.w3.org/2001/XMLSchema-instance</em> namespace. If an element instance has an <code>xsi:nil</code> attribute set to true, it can be left empty, even though its element declaration may have required content.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_Notation">Notation</a> </span>A notation is used to identify the format of a piece of data. Values of elements and attributes that are of type, NOTATION, must come from the names of declared notations. See: <a title="http://www.w3.org/TR/xmlschema-1/#cNotation_Declarations" href="http://www.w3.org/TR/xmlschema-1/#cNotation_Declarations">http://www.w3.org/TR/xmlschema-1/#cNotation_Declarations</a>.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_PreserveWS">Preserve Whitespace Policy</a> </span>Preserve whitespaces exactly as they appear in instances.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_TypeFinal">Prohibited Derivations</a> </span>(Applies to type definitions). Derivation methods that cannot be used to create sub-types from a given type definition.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_TypeBlock">Prohibited Substitutions</a> </span>(Applies to complex type definitions). Prevents sub-types that have been derived using the specified derivation methods from validating element instances in place of the given type definition.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_ReplaceWS">Replace Whitespace Policy</a> </span>Replace tab, line feed, and carriage return characters with space character (Unicode character 32).</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_Sequence">Sequence Model Group</a> </span>Child elements and model groups must be provided <em>in the specified order</em> in instances. See: <a title="http://www.w3.org/TR/xmlschema-1/#element-sequence" href="http://www.w3.org/TR/xmlschema-1/#element-sequence">http://www.w3.org/TR/xmlschema-1/#element-sequence</a>.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_SubGroup">Substitution Group</a> </span>Elements that are <em>members</em> of a substitution group can be used wherever the <em>head</em> element of the substitution group is referenced.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_ElemFinal">Substitution Group Exclusions</a> </span>(Applies to element declarations). Prohibits element declarations from nominating themselves as being able to substitute a given element declaration, if they have types that are derived from the original element's type using the specified derivation methods.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_TargetNS">Target Namespace</a> </span>The target namespace identifies the namespace that components in this schema belongs to. If no target namespace is provided, then the schema components do not belong to any namespace.</p>
+<p>
+<span class="glossaryTerm">
+<a name="term_Unique">Uniqueness Constraint</a> </span>Ensures uniqueness of an element/attribute value, or a combination of values, within a specified scope. See: <a title="http://www.w3.org/TR/xmlschema-1/#cIdentity-constraint_Definitions" href="http://www.w3.org/TR/xmlschema-1/#cIdentity-constraint_Definitions">http://www.w3.org/TR/xmlschema-1/#cIdentity-constraint_Definitions</a>.</p>
+<div style="text-align: right; clear: both;">
+<a href="#top">top</a>
+</div>
+<hr/>
+</div>
+<p class="footer">Generated by <a href="http://titanium.dstc.edu.au/xml/xs3p">xs3p</a>. Last modified: <script type="text/javascript">
+<!--
+document.write(document.lastModified);
+// -->
+</script>
+</p>
+</body>
+</html>
