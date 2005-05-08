@@ -10,14 +10,12 @@
 package org.aitools.programd.parser;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -208,19 +206,7 @@ abstract public class GenericParser<P extends Processor>
      */
     public String processResponse(String input) throws ProcessorException
     {
-        Document template;
-        try
-        {
-            template = utilDocBuilder.parse(new InputSource(new StringReader(input)));
-        }
-        catch (IOException e)
-        {
-            throw new ProcessorException("I/O Error processing XML fragment.", e, input);
-        }
-        catch (SAXException e)
-        {
-            throw new ProcessorException("SAX Exception processing XML fragment.", e, input);
-        }
+        Document template = XMLKit.parseAsDocumentFragment(input);
         return evaluate(template);
     }
 
