@@ -25,10 +25,10 @@ import javax.xml.parsers.SAXParser;
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
 import org.aitools.programd.bot.Bot;
-import org.aitools.programd.loader.AIMLLoader;
 import org.aitools.programd.parser.AIMLReader;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
+import org.aitools.programd.processor.aiml.RandomProcessor;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.NoMatchException;
 import org.aitools.programd.util.StringKit;
@@ -36,6 +36,10 @@ import org.aitools.programd.util.URITools;
 import org.aitools.programd.util.XMLKit;
 
 import org.xml.sax.SAXException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * <p>
@@ -115,7 +119,7 @@ public class Graphmaster
     IN_BOTID
     }
 
-    // Class variables.
+    // Instance variables.
 
     /** The core that owns this Graphmaster. */
     private Core core;
@@ -129,8 +133,20 @@ public class Graphmaster
     /** The root {@link Nodemaster} . */
     private Nodemapper root = new Nodemaster();
 
+    /** The merge policy. */
+    private CoreSettings.MergePolicy mergePolicy;
+    
+    /** The AIML namespace URI in use. */
+    private String aimlNamespaceURI;
+    
+    /** How frequently to provide a category load count. */
+    private int categoryLoadNotifyInterval;
+
     /** The total number of categories read. */
     private int totalCategories = 0;
+    
+    /** The total number of path-identical categories that have been encountered. */
+    private int duplicateCategories = 0;
 
     /** The SAXParser used in loading AIML. */
     private SAXParser parser;
@@ -152,9 +168,10 @@ public class Graphmaster
         this.coreSettings = this.core.getSettings();
         this.logger = Logger.getLogger("programd");
         this.parser = XMLKit.getSAXParser(this.coreSettings.getAimlSchemaLocation(), "AIML");
-
-
+        this.aimlNamespaceURI = this.coreSettings.getAimlSchemaNamespaceUri();
+        this.mergePolicy = this.coreSettings.getMergePolicy();
         this.responseTimeout = this.coreSettings.getResponseTimeout();
+        this.categoryLoadNotifyInterval = this.coreSettings.getCategoryLoadNotifyInterval();
     }
 
     /**
@@ -621,6 +638,89 @@ public class Graphmaster
     }
 
     /**
+     * Adds a new category to the Graphmaster.
+     * 
+     * @param pattern the category's pattern
+     * @param that the category's that
+     * @param topic the category's topic
+     * @param template the category's template
+     * @param botid the bot id for whom to add the category
+     * @param bot the bot for whom the category is being added
+     * @param filename the filename from which the category comes
+     */
+    public void addCategory(String pattern, String that, String topic, String template, String botid, Bot bot, String filename)
+    {
+        // Make sure the path components are right.
+        if (pattern == null)
+        {
+            pattern = ASTERISK;
+        }
+        if (that == null)
+        {
+            that = ASTERISK;
+        }
+        if (topic == null)
+        {
+            topic = ASTERISK;
+        }
+
+        if (this.totalCategories % this.categoryLoadNotifyInterval == 0 && this.totalCategories > 0)
+        {
+            this.logger.log(Level.INFO, this.totalCategories + " categories loaded so far.");
+        }
+
+        Nodemapper node = add(pattern, that, topic, botid);
+        String storedTemplate = (String) node.get(TEMPLATE);
+        if (storedTemplate == null)
+        {
+            node.put(FILENAME, filename);
+            bot.addToFilenameMap(filename, node);
+            node.put(TEMPLATE, template);
+            this.totalCategories++;
+        }
+        else
+        {
+            this.duplicateCategories++;
+            switch (this.mergePolicy)
+            {
+                case SKIP:
+                    this.logger.log(Level.WARNING, "Skipping path-identical category from \""
+                            + filename + "\" which duplicates path of category from \""
+                            + node.get(FILENAME) + "\": " + pattern + ":" + that + ":"
+                            + topic);
+                    break;
+
+                case OVERWRITE:
+                    this.logger.log(Level.WARNING, "Overwriting path-identical category from \""
+                            + node.get(Graphmaster.FILENAME) + "\" with new category from \""
+                            + filename + "\".  Path: " + pattern + ":" + that + ":" + topic);
+                    node.put(Graphmaster.FILENAME, filename);
+                    node.put(Graphmaster.TEMPLATE, template);
+                    break;
+
+                case APPEND:
+                    this.logger.log(Level.WARNING, "Appending template of category from \""
+                            + filename + "\" to template of path-identical category from \""
+                            + node.get(Graphmaster.FILENAME) + "\": " + pattern + ":" + that + ":"
+                            + topic);
+                    node.put(Graphmaster.FILENAME, node.get(Graphmaster.FILENAME) + ", " + filename);
+                    node.put(Graphmaster.TEMPLATE, appendTemplate(storedTemplate, template));
+                    break;
+
+                case COMBINE:
+                    this.logger.log(Level.WARNING, "Combining template of category from \""
+                            + filename + "\" with template of path-identical category from \""
+                            + node.get(Graphmaster.FILENAME) + "\": " + pattern + ":" + that + ":"
+                            + topic);
+                    node.put(Graphmaster.FILENAME, node.get(Graphmaster.FILENAME) + ", " + filename);
+                    String combined = combineTemplates(storedTemplate, template);
+                    node.put(Graphmaster.TEMPLATE, combined);
+                    break;
+            }
+        }
+    }
+
+    /**
      * Tells the PredicateMaster to save all predicates.
      */
     public void shutdown()
@@ -718,7 +818,7 @@ public class Graphmaster
 
         try
         {
-            this.parser.parse(url.toString(), new AIMLReader(new AIMLLoader(this, path, botid), this.coreSettings.getAimlSchemaNamespaceUri()));
+            this.parser.parse(url.toString(), new AIMLReader(this, path, botid, this.core.getBots().getBot(botid), this.coreSettings.getAimlSchemaNamespaceUri()));
             // this.parser.reset();
         }
         catch (IOException e)
@@ -791,6 +891,103 @@ public class Graphmaster
     }
 
     /**
+     * Combines two template content strings into a single template, using
+     * a random element so that
+     * either original template content string has an equal chance of being
+     * processed.  The order in which the templates are supplied is important:
+     * the first one (<code>existingTemplate</code>) is processed as though it
+     * has already been stored in the Graphmaster, and hence might itself
+     * be the result of a previous <code>combine()</code> operation.  If this
+     * is the case, the in-memory representation of the template will have a special
+     * attribute indicating this fact, which will be used to &quot;balance&quot;
+     * the combine operation.
+     * 
+     * @param existingTemplate the template with which the new template should be combined
+     * @param newTemplate the template which should be combined with the existing template
+     * @return the combined result
+     */
+    public String combineTemplates(String existingTemplate, String newTemplate)
+    {
+        Document existingDoc = XMLKit.parseAsDocumentFragment(existingTemplate);
+        Element existingRoot = existingDoc.getDocumentElement();
+        NodeList existingContent = existingRoot.getChildNodes();
+        
+        Document newDoc = XMLKit.parseAsDocumentFragment(newTemplate);
+        NodeList newContent = newDoc.getDocumentElement().getChildNodes();
+        
+        /* If the existing template has a random element as its root,
+         * we need to check whether this was the result of a previous combine.
+         */
+        Node firstNode = existingContent.item(0);
+        if (firstNode instanceof Element)
+        {
+            Element firstElement = (Element)firstNode;
+            if (firstElement.getNodeName().equals(RandomProcessor.label) && firstElement.hasAttribute("synthetic"))
+            {
+                Element newListItem = existingDoc.createElementNS(this.aimlNamespaceURI, RandomProcessor.LI);
+                int newContentSize = newContent.getLength();
+                for (int index = 0; index < newContentSize; index++)
+                {
+                    newListItem.appendChild(existingDoc.importNode(newContent.item(index), true));
+                }
+                firstElement.appendChild(newListItem);
+            }
+            return XMLKit.renderXML(existingDoc.getChildNodes(), false);
+        }
+        Element listItemForExisting = existingDoc.createElementNS(this.aimlNamespaceURI, RandomProcessor.LI);
+        int existingContentSize = existingContent.getLength();
+        for (int index = 0; index < existingContentSize; index++)
+        {
+            Node child = existingContent.item(index);
+            if (child != null)
+            {
+                listItemForExisting.appendChild(child.cloneNode(true));
+                existingRoot.removeChild(child);
+            }
+        }
+
+        Element listItemForNew = newDoc.createElementNS(this.aimlNamespaceURI, RandomProcessor.LI);
+        int newContentSize = newContent.getLength();
+        for (int index = 0; index < newContentSize; index++)
+        {
+            listItemForNew.appendChild(newContent.item(index).cloneNode(true));
+        }
+        
+        Element newRandom = existingDoc.createElementNS(this.aimlNamespaceURI, RandomProcessor.label);
+        newRandom.setAttribute("synthetic", "yes");
+        newRandom.appendChild(listItemForExisting);
+        newRandom.appendChild(existingDoc.importNode(listItemForNew, true));
+        
+        existingRoot.appendChild(newRandom);
+
+        return XMLKit.renderXML(existingDoc.getChildNodes(), false);
+    }
+
+    /**
+     * Appends the contents of one template to another.
+     * 
+     * @param existingTemplate the template to which to append
+     * @param newTemplate the template whose content should be appended
+     * @return the combined result
+     */
+    public String appendTemplate(String existingTemplate, String newTemplate)
+    {
+        Document existingDoc = XMLKit.parseAsDocumentFragment(existingTemplate);
+        Element existingRoot = existingDoc.getDocumentElement();
+        
+        Document newDoc = XMLKit.parseAsDocumentFragment(newTemplate);
+        NodeList newContent = newDoc.getDocumentElement().getChildNodes();
+        
+        int newContentLength = newContent.getLength();
+        for (int index = 0; index < newContentLength; index++)
+        {
+            Node newNode = existingDoc.importNode(newContent.item(index), true);
+            existingRoot.appendChild(newNode);
+        }
+        return XMLKit.renderXML(existingDoc.getChildNodes(), false);
+    }
+
+    /**
      * Returns the number of categories presently loaded.
      * 
      * @return the number of categories presently loaded
@@ -801,13 +998,13 @@ public class Graphmaster
     }
 
     /**
-     * Increments the total categories.
+     * Returns the number of path-identical categories encountered.
      * 
-     * @return the number of categories presently loaded
+     * @return the number of path-identical categories encountered
      */
-    public int incrementTotalCategories()
+    public int getDuplicateCategories()
     {
-        return this.totalCategories++;
+        return this.duplicateCategories;
     }
 
     /**

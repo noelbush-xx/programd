@@ -14,6 +14,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.aitools.programd.bot.Bot;
+import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.util.XMLKit;
 
 /**
@@ -29,10 +31,15 @@ import org.aitools.programd.util.XMLKit;
  */
 public class AIMLReader extends DefaultHandler
 {
-    /** The <code>Listener</code> that will handle new items. */
-    private AIMLReaderListener listener;
-
     private String defaultNamespaceURI;
+    
+    private Graphmaster graphmaster;
+    
+    private String path;
+    
+    private String botid;
+    
+    private Bot bot;
 
     /*
      * Constants used in parsing.
@@ -124,14 +131,19 @@ public class AIMLReader extends DefaultHandler
     /**
      * Creates a new AIMLReader.
      * 
-     * @param readerListener the listener that will (presumably) create new
-     *            categories as they are found by the reader.
+     * @param graphmasterToUse the graphmaster into which new categories are to be loaded.
+     * @param pathToUse the path that is being read
+     * @param botidToUse the id of the bot into whom categories are being loaded
+     * @param botToUse the bot itself
      * @param defaultNamespaceURIToUse the namespace URI to use when none other
      *            is specified (?)
      */
-    public AIMLReader(AIMLReaderListener readerListener, String defaultNamespaceURIToUse)
+    public AIMLReader(Graphmaster graphmasterToUse, String pathToUse, String botidToUse, Bot botToUse, String defaultNamespaceURIToUse)
     {
-        this.listener = readerListener;
+        this.graphmaster = graphmasterToUse;
+        this.path = pathToUse;
+        this.botid = botidToUse;
+        this.bot = botToUse;
         this.defaultNamespaceURI = defaultNamespaceURIToUse;
         this.templateStartTag = OPEN_TEMPLATE_START_TAG + defaultNamespaceURIToUse + QUOTE_MARKER_END;
         this.topic = WILDCARD;
@@ -190,8 +202,8 @@ public class AIMLReader extends DefaultHandler
         {
             // Whitespace-normalize the template contents.
             this.template = XMLKit.filterWhitespace(this.templateStartTag + this.templateBuffer.toString() + TEMPLATE_END_TAG);
-            // Finally, deliver the newly defined category to the listener.
-            this.listener.newCategory(this.pattern, this.that, this.topic, this.template);
+            // Finally, deliver the newly defined category to the Graphmaster.
+            this.graphmaster.addCategory(this.pattern, this.that, this.topic, this.template, this.botid, this.bot, this.path);
             // Reset the pattern, that and template.
             this.pattern = this.that = this.template = null;
             this.patternBuffer = this.thatBuffer = this.templateBuffer = null;

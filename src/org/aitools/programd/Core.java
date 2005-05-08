@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.interpreter.Interpreter;
-import org.aitools.programd.loader.AIMLWatcher;
 import org.aitools.programd.logging.LogUtils;
 import org.aitools.programd.multiplexor.Multiplexor;
 import org.aitools.programd.multiplexor.PredicateMaster;
@@ -28,6 +27,7 @@ import org.aitools.programd.processor.aiml.AIMLProcessorRegistry;
 import org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessorRegistry;
 import org.aitools.programd.responder.Responder;
 import org.aitools.programd.responder.TextResponder;
+import org.aitools.programd.util.AIMLWatcher;
 import org.aitools.programd.util.ClassUtils;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
@@ -308,7 +308,10 @@ public class Core extends Thread
             time = new Date().getTime() - time;
 
             this.logger.log(Level.INFO, this.graphmaster.getTotalCategories()
-                    + " categories loaded in " + time / 1000.00 + " seconds.");
+                    + " unique categories loaded in " + time / 1000.00 + " seconds.");
+            
+            this.logger.log(Level.WARNING, this.graphmaster.getDuplicateCategories()
+                    + " path-identical categories were encountered, and handled according to the " + this.settings.getMergePolicy() + " merge policy.");
 
             // Start the AIMLWatcher if configured to do so.
             if (this.settings.useWatcher())

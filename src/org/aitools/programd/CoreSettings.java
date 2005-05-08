@@ -12,251 +12,246 @@ package org.aitools.programd;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-05-01T15:24:42.118-04:00
+ * Automatically generated from properties file, 2005-05-07T16:36:49.378-04:00
  */
 public class CoreSettings extends Settings
 {
     /**
-     *The root directory for all paths. 
-     * This is generally relative to the current directory
-     * (i.e., the conf directory), although you can change
-     * that in your startup script.
+     * The root directory for all paths.
      */
     private String rootDirectory;
-
+        
     /**
-     *The namespace URI of AIML to use. 
+     * The namespace URI of AIML to use.
      */
     private String aimlSchemaNamespaceUri;
-
+        
     /**
-     *The location of the AIML schema (or a copy of it). 
+     * The location of the AIML schema (or a copy of it).
      */
     private String aimlSchemaLocation;
-
+        
     /**
-     *The bot configuration startup file. 
+     * The bot configuration startup file.
      */
     private String startupFilePath;
-
+        
     /**
-     *Overwrite categories with identical pattern:that:topic? 
+     * What to do when a category is loaded whose pattern:that:topic path is identical to one already loaded (for the same bot).
      */
-    private boolean mergePolicy;
+    private MergePolicy mergePolicy;
+    
+    /** The possible values for MergePolicy. */
+    public static enum MergePolicy
+    {
+        /** Leave the currently loaded template in place and ignore the new one. */
+        SKIP,
+        
+        /** Overwrite the loaded template with the new one. */
+        OVERWRITE,
+        
+        /** Append the content of the new template to the currently loaded one. */
+        APPEND,
+        
+        /** Store the new template as well, so it will have an equal chance of being used as the currently loaded one. */
+        COMBINE
+    }
 
-    /**
-     *The default value for undefined predicates. 
+            /**
+     * The default value for undefined predicates.
      */
     private String predicateEmptyDefault;
-
+        
     /**
-     *The maximum allowable time (in milliseconds) to get a response. 
+     * The maximum allowable time (in milliseconds) to get a response.
      */
     private int responseTimeout;
-
+        
     /**
-     * How many categories will be loaded before a message is displayed? 
-     * Only meaningful if programd.enable-console == true.
+     * How many categories will be loaded before a message is displayed?
      */
     private int categoryLoadNotifyInterval;
-
+        
     /**
-     *The input to match if an infinite loop is found. 
+     * The input to match if an infinite loop is found.
      */
     private String infiniteLoopInput;
-
+        
     /**
-     * Which bot predicate contains the client's name? 
+     * Which bot predicate contains the client's name?
      */
     private String clientNamePredicate;
-
+        
     /**
-     * Which bot predicate contains the bot's name? 
+     * Which bot predicate contains the bot's name?
      */
     private String botNamePredicate;
-
+        
     /**
-     * Log/display match trace messages? 
+     * Log/display match trace messages?
      */
     private boolean recordMatchTrace;
-
+        
     /**
-     * Print stack trace on uncaught exceptions? 
+     * Print stack trace on uncaught exceptions?
      */
     private boolean onUncaughtExceptionsPrintStackTrace;
-
+        
     /**
-     *Allow use of <system> element? 
+     * Allow use of <system> element?
      */
     private boolean osAccessAllowed;
-
+        
     /**
-     *Allow use of <javascript> element? 
+     * Allow use of <javascript> element?
      */
     private boolean javascriptAllowed;
-
+        
     /**
-     *Where to write gossip entries.                       
-    * Gossip entries will be written like this:
-          <li>the gossip</li>.
+     * Where to write gossip entries.
      */
     private String gossipPath;
-
+        
     /**
-     *The string to send when first connecting to the bot. 
-     * If this value is empty or not defined, no value
-           will be sent.
+     * The string to send when first connecting to the bot.
      */
     private String connectString;
-
+        
     /**
-     *The string to send after an inactivity timeout. 
+     * The string to send after an inactivity timeout.
      */
     private String inactivityString;
-
+        
     /**
-     *The Multiplexor to use. 
+     * The Multiplexor to use.
      */
     private String multiplexorClassname;
-
+        
     /**
-     *The subdirectory in which to save flat-file predicates (FFM only). 
+     * The subdirectory in which to save flat-file predicates (FFM only).
      */
     private String multiplexorFfmDir;
-
+        
     /**
-     *Enable the heart? 
-    * The heart can beat and let you know the bot is alive.
-    * Right now the only kind of pulse is a message "I'm alive!" printed to the console.
-    * You can write a "Pulse" that can do something more useful, like ping a server.
+     * Enable the heart?
      */
     private boolean heartEnabled;
-
+        
     /**
-     *The pulse rate for the heart (beats per minute). 
+     * The pulse rate for the heart (beats per minute).
      */
     private int heartPulserate;
-
+        
     /**
-     *The maximum size of the cache before writing to disk/database. 
+     * The maximum size of the cache before writing to disk/database.
      */
     private int predicateCacheMax;
-
+        
     /**
-     *The directory in which to execute <system> commands. 
+     * The directory in which to execute <system> commands.
      */
     private String systemInterpreterDirectory;
-
+        
     /**
-     *The string to prepend to all <system> calls (platform-specific). 
-     * Windows requires something like "cmd /c "; Linux doesn't (just comment out)
+     * The string to prepend to all <system> calls (platform-specific).
      */
     private String systemInterpreterPrefix;
-
+        
     /**
-     *The JavaScript interpreter (fully-qualified class name). 
+     * The JavaScript interpreter (fully-qualified class name).
      */
     private String javascriptInterpreterClassname;
-
+        
     /**
-     *Enable the AIML Watcher? 
-    * This will automatically load your AIML files if they are changed.
+     * Enable the AIML Watcher?
      */
     private boolean useWatcher;
-
+        
     /**
-     *The delay period when checking changed AIML (milliseconds). 
-    * Only applicable if the AIML Watcher is enabled.
+     * The delay period when checking changed AIML (milliseconds).
      */
     private int watcherTimer;
-
+        
     /**
-     *The general activity log file. 
+     * The general activity log file.
      */
     private String activityLogPattern;
-
+        
     /**
-     *The log file for matching activity. 
+     * The log file for matching activity.
      */
     private String matchingLogPattern;
-
+        
     /**
-     *The date-time format to use in general logs. 
-    * See http://java.sun.com/jdk1.5.0/docs/api/java/text/SimpleDateFormat.html
-          for formatting codes.
-    * Setting the value to blank means no timestamp will be displayed.
+     * The date-time format to use in general logs.
      */
     private String logTimestampFormat;
-
+        
     /**
-     *The subdirectory for chat logs. 
+     * The subdirectory for chat logs.
      */
     private String chatLogDirectory;
-
+        
     /**
-     *The date-time format to use in chat logs. 
-    * See http://java.sun.com/jdk1.5.0/docs/api/java/text/SimpleDateFormat.html
-          for formatting codes.
-    * Setting the value to blank means no timestamp will be displayed.
+     * The date-time format to use in chat logs.
      */
     private String chatLogTimestampFormat;
-
+        
     /**
-     *Enable chat logging to plain text files? 
+     * Enable chat logging to plain text files?
      */
     private boolean chatLogToPlainText;
-
+        
     /**
-     *Enable chat logging to XML? 
+     * Enable chat logging to XML?
      */
     private boolean chatLogToXml;
-
+        
     /**
-     *Enable chat logging to the database? 
-    * Be sure that the database configuration (later in this file) is valid.
+     * Enable chat logging to the database?
      */
     private boolean chatLogToDatabase;
-
+        
     /**
-     *The URL of the database to use. 
+     * The URL of the database to use.
      */
     private String databaseUrl;
-
+        
     /**
-     *The database driver to use. 
+     * The database driver to use.
      */
     private String databaseDriver;
-
+        
     /**
-     *The maximum number of simultaneous connections to the database. 
+     * The maximum number of simultaneous connections to the database.
      */
     private int databaseConnections;
-
+        
     /**
-     *The username which with to access the database. 
+     * The username which with to access the database.
      */
     private String databaseUser;
-
+        
     /**
-     *The password for the database. 
+     * The password for the database.
      */
     private String databasePassword;
-
+        
     /**
-     *Configuration file for plugins. 
+     * Configuration file for plugins.
      */
     private String confLocationPlugins;
-
+        
     /**
-     *Configuration file for HTMLResponder. 
+     * Configuration file for HTMLResponder.
      */
     private String confLocationHtmlResponder;
-
+        
     /**
-     *Configuration file for FlashResponder. 
+     * Configuration file for FlashResponder.
      */
     private String confLocationFlashResponder;
-
+        
     /**
      * Creates a <code>CoreSettings</code> using default property values.
      */
@@ -289,7 +284,25 @@ public class CoreSettings extends Settings
 
         setStartupFilePath(this.properties.getProperty("programd.startup-file-path", "conf/bots.xml"));
 
-        setMergePolicy(Boolean.valueOf(this.properties.getProperty("programd.merge-policy", "true")).booleanValue());
+        String mergePolicyValue = this.properties.getProperty("programd.merge-policy", "combine");
+         
+         if (mergePolicyValue.equals("skip"))
+         {
+             this.mergePolicy = MergePolicy.SKIP;
+         }
+             else if (mergePolicyValue.equals("overwrite"))
+         {
+             this.mergePolicy = MergePolicy.OVERWRITE;
+         }
+             else if (mergePolicyValue.equals("append"))
+         {
+             this.mergePolicy = MergePolicy.APPEND;
+         }
+             else if (mergePolicyValue.equals("combine"))
+         {
+             this.mergePolicy = MergePolicy.COMBINE;
+         }
+             
 
         setPredicateEmptyDefault(this.properties.getProperty("programd.predicate-empty-default", "undefined"));
 
@@ -448,7 +461,7 @@ public class CoreSettings extends Settings
     /**
      * @return the value of mergePolicy
      */
-    public boolean mergePolicy()
+    public MergePolicy getMergePolicy()
     {
         return this.mergePolicy;
     }
@@ -800,7 +813,7 @@ public class CoreSettings extends Settings
     /**
      * @param mergePolicyToSet   the value to which to set mergePolicy
      */
-    public void setMergePolicy(boolean mergePolicyToSet)
+    public void setMergePolicy(MergePolicy mergePolicyToSet)
     {
         this.mergePolicy = mergePolicyToSet;
     }
