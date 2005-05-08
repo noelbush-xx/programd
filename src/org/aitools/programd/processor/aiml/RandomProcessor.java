@@ -61,6 +61,9 @@ public class RandomProcessor extends AIMLProcessor
 {
     /** The label (as required by the registration scheme). */
     public static final String label = "random";
+    
+    /** The tag name for a listitem element. */
+    public static final String LI = "li";
 
     /**
      * The map in which MersenneTwisterFast random number generators will be
