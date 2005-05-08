@@ -222,8 +222,6 @@ public class FlatFileMultiplexor extends Multiplexor
         }
         catch (IOException e)
         {
-            System.err.println(System.getProperty("user.dir"));
-            System.err.println(e.getMessage());
             throw new DeveloperError("Error trying to save predicates.", e);
         }
     }
