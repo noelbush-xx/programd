@@ -12,7 +12,7 @@ package org.aitools.programd;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-05-07T16:36:49.378-04:00
+ * Automatically generated from properties file, 2005-05-08T14:08:30.448-04:00
  */
 public class CoreSettings extends Settings
 {
@@ -58,6 +58,11 @@ public class CoreSettings extends Settings
     }
 
             /**
+     * If the append merge policy is used, what text content (if any) should be inserted between the contents of the two templates?
+     */
+    private String mergeAppendSeparatorString;
+        
+    /**
      * The default value for undefined predicates.
      */
     private String predicateEmptyDefault;
@@ -284,7 +289,7 @@ public class CoreSettings extends Settings
 
         setStartupFilePath(this.properties.getProperty("programd.startup-file-path", "conf/bots.xml"));
 
-        String mergePolicyValue = this.properties.getProperty("programd.merge-policy", "combine");
+        String mergePolicyValue = this.properties.getProperty("programd.merge.policy", "combine");
          
          if (mergePolicyValue.equals("skip"))
          {
@@ -303,6 +308,8 @@ public class CoreSettings extends Settings
              this.mergePolicy = MergePolicy.COMBINE;
          }
              
+
+        setMergeAppendSeparatorString(this.properties.getProperty("programd.merge.append.separator-string", "&#x10;"));
 
         setPredicateEmptyDefault(this.properties.getProperty("programd.predicate-empty-default", "undefined"));
 
@@ -464,6 +471,14 @@ public class CoreSettings extends Settings
     public MergePolicy getMergePolicy()
     {
         return this.mergePolicy;
+    }
+
+    /**
+     * @return the value of mergeAppendSeparatorString
+     */
+    public String getMergeAppendSeparatorString()
+    {
+        return this.mergeAppendSeparatorString;
     }
 
     /**
@@ -816,6 +831,14 @@ public class CoreSettings extends Settings
     public void setMergePolicy(MergePolicy mergePolicyToSet)
     {
         this.mergePolicy = mergePolicyToSet;
+    }
+
+    /**
+     * @param mergeAppendSeparatorStringToSet   the value to which to set mergeAppendSeparatorString
+     */
+    public void setMergeAppendSeparatorString(String mergeAppendSeparatorStringToSet)
+    {
+        this.mergeAppendSeparatorString = mergeAppendSeparatorStringToSet;
     }
 
     /**

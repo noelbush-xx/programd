@@ -136,6 +136,9 @@ public class Graphmaster
     /** The merge policy. */
     private CoreSettings.MergePolicy mergePolicy;
     
+    /** The separator string to use with the "append" merge policy. */
+    private String mergeAppendSeparator;
+    
     /** The AIML namespace URI in use. */
     private String aimlNamespaceURI;
     
@@ -170,6 +173,7 @@ public class Graphmaster
         this.parser = XMLKit.getSAXParser(this.coreSettings.getAimlSchemaLocation(), "AIML");
         this.aimlNamespaceURI = this.coreSettings.getAimlSchemaNamespaceUri();
         this.mergePolicy = this.coreSettings.getMergePolicy();
+        this.mergeAppendSeparator = this.coreSettings.getMergeAppendSeparatorString();
         this.responseTimeout = this.coreSettings.getResponseTimeout();
         this.categoryLoadNotifyInterval = this.coreSettings.getCategoryLoadNotifyInterval();
     }
@@ -839,8 +843,7 @@ public class Graphmaster
     /**
      * Tracks/checks whether a given path should be loaded, depending on whether
      * or not it's currently &quot;loadtime&quot;; if the file has already been
-     * loaded and is allowed to be reloaded, unloads the file first. A null
-     * value for bot causes this to return true!!!
+     * loaded and is allowed to be reloaded, unloads the file first.
      * 
      * @param path the path to check
      * @param bot the bot for whom to check
@@ -850,7 +853,7 @@ public class Graphmaster
     {
         if (bot == null)
         {
-            return true;
+            throw new NullPointerException("Null bot passed to loadCheck().");
         }
 
         HashMap<URL, HashSet<Nodemapper>> loadedFiles = bot.getLoadedFilesMap();
@@ -977,6 +980,12 @@ public class Graphmaster
         
         Document newDoc = XMLKit.parseAsDocumentFragment(newTemplate);
         NodeList newContent = newDoc.getDocumentElement().getChildNodes();
+        
+        // Append whatever text is configured to be inserted between the templates.
+        if (this.mergeAppendSeparator != null)
+        {
+            existingRoot.appendChild(existingDoc.createTextNode(this.mergeAppendSeparator));
+        }
         
         int newContentLength = newContent.getLength();
         for (int index = 0; index < newContentLength; index++)

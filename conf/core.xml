@@ -50,8 +50,20 @@ GENERAL NOTES
     <!--The bot configuration startup file. [String: conf/bots.xml]--> 
     <entry key="programd.startup-file-path">conf/bots.xml</entry>
     
-    <!--Overwrite categories with identical pattern:that:topic? [boolean: true]-->
-    <entry key="programd.merge-policy">true</entry>
+    <!--What to do when a category is loaded whose pattern:that:topic path
+        is identical to one already loaded (for the same bot).
+        * skip: Leave the currently loaded template in place and ignore the new one.
+        * overwrite: Overwrite the loaded template with the new one.
+        * append: Append the content of the new template to the currently loaded one.
+        * combine: Store the new template as well, so it will have an equal chance
+                   of being used as the currently loaded one.
+                                 [enum(skip, overwrite, append, combine): combine]-->
+    <entry key="programd.merge.policy">append</entry>
+    
+    <!--If the append merge policy is used, what text content (if any)
+        should be inserted between the contents of the two templates?
+        * (The default value you see here is the hex code for a space.)  [String: &#x10;]-->
+    <entry key="programd.merge.append.separator-string"> </entry>
     
     <!--The default value for undefined predicates. [String: undefined]-->
     <entry key="programd.predicate-empty-default">undefined</entry>
@@ -76,7 +88,7 @@ GENERAL NOTES
     <entry key="programd.record-match-trace">true</entry>
     
     <!-- Print stack trace on uncaught exceptions? [boolean: false]-->
-    <entry key="programd.on-uncaught-exceptions.print-stack-trace">false</entry>
+    <entry key="programd.on-uncaught-exceptions.print-stack-trace">true</entry>
     
     <!--Allow use of <system> element? [boolean: false]-->
     <entry key="programd.os-access-allowed">false</entry>
