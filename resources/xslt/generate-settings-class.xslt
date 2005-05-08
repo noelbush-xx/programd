@@ -147,10 +147,9 @@ public class </xsl:text>
         <xsl:variable name="description"
             select="replace(preceding-sibling::comment()[1], '    \*', '*')"/>
         <!--Discover type.-->
-        <xsl:variable name="type" select="substring-before(substring-after($description, '['), ':')"/>
+        <xsl:variable name="type" select="d:get-type($description)"/>
         <!--Discover default.-->
-        <xsl:variable name="default"
-            select="substring-before(substring-after(substring-after($description, '['), ': '), ']')"/>
+        <xsl:variable name="default" select="d:get-default($description)"/>
         <xsl:choose>
             <xsl:when test="$type = 'int'">
                 <xsl:text>        try
@@ -181,6 +180,37 @@ public class </xsl:text>
                 <xsl:value-of select="$default"/>
                 <xsl:text>")).booleanValue());</xsl:text>
             </xsl:when>
+            <xsl:when test="$type = 'enum'">
+                <xsl:text>        String </xsl:text>
+                <xsl:value-of select="$propertyName"/>
+                <xsl:text>Value = this.properties.getProperty("</xsl:text>
+                <xsl:value-of select="@key"/>
+                <xsl:text>", "</xsl:text>
+                <xsl:value-of select="$default"/>
+                <xsl:text>");
+         
+         </xsl:text>
+                <xsl:for-each select="d:get-enum-values($description)">
+                    <xsl:if test="position() != 1">
+                        <xsl:text>else </xsl:text>
+                    </xsl:if>
+                    <xsl:text>if (</xsl:text>
+                    <xsl:value-of select="$propertyName"/>
+                    <xsl:text>Value.equals("</xsl:text>
+                    <xsl:value-of select="."/>
+                    <xsl:text>"))
+         {
+             this.</xsl:text>
+                    <xsl:value-of select="$propertyName"/>
+                    <xsl:text> = </xsl:text>
+                    <xsl:value-of select="d:title-case($propertyName)"/>
+                    <xsl:text>.</xsl:text>
+                    <xsl:value-of select="upper-case(.)"/>
+                    <xsl:text>;
+         }
+             </xsl:text>
+                </xsl:for-each>
+            </xsl:when>
             <xsl:otherwise>
                 <xsl:text>        set</xsl:text>
                 <xsl:value-of select="d:title-case($propertyName)"/>
@@ -206,20 +236,61 @@ public class </xsl:text>
         <xsl:variable name="description"
             select="replace(preceding-sibling::comment()[1], '    \*', '*')"/>
         <xsl:if test="$description">
-            <xsl:text>     *</xsl:text>
-            <xsl:value-of select="replace($description, '\[.+\]', '')"/>
+            <xsl:text>     * </xsl:text>
+            <xsl:value-of select="normalize-space(replace(replace($description, '\*.*', '', 's'), '\[.+\]', ''))"/>
             <xsl:text>
 </xsl:text>
         </xsl:if>
         <xsl:text>     */
     private </xsl:text>
         <!--Discover type.-->
-        <xsl:value-of select="substring-before(substring-after($description, '['), ':')"/>
-        <xsl:text> </xsl:text>
-        <xsl:value-of select="$propertyName"/>
-        <xsl:text>;
-
+        <xsl:variable name="type" select="d:get-type($description)"/>
+        <xsl:choose>
+            <xsl:when test="$type = 'enum'">
+                <xsl:text></xsl:text>
+                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:text> </xsl:text>
+                <xsl:value-of select="$propertyName"/>
+                <xsl:text>;
+    
+    /** The possible values for </xsl:text>
+                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:text>. */
+    public static enum </xsl:text>
+                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:text>
+    {
+        </xsl:text>
+                <xsl:for-each select="d:get-enum-values($description)">
+                    <xsl:text>/** </xsl:text>
+                    <xsl:value-of select="d:get-enum-value-description(., $description)"/>
+                    <xsl:text>. */
+        </xsl:text>
+                <xsl:value-of select="upper-case(.)"/>
+                <xsl:choose>
+                    <xsl:when test="position() &lt; last()">
+                        <xsl:text>,
+        </xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>
+    }
 </xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:text>
+        </xsl:text>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$type"/>
+                <xsl:text> </xsl:text>
+                <xsl:value-of select="$propertyName"/>
+                <xsl:text>;
+        
+</xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     <!--Build the getters.-->
     <xsl:template match="entry" mode="getters">
@@ -236,14 +307,20 @@ public class </xsl:text>
         <xsl:variable name="description"
             select="replace(preceding-sibling::comment()[1], '    \*', '*')"/>
         <!--Discover type.-->
-        <xsl:variable name="type" select="substring-before(substring-after($description, '['), ':')"/>
-        <xsl:value-of select="$type"/>
-        <xsl:text> </xsl:text>
+        <xsl:variable name="type" select="d:get-type($description)"/>
         <xsl:choose>
             <xsl:when test="$type = 'boolean'">
+                <xsl:text>boolean </xsl:text>
                 <xsl:value-of select="$propertyName"/>
             </xsl:when>
+            <xsl:when test="$type = 'enum'">
+                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:text> get</xsl:text>
+                <xsl:value-of select="d:title-case($propertyName)"/>
+            </xsl:when>
             <xsl:otherwise>
+                <xsl:value-of select="$type"/>
+                <xsl:text> </xsl:text>
                 <xsl:text>get</xsl:text>
                 <xsl:value-of select="d:title-case($propertyName)"/>
             </xsl:otherwise>
@@ -276,7 +353,15 @@ public class </xsl:text>
         <xsl:variable name="description"
             select="replace(preceding-sibling::comment()[1], '    \*', '*')"/>
         <!--Discover type.-->
-        <xsl:value-of select="substring-before(substring-after($description, '['), ':')"/>
+        <xsl:variable name="type" select="d:get-type($description)"/>
+        <xsl:choose>
+            <xsl:when test="$type = 'enum'">
+                <xsl:value-of select="d:title-case($propertyName)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$type"/>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:text> </xsl:text>
         <xsl:value-of select="$propertyName"/>
         <xsl:text>ToSet)
@@ -290,6 +375,38 @@ public class </xsl:text>
 
 </xsl:text>
     </xsl:template>
+    <!--Determine the type of a property.-->
+    <xsl:function name="d:get-type">
+        <xsl:param name="description"/>
+        <xsl:variable name="typespec" select="substring-before(substring-after($description, '['), ':')"/>
+        <xsl:choose>
+            <xsl:when test="contains($typespec, '(')">
+                <xsl:sequence select="substring-before($typespec, '(')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="$typespec"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+    <!--Determine the values for an enum.-->
+    <xsl:function name="d:get-enum-values">
+        <xsl:param name="description"/>
+        <xsl:variable name="valuespec" select="substring-after(substring-before(substring-after($description, '['), '):'), '(')"/>
+        <xsl:sequence select="tokenize($valuespec, ', *')"/>
+    </xsl:function>
+    <!--Determine the default value for a property.-->
+    <xsl:function name="d:get-default">
+        <xsl:param name="description"/>
+        <xsl:sequence
+            select="substring-before(substring-after(substring-after($description, '['), ': '), ']')"
+        />
+    </xsl:function>
+    <!--Get the description for an enum value.-->
+    <xsl:function name="d:get-enum-value-description">
+        <xsl:param name="value"/>
+        <xsl:param name="description"/>
+        <xsl:sequence select="normalize-space(substring-before(substring-after($description, concat('* ', $value, ': ')), '.'))"/>
+    </xsl:function>
     <!--A few simple functions used in formatting.-->
     <xsl:function name="d:title-case">
         <xsl:param name="string"/>
