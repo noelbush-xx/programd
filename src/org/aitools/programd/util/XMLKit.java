@@ -139,6 +139,7 @@ public class XMLKit
     static
     {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
         try
         {
             utilBuilder = factory.newDocumentBuilder();
@@ -398,6 +399,28 @@ public class XMLKit
         // If encoding was unspecified, return the system encoding.
         return SYSTEM_ENCODING;
     }
+    
+    /**
+     * @param text a document fragment
+     * @return a Document created by parsing the given text as a document fragment
+     */
+    public static Document parseAsDocumentFragment(String text)
+    {
+        Document result;
+        try
+        {
+            result = utilBuilder.parse(new InputSource(new StringReader(text)));
+        }
+        catch (IOException e)
+        {
+            throw new DeveloperError("I/O Error processing XML fragment.", e);
+        }
+        catch (SAXException e)
+        {
+            throw new DeveloperError("SAX Exception processing XML fragment.", e);
+        }
+        return result;
+    }
 
     /**
      * Formats XML from a single long string into a nicely indented multi-line
@@ -413,19 +436,7 @@ public class XMLKit
      */
     public static String renderXML(String content, boolean includeNamespaceAttribute, boolean indent)
     {
-        Document document;
-        try
-        {
-            document = utilBuilder.parse(new InputSource(new StringReader(content)));
-        }
-        catch (IOException e)
-        {
-            throw new DeveloperError("I/O error creating a document for formatting XML.", e);
-        }
-        catch (SAXException e)
-        {
-            throw new DeveloperError("I/O error creating a document for formatting XML.", e);
-        }
+        Document document = parseAsDocumentFragment(content);
         StringBuffer result = new StringBuffer();
         renderXML(document.getDocumentElement(), 0, true, result, includeNamespaceAttribute, indent);
         return filterWhitespace(result.toString());
@@ -802,7 +813,12 @@ public class XMLKit
     {
         StringBuffer result = new StringBuffer();
         result.append(MARKER_START);
-        result.append(element.getLocalName());
+        String name = element.getLocalName();
+        if (name == null)
+        {
+            name = element.getNodeName();
+        }
+        result.append(name);
         if (includeNamespaceAttribute)
         {
             result.append(SPACE_XMLNS_EQUALS_QUOTE + element.getNamespaceURI() + QUOTE_MARK);
@@ -851,7 +867,12 @@ public class XMLKit
     {
         StringBuffer result = new StringBuffer();
         result.append(MARKER_START);
-        result.append(element.getLocalName());
+        String name = element.getLocalName();
+        if (name == null)
+        {
+            name = element.getNodeName();
+        }
+        result.append(name);
         if (includeNamespaceAttribute)
         {
             result.append(SPACE_XMLNS_EQUALS_QUOTE + element.getNamespaceURI() + QUOTE_MARK);
@@ -876,11 +897,11 @@ public class XMLKit
             for (int index = 0; index < attributeCount; index++)
             {
                 String attributeName = attributes.getLocalName(index);
-                if (EMPTY_STRING.equals(attributeName))
+                if (attributeName == null || EMPTY_STRING.equals(attributeName))
                 {
                     attributeName = attributes.getQName(index);
                 }
-                if (!attributeName.equals(XMLNS) && !attributes.getQName(index).contains(XMLNS))
+                if (attributeName != null && !XMLNS.equals(attributeName) && !attributes.getQName(index).contains(XMLNS))
                 {
                     result.append(SPACE);
                     result
@@ -908,11 +929,11 @@ public class XMLKit
             {
                 Node attribute = attributes.item(index);
                 String attributeName = attribute.getLocalName();
-                if (EMPTY_STRING.equals(attributeName))
+                if (attributeName == null || EMPTY_STRING.equals(attributeName))
                 {
                     attributeName = attribute.getNodeName();
                 }
-                if (!attributeName.equals(XMLNS) && !XMLNS.equals(attribute.getPrefix()))
+                if (attributeName != null && !XMLNS.equals(attributeName) && !XMLNS.equals(attribute.getPrefix()))
                 {
                     result.append(SPACE);
                     result
@@ -932,7 +953,12 @@ public class XMLKit
      */
     public static String renderEndTag(Element element)
     {
-        return END_TAG_START + element.getLocalName() + MARKER_END;
+        String name = element.getLocalName();
+        if (name == null)
+        {
+            name = element.getNodeName();
+        }
+        return END_TAG_START + name + MARKER_END;
     }
 
     /**
@@ -1062,5 +1088,25 @@ public class XMLKit
     public static Element getFirstElementChildOf(Element element)
     {
         return getElementChildrenOf(element).get(0);
+    }
+
+    /**
+     * Returns the first element member (if there is one) of the given nodelist.
+     * 
+     * @param list the nodes to scan
+     * @return the first element member of the given list
+     */
+    public static Element getFirstElementIn(NodeList list)
+    {
+        int listSize = list.getLength();
+        for (int index = 0; index < listSize; index++)
+        {
+            Node node = list.item(index);
+            if (node.getNodeType() == Node.ELEMENT_NODE)
+            {
+                return (Element)node;
+            }
+        }
+        throw new DeveloperError("No element children of this nodelist!", new NullPointerException());
     }
 }
