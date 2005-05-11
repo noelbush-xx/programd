@@ -106,17 +106,17 @@ public class Graphmaster
     /** Match states. */
     private static enum MatchState
     {
-    /** Trying to match the input part of the path. */
-    IN_INPUT,
+        /** Trying to match the input part of the path. */
+        IN_INPUT,
 
-    /** Trying to match the that part of the path. */
-    IN_THAT,
+        /** Trying to match the that part of the path. */
+        IN_THAT,
 
-    /** Trying to match the topic part of the path. */
-    IN_TOPIC,
+        /** Trying to match the topic part of the path. */
+        IN_TOPIC,
 
-    /** Trying to match the botid part of the path. */
-    IN_BOTID
+        /** Trying to match the botid part of the path. */
+        IN_BOTID
     }
 
     // Instance variables.
@@ -135,19 +135,22 @@ public class Graphmaster
 
     /** The merge policy. */
     private CoreSettings.MergePolicy mergePolicy;
-    
+
     /** The separator string to use with the "append" merge policy. */
     private String mergeAppendSeparator;
-    
+
+    /** Whether to note each merge. */
+    private boolean noteEachMerge;
+
     /** The AIML namespace URI in use. */
     private String aimlNamespaceURI;
-    
+
     /** How frequently to provide a category load count. */
     private int categoryLoadNotifyInterval;
 
     /** The total number of categories read. */
     private int totalCategories = 0;
-    
+
     /** The total number of path-identical categories that have been encountered. */
     private int duplicateCategories = 0;
 
@@ -174,6 +177,7 @@ public class Graphmaster
         this.aimlNamespaceURI = this.coreSettings.getAimlSchemaNamespaceUri();
         this.mergePolicy = this.coreSettings.getMergePolicy();
         this.mergeAppendSeparator = this.coreSettings.getMergeAppendSeparatorString();
+        this.noteEachMerge = this.coreSettings.mergeNoteEach();
         this.responseTimeout = this.coreSettings.getResponseTimeout();
         this.categoryLoadNotifyInterval = this.coreSettings.getCategoryLoadNotifyInterval();
     }
@@ -284,7 +288,8 @@ public class Graphmaster
      * @return the resulting <code>Match</code> object
      * @throws NoMatchException if no match was found
      */
-    public Match match(String input, String that, String topic, String botid) throws NoMatchException
+    public Match match(String input, String that, String topic, String botid)
+            throws NoMatchException
     {
         // Compose the input path. Fill in asterisks for empty values.
         ArrayList<String> inputPath;
@@ -334,8 +339,8 @@ public class Graphmaster
 
         // Get the match, starting at the root, with an empty star and path,
         // starting in "in input" mode.
-        Match match = match(this.root, this.root, inputPath, EMPTY_STRING, new StringBuffer(), MatchState.IN_INPUT, System.currentTimeMillis()
-                + this.responseTimeout);
+        Match match = match(this.root, this.root, inputPath, EMPTY_STRING, new StringBuffer(),
+                MatchState.IN_INPUT, System.currentTimeMillis() + this.responseTimeout);
 
         // Return it if not null; throw an exception if null.
         if (match != null)
@@ -366,8 +371,8 @@ public class Graphmaster
      * @param expiration when this response process expires
      * @return the resulting <code>Match</code> object
      */
-    private Match match(Nodemapper nodemapper, Nodemapper parent, List<String> input, String wildcardContent, StringBuffer path,
-            MatchState matchState, long expiration)
+    private Match match(Nodemapper nodemapper, Nodemapper parent, List<String> input,
+            String wildcardContent, StringBuffer path, MatchState matchState, long expiration)
     {
         // Return null if expiration has been reached.
         if (System.currentTimeMillis() >= expiration)
@@ -428,7 +433,8 @@ public class Graphmaster
 
             // Try to get a match with the tail and this new path, using the
             // head as the wildcard content.
-            match = match((Nodemapper) nodemapper.get(UNDERSCORE), nodemapper, tail, head, newPath, matchState, expiration);
+            match = match((Nodemapper) nodemapper.get(UNDERSCORE), nodemapper, tail, head, newPath,
+                    matchState, expiration);
 
             // If that did result in a match,
             if (match != null)
@@ -492,7 +498,8 @@ public class Graphmaster
 
                 // Now try to get a match using the tail and an empty star and
                 // empty path.
-                match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, EMPTY_STRING, new StringBuffer(), matchState, expiration);
+                match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, EMPTY_STRING,
+                        new StringBuffer(), matchState, expiration);
 
                 // If that did result in a match,
                 if (match != null)
@@ -554,7 +561,8 @@ public class Graphmaster
 
                 // Try to get a match with the tail and this path, using the
                 // current star.
-                match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, wildcardContent, newPath, matchState, expiration);
+                match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, wildcardContent,
+                        newPath, matchState, expiration);
 
                 // If that did result in a match, just return it.
                 if (match != null)
@@ -586,7 +594,8 @@ public class Graphmaster
 
             // Try to get a match with the tail and this new path, using the
             // head as the star.
-            match = match((Nodemapper) nodemapper.get(ASTERISK), nodemapper, tail, head, newPath, matchState, expiration);
+            match = match((Nodemapper) nodemapper.get(ASTERISK), nodemapper, tail, head, newPath,
+                    matchState, expiration);
 
             // If that did result in a match,
             if (match != null)
@@ -629,7 +638,8 @@ public class Graphmaster
          */
         if (nodemapper.equals(parent.get(ASTERISK)) || nodemapper.equals(parent.get(UNDERSCORE)))
         {
-            return match(nodemapper, parent, tail, wildcardContent + SPACE + head, path, matchState, expiration);
+            return match(nodemapper, parent, tail, wildcardContent + SPACE + head, path,
+                    matchState, expiration);
         }
 
         /*
@@ -652,7 +662,8 @@ public class Graphmaster
      * @param bot the bot for whom the category is being added
      * @param filename the filename from which the category comes
      */
-    public void addCategory(String pattern, String that, String topic, String template, String botid, Bot bot, String filename)
+    public void addCategory(String pattern, String that, String topic, String template,
+            String botid, Bot bot, String filename)
     {
         // Make sure the path components are right.
         if (pattern == null)
@@ -688,35 +699,52 @@ public class Graphmaster
             switch (this.mergePolicy)
             {
                 case SKIP:
-                    this.logger.log(Level.WARNING, "Skipping path-identical category from \""
-                            + filename + "\" which duplicates path of category from \""
-                            + node.get(FILENAME) + "\": " + pattern + ":" + that + ":"
-                            + topic);
+                    if (this.noteEachMerge)
+                    {
+                        this.logger.log(Level.WARNING, "Skipping path-identical category from \""
+                                + filename + "\" which duplicates path of category from \""
+                                + node.get(FILENAME) + "\": " + pattern + ":" + that + ":" + topic);
+                    }
                     break;
 
                 case OVERWRITE:
-                    this.logger.log(Level.WARNING, "Overwriting path-identical category from \""
-                            + node.get(Graphmaster.FILENAME) + "\" with new category from \""
-                            + filename + "\".  Path: " + pattern + ":" + that + ":" + topic);
+                    if (this.noteEachMerge)
+                    {
+                        this.logger.log(Level.WARNING,
+                                "Overwriting path-identical category from \""
+                                        + node.get(Graphmaster.FILENAME)
+                                        + "\" with new category from \"" + filename + "\".  Path: "
+                                        + pattern + ":" + that + ":" + topic);
+                    }
                     node.put(Graphmaster.FILENAME, filename);
                     node.put(Graphmaster.TEMPLATE, template);
                     break;
 
                 case APPEND:
-                    this.logger.log(Level.WARNING, "Appending template of category from \""
-                            + filename + "\" to template of path-identical category from \""
-                            + node.get(Graphmaster.FILENAME) + "\": " + pattern + ":" + that + ":"
-                            + topic);
-                    node.put(Graphmaster.FILENAME, node.get(Graphmaster.FILENAME) + ", " + filename);
+                    if (this.noteEachMerge)
+                    {
+                        this.logger.log(Level.WARNING, "Appending template of category from \""
+                                + filename + "\" to template of path-identical category from \""
+                                + node.get(Graphmaster.FILENAME) + "\": " + pattern + ":" + that
+                                + ":" + topic);
+                    }
+                    node
+                            .put(Graphmaster.FILENAME, node.get(Graphmaster.FILENAME) + ", "
+                                    + filename);
                     node.put(Graphmaster.TEMPLATE, appendTemplate(storedTemplate, template));
                     break;
 
                 case COMBINE:
-                    this.logger.log(Level.WARNING, "Combining template of category from \""
-                            + filename + "\" with template of path-identical category from \""
-                            + node.get(Graphmaster.FILENAME) + "\": " + pattern + ":" + that + ":"
-                            + topic);
-                    node.put(Graphmaster.FILENAME, node.get(Graphmaster.FILENAME) + ", " + filename);
+                    if (this.noteEachMerge)
+                    {
+                        this.logger.log(Level.WARNING, "Combining template of category from \""
+                                + filename + "\" with template of path-identical category from \""
+                                + node.get(Graphmaster.FILENAME) + "\": " + pattern + ":" + that
+                                + ":" + topic);
+                    }
+                    node
+                            .put(Graphmaster.FILENAME, node.get(Graphmaster.FILENAME) + ", "
+                                    + filename);
                     String combined = combineTemplates(storedTemplate, template);
                     node.put(Graphmaster.TEMPLATE, combined);
                     break;
@@ -804,7 +832,6 @@ public class Graphmaster
             return;
         }
 
-
         if (!url.getProtocol().equals(FILE))
         {
             localFile = false;
@@ -822,7 +849,8 @@ public class Graphmaster
 
         try
         {
-            this.parser.parse(url.toString(), new AIMLReader(this, path, botid, this.core.getBots().getBot(botid), this.coreSettings.getAimlSchemaNamespaceUri()));
+            this.parser.parse(url.toString(), new AIMLReader(this, path, botid, this.core.getBots()
+                    .getBot(botid), this.coreSettings.getAimlSchemaNamespaceUri()));
             // this.parser.reset();
         }
         catch (IOException e)
@@ -894,19 +922,20 @@ public class Graphmaster
     }
 
     /**
-     * Combines two template content strings into a single template, using
-     * a random element so that
-     * either original template content string has an equal chance of being
-     * processed.  The order in which the templates are supplied is important:
-     * the first one (<code>existingTemplate</code>) is processed as though it
-     * has already been stored in the Graphmaster, and hence might itself
-     * be the result of a previous <code>combine()</code> operation.  If this
-     * is the case, the in-memory representation of the template will have a special
-     * attribute indicating this fact, which will be used to &quot;balance&quot;
-     * the combine operation.
+     * Combines two template content strings into a single template, using a
+     * random element so that either original template content string has an
+     * equal chance of being processed. The order in which the templates are
+     * supplied is important: the first one (<code>existingTemplate</code>)
+     * is processed as though it has already been stored in the Graphmaster, and
+     * hence might itself be the result of a previous <code>combine()</code>
+     * operation. If this is the case, the in-memory representation of the
+     * template will have a special attribute indicating this fact, which will
+     * be used to &quot;balance&quot; the combine operation.
      * 
-     * @param existingTemplate the template with which the new template should be combined
-     * @param newTemplate the template which should be combined with the existing template
+     * @param existingTemplate the template with which the new template should
+     *            be combined
+     * @param newTemplate the template which should be combined with the
+     *            existing template
      * @return the combined result
      */
     public String combineTemplates(String existingTemplate, String newTemplate)
@@ -914,20 +943,23 @@ public class Graphmaster
         Document existingDoc = XMLKit.parseAsDocumentFragment(existingTemplate);
         Element existingRoot = existingDoc.getDocumentElement();
         NodeList existingContent = existingRoot.getChildNodes();
-        
+
         Document newDoc = XMLKit.parseAsDocumentFragment(newTemplate);
         NodeList newContent = newDoc.getDocumentElement().getChildNodes();
-        
-        /* If the existing template has a random element as its root,
-         * we need to check whether this was the result of a previous combine.
+
+        /*
+         * If the existing template has a random element as its root, we need to
+         * check whether this was the result of a previous combine.
          */
         Node firstNode = existingContent.item(0);
         if (firstNode instanceof Element)
         {
-            Element firstElement = (Element)firstNode;
-            if (firstElement.getNodeName().equals(RandomProcessor.label) && firstElement.hasAttribute("synthetic"))
+            Element firstElement = (Element) firstNode;
+            if (firstElement.getNodeName().equals(RandomProcessor.label)
+                    && firstElement.hasAttribute("synthetic"))
             {
-                Element newListItem = existingDoc.createElementNS(this.aimlNamespaceURI, RandomProcessor.LI);
+                Element newListItem = existingDoc.createElementNS(this.aimlNamespaceURI,
+                        RandomProcessor.LI);
                 int newContentSize = newContent.getLength();
                 for (int index = 0; index < newContentSize; index++)
                 {
@@ -937,7 +969,8 @@ public class Graphmaster
             }
             return XMLKit.renderXML(existingDoc.getChildNodes(), false);
         }
-        Element listItemForExisting = existingDoc.createElementNS(this.aimlNamespaceURI, RandomProcessor.LI);
+        Element listItemForExisting = existingDoc.createElementNS(this.aimlNamespaceURI,
+                RandomProcessor.LI);
         int existingContentSize = existingContent.getLength();
         for (int index = 0; index < existingContentSize; index++)
         {
@@ -955,12 +988,13 @@ public class Graphmaster
         {
             listItemForNew.appendChild(newContent.item(index).cloneNode(true));
         }
-        
-        Element newRandom = existingDoc.createElementNS(this.aimlNamespaceURI, RandomProcessor.label);
+
+        Element newRandom = existingDoc.createElementNS(this.aimlNamespaceURI,
+                RandomProcessor.label);
         newRandom.setAttribute("synthetic", "yes");
         newRandom.appendChild(listItemForExisting);
         newRandom.appendChild(existingDoc.importNode(listItemForNew, true));
-        
+
         existingRoot.appendChild(newRandom);
 
         return XMLKit.renderXML(existingDoc.getChildNodes(), false);
@@ -977,16 +1011,17 @@ public class Graphmaster
     {
         Document existingDoc = XMLKit.parseAsDocumentFragment(existingTemplate);
         Element existingRoot = existingDoc.getDocumentElement();
-        
+
         Document newDoc = XMLKit.parseAsDocumentFragment(newTemplate);
         NodeList newContent = newDoc.getDocumentElement().getChildNodes();
-        
-        // Append whatever text is configured to be inserted between the templates.
+
+        // Append whatever text is configured to be inserted between the
+        // templates.
         if (this.mergeAppendSeparator != null)
         {
             existingRoot.appendChild(existingDoc.createTextNode(this.mergeAppendSeparator));
         }
-        
+
         int newContentLength = newContent.getLength();
         for (int index = 0; index < newContentLength; index++)
         {
