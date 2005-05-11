@@ -23,7 +23,6 @@
 		<property name="javadoc.dir" value="../docs/api"/>
 		
 		<property name="main.jar" value="programd-main.jar"/>
-		<property name="listeners.jar" value="programd-listeners.jar"/>
 		<property name="jetty.jar" value="programd-jetty.jar"/>
 		<property name="rhino.jar" value="programd-rhino.jar"/>
 		
@@ -68,12 +67,8 @@
 		<jar jarfile="${lib.dir}/${main.jar}">
 			<fileset dir="${build.dir}/"
 				includes="org/**"
-				excludes="org/aitools/programd/server/jettyinterface/* org/aitools/programd/interpreter/RhinoInterpreter.class org/aitools/programd/listener/*Listener.class"/>
+				excludes="org/aitools/programd/server/jettyinterface/* org/aitools/programd/interpreter/RhinoInterpreter.class"/>
 			<fileset dir="${src.dir}/" includes="org/aitools/programd/gui/icons/**"/>
-		</jar>
-		<jar jarfile="${lib.dir}/${listeners.jar}">
-			<fileset dir="${build.dir}/"
-				includes="org/aitools/programd/listener/*Listener.class"/>
 		</jar>
 		<jar jarfile="${lib.dir}/${jetty.jar}">
 			<fileset dir="${build.dir}/"
