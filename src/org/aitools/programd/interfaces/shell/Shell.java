@@ -218,7 +218,7 @@ public class Shell extends Thread
         this.botid = bot.getID();
         this.botName = bot.getPropertyValue(this.botNamePredicate);
 
-        while (true && this.core.getStatus() == Core.Status.RUNNING)
+        while (true && this.core.getStatus() == Core.Status.READY)
         {
             showPrompt();
             String commandLine = null;
