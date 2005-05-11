@@ -123,10 +123,7 @@ public class Core extends Thread
         INITIALIZED,
 
         /** The Core has been properly set up (external, by user). */
-        SET_UP,
-
-        /** The Core is running. */
-        RUNNING,
+        READY,
 
         /** The Core has shut down. */
         SHUT_DOWN,
@@ -310,9 +307,13 @@ public class Core extends Thread
             this.logger.log(Level.INFO, this.graphmaster.getTotalCategories()
                     + " unique categories loaded in " + time / 1000.00 + " seconds.");
             
-            this.logger.log(Level.WARNING, this.graphmaster.getDuplicateCategories()
+            int dupes = this.graphmaster.getDuplicateCategories();
+            if (dupes > 0)
+            {
+                this.logger.log(Level.WARNING, dupes
                     + " path-identical categories were encountered, and handled according to the " + this.settings.getMergePolicy() + " merge policy.");
-
+            }
+            
             // Start the AIMLWatcher if configured to do so.
             if (this.settings.useWatcher())
             {
@@ -396,7 +397,7 @@ public class Core extends Thread
         }
 
         // Set the status indicator.
-        this.status = Status.SET_UP;
+        this.status = Status.READY;
     }
 
     /**
@@ -405,16 +406,19 @@ public class Core extends Thread
      */
     public void run()
     {
-        if (this.status != Status.SET_UP)
+        if (this.status != Status.READY)
         {
             throw new DeveloperError(new IllegalStateException(
                     "Core has not been set up; cannot run."));
         }
 
-        this.status = Status.RUNNING;
+        synchronized (this)
+        {
+            notifyAll();
+        }
 
-        // Now just run as long as the status flag stays at RUNNING.
-        while (this.status == Status.RUNNING)
+        // Now just run as long as the status flag stays at READY.
+        while (this.status == Status.READY)
         {
             try
             {
@@ -436,7 +440,14 @@ public class Core extends Thread
      */
     public synchronized void processResponse(String input)
     {
-        this.multiplexor.getResponse(input, this.hostname, this.bots.getABot().getID());
+        if (this.status == Status.READY)
+        {
+            this.multiplexor.getResponse(input, this.hostname, this.bots.getABot().getID());
+        }
+        else
+        {
+            throw new DeveloperError("Check that the Core is ready before sending it messages.", new CoreNotReadyException());
+        }
     }
 
     /**
@@ -450,8 +461,13 @@ public class Core extends Thread
      */
     public synchronized String getResponse(String input, String userid, String botid)
     {
-        String response = this.multiplexor.getResponse(input, userid, botid, new TextResponder());
-        return response;
+        if (this.status == Status.READY)
+        {
+            String response = this.multiplexor.getResponse(input, userid, botid, new TextResponder());
+            return response;
+        }
+        // otherwise...
+        throw new DeveloperError("Check that the Core is running before sending it messages.", new CoreNotReadyException());
     }
 
     /**
@@ -467,8 +483,13 @@ public class Core extends Thread
     public synchronized String getResponse(String input, String userid, String botid,
             Responder responder)
     {
-        String response = this.multiplexor.getResponse(input, userid, botid, responder);
-        return response;
+        if (this.status == Status.READY)
+        {
+            String response = this.multiplexor.getResponse(input, userid, botid, responder);
+            return response;
+        }
+        // otherwise...
+        throw new DeveloperError("Check that the Core is running before sending it messages.", new CoreNotReadyException());
     }
 
     /**
