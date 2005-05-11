@@ -12,7 +12,7 @@ package org.aitools.programd;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-05-08T14:08:30.448-04:00
+ * Automatically generated from properties file, 2005-05-10T00:54:12.668-04:00
  */
 public class CoreSettings extends Settings
 {
@@ -61,6 +61,11 @@ public class CoreSettings extends Settings
      * If the append merge policy is used, what text content (if any) should be inserted between the contents of the two templates?
      */
     private String mergeAppendSeparatorString;
+        
+    /**
+     * Produce a note in the console/log for each merge?
+     */
+    private boolean mergeNoteEach;
         
     /**
      * The default value for undefined predicates.
@@ -311,6 +316,8 @@ public class CoreSettings extends Settings
 
         setMergeAppendSeparatorString(this.properties.getProperty("programd.merge.append.separator-string", "&#x10;"));
 
+        setMergeNoteEach(Boolean.valueOf(this.properties.getProperty("programd.merge.note-each", "true")).booleanValue());
+
         setPredicateEmptyDefault(this.properties.getProperty("programd.predicate-empty-default", "undefined"));
 
         try
@@ -479,6 +486,14 @@ public class CoreSettings extends Settings
     public String getMergeAppendSeparatorString()
     {
         return this.mergeAppendSeparatorString;
+    }
+
+    /**
+     * @return the value of mergeNoteEach
+     */
+    public boolean mergeNoteEach()
+    {
+        return this.mergeNoteEach;
     }
 
     /**
@@ -839,6 +854,14 @@ public class CoreSettings extends Settings
     public void setMergeAppendSeparatorString(String mergeAppendSeparatorStringToSet)
     {
         this.mergeAppendSeparatorString = mergeAppendSeparatorStringToSet;
+    }
+
+    /**
+     * @param mergeNoteEachToSet   the value to which to set mergeNoteEach
+     */
+    public void setMergeNoteEach(boolean mergeNoteEachToSet)
+    {
+        this.mergeNoteEach = mergeNoteEachToSet;
     }
 
     /**
