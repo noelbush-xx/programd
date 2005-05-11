@@ -58,12 +58,15 @@ GENERAL NOTES
         * combine: Store the new template as well, so it will have an equal chance
                    of being used as the currently loaded one.
                                  [enum(skip, overwrite, append, combine): combine]-->
-    <entry key="programd.merge.policy">append</entry>
+    <entry key="programd.merge.policy">combine</entry>
     
     <!--If the append merge policy is used, what text content (if any)
         should be inserted between the contents of the two templates?
         * (The default value you see here is the hex code for a space.)  [String: &#x10;]-->
     <entry key="programd.merge.append.separator-string"> </entry>
+    
+    <!--Produce a note in the console/log for each merge? [boolean: true]-->
+    <entry key="programd.merge.note-each">false</entry>
     
     <!--The default value for undefined predicates. [String: undefined]-->
     <entry key="programd.predicate-empty-default">undefined</entry>
