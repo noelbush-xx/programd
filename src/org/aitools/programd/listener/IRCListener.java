@@ -6,8 +6,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
@@ -27,8 +29,23 @@ import org.aitools.programd.util.XMLKit;
  * @see <a href="http://www.chrisknight.com/sirc/">sIRC </a>
  */
 
-public class IRCListener extends Listener implements ShellCommandable
+public class IRCListener implements Listener, ShellCommandable
 {
+    /** The Core object in use. */
+    protected Core core;
+
+    /** The bot for which this listener works. */
+    protected Bot bot;
+
+    /** The id of the bot for which this listener works. */
+    protected String botID;
+
+    /** The parameters that can be set for this listener. */
+    protected Map<String, String> parameters;
+
+    /** The logger to use. */
+    protected Logger logger;
+
     /** Please document. */
     private static final String VERSION = "0.86.0b";
 
@@ -101,9 +118,13 @@ public class IRCListener extends Listener implements ShellCommandable
      *            values
      * @throws InvalidListenerParameterException
      */
-    public IRCListener(Core coreToUse, Bot botToListenFor, Map<String, String> parametersToUse) throws InvalidListenerParameterException
+    public IRCListener(Core coreToUse, Bot botToListenFor, HashMap<String, String> parametersToUse) throws InvalidListenerParameterException
     {
-        super(coreToUse, botToListenFor, parametersToUse);
+        this.core = coreToUse;
+        this.bot = botToListenFor;
+        this.botID = botToListenFor.getID();
+        this.parameters = parametersToUse;
+        this.logger = Logger.getLogger("programd");
         this.host = this.parameters.get("host");
         try
         {
