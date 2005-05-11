@@ -118,6 +118,14 @@ goto end
 
   :check_optional_components
   rem Optional components:
+  
+  rem Set LISTENER_LIBS to the location of your listener jars.
+  rem No warning is provided if they cannot be found (since they are optional).
+  set ICQ_AIM_LISTENER_LIBS=%LIBS%\icq-aim-listener.jar;%LIBS%\daim.jar
+  set IRC_LISTENER_LIBS=
+  set YAHOO_LISTENER_LIBS=
+  set LISTENER_LIBS=%ICQ_AIM_LISTENER_LIBS%:%IRC_LISTENER_LIBS%:%YAHOO_LISTENER_LIBS%
+  set LISTENER_LIBS=%LIBS%\icq-aim-listener.jar
 
   rem Set SQL_LIB to the location of your database driver.
   rem No warning is provided if it cannot be found (since it is optional).
@@ -131,7 +139,7 @@ goto end
   rem No warning is provided if they cannot be found (since they are optional).
   set JETTY_LIBS=%LIBS%\commons-logging.jar;%LIBS%\org.mortbay.jetty.jar;%LIBS%\javax.servlet.jar
   
-  set OTHER_LIBS=%GETOPT_LIB%;%SQL_LIB%;%JS_LIB%;%JETTY_LIBS%
+  set OTHER_LIBS=%GETOPT_LIB%;%LISTENER_LIBS%;%SQL_LIB%;%JS_LIB%;%JETTY_LIBS%
 goto end
 
 
