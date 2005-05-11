@@ -9,7 +9,6 @@
 
 package org.aitools.programd.processor.botconfiguration;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,7 +88,7 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         // Set up the parameters for the listener.
         List<Element> parameterElements = XMLKit.getElementChildrenOf(element);
         
-        Map<String, String> parameters = Collections.checkedMap(new HashMap<String, String>(parameterElements.size()), String.class, String.class);
+        Map<String, String> parameters = new HashMap<String, String>(parameterElements.size());
         
         for (Element parameter : parameterElements)
         {
