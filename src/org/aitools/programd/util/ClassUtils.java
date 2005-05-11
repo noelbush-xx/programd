@@ -75,7 +75,7 @@ public class ClassUtils
         Constructor<T> constructor = null;
         try
         {
-            constructor = theClass.getDeclaredConstructor(argumentTypes.toArray(new Class[]{}));
+            constructor = theClass.getConstructor(argumentTypes.toArray(new Class[]{}));
         }
         catch (NoSuchMethodException e)
         {
