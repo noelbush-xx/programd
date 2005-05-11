@@ -24,7 +24,6 @@ import org.aitools.programd.CoreSettings;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.StringKit;
 
 /**
  * <p>
@@ -77,6 +76,9 @@ public class SystemProcessor extends AIMLProcessor
             }
         }
     }
+
+    /** A word boundary pattern (for splitting strings into words). */
+    private static final String WORD_BOUNDARY_REGEX = "\\b";
 
     /**
      * Creates a new SystemProcessor using the given Core.
@@ -135,7 +137,7 @@ public class SystemProcessor extends AIMLProcessor
             Process child;
             if (useArrayExecForm)
             {
-                child = Runtime.getRuntime().exec(StringKit.wordSplit(response).toArray(new String[] {}), null, directory);
+                child = Runtime.getRuntime().exec(response.split(WORD_BOUNDARY_REGEX), null, directory);
             }
             else
             {
