@@ -1,0 +1,14 @@
+This is a release checklist, to be followed before releasing a new build.
+
+1.  Unzip the zip bin distro into a clean directory.
+2.  Start simple console and run tests ("/test").  Look for any test failures.
+    (<system> and <javascript> will fail unless enabled in core.xml.)
+3.  Start simple GUI and run tests.
+4.  Start web server and manually type in several test case inputs.
+5.  Check flash interface.
+6.  Download and enable each listener and check for responsiveness.
+7.  Repeat steps 1-6, using tar.bz2 bin distro.
+8.  Unzip the zip source distro into a clean directory.
+9.  Ensure that build works (ant conf/build.xml).
+10. Repeat steps 2-6.
+11. Repeat steps 9-10 using tar.bz2 bin distro.
