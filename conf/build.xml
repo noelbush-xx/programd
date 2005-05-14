@@ -22,9 +22,9 @@
 		<property name="build.classpath" value="${lib.dir}/commons-logging.jar:${lib.dir}/gnu.getopt-1.0.10.jar:${lib.dir}/js.jar:${lib.dir}/org.mortbay.jetty.jar:${lib.dir}/javax.servlet.jar"/>
 		<property name="javadoc.dir" value="../docs/api"/>
 		
-		<property name="main.jar" value="programd-main.jar"/>
-		<property name="jetty.jar" value="programd-jetty.jar"/>
-		<property name="rhino.jar" value="programd-rhino.jar"/>
+		<property name="main.jar" value="${lib.dir}/programd-main.jar"/>
+		<property name="jetty.jar" value="${lib.dir}/programd-jetty.jar"/>
+		<property name="rhino.jar" value="${lib.dir}/programd-rhino.jar"/>
 		
 		<property name="distributable.src.dir" value="${base.dir}/distributable.src.tmp"/>
 		<property name="distributable.bin.dir" value="${base.dir}/distributable.bin.tmp"/>
@@ -64,17 +64,17 @@
 	
 	<!--Create the jars.-->
 	<target name="package" depends="compile">
-		<jar jarfile="${lib.dir}/${main.jar}">
+		<jar jarfile="${main.jar}">
 			<fileset dir="${build.dir}/"
 				includes="org/**"
 				excludes="org/aitools/programd/server/jettyinterface/* org/aitools/programd/interpreter/RhinoInterpreter.class"/>
 			<fileset dir="${src.dir}/" includes="org/aitools/programd/gui/icons/**"/>
 		</jar>
-		<jar jarfile="${lib.dir}/${jetty.jar}">
+		<jar jarfile="${jetty.jar}">
 			<fileset dir="${build.dir}/"
 				includes="org/aitools/programd/server/jettyinterface/*"/>
 		</jar>
-		<jar jarfile="${lib.dir}/${rhino.jar}">
+		<jar jarfile="${rhino.jar}">
 			<fileset dir="${build.dir}/"
 				includes="org/aitools/programd/interpreter/RhinoInterpreter.class"/>
 		</jar>
@@ -124,7 +124,7 @@
 	</target>
 	
 	<!--Make the distributables.-->
-	<target name="distributables" depends="package">
+	<target name="distributables" depends="distclean,package">
 		<!--The source distributables.-->
 		<delete dir="${distributable.src.dir}"/>
 		<copy todir="${distributable.src.dir}">
@@ -132,9 +132,11 @@
 				<exclude name="aiml/**"/>
 				<exclude name="build.tmp/**"/>
 				<exclude name="classes/**"/>
+				<exclude name="conf/test-listeners.xml"/>
 				<exclude name="distributable*.tmp/**"/>
 				<exclude name="docs/**"/>
 				<exclude name="ffm/**"/>
+				<exclude name="lib/*-listener/*.jar"/>
 				<exclude name="logs/**"/>
 				<exclude name="**/programd-*.jar"/>
 				<exclude name="programd-*.zip"/>
@@ -155,9 +157,11 @@
 				<exclude name="aiml/**"/>
 				<exclude name="build.tmp/**"/>
 				<exclude name="classes/**"/>
+				<exclude name="conf/test-listeners.xml"/>
 				<exclude name="distributable*.tmp/**"/>
 				<exclude name="docs/**"/>
 				<exclude name="ffm/**"/>
+				<exclude name="lib/*-listener/*.jar"/>
 				<exclude name="logs/**"/>
 				<exclude name="programd-*.zip"/>
 				<exclude name="programd-*.tar.bz2"/>
