@@ -113,7 +113,7 @@ a:active
     <h1>Program D Release Notes</h1>
     <p class="docinfo"> maintainer: <a href="mailto:noel@aitools.org">Noel Bush</a>
       <br/>previous authors: <a href="mailto:noel@aitools.org">Noel Bush</a>, Kim Sullivan, Thomas
-      Ringate, Pedro E. Colla<br/> Last updated: 26 April 2005</p>
+      Ringate, Pedro E. Colla<br/> Last updated: 13 May 2005</p>
     <p class="docinfo"> The latest version of this document can always be found at <a
         href="http://aitools.org/programd/release-notes.html"
         >http://aitools.org/programd/release-notes.html</a>. Probably.</p>
@@ -433,36 +433,79 @@ core.setPredicateEmptyDefault("unknown");
     <h3>
       <a id="v4.5.rc-notes">Release Candidate Notes</a>
     </h3>
-    <p>Here are notes about the release candidates.</p>
+    <p>Here are notes about the release candidates and the final release.</p>
     <ul>
       <li>
-        <a href="#v4.5.rc-notes.rc2">Release Candidate 2</a>
+        <a href="#v4.5.rc-notes.final">Final Release</a>
       </li>
       <li>
         <a href="#v4.5.rc-notes.rc3">Release Candidate 3</a>
+      </li>
+      <li>
+        <a href="#v4.5.rc-notes.rc2">Release Candidate 2</a>
       </li>
     </ul>
     <ul>
       <li>
         <h4>
-          <a id="v4.5.rc-notes.rc2">Release Candidate 2</a>
+          <a id="v4.5.rc-notes.final">Final Release</a>
         </h4>
-        <p>This one follows hot on the heels of rc1, and includes the following fixes:</p>
         <ul>
           <li>
             <p>
-              <b>AIML Schema bug</b>&mdash;The AIML Schema released with the previous version
-              did not allow non-<span class="literal">li</span> content in <span class="literal"
-              >condition</span> elements; as a result, some valid AIML was rejected.</p>
+              <b>Merge policies implemented</b>&mdash;Long overdue, this has been addressed in
+              time for the final release. Now, if your AIML contains categories whose <span
+                class="literal">pattern:that:topic</span> paths are identical, you can specify what
+              should happen at loadtime. As your AIML is loaded, the program will decide what to do
+              with the template in an already-loaded category whose path is matched by another
+              category being loaded. These are the merge policy choices:</p>
+            <ul>
+              <li>
+                <p>
+                  <b>skip:</b> Leave the currently loaded template in place and ignore the new
+                one.</p>
+              </li>
+              <li>
+                <p>
+                  <b>overwrite:</b> Overwrite the loaded template with the new one.</p>
+              </li>
+              <li>
+                <p>
+                  <b>append:</b> Append the content of the new template to the currently loaded
+                one.</p>
+              </li>
+              <li>
+                <p>
+                  <b>combine:</b> Store the new template as well, so it will have an equal chance of
+                  being used as the currently loaded one.</p>
+              </li>
+            </ul>
           </li>
           <li>
-            <p>
-              <b>Bad default value for web-server conf</b>&mdash;The default value of the web
-              server configuration file, specified in <span class="literal">core.xml</span>, named a
-              non-existent file. This would have caused confusion.</p>
+              <p><b>Schema fix</b>&mdash;The AIML schema had an incorrect definition for the pattern-side
+              <span class="literal">bot</span> element, leading to incorrect error messages when loading
+              AIML using this feature.</p>
+          </li>
+          <li>
+              <p><b>pattern-side bot elements</b>&mdash;An implementation of the pattern-side <span class="literal">bot</span>
+              element was missing; this was put in place.</p>
+          </li>
+          <li>
+              <p><b>listener packaging</b>&mdash;All listeners were moved out to separate package, now distributed
+              independently (so they are not tied to engine releases).  The ICQ/AIM listener was completely
+              rewritten using a new library, and a Yahoo listener was introduced.</p>
+          </li>
+          <li>
+              <p><b>web server script bug</b>&mdash;The shell script and batch file for starting Program D did
+              not properly set up the class path to be able to start the web server configuration.  This
+              was reported in several bugs.  It has been corrected.</p>
+          </li>
+          <li>
+              <p><b>release checklist</b>&mdash;A release checklist has been added to the build.  This
+              lists the things that will be tested before releasing a build.  Any and all input on
+              making this better will be enormously welcome.</p>
           </li>
         </ul>
-        <p>The first one is pretty critical, which is why this release is so soon after rc1.</p>
       </li>
       <li>
         <h4>
@@ -557,6 +600,27 @@ core.setPredicateEmptyDefault("unknown");
           </li>
         </ul>
       </li>
+      <li>
+        <h4>
+          <a id="v4.5.rc-notes.rc2">Release Candidate 2</a>
+        </h4>
+        <p>This one follows hot on the heels of rc1, and includes the following fixes:</p>
+        <ul>
+          <li>
+            <p>
+              <b>AIML Schema bug</b>&mdash;The AIML Schema released with the previous version
+              did not allow non-<span class="literal">li</span> content in <span class="literal"
+              >condition</span> elements; as a result, some valid AIML was rejected.</p>
+          </li>
+          <li>
+            <p>
+              <b>Bad default value for web-server conf</b>&mdash;The default value of the web
+              server configuration file, specified in <span class="literal">core.xml</span>, named a
+              non-existent file. This would have caused confusion.</p>
+          </li>
+        </ul>
+        <p>The first one is pretty critical, which is why this release is so soon after rc1.</p>
+      </li>
     </ul>
     <h3>
       <a id="v4.5.requirements">Important Notes on System Requirements</a>
@@ -575,30 +639,6 @@ core.setPredicateEmptyDefault("unknown");
       <a id="v4.5.openissues">Significant Open Issues</a>
     </h3>
     <ul>
-      <li>
-        <p>The two included IM listeners fail to function, due to changes in protocols for the
-          various services. Someone with knowledge of these services is invited to take a look and
-          submit patches. The problems, which can be easily reproduced by enabling the listeners in
-          the <span class="literal">bots.xml</span> file (and filling in some valid account
-          information), are:</p>
-        <ul>
-          <li>
-            <p>AIMListener: Loops with a "Error in main AIMListener loop." message (haven't tracked
-              this down in the debugger yet as of rc1).</p>
-          </li>
-          <li>
-            <p>ICQListener: Starts contacting the server, but never succeeds in logging in.</p>
-          </li>
-        </ul>
-      </li>
-      <li>
-        <p>The issue of "merge policies", as for so long, has not yet been addressed. And does
-          anyone care? Well, probably. But this author thinks that "merge policy" is just a small
-          part of a much larger issue of knowledge base quality issues. Addressing these should be a
-          project unto itself. Nonetheless, when there's a spare moment, we'll update the merge
-          policy handling. Or feel free to <a href="mailto:programd@aitools.org">submit a patch</a>.
-        </p>
-      </li>
       <li>
         <p>The AIML schema includes embedded <a
             href="http://xml.ascc.net/resource/schematron/schematron.html" target="_blank"
