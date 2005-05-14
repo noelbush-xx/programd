@@ -87,6 +87,9 @@ public class AIMLReader extends DefaultHandler
     private static final String PATTERN = "pattern";
 
     /** The string &quot;{@value}&quot;. */
+    private static final String BOT = "bot";
+
+    /** The string &quot;{@value}&quot;. */
     private static final String THAT = "that";
 
     /** The string &quot;{@value}&quot;. */
@@ -268,6 +271,11 @@ public class AIMLReader extends DefaultHandler
             this.patternBuffer = null;
             this.patternBuffer = new StringBuffer();
         }
+        else if (elementName.equals(BOT) && this.state == State.IN_PATTERN)
+        {
+            // Insert the value of the given bot predicate (no warning if doesn't exist!).
+            this.patternBuffer.append(this.bot.getPropertyValue(attributes.getValue(NAME)));
+        }
         else if (elementName.equals(THAT) && this.state != State.IN_TEMPLATE)
         {
             this.state = State.IN_THAT;
@@ -282,11 +290,11 @@ public class AIMLReader extends DefaultHandler
         }
         else if (this.state == State.IN_TEMPLATE)
         {
-            // This seems stupid -- I wish there were a better way.
-            // The point is that we don't want to parse the template into
-            // some big memory structure, since it may never be used. So
-            // really here we are just reconstituting the XML text for later
-            // processing.
+            /* We don't want to parse the template into
+             * some big memory structure, since it may never be used. So
+             * we just reconstitute the XML text for later
+             * processing.
+             */
             this.templateBuffer.append(XMLKit.renderStartTag(elementName, attributes, !uri.equals(this.defaultNamespaceURI), uri));
         }
         else if (elementName.equals(TOPIC))
