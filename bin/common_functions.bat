@@ -208,7 +208,6 @@ rem Checks that JAVA_HOME points to a real directory.
   set quit=yes
 goto end
 
-rem Sets the JVM launcher command.
 :set_jvm_command
   set JVM_COMMAND=%JAVA_HOME%\bin\java.exe
 goto end
