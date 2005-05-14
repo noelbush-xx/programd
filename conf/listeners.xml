@@ -4,24 +4,18 @@
     xmlns:d="http://aitools.org/programd/4.5"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://aitools.org/programd/4.5/bot-configuration http://aitools.org/programd/4.5/bot-configuration.xsd">
-    <listener class="org.aitools.programd.listener.AIMListener" enabled="false">
-        <parameter name="owner" value="MyOwner"/>
-        <parameter name="screenname" value="Me"/>
-        <parameter name="password" value="password"/>
-        <parameter name="bgcolor" value="White"/>
-        <parameter name="fontface" value="Verdana,Arial"/>
-        <parameter name="fontsize" value="2"/>
-        <parameter name="fontcolor" value="Black"/>
-        <parameter name="buddies" value="Buddy1,Buddy2,Buddy3"/>
-    </listener>
-    <listener class="org.aitools.programd.listener.ICQListener" enabled="false">
-        <parameter name="number" value="your-uin"/>
+    <listener class="org.aitools.programd.listener.ICQandAIMListener" enabled="false">
+        <parameter name="userid" value="your-userid"/>
         <parameter name="password" value="your-password"/>
     </listener>
     <listener class="org.aitools.programd.listener.IRCListener" enabled="false">
         <parameter name="host" value="irc.freenode.net"/>
         <parameter name="port" value="6667"/>
-        <parameter name="nick" value="programd"/>
-        <parameter name="channel" value="#programd"/>
+        <parameter name="nick" value="your-nick"/>
+        <parameter name="channel" value="#some-channel"/>
+    </listener>
+    <listener class="org.aitools.programd.listener.YahooListener" enabled="false">
+        <parameter name="userid" value="your-userid"/>
+        <parameter name="password" value="your-password"/>
     </listener>
 </listeners>
