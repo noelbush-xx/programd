@@ -91,7 +91,7 @@ GENERAL NOTES
     <entry key="programd.record-match-trace">true</entry>
     
     <!-- Print stack trace on uncaught exceptions? [boolean: false]-->
-    <entry key="programd.on-uncaught-exceptions.print-stack-trace">true</entry>
+    <entry key="programd.on-uncaught-exceptions.print-stack-trace">false</entry>
     
     <!--Allow use of <system> element? [boolean: false]-->
     <entry key="programd.os-access-allowed">false</entry>
