@@ -46,7 +46,9 @@ Every line of code of Program D has been reviewed, and "refactored" as
 appropriate. The program still passes all of the AIML 1.0.1 test cases 
 published with the previous version, as well as a few more.
 
-Following are details of what has been addressed.
+Following are details of what has been addressed. Please note that, as of the 
+final release, items originally found only under the Release Candidate Notes 
+section have been included here, when appropriate.
 
     * What's New
     * Release Candidate Notes
@@ -63,8 +65,13 @@ What's New
     * XML Templating for Responders
     * Regular Expressions for Substitutions
     * Improved Responder Architecture
+    * Merge Policies
+    * AIML Testing System
+    * AIML Test Suite
+    * Plugin architecture
+    * AIML Shell Command
     * Graphmaster.unload()
-    * IRC Listener fixes
+    * Listener Updates and Package Separation
     * Type Safety and Other JDK-Supported Enhancements
     * Tighter Coding Standards
     * Better Error Checking
@@ -93,7 +100,7 @@ connected to the Core before proceeding with initialization. Following setup(),
 there is again the opportunity to do any further setup of other components 
 before calling start() on the Core. The getResponse() method comes in several 
 forms, including those that allow the specification of a particular bot, and 
-the use of a Responder object to forma26 Aprilt input and output.
+the use of a Responder object to format input and output.
 
       For examples, see the classes provided in the 
 org.aitools.programd.configurations package.
@@ -180,20 +187,69 @@ input and output formatting, and (c) is reasonably reusable. A complete set of
 example files to support user authentication is include in templates/html, and 
 some important properties can be adjusted in conf/html-responder.xml.
     *
+      Merge Policies
+
+      Long overdue, this has at last been addressed comprehensively in 4.5. 
+Now, if your AIML contains categories whose pattern:that:topic paths are 
+identical, you can specify what should happen at loadtime. As your AIML is 
+loaded, the program will decide what to do with the template in an 
+already-loaded category whose path is matched by another category being loaded. 
+These are the merge policy choices:
+          o
+
+            skip: Leave the currently loaded template in place and ignore the 
+new one.
+          o
+
+            overwrite: Overwrite the loaded template with the new one.
+          o
+
+            append: Append the content of the new template to the currently 
+loaded one.
+          o
+
+            combine: Store the new template as well, so it will have an equal 
+chance of being used as the currently loaded one.
+    *
+      AIML Testing System
+
+      Albertas Mickensas's AIML testing system has been adapted to version 4.5. 
+Now you can create test cases and test your AIML from the shell. (Uses the new 
+shell command interface.)
+    *
+      AIML Test Suite
+
+      The old set of AIML compliance test cases has been ported to the new test 
+case framework. These are included in the Program D distribution. You can test 
+Program D's adherence to the spec simply by typing /test in the shell.
+    *
+      Plugin architecture
+
+      A plugin architecture of sorts has been introduced; at first, this is 
+geared only to plug-in shell commands. You can easily add a new command to be 
+available from the shell by implementing a simple interface. To be documented.
+    *
+      AIML Shell Command
+
+      A new shell command called /aiml now allows you to directly "execute" 
+AIML template contents from the command line. Try, for example, typing: /aiml 
+<date/>.
+    *
       Graphmaster.unload()
 
       Eion Robb submitted a patch to 4.1.5 that fixed a fundamental problem 
 with the Graphmaster.unload() method—namely, that it didn't work. His 
 contribution has been incorporated into the current release.
     *
-      IRC Listener fixes
+      Listener Updates and Package Separation
 
-      A person known to me only as "Kevin W." submitted a patch for the IRC 
-listener that did the following:
-          o allowed joining multiple channels
-          o recognises nick in any part of message
-          o delay implemented (the "delay" IRC listener property)
-          o fixed parameters bug with processMessageCommand
+      All listeners have been moved out to separate package, now distributed 
+independently (so they are not tied to engine releases). The ICQ/AIM listener 
+was completely rewritten using a new library, and a Yahoo listener was 
+introduced.
+
+      You can find pages describing the ICQ/AIM Listener, Yahoo Listener, and 
+IRC Listener on the aitools.org web site.
     *
       Type Safety and Other JDK-Supported Enhancements
 

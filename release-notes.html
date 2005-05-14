@@ -168,7 +168,9 @@ a:active
     <p>Every line of code of Program D has been reviewed, and "refactored" as appropriate. The
       program still passes all of the AIML 1.0.1 test cases published with the previous version, as
       well as a few more.</p>
-    <p>Following are details of what has been addressed.</p>
+    <p>Following are details of what has been addressed. Please note that, as of the final release,
+      items originally found only under the <a href="#v4.5.rc-notes">Release Candidate Notes</a>
+      section have been included here, when appropriate.</p>
     <ul>
       <li>
         <a href="#v4.5.whatsnew">What's New</a>
@@ -212,10 +214,25 @@ a:active
         <a href="#v4.5.whatsnew.responder-refactoring">Improved Responder Architecture</a>
       </li>
       <li>
+        <a href="#v4.5.whatsnew.merge-policies">Merge Policies</a>
+      </li>
+      <li>
+        <a href="#v4.5.whatsnew.aiml-testing">AIML Testing System</a>
+      </li>
+      <li>
+        <a href="#v4.5.whatsnew.aiml-test-suite">AIML Test Suite</a>
+      </li>
+      <li>
+        <a href="#v4.5.whatsnew.plugin-architecture">Plugin architecture</a>
+      </li>
+      <li>
+        <a href="#v4.5.whatsnew.aiml-shell">AIML Shell Command</a>
+      </li>
+      <li>
         <a href="#v4.5.whatsnew.graphmaster-unload">Graphmaster.unload()</a>
       </li>
       <li>
-        <a href="#v4.5.whatsnew.irc-listener-fixes">IRC Listener fixes</a>
+        <a href="#v4.5.whatsnew.listeners">Listener Updates and Package Separation</a>
       </li>
       <li>
         <a href="#v4.5.whatsnew.java-language">Type Safety and Other JDK-Supported Enhancements</a>
@@ -360,6 +377,67 @@ core.setPredicateEmptyDefault("unknown");
       </li>
       <li>
         <h4>
+          <a id="v4.5.whatsnew.merge-policies">Merge Policies</a>
+        </h4>
+        <p>Long overdue, this has at last been addressed comprehensively in 4.5. Now, if your AIML
+          contains categories whose <span class="literal">pattern:that:topic</span> paths are
+          identical, you can specify what should happen at loadtime. As your AIML is loaded, the
+          program will decide what to do with the template in an already-loaded category whose path
+          is matched by another category being loaded. These are the merge policy choices:</p>
+        <ul>
+          <li>
+            <p>
+              <b>skip:</b> Leave the currently loaded template in place and ignore the new one.</p>
+          </li>
+          <li>
+            <p>
+              <b>overwrite:</b> Overwrite the loaded template with the new one.</p>
+          </li>
+          <li>
+            <p>
+              <b>append:</b> Append the content of the new template to the currently loaded one.</p>
+          </li>
+          <li>
+            <p>
+              <b>combine:</b> Store the new template as well, so it will have an equal chance of
+              being used as the currently loaded one.</p>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <h4>
+          <a id="v4.5.whatsnew.aiml-testing">AIML Testing System</a>
+        </h4>
+        <p>Albertas Mickensas's AIML testing system has been adapted to version 4.5. Now you can
+          create test cases and test your AIML from the shell. (Uses the new shell command
+          interface.) </p>
+      </li>
+      <li>
+        <h4>
+          <a id="v4.5.whatsnew.aiml-test-suite">AIML Test Suite</a>
+        </h4>
+        <p>The old set of AIML compliance test cases has been ported to the new test case framework.
+          These are included in the Program D distribution. You can test Program D's adherence to
+          the spec simply by typing <span class="literal">/test</span> in the shell.</p>
+      </li>
+      <li>
+        <h4>
+          <a id="v4.5.whatsnew.plugin-architecture">Plugin architecture</a>
+        </h4>
+        <p>A plugin architecture of sorts has been introduced; at first, this is geared only to
+          plug-in shell commands. You can easily add a new command to be available from the shell by
+          implementing a simple interface. To be documented.</p>
+      </li>
+      <li>
+        <h4>
+          <a id="v4.5.whatsnew.aiml-shell">AIML Shell Command</a>
+        </h4>
+        <p>A new shell command called <span class="literal">/aiml</span> now allows you to directly
+          &quot;execute&quot; AIML template contents from the command line. Try, for
+          example, typing: <span class="literal">/aiml &lt;date/&gt;</span>.</p>
+      </li>
+      <li>
+        <h4>
           <a id="v4.5.whatsnew.graphmaster-unload">Graphmaster.unload()</a>
         </h4>
         <p>Eion Robb submitted a patch to 4.1.5 that fixed a fundamental problem with the <span
@@ -368,16 +446,15 @@ core.setPredicateEmptyDefault("unknown");
       </li>
       <li>
         <h4>
-          <a id="v4.5.whatsnew.irc-listener-fixes">IRC Listener fixes</a>
+          <a id="v4.5.whatsnew.listeners">Listener Updates and Package Separation</a>
         </h4>
-        <p>A person known to me only as "Kevin W." submitted a patch for the IRC listener that did
-          the following:</p>
-        <ul>
-          <li>allowed joining multiple channels</li>
-          <li>recognises nick in any part of message</li>
-          <li>delay implemented (the "delay" IRC listener property)</li>
-          <li>fixed parameters bug with processMessageCommand</li>
-        </ul>
+        <p>All listeners have been moved out to separate package, now distributed independently (so
+          they are not tied to engine releases). The ICQ/AIM listener was completely rewritten using
+          a new library, and a Yahoo listener was introduced.</p>
+        <p>You can find pages describing the <a href="http://aitools.org/icqaimlistener">ICQ/AIM
+            Listener</a>, <a href="http://aitools.org/yahoolistener">Yahoo Listener</a>, and <a
+            href="http://aitools.org/irclistener">IRC Listener</a> on the <a
+            href="http://aitools.org">aitools.org</a> web site.</p>
       </li>
       <li>
         <h4>
@@ -482,28 +559,34 @@ core.setPredicateEmptyDefault("unknown");
             </ul>
           </li>
           <li>
-              <p><b>Schema fix</b>&mdash;The AIML schema had an incorrect definition for the pattern-side
-              <span class="literal">bot</span> element, leading to incorrect error messages when loading
-              AIML using this feature.</p>
+            <p>
+              <b>Schema fix</b>&mdash;The AIML schema had an incorrect definition for the
+              pattern-side <span class="literal">bot</span> element, leading to incorrect error
+              messages when loading AIML using this feature.</p>
           </li>
           <li>
-              <p><b>pattern-side bot elements</b>&mdash;An implementation of the pattern-side <span class="literal">bot</span>
-              element was missing; this was put in place.</p>
+            <p>
+              <b>pattern-side bot elements</b>&mdash;An implementation of the pattern-side <span
+                class="literal">bot</span> element was missing; this was put in place.</p>
           </li>
           <li>
-              <p><b>listener packaging</b>&mdash;All listeners were moved out to separate package, now distributed
-              independently (so they are not tied to engine releases).  The ICQ/AIM listener was completely
-              rewritten using a new library, and a Yahoo listener was introduced.</p>
+            <p>
+              <b>listener packaging</b>&mdash;All listeners were moved out to separate package,
+              now distributed independently (so they are not tied to engine releases). The ICQ/AIM
+              listener was completely rewritten using a new library, and a Yahoo listener was
+              introduced.</p>
           </li>
           <li>
-              <p><b>web server script bug</b>&mdash;The shell script and batch file for starting Program D did
-              not properly set up the class path to be able to start the web server configuration.  This
-              was reported in several bugs.  It has been corrected.</p>
+            <p>
+              <b>web server script bug</b>&mdash;The shell script and batch file for starting
+              Program D did not properly set up the class path to be able to start the web server
+              configuration. This was reported in several bugs. It has been corrected.</p>
           </li>
           <li>
-              <p><b>release checklist</b>&mdash;A release checklist has been added to the build.  This
-              lists the things that will be tested before releasing a build.  Any and all input on
-              making this better will be enormously welcome.</p>
+            <p>
+              <b>release checklist</b>&mdash;A release checklist has been added to the build.
+              This lists the things that will be tested before releasing a build. Any and all input
+              on making this better will be enormously welcome.</p>
           </li>
         </ul>
       </li>
