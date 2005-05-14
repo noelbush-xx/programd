@@ -90,7 +90,7 @@
 		<!--<xs:complexContent mixed="true">
 			<xs:extension base="SimplePatternExpression">-->
 		<xs:choice minOccurs="0" maxOccurs="unbounded">
-			<xs:element name="bot" type="PredicateName"/>
+			<xs:element name="bot" type="BotPredicate"/>
 		</xs:choice>
 		<!--</xs:extension>
 		</xs:complexContent>-->
@@ -200,24 +200,23 @@
 					<xs:attribute name="name" type="PredicateName"/>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="bot">
-				<xs:annotation>
-					<xs:documentation> An element called bot, which may be considered a restricted
-						version of get, is used to tell the AIML interpreter that it should
-						substitute the contents of a "bot predicate". The value of a bot predicate
-						is set at load-time, and cannot be changed at run-time. The AIML interpreter
-						may decide how to set the values of bot predicate at load-time. If the bot
-						predicate has no value defined, the AIML interpreter should substitute an
-						empty string.</xs:documentation>
-				</xs:annotation>
-				<xs:complexType>
-					<xs:attribute name="name" type="PredicateName"/>
-				</xs:complexType>
-			</xs:element>
+			<xs:element name="bot" type="BotPredicate"/>
 			<xs:group ref="shortcutElements"/>
 			<xs:group ref="systemDefinedPredicates"/>
 		</xs:choice>
 	</xs:group>
+	<xs:complexType name="BotPredicate">
+		<xs:annotation>
+			<xs:documentation> An element called bot, which may be considered a restricted
+				version of get, is used to tell the AIML interpreter that it should
+				substitute the contents of a "bot predicate". The value of a bot predicate
+				is set at load-time, and cannot be changed at run-time. The AIML interpreter
+				may decide how to set the values of bot predicate at load-time. If the bot
+				predicate has no value defined, the AIML interpreter should substitute an
+				empty string.</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="name" type="PredicateName" use="required"/>
+	</xs:complexType>
 	<xs:group name="shortcutElements">
 		<xs:annotation>
 			<xs:documentation>Several atomic AIML elements are "short-cuts" for combinations of
