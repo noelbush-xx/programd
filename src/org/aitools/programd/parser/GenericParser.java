@@ -230,8 +230,8 @@ abstract public class GenericParser<P extends Processor>
 
         String elementNamespaceURI = element.getNamespaceURI();
         boolean emitXMLNS = element.isSameNode(element.getOwnerDocument().getDocumentElement())
-                || !elementNamespaceURI.equals(element.getOwnerDocument().getDocumentElement()
-                        .getNamespaceURI());
+                || (elementNamespaceURI != null &&!elementNamespaceURI.equals(element.getOwnerDocument().getDocumentElement()
+                        .getNamespaceURI()));
         if (elementNamespaceURI == null
                 || this.processorRegistry.getNamespaceURI().equals(elementNamespaceURI))
         {
