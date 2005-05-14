@@ -54,7 +54,6 @@ function setup_programd()
   
   # Define the other programd jars, but don't worry if they don't exist.
   PROGRAMD_JETTY_LIB=$LIBS/programd-jetty.jar
-  PROGRAMD_JETTY_LIB=$LIBS/programd-listeners.jar
   PROGRAMD_JS_LIB=$LIBS/programd-rhino.jar
   
   # Set up external jars.
@@ -82,9 +81,9 @@ function setup_other_libs()
   # Set LISTENER_LIBS to the location of your listener jars.
   # No warning is provided if they cannot be found (since they are optional).
   ICQ_AIM_LISTENER_LIBS=$LIBS/icq-aim-listener/icq-aim-listener.jar:$LIBS/icq-aim-listener/daim.jar:$LIBS/icq-aim-listener/log4j-1.2.9.jar
-  IRC_LISTENER_LIBS=
-  YAHOO_LISTENER_LIBS=
-  LISTENER_LIBS=$ICQ_AIM_LISTENER_LIBS:$IRC_LISTENER_LIBS:YAHOO_LISTENER_LIBS
+  IRC_LISTENER_LIBS=$LIBS/irc-listener/irc-listener.jar
+  YAHOO_LISTENER_LIBS=$LIBS/yahoo-listener/yahoo-listener.jar:$LIBS/yahoo-listener/ymsg_network_v0_6.jar
+  LISTENER_LIBS=$ICQ_AIM_LISTENER_LIBS:$IRC_LISTENER_LIBS:$YAHOO_LISTENER_LIBS
 
   # Set SQL_LIB to the location of your database driver.
   # No warning is provided if it cannot be found (since it is optional).

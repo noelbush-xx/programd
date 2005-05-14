@@ -95,7 +95,6 @@ rem Sets up some variables used to run/build Program D.
   :check_other_programd_jars
   rem Define the other programd jars, but don't worry if they don't exist.
   set PROGRAMD_JETTY_LIB=%LIBS%\programd-jetty.jar
-  set PROGRAMD_JETTY_LIB=%LIBS%\programd-listeners.jar
   set PROGRAMD_JS_LIB=%LIBS%\programd-rhino.jar
   
   rem Set up external jars.
@@ -121,9 +120,9 @@ goto end
   
   rem Set LISTENER_LIBS to the location of your listener jars.
   rem No warning is provided if they cannot be found (since they are optional).
-  set ICQ_AIM_LISTENER_LIBS=%LIBS%\icq-aim-listener.jar;%LIBS%\daim.jar
-  set IRC_LISTENER_LIBS=
-  set YAHOO_LISTENER_LIBS=
+  set ICQ_AIM_LISTENER_LIBS=%LIBS%\icq-aim-listener\icq-aim-listener.jar;%LIBS%\icq-aim-listener\daim.jar;%LIBS%\icq-aim-listener\log4j-1.2.9.jar
+  set IRC_LISTENER_LIBS=%LIBS%\irc-listener\irc-listener.jar
+  set YAHOO_LISTENER_LIBS=%LIBS%\yahoo-listener\yahoo-listener.jar;%LIBS%\yahoo-listener\ymsg_network_v0_6.jar
   set LISTENER_LIBS=%ICQ_AIM_LISTENER_LIBS%:%IRC_LISTENER_LIBS%:%YAHOO_LISTENER_LIBS%
   set LISTENER_LIBS=%LIBS%\icq-aim-listener.jar
 
