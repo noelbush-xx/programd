@@ -59,6 +59,13 @@
                                             comma-separated keywords.</xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
+                                <xs:element name="ExpectedMatch" type="xs:string">
+                                    <xs:annotation>
+                                        <xs:documentation>An ExpectedMatch checker tells us if a
+                                            response matches a given regular
+                                        expression.</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
                                 <xs:element name="Length" type="xs:integer">
                                     <xs:annotation>
                                         <xs:documentation>A Length checker tells us if a response is
