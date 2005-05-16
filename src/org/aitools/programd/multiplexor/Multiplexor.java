@@ -537,6 +537,14 @@ abstract public class Multiplexor
             // Set response to empty string.
             return EMPTY_STRING;
         }
+        catch (DeveloperError e)
+        {
+            // Log the error message.
+            Logger.getLogger("programd").log(Level.SEVERE, e.getCause().getMessage());
+
+            // Set response to empty string.
+            return EMPTY_STRING;
+        }
 
         // Record activation, if targeting is in use.
         // Needs review in light of multi-bot update
