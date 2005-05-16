@@ -12,7 +12,7 @@ package org.aitools.programd;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-05-10T00:54:12.668-04:00
+ * Automatically generated from properties file, 2005-05-14T19:39:40.021-04:00
  */
 public class CoreSettings extends Settings
 {
@@ -81,6 +81,11 @@ public class CoreSettings extends Settings
      * How many categories will be loaded before a message is displayed?
      */
     private int categoryLoadNotifyInterval;
+        
+    /**
+     * Whether or not to print a message as each file is loaded.
+     */
+    private boolean loadNotifyEachFile;
         
     /**
      * The input to match if an infinite loop is found.
@@ -338,6 +343,8 @@ public class CoreSettings extends Settings
             setCategoryLoadNotifyInterval(5000);
         }
 
+        setLoadNotifyEachFile(Boolean.valueOf(this.properties.getProperty("programd.load.notify-each-file", "true")).booleanValue());
+
         setInfiniteLoopInput(this.properties.getProperty("programd.infinite-loop-input", "INFINITE LOOP"));
 
         setClientNamePredicate(this.properties.getProperty("programd.client-name-predicate", "name"));
@@ -518,6 +525,14 @@ public class CoreSettings extends Settings
     public int getCategoryLoadNotifyInterval()
     {
         return this.categoryLoadNotifyInterval;
+    }
+
+    /**
+     * @return the value of loadNotifyEachFile
+     */
+    public boolean loadNotifyEachFile()
+    {
+        return this.loadNotifyEachFile;
     }
 
     /**
@@ -886,6 +901,14 @@ public class CoreSettings extends Settings
     public void setCategoryLoadNotifyInterval(int categoryLoadNotifyIntervalToSet)
     {
         this.categoryLoadNotifyInterval = categoryLoadNotifyIntervalToSet;
+    }
+
+    /**
+     * @param loadNotifyEachFileToSet   the value to which to set loadNotifyEachFile
+     */
+    public void setLoadNotifyEachFile(boolean loadNotifyEachFileToSet)
+    {
+        this.loadNotifyEachFile = loadNotifyEachFileToSet;
     }
 
     /**

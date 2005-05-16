@@ -78,6 +78,9 @@ GENERAL NOTES
          * Only meaningful if programd.enable-console == true.-->
     <entry key="programd.category-load-notify-interval">5000</entry>
     
+    <!-- Whether or not to print a message as each file is loaded. [boolean: true]-->
+    <entry key="programd.load.notify-each-file">true</entry>
+    
     <!--The input to match if an infinite loop is found. [String: INFINITE LOOP]-->
     <entry key="programd.infinite-loop-input">INFINITE LOOP</entry>
     
@@ -91,7 +94,7 @@ GENERAL NOTES
     <entry key="programd.record-match-trace">true</entry>
     
     <!-- Print stack trace on uncaught exceptions? [boolean: false]-->
-    <entry key="programd.on-uncaught-exceptions.print-stack-trace">false</entry>
+    <entry key="programd.on-uncaught-exceptions.print-stack-trace">true</entry>
     
     <!--Allow use of <system> element? [boolean: false]-->
     <entry key="programd.os-access-allowed">false</entry>
