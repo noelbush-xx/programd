@@ -11,6 +11,21 @@ import org.w3c.dom.Element;
  */
 abstract public class Checker
 {
+    /** The string &quot;{@value}&quot;. */
+    public static String TAG_EXPECTED_ANSWER = "ExpectedAnswer";
+
+    /** The string &quot;{@value}&quot;. */
+    public static String TAG_EXPECTED_KEYWORDS = "ExpectedKeywords";
+
+    /** The string &quot;{@value}&quot;. */
+    public static String TAG_EXPECTED_LENGTH = "ExpectedLength";
+
+    /** The string &quot;{@value}&quot;. */
+    public static String TAG_EXPECTED_MATCH = "ExpectedMatch";
+
+    /** The string &quot;{@value}&quot;. */
+    public static String TAG_ALERT_KEYWORDS = "AlertKeywords";
+
     /**
      * Determines whether the given input passes the Checker's test.
      * 
@@ -31,21 +46,25 @@ abstract public class Checker
         String tagName = element.getTagName();
 
         // Create the appropriate type of Checker.
-        if (tagName.equals(TestCase.TAG_ALERT_KEYWORDS))
+        if (tagName.equals(TAG_ALERT_KEYWORDS))
         {
             return new AlertKeywordChecker(element.getTextContent());
         }
-        else if (tagName.equals(TestCase.TAG_EXPECTED_ANSWER))
+        else if (tagName.equals(TAG_EXPECTED_ANSWER))
         {
             return new AnswerChecker(element);
         }
-        else if (tagName.equals(TestCase.TAG_EXPECTED_KEYWORDS))
+        else if (tagName.equals(TAG_EXPECTED_KEYWORDS))
         {
             return new ExpectedKeywordChecker(element.getTextContent());
         }
-        else if (tagName.equals(TestCase.TAG_EXPECTED_LENGTH))
+        else if (tagName.equals(TAG_EXPECTED_LENGTH))
         {
             return new LengthChecker(element.getTextContent());
+        }
+        else if (tagName.equals(TAG_EXPECTED_MATCH))
+        {
+            return new MatchChecker(element.getTextContent());
         }
         else
         {
