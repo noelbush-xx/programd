@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javax.xml.XMLConstants;
@@ -413,11 +415,11 @@ public class XMLKit
         }
         catch (IOException e)
         {
-            throw new DeveloperError("I/O Error processing XML fragment.", e);
+            throw new DeveloperError("I/O Error processing XML fragment: \"" + text + "\"", e);
         }
         catch (SAXException e)
         {
-            throw new DeveloperError("SAX Exception processing XML fragment.", e);
+            throw new DeveloperError("SAX Exception processing XML fragment: \"" + text + "\"", e);
         }
         return result;
     }
@@ -436,7 +438,16 @@ public class XMLKit
      */
     public static String renderXML(String content, boolean includeNamespaceAttribute, boolean indent)
     {
-        Document document = parseAsDocumentFragment(content);
+        Document document;
+        try
+        {
+            document = parseAsDocumentFragment(content);
+        }
+        catch (DeveloperError e)
+        {
+            Logger.getLogger("programd").log(Level.WARNING, "XML could not be rendered; returning original string: " + content);
+            return content;
+        }
         StringBuffer result = new StringBuffer();
         renderXML(document.getDocumentElement(), 0, true, result, includeNamespaceAttribute, indent);
         return filterWhitespace(result.toString());
