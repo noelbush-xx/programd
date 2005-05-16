@@ -57,7 +57,7 @@ public class Core extends Thread
             "of the License, or (at your option) any later version." };
 
     /** Version of this package. */
-    public static final String VERSION = "4.5";
+    public static final String VERSION = "4.5.1";
 
     /** Build identifier. */
     public static final String BUILD = "";
@@ -363,6 +363,16 @@ public class Core extends Thread
 
             // Request garbage collection.
             System.gc();
+
+            this.logger
+            .log(
+                    Level.INFO,
+                    String
+                            .format(
+                                    "%.1f MB of memory free out of %.1f MB total in JVM.  (Configured maximum: %.1f MB.)",
+                                    (runtime.freeMemory() / 1048576.0),
+                                    (runtime.totalMemory() / 1048576.0),
+                                    (runtime.maxMemory() / 1048576.0)));
 
             // Start the heart, if enabled.
             if (this.settings.heartEnabled())
