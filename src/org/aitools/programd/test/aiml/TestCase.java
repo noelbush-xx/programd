@@ -26,18 +26,6 @@ public class TestCase
     /** The string &quot;{@value}&quot;. */
     public static String TAG_INPUT = "Input";
 
-    /** The string &quot;{@value}&quot;. */
-    public static String TAG_EXPECTED_ANSWER = "ExpectedAnswer";
-
-    /** The string &quot;{@value}&quot;. */
-    public static String TAG_EXPECTED_KEYWORDS = "ExpectedKeywords";
-
-    /** The string &quot;{@value}&quot;. */
-    public static String TAG_EXPECTED_LENGTH = "ExpectedLength";
-
-    /** The string &quot;{@value}&quot;. */
-    public static String TAG_ALERT_KEYWORDS = "AlertKeywords";
-
     /** The name of this test case. */
     private String name;
 
