@@ -29,6 +29,7 @@ import org.aitools.programd.parser.AIMLReader;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.processor.aiml.RandomProcessor;
+import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.NoMatchException;
 import org.aitools.programd.util.StringKit;
@@ -147,6 +148,9 @@ public class Graphmaster
 
     /** How frequently to provide a category load count. */
     private int categoryLoadNotifyInterval;
+    
+    /** Whether or not to print a message as each file is loaded. */
+    private boolean notifyEachFile;
 
     /** The total number of categories read. */
     private int totalCategories = 0;
@@ -180,6 +184,7 @@ public class Graphmaster
         this.noteEachMerge = this.coreSettings.mergeNoteEach();
         this.responseTimeout = this.coreSettings.getResponseTimeout();
         this.categoryLoadNotifyInterval = this.coreSettings.getCategoryLoadNotifyInterval();
+        this.notifyEachFile = this.coreSettings.loadNotifyEachFile();
     }
 
     /**
@@ -849,8 +854,13 @@ public class Graphmaster
 
         try
         {
+            if (this.notifyEachFile)
+            {
+                this.logger.log(Level.INFO, "Loading " + url.toString() + "....");
+            }
             this.parser.parse(url.toString(), new AIMLReader(this, path, botid, this.core.getBots()
                     .getBot(botid), this.coreSettings.getAimlSchemaNamespaceUri()));
+            System.gc();
             // this.parser.reset();
         }
         catch (IOException e)
@@ -940,13 +950,34 @@ public class Graphmaster
      */
     public String combineTemplates(String existingTemplate, String newTemplate)
     {
-        Document existingDoc = XMLKit.parseAsDocumentFragment(existingTemplate);
-        Element existingRoot = existingDoc.getDocumentElement();
-        NodeList existingContent = existingRoot.getChildNodes();
+        Document existingDoc;
+        Element existingRoot;
+        NodeList existingContent;
 
-        Document newDoc = XMLKit.parseAsDocumentFragment(newTemplate);
-        NodeList newContent = newDoc.getDocumentElement().getChildNodes();
+        Document newDoc;
+        NodeList newContent;
 
+        try
+        {
+            existingDoc = XMLKit.parseAsDocumentFragment(existingTemplate);
+            existingRoot = existingDoc.getDocumentElement();
+            existingContent = existingRoot.getChildNodes();
+    
+            newDoc = XMLKit.parseAsDocumentFragment(newTemplate);
+            newContent = newDoc.getDocumentElement().getChildNodes();
+        }
+        catch (DeveloperError e)
+        {
+            synchronized (this.logger)
+            {
+                this.logger.log(Level.WARNING, "Problem with existing or new template when performing merge combine.");
+                this.logger.log(Level.WARNING, "existing template: " + existingTemplate);
+                this.logger.log(Level.WARNING, "new template: " + newTemplate);
+                this.logger.log(Level.WARNING, "Existing template will be retained as-is.");
+            }
+            return existingTemplate;
+        }
+            
         /*
          * If the existing template has a random element as its root, we need to
          * check whether this was the result of a previous combine.
@@ -1009,11 +1040,31 @@ public class Graphmaster
      */
     public String appendTemplate(String existingTemplate, String newTemplate)
     {
-        Document existingDoc = XMLKit.parseAsDocumentFragment(existingTemplate);
-        Element existingRoot = existingDoc.getDocumentElement();
+        Document existingDoc;
+        Element existingRoot;
 
-        Document newDoc = XMLKit.parseAsDocumentFragment(newTemplate);
-        NodeList newContent = newDoc.getDocumentElement().getChildNodes();
+        Document newDoc;
+        NodeList newContent;
+
+        try
+        {
+            existingDoc = XMLKit.parseAsDocumentFragment(existingTemplate);
+            existingRoot = existingDoc.getDocumentElement();
+
+            newDoc = XMLKit.parseAsDocumentFragment(newTemplate);
+            newContent = newDoc.getDocumentElement().getChildNodes();
+        }
+        catch (DeveloperError e)
+        {
+            synchronized (this.logger)
+            {
+                this.logger.log(Level.WARNING, "Problem with existing or new template when performing merge append.");
+                this.logger.log(Level.WARNING, "existing template: " + existingTemplate);
+                this.logger.log(Level.WARNING, "new template: " + newTemplate);
+                this.logger.log(Level.WARNING, "Existing template will be retained as-is.");
+            }
+            return existingTemplate;
+        }
 
         // Append whatever text is configured to be inserted between the
         // templates.
