@@ -75,7 +75,11 @@ public class FileManager
                 throw new DeveloperError("Could not create canonical file for \"" + file.getAbsolutePath() + "\".", e);
             }
         }
-        return new File(rootPath.getPath() + path);
+        if (path.indexOf('/') != 0)
+        {
+            return new File(rootPath.getPath() + path);
+        }
+        return file;
     }
 
     /**
@@ -240,7 +244,7 @@ public class FileManager
         {
             file.createNewFile();
         }
-        catch (IOException e0)
+        catch (IOException e)
         {
             // This may mean that some necessary directories don't exist.
             File directory = file.getParentFile();
@@ -252,7 +256,7 @@ public class FileManager
                     {
                         file.createNewFile();
                     }
-                    catch (IOException e)
+                    catch (IOException ee)
                     {
                         throw new UserError("Could not create " + description + ".", new CouldNotCreateFileException(file.getAbsolutePath()));
                     }
