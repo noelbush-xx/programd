@@ -30,8 +30,11 @@ public class TestSuite
     /** The Logger to use. */
     private Logger logger;
 
+    /** The test auccesses accumulated by this suite. */
+    private LinkedList<TestResult> successes = new LinkedList<TestResult>();
+
     /** The test failures accumulated by this suite. */
-    private LinkedList<TestFailure> failures = new LinkedList<TestFailure>();
+    private LinkedList<TestResult> failures = new LinkedList<TestResult>();
 
     /** The userid to use for the tester. */
     private static final String TESTER_ID = "ProgramD-Tester";
@@ -118,20 +121,38 @@ public class TestSuite
                 registerFailure(this.name, testCase.getName(), testCase.getInput(), testCase
                         .getLastResponse());
             }
+            else
+            {
+                registerSuccess(this.name, testCase.getName(), testCase.getInput(), testCase
+                        .getLastResponse());
+            }
             suiteSuccessful &= caseSuccessful;
         }
         return suiteSuccessful;
     }
 
+    private void registerSuccess(String suite, String tcase, String pattern, String response)
+    {
+        this.successes.add(new TestResult(suite, tcase, pattern, response));
+    }
+
     private void registerFailure(String suite, String tcase, String pattern, String response)
     {
-        this.failures.add(new TestFailure(suite, tcase, pattern, response));
+        this.failures.add(new TestResult(suite, tcase, pattern, response));
+    }
+
+    /**
+     * @return the successes accumulated by this suite
+     */
+    public LinkedList<TestResult> getSuccesses()
+    {
+        return this.successes;
     }
 
     /**
      * @return the failures accumulated by this suite
      */
-    public LinkedList<TestFailure> getFailures()
+    public LinkedList<TestResult> getFailures()
     {
         return this.failures;
     }
