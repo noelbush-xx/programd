@@ -52,7 +52,7 @@ public class TestReport
      */
     public void logSummary(Logger logger)
     {
-        logger.log(Level.INFO, this.successes.size() + "/" + this.successes.size() + this.failures.size()
+        logger.log(Level.INFO, this.successes.size() + "/" + (this.successes.size() + this.failures.size())
                 + " tests succeeded.");
     }
 
