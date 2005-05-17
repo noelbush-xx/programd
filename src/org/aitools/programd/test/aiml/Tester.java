@@ -3,6 +3,8 @@ package org.aitools.programd.test.aiml;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.logging.Level;
@@ -26,6 +28,7 @@ import org.aitools.programd.util.XMLKit;
  * A Tester loads one or more test suites and runs them, logging output.
  * 
  * @author Albertas Mickensas
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class Tester
 {
@@ -38,8 +41,11 @@ public class Tester
     /** The test suites. */
     private HashMap<String, TestSuite> suites = new HashMap<String, TestSuite>();
 
+    /** The test successes. */
+    private LinkedList<TestResult> successes = new LinkedList<TestResult>();
+
     /** The test failures. */
-    private LinkedList<TestFailure> failures = new LinkedList<TestFailure>();
+    private LinkedList<TestResult> failures = new LinkedList<TestResult>();
 
     /** The Multiplexor that this Tester will use. */
     private Multiplexor multiplexor;
@@ -49,6 +55,10 @@ public class Tester
 
     /** The path to the directory that contains test suites. */
     private String directory;
+
+    /** The timestamp format to use for reports. */
+    private static final SimpleDateFormat timestampFormat = new SimpleDateFormat(
+            "yyyy-MM-dd-H-mm-ss");
 
     /**
      * Creates a new Tester which will use the given Core to find out its
@@ -102,6 +112,7 @@ public class Tester
         {
             return;
         }
+        this.successes.clear();
         this.failures.clear();
         if (suite == null)
         {
@@ -111,19 +122,10 @@ public class Tester
         {
             runOneSuite(botid, suite, runCount);
         }
-        if (this.failures.size() > 0)
-        {
-            this.logger.log(Level.WARNING, this.failures.size() + " test case failure(s).");
-            for (TestFailure failure : this.failures)
-            {
-                this.logger.log(Level.WARNING, failure.toString());
-            }
-        }
-        else
-        {
-            this.logger.log(Level.INFO, "All tests passed.");
-        }
-
+        TestReport report = new TestReport(this.successes, this.failures);
+        report.logSummary(this.logger);
+        report.write(this.directory + File.separator + "reports" + File.separator + "test-report-"
+                + timestampFormat.format(new Date()) + ".xml");
     }
 
     private void runOneSuite(String botid, String suiteName, int runCount)
@@ -153,10 +155,9 @@ public class Tester
 
     private void runSuite(String botId, TestSuite suite)
     {
-        if (!suite.run(botId))
-        {
-            this.failures.addAll(suite.getFailures());
-        }
+        suite.run(botId);
+        this.failures.addAll(suite.getFailures());
+        this.successes.addAll(suite.getSuccesses());
     }
 
     /**
