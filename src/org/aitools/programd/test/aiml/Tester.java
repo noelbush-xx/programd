@@ -9,20 +9,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.parsers.DocumentBuilder;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.multiplexor.Multiplexor;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.URITools;
 import org.aitools.programd.util.UserError;
-import org.aitools.programd.util.XMLKit;
 
 /**
  * A Tester loads one or more test suites and runs them, logging output.
@@ -32,12 +24,6 @@ import org.aitools.programd.util.XMLKit;
  */
 public class Tester
 {
-    /** The test cases namespace URI. */
-    public static final String TESTCASE_NAMESPACE_URI = "http://aitools.org/programd/4.5/test-cases";
-
-    /** The test cases schema location (local). */
-    private static final String SCHEMA_LOCATION = "resources/schema/test-cases.xsd";
-
     /** The test suites. */
     private HashMap<String, TestSuite> suites = new HashMap<String, TestSuite>();
 
@@ -96,7 +82,8 @@ public class Tester
      */
     public void run(String botid, String suite, int runCount)
     {
-        loadTests();
+        this.suites.clear();
+        this.suites = loadTests(this.directory, this.multiplexor, this.logger);
         runTests(botid, suite, runCount);
     }
 
@@ -126,6 +113,8 @@ public class Tester
         report.logSummary(this.logger);
         report.write(this.directory + File.separator + "reports" + File.separator + "test-report-"
                 + timestampFormat.format(new Date()) + ".xml");
+        // Good time to request garbage collection.
+        System.gc();
     }
 
     private void runOneSuite(String botid, String suiteName, int runCount)
@@ -161,75 +150,43 @@ public class Tester
     }
 
     /**
-     * Loads all test suites from the tests directory.
+     * Loads all test suites from a given directory.
+     * @param directory the directory from which to load the tests
+     * @param multiplexorToUse the Multiplexor to assign to the suites
+     * @param logger the logger to use for tracking progress
      * 
      * @param testFilePath
+     * @return the map of suite names to suites
      */
-    private void loadTests()
+    private static HashMap<String, TestSuite> loadTests(String directory, Multiplexor multiplexorToUse, Logger logger)
     {
-        this.suites.clear();
+        HashMap<String, TestSuite> suites = new HashMap<String, TestSuite>();
         String[] fileList;
         try
         {
-            fileList = FileManager.glob("*.xml", this.directory);
+            fileList = FileManager.glob("*.xml", directory);
         }
         catch (FileNotFoundException e)
         {
-            throw new UserError("Could not find files matching \"" + this.directory
+            throw new UserError("Could not find files matching \"" + directory
                     + File.separator + "*.xml", e);
         }
         int fileCount = fileList.length;
         if (null != fileList && fileCount > 0)
         {
-            DocumentBuilder builder = XMLKit.getDocumentBuilder(SCHEMA_LOCATION, "test cases");
             for (int index = 0; index < fileCount; index++)
             {
                 String path = fileList[index];
-                this.logger.log(Level.INFO, "Loading tests from \"" + path + "\".");
-                try
-                {
-                    loadTestSuite(builder.parse(URITools.createValidURL(path).toExternalForm()));
-                }
-                catch (IOException e)
-                {
-                    throw new DeveloperError("IO exception trying to parse test suite file.", e);
-                }
-                catch (SAXException e)
-                {
-                    throw new UserError("SAX exception trying to parse test suite file: "
-                            + e.getMessage(), e);
-                }
+                logger.log(Level.INFO, "Loading tests from \"" + path + "\".");
+                TestSuite suite = TestSuite.load(path, multiplexorToUse);
+                suites.put(suite.getName(), suite);
             }
         }
         else
         {
-            this.logger.log(Level.WARNING, "No test files found in path \"" + this.directory
+            logger.log(Level.WARNING, "No test files found in path \"" + directory
                     + "\".");
         }
-    }
-
-    /**
-     * Creates a TestSuite object from an XML document, presumed to be a test
-     * suite
-     * 
-     * @param doc the document from which to create the test suite
-     */
-    private void loadTestSuite(Document doc)
-    {
-        // We assume that the document has been validated!
-        Element testSuiteElement = doc.getDocumentElement();
-        TestSuite suite = new TestSuite(testSuiteElement.getAttribute("name"), testSuiteElement
-                .getAttribute("clearInput"), this.multiplexor, this.logger);
-        this.suites.put(testSuiteElement.getAttribute("name"), suite);
-
-        NodeList testCases = doc.getElementsByTagNameNS(TESTCASE_NAMESPACE_URI,
-                TestCase.TAG_TESTCASE);
-        int testCaseCount = testCases.getLength();
-        for (int index = 0; index < testCaseCount; index++)
-        {
-            Element testCaseElement = (Element) testCases.item(index);
-            TestCase testCase = new TestCase(testCaseElement, index);
-            suite.addTestCase(testCase);
-        }
+        return suites;
     }
 }
