@@ -95,7 +95,7 @@ public class StringKit
         int stringCount = strings.length;
         if (stringCount == 0)
         {
-            return strings[0];
+            return EMPTY_STRING;
         }
         StringBuffer result = new StringBuffer();
         for (int index = 0; index < stringCount - 1; index++)
