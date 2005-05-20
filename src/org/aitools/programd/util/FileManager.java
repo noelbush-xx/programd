@@ -75,7 +75,7 @@ public class FileManager
                 throw new DeveloperError("Could not create canonical file for \"" + file.getAbsolutePath() + "\".", e);
             }
         }
-        if (path.indexOf(File.separator) != 0)
+        if (path.indexOf(File.separator) != 0 && rootPath != null)
         {
             return new File(rootPath.getPath() + path);
         }
