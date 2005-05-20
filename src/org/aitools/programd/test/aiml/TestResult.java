@@ -39,6 +39,19 @@ public class TestResult
     }
     
     /**
+     * Creates an object that represents the test result,
+     * with no suite name or test case name attached.
+     * 
+     * @param in the input
+     * @param out the response
+     */
+    public TestResult(String in, String out)
+    {
+        this.input = in;
+        this.response = out;
+    }
+    
+    /**
      * @return the input
      */
     public String getInput()
