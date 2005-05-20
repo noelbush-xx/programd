@@ -17,12 +17,10 @@ import java.io.StringReader;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -93,11 +91,19 @@ public class XMLKit
     protected static final String WHITESPACE_REGEX = "\\s+";
 
     /**
-     * Mapping between XML chars prohibited in some contexts and their escaped
-     * equivalents.
+     * XML chars prohibited in some contexts and their escaped equivalents.
      */
-    private static final String[][] XML_ESCAPES = { { "&amp;", "&" }, { "&lt;", "<" },
-            { "&gt;", ">" }, { "&apos;", "'" }, { "&quot;", "\"" } };
+    private static final String AMPERSAND = "&";
+    
+    private static final String XML_AMPERSAND = "&amp;";
+    
+    private static final String LESS_THAN = "<";
+    
+    private static final String XML_LESS_THAN = "&lt;";
+    
+    private static final String GREATER_THAN = ">";
+    
+    private static final String XML_GREATER_THAN = "&gt;";
 
     /** The start of an XML processing instruction. */
     private static final String XML_PI_START = "<?xml version=\"1.0\"";
@@ -125,12 +131,6 @@ public class XMLKit
      * (&apos;{@value}&apos;)
      */
     private static final String END_P = "</p>";
-
-    /** The actual Map used to store prohibited-to-escaped mappings. */
-    private static HashMap<Pattern, String> xmlProhibited;
-
-    /** The actual Map used to store escaped-to-prohibited mappings. */
-    private static HashMap<Pattern, String> xmlEscapes;
 
     /** A DocumentBuilder for producing new documents. */
     protected static DocumentBuilder utilBuilder;
@@ -173,21 +173,7 @@ public class XMLKit
      */
     public static String unescapeXMLChars(String input)
     {
-        /*
-         * This one-time-only initialization of xmlEscaped lets us avoid
-         * creating needless strings by repeated application of the simpler
-         * replace() method.
-         */
-        if (xmlEscapes == null)
-        {
-            xmlEscapes = new HashMap<Pattern, String>(XML_ESCAPES.length);
-            for (int index = XML_ESCAPES.length; --index >= 0;)
-            {
-                xmlEscapes.put(Pattern.compile(XML_ESCAPES[index][0], Pattern.LITERAL),
-                        XML_ESCAPES[index][1]);
-            }
-        }
-        return Substituter.applySubstitutions(xmlEscapes, input);
+        return input.replace(XML_LESS_THAN, LESS_THAN).replace(XML_GREATER_THAN, GREATER_THAN).replace(XML_AMPERSAND, AMPERSAND);
     }
 
     /**
@@ -210,21 +196,7 @@ public class XMLKit
      */
     public static String escapeXMLChars(String input)
     {
-        /*
-         * This one-time-only initialization of xmlProhibited lets us avoid
-         * creating needless strings by repeated application of the simpler
-         * replace() method.
-         */
-        if (xmlProhibited == null)
-        {
-            xmlProhibited = new HashMap<Pattern, String>(XML_ESCAPES.length);
-            for (int index = XML_ESCAPES.length; --index >= 0;)
-            {
-                xmlProhibited.put(Pattern.compile(XML_ESCAPES[index][1], Pattern.LITERAL),
-                        XML_ESCAPES[index][0]);
-            }
-        }
-        return Substituter.applySubstitutions(xmlProhibited, input);
+        return input.replace(AMPERSAND, XML_AMPERSAND).replace(LESS_THAN, XML_LESS_THAN).replace(GREATER_THAN, XML_GREATER_THAN);
     }
 
     /**
