@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
+import org.aitools.programd.util.XMLKit;
 
 /**
  * Contains a list of test successes and failures, and can generate a report
@@ -74,10 +75,10 @@ public class TestReport
             {
                 writer.write("    <Success>\n");
                 writer.write("      <Input>");
-                writer.write(success.getInput());
+                writer.write(XMLKit.escapeXMLChars(success.getInput()));
                 writer.write("</Input>\n");
                 writer.write("      <Response>");
-                writer.write(success.getResponse());
+                writer.write(XMLKit.escapeXMLChars(success.getResponse()));
                 writer.write("</Response>\n");
                 writer.write("    </Success>\n");
                 writer.flush();
@@ -88,10 +89,10 @@ public class TestReport
             {
                 writer.write("    <Failure>\n");
                 writer.write("      <Input>");
-                writer.write(failure.getInput());
+                writer.write(XMLKit.escapeXMLChars(failure.getInput()));
                 writer.write("</Input>\n");
                 writer.write("      <Response>");
-                writer.write(failure.getResponse());
+                writer.write(XMLKit.escapeXMLChars(failure.getResponse()));
                 writer.write("</Response>\n");
                 writer.write("    </Failure>\n");
                 writer.flush();
