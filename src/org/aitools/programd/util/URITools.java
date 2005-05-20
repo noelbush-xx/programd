@@ -10,10 +10,13 @@
 package org.aitools.programd.util;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <code>URITools</code> contains helper methods for dealing with URIs and
@@ -259,5 +262,40 @@ public class URITools
             }
         }
         return url;
+    }
+    
+    /**
+     * Take a path spec that may, or may not, use glob-style wildcards to
+     * indicate multiple files, and returns a list of URLs pointing to those
+     * files.
+     * 
+     * @param pathspec the path specification that may point to one or many files
+     * @return a list of URLs
+     */
+    public static List<URL> getURLs(String pathspec)
+    {
+        ArrayList<URL> result = new ArrayList<URL>();
+        if (pathspec.indexOf('*') != -1 || pathspec.indexOf('?') != -1)
+        {
+            String[] files;
+            try
+            {
+                files = FileManager.glob(pathspec);
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new DeveloperError("File not found when processing glob!", e);
+            }
+            int fileCount = files.length;
+            for (int index = 0; index < fileCount; index++)
+            {
+                result.add(createValidURL(files[index]));
+            }
+        }
+        else
+        {
+            result.add(createValidURL(pathspec));
+        }
+        return result;
     }
 }
