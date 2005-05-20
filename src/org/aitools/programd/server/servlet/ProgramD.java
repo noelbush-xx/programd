@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.aitools.programd.Core;
+import org.aitools.programd.responder.NoResponderHandlesThisException;
 import org.aitools.programd.server.ServletRequestTransactionEnvelope;
 import org.aitools.programd.server.ServletRequestResponderManagerRegistry;
 
@@ -80,6 +81,10 @@ public class ProgramD extends HttpServlet
         try
         {
             new ServletRequestTransactionEnvelope(request, response, this.core, this.responderRegistry).process();
+        }
+        catch (NoResponderHandlesThisException e)
+        {
+            // Do nothing -- just ignore!
         }
         catch (Throwable e)
         {
