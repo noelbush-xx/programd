@@ -1,11 +1,22 @@
 package org.aitools.programd.test.aiml;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.parsers.DocumentBuilder;
+
 import org.aitools.programd.multiplexor.Multiplexor;
+import org.aitools.programd.util.DeveloperError;
+import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.UserError;
+import org.aitools.programd.util.XMLKit;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * A TestSuite comprises a set of TestCases.
@@ -13,8 +24,14 @@ import org.aitools.programd.multiplexor.Multiplexor;
  * @author Albertas Mickensas
  * @since 4.5
  */
-public class TestSuite
+public class TestSuite implements Iterable<TestCase>
 {
+    /** The test cases namespace URI. */
+    public static final String TESTCASE_NAMESPACE_URI = "http://aitools.org/programd/4.5/test-cases";
+
+    /** The test cases schema location (local). */
+    private static final String SCHEMA_LOCATION = "resources/schema/test-cases.xsd";
+
     /** The test cases in this suite. */
     ArrayList<TestCase> testCases = new ArrayList<TestCase>();
 
@@ -45,15 +62,12 @@ public class TestSuite
      * @param nameToUse the name to give the test suite
      * @param clearInputToUse the clearInput for the test suite
      * @param multiplexorToUse the multiplexor to use
-     * @param loggerToUse the logger to use
      */
-    public TestSuite(String nameToUse, String clearInputToUse, Multiplexor multiplexorToUse,
-            Logger loggerToUse)
+    public TestSuite(String nameToUse, String clearInputToUse, Multiplexor multiplexorToUse)
     {
         this.name = nameToUse;
         this.clearInput = clearInputToUse;
         this.multiplexor = multiplexorToUse;
-        this.logger = loggerToUse;
     }
 
     /**
@@ -61,14 +75,30 @@ public class TestSuite
      * 
      * @param nameToUse the name to give the test suite
      * @param multiplexorToUse the multiplexor to use
-     * @param loggerToUse the logger to use
      */
-    public TestSuite(String nameToUse, Multiplexor multiplexorToUse,
-            Logger loggerToUse)
+    public TestSuite(String nameToUse, Multiplexor multiplexorToUse)
     {
         this.name = nameToUse;
         this.multiplexor = multiplexorToUse;
-        this.logger = loggerToUse;
+    }
+
+    /**
+     * Creates a new TestSuite (with no clearInput or Multiplexor(!)).
+     * 
+     * @param nameToUse the name to give the test suite
+     */
+    private TestSuite(String nameToUse)
+    {
+        this.name = nameToUse;
+    }
+
+    /**
+     * @return an iterator over this suite's test cases
+     * @see java.lang.Iterable#iterator()
+     */
+    public Iterator<TestCase> iterator()
+    {
+        return this.testCases.iterator();
     }
 
     /**
@@ -112,7 +142,6 @@ public class TestSuite
 
         this.failures.clear();
         boolean suiteSuccessful = true;
-        this.logger.log(Level.INFO, "Running TestSuite \"" + this.name + "\".");
         for (TestCase testCase : this.testCases)
         {
             boolean caseSuccessful = testCase.run(this.multiplexor, TESTER_ID, botid);
@@ -155,5 +184,56 @@ public class TestSuite
     public LinkedList<TestResult> getFailures()
     {
         return this.failures;
+    }
+
+    /**
+     * Loads a test suite from the given path.
+     * 
+     * @param path the path from which to load the test suite
+     * @return the loaded test suite
+     */
+    public static TestSuite load(String path)
+    {
+        return load(path, null);
+    }
+
+    /**
+     * Loads a test suite from the given path.
+     * 
+     * @param path the path from which to load the test suite
+     * @param multiplexor the multiplexor to use
+     * @return the loaded test suite
+     */
+    public static TestSuite load(String path, Multiplexor multiplexor)
+    {
+        DocumentBuilder builder = XMLKit.getDocumentBuilder(SCHEMA_LOCATION, "test cases");
+        Document doc;
+        try
+        {
+            doc = builder.parse(URITools.createValidURL(path).toExternalForm());
+        }
+        catch (IOException e)
+        {
+            throw new DeveloperError("IO exception trying to parse test suite file.", e);
+        }
+        catch (SAXException e)
+        {
+            throw new UserError("SAX exception trying to parse test suite file: "
+                    + e.getMessage(), e);
+        }
+        Element testSuiteElement = doc.getDocumentElement();
+        TestSuite suite = new TestSuite(testSuiteElement.getAttribute("name"), testSuiteElement
+                .getAttribute("clearInput"), multiplexor);
+    
+        NodeList testCases = doc.getElementsByTagNameNS(TESTCASE_NAMESPACE_URI,
+                TestCase.TAG_TESTCASE);
+        int testCaseCount = testCases.getLength();
+        for (int index = 0; index < testCaseCount; index++)
+        {
+            Element testCaseElement = (Element) testCases.item(index);
+            TestCase testCase = new TestCase(testCaseElement, index);
+            suite.addTestCase(testCase);
+        }
+        return suite;
     }
 }
