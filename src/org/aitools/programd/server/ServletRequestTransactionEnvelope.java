@@ -200,6 +200,11 @@ public class ServletRequestTransactionEnvelope
         {
             this.botid = this.core.getBots().getABot().getID();
         }
+        
+        if (this.botid == null)
+        {
+            return;
+        }
 
         // Look for a named template.
         this.templateName = this.serviceRequest.getParameter(TEMPLATE);
