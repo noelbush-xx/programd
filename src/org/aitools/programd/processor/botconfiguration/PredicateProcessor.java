@@ -46,7 +46,7 @@ public class PredicateProcessor extends BotConfigurationElementProcessor
      * @see BotConfigurationElementProcessor#process(Element,
      *      BotsConfigurationFileParser)
      */
-    public void process(Element element, BotsConfigurationFileParser parser)
+    public String process(Element element, BotsConfigurationFileParser parser)
     {
         String name = element.getAttribute(NAME);
         String defaultValue = element.getAttribute(DEFAULT);
@@ -61,5 +61,6 @@ public class PredicateProcessor extends BotConfigurationElementProcessor
             returnNameWhenSet = true;
         }
         parser.getCurrentBot().addPredicateInfo(name, defaultValue, returnNameWhenSet);
+        return EMPTY_STRING;
     }
 }

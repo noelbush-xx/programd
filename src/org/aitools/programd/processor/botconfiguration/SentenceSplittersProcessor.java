@@ -46,13 +46,13 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
      * @see BotConfigurationElementProcessor#process(Element,
      *      BotsConfigurationFileParser)
      */
-    public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
+    public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         // Does it have an href attribute?
         if (element.hasAttribute(HREF))
         {
             parser.verifyAndProcess(element.getAttribute(HREF));
-            return;
+            return EMPTY_STRING;
         }
         // (otherwise...)
         Bot bot = parser.getCurrentBot();
@@ -65,5 +65,6 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
         }
 
         logger.log(Level.INFO, "Loaded " + splitters.size() + " sentence-splitters.");
+        return EMPTY_STRING;
     }
 }

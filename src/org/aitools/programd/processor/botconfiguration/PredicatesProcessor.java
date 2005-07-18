@@ -40,7 +40,7 @@ public class PredicatesProcessor extends BotConfigurationElementProcessor
      * @see BotConfigurationElementProcessor#process(Element,
      *      BotsConfigurationFileParser)
      */
-    public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
+    public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         // Does it have an href attribute?
         if (element.hasAttribute(HREF))
@@ -51,5 +51,6 @@ public class PredicatesProcessor extends BotConfigurationElementProcessor
         {
             parser.evaluate(element.getChildNodes());
         }
+        return EMPTY_STRING;
     }
 }

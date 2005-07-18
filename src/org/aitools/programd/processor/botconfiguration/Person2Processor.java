@@ -38,8 +38,9 @@ public class Person2Processor extends SubstitutionElementProcessor
      * @see BotConfigurationElementProcessor#process(Element,
      *      BotsConfigurationFileParser)
      */
-    public void process(Element element, BotsConfigurationFileParser parser)
+    public String process(Element element, BotsConfigurationFileParser parser)
     {
         addSubstitutions(SubstitutionType.PERSON2, element, parser);
+        return EMPTY_STRING;
     }
 }

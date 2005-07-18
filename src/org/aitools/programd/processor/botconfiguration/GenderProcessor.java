@@ -41,8 +41,9 @@ public class GenderProcessor extends SubstitutionElementProcessor
      * @see BotConfigurationElementProcessor#process(Element,
      *      BotsConfigurationFileParser)
      */
-    public void process(Element element, BotsConfigurationFileParser parser)
+    public String process(Element element, BotsConfigurationFileParser parser)
     {
         addSubstitutions(SubstitutionType.GENDER, element, parser);
+        return EMPTY_STRING;
     }
 }

@@ -41,8 +41,9 @@ public class InputProcessor extends SubstitutionElementProcessor
      * @see BotConfigurationElementProcessor#process(Element,
      *      BotsConfigurationFileParser)
      */
-    public void process(Element element, BotsConfigurationFileParser parser)
+    public String process(Element element, BotsConfigurationFileParser parser)
     {
         addSubstitutions(SubstitutionType.INPUT, element, parser);
+        return EMPTY_STRING;
     }
 }

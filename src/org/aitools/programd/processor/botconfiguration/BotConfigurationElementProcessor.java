@@ -51,8 +51,7 @@ abstract public class BotConfigurationElementProcessor extends Processor
     {
         try
         {
-            process(element, (BotsConfigurationFileParser) parser);
-            return EMPTY_STRING;
+            return process(element, (BotsConfigurationFileParser) parser);
         }
         catch (ClassCastException e)
         {
@@ -65,10 +64,11 @@ abstract public class BotConfigurationElementProcessor extends Processor
      * 
      * @param element the element to process
      * @param parser the parser that is doing the processing
+     * @return the result of processing (usually ignored)
      * @throws ProcessorException if there is an error in processing
      */
-    public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
+    public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
-        parser.evaluate(element.getChildNodes());
+        return parser.evaluate(element.getChildNodes());
     }
 }

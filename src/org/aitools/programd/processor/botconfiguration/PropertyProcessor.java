@@ -43,8 +43,9 @@ public class PropertyProcessor extends BotConfigurationElementProcessor
      * @see BotConfigurationElementProcessor#process(Element,
      *      BotsConfigurationFileParser)
      */
-    public void process(Element element, BotsConfigurationFileParser parser)
+    public String process(Element element, BotsConfigurationFileParser parser)
     {
         parser.getCurrentBot().setPropertyValue(element.getAttribute(NAME), element.getAttribute(VALUE));
+        return EMPTY_STRING;
     }
 }

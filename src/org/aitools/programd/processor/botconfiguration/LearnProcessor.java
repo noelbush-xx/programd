@@ -41,8 +41,9 @@ public class LearnProcessor extends BotConfigurationElementProcessor
      * @see BotConfigurationElementProcessor#process(Element,
      *      BotsConfigurationFileParser)
      */
-    public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
+    public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
-        parser.getCore().getGraphmaster().load(parser.evaluate(element.getChildNodes()), parser.getCurrentBot().getID());
+        parser.getCore().load(parser.evaluate(element.getChildNodes()), parser.getCurrentBot().getID());
+        return EMPTY_STRING;
     }
 }

@@ -39,13 +39,32 @@ public class BotProcessor extends BotConfigurationElementProcessor
     {
         super(coreToUse);
     }
+    
+    /**
+     * @see org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.BotsConfigurationFileParser)
+     */
+    public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
+    {
+        return processResponse(element, parser);
+    }
 
     /**
+     * Processes a bot element and returns the id of the bot loaded.
+     * 
+     * @param element the bot element 
+     * @param parser the parser in use
+     * @return the id of the bot loaded
+     * @throws ProcessorException if there was a problem
      * @see BotConfigurationElementProcessor#process(Element,
      *      BotsConfigurationFileParser)
      */
-    public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
+    public String processResponse(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
+        if (element.hasAttribute(HREF))
+        {
+            return this.core.loadBot(element.getAttribute(HREF));
+        }
+
         String botID = element.getAttribute(ID);
 
         if (Boolean.valueOf(element.getAttribute(ENABLED)).booleanValue())
@@ -64,5 +83,6 @@ public class BotProcessor extends BotConfigurationElementProcessor
                 logger.log(Level.WARNING, "Bot \"" + botID + "\" has already been configured.");
             }
         }
+        return botID;
     }
 }

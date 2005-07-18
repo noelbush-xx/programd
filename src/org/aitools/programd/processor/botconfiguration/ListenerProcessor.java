@@ -63,13 +63,13 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
      * @see BotConfigurationElementProcessor#process(Element,
      *      BotsConfigurationFileParser)
      */
-    public void process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
+    public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         // Does it have an href attribute?
         if (element.hasAttribute(HREF))
         {
             parser.verifyAndProcess(element.getAttribute(HREF));
-            return;
+            return EMPTY_STRING;
         }
         // otherwise...
 
@@ -79,7 +79,7 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         // Is the enabled attribute true?
         if (!enabled.equals(TRUE))
         {
-            return;
+            return EMPTY_STRING;
         }
 
         // Get the current bot.
@@ -113,5 +113,6 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         this.core.getManagedProcesses().start(listener, classname + SEPARATOR + bot.getID());
 
         logger.log(Level.INFO, "Started \"" + classname + "\" listener for bot \"" + bot.getID() + "\".");
+        return EMPTY_STRING;
     }
 }
