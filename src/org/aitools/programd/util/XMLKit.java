@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.net.URL;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
@@ -448,6 +449,22 @@ public class XMLKit
      * <code>indent</code> is <code>false</code>).
      * 
      * @param list the list of XML nodes
+     * @param includeNamespaceAttribute whether to include the namespace attribute
+     * @param indent whether to render the string in an indented, multiline
+     *            fashion
+     * @return the formatted XML
+     */
+    public static String renderXML(NodeList list, boolean includeNamespaceAttribute, boolean indent)
+    {
+        return filterWhitespace(renderXML(list, 0, true, includeNamespaceAttribute, indent));
+    }
+
+    /**
+     * Formats XML from a node list into a nicely indented multi-line string (if
+     * <code>indent</code> is <code>true</code>), or just a long string (if
+     * <code>indent</code> is <code>false</code>).
+     * 
+     * @param list the list of XML nodes
      * @param level the level (for indenting; no meaning if indenting is off)
      * @param atStart whether the whole XML string is at its beginning
      * @param includeNamespaceAttribute whether to include the namespace
@@ -456,17 +473,20 @@ public class XMLKit
      *            fashion
      * @return the formatted XML
      */
-    private static String renderXML(NodeList list, int level, boolean atStart,
+    public static String renderXML(NodeList list, int level, boolean atStart,
             boolean includeNamespaceAttribute, boolean indent)
     {
         StringBuffer result = new StringBuffer();
 
-        int listLength = list.getLength();
-
-        for (int index = 0; index < listLength; index++)
+        if (list != null)
         {
-            Node node = list.item(index);
-            renderXML(node, level, atStart, result, includeNamespaceAttribute, indent);
+            int listLength = list.getLength();
+    
+            for (int index = 0; index < listLength; index++)
+            {
+                Node node = list.item(index);
+                renderXML(node, level, atStart, result, includeNamespaceAttribute, indent);
+            }
         }
         return result.toString();
     }
@@ -501,53 +521,64 @@ public class XMLKit
                         atStart = false;
                     }
                 }
-                String contents = renderXML(node.getChildNodes(), level + 1, true,
-                        includeNamespaceAttribute, indent);
-                if (contents.trim().length() > 0)
+                if (indent)
                 {
-                    if (indent)
+                    result.append(StringKit.tab(level));
+                }
+                if (node.hasChildNodes())
+                {
+                    NodeList children = node.getChildNodes();
+                    String contents = renderXML(children, level + 1, true,
+                        includeNamespaceAttribute, indent);
+                    if (contents.trim().length() > 0)
                     {
-                        result.append(StringKit.tab(level));
+                        result.append(renderStartTag((Element) node, includeNamespaceAttribute));
+                        int elementCount = elementCount(children);
+                        if (indent && elementCount > 0)
+                        {
+                            result.append(LINE_SEPARATOR);
+                        }
+                        result.append(contents);
+                        if (indent && elementCount > 0)
+                        {
+                            result.append(LINE_SEPARATOR + StringKit.tab(level));
+                        }
+                        result.append(renderEndTag((Element) node));
                     }
-                    result.append(renderStartTag((Element) node, includeNamespaceAttribute));
-                    if (indent)
+                    else
                     {
-                        result.append(LINE_SEPARATOR);
+                        result.append(renderEmptyElement((Element) node, includeNamespaceAttribute));
                     }
-                    result.append(contents);
-                    if (indent)
-                    {
-                        result.append(LINE_SEPARATOR + StringKit.tab(level));
-                    }
-                    result.append(renderEndTag((Element) node));
                 }
                 else
                 {
-                    if (indent)
-                    {
-                        result.append(StringKit.tab(level));
-                    }
                     result.append(renderEmptyElement((Element) node, includeNamespaceAttribute));
                 }
                 break;
 
             // Append text content.
             case Node.TEXT_NODE:
+                /*
                 if (indent && atStart)
                 {
                     if (node.getTextContent().trim().length() > 0)
                     {
-                        result.append(StringKit.tab(level) + node.getTextContent());
+                        result.append(StringKit.tab(level) + escapeXMLChars(node.getTextContent()));
                         atStart = false;
                         break;
                     }
                 }
                 // (otherwise)
-                result.append(node.getTextContent());
+                */
+                if (node.getTextContent().trim().length() > 0)
+                {
+                    result.append(escapeXMLChars(node.getTextContent()));
+                }
                 break;
 
             // Append CDATA.
             case Node.CDATA_SECTION_NODE:
+                /*
                 if (indent)
                 {
                     if (atStart)
@@ -557,7 +588,8 @@ public class XMLKit
                     }
                     result.append(LINE_SEPARATOR + StringKit.tab(level));
                 }
-                result.append(CDATA_START + node.getNodeValue() + CDATA_END);
+                */
+                result.append(CDATA_START + escapeXMLChars(node.getNodeValue()) + CDATA_END);
                 break;
 
             // Append comments.
@@ -620,6 +652,37 @@ public class XMLKit
         // If there was no cdata end marker, we have wasted our time. Duplicate
         // code from above.
         return filterXML(input.trim()).replace(WHITESPACE_REGEX, SPACE);
+    }
+    
+    /**
+     * Returns the number of elements in the nodelist and
+     * its descendants.  Useful for seeing whether there are no
+     * elements, only text.
+     * @param list a list of nodes
+     * @return the number of elements in the nodelist and its descendants
+     */
+    public static int elementCount(NodeList list)
+    {
+        int result = 0;
+        if (list != null)
+        {
+            int nodeCount = list.getLength();
+            for (int index = 0; index < nodeCount; index++)
+            {
+                Node node = list.item(index);
+                switch (node.getNodeType())
+                {
+                    case Node.ELEMENT_NODE :
+                        result++;
+                        result += elementCount(node.getChildNodes());
+                        break;
+                        
+                    default :
+                        break;
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -966,7 +1029,7 @@ public class XMLKit
      * @param schemaDescription short (one word or so) description of the schema
      * @return the parser
      */
-    public static SAXParser getSAXParser(String schemaLocation, String schemaDescription)
+    public static SAXParser getSAXParser(URL schemaLocation, String schemaDescription)
     {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -999,7 +1062,7 @@ public class XMLKit
      * @param schemaDescription short (one word or so) description of the schema
      * @return the parser
      */
-    public static DocumentBuilder getDocumentBuilder(String schemaLocation, String schemaDescription)
+    public static DocumentBuilder getDocumentBuilder(URL schemaLocation, String schemaDescription)
     {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -1026,12 +1089,12 @@ public class XMLKit
      * @param schemaDescription short (one word or so) description of the schema
      * @return the schema
      */
-    public static Schema getSchema(String schemaLocation, String schemaDescription)
+    public static Schema getSchema(URL schemaLocation, String schemaDescription)
     {
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         try
         {
-            return schemaFactory.newSchema(URITools.createValidURL(schemaLocation));
+            return schemaFactory.newSchema(schemaLocation);
         }
         catch (SAXException e)
         {
