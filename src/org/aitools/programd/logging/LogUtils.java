@@ -38,7 +38,9 @@ public class LogUtils
     public static Logger setupLogger(String name, String pattern, String timestampFormat)
     {
         Logger newLogger = Logger.getLogger(name);
-        FileManager.checkOrCreateDirectory((new File(pattern)).getParent(), "log file directory");
+        pattern =
+            FileManager.checkOrCreateDirectory((new File(pattern)).
+                    getParent(), "log file directory").getAbsolutePath() + File.separator + pattern.substring(pattern.lastIndexOf(File.separatorChar));
         FileHandler newHandler = null;
         try
         {
