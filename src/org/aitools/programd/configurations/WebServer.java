@@ -9,6 +9,9 @@
 
 package org.aitools.programd.configurations;
 
+import java.util.logging.Handler;
+import java.util.logging.Logger;
+
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
@@ -58,6 +61,14 @@ public class WebServer
 
     private void initialize(String corePropertiesPath, String webServerPropertiesPath)
     {
+        // Remove all Handlers from the root logger.
+        Logger rootLogger = Logger.getLogger("");
+        Handler[] handlers = rootLogger.getHandlers();
+        for (int index = 0; index < handlers.length; index++)
+        {
+            rootLogger.removeHandler(handlers[index]);
+        }
+
         this.core = new Core(corePropertiesPath);
         if (this.console != null)
         {
