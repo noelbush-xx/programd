@@ -131,26 +131,29 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
         this.templatesDirectoryPath = FileManager.getExistingFile(
                 this.settings.getTemplateDirectory()).getAbsolutePath();
 
-        // Read the registration, login, etc. paths.
-        this.registrationForm = validTemplatePath(this.settings.getRegisterFormPath());
-        this.loginFormPath = validTemplatePath(this.settings.getLoginFormPath());
-        this.changePasswordFormPath = validTemplatePath(this.settings.getChangePasswordFormPath());
-        this.accessDeniedPagePath = validTemplatePath(this.settings.getAccessDeniedPagePath());
-        this.loginSuccessPagePath = validTemplatePath(this.settings.getLoginSuccessPagePath());
-        this.loginFailedPagePath = validTemplatePath(this.settings.getLoginFailedPagePath());
-        this.logoutSuccessPagePath = validTemplatePath(this.settings.getLogoutSuccessPagePath());
-        this.passwordChangeSucceededPagePath = validTemplatePath(this.settings
-                .getPasswordChangeSucceededPagePath());
-        this.oldPasswordInvalidPagePath = validTemplatePath(this.settings
-                .getOldPasswordInvalidPagePath());
-        this.passwordFormatInvalidPagePath = validTemplatePath(this.settings
-                .getPasswordFormatInvalidPagePath());
-        this.passwordNotConfirmedPagePath = validTemplatePath(this.settings
-                .getPasswordNotConfirmedPagePath());
-        this.registrationSucceededPagePath = validTemplatePath(this.settings
-                .getRegistrationSucceededPagePath());
-        this.usernameFormatInvalidPagePath = validTemplatePath(this.settings
-                .getUsernameFormatInvalidPagePath());
+        // Read the registration, login, etc. paths, if authentication is being used.
+        if (this.settings.useUserAuthentication())
+        {
+            this.registrationForm = validTemplatePath(this.settings.getRegisterFormPath());
+            this.loginFormPath = validTemplatePath(this.settings.getLoginFormPath());
+            this.changePasswordFormPath = validTemplatePath(this.settings.getChangePasswordFormPath());
+            this.accessDeniedPagePath = validTemplatePath(this.settings.getAccessDeniedPagePath());
+            this.loginSuccessPagePath = validTemplatePath(this.settings.getLoginSuccessPagePath());
+            this.loginFailedPagePath = validTemplatePath(this.settings.getLoginFailedPagePath());
+            this.logoutSuccessPagePath = validTemplatePath(this.settings.getLogoutSuccessPagePath());
+            this.passwordChangeSucceededPagePath = validTemplatePath(this.settings
+                    .getPasswordChangeSucceededPagePath());
+            this.oldPasswordInvalidPagePath = validTemplatePath(this.settings
+                    .getOldPasswordInvalidPagePath());
+            this.passwordFormatInvalidPagePath = validTemplatePath(this.settings
+                    .getPasswordFormatInvalidPagePath());
+            this.passwordNotConfirmedPagePath = validTemplatePath(this.settings
+                    .getPasswordNotConfirmedPagePath());
+            this.registrationSucceededPagePath = validTemplatePath(this.settings
+                    .getRegistrationSucceededPagePath());
+            this.usernameFormatInvalidPagePath = validTemplatePath(this.settings
+                    .getUsernameFormatInvalidPagePath());
+        }
         try
         {
             BufferedReader keyReader = new BufferedReader(new FileReader(FileManager
@@ -423,50 +426,54 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
      */
     public RequiredAction determineRequiredAction(ServletRequestTransactionEnvelope envelope)
     {
-        // Look for the request parameter.
-        String requestParam = envelope.getServiceRequest().getParameter(REQUEST);
-
-        // If requestParam is null, we must try to authenticate with cookies.
-        if (requestParam == null)
+        if (this.settings.useUserAuthentication())
         {
-            return RequiredAction.authenticate;
+            // Look for the request parameter.
+            String requestParam = envelope.getServiceRequest().getParameter(REQUEST);
+    
+            // If requestParam is null, we must try to authenticate with cookies.
+            if (requestParam == null)
+            {
+                return RequiredAction.authenticate;
+            }
+            // User is requesting login form
+            if (requestParam.equals("send-login-form"))
+            {
+                return RequiredAction.sendLoginForm;
+            }
+            // User is requesting login
+            if (requestParam.equals("process-login-form"))
+            {
+                return RequiredAction.processLoginForm;
+            }
+            // User is requesting logout
+            if (requestParam.equals("logout"))
+            {
+                return RequiredAction.logout;
+            }
+            // User is requesting password change form
+            if (requestParam.equals("send-password-change-form"))
+            {
+                return RequiredAction.sendPasswordChangeForm;
+            }
+            // User is requesting processing of password change
+            if (requestParam.equals("process-password-change"))
+            {
+                return RequiredAction.processPasswordChangeForm;
+            }
+            // User is requesting registration form
+            if (requestParam.equals("send-registration-form"))
+            {
+                return RequiredAction.sendRegistrationForm;
+            }
+            // User is requesting processing of registration form
+            if (requestParam.equals("process-registration-form"))
+            {
+                return RequiredAction.processRegistrationForm;
+            }
+            return RequiredAction.unknown;
         }
-        // User is requesting login form
-        if (requestParam.equals("send-login-form"))
-        {
-            return RequiredAction.sendLoginForm;
-        }
-        // User is requesting login
-        if (requestParam.equals("process-login-form"))
-        {
-            return RequiredAction.processLoginForm;
-        }
-        // User is requesting logout
-        if (requestParam.equals("logout"))
-        {
-            return RequiredAction.logout;
-        }
-        // User is requesting password change form
-        if (requestParam.equals("send-password-change-form"))
-        {
-            return RequiredAction.sendPasswordChangeForm;
-        }
-        // User is requesting processing of password change
-        if (requestParam.equals("process-password-change"))
-        {
-            return RequiredAction.processPasswordChangeForm;
-        }
-        // User is requesting registration form
-        if (requestParam.equals("send-registration-form"))
-        {
-            return RequiredAction.sendRegistrationForm;
-        }
-        // User is requesting processing of registration form
-        if (requestParam.equals("process-registration-form"))
-        {
-            return RequiredAction.processRegistrationForm;
-        }
-        return RequiredAction.unknown;
+        return RequiredAction.proceed;
     }
 
     /** Possible results of attempting to authenticate a request. */
