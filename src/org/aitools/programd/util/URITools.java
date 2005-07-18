@@ -31,7 +31,7 @@ public class URITools
     private static final String SLASH = "/";
 
     /** The string "://". */
-    private static final String COLON_SLASH_SLASH = "://";
+    private static final String COLON_SLASH = ":/";
 
     /**
      * <p>
@@ -238,7 +238,7 @@ public class URITools
     public static URL createValidURL(String path)
     {
         URL url;
-        if (path.indexOf(COLON_SLASH_SLASH) > 0)
+        if (path.indexOf(COLON_SLASH) > 0)
         {
             try
             {
