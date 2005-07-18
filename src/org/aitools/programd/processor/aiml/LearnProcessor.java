@@ -51,7 +51,7 @@ public class LearnProcessor extends AIMLProcessor
      */
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        parser.getCore().getGraphmaster().load(parser.evaluate(element.getChildNodes()), parser.getBotID());
+        parser.getCore().load(parser.evaluate(element.getChildNodes()), parser.getBotID());
         return EMPTY_STRING;
     }
 }
