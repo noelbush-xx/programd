@@ -1,11 +1,13 @@
 package org.aitools.programd.test.aiml;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Element;
 
 import org.aitools.programd.multiplexor.Multiplexor;
+import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.StringKit;
 import org.aitools.programd.util.XMLKit;
 
@@ -42,13 +44,21 @@ public class TestCase
      * Creates a new TestCase from the given XML element.
      * 
      * @param element the TestCase element
+     * @param encoding the encoding of the document from which this element comes
      * @param index a default index to use for automatically naming this case
      */
-    public TestCase(Element element, int index)
+    public TestCase(Element element, String encoding, int index)
     {
         if (element.hasAttribute("name"))
         {
-            this.name = element.getAttribute("name");
+            try
+            {
+                this.name = new String(element.getAttribute("name").getBytes(encoding));
+            }
+            catch (UnsupportedEncodingException e)
+            {
+                throw new DeveloperError("Platform does not support encoding \"" + encoding + "\"!", e);
+            }
         }
         else
         {
@@ -69,12 +79,33 @@ public class TestCase
             checkersStart = 1;
         }
 
-        this.input = children.get(checkersStart - 1).getTextContent();
+        try
+        {
+            this.input = new String(children.get(checkersStart - 1).getTextContent().getBytes(encoding));
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            throw new DeveloperError("Platform does not support encoding \"" + encoding + "\"!", e);
+        }
         for (Element checker : children.subList(checkersStart, children.size()))
         {
-            this.checkers.add(Checker.create(checker));
+            this.checkers.add(Checker.create(checker, encoding));
         }
 
+    }
+    
+    /**
+     * Constructs a basic TestCase with an input and an expected answer
+     * (utility constructor).
+     * 
+     * @param testInput the input to use
+     * @param expectedAnswer the answer to expect
+     */
+    public TestCase(String testInput, String expectedAnswer)
+    {
+        this.name = "testcase-" + System.currentTimeMillis();
+        this.input = testInput;
+        this.addChecker(new AnswerChecker(expectedAnswer));
     }
 
     /**
@@ -130,5 +161,39 @@ public class TestCase
             result |= checker.test(response);
         }
         return result;
+    }
+    
+    /**
+     * Produces a map of checker names to contents that can
+     * be used to describe the test case textually.
+     * 
+     * @return a map of checker names to contents that can be used to describe the test case textually
+     */
+    public List<String[]> getDescription()
+    {
+        List<String[]> result = new ArrayList<String[]>();
+        for (Checker checker : this.checkers)
+        {
+            result.add(new String[] {checker.getTagName(), checker.getContent()});
+        }
+        return result;
+    }
+    
+    /**
+     * Removes all checkers.
+     */
+    public void removeCheckers()
+    {
+        this.checkers = new ArrayList<Checker>();
+    }
+    
+    /**
+     * Adds a given checker.
+     * 
+     * @param checker the checker to add
+     */
+    public void addChecker(Checker checker)
+    {
+        this.checkers.add(checker);
     }
 }

@@ -1,5 +1,7 @@
 package org.aitools.programd.test.aiml;
 
+import java.io.UnsupportedEncodingException;
+
 import org.aitools.programd.util.DeveloperError;
 import org.w3c.dom.Element;
 
@@ -39,32 +41,61 @@ abstract public class Checker
      * given XML element.
      * 
      * @param element the element from which to create the Input
+     * @param encoding the encoding of the document from which this element comes
      * @return the created Input
      */
-    public static Checker create(Element element)
+    public static Checker create(Element element, String encoding)
     {
         String tagName = element.getTagName();
 
         // Create the appropriate type of Checker.
         if (tagName.equals(TAG_ALERT_KEYWORDS))
         {
-            return new AlertKeywordChecker(element.getTextContent());
+            try
+            {
+                return new AlertKeywordChecker(new String(element.getTextContent().getBytes(encoding)));
+            }
+            catch (UnsupportedEncodingException e)
+            {
+                throw new DeveloperError("Platform does not support \"" + encoding + "\" encoding!", e);
+            }
         }
         else if (tagName.equals(TAG_EXPECTED_ANSWER))
         {
-            return new AnswerChecker(element);
+            return new AnswerChecker(element, encoding);
         }
         else if (tagName.equals(TAG_EXPECTED_KEYWORDS))
         {
-            return new ExpectedKeywordChecker(element.getTextContent());
+            try
+            {
+                return new ExpectedKeywordChecker(new String(element.getTextContent().getBytes(encoding)));
+            }
+            catch (UnsupportedEncodingException e)
+            {
+                throw new DeveloperError("Platform does not support \"" + encoding + "\" encoding!", e);
+            }
         }
         else if (tagName.equals(TAG_EXPECTED_LENGTH))
         {
-            return new LengthChecker(element.getTextContent());
+            try
+            {
+                return new LengthChecker(new String(element.getTextContent().getBytes(encoding)));
+            }
+            catch (UnsupportedEncodingException e)
+            {
+                throw new DeveloperError("Platform does not support \"" + encoding + "\" encoding!", e);
+            }
         }
         else if (tagName.equals(TAG_EXPECTED_MATCH))
         {
-            return new MatchChecker(element.getTextContent());
+            try
+            {
+                return new MatchChecker(new String(element.getTextContent().getBytes(encoding)));
+            }
+            catch (UnsupportedEncodingException e)
+            {
+                throw new DeveloperError("Platform does not support \"" + encoding + "\" encoding!", e);
+            }
         }
         else
         {
@@ -72,4 +103,14 @@ abstract public class Checker
                     + "\") slipped past the schema!", new IllegalArgumentException());
         }
     }
+    
+    /**
+     * @return the textual content of the checker
+     */
+    abstract public String getContent();
+    
+    /**
+     * @return the tag name that the checker uses
+     */
+    abstract public String getTagName();
 }

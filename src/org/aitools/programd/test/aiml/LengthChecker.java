@@ -49,4 +49,20 @@ public class LengthChecker extends Checker
         // otherwise...
         return false;
     }
+
+    /**
+     * @see org.aitools.programd.test.aiml.Checker#getContent()
+     */
+    public String getContent()
+    {
+        return "" + this.expectedLength;
+    }
+
+    /**
+     * @see org.aitools.programd.test.aiml.Checker#getTagName()
+     */
+    public String getTagName()
+    {
+        return Checker.TAG_EXPECTED_LENGTH;
+    }
 }

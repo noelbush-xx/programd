@@ -38,4 +38,30 @@ public class ExpectedKeywordChecker extends Checker
         }
         return result;
     }
+
+    /**
+     * @see org.aitools.programd.test.aiml.Checker#getContent()
+     */
+    public String getContent()
+    {
+        StringBuffer result = new StringBuffer();
+        int keywordCount = this.keywords.size();
+        for (String keyword : this.keywords)
+        {
+            result.append(keyword);
+            if (this.keywords.indexOf(keyword) < keywordCount - 1)
+            {
+                result.append(",");
+            }
+        }
+        return result.toString();
+    }
+
+    /**
+     * @see org.aitools.programd.test.aiml.Checker#getTagName()
+     */
+    public String getTagName()
+    {
+        return Checker.TAG_EXPECTED_KEYWORDS;
+    }
 }

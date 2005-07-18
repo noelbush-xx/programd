@@ -42,4 +42,19 @@ public class MatchChecker extends Checker
         return false;
     }
 
+    /**
+     * @see org.aitools.programd.test.aiml.Checker#getContent()
+     */
+    public String getContent()
+    {
+        return this.matcher.pattern().toString();
+    }
+
+    /**
+     * @see org.aitools.programd.test.aiml.Checker#getTagName()
+     */
+    public String getTagName()
+    {
+        return Checker.TAG_EXPECTED_MATCH;
+    }
 }

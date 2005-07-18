@@ -206,7 +206,7 @@ public class TestSuite implements Iterable<TestCase>
      */
     public static TestSuite load(String path, Multiplexor multiplexor)
     {
-        DocumentBuilder builder = XMLKit.getDocumentBuilder(SCHEMA_LOCATION, "test cases");
+        DocumentBuilder builder = XMLKit.getDocumentBuilder(URITools.createValidURL(SCHEMA_LOCATION), "test cases");
         Document doc;
         try
         {
@@ -221,6 +221,7 @@ public class TestSuite implements Iterable<TestCase>
             throw new UserError("SAX exception trying to parse test suite file: "
                     + e.getMessage(), e);
         }
+        String encoding = doc.getXmlEncoding();
         Element testSuiteElement = doc.getDocumentElement();
         TestSuite suite = new TestSuite(testSuiteElement.getAttribute("name"), testSuiteElement
                 .getAttribute("clearInput"), multiplexor);
@@ -231,7 +232,7 @@ public class TestSuite implements Iterable<TestCase>
         for (int index = 0; index < testCaseCount; index++)
         {
             Element testCaseElement = (Element) testCases.item(index);
-            TestCase testCase = new TestCase(testCaseElement, index);
+            TestCase testCase = new TestCase(testCaseElement, encoding, index);
             suite.addTestCase(testCase);
         }
         return suite;
