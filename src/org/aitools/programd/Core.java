@@ -9,20 +9,30 @@
 
 package org.aitools.programd;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Date;
-import java.util.logging.Handler;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.parsers.SAXParser;
+
+import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
+import org.aitools.programd.graph.Nodemapper;
 import org.aitools.programd.interpreter.Interpreter;
 import org.aitools.programd.logging.LogUtils;
 import org.aitools.programd.multiplexor.Multiplexor;
 import org.aitools.programd.multiplexor.PredicateMaster;
+import org.aitools.programd.parser.AIMLReader;
+import org.aitools.programd.parser.BotsConfigurationFileParser;
+import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.processor.aiml.AIMLProcessorRegistry;
 import org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessorRegistry;
 import org.aitools.programd.responder.Responder;
@@ -68,6 +78,9 @@ public class Core extends Thread
     /** The namespace URI of the plugin configuration. */
     public static final String PLUGIN_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.5/plugins";
 
+    /** The location of the plugin configuration schema. */
+    private static final String PLUGIN_CONFIG_SCHEMA_LOCATION = "resources/schema/plugins.xsd";
+
     /** The Settings. */
     protected CoreSettings settings;
 
@@ -89,6 +102,9 @@ public class Core extends Thread
     /** The bot configuration element processor registry. */
     private BotConfigurationElementProcessorRegistry botConfigurationElementProcessorRegistry;
 
+    /** The SAXParser used in loading AIML. */
+    private SAXParser parser;
+
     /** The AIML processor registry. */
     private AIMLProcessorRegistry aimlProcessorRegistry;
 
@@ -100,6 +116,9 @@ public class Core extends Thread
 
     /** The logger for the Core. */
     private Logger logger;
+
+    /** Load time marker. */
+    private boolean loadtime;
 
     /** Name of the local host. */
     private String hostname;
@@ -131,12 +150,15 @@ public class Core extends Thread
         /** The Core has crashed. */
         CRASHED
     }
+    
+    /** The AIML schema location. */
+    private static final String AIML_SCHEMA_LOCATION = "resources/schema/AIML.xsd";
 
     // Convenience constants.
     private static final String EMPTY_STRING = "";
 
-    /** The location of the plugin configuration schema. */
-    private static final String PLUGIN_CONFIG_SCHEMA = "./resources/schema/plugins.xsd";
+    /** The <code>*</code> wildcard. */
+    public static final String ASTERISK = "*";
 
     /**
      * Initializes a new Core object with the properties from the given file.
@@ -186,7 +208,8 @@ public class Core extends Thread
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
-        this.graphmaster = new Graphmaster(this);
+        this.parser = XMLKit.getSAXParser(ClassLoader.getSystemResource(AIML_SCHEMA_LOCATION), "AIML");
+        this.graphmaster = new Graphmaster();
         this.bots = new Bots();
         this.processes = new ManagedProcesses(this);
 
@@ -197,14 +220,6 @@ public class Core extends Thread
         // Initialize the PredicateMaster and attach it to the Multiplexor.
         this.predicateMaster = new PredicateMaster(this);
         this.multiplexor.attach(this.predicateMaster);
-
-        // Remove all Handlers from the root logger.
-        Logger rootLogger = Logger.getLogger("");
-        Handler[] handlers = rootLogger.getHandlers();
-        for (int index = 0; index < handlers.length; index++)
-        {
-            rootLogger.removeHandler(handlers[index]);
-        }
 
         // Set up loggers based on the settings.
         this.logger = setupLogger("programd", this.settings.getActivityLogPattern());
@@ -230,7 +245,7 @@ public class Core extends Thread
         // Load the plugin config.
         try
         {
-            this.pluginConfig = XMLKit.getDocumentBuilder(PLUGIN_CONFIG_SCHEMA,
+            this.pluginConfig = XMLKit.getDocumentBuilder(ClassLoader.getSystemResource(PLUGIN_CONFIG_SCHEMA_LOCATION),
                     "plugin configuration").parse(
                     URITools.createValidURL(this.settings.getConfLocationPlugins())
                             .toExternalForm());
@@ -290,7 +305,7 @@ public class Core extends Thread
             // Create the AIMLWatcher if configured to do so.
             if (this.settings.useWatcher())
             {
-                this.aimlWatcher = new AIMLWatcher(this.graphmaster);
+                this.aimlWatcher = new AIMLWatcher(this);
             }
 
             this.logger.log(Level.INFO, "Starting up the Graphmaster.");
@@ -298,8 +313,8 @@ public class Core extends Thread
             // Index the start time before loading.
             long time = new Date().getTime();
 
-            // Start up the Graphmaster.
-            this.graphmaster.startup(this.settings.getStartupFilePath());
+            // Start loading bots.
+            loadBots(this.settings.getStartupFilePath());
 
             // Calculate the time used to load all categories.
             time = new Date().getTime() - time;
@@ -442,6 +457,147 @@ public class Core extends Thread
     }
 
     /**
+     * Loads the <code>Graphmaster</code> with the contents of a given path.
+     * 
+     * @param path path to the file(s) to load
+     * @param botid
+     */
+    public void load(String path, String botid)
+    {
+        boolean localFile;
+
+        // Check for obviously invalid paths of zero length.
+        if (path.length() < 1)
+        {
+            this.logger.log(Level.WARNING, "Cannot open a file whose name has zero length.");
+        }
+
+        // Handle paths with wildcards that need to be expanded.
+        if (path.indexOf(ASTERISK) != -1)
+        {
+            String[] files = null;
+
+            try
+            {
+                files = FileManager.glob(path);
+            }
+            catch (FileNotFoundException e)
+            {
+                this.logger.log(Level.WARNING, e.getMessage());
+            }
+            if (files != null)
+            {
+                for (int index = files.length; --index >= 0;)
+                {
+                    load(files[index], botid);
+                }
+            }
+            return;
+        }
+
+        Bot bot = this.bots.getBot(botid);
+        URL url = URITools.createValidURL(path);
+
+        if (!loadCheck(url, bot))
+        {
+            return;
+        }
+
+        if (!url.getProtocol().equals(FileManager.FILE))
+        {
+            localFile = false;
+        }
+        else
+        {
+            localFile = true;
+            // Add it to the AIMLWatcher, if active.
+            if (this.settings.useWatcher())
+            {
+                this.aimlWatcher.addWatchFile(url.getPath(), botid);
+            }
+            FileManager.pushFileParentAsWorkingDirectory(path);
+        }
+
+        try
+        {
+            if (this.settings.loadNotifyEachFile())
+            {
+                this.logger.log(Level.INFO, "Loading " + url.toString() + "....");
+            }
+            this.parser.parse(url.toString(), new AIMLReader(this.graphmaster, path, botid, this.bots
+                    .getBot(botid), this.settings.getAimlSchemaNamespaceUri()));
+            System.gc();
+            // this.parser.reset();
+        }
+        catch (IOException e)
+        {
+            this.logger.log(Level.WARNING, "Error reading \"" + url + "\".");
+        }
+        catch (SAXException e)
+        {
+            this.logger.log(Level.WARNING, "Error parsing \"" + url + "\": " + e.getMessage());
+        }
+
+        if (localFile)
+        {
+            FileManager.popWorkingDirectory();
+        }
+    }
+
+    /**
+     * Tracks/checks whether a given path should be loaded, depending on whether
+     * or not it's currently &quot;loadtime&quot;; if the file has already been
+     * loaded and is allowed to be reloaded, unloads the file first.
+     * 
+     * @param path the path to check
+     * @param bot the bot for whom to check
+     * @return whether or not the given path should be loaded
+     */
+    private boolean loadCheck(URL path, Bot bot)
+    {
+        if (bot == null)
+        {
+            throw new NullPointerException("Null bot passed to loadCheck().");
+        }
+
+        HashMap<URL, HashSet<Nodemapper>> loadedFiles = bot.getLoadedFilesMap();
+
+        if (loadedFiles.keySet().contains(path))
+        {
+            // At load time, don't load an already-loaded file.
+            if (this.loadtime)
+            {
+                return false;
+            }
+            // At other times, unload the file before loading it again.
+            this.graphmaster.unload(path, bot);
+        }
+        else
+        {
+            loadedFiles.put(path, new HashSet<Nodemapper>());
+        }
+        return true;
+    }
+    
+    /**
+     * Sets "loadtime" mode
+     * (so accidentally duplicated paths in a load config
+     * won't be loaded multiple times).
+     */
+    public void setLoadtime()
+    {
+        this.loadtime = true;
+    }
+
+    /**
+     * Unsets "loadtime" mode.
+     */
+    public void unsetLoadtime()
+    {
+        this.loadtime = false;
+    }
+
+    /**
      * Processes the given input using default values for userid (the hostname),
      * botid (the first available bot), and no responder. The result is not
      * returned. This method is mostly useful for a simple test of the Core.
@@ -510,7 +666,7 @@ public class Core extends Thread
     {
         this.logger.log(Level.INFO, "Program D is shutting down.");
         this.processes.shutdownAll();
-        this.graphmaster.shutdown();
+        this.predicateMaster.saveAll();
         this.logger.log(Level.INFO, "Shutdown complete.");
         this.status = Status.SHUT_DOWN;
     }
@@ -618,6 +774,59 @@ public class Core extends Thread
     public Logger setupLogger(String name, String pattern)
     {
         return LogUtils.setupLogger(name, pattern, this.settings.getLogTimestampFormat());
+    }
+    
+    /**
+     * Loads bots from the indicated config file path.
+     * 
+     * @param path the config file path
+     */
+    public void loadBots(String path)
+    {
+        setLoadtime();
+        URL url = URITools.createValidURL(path);
+        if (url.getProtocol().equals(FileManager.FILE))
+        {
+            FileManager.pushFileParentAsWorkingDirectory(url.getPath());
+        }
+        try
+        {
+            new BotsConfigurationFileParser(this).process(url);
+        }
+        catch (ProcessorException e)
+        {
+            this.logger.log(Level.SEVERE, e.getExplanatoryMessage());
+            fail("processor exception during startup", e);
+        }
+        unsetLoadtime();
+    }
+    
+    /**
+     * Loads a bot from the given path.  Will only
+     * work right if the file at the path actually
+     * has a &gt;bot&lt; element as its root.
+     * 
+     * @param path the bot config file
+     * @return the id of the bot loaded
+     */
+    public String loadBot(String path)
+    {
+        URL url = URITools.createValidURL(path);
+        if (url.getProtocol().equals(FileManager.FILE))
+        {
+            FileManager.pushFileParentAsWorkingDirectory(url.getPath());
+        }
+        String botID = null;
+        try
+        {
+            botID = new BotsConfigurationFileParser(this).processResponse(url);
+        }
+        catch (ProcessorException e)
+        {
+            this.logger.log(Level.SEVERE, e.getExplanatoryMessage());
+            fail("processor exception during startup", e);
+        }
+        return botID;
     }
 
     /*

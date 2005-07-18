@@ -725,7 +725,7 @@ public class GUIConsole extends JPanel
 
         Graphmaster graphmaster = this.core.getGraphmaster();
         int categories = graphmaster.getTotalCategories();
-        graphmaster.load((String) response, this.shell.getCurrentBotID());
+        this.core.load((String) response, this.shell.getCurrentBotID());
         Logger.getLogger("programd").log(Level.INFO,
                 graphmaster.getTotalCategories() - categories + " categories loaded from \"" + (String) response + "\".");
     }
@@ -750,7 +750,7 @@ public class GUIConsole extends JPanel
             }
             int categories = this.core.getGraphmaster().getTotalCategories();
             Graphmaster graphmaster = this.core.getGraphmaster();
-            graphmaster.load(newPath, this.shell.getCurrentBotID());
+            this.core.load(newPath, this.shell.getCurrentBotID());
             Logger.getLogger("programd").log(Level.INFO,
                     graphmaster.getTotalCategories() - categories + " categories loaded from \"" + newPath + "\".");
         }

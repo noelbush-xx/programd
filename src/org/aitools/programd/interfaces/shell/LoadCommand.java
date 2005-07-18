@@ -12,6 +12,7 @@ package org.aitools.programd.interfaces.shell;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.aitools.programd.Core;
 import org.aitools.programd.graph.Graphmaster;
 
 /**
@@ -60,10 +61,11 @@ public class LoadCommand extends ShellCommand
         }
         else
         {
-            Graphmaster graphmaster = shell.getCore().getGraphmaster();
+            Core core = shell.getCore();
+            Graphmaster graphmaster = core.getGraphmaster();
             int categories = graphmaster.getTotalCategories();
             String path = commandLine.substring(space + 1);
-            graphmaster.load(path, shell.getCurrentBotID());
+            core.load(path, shell.getCurrentBotID());
             Logger.getLogger("programd").log(Level.INFO,
                     graphmaster.getTotalCategories() - categories + " categories loaded from \"" + path + "\".");
         }

@@ -19,7 +19,7 @@ import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.aitools.programd.graph.Graphmaster;
+import org.aitools.programd.Core;
 
 /**
  * Watches a set of AIML files. Any file changes will be loaded automatically.
@@ -33,7 +33,7 @@ public class AIMLWatcher
     /** The Timer that handles watching AIML files. */
     private Timer timer;
 
-    private Graphmaster graphmaster;
+    private Core core;
 
     /** Used for storing information about file changes. */
     protected HashMap<String, Map<File, Long>> watchMaps = new HashMap<String, Map<File, Long>>();
@@ -43,11 +43,11 @@ public class AIMLWatcher
     /**
      * Creates a new AIMLWatcher using the given Graphmaster
      * 
-     * @param graphmasterToUse the Graphmaster to use
+     * @param coreToUse the Core to use
      */
-    public AIMLWatcher(Graphmaster graphmasterToUse)
+    public AIMLWatcher(Core coreToUse)
     {
-        this.graphmaster = graphmasterToUse;
+        this.core = coreToUse;
     }
 
     /**
@@ -58,7 +58,7 @@ public class AIMLWatcher
         if (this.timer == null)
         {
             this.timer = new Timer(true);
-            this.timer.schedule(new CheckAIMLTask(), 0, this.graphmaster.getCore().getSettings().getWatcherTimer());
+            this.timer.schedule(new CheckAIMLTask(), 0, this.core.getSettings().getWatcherTimer());
         }
     }
 
@@ -80,7 +80,7 @@ public class AIMLWatcher
             return;
         }
         logger.log(Level.INFO, "AIMLWatcher reloading \"" + path + "\".");
-        this.graphmaster.load(path, botid);
+        this.core.load(path, botid);
     }
 
     /**

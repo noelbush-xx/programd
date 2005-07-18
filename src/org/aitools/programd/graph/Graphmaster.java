@@ -9,34 +9,20 @@
 
 package org.aitools.programd.graph;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.xml.parsers.SAXParser;
-
-import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
 import org.aitools.programd.bot.Bot;
-import org.aitools.programd.parser.AIMLReader;
-import org.aitools.programd.parser.BotsConfigurationFileParser;
-import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.processor.aiml.RandomProcessor;
 import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.NoMatchException;
 import org.aitools.programd.util.StringKit;
-import org.aitools.programd.util.URITools;
 import org.aitools.programd.util.XMLKit;
-
-import org.xml.sax.SAXException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -101,9 +87,6 @@ public class Graphmaster
     /** A space. */
     private static final String SPACE = " ";
 
-    /** The string &quot;{@value}&quot;. */
-    private static final String FILE = "file";
-
     /** Match states. */
     private static enum MatchState
     {
@@ -122,14 +105,8 @@ public class Graphmaster
 
     // Instance variables.
 
-    /** The core that owns this Graphmaster. */
-    private Core core;
-
-    /** The core's settings. */
-    private CoreSettings coreSettings;
-
     /** The logger. */
-    private Logger logger;
+    private Logger logger = Logger.getLogger("programd");
 
     /** The root {@link Nodemaster} . */
     private Nodemapper root = new Nodemaster();
@@ -149,42 +126,41 @@ public class Graphmaster
     /** How frequently to provide a category load count. */
     private int categoryLoadNotifyInterval;
     
-    /** Whether or not to print a message as each file is loaded. */
-    private boolean notifyEachFile;
-
     /** The total number of categories read. */
     private int totalCategories = 0;
 
     /** The total number of path-identical categories that have been encountered. */
     private int duplicateCategories = 0;
 
-    /** The SAXParser used in loading AIML. */
-    private SAXParser parser;
-
     /** The response timeout. */
     protected int responseTimeout;
 
-    /** Load time marker. */
-    private boolean loadtime;
-
     /**
-     * Creates a new Graphmaster for the given Core.
+     * Creates a new Graphmaster, reading settings from
+     * the given CoreSettings object.
      * 
-     * @param coreToUse the core for which to create the Graphmaster.
+     * @param settings the CoreSettings object from which to read settings
      */
-    public Graphmaster(Core coreToUse)
+    public Graphmaster(CoreSettings settings)
     {
-        this.core = coreToUse;
-        this.coreSettings = this.core.getSettings();
-        this.logger = Logger.getLogger("programd");
-        this.parser = XMLKit.getSAXParser(this.coreSettings.getAimlSchemaLocation(), "AIML");
-        this.aimlNamespaceURI = this.coreSettings.getAimlSchemaNamespaceUri();
-        this.mergePolicy = this.coreSettings.getMergePolicy();
-        this.mergeAppendSeparator = this.coreSettings.getMergeAppendSeparatorString();
-        this.noteEachMerge = this.coreSettings.mergeNoteEach();
-        this.responseTimeout = this.coreSettings.getResponseTimeout();
-        this.categoryLoadNotifyInterval = this.coreSettings.getCategoryLoadNotifyInterval();
-        this.notifyEachFile = this.coreSettings.loadNotifyEachFile();
+        this.mergePolicy = settings.getMergePolicy();
+        this.mergeAppendSeparator = settings.getMergeAppendSeparatorString();
+        this.noteEachMerge = settings.mergeNoteEach();
+        this.responseTimeout = settings.getResponseTimeout();
+        this.categoryLoadNotifyInterval = settings.getCategoryLoadNotifyInterval();
+    }
+    
+    /**
+     * Creates a new Graphmaster, using default
+     * settings as necessary.
+     */
+    public Graphmaster()
+    {
+        this.mergePolicy = CoreSettings.MergePolicy.COMBINE;
+        this.mergeAppendSeparator = " ";
+        this.noteEachMerge = false;
+        this.responseTimeout = 1000;
+        this.categoryLoadNotifyInterval = 5000;
     }
 
     /**
@@ -354,7 +330,7 @@ public class Graphmaster
         }
         // (otherwise...)
         NoMatchException e = new NoMatchException(input);
-        this.logger.log(Level.WARNING, "Match is null.", e);
+        this.logger.log(Level.WARNING, e.getMessage());
         throw e;
     }
 
@@ -758,162 +734,6 @@ public class Graphmaster
     }
 
     /**
-     * Tells the PredicateMaster to save all predicates.
-     */
-    public void shutdown()
-    {
-        this.core.getPredicateMaster().saveAll();
-    }
-
-    /**
-     * Starts up the <code>Graphmaster</code> with the given startup file.
-     * 
-     * @param startupFilePath
-     */
-    public void startup(String startupFilePath)
-    {
-        this.loadtime = true;
-        URL url = URITools.createValidURL(startupFilePath);
-        if (url.getProtocol().equals(FILE))
-        {
-            FileManager.pushFileParentAsWorkingDirectory(url.getPath());
-        }
-        try
-        {
-            new BotsConfigurationFileParser(this.core).process(url);
-        }
-        catch (ProcessorException e)
-        {
-            this.logger.log(Level.SEVERE, e.getExplanatoryMessage());
-            this.core.fail("processor exception during startup", e);
-        }
-        this.loadtime = false;
-    }
-
-    /**
-     * Loads the <code>Graphmaster</code> with the contents of a given path.
-     * 
-     * @param path path to the file(s) to load
-     * @param botid
-     */
-    public void load(String path, String botid)
-    {
-        boolean localFile;
-
-        // Check for obviously invalid paths of zero length.
-        if (path.length() < 1)
-        {
-            this.logger.log(Level.WARNING, "Cannot open a file whose name has zero length.");
-        }
-
-        // Handle paths with wildcards that need to be expanded.
-        if (path.indexOf(ASTERISK) != -1)
-        {
-            String[] files = null;
-
-            try
-            {
-                files = FileManager.glob(path);
-            }
-            catch (FileNotFoundException e)
-            {
-                this.logger.log(Level.WARNING, e.getMessage());
-            }
-            if (files != null)
-            {
-                for (int index = files.length; --index >= 0;)
-                {
-                    load(files[index], botid);
-                }
-            }
-            return;
-        }
-
-        Bot bot = this.core.getBots().getBot(botid);
-        URL url = URITools.createValidURL(path);
-
-        if (!loadCheck(url, bot))
-        {
-            return;
-        }
-
-        if (!url.getProtocol().equals(FILE))
-        {
-            localFile = false;
-        }
-        else
-        {
-            localFile = true;
-            // Add it to the AIMLWatcher, if active.
-            if (this.coreSettings.useWatcher())
-            {
-                this.core.getAIMLWatcher().addWatchFile(url.getPath(), botid);
-            }
-            FileManager.pushFileParentAsWorkingDirectory(path);
-        }
-
-        try
-        {
-            if (this.notifyEachFile)
-            {
-                this.logger.log(Level.INFO, "Loading " + url.toString() + "....");
-            }
-            this.parser.parse(url.toString(), new AIMLReader(this, path, botid, this.core.getBots()
-                    .getBot(botid), this.coreSettings.getAimlSchemaNamespaceUri()));
-            System.gc();
-            // this.parser.reset();
-        }
-        catch (IOException e)
-        {
-            this.logger.log(Level.WARNING, "Error reading \"" + url + "\".");
-        }
-        catch (SAXException e)
-        {
-            this.logger.log(Level.WARNING, "Error parsing \"" + url + "\": " + e.getMessage());
-        }
-
-        if (localFile)
-        {
-            FileManager.popWorkingDirectory();
-        }
-    }
-
-    /**
-     * Tracks/checks whether a given path should be loaded, depending on whether
-     * or not it's currently &quot;loadtime&quot;; if the file has already been
-     * loaded and is allowed to be reloaded, unloads the file first.
-     * 
-     * @param path the path to check
-     * @param bot the bot for whom to check
-     * @return whether or not the given path should be loaded
-     */
-    private boolean loadCheck(URL path, Bot bot)
-    {
-        if (bot == null)
-        {
-            throw new NullPointerException("Null bot passed to loadCheck().");
-        }
-
-        HashMap<URL, HashSet<Nodemapper>> loadedFiles = bot.getLoadedFilesMap();
-
-        if (loadedFiles.keySet().contains(path))
-        {
-            // At load time, don't load an already-loaded file.
-            if (this.loadtime)
-            {
-                return false;
-            }
-            // At other times, unload the file before loading it again.
-            unload(path, bot);
-        }
-        else
-        {
-            loadedFiles.put(path, new HashSet<Nodemapper>());
-        }
-        return true;
-    }
-
-    /**
      * Removes all nodes associated with a given filename, and removes the file
      * from the list of loaded files.
      * 
@@ -1100,13 +920,5 @@ public class Graphmaster
     public int getDuplicateCategories()
     {
         return this.duplicateCategories;
-    }
-
-    /**
-     * @return the Core
-     */
-    public Core getCore()
-    {
-        return this.core;
     }
 }
