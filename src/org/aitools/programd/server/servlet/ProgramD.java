@@ -9,12 +9,12 @@
 
 package org.aitools.programd.server.servlet;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.aitools.programd.Core;
-import org.aitools.programd.responder.NoResponderHandlesThisException;
 import org.aitools.programd.server.ServletRequestTransactionEnvelope;
 import org.aitools.programd.server.ServletRequestResponderManagerRegistry;
 
@@ -38,30 +38,16 @@ import org.aitools.programd.server.ServletRequestResponderManagerRegistry;
 public class ProgramD extends HttpServlet
 {
     /** The string &quot;{@value}&quot;. */
-    private static final String CORE = "Core";
+    private static final String CORE = "core";
     
     /** The string &quot;{@value}&quot;. */
     private static final String RESPONDER_REGISTRY = "responder-registry";
 
     /** The Core to use. */
-    protected Core core;
+    private Core core;
 
     /** The ServletRequestResponderManagerRegistry to use. */
     private ServletRequestResponderManagerRegistry responderRegistry;
-    
-    /** Whether or not to insist on running at the "root" path of the server. */
-    private boolean insistOnRootPath = true;
-    
-    /**
-     * Creates an instance of the servlet, allowing the caller
-     * to specify whether the servlet will insist on using the root path.
-     * 
-     * @param insist whether or not to insist on using the root path
-     */
-    public ProgramD(boolean insist)
-    {
-        this.insistOnRootPath = insist;
-    }
 
     /**
      * @see javax.servlet.GenericServlet#init()
@@ -73,22 +59,27 @@ public class ProgramD extends HttpServlet
     }
 
     /**
+     * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
+     */
+    public void init(ServletConfig config)
+    {
+        this.core = (Core) config.getServletContext().getAttribute(CORE);
+        this.responderRegistry = (ServletRequestResponderManagerRegistry) config.getServletContext().getAttribute(RESPONDER_REGISTRY);
+    }
+
+    /**
      * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
      *      javax.servlet.http.HttpServletResponse)
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     {
-        if (this.insistOnRootPath && !request.getServletPath().substring(1).equals(request.getContextPath()))
+        if (!request.getServletPath().substring(1).equals(request.getContextPath()))
         {
             return;
         }
         try
         {
             new ServletRequestTransactionEnvelope(request, response, this.core, this.responderRegistry).process();
-        }
-        catch (NoResponderHandlesThisException e)
-        {
-            // Do nothing -- just ignore!
         }
         catch (Throwable e)
         {
