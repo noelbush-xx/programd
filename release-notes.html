@@ -113,12 +113,15 @@ a:active
     <h1>Program D Release Notes</h1>
     <p class="docinfo"> maintainer: <a href="mailto:noel@aitools.org">Noel Bush</a>
       <br/>previous authors: <a href="mailto:noel@aitools.org">Noel Bush</a>, Kim Sullivan, Thomas
-      Ringate, Pedro E. Colla<br/> Last updated: 13 May 2005</p>
+      Ringate, Pedro E. Colla<br/> Last updated: 14 May 2005</p>
     <p class="docinfo"> The latest version of this document can always be found at <a
         href="http://aitools.org/programd/release-notes.html"
         >http://aitools.org/programd/release-notes.html</a>. Probably.</p>
     <p> Versions documented here:</p>
     <ul>
+      <li>
+        <a href="#v4.5.1">4.5.1</a>
+      </li>
       <li>
         <a href="#v4.5">4.5</a>
       </li>
@@ -145,6 +148,61 @@ a:active
       </li>
       <li>
         <a href="#v4.0.1">4.0.1</a>
+      </li>
+    </ul>
+    <h2>
+      <a name="v4.5.1">4.5.1</a>
+    </h2>
+    <p>This is mostly a bug-fix and performance improvement release.</p>
+    <ul>
+      <li>
+        <a href="#v4.5.1.whatsnew">What's New</a>
+      </li>
+      <li>
+        <a href="#v4.5.1.requirements">Important Notes on System Requirements</a>
+      </li>
+      <li>
+        <a href="#v4.5.1.openissues">Significant Open Issues</a>
+      </li>
+    </ul>
+    <h3>
+      <a id="v4.5.whatsnew">What's New</a>
+    </h3>
+    <ul>
+      <li>
+        <h4>
+          <a id="v4.5.1.whatsnew.xml-error-handling">XML Error Handling</a>
+        </h4>
+        <p>XML errors that are found in loaded AIML now don't cause the program to terminate
+        at load time, if at all possible.  This has the downside of possibly causing parts
+        of your AIML to go unused, if you don't watch the console messages, but it allows
+        you to proceed without fixing every error, should you choose to do so.</p>
+      </li>
+    </ul>
+    <h3>
+      <a id="v4.5.1.requirements">Important Notes on System Requirements</a>
+    </h3>
+    <p>Program D requires <a href="http://java.sun.com/j2se/1.5.0/">JDK 5</a>. See <a
+        href="#v4.5.whatsnew.java-language">below</a> for the reasons why.</p>
+    <p>If you want to build Program D from the source distribution, you can easily import it into a
+      Java IDE such as <a href="http://eclipse.org/">Eclipse</a>. Or you can use the included Ant
+      buildfile, which is the same file used to create the binary distributions. You will need
+      to have <a href="http://ant.apache.org">Ant</a>
+      installed.</p>
+    <h3>
+      <a id="v4.5.1.openissues">Significant Open Issues</a>
+    </h3>
+    <ul>
+      <li>
+        <p>The AIML schema's <a
+            href="http://xml.ascc.net/resource/schematron/schematron.html" target="_blank"
+            >Schematron</a> directives are not yet used at load time.</p>
+      </li>
+      <li>
+        <p>The "readme" doc needs major updating.</p>
+      </li>
+      <li>
+        <p>Class-level unit testing is not yet implemented.</p>
       </li>
     </ul>
     <h2>
