@@ -109,7 +109,7 @@ public class Graphmaster
     private Logger logger = Logger.getLogger("programd");
 
     /** The root {@link Nodemaster} . */
-    private Nodemapper root = new Nodemaster();
+    protected Nodemapper root = new Nodemaster();
 
     /** The merge policy. */
     private CoreSettings.MergePolicy mergePolicy;
@@ -183,9 +183,7 @@ public class Graphmaster
         path.add(BOTID);
         path.add(botid);
 
-        Nodemapper node = add(path.listIterator(), this.root);
-
-        return (node);
+        return add(path.listIterator(), this.root);
     }
 
     /**
@@ -329,9 +327,7 @@ public class Graphmaster
             return match;
         }
         // (otherwise...)
-        NoMatchException e = new NoMatchException(input);
-        this.logger.log(Level.WARNING, e.getMessage());
-        throw e;
+        throw new NoMatchException(input);
     }
 
     /**

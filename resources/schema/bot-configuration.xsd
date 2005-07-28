@@ -20,28 +20,43 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence maxOccurs="unbounded">
-                <xs:element name="bot">
-                    <xs:complexType>
-                        <xs:sequence>
-                            <xs:element ref="properties" minOccurs="0"/>
-                            <xs:element ref="predicates" minOccurs="0"/>
-                            <xs:element ref="substitutions" minOccurs="0"/>
-                            <xs:element ref="sentence-splitters" minOccurs="0"/>
-                            <xs:element ref="listeners" minOccurs="0"/>
-                            <xs:element name="learn" minOccurs="0" maxOccurs="unbounded"
-                                type="xs:anyURI">
-                                <xs:annotation>
-                                    <xs:documentation>A learn element specifies an AIML file, or a
-                                        glob-style pattern indicating several AIML files, that
-                                        should be loaded by the bot. </xs:documentation>
-                                </xs:annotation>
-                            </xs:element>
-                        </xs:sequence>
-                        <xs:attribute name="id" use="required" type="xs:Name"/>
-                        <xs:attribute name="enabled" use="required" type="xs:boolean"/>
-                    </xs:complexType>
+                <xs:element ref="bot" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="bot">
+        <xs:annotation>
+            <xs:documentation>A bot element describes how to configure a bot.</xs:documentation>
+            <xs:appinfo>
+                <sch:pattern name="href xor element content">
+                    <sch:rule context="bc:bot">
+                        <sch:assert
+                            test="(@href and not(@id) and not(@enabled) and not(child::*)) or (not(@href) and @id and @enabled and child::*)"> A
+                            bot element should have either (1) an href attribute, or the (2) id and enabled
+                            attributes and element content, but not both.</sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="properties" minOccurs="0"/>
+                <xs:element ref="predicates" minOccurs="0"/>
+                <xs:element ref="substitutions" minOccurs="0"/>
+                <xs:element ref="sentence-splitters" minOccurs="0"/>
+                <xs:element ref="listeners" minOccurs="0"/>
+                <xs:element name="learn" minOccurs="0" maxOccurs="unbounded"
+                    type="xs:anyURI">
+                    <xs:annotation>
+                        <xs:documentation>A learn element specifies an AIML file, or a
+                            glob-style pattern indicating several AIML files, that
+                            should be loaded by the bot. </xs:documentation>
+                    </xs:annotation>
                 </xs:element>
             </xs:sequence>
+            <xs:attribute name="id" type="xs:Name"/>
+            <xs:attribute name="enabled" type="xs:boolean"/>
+            <xs:attribute name="href" type="xs:anyURI"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="properties">

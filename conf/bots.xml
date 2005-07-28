@@ -9,7 +9,13 @@
         <substitutions href="substitutions.xml"/>
         <sentence-splitters href="sentence-splitters.xml"/>
         <listeners href="listeners.xml"/>
-        <!--<learn>../aiml/*.aiml</learn>-->
-        <learn>../resources/testing/AIML.aiml</learn>
+        <!--<learn>../aiml/AAA/*.aiml</learn>
+        <learn>../aiml/alice/*.aiml</learn>
+        <learn>../aiml/FrenchAIML/*.aiml</learn>
+        <learn>../aiml/GermanAlice/*.aiml</learn>
+        <learn>../aiml/maria/*.aiml</learn>
+        <learn>../aiml/standard/*.aiml</learn>-->
+        <!--<learn>../resources/testing/AIML.aiml</learn>-->
+        <learn>/home/noel/workspace/editor/testing/kb.aiml</learn>
     </bot>
 </bots>

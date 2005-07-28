@@ -816,17 +816,37 @@ public class Core extends Thread
         {
             FileManager.pushFileParentAsWorkingDirectory(url.getPath());
         }
-        String botID = null;
+        String id = null;
         try
         {
-            botID = new BotsConfigurationFileParser(this).processResponse(url);
+            id = new BotsConfigurationFileParser(this).processResponse(url);
         }
         catch (ProcessorException e)
         {
             this.logger.log(Level.SEVERE, e.getExplanatoryMessage());
-            fail("processor exception during startup", e);
         }
-        return botID;
+        this.logger.log(Level.INFO, "Bot \"" + id + "\" has been loaded.");
+        return id;
+    }
+    
+    /**
+     * Unloads a bot with the given id.
+     * 
+     * @param id the bot to unload
+     */
+    public void unloadBot(String id)
+    {
+        if (!this.bots.include(id))
+        {
+            this.logger.log(Level.WARNING, "Bot \"" + id + "\" is not loaded; cannot unload.");
+            return;
+        }
+        Bot bot = this.bots.getBot(id);
+        for (URL path : bot.getLoadedFilesMap().keySet())
+        {
+            this.graphmaster.unload(path, bot);
+        }
+        this.logger.log(Level.INFO, "Bot \"" + id + "\" has been unloaded.");
     }
 
     /*

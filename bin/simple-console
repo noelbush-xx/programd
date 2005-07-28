@@ -22,8 +22,8 @@ source $BASE/bin/common_functions.sh
 
 # Configuration
 MAIN_CLASS=org.aitools.programd.configurations.SimpleConsole
-START_MEM=256m
-MAX_MEM=512m
+START_MEM=1024m
+MAX_MEM=2048m
 CORE_CONF=$BASE/conf/core.xml
 CONSOLE_CONF=$BASE/conf/console.xml
 

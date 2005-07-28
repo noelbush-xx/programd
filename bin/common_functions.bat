@@ -123,7 +123,7 @@ goto end
   set ICQ_AIM_LISTENER_LIBS=%LIBS%\icq-aim-listener\icq-aim-listener.jar;%LIBS%\icq-aim-listener\daim.jar;%LIBS%\icq-aim-listener\log4j-1.2.9.jar
   set IRC_LISTENER_LIBS=%LIBS%\irc-listener\irc-listener.jar
   set YAHOO_LISTENER_LIBS=%LIBS%\yahoo-listener\yahoo-listener.jar;%LIBS%\yahoo-listener\ymsg_network_v0_6.jar
-  set LISTENER_LIBS=%ICQ_AIM_LISTENER_LIBS%:%IRC_LISTENER_LIBS%:%YAHOO_LISTENER_LIBS%
+  set LISTENER_LIBS=%ICQ_AIM_LISTENER_LIBS%;%IRC_LISTENER_LIBS%;%YAHOO_LISTENER_LIBS%
   set LISTENER_LIBS=%LIBS%\icq-aim-listener.jar
 
   rem Set SQL_LIB to the location of your database driver.

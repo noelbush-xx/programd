@@ -197,6 +197,10 @@ public class XMLKit
      */
     public static String escapeXMLChars(String input)
     {
+        if (input == null)
+        {
+            return EMPTY_STRING;
+        }
         return input.replace(AMPERSAND, XML_AMPERSAND).replace(LESS_THAN, XML_LESS_THAN).replace(GREATER_THAN, XML_GREATER_THAN);
     }
 
@@ -1154,5 +1158,47 @@ public class XMLKit
             }
         }
         throw new DeveloperError("No element children of this nodelist!", new NullPointerException());
+    }
+    
+    /**
+     * Returns the all elements with the given name
+     * that are children of the given element, or null if
+     * there is no such element.
+     * 
+     * @param element the element whose children should be examined
+     * @param name the name of the element desired
+     * @return the desired elements, or null
+     */
+    public static List<Element> getAllElementsNamed(Element element, String name)
+    {
+        List<Element> children = getElementChildrenOf(element);
+        List<Element> results = new ArrayList<Element>();
+        for (Element child : children)
+        {
+            if (child.getNodeName().equals(name))
+            {
+                results.add(child);
+            }
+        }
+        return results;
+    }
+    
+    /**
+     * Returns the first element with the given name
+     * that is a child of the given element, or null if
+     * there is no such element.
+     * 
+     * @param element the element whose children should be examined
+     * @param name the name of the element desired
+     * @return the desired element, or null
+     */
+    public static Element getFirstElementNamed(Element element, String name)
+    {
+        List<Element> allChildren = getAllElementsNamed(element, name);
+        if (allChildren.size() == 0)
+        {
+            return null;
+        }
+        return allChildren.get(0);
     }
 }

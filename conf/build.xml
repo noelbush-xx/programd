@@ -10,7 +10,7 @@
 		<echo message="Building ${Name} ${version}...."/>
 		
 		<property name="build.compiler" value="modern"/>
-		<property name="debug" value="off"/>
+		<property name="debug" value="on"/>
 		<property name="optimize" value="on"/>
 		<property name="deprecation" value="on"/>
 		
@@ -69,6 +69,7 @@
 				includes="org/**"
 				excludes="org/aitools/programd/server/jettyinterface/* org/aitools/programd/interpreter/RhinoInterpreter.class"/>
 			<fileset dir="${src.dir}/" includes="org/aitools/programd/gui/icons/**"/>
+			<fileset dir="${base.dir}/" includes="resources/schema/**"/>
 		</jar>
 		<jar jarfile="${jetty.jar}">
 			<fileset dir="${build.dir}/"

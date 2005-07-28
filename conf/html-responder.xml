@@ -81,12 +81,9 @@ GENERAL NOTES
 
     <!-- The registration succeeded page. [String: registration-succeeded.html]-->
     <entry key="programd.responder.html.registration-succeeded.page.path">registration-succeeded.html</entry>
-
-    <!-- Whether to enable authentication via the HTMLResponder [boolean: true]-->
-    <entry key="programd.responder.html.authenticate">true</entry>
     
     <!-- Whether to automatically generate a cookie for an unknown user [boolean: true]
          * Only applicable if programd.httpserver.authenticate == true-->
-    <entry key="programd.responder.html.autocookie">true</entry>
+    <entry key="programd.responder.html.autocookie">false</entry>
 
 </properties>
