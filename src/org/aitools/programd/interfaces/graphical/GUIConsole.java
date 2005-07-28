@@ -55,6 +55,7 @@ import org.aitools.programd.interfaces.shell.ListBotFilesCommand;
 import org.aitools.programd.interfaces.shell.NoSuchCommandException;
 import org.aitools.programd.interfaces.shell.Shell;
 import org.aitools.programd.util.DeveloperError;
+import org.aitools.programd.util.URITools;
 
 /**
  * Provides a very simple GUI console for the bot.
@@ -144,7 +145,7 @@ public class GUIConsole extends JPanel
             throw new DeveloperError("The requested LookAndFeel is not supported.", e);
         }
 
-        URL logoURL = ClassLoader.getSystemResource(LOGO_PATH);
+        URL logoURL = URITools.getResource(LOGO_PATH);
         if (logoURL != null)
         {
             this.logo = new ImageIcon(logoURL);
@@ -154,7 +155,7 @@ public class GUIConsole extends JPanel
             throw new DeveloperError("Logo is missing from \"" + LOGO_PATH + "\"!", new NullPointerException());
         }
 
-        URL iconURL = ClassLoader.getSystemResource(ICON_PATH);
+        URL iconURL = URITools.getResource(ICON_PATH);
         if (iconURL != null)
         {
             this.icon = new ImageIcon(iconURL);

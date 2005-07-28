@@ -298,4 +298,21 @@ public class URITools
         }
         return result;
     }
+    
+    /**
+     * Tries to get a URL for a resource, first by looking in the root directory,
+     * then looking in jar files and the classpath (via ClassLoader.getSystemResource()).
+     * 
+     * @param path the resource path
+     * @return the URL of the resource
+     */
+    public static URL getResource(String path)
+    {
+        File file = FileManager.getExistingFile(path);
+        if (file.exists())
+        {
+            return createValidURL(file.getAbsolutePath());
+        }
+        return URITools.getResource(path);
+    }
 }

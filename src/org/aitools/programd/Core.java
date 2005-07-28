@@ -208,7 +208,7 @@ public class Core extends Thread
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
-        this.parser = XMLKit.getSAXParser(ClassLoader.getSystemResource(AIML_SCHEMA_LOCATION), "AIML");
+        this.parser = XMLKit.getSAXParser(URITools.getResource(AIML_SCHEMA_LOCATION), "AIML");
         this.graphmaster = new Graphmaster();
         this.bots = new Bots();
         this.processes = new ManagedProcesses(this);
@@ -245,7 +245,7 @@ public class Core extends Thread
         // Load the plugin config.
         try
         {
-            this.pluginConfig = XMLKit.getDocumentBuilder(ClassLoader.getSystemResource(PLUGIN_CONFIG_SCHEMA_LOCATION),
+            this.pluginConfig = XMLKit.getDocumentBuilder(URITools.getResource(PLUGIN_CONFIG_SCHEMA_LOCATION),
                     "plugin configuration").parse(
                     URITools.createValidURL(this.settings.getConfLocationPlugins())
                             .toExternalForm());
