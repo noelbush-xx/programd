@@ -116,8 +116,8 @@ GENERAL NOTES
     <entry key="programd.inactivity-string">INACTIVITY</entry>
     
     <!--The Multiplexor to use. [String: org.aitools.programd.multiplexor.FlatFileMultiplexor]-->
-    <!--<entry key="programd.multiplexor-classname">org.aitools.programd.multiplexor.FlatFileMultiplexor</entry>-->
-    <entry key="programd.multiplexor-classname">org.aitools.programd.multiplexor.DBMultiplexor</entry>
+    <entry key="programd.multiplexor-classname">org.aitools.programd.multiplexor.FlatFileMultiplexor</entry>
+    <!--<entry key="programd.multiplexor-classname">org.aitools.programd.multiplexor.DBMultiplexor</entry>-->
     
     <!--The subdirectory in which to save flat-file predicates (FFM only). [String: ffm]-->
     <entry key="programd.multiplexor.ffm-dir">ffm</entry>

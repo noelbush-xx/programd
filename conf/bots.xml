@@ -15,7 +15,6 @@
         <learn>../aiml/GermanAlice/*.aiml</learn>
         <learn>../aiml/maria/*.aiml</learn>
         <learn>../aiml/standard/*.aiml</learn>-->
-        <!--<learn>../resources/testing/AIML.aiml</learn>-->
-        <learn>/home/noel/workspace/editor/testing/kb.aiml</learn>
+        <learn>../resources/testing/AIML.aiml</learn>
     </bot>
 </bots>
