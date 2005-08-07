@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import org.w3c.dom.Document;
 
 import org.aitools.programd.bot.Bot;
+import org.aitools.programd.bot.Bots;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.responder.xml.XMLTemplateParser;
 import org.aitools.programd.util.UserError;
@@ -84,8 +85,12 @@ abstract public class AbstractXMLResponder implements Responder
     {
         this.botid = botidToRespondFor;
         this.manager = respnsibleManager;
-        this.bot = this.manager.getBots().getBot(botidToRespondFor);
-        this.template = this.manager.getTemplate(templateName);
+        Bots bots = this.manager.getBots();
+        if (bots.include(botidToRespondFor))
+        {
+            this.bot = bots.getBot(botidToRespondFor);
+            this.template = this.manager.getTemplate(templateName);
+        }
     }
 
     /**
