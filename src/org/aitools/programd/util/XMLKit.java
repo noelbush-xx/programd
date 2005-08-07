@@ -1201,4 +1201,21 @@ public class XMLKit
         }
         return allChildren.get(0);
     }
+
+    /**
+     * Gets the text of the named child from of the given element.
+     * 
+     * @param element
+     * @param childName
+     * @return the text of the named child from of the given element
+     */
+    public static String getChildText(Element element, String childName)
+    {
+        Element child = XMLKit.getFirstElementNamed(element, childName);
+        if (child != null)
+        {
+            return child.getTextContent();
+        }
+        return "";
+    }
 }
