@@ -83,7 +83,7 @@ public class XMLChatLogFormatter extends XMLFormatter
      */
     public String format(ChatLogRecord record)
     {
-        StringBuffer result = new StringBuffer(1000);
+        StringBuilder result = new StringBuilder(1000);
         result.append(RECORD_START);
 
         result.append(DATE_START);

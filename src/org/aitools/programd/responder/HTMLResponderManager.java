@@ -746,8 +746,8 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
     private void makeNewCookiesAndRegister(HttpServletResponse servletResponse, String botid)
             throws DuplicateUserIDError
     {
-        StringBuffer newusername = new StringBuffer(17);
-        StringBuffer newpassword = new StringBuffer(10);
+        StringBuilder newusername = new StringBuilder(17);
+        StringBuilder newpassword = new StringBuilder(10);
 
         // Generate the new username as "webuser" + the date in milliseconds + a
         // random five digits, password same

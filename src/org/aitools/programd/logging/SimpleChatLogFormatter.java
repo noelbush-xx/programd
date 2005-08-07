@@ -85,7 +85,7 @@ public class SimpleChatLogFormatter extends SimpleFormatter
     public String format(ChatLogRecord record)
     {
         String[] responseLines = XMLKit.filterViaHTMLTags(record.getReply());
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         int responseLineCount = responseLines.length;
         String datetime = null;
         if (this.showTimestamp)

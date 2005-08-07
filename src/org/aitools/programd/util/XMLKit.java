@@ -229,8 +229,8 @@ public class XMLKit
             return EMPTY_STRING;
         }
 
-        // This StringBuffer will hold the result.
-        StringBuffer result = new StringBuffer(input.length());
+        // This StringBuilder will hold the result.
+        StringBuilder result = new StringBuilder(input.length());
 
         // This StringCharacterIterator will iterate over the input.
         StringCharacterIterator iterator = new StringCharacterIterator(input);
@@ -275,7 +275,7 @@ public class XMLKit
         int inputLength = input.length();
         int pointer = 0;
 
-        StringBuffer result = new StringBuffer(inputLength);
+        StringBuilder result = new StringBuilder(inputLength);
 
         while (pointer < input.length())
         {
@@ -425,7 +425,7 @@ public class XMLKit
             Logger.getLogger("programd").log(Level.WARNING, "XML could not be rendered; returning original string: " + content);
             return content;
         }
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         renderXML(document.getDocumentElement(), 0, true, result, includeNamespaceAttribute, indent);
         return filterWhitespace(result.toString());
     }
@@ -480,7 +480,7 @@ public class XMLKit
     public static String renderXML(NodeList list, int level, boolean atStart,
             boolean includeNamespaceAttribute, boolean indent)
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         if (list != null)
         {
@@ -507,7 +507,7 @@ public class XMLKit
      * @param indent whether to render the string in an indented, multiline
      *            fashion
      */
-    private static void renderXML(Node node, int level, boolean atStart, StringBuffer result,
+    private static void renderXML(Node node, int level, boolean atStart, StringBuilder result,
             boolean includeNamespaceAttribute, boolean indent)
     {
         switch (node.getNodeType())
@@ -738,7 +738,7 @@ public class XMLKit
         Vector<String> result = new Vector<String>();
 
         // This will hold each line as it is assembled.
-        StringBuffer line = new StringBuffer();
+        StringBuilder line = new StringBuilder();
 
         // Break lines at tags.
         while ((tagStart > -1) && (tagEnd > -1))
@@ -760,7 +760,7 @@ public class XMLKit
                     || input.indexOf(END_P, tagStart) == tagStart)
             {
                 result.addElement(line.toString());
-                line = new StringBuffer();
+                line = new StringBuilder();
             }
 
             // Set last end to the character following the end of the tag.
@@ -819,7 +819,7 @@ public class XMLKit
         int inputLength = input.length();
 
         // Results will be built up in this buffer.
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         // Break lines at tags.
         while ((tagStart > -1) && (tagEnd > -1))
@@ -861,7 +861,7 @@ public class XMLKit
      */
     public static String renderStartTag(Element element, boolean includeNamespaceAttribute)
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append(MARKER_START);
         String name = element.getLocalName();
         if (name == null)
@@ -892,7 +892,7 @@ public class XMLKit
     public static String renderStartTag(String elementName, Attributes attributes,
             boolean includeNamespaceAttribute, String namespaceURI)
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append(MARKER_START);
         result.append(elementName);
         if (includeNamespaceAttribute)
@@ -915,7 +915,7 @@ public class XMLKit
      */
     public static String renderEmptyElement(Element element, boolean includeNamespaceAttribute)
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append(MARKER_START);
         String name = element.getLocalName();
         if (name == null)
@@ -940,7 +940,7 @@ public class XMLKit
      */
     private static String renderAttributes(Attributes attributes)
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         if (attributes != null)
         {
             int attributeCount = attributes.getLength();
@@ -971,7 +971,7 @@ public class XMLKit
      */
     private static String renderAttributes(NamedNodeMap attributes)
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         if (attributes != null)
         {
             int attributeCount = attributes.getLength();
@@ -1017,7 +1017,7 @@ public class XMLKit
      */
     public static String getSpaces(int count)
     {
-        StringBuffer result = new StringBuffer(count);
+        StringBuilder result = new StringBuilder(count);
         for (int index = 0; index < count; index++)
         {
             result.append(' ');

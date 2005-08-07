@@ -383,7 +383,7 @@ public class FileManager
                 }
             }
         }
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         String line;
         try
         {
@@ -579,7 +579,7 @@ public class FileManager
     public static String loadFileAsString(File file)
     {
         String templateLine;
-        StringBuffer result = new StringBuffer(1000);
+        StringBuilder result = new StringBuilder(1000);
 
         BufferedReader reader;
         try
