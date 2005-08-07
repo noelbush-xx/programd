@@ -15,8 +15,9 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -224,13 +225,6 @@ public class Core extends Thread
         // Set up loggers based on the settings.
         this.logger = setupLogger("programd", this.settings.getActivityLogPattern());
         this.logger.setLevel(Level.ALL);
-
-        Logger matchingLogger = setupLogger("programd.matching", this.settings
-                .getMatchingLogPattern());
-        if (this.settings.recordMatchTrace())
-        {
-            matchingLogger.setLevel(Level.FINE);
-        }
 
         // Get the hostname (used occasionally).
         try
@@ -524,7 +518,7 @@ public class Core extends Thread
             {
                 this.logger.log(Level.INFO, "Loading " + url.toString() + "....");
             }
-            this.parser.parse(url.toString(), new AIMLReader(this.graphmaster, path, botid, this.bots
+            this.parser.parse(url.toString(), new AIMLReader(this.graphmaster, url, botid, this.bots
                     .getBot(botid), this.settings.getAimlSchemaNamespaceUri()));
             System.gc();
             // this.parser.reset();
@@ -560,7 +554,7 @@ public class Core extends Thread
             throw new NullPointerException("Null bot passed to loadCheck().");
         }
 
-        HashMap<URL, HashSet<Nodemapper>> loadedFiles = bot.getLoadedFilesMap();
+        Map<URL, Set<Nodemapper>> loadedFiles = bot.getLoadedFilesMap();
 
         if (loadedFiles.keySet().contains(path))
         {
@@ -811,6 +805,7 @@ public class Core extends Thread
      */
     public String loadBot(String path)
     {
+        this.logger.log(Level.INFO, "Loading bot from \"" + path + "\".");
         URL url = URITools.createValidURL(path);
         if (url.getProtocol().equals(FileManager.FILE))
         {
@@ -846,6 +841,7 @@ public class Core extends Thread
         {
             this.graphmaster.unload(path, bot);
         }
+        this.bots.removeBot(id);
         this.logger.log(Level.INFO, "Bot \"" + id + "\" has been unloaded.");
     }
 
