@@ -128,7 +128,7 @@ public class FileManager
             file = getFile(workingDirectory.peek().getPath() + path);
             if (!file.exists())
             {
-                throw new DeveloperError(new FileNotFoundException("Couldn't find \"" + path + "\"."));
+                throw new DeveloperError("Couldn't find \"" + path + "\".", new FileNotFoundException(path));
             }
         }
         try
