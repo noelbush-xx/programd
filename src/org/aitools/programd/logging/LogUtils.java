@@ -25,6 +25,9 @@ import org.aitools.programd.util.UserError;
  */
 public class LogUtils
 {
+    /** A default timestamp format. */
+    public static final String DEFAULT_TIMESTAMP_FORMAT = "yyyy-MM-dd H:mm:ss";
+    
     /**
      * Sets up a Logger in a standard way. (A FileHandler is attached with some
      * generic settings.)
@@ -53,5 +56,18 @@ public class LogUtils
         newHandler.setFormatter(new SimpleFormatter(timestampFormat));
         newLogger.addHandler(newHandler);
         return newLogger;
+    }
+    
+    /**
+     * Sets up a logger in a standard way, with a default timestamp format.
+
+     * @param name the name of the logger
+     * @param pattern the pattern for the determining the logger's file output
+     *            file
+     * @return the Logger that was set up.
+     */
+    public static Logger setupLogger(String name, String pattern)
+    {
+        return setupLogger(name, pattern, DEFAULT_TIMESTAMP_FORMAT);
     }
 }
