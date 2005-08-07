@@ -303,16 +303,19 @@ public class URITools
      * Tries to get a URL for a resource, first by looking in the root directory,
      * then looking in jar files and the classpath (via ClassLoader.getSystemResource()).
      * 
-     * @param path the resource path
+     * @param name the resource identifier
      * @return the URL of the resource
      */
-    public static URL getResource(String path)
+    public static URL getResource(String name)
     {
-        File file = FileManager.getExistingFile(path);
-        if (file.exists())
+        try
         {
+            File file = FileManager.getExistingFile(name);
             return createValidURL(file.getAbsolutePath());
         }
-        return URITools.getResource(path);
+        catch (Error e)
+        {
+            return ClassLoader.getSystemResource(name);
+        }
     }
 }
