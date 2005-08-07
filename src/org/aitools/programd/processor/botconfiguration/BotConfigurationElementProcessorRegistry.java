@@ -38,7 +38,8 @@ public class BotConfigurationElementProcessorRegistry extends ProcessorRegistry<
                                                      "org.aitools.programd.processor.botconfiguration.PropertiesProcessor",
                                                      "org.aitools.programd.processor.botconfiguration.PropertyProcessor",
                                                      "org.aitools.programd.processor.botconfiguration.SentenceSplittersProcessor",
-                                                     "org.aitools.programd.processor.botconfiguration.SubstitutionsProcessor" };
+                                                     "org.aitools.programd.processor.botconfiguration.SubstitutionsProcessor",
+                                                     "org.aitools.programd.processor.botconfiguration.TestingProcessor"};
 
     /**
      * Creates a new <code>BotConfigurationElementProcessorRegistry</code>.
