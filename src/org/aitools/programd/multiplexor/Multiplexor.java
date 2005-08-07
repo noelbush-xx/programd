@@ -136,12 +136,6 @@ abstract public class Multiplexor
     /** The general log where we will record some events. */
     protected Logger logger;
 
-    /**
-     * The match logger where information about individual matches can be
-     * recorded.
-     */
-    protected Logger matchLogger;
-
     /** Whether or not to record match trace info. */
     protected boolean recordMatchTrace;
 
@@ -169,7 +163,6 @@ abstract public class Multiplexor
         this.core = coreOwner;
         this.graphmaster = this.core.getGraphmaster();
         this.logger = Logger.getLogger("programd");
-        this.matchLogger = Logger.getLogger("programd.matching");
         this.bots = this.core.getBots();
         CoreSettings coreSettings = this.core.getSettings();
         this.predicateEmptyDefault = coreSettings.getPredicateEmptyDefault();
@@ -403,7 +396,7 @@ abstract public class Multiplexor
             // Calculate the average response time.
             this.totalTime += time;
             this.avgResponseTime = (float) this.totalTime / (float) this.responseCount;
-            this.matchLogger.log(Level.FINE, RESPONSE_SPACE + this.responseCount + SPACE_IN_SPACE + time + MS_AVERAGE + this.avgResponseTime + MS);
+            this.logger.log(Level.FINE, RESPONSE_SPACE + this.responseCount + SPACE_IN_SPACE + time + MS_AVERAGE + this.avgResponseTime + MS);
         }
 
         // Invoke targeting if appropriate.
@@ -476,7 +469,7 @@ abstract public class Multiplexor
         // Always show the input path (in any case, if match trace is on).
         if (this.recordMatchTrace)
         {
-            this.matchLogger.log(Level.FINE, userid + PROMPT + input + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + that + SPACE
+            this.logger.log(Level.FINE, userid + PROMPT + input + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + that + SPACE
                     + Graphmaster.PATH_SEPARATOR + SPACE + topic + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + botid);
         }
 
@@ -500,8 +493,8 @@ abstract public class Multiplexor
 
         if (this.recordMatchTrace)
         {
-            this.matchLogger.log(Level.FINE, LABEL_MATCH + match.getPath());
-            this.matchLogger.log(Level.FINE, LABEL_FILENAME + QUOTE_MARK + match.getFileName() + QUOTE_MARK);
+            this.logger.log(Level.FINE, LABEL_MATCH + match.getPath());
+            this.logger.log(Level.FINE, LABEL_FILENAME + QUOTE_MARK + match.getFileName() + QUOTE_MARK);
         }
 
         ArrayList<String> stars = match.getInputStars();
