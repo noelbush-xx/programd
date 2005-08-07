@@ -15,6 +15,11 @@
         <learn>../aiml/GermanAlice/*.aiml</learn>
         <learn>../aiml/maria/*.aiml</learn>
         <learn>../aiml/standard/*.aiml</learn>-->
+        <testing>
+            <test-suite-path>../resources/testing/AIML.xml</test-suite-path>
+            <report-directory>../resources/testing/reports</report-directory>
+            <log-pattern>../logs/testing-%g.log</log-pattern>
+        </testing>
         <learn>../resources/testing/AIML.aiml</learn>
     </bot>
 </bots>
