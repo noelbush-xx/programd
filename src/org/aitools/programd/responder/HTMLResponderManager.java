@@ -111,6 +111,9 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
 
     /** The string &quot;{@value}&quot;. */
     private static final String LOGGED_IN = "logged-in";
+    
+    /** An error page indicating no such bot. */
+    private static final String NO_BOT_ERROR_PAGE = "<html><head><title>No Such Bot</title></head><body><h1>No Such Bot</h1><p>No such bot available.</p></body></html>";
 
     /**
      * Creates this object.
@@ -229,9 +232,14 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
         {
             // The user is already logged in, or perhaps authentication is off.
             case proceed:
-                return envelope.getCore().getResponse(envelope.getUserRequest(),
-                        getCookieValue(envelope.getServiceRequest(), USER_COOKIE_NAME),
-                        envelope.getBotID(), new HTMLResponder(this, envelope));
+                String botid = envelope.getBotID();
+                if (this.core.getBots().include(botid))
+                {
+                    return envelope.getCore().getResponse(envelope.getUserRequest(),
+                            getCookieValue(envelope.getServiceRequest(), USER_COOKIE_NAME),
+                            envelope.getBotID(), new HTMLResponder(this, envelope));
+                }
+                return NO_BOT_ERROR_PAGE;
 
             // The user needs to be authenticated.
             case authenticate:
