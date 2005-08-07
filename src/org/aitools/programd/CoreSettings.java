@@ -12,7 +12,7 @@ package org.aitools.programd;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-05-14T19:39:40.021-04:00
+ * Automatically generated from properties file, 2005-08-06T13:39:56.319-04:00
  */
 public class CoreSettings extends Settings
 {
@@ -188,14 +188,9 @@ public class CoreSettings extends Settings
     private int watcherTimer;
         
     /**
-     * The general activity log file.
+     * The main Program D log file.
      */
     private String activityLogPattern;
-        
-    /**
-     * The log file for matching activity.
-     */
-    private String matchingLogPattern;
         
     /**
      * The date-time format to use in general logs.
@@ -407,8 +402,6 @@ public class CoreSettings extends Settings
         }
 
         setActivityLogPattern(this.properties.getProperty("programd.activity.log.pattern", "logs/activity-%g.log"));
-
-        setMatchingLogPattern(this.properties.getProperty("programd.matching.log.pattern", "logs/matching-%g.log"));
 
         setLogTimestampFormat(this.properties.getProperty("programd.log.timestamp-format", "yyyy-MM-dd H:mm:ss"));
 
@@ -701,14 +694,6 @@ public class CoreSettings extends Settings
     public String getActivityLogPattern()
     {
         return this.activityLogPattern;
-    }
-
-    /**
-     * @return the value of matchingLogPattern
-     */
-    public String getMatchingLogPattern()
-    {
-        return this.matchingLogPattern;
     }
 
     /**
@@ -1077,14 +1062,6 @@ public class CoreSettings extends Settings
     public void setActivityLogPattern(String activityLogPatternToSet)
     {
         this.activityLogPattern = activityLogPatternToSet;
-    }
-
-    /**
-     * @param matchingLogPatternToSet   the value to which to set matchingLogPattern
-     */
-    public void setMatchingLogPattern(String matchingLogPatternToSet)
-    {
-        this.matchingLogPattern = matchingLogPatternToSet;
     }
 
     /**
