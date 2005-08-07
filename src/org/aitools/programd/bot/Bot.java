@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -51,7 +52,7 @@ public class Bot
     private String id;
 
     /** The files loaded for the bot. */
-    private HashMap<URL, HashSet<Nodemapper>> loadedFiles = new HashMap<URL, HashSet<Nodemapper>>();
+    private Map<URL, Set<Nodemapper>> loadedFiles = new HashMap<URL, Set<Nodemapper>>();
 
     /** The bot's properties. */
     private Map<String, String> properties = Collections.checkedMap(new HashMap<String, String>(),
@@ -75,6 +76,15 @@ public class Bot
     /** Holds cached predicates, keyed by userid. */
     private Map<String, PredicateMap> predicateCache = Collections
             .synchronizedMap(new HashMap<String, PredicateMap>());
+    
+    /** The directory where test suites are found. */
+    private String testSuitePathspec;
+    
+    /** The directory where test reports are to be written. */
+    private String testReportDirectory;
+    
+    /** The pattern for logs of testing. */
+    private String testingLogPattern;
 
     /** The predicate empty default. */
     protected String predicateEmptyDefault;
@@ -170,7 +180,7 @@ public class Bot
      * 
      * @return a map of the files loaded by this bot
      */
-    public HashMap<URL, HashSet<Nodemapper>> getLoadedFilesMap()
+    public Map<URL, Set<Nodemapper>> getLoadedFilesMap()
     {
         return this.loadedFiles;
     }
@@ -187,18 +197,20 @@ public class Bot
     }
 
     /**
-     * Adds a nodemapper to the filename map.
+     * Adds a nodemapper to the path map.
      * 
-     * @param filename the filename
+     * @param path the path
      * @param nodemapper the mapper for the node to add
      */
-    public void addToFilenameMap(String filename, Nodemapper nodemapper)
+    public void addToPathMap(URL path, Nodemapper nodemapper)
     {
-        HashSet<Nodemapper> nodemappers = this.loadedFiles.get(filename);
-        if (nodemappers != null)
+        Set<Nodemapper> nodemappers = this.loadedFiles.get(path);
+        if (nodemappers == null)
         {
-            nodemappers.add(nodemapper);
+            nodemappers = new HashSet<Nodemapper>();
+            this.loadedFiles.put(path, nodemappers);
         }
+        nodemappers.add(nodemapper);
     }
 
     /**
@@ -409,5 +421,53 @@ public class Bot
     public String applyInputSubstitutions(String input)
     {
         return Substituter.applySubstitutions(this.inputSubstitutions, input);
+    }
+
+    /**
+     * @return Returns the testingLogPattern.
+     */
+    public String getTestingLogPattern()
+    {
+        return this.testingLogPattern;
+    }
+
+    /**
+     * @param testingLogPatternToSet The testingLogPattern to set.
+     */
+    public void setTestingLogPattern(String testingLogPatternToSet)
+    {
+        this.testingLogPattern = testingLogPatternToSet;
+    }
+
+    /**
+     * @return Returns the testReportDirectory.
+     */
+    public String getTestReportDirectory()
+    {
+        return this.testReportDirectory;
+    }
+
+    /**
+     * @param testReportDirectoryToSet The testReportDirectory to set.
+     */
+    public void setTestReportDirectory(String testReportDirectoryToSet)
+    {
+        this.testReportDirectory = testReportDirectoryToSet;
+    }
+
+    /**
+     * @return Returns the testSuitePathspec.
+     */
+    public String getTestSuitePathspec()
+    {
+        return this.testSuitePathspec;
+    }
+
+    /**
+     * @param testSuitePathspecToSet The testSuitePathspec to set.
+     */
+    public void setTestSuiteDirectory(String testSuitePathspecToSet)
+    {
+        this.testSuitePathspec = testSuitePathspecToSet;
     }
 }
