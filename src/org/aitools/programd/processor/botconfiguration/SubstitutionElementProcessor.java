@@ -19,6 +19,7 @@ import org.w3c.dom.Element;
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
+import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.XMLKit;
 
@@ -68,9 +69,17 @@ abstract public class SubstitutionElementProcessor extends BotConfigurationEleme
      * @param type the type of substitution to add
      * @param element the container of the &lt;substitute/&gt; elements
      * @param parser the parser handling this
+     * @throws ProcessorException if there is some problem processing
      */
-    protected void addSubstitutions(SubstitutionType type, Element element, BotsConfigurationFileParser parser)
+    protected void addSubstitutions(SubstitutionType type, Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
+        // Does it have an href attribute?
+        if (element.hasAttribute(HREF))
+        {
+            parser.verifyAndProcess(element.getAttribute(HREF));
+            return;
+        }
+        
         Bot bot = parser.getCurrentBot();
         List<Element> substitutions = XMLKit.getElementChildrenOf(element);
 
