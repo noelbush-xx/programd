@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.aitools.programd.Core;
+import org.aitools.programd.responder.NoResponderHandlesThisException;
 import org.aitools.programd.server.ServletRequestTransactionEnvelope;
 import org.aitools.programd.server.ServletRequestResponderManagerRegistry;
 
@@ -38,7 +39,7 @@ import org.aitools.programd.server.ServletRequestResponderManagerRegistry;
 public class ProgramD extends HttpServlet
 {
     /** The string &quot;{@value}&quot;. */
-    private static final String CORE = "core";
+    private static final String CORE = "Core";
     
     /** The string &quot;{@value}&quot;. */
     private static final String RESPONDER_REGISTRY = "responder-registry";
@@ -73,13 +74,13 @@ public class ProgramD extends HttpServlet
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     {
-        if (!request.getServletPath().substring(1).equals(request.getContextPath()))
-        {
-            return;
-        }
         try
         {
             new ServletRequestTransactionEnvelope(request, response, this.core, this.responderRegistry).process();
+        }
+        catch (NoResponderHandlesThisException e)
+        {
+            this.log("No responder handles this message.", e);
         }
         catch (Throwable e)
         {
