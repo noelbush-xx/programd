@@ -168,11 +168,8 @@ GENERAL NOTES
     For pattern syntax, see http://java.sun.com/j2se/1.5.0/docs/api/java/util/logging/FileHandler.html
     -->
     
-    <!--The general activity log file. [String: logs/activity-%g.log]-->
-    <entry key="programd.activity.log.pattern">logs/activity-%g.log</entry>
-
-    <!--The log file for matching activity. [String: logs/matching-%g.log]-->
-    <entry key="programd.matching.log.pattern">logs/matching-%g.log</entry>
+    <!--The main Program D log file. [String: logs/activity-%g.log]-->
+    <entry key="programd.activity.log.pattern">logs/programd-%g.log</entry>
     
     <!--The date-time format to use in general logs. [String: yyyy-MM-dd H:mm:ss]
         * See http://java.sun.com/jdk1.5.0/docs/api/java/text/SimpleDateFormat.html
