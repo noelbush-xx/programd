@@ -13,6 +13,7 @@ import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
+import org.aitools.programd.processor.ProcessorException;
 
 /**
  * The <code>gender</code> element is a container for definitions of <a
@@ -41,7 +42,7 @@ public class GenderProcessor extends SubstitutionElementProcessor
      * @see BotConfigurationElementProcessor#process(Element,
      *      BotsConfigurationFileParser)
      */
-    public String process(Element element, BotsConfigurationFileParser parser)
+    public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         addSubstitutions(SubstitutionType.GENDER, element, parser);
         return EMPTY_STRING;
