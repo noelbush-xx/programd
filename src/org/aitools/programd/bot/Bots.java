@@ -26,15 +26,15 @@ import org.aitools.programd.util.DeveloperError;
  */
 public class Bots
 {
-    /** The private HashMap that is used by this. */
-    private Map<String, Bot> botList;
+    /** The map of bot ids to bots. */
+    private Map<String, Bot> botMap;
 
     /**
      * Creates a new <code>Bots</code>.
      */
     public Bots()
     {
-        this.botList = Collections.checkedMap(new HashMap<String, Bot>(), String.class, Bot.class);
+        this.botMap = Collections.checkedMap(new HashMap<String, Bot>(), String.class, Bot.class);
     }
 
     /**
@@ -45,7 +45,7 @@ public class Bots
      */
     public boolean include(String botid)
     {
-        return !(this.botList.get(botid) == null);
+        return this.botMap.containsKey(botid);
     }
 
     /**
@@ -57,7 +57,7 @@ public class Bots
      */
     public void addBot(String botid, Bot bot)
     {
-        this.botList.put(botid, bot);
+        this.botMap.put(botid, bot);
     }
 
     /**
@@ -71,7 +71,7 @@ public class Bots
         Bot wanted;
         try
         {
-            wanted = this.botList.get(botid);
+            wanted = this.botMap.get(botid);
         }
         catch (ClassCastException e)
         {
@@ -91,9 +91,9 @@ public class Bots
      */
     public Bot getABot()
     {
-        if (this.botList.size() > 0)
+        if (this.botMap.size() > 0)
         {
-            return this.botList.values().iterator().next();
+            return this.botMap.values().iterator().next();
         }
         // (otherwise...)
         throw new NullPointerException("No bots!");
@@ -106,7 +106,7 @@ public class Bots
      */
     public int getCount()
     {
-        return this.botList.size();
+        return this.botMap.size();
     }
 
     /**
@@ -116,12 +116,12 @@ public class Bots
      */
     public String getNiceList()
     {
-        if (this.botList.size() == 0)
+        if (this.botMap.size() == 0)
         {
             return "";
         }
         StringBuffer result = new StringBuffer();
-        for (String botName : this.botList.keySet())
+        for (String botName : this.botMap.keySet())
         {
             if (result.length() > 0)
             {
@@ -139,7 +139,7 @@ public class Bots
      */
     public Set<String> getIDs()
     {
-        return this.botList.keySet();
+        return this.botMap.keySet();
     }
 
     /**
@@ -149,7 +149,7 @@ public class Bots
      */
     public Iterator<String> keysIterator()
     {
-        return this.botList.keySet().iterator();
+        return this.botMap.keySet().iterator();
     }
 
     /**
@@ -160,7 +160,7 @@ public class Bots
      */
     public boolean haveLoaded(String filename)
     {
-        for (Bot bot : this.botList.values())
+        for (Bot bot : this.botMap.values())
         {
             if (bot.hasLoaded(filename))
             {
@@ -168,5 +168,15 @@ public class Bots
             }
         }
         return false;
+    }
+    
+    /**
+     * Removes the indicated bot.
+     * 
+     * @param id
+     */
+    public void removeBot(String id)
+    {
+        this.botMap.remove(id);
     }
 }
