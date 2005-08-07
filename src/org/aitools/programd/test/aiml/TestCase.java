@@ -107,6 +107,17 @@ public class TestCase
         this.input = testInput;
         this.addChecker(new AnswerChecker(expectedAnswer));
     }
+    
+    /**
+     * Constructs a basic TestCase with just an input.
+     * 
+     * @param testInput the input to use
+     */
+    public TestCase(String testInput)
+    {
+        this.name = "testcase-" + System.currentTimeMillis();
+        this.input = testInput;
+    }
 
     /**
      * @return the name of this test case
