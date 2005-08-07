@@ -9,10 +9,11 @@
 
 package org.aitools.programd.graph;
 
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -637,10 +638,10 @@ public class Graphmaster
      * @param template the category's template
      * @param botid the bot id for whom to add the category
      * @param bot the bot for whom the category is being added
-     * @param filename the filename from which the category comes
+     * @param url the path from which the category comes
      */
     public void addCategory(String pattern, String that, String topic, String template,
-            String botid, Bot bot, String filename)
+            String botid, Bot bot, URL url)
     {
         // Make sure the path components are right.
         if (pattern == null)
@@ -665,8 +666,8 @@ public class Graphmaster
         String storedTemplate = (String) node.get(TEMPLATE);
         if (storedTemplate == null)
         {
-            node.put(FILENAME, filename);
-            bot.addToFilenameMap(filename, node);
+            node.put(FILENAME, url.toExternalForm());
+            bot.addToPathMap(url, node);
             node.put(TEMPLATE, template);
             this.totalCategories++;
         }
@@ -679,7 +680,7 @@ public class Graphmaster
                     if (this.noteEachMerge)
                     {
                         this.logger.log(Level.WARNING, "Skipping path-identical category from \""
-                                + filename + "\" which duplicates path of category from \""
+                                + url + "\" which duplicates path of category from \""
                                 + node.get(FILENAME) + "\": " + pattern + ":" + that + ":" + topic);
                     }
                     break;
@@ -690,10 +691,10 @@ public class Graphmaster
                         this.logger.log(Level.WARNING,
                                 "Overwriting path-identical category from \""
                                         + node.get(Graphmaster.FILENAME)
-                                        + "\" with new category from \"" + filename + "\".  Path: "
+                                        + "\" with new category from \"" + url + "\".  Path: "
                                         + pattern + ":" + that + ":" + topic);
                     }
-                    node.put(Graphmaster.FILENAME, filename);
+                    node.put(Graphmaster.FILENAME, url);
                     node.put(Graphmaster.TEMPLATE, template);
                     break;
 
@@ -701,13 +702,13 @@ public class Graphmaster
                     if (this.noteEachMerge)
                     {
                         this.logger.log(Level.WARNING, "Appending template of category from \""
-                                + filename + "\" to template of path-identical category from \""
+                                + url + "\" to template of path-identical category from \""
                                 + node.get(Graphmaster.FILENAME) + "\": " + pattern + ":" + that
                                 + ":" + topic);
                     }
                     node
                             .put(Graphmaster.FILENAME, node.get(Graphmaster.FILENAME) + ", "
-                                    + filename);
+                                    + url);
                     node.put(Graphmaster.TEMPLATE, appendTemplate(storedTemplate, template));
                     break;
 
@@ -715,13 +716,13 @@ public class Graphmaster
                     if (this.noteEachMerge)
                     {
                         this.logger.log(Level.WARNING, "Combining template of category from \""
-                                + filename + "\" with template of path-identical category from \""
+                                + url + "\" with template of path-identical category from \""
                                 + node.get(Graphmaster.FILENAME) + "\": " + pattern + ":" + that
                                 + ":" + topic);
                     }
                     node
                             .put(Graphmaster.FILENAME, node.get(Graphmaster.FILENAME) + ", "
-                                    + filename);
+                                    + url);
                     String combined = combineTemplates(storedTemplate, template);
                     node.put(Graphmaster.TEMPLATE, combined);
                     break;
@@ -738,7 +739,7 @@ public class Graphmaster
      */
     public void unload(Object path, Bot bot)
     {
-        HashSet<Nodemapper> nodemappers = bot.getLoadedFilesMap().get(path);
+        Set<Nodemapper> nodemappers = bot.getLoadedFilesMap().get(path);
 
         for (Nodemapper nodemapper : nodemappers)
         {
