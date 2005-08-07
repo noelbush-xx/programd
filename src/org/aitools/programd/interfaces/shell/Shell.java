@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -32,7 +33,6 @@ import org.aitools.programd.util.ManagedProcess;
 import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.XMLKit;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * Provides a simple shell for interacting with the bot at a command line.
@@ -180,21 +180,27 @@ public class Shell extends Thread
         this.commandRegistry = new ShellCommandRegistry();
         
         // Look for any shell command plugins and add them to the registry.
-        NodeList commands = ((Element)this.core.getPluginConfig().getDocumentElement().getElementsByTagNameNS(Core.PLUGIN_CONFIG_SCHEMA_URI, "shell-commands").item(0)).getElementsByTagNameNS(Core.PLUGIN_CONFIG_SCHEMA_URI, "command");
-        int commandCount = commands.getLength();
-        for (int commandIndex = 0; commandIndex < commandCount; commandIndex++)
+        Element shellCommandSet = XMLKit.getFirstElementNamed(this.core.getPluginConfig().getDocumentElement(), "shell-commands");
+        if (shellCommandSet != null)
         {
-            Element commandElement = (Element)commands.item(commandIndex);
-            String classname = commandElement.getAttribute("class");
-            NodeList parameterElements = commandElement.getElementsByTagNameNS(Core.PLUGIN_CONFIG_SCHEMA_URI, "parameter");
-            int parameterCount = parameterElements.getLength();
-            HashMap<String, String> parameters = new HashMap<String, String>(parameterCount);
-            for (int parameterIndex = 0; parameterIndex < parameterCount; parameterIndex++)
+            List<Element> commands = XMLKit.getAllElementsNamed(shellCommandSet, "command");
+            if (commands != null)
             {
-                Element parameter = (Element)parameterElements.item(parameterIndex);
-                parameters.put(parameter.getAttribute("name"), parameter.getAttribute("value"));
+                for (Element commandElement : commands)
+                {
+                    String classname = commandElement.getAttribute("class");
+                    List<Element> parameterElements = XMLKit.getAllElementsNamed(commandElement, "parameter");
+                    if (parameterElements != null)
+                    {
+                        HashMap<String, String> parameters = new HashMap<String, String>(parameterElements.size());
+                        for (Element parameter : parameterElements)
+                        {
+                            parameters.put(parameter.getAttribute("name"), parameter.getAttribute("value"));
+                        }
+                        this.commandRegistry.register(classname, parameters);
+                    }
+                }
             }
-            this.commandRegistry.register(classname, parameters);
         }
     }
 
