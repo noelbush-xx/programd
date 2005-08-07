@@ -30,7 +30,8 @@ public class ShellCommandRegistry extends ObjectExemplarRegistry<ShellCommand>
                                                    "org.aitools.programd.interfaces.shell.TalkToCommand",
                                                    "org.aitools.programd.interfaces.shell.WhoCommand",
                                                    "org.aitools.programd.interfaces.shell.ListBotFilesCommand",
-                                                   "org.aitools.programd.interfaces.shell.ListCommandablesCommand" };
+                                                   "org.aitools.programd.interfaces.shell.ListCommandablesCommand",
+                                                   "org.aitools.programd.test.aiml.TestCommand"};
     
     /**
      * Creates a new <code>AIMLProcessorRegistry</code>, with
