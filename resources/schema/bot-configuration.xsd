@@ -45,6 +45,7 @@
                 <xs:element ref="substitutions" minOccurs="0"/>
                 <xs:element ref="sentence-splitters" minOccurs="0"/>
                 <xs:element ref="listeners" minOccurs="0"/>
+                <xs:element ref="testing" minOccurs="0"/>
                 <xs:element name="learn" minOccurs="0" maxOccurs="unbounded"
                     type="xs:anyURI">
                     <xs:annotation>
@@ -147,15 +148,31 @@
         </xs:annotation>
         <xs:complexType>
             <xs:all minOccurs="0">
-                <xs:element name="input" type="SubstitutionElementSet"/>
-                <xs:element name="gender" type="SubstitutionElementSet"/>
-                <xs:element name="person" type="SubstitutionElementSet"/>
-                <xs:element name="person2" type="SubstitutionElementSet"/>
+                <xs:element ref="input"/>
+                <xs:element ref="gender"/>
+                <xs:element ref="person"/>
+                <xs:element ref="person2"/>
             </xs:all>
             <xs:attribute name="href" type="xs:anyURI"/>
         </xs:complexType>
     </xs:element>
+    <xs:element name="input" type="SubstitutionElementSet"/>
+    <xs:element name="gender" type="SubstitutionElementSet"/>
+    <xs:element name="person" type="SubstitutionElementSet"/>
+    <xs:element name="person2" type="SubstitutionElementSet"/>
     <xs:complexType name="SubstitutionElementSet">
+        <xs:annotation>
+            <xs:appinfo>
+                <sch:pattern name="href xor element content">
+                    <sch:rule context="bc:predicates">
+                        <sch:assert
+                            test="(@href and not(bc:substitute)) or (not(@href) and bc:substitute)"> A
+                            substitution element set should have an href attribute, or substitute
+                            element content, but not both. </sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xs:appinfo>
+        </xs:annotation>
         <xs:sequence>
             <xs:element name="substitute" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
@@ -169,6 +186,7 @@
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
+        <xs:attribute name="href" type="xs:anyURI"/>
     </xs:complexType>
     <xs:element name="sentence-splitters">
         <xs:annotation>
@@ -227,6 +245,41 @@
                         <xs:attribute name="class" type="d:JavaClassname" use="required"/>
                         <xs:attribute name="enabled" type="xs:boolean" use="required"/>
                     </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="href" type="xs:anyURI"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="testing">
+        <xs:annotation>
+            <xs:documentation>A testing element defines the testing configuration.</xs:documentation>
+            <xs:appinfo>
+                <sch:pattern name="href xor element content">
+                    <sch:rule context="bc:testing">
+                        <sch:assert
+                            test="(@href and not(child::*)) or (not(@href) and child::*)"> A
+                            testing element should have an href attribute, or testing element
+                            content, but not both. </sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="test-suite-path" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>A test-suite element gives the pathspec for one or more test suite files (use wildcards to indicate multiple files).</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="report-directory" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>A report-directory element gives the path to a directory where test reports should be stored.</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="log-pattern" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>A log-pattern defines the pattern (including path) for writing log files of testing activity.</xs:documentation>
+                    </xs:annotation>
                 </xs:element>
             </xs:sequence>
             <xs:attribute name="href" type="xs:anyURI"/>
