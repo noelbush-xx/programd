@@ -9,13 +9,10 @@
 
 package org.aitools.programd.test.aiml;
 
-import java.util.HashMap;
-import java.util.logging.Logger;
-
+import org.aitools.programd.bot.Bot;
 import org.aitools.programd.interfaces.shell.Shell;
 import org.aitools.programd.interfaces.shell.ShellCommand;
 import org.aitools.programd.logging.LogUtils;
-import org.aitools.programd.util.UserError;
 
 /**
  * A TestCommand provides an interface to the AIML testing facility.
@@ -33,39 +30,12 @@ public class TestCommand extends ShellCommand
     /** Shell help line. */
     private static final String HELP_LINE = "runs specified test suite on current bot";
 
-    /** The directory where test suites should be found. */
-    private String testSuiteDirectory;
-
-    /** The logger to use. */
-    private Logger logger;
-
     /**
      * Creates a new TestCommand.
-     * 
-     * @param parameters the parameters for configuring the Tester
      */
-    public TestCommand(HashMap<String, String> parameters)
+    public TestCommand()
     {
         super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
-        this.testSuiteDirectory = parameters.get("test-suite-directory");
-        if (this.testSuiteDirectory == null)
-        {
-            throw new UserError("No test suite directory specified for Tester!",
-                    new IllegalArgumentException());
-        }
-        String logPattern = parameters.get("log-pattern");
-        if (logPattern == null)
-        {
-            throw new UserError("No log pattern specified for Tester!",
-                    new IllegalArgumentException());
-        }
-        String timestampFormat = parameters.get("log-timestamp-format");
-        if (timestampFormat == null)
-        {
-            throw new UserError("No timestamp format specified for Tester!",
-                    new IllegalArgumentException());
-        }
-        this.logger = LogUtils.setupLogger("programd.testing", logPattern, timestampFormat);
     }
 
     /**
@@ -110,8 +80,23 @@ public class TestCommand extends ShellCommand
                 }
             }
         }
-        new Tester(shell.getCore(), this.logger, this.testSuiteDirectory).run(shell
-                .getCurrentBotID(), suite, runCount);
+        String botid = shell.getCurrentBotID();
+        Bot bot = shell.getBots().getBot(botid);
+        String logPattern = bot.getTestingLogPattern();
+        String testSuitePathspec = bot.getTestSuitePathspec();
+        String testReportDirectory = bot.getTestReportDirectory();
+        if (logPattern != null && testSuitePathspec != null && testReportDirectory != null)
+        {
+            new Tester(shell.getCore(),
+                    LogUtils.setupLogger("programd.testing", logPattern),
+                    testSuitePathspec,
+                    testReportDirectory).run(shell
+                    .getCurrentBotID(), suite, runCount);
+        }
+        else
+        {
+            shell.showError("Bot " + botid + " is not configured for testing.");
+        }
     }
 
 }

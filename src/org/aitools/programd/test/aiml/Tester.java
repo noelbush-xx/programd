@@ -14,7 +14,6 @@ import org.aitools.programd.Core;
 import org.aitools.programd.multiplexor.Multiplexor;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.UserError;
 
 /**
  * A Tester loads one or more test suites and runs them, logging output.
@@ -39,8 +38,11 @@ public class Tester
     /** The logger to use. */
     private Logger logger;
 
-    /** The path to the directory that contains test suites. */
-    private String directory;
+    /** The pathspec for the test suites. */
+    private String testSuitePathSpec;
+
+    /** The path to the test report directory. */
+    private String testReportDirectory;
 
     /** The timestamp format to use for reports. */
     private static final SimpleDateFormat timestampFormat = new SimpleDateFormat(
@@ -53,16 +55,17 @@ public class Tester
      * @param core the Core to use for finding plugin configuration, active
      *            multiplexor, etc.
      * @param testLogger the logger to which to send output
-     * @param testSuiteDirectory the name of the directory that contains test
-     *            suites
+     * @param testSuites the path to the test suite directory
+     * @param testReports the directory in which to store test reports
      */
-    public Tester(Core core, Logger testLogger, String testSuiteDirectory)
+    public Tester(Core core, Logger testLogger, String testSuites, String testReports)
     {
         this.multiplexor = core.getMultiplexor();
         this.logger = testLogger;
+        this.testSuitePathSpec = testSuites;
         try
         {
-            this.directory = FileManager.getExistingDirectory(testSuiteDirectory)
+            this.testReportDirectory = FileManager.getExistingDirectory(testReports)
                     .getCanonicalPath();
         }
         catch (IOException e)
@@ -79,25 +82,21 @@ public class Tester
      * @param suite the suite to run
      * @param botid the botid on whom to run the tests
      * @param runCount the number of times to run the tests
+     * @return the path where the test report was written
      */
-    public void run(String botid, String suite, int runCount)
+    public String run(String botid, String suite, int runCount)
     {
         this.suites.clear();
-        this.suites = loadTests(this.directory, this.multiplexor, this.logger);
-        runTests(botid, suite, runCount);
-    }
-
-    private void runTests(String botid, String suite, int runCount)
-    {
+        this.suites = loadTests(this.testSuitePathSpec, this.multiplexor, this.logger);
         if (null == botid)
         {
-            this.logger
-                    .log(Level.WARNING, "No botid defined for tests; select a bot with /talkto.");
-            return;
+            this.logger.log(Level.WARNING, "No botid defined for tests.");
+            return "";
         }
         if (this.suites.size() == 0)
         {
-            return;
+            this.logger.log(Level.WARNING, "No suites defined.");
+            return "";
         }
         this.successes.clear();
         this.failures.clear();
@@ -111,10 +110,12 @@ public class Tester
         }
         TestReport report = new TestReport(this.successes, this.failures);
         report.logSummary(this.logger);
-        report.write(this.directory + File.separator + "reports" + File.separator + "test-report-"
-                + timestampFormat.format(new Date()) + ".xml");
+        String reportPath = this.testReportDirectory + File.separator + "test-report-"
+        + timestampFormat.format(new Date()) + ".xml";
+        report.write(reportPath);
         // Good time to request garbage collection.
         System.gc();
+        return reportPath;
     }
 
     private void runOneSuite(String botid, String suiteName, int runCount)
@@ -150,26 +151,33 @@ public class Tester
     }
 
     /**
-     * Loads all test suites from a given directory.
+     * Loads all test suites from a given pathspec (may use wildcards).
      * @param directory the directory from which to load the tests
      * @param multiplexorToUse the Multiplexor to assign to the suites
      * @param logger the logger to use for tracking progress
      * 
-     * @param testFilePath
+     * @param pathspec
      * @return the map of suite names to suites
      */
-    private static HashMap<String, TestSuite> loadTests(String directory, Multiplexor multiplexorToUse, Logger logger)
+    private static HashMap<String, TestSuite> loadTests(String pathspec, Multiplexor multiplexorToUse, Logger logger)
     {
         HashMap<String, TestSuite> suites = new HashMap<String, TestSuite>();
-        String[] fileList;
-        try
+        String[] fileList = null;
+        // Handle paths with wildcards that need to be expanded.
+        if (pathspec.indexOf("*") != -1)
         {
-            fileList = FileManager.glob("*.xml", directory);
+            try
+            {
+                fileList = FileManager.glob(pathspec);
+            }
+            catch (FileNotFoundException e)
+            {
+                logger.log(Level.WARNING, e.getMessage());
+            }
         }
-        catch (FileNotFoundException e)
+        else
         {
-            throw new UserError("Could not find files matching \"" + directory
-                    + File.separator + "*.xml", e);
+            fileList = new String[] {pathspec};
         }
         int fileCount = fileList.length;
         if (null != fileList && fileCount > 0)
@@ -177,15 +185,14 @@ public class Tester
             for (int index = 0; index < fileCount; index++)
             {
                 String path = fileList[index];
-                logger.log(Level.INFO, "Loading tests from \"" + path + "\".");
+                logger.log(Level.INFO, "Loading tests from \"" + pathspec + "\".");
                 TestSuite suite = TestSuite.load(path, multiplexorToUse);
                 suites.put(suite.getName(), suite);
             }
         }
         else
         {
-            logger.log(Level.WARNING, "No test files found in path \"" + directory
-                    + "\".");
+            logger.log(Level.WARNING, "No test files found in \"" + pathspec + "\".");
         }
         return suites;
     }
