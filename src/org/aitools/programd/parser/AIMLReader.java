@@ -9,6 +9,8 @@
 
 package org.aitools.programd.parser;
 
+import java.net.URL;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -35,7 +37,7 @@ public class AIMLReader extends DefaultHandler
     
     private Graphmaster graphmaster;
     
-    private String path;
+    private URL path;
     
     private String botid;
     
@@ -135,16 +137,16 @@ public class AIMLReader extends DefaultHandler
      * Creates a new AIMLReader.
      * 
      * @param graphmasterToUse the graphmaster into which new categories are to be loaded.
-     * @param pathToUse the path that is being read
+     * @param url the path that is being read
      * @param botidToUse the id of the bot into whom categories are being loaded
      * @param botToUse the bot itself
      * @param defaultNamespaceURIToUse the namespace URI to use when none other
      *            is specified (?)
      */
-    public AIMLReader(Graphmaster graphmasterToUse, String pathToUse, String botidToUse, Bot botToUse, String defaultNamespaceURIToUse)
+    public AIMLReader(Graphmaster graphmasterToUse, URL url, String botidToUse, Bot botToUse, String defaultNamespaceURIToUse)
     {
         this.graphmaster = graphmasterToUse;
-        this.path = pathToUse;
+        this.path = url;
         this.botid = botidToUse;
         this.bot = botToUse;
         this.defaultNamespaceURI = defaultNamespaceURIToUse;
