@@ -63,8 +63,7 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
 
         this.jetty = new ProgramDAwareJettyServer(this.core, this.responderRegistry);
 
-        // Add a LogSink to Jetty so it will send its errors to the web server
-        // log.
+        // Add a LogSink to Jetty so it will send its errors to the web server log.
         OutputStreamLogSink logsink = new OutputStreamLogSink(this.serverSettings.getLogPathPattern());
         try
         {
@@ -84,7 +83,7 @@ public class JettyWrapper implements ProgramDCompatibleHttpServer
             throw new DeveloperError("Error occurred while configuring jetty.  Check that the config file is valid.", e);
         }
 
-        this.jetty.setStatsOn(true);
+        this.jetty.setStatsOn(false);
     }
 
     /**

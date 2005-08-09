@@ -85,7 +85,7 @@ public class Substituter
         }
 
         // Now construct the result.
-        StringBuilder result = new StringBuilder();
+        StringBuffer result = new StringBuffer();
 
         // Iterate through the untouched pieces and the replacements.
         ListIterator<String> untouchedIterator = untouchedPieces.listIterator(0);

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -43,9 +42,6 @@ public class TestSuite implements Iterable<TestCase>
 
     /** The Multiplexor to use. */
     private Multiplexor multiplexor;
-
-    /** The Logger to use. */
-    private Logger logger;
 
     /** The test auccesses accumulated by this suite. */
     private LinkedList<TestResult> successes = new LinkedList<TestResult>();

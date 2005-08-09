@@ -295,7 +295,7 @@ abstract public class GenericParser<P extends Processor>
      */
     public String evaluate(NodeList list) throws ProcessorException
     {
-        StringBuilder result = new StringBuilder();
+        StringBuffer result = new StringBuffer();
         int listSize = list.getLength();
         for (int index = 0; index < listSize; index++)
         {

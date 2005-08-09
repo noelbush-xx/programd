@@ -97,7 +97,7 @@ public class StringKit
         {
             return EMPTY_STRING;
         }
-        StringBuilder result = new StringBuilder();
+        StringBuffer result = new StringBuffer();
         for (int index = 0; index < stringCount - 1; index++)
         {
             result.append(strings[index]);

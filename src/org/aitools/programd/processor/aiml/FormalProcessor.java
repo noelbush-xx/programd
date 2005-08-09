@@ -55,7 +55,7 @@ public class FormalProcessor extends AIMLProcessor
             return response;
         }
         StringTokenizer tokenizer = new StringTokenizer(response, SPACE);
-        StringBuilder result = new StringBuilder(response.length());
+        StringBuffer result = new StringBuffer(response.length());
         while (tokenizer.hasMoreTokens())
         {
             String word = tokenizer.nextToken();

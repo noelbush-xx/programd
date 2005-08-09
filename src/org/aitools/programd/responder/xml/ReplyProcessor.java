@@ -41,7 +41,7 @@ public class ReplyProcessor extends XMLTemplateProcessor
      */
     public String process(Element element, XMLTemplateParser parser)
     {
-        StringBuilder result = new StringBuilder();
+        StringBuffer result = new StringBuffer();
         String replyContent = XMLKit.renderXML(element.getChildNodes(), true);
         for (String reply : parser.getResponder().getBotReplies())
         {

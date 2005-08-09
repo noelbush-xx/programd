@@ -44,7 +44,7 @@ public class ExpectedKeywordChecker extends Checker
      */
     public String getContent()
     {
-        StringBuilder result = new StringBuilder();
+        StringBuffer result = new StringBuffer();
         int keywordCount = this.keywords.size();
         for (String keyword : this.keywords)
         {

@@ -110,13 +110,13 @@ public class AIMLReader extends DefaultHandler
     private State state = State.IN_UNHANDLED;
 
     /** The most recently collected &lt;pattern&gt;&lt;/pattern&gt; contents. */
-    private StringBuilder patternBuffer;
+    private StringBuffer patternBuffer;
 
     /** The most recently collected &lt;that&gt;&lt;/that&gt; contents. */
-    private StringBuilder thatBuffer;
+    private StringBuffer thatBuffer;
 
     /** The most recently collected &lt;template&gt;&lt;/template&gt; contents. */
-    private StringBuilder templateBuffer;
+    private StringBuffer templateBuffer;
 
     /** The finalized &lt;pattern&gt;&lt;/pattern&gt; contents. */
     private String pattern;
@@ -271,7 +271,7 @@ public class AIMLReader extends DefaultHandler
         {
             this.state = State.IN_PATTERN;
             this.patternBuffer = null;
-            this.patternBuffer = new StringBuilder();
+            this.patternBuffer = new StringBuffer();
         }
         else if (elementName.equals(BOT) && this.state == State.IN_PATTERN)
         {
@@ -282,13 +282,13 @@ public class AIMLReader extends DefaultHandler
         {
             this.state = State.IN_THAT;
             this.thatBuffer = null;
-            this.thatBuffer = new StringBuilder();
+            this.thatBuffer = new StringBuffer();
         }
         else if (elementName.equals(TEMPLATE))
         {
             this.state = State.IN_TEMPLATE;
             this.templateBuffer = null;
-            this.templateBuffer = new StringBuilder();
+            this.templateBuffer = new StringBuffer();
         }
         else if (this.state == State.IN_TEMPLATE)
         {

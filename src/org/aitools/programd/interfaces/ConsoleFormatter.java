@@ -69,7 +69,7 @@ public class ConsoleFormatter extends Formatter
      */
     public String format(LogRecord record)
     {
-        StringBuilder result = new StringBuilder();
+        StringBuffer result = new StringBuffer();
         if (this.showTimestamp)
         {
             result.append('[' + this.timestampFormat.format(new Date(record.getMillis())) + RBRACKET_SPACE);
