@@ -42,7 +42,7 @@ public class ProgramDAwareJettyServer extends Server
     public HttpContext addContext(HttpContext context)
     {
         ServletHttpContext result = (ServletHttpContext) super.addContext(context);
-        result.getServletContext().setAttribute("core", this.core);
+        result.getServletContext().setAttribute("Core", this.core);
         result.getServletContext().setAttribute("responder-registry", this.responderRegistry);
         return result;
     }
