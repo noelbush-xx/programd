@@ -149,6 +149,7 @@ public class Graphmaster
         this.noteEachMerge = settings.mergeNoteEach();
         this.responseTimeout = settings.getResponseTimeout();
         this.categoryLoadNotifyInterval = settings.getCategoryLoadNotifyInterval();
+        this.aimlNamespaceURI = settings.getAimlSchemaNamespaceUri();
     }
     
     /**
@@ -162,6 +163,7 @@ public class Graphmaster
         this.noteEachMerge = false;
         this.responseTimeout = 1000;
         this.categoryLoadNotifyInterval = 5000;
+        this.aimlNamespaceURI = "http://alicebot.org/2001/AIML-1.0.1";
     }
 
     /**
@@ -259,7 +261,7 @@ public class Graphmaster
      * synchronized!
      * </p>
      * 
-     * @see #match(Nodemapper, Nodemapper, List, String, StringBuilder,
+     * @see #match(Nodemapper, Nodemapper, List, String, StringBuffer,
      *      MatchState, long)
      * @param input &lt;input/&gt; path component
      * @param that &lt;that/&gt; path component
@@ -319,7 +321,7 @@ public class Graphmaster
 
         // Get the match, starting at the root, with an empty star and path,
         // starting in "in input" mode.
-        Match match = match(this.root, this.root, inputPath, EMPTY_STRING, new StringBuilder(),
+        Match match = match(this.root, this.root, inputPath, EMPTY_STRING, new StringBuffer(),
                 MatchState.IN_INPUT, System.currentTimeMillis() + this.responseTimeout);
 
         // Return it if not null; throw an exception if null.
@@ -350,7 +352,7 @@ public class Graphmaster
      * @return the resulting <code>Match</code> object
      */
     private Match match(Nodemapper nodemapper, Nodemapper parent, List<String> input,
-            String wildcardContent, StringBuilder path, MatchState matchState, long expiration)
+            String wildcardContent, StringBuffer path, MatchState matchState, long expiration)
     {
         // Return null if expiration has been reached.
         if (System.currentTimeMillis() >= expiration)
@@ -398,7 +400,7 @@ public class Graphmaster
         {
             // If so, construct a new path from the current path plus a _
             // wildcard.
-            StringBuilder newPath = new StringBuilder();
+            StringBuffer newPath = new StringBuffer();
             synchronized (newPath)
             {
                 if (path.length() > 0)
@@ -477,7 +479,7 @@ public class Graphmaster
                 // Now try to get a match using the tail and an empty star and
                 // empty path.
                 match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, EMPTY_STRING,
-                        new StringBuilder(), matchState, expiration);
+                        new StringBuffer(), matchState, expiration);
 
                 // If that did result in a match,
                 if (match != null)
@@ -526,7 +528,7 @@ public class Graphmaster
             else
             {
                 // Construct a new path from the current path plus the head.
-                StringBuilder newPath = new StringBuilder();
+                StringBuffer newPath = new StringBuffer();
                 synchronized (newPath)
                 {
                     if (path.length() > 0)
@@ -559,7 +561,7 @@ public class Graphmaster
         {
             // If so, construct a new path from the current path plus a *
             // wildcard.
-            StringBuilder newPath = new StringBuilder();
+            StringBuffer newPath = new StringBuffer();
             synchronized (newPath)
             {
                 if (path.length() > 0)
