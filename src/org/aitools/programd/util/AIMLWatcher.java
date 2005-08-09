@@ -61,6 +61,14 @@ public class AIMLWatcher
             this.timer.schedule(new CheckAIMLTask(), 0, this.core.getSettings().getWatcherTimer());
         }
     }
+    
+    /**
+     * Stops the AIMLWatcher.
+     */
+    public void stop()
+    {
+        this.timer.cancel();
+    }
 
     /**
      * Reloads AIML from a given file.
@@ -102,7 +110,7 @@ public class AIMLWatcher
         }
         else
         {
-            throw new DeveloperError("AIMLWatcher cannot read path \"" + path + "\"", new IOException());
+            logger.log(Level.WARNING, "AIMLWatcher cannot read path \"" + path + "\"", new IOException());
         }
     }
 
