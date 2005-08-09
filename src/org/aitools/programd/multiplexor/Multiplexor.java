@@ -280,7 +280,7 @@ abstract public class Multiplexor
         String response = EMPTY_STRING;
 
         // For each input sentence...
-        for (String sentence : sentenceList)
+        for (Iterator iterator = sentenceList.iterator(); iterator.hasNext(); )
         {
             // Append the reply to the response.
             response += replies.next();
