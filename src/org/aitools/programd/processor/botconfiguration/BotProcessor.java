@@ -9,6 +9,7 @@
 
 package org.aitools.programd.processor.botconfiguration;
 
+import java.util.Date;
 import java.util.logging.Level;
 
 import org.w3c.dom.Element;
@@ -16,6 +17,7 @@ import org.w3c.dom.Element;
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
+import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
 
@@ -69,14 +71,54 @@ public class BotProcessor extends BotConfigurationElementProcessor
 
         if (Boolean.valueOf(element.getAttribute(ENABLED)).booleanValue())
         {
-            Bots bots = parser.getCore().getBots();
+            Bots bots = this.core.getBots();
             if (!bots.include(botID))
             {
                 Bot bot = new Bot(botID, parser.getCore().getSettings());
+                
                 logger.log(Level.INFO, "Configuring bot \"" + botID + "\".");
                 parser.setCurrentBot(bot);
                 bots.addBot(botID, bot);
+                
+                Graphmaster graphmaster = this.core.getGraphmaster();
+                
+                int previousCategoryCount = graphmaster.getTotalCategories();
+                int previousDuplicateCount = graphmaster.getDuplicateCategories();
+
+                this.core.setLoadtime();
+                
+                // Stop the AIMLWatcher while loading.
+                if (this.core.getSettings().useWatcher())
+                {
+                    this.core.getAIMLWatcher().stop();
+                }
+                
+                // Index the start time before loading.
+                long time = new Date().getTime();
+                
+                // Load the bot.
                 parser.evaluate(element.getChildNodes());
+
+                // Calculate the time used to load all categories.
+                time = new Date().getTime() - time;
+
+                this.core.unsetLoadtime();
+
+                // Restart the AIMLWatcher.
+                if (this.core.getSettings().useWatcher())
+                {
+                    this.core.getAIMLWatcher().start();
+                }
+                
+                logger.log(Level.INFO, (graphmaster.getTotalCategories() - previousCategoryCount)
+                        + " unique categories loaded in " + time / 1000.00 + " seconds.");
+                
+                int dupes = graphmaster.getDuplicateCategories() - previousDuplicateCount;
+                if (dupes > 0)
+                {
+                    logger.log(Level.WARNING, dupes
+                        + " path-identical categories were encountered, and handled according to the " + this.core.getSettings().getMergePolicy() + " merge policy.");
+                }
             }
             else
             {
