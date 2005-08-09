@@ -11,10 +11,11 @@ package org.aitools.programd;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.UnknownHostException;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -210,7 +211,7 @@ public class Core extends Thread
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
         this.parser = XMLKit.getSAXParser(URITools.getResource(AIML_SCHEMA_LOCATION), "AIML");
-        this.graphmaster = new Graphmaster();
+        this.graphmaster = new Graphmaster(this.settings);
         this.bots = new Bots();
         this.processes = new ManagedProcesses(this);
 
@@ -304,24 +305,8 @@ public class Core extends Thread
 
             this.logger.log(Level.INFO, "Starting up the Graphmaster.");
 
-            // Index the start time before loading.
-            long time = new Date().getTime();
-
             // Start loading bots.
             loadBots(this.settings.getStartupFilePath());
-
-            // Calculate the time used to load all categories.
-            time = new Date().getTime() - time;
-
-            this.logger.log(Level.INFO, this.graphmaster.getTotalCategories()
-                    + " unique categories loaded in " + time / 1000.00 + " seconds.");
-            
-            int dupes = this.graphmaster.getDuplicateCategories();
-            if (dupes > 0)
-            {
-                this.logger.log(Level.WARNING, dupes
-                    + " path-identical categories were encountered, and handled according to the " + this.settings.getMergePolicy() + " merge policy.");
-            }
             
             // Start the AIMLWatcher if configured to do so.
             if (this.settings.useWatcher())
@@ -458,8 +443,10 @@ public class Core extends Thread
      */
     public void load(String path, String botid)
     {
-        boolean localFile;
+        final String ENC_UTF8 = "UTF-8";
 
+        boolean localFile;
+        
         // Check for obviously invalid paths of zero length.
         if (path.length() < 1)
         {
@@ -507,7 +494,14 @@ public class Core extends Thread
             // Add it to the AIMLWatcher, if active.
             if (this.settings.useWatcher())
             {
-                this.aimlWatcher.addWatchFile(url.getPath(), botid);
+                try
+                {
+                    this.aimlWatcher.addWatchFile(URLDecoder.decode(url.getPath(), ENC_UTF8), botid);
+                }
+                catch (UnsupportedEncodingException e)
+                {
+                    assert false;
+                }
             }
             FileManager.pushFileParentAsWorkingDirectory(path);
         }
@@ -777,7 +771,6 @@ public class Core extends Thread
      */
     public void loadBots(String path)
     {
-        setLoadtime();
         URL url = URITools.createValidURL(path);
         if (url.getProtocol().equals(FileManager.FILE))
         {
@@ -792,7 +785,6 @@ public class Core extends Thread
             this.logger.log(Level.SEVERE, e.getExplanatoryMessage());
             fail("processor exception during startup", e);
         }
-        unsetLoadtime();
     }
     
     /**
@@ -811,7 +803,9 @@ public class Core extends Thread
         {
             FileManager.pushFileParentAsWorkingDirectory(url.getPath());
         }
+
         String id = null;
+
         try
         {
             id = new BotsConfigurationFileParser(this).processResponse(url);
@@ -821,6 +815,7 @@ public class Core extends Thread
             this.logger.log(Level.SEVERE, e.getExplanatoryMessage());
         }
         this.logger.log(Level.INFO, "Bot \"" + id + "\" has been loaded.");
+
         return id;
     }
     
