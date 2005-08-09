@@ -837,4 +837,12 @@ Each test case is documented with what is expected to be the correct response.
         <pattern>INFINITE LOOP</pattern>
         <template> Test passed.</template>
     </category>
+    <category>
+        <pattern>TESTDUPLICATE</pattern>
+        <template>Duplicate 1.</template>
+    </category>
+    <category>
+        <pattern>TESTDUPLICATE</pattern>
+        <template>Duplicate 2.</template>
+    </category>
 </aiml>
