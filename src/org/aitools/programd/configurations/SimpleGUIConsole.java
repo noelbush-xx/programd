@@ -60,6 +60,17 @@ public class SimpleGUIConsole
     {
         this.core.start();
         // Send the connect string.
+        while (this.core.getStatus() != Core.Status.READY)
+        {
+            try
+            {
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException e)
+            {
+                //
+            }
+        }
         this.core.processResponse(this.core.getSettings().getConnectString());
         this.console.startShell();
     }
