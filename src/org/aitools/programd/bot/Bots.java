@@ -95,8 +95,7 @@ public class Bots
         {
             return this.botMap.values().iterator().next();
         }
-        // (otherwise...)
-        throw new NullPointerException("No bots!");
+        return null;
     }
 
     /**
