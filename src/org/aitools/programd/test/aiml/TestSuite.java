@@ -83,6 +83,7 @@ public class TestSuite implements Iterable<TestCase>
      * 
      * @param nameToUse the name to give the test suite
      */
+    @SuppressWarnings("unused")
     private TestSuite(String nameToUse)
     {
         this.name = nameToUse;
