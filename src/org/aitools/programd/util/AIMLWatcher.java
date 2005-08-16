@@ -64,7 +64,10 @@ public class AIMLWatcher
      */
     public void stop()
     {
-        this.timer.cancel();
+        if (this.timer != null)
+        {
+            this.timer.cancel();
+        }
     }
 
     /**
