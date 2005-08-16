@@ -82,6 +82,7 @@ public class LRUCache<K, V>
      * 
      * @param initialCapacity minimum capacity of the cache
      */
+    @SuppressWarnings("unchecked")
     public LRUCache(int initialCapacity)
     {
         int capacity;

@@ -29,6 +29,7 @@ public class StringTripleMatrix
     /**
      * Creates a new StringTripleMatrix.
      */
+    @SuppressWarnings("unchecked")
     public StringTripleMatrix()
     {
         this.vertical = new LinkedList[] { new LinkedList<String>(), new LinkedList<String>(), new LinkedList<String>() };
