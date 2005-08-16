@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.aitools.programd.Core;
+import org.aitools.programd.bot.Bot;
 import org.aitools.programd.responder.NoResponderHandlesThisException;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.UserError;
@@ -192,13 +193,21 @@ public class ServletRequestTransactionEnvelope
         // Check for no userid.
         if (this.userid == null)
         {
-            this.userid = this.serviceRequest.getRemoteHost();
+            this.userid = this.serviceRequest.getUserPrincipal().getName();
+            if (this.userid == null)
+            {
+                this.userid = this.serviceRequest.getRemoteHost();
+            }
         }
 
         // Check for no bot id.
         if (this.botid == null)
         {
-            this.botid = this.core.getBots().getABot().getID();
+            Bot bot = this.core.getBots().getABot();
+            if (bot != null)
+            {
+                this.botid = bot.getID();
+            }
         }
         
         if (this.botid == null)
