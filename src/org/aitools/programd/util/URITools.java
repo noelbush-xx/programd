@@ -230,12 +230,26 @@ public class URITools
 
     /**
      * Attempts to create the given <code>path</code> into a valid URL, using
-     * a few heuristics.
+     * a few heuristics.  Tries to validate the given path (if it is a file).
      * 
      * @param path
      * @return a valid URL, if possible
      */
     public static URL createValidURL(String path)
+    {
+        return createValidURL(path, true);
+    }
+
+    /**
+     * Attempts to create the given <code>path</code> into a valid URL, using
+     * a few heuristics.
+     * 
+     * @param path
+     * @param tryToValidate whether the method should try to validate the existence of the path
+     *  (only attempted with files)
+     * @return a valid URL, if possible
+     */
+    public static URL createValidURL(String path, boolean tryToValidate)
     {
         URL url;
         if (path.indexOf(COLON_SLASH) > 0)
@@ -251,7 +265,15 @@ public class URITools
         }
         else
         {
-            File file = FileManager.getExistingFile(path);
+            File file;
+            if (tryToValidate)
+            {
+                file = FileManager.getExistingFile(path);
+            }
+            else
+            {
+                file = new File(path);
+            }
             try
             {
                 url = file.toURI().toURL();
@@ -262,6 +284,53 @@ public class URITools
             }
         }
         return url;
+    }
+    
+    /**
+     * Attempts to create the given <code>path</code> into a valid URI, using
+     * a few heuristics.  Tries to validate the given path, if it is a file.
+     * 
+     * @param path
+     * @return a valid URI, if possible
+     */
+    public static URI createValidURI(String path)
+    {
+        return createValidURI(path, true);
+    }
+    
+    /**
+     * Attempts to create the given <code>path</code> into a valid URI, using
+     * a few heuristics.
+     * 
+     * @param path
+     * @param tryToValidate whether to try to validate the given path (if it is a file)
+     * @return a valid URI, if possible
+     */
+    public static URI createValidURI(String path, boolean tryToValidate)
+    {
+        try
+        {
+            return createValidURL(path, tryToValidate).toURI();
+        }
+        catch (URISyntaxException e)
+        {
+            throw new DeveloperError("Could not construct a valid URI from \"" + path + "\".", e);
+        }
+    }
+    
+    /**
+     * A wrapper for {@link URI#relativize(URI)}, allowing the second
+     * argument to specified as a String.  Does <i>not</i> attempt to
+     * validate the subject.
+     * 
+     * @param relativizeTo the URI against which to relativize
+     * @param subject the URI to relativize
+     * @return the subject relativized to the first argument
+     * 
+     */
+    public static URI relativize(URI relativizeTo, String subject)
+    {
+        return relativizeTo.relativize(createValidURI(subject, false));
     }
     
     /**
