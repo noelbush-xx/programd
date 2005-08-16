@@ -596,7 +596,15 @@ public class Core extends Thread
     {
         if (this.status == Status.READY)
         {
-            this.multiplexor.getResponse(input, this.hostname, this.bots.getABot().getID());
+            Bot bot = this.bots.getABot();
+            if (bot != null)
+            {
+                this.multiplexor.getResponse(input, this.hostname, bot.getID());
+            }
+            else
+            {
+                this.logger.log(Level.WARNING, "No bot available to process response!");
+            }
         }
         else
         {
