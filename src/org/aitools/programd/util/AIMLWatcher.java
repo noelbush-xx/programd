@@ -55,11 +55,8 @@ public class AIMLWatcher
      */
     public void start()
     {
-        if (this.timer == null)
-        {
-            this.timer = new Timer(true);
-            this.timer.schedule(new CheckAIMLTask(), 0, this.core.getSettings().getWatcherTimer());
-        }
+        this.timer = new Timer(true);
+        this.timer.schedule(new CheckAIMLTask(), 0, this.core.getSettings().getWatcherTimer());
     }
     
     /**
