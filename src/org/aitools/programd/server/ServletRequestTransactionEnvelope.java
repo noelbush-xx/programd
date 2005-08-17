@@ -11,6 +11,7 @@ package org.aitools.programd.server;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.Principal;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -157,7 +158,6 @@ public class ServletRequestTransactionEnvelope
     public void process() throws NoResponderHandlesThisException
     {
         this.userRequest = this.serviceRequest.getParameter(TEXT_PARAM);
-        this.userid = this.serviceRequest.getParameter(USERID_PARAM);
         this.botid = this.serviceRequest.getParameter(BOTID_PARAM);
         this.responseEncoding = this.serviceRequest.getParameter(RESPONSE_ENCODING_PARAM);
 
@@ -190,10 +190,15 @@ public class ServletRequestTransactionEnvelope
             this.responseEncoding = ENC_UTF8;
         }
 
-        // Check for no userid.
+        // Get some kind of userid.
+        Principal principal = this.serviceRequest.getUserPrincipal();
+        if (principal != null)
+        {
+            this.userid = principal.getName();
+        }
         if (this.userid == null)
         {
-            this.userid = this.serviceRequest.getUserPrincipal().getName();
+            this.userid = this.serviceRequest.getParameter(USERID_PARAM);
             if (this.userid == null)
             {
                 this.userid = this.serviceRequest.getRemoteHost();
