@@ -273,18 +273,19 @@ abstract public class Multiplexor
         // Split sentences (after performing substitutions).
         List<String> sentenceList = bot.sentenceSplit(bot.applyInputSubstitutions(input));
 
-        // Get an iterator on the replies.
-        Iterator<String> replies = getReplies(sentenceList, userid, botid).iterator();
+        // Get the replies.
+        List<String> replies = getReplies(sentenceList, userid, botid);
 
         // Start by assuming an empty response.
-        String response = EMPTY_STRING;
+        StringBuilder responseBuffer = new StringBuilder(EMPTY_STRING);
 
-        // For each input sentence...
-        for (Iterator iterator = sentenceList.iterator(); iterator.hasNext(); )
+        // Append each reply to the response.
+        for (String reply : replies)
         {
-            // Append the reply to the response.
-            response += replies.next();
+            responseBuffer.append(reply);
         }
+        
+        String response = responseBuffer.toString();
         
         // Log the response.
         logResponse(input, response, userid, botid);
