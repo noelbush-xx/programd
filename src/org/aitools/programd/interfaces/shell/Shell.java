@@ -207,6 +207,7 @@ public class Shell extends Thread
     /**
      * Runs the shell.
      */
+    @Override
     public void run()
     {
         if (this.core == null)
@@ -224,7 +225,7 @@ public class Shell extends Thread
         this.botid = bot.getID();
         this.botName = bot.getPropertyValue(this.botNamePredicate);
 
-        while (true && this.core.getStatus() == Core.Status.READY)
+        while (true /*&& this.core.getStatus() == Core.Status.READY*/)
         {
             showPrompt();
             String commandLine = null;
@@ -234,7 +235,7 @@ public class Shell extends Thread
             }
             catch (IOException e)
             {
-                throw new DeveloperError("Cannot read from console!", e);
+                // Do nothing -- the next block will handle this.
             }
             if (commandLine == null)
             {

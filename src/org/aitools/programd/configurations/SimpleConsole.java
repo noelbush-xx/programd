@@ -59,7 +59,7 @@ public class SimpleConsole
     public void run()
     {
         this.core.start();
-        // Send the connect string.
+        /*
         while (this.core.getStatus() != Core.Status.READY)
         {
             try
@@ -71,6 +71,8 @@ public class SimpleConsole
                 //
             }
         }
+        */
+        // Send the connect string.
         this.core.processResponse(this.core.getSettings().getConnectString());
         this.console.startShell();
     }

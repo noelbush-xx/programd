@@ -235,6 +235,7 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
                 String botid = envelope.getBotID();
                 if (this.core.getBots().include(botid))
                 {
+                    /*
                     while (this.core.getStatus() != Core.Status.READY)
                     {
                         try
@@ -246,6 +247,7 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
                             //
                         }
                     }
+                    */
                     return this.core.getResponse(envelope.getUserRequest(),
                             getCookieValue(envelope.getServiceRequest(), USER_COOKIE_NAME),
                             envelope.getBotID(), new HTMLResponder(this, envelope));
