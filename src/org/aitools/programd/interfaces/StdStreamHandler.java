@@ -58,6 +58,7 @@ public class StdStreamHandler extends StreamHandler
      * 
      * @see java.util.logging.StreamHandler#publish(java.util.logging.LogRecord)
      */
+    @Override
     public void publish(LogRecord record)
     {
         super.publish(record);

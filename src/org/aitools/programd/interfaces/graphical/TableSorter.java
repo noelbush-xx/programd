@@ -60,6 +60,7 @@ public class TableSorter extends TableMap
     /**
      * @see org.aitools.programd.interfaces.graphical.TableMap#setModel(javax.swing.table.TableModel)
      */
+    @Override
     public void setModel(TableModel modelToSet)
     {
         super.setModel(modelToSet);
@@ -255,6 +256,7 @@ public class TableSorter extends TableMap
     /**
      * @see org.aitools.programd.interfaces.graphical.TableMap#tableChanged(javax.swing.event.TableModelEvent)
      */
+    @Override
     public void tableChanged(TableModelEvent e)
     {
         reallocateIndexes();
@@ -386,6 +388,7 @@ public class TableSorter extends TableMap
      * @see org.aitools.programd.interfaces.graphical.TableMap#getValueAt(int,
      *      int)
      */
+    @Override
     public Object getValueAt(int aRow, int aColumn)
     {
         checkModel();
@@ -396,6 +399,7 @@ public class TableSorter extends TableMap
      * @see org.aitools.programd.interfaces.graphical.TableMap#setValueAt(java.lang.Object,
      *      int, int)
      */
+    @Override
     public void setValueAt(Object aValue, int aRow, int aColumn)
     {
         checkModel();
@@ -440,6 +444,7 @@ public class TableSorter extends TableMap
         tableView.setColumnSelectionAllowed(false);
         MouseAdapter listMouseListener = new MouseAdapter()
         {
+            @Override
             public void mouseClicked(MouseEvent e)
             {
                 TableColumnModel columnModel = tableView.getColumnModel();

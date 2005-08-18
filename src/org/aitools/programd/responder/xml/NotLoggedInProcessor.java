@@ -43,6 +43,7 @@ public class NotLoggedInProcessor extends XMLTemplateProcessor
      * @return the contents of this element, if the session is not logged in; otherwise, empty string
      * @throws XMLTemplateProcessorException if the responder associated with the parser does not implement ServletRequestResponder
      */
+    @Override
     public String process(Element element, XMLTemplateParser parser) throws XMLTemplateProcessorException
     {
         Responder associatedResponder = parser.getResponder();

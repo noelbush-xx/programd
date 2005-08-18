@@ -60,6 +60,7 @@ public class DatabaseChatLogHandler extends Handler
     /**
      * @see java.util.logging.Handler#publish(java.util.logging.LogRecord)
      */
+    @Override
     public void publish(LogRecord record)
     {
         if (!(record instanceof ChatLogRecord))
@@ -106,6 +107,7 @@ public class DatabaseChatLogHandler extends Handler
     /**
      * @see java.util.logging.Handler#flush()
      */
+    @Override
     public void flush()
     {
         // Nothing to do.
@@ -114,6 +116,7 @@ public class DatabaseChatLogHandler extends Handler
     /**
      * @see java.util.logging.Handler#close()
      */
+    @Override
     public void close()
     {
         // Nothing to do.

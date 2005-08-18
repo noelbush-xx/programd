@@ -37,6 +37,7 @@ public class HostnameProcessor extends XMLTemplateProcessor
      * @param parser the parser that is at work
      * @return the hostname
      */
+    @Override
     public String process(Element element, XMLTemplateParser parser)
     {
         return parser.getCore().getHostname();

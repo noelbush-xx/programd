@@ -43,6 +43,7 @@ public class DbAccessRefsPoolMgr extends ObjectPool
      * 
      * @return the created object
      */
+    @Override
     protected Object create()
     {
         return new DbAccess(this.driver, this.url, this.user, this.password);
@@ -83,11 +84,13 @@ public class DbAccessRefsPoolMgr extends ObjectPool
         return (DbAccess) super.checkOut();
     }
 
+    @Override
     protected boolean validate(Object o)
     {
         return true;
     }
 
+    @Override
     protected void expire(Object o)
     {
         // Nothing to do.

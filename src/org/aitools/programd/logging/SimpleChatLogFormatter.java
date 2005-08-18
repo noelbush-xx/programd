@@ -66,6 +66,7 @@ public class SimpleChatLogFormatter extends SimpleFormatter
      * @throws IllegalArgumentException
      *             if the record is not a ChatLogRecord
      */
+    @Override
     public String format(LogRecord record)
     {
         if (!(record instanceof ChatLogRecord))

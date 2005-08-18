@@ -145,6 +145,7 @@ abstract public class Tabulator extends JPanel
         /**
          * @see javax.swing.table.AbstractTableModel#getColumnName(int)
          */
+        @Override
         public String getColumnName(int col)
         {
             return this.columnNames[col];
@@ -161,7 +162,8 @@ abstract public class Tabulator extends JPanel
         /**
          * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
          */
-        public Class< ? > getColumnClass(int c)
+        @Override
+        public Class<?> getColumnClass(int c)
         {
             return getValueAt(0, c).getClass();
         }

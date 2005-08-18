@@ -61,6 +61,7 @@ public class FlashResponderSettings extends Settings
     /**
     * Initializes the Settings with values from properties, or defaults.
     */
+    @Override
     protected void initialize()
     {
         setTemplateDirectory(this.properties.getProperty("programd.responder.flash.template.directory", "templates/flash"));

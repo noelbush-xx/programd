@@ -55,6 +55,7 @@ public class TableMap extends AbstractTableModel implements TableModelListener
      * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object,
      *      int, int)
      */
+    @Override
     public void setValueAt(Object aValue, int aRow, int aColumn)
     {
         this.model.setValueAt(aValue, aRow, aColumn);
@@ -79,6 +80,7 @@ public class TableMap extends AbstractTableModel implements TableModelListener
     /**
      * @see javax.swing.table.AbstractTableModel#getColumnName(int)
      */
+    @Override
     public String getColumnName(int aColumn)
     {
         return this.model.getColumnName(aColumn);
@@ -87,6 +89,7 @@ public class TableMap extends AbstractTableModel implements TableModelListener
     /**
      * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
      */
+    @Override
     public Class< ? > getColumnClass(int aColumn)
     {
         return this.model.getColumnClass(aColumn);
@@ -95,6 +98,7 @@ public class TableMap extends AbstractTableModel implements TableModelListener
     /**
      * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
      */
+    @Override
     public boolean isCellEditable(int row, int column)
     {
         return this.model.isCellEditable(row, column);

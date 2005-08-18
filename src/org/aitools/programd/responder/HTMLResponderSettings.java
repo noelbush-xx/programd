@@ -133,6 +133,7 @@ public class HTMLResponderSettings extends Settings
     /**
      * Initializes the Settings with values from properties, or defaults.
      */
+    @Override
     protected void initialize()
     {
         setTemplateDirectory(this.properties.getProperty("programd.responder.html.template.directory", "templates/html"));

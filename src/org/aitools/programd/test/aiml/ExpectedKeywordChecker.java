@@ -29,6 +29,7 @@ public class ExpectedKeywordChecker extends Checker
      * 
      * @see org.aitools.programd.test.aiml.Checker#test(java.lang.String)
      */
+    @Override
     public boolean test(String input)
     {
         boolean result = true;
@@ -42,6 +43,7 @@ public class ExpectedKeywordChecker extends Checker
     /**
      * @see org.aitools.programd.test.aiml.Checker#getContent()
      */
+    @Override
     public String getContent()
     {
         StringBuffer result = new StringBuffer();
@@ -60,6 +62,7 @@ public class ExpectedKeywordChecker extends Checker
     /**
      * @see org.aitools.programd.test.aiml.Checker#getTagName()
      */
+    @Override
     public String getTagName()
     {
         return Checker.TAG_EXPECTED_KEYWORDS;

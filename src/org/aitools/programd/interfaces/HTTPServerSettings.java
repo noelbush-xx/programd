@@ -53,6 +53,7 @@ public class HTTPServerSettings extends Settings
     /**
     * Initializes the Settings with values from properties, or defaults.
     */
+    @Override
     protected void initialize()
     {
         setClassname(this.properties.getProperty("programd.httpserver.classname", "org.aitools.programd.server.JettyWrapper"));

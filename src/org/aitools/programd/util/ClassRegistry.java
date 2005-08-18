@@ -47,6 +47,7 @@ abstract public class ClassRegistry<B>
      * 
      * @param classname the name of the class to register
      */
+    @SuppressWarnings("unchecked")
     public void register(String classname)
     {
         Class< ? extends B> classToRegister;

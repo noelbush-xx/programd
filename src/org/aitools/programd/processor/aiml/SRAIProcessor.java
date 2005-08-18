@@ -60,6 +60,7 @@ public class SRAIProcessor extends AIMLProcessor
      * @return the result of processing the element
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
+    @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         // Check for some simple kinds of infinite loops.

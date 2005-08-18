@@ -284,6 +284,7 @@ public class CoreSettings extends Settings
     /**
     * Initializes the Settings with values from properties, or defaults.
     */
+    @Override
     protected void initialize()
     {
         setRootDirectory(this.properties.getProperty("programd.root-directory", ".."));

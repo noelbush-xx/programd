@@ -53,6 +53,7 @@ public class ProgramD extends HttpServlet
     /**
      * @see javax.servlet.GenericServlet#init()
      */
+    @Override
     public void init()
     {
         this.core = (Core) this.getServletContext().getAttribute(CORE);
@@ -62,6 +63,7 @@ public class ProgramD extends HttpServlet
     /**
      * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
      */
+    @Override
     public void init(ServletConfig config)
     {
         this.core = (Core) config.getServletContext().getAttribute(CORE);
@@ -72,6 +74,7 @@ public class ProgramD extends HttpServlet
      * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
      *      javax.servlet.http.HttpServletResponse)
      */
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     {
         try
@@ -92,6 +95,7 @@ public class ProgramD extends HttpServlet
      * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest,
      *      javax.servlet.http.HttpServletResponse)
      */
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
     {
         doGet(request, response);

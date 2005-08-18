@@ -47,6 +47,7 @@ abstract public class BotConfigurationElementProcessor extends Processor
      * @see org.aitools.programd.processor.Processor#process(Element,
      *      GenericParser)
      */
+    @Override
     public String process(Element element, GenericParser parser) throws ProcessorException
     {
         try

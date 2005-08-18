@@ -31,6 +31,7 @@ public class MatchChecker extends Checker
      * @return whether the given input matches the expected answer
      * @see org.aitools.programd.test.aiml.Checker#test(java.lang.String)
      */
+    @Override
     public boolean test(String input)
     {
         if (null != this.matcher)
@@ -45,6 +46,7 @@ public class MatchChecker extends Checker
     /**
      * @see org.aitools.programd.test.aiml.Checker#getContent()
      */
+    @Override
     public String getContent()
     {
         return this.matcher.pattern().toString();
@@ -53,6 +55,7 @@ public class MatchChecker extends Checker
     /**
      * @see org.aitools.programd.test.aiml.Checker#getTagName()
      */
+    @Override
     public String getTagName()
     {
         return Checker.TAG_EXPECTED_MATCH;

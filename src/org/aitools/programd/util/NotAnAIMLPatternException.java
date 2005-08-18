@@ -41,6 +41,7 @@ public class NotAnAIMLPatternException extends Exception
     /**
      * @see java.lang.Throwable#getMessage()
      */
+    @Override
     public String getMessage()
     {
         return MSG_PART_ONE + this.pattern + MSG_PART_TWO + super.getMessage();

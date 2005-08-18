@@ -37,6 +37,7 @@ public class WhoCommand extends ShellCommand
     /**
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
      */
+    @Override
     public boolean handles(String commandLine)
     {
         return commandLine.toLowerCase().equals(WhoCommand.SHELL_COMMAND);
@@ -47,6 +48,7 @@ public class WhoCommand extends ShellCommand
      * 
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
      */
+    @Override
     public void handle(String commandLine, Shell shell)
     {
         shell.showMessage("You are talking to \"" + shell.getCurrentBotID() + "\".");

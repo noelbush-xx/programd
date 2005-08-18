@@ -84,6 +84,7 @@ public class RandomProcessor extends AIMLProcessor
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
+    @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         // Construct the identifying string (botid + userid + element

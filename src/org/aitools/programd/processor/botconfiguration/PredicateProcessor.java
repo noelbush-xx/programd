@@ -46,6 +46,7 @@ public class PredicateProcessor extends BotConfigurationElementProcessor
      * @see BotConfigurationElementProcessor#process(Element,
      *      BotsConfigurationFileParser)
      */
+    @Override
     public String process(Element element, BotsConfigurationFileParser parser)
     {
         String name = element.getAttribute(NAME);

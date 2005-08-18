@@ -40,6 +40,7 @@ public class VersionProcessor extends AIMLProcessor
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
+    @Override
     public String process(Element element, TemplateParser parser)
     {
         return Core.VERSION + Core.BUILD;

@@ -43,6 +43,7 @@ public class SentenceProcessor extends AIMLProcessor
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
+    @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         String response = parser.evaluate(element.getChildNodes());

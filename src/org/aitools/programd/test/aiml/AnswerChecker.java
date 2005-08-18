@@ -53,6 +53,7 @@ public class AnswerChecker extends Checker
      * @return whether the given input matches the expected answer
      * @see org.aitools.programd.test.aiml.Checker#test(java.lang.String)
      */
+    @Override
     public boolean test(String input)
     {
         if (null != this.expectedAnswer)
@@ -71,6 +72,7 @@ public class AnswerChecker extends Checker
     /**
      * @see org.aitools.programd.test.aiml.Checker#getContent()
      */
+    @Override
     public String getContent()
     {
         return this.expectedAnswer;
@@ -79,6 +81,7 @@ public class AnswerChecker extends Checker
     /**
      * @see org.aitools.programd.test.aiml.Checker#getTagName()
      */
+    @Override
     public String getTagName()
     {
         return Checker.TAG_EXPECTED_ANSWER;

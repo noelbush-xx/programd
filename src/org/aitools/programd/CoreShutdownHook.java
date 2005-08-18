@@ -43,6 +43,7 @@ public class CoreShutdownHook extends Thread
      * 
      * @see Thread#run
      */
+    @Override
     public void run()
     {
         // The Core may already have been shut down -- don't do it again.

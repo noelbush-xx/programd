@@ -71,6 +71,7 @@ public class FlatFileMultiplexor extends Multiplexor
      *            userid/password combination
      * @return true always
      */
+    @Override
     public boolean checkUser(String userid, String password, String secretKey, String botid)
     {
         return true;
@@ -87,6 +88,7 @@ public class FlatFileMultiplexor extends Multiplexor
      * @param botid the id of the bot for whom to create the given
      *            userid/password combination
      */
+    @Override
     public void createUser(String userid, String password, String secretKey, String botid)
     {
         // Do nothing.
@@ -104,6 +106,7 @@ public class FlatFileMultiplexor extends Multiplexor
      *            userid/password combination
      * @return true always
      */
+    @Override
     public boolean changePassword(String userid, String password, String secretKey, String botid)
     {
         return true;
@@ -117,6 +120,7 @@ public class FlatFileMultiplexor extends Multiplexor
      * @param userid the userid with which to associate this predicate
      * @param botid the botid with which to associate this predicate
      */
+    @Override
     public void savePredicate(String name, String value, String userid, String botid)
     {
         // Test whether predicateSets is intialized.
@@ -145,6 +149,7 @@ public class FlatFileMultiplexor extends Multiplexor
      * @throws NoSuchPredicateException if no such predicate has been defined
      *             for the given userid and botid pair
      */
+    @Override
     public String loadPredicate(String name, String userid, String botid) throws NoSuchPredicateException
     {
         // Test whether predicateSets is intialized.
@@ -229,6 +234,7 @@ public class FlatFileMultiplexor extends Multiplexor
     /**
      * @see org.aitools.programd.multiplexor.Multiplexor#useridCount(java.lang.String)
      */
+    @Override
     public int useridCount(String botid)
     {
         return 0;

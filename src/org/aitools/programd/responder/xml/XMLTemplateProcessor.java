@@ -39,6 +39,7 @@ abstract public class XMLTemplateProcessor extends Processor
      * @see org.aitools.programd.processor.Processor#process(org.w3c.dom.Element,
      *      org.aitools.programd.parser.GenericParser)
      */
+    @Override
     public String process(Element element, GenericParser parser) throws ProcessorException
     {
         try

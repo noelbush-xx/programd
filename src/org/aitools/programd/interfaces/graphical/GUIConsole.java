@@ -198,6 +198,7 @@ public class GUIConsole extends JPanel
         loadAIMLURL.setMnemonic(KeyEvent.VK_U);
         loadAIMLURL.addActionListener(new ActionEventIgnoringActionListener()
         {
+            @Override
             public void actionPerformed()
             {
                 loadAIMLURLBox();
@@ -209,6 +210,7 @@ public class GUIConsole extends JPanel
         loadAIMLFilePath.setMnemonic(KeyEvent.VK_P);
         loadAIMLFilePath.addActionListener(new ActionEventIgnoringActionListener()
         {
+            @Override
             public void actionPerformed()
             {
                 loadAIMLFilePathChooser();
@@ -220,6 +222,7 @@ public class GUIConsole extends JPanel
         shutdown.setMnemonic(KeyEvent.VK_X);
         shutdown.addActionListener(new ActionEventIgnoringActionListener()
         {
+            @Override
             public void actionPerformed()
             {
                 shutdown();
@@ -231,6 +234,7 @@ public class GUIConsole extends JPanel
         quit.setMnemonic(KeyEvent.VK_X);
         quit.addActionListener(new ActionEventIgnoringActionListener()
         {
+            @Override
             public void actionPerformed()
             {
                 quit();
@@ -253,6 +257,7 @@ public class GUIConsole extends JPanel
         pause.setMnemonic(KeyEvent.VK_P);
         pause.addActionListener(new ActionEventIgnoringActionListener()
         {
+            @Override
             public void actionPerformed()
             {
                 GUIConsole.this.outDisplay.togglePause();
@@ -265,6 +270,7 @@ public class GUIConsole extends JPanel
         talkToBot.setMnemonic(KeyEvent.VK_B);
         talkToBot.addActionListener(new ActionEventIgnoringActionListener()
         {
+            @Override
             public void actionPerformed()
             {
                 chooseBot();
@@ -276,6 +282,7 @@ public class GUIConsole extends JPanel
         botFiles.setMnemonic(KeyEvent.VK_F);
         botFiles.addActionListener(new ActionEventIgnoringActionListener()
         {
+            @Override
             public void actionPerformed()
             {
                 try
@@ -294,6 +301,7 @@ public class GUIConsole extends JPanel
         listBots.setMnemonic(KeyEvent.VK_L);
         listBots.addActionListener(new ActionEventIgnoringActionListener()
         {
+            @Override
             public void actionPerformed()
             {
                 try
@@ -324,6 +332,7 @@ public class GUIConsole extends JPanel
         shellHelp.setMnemonic(KeyEvent.VK_H);
         shellHelp.addActionListener(new ActionEventIgnoringActionListener()
         {
+            @Override
             public void actionPerformed()
             {
                 try
@@ -341,6 +350,7 @@ public class GUIConsole extends JPanel
         about.setMnemonic(KeyEvent.VK_A);
         about.addActionListener(new ActionEventIgnoringActionListener()
         {
+            @Override
             public void actionPerformed()
             {
                 showAboutBox();
@@ -479,6 +489,7 @@ public class GUIConsole extends JPanel
          * 
          * @param enabled whether or not the panel should be enabled
          */
+        @Override
         public void setEnabled(boolean enabled)
         {
             this.input.setEnabled(enabled);
@@ -523,6 +534,7 @@ public class GUIConsole extends JPanel
         /**
          * @see java.io.OutputStream#write(byte[], int, int)
          */
+        @Override
         public void write(byte[] b, int off, int len)
         {
             while (this.paused)
@@ -543,6 +555,7 @@ public class GUIConsole extends JPanel
         /**
          * @see java.io.OutputStream#write(int)
          */
+        @Override
         public void write(int b)
         {
             while (this.paused)
@@ -585,6 +598,7 @@ public class GUIConsole extends JPanel
         /**
          * @see java.io.OutputStream#write(byte[], int, int)
          */
+        @Override
         public void write(byte[] b, int off, int len)
         {
             GUIConsole.this.inputPanel.setPrompt(new String(b, off, len));
@@ -593,6 +607,7 @@ public class GUIConsole extends JPanel
         /**
          * @see java.io.OutputStream#write(int)
          */
+        @Override
         public void write(int b)
         {
             GUIConsole.this.inputPanel.setPrompt(String.valueOf((char) b));
@@ -633,6 +648,7 @@ public class GUIConsole extends JPanel
         /**
          * @see java.io.InputStream#read(byte[], int, int)
          */
+        @Override
         public int read(byte b[], int off, int len)
         {
             while (this.mark >= this.content.length)
@@ -676,6 +692,7 @@ public class GUIConsole extends JPanel
         /**
          * @see java.io.InputStream#available()
          */
+        @Override
         public int available()
         {
             return this.content.length - this.mark - 1;
@@ -684,6 +701,7 @@ public class GUIConsole extends JPanel
         /**
          * @see java.io.InputStream#markSupported()
          */
+        @Override
         public boolean markSupported()
         {
             return false;
@@ -692,6 +710,7 @@ public class GUIConsole extends JPanel
         /**
          * @see java.io.InputStream#read()
          */
+        @Override
         public int read()
         {
             while (this.mark >= this.content.length)

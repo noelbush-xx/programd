@@ -98,6 +98,7 @@ public class Heart
         /**
          * @see java.util.TimerTask#run()
          */
+        @Override
         public void run()
         {
             pulse();

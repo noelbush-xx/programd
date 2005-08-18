@@ -67,6 +67,7 @@ public class ConsoleFormatter extends Formatter
      * 
      * @see java.util.logging.Formatter#format(java.util.logging.LogRecord)
      */
+    @Override
     public String format(LogRecord record)
     {
         StringBuffer result = new StringBuffer();

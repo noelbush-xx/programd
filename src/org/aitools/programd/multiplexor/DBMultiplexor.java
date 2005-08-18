@@ -72,6 +72,7 @@ public class DBMultiplexor extends Multiplexor
     /**
      * Loads the database properties from the server configuration.
      */
+    @Override
     public void initialize()
     {
         super.initialize();
@@ -96,6 +97,7 @@ public class DBMultiplexor extends Multiplexor
      * @param userid the userid with which to associate this predicate
      * @param botid the botid with which to associate this predicate
      */
+    @Override
     public void savePredicate(String name, String value, String userid, String botid)
     {
         /*
@@ -161,6 +163,7 @@ public class DBMultiplexor extends Multiplexor
      * @throws NoSuchPredicateException if no such predicate has been defined
      *             for the given userid and botid pair
      */
+    @Override
     public String loadPredicate(String name, String userid, String botid) throws NoSuchPredicateException
     {
         String result = null;
@@ -220,6 +223,7 @@ public class DBMultiplexor extends Multiplexor
      * @throws DuplicateUserIDError if the given userid was already found in the
      *             database
      */
+    @Override
     public void createUser(String userid, String password, String secretKey, String botid) throws DuplicateUserIDError
     {
         if (!secretKey.equals(SECRET_KEY))
@@ -266,6 +270,7 @@ public class DBMultiplexor extends Multiplexor
      * @see org.aitools.programd.multiplexor.Multiplexor#checkUser(java.lang.String,
      *      java.lang.String, java.lang.String, java.lang.String)
      */
+    @Override
     public boolean checkUser(String userid, String password, String secretKey, String botid)
     {
         if (!secretKey.equals(SECRET_KEY))
@@ -366,6 +371,7 @@ public class DBMultiplexor extends Multiplexor
      * @see org.aitools.programd.multiplexor.Multiplexor#changePassword(java.lang.String,
      *      java.lang.String, java.lang.String, java.lang.String)
      */
+    @Override
     public boolean changePassword(String userid, String password, String secretKey, String botid)
     {
         if (!secretKey.equals(SECRET_KEY))
@@ -416,6 +422,7 @@ public class DBMultiplexor extends Multiplexor
     /**
      * @see org.aitools.programd.multiplexor.Multiplexor#useridCount(java.lang.String)
      */
+    @Override
     public int useridCount(String botid)
     {
         return ((HashMap) this.userCacheForBots.get(botid)).size();

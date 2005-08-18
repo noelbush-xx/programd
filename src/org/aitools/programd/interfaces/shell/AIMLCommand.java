@@ -49,6 +49,7 @@ public class AIMLCommand extends ShellCommand
     /**
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
      */
+    @Override
     public boolean handles(String commandLine)
     {
         return commandLine.toLowerCase().startsWith(COMMAND_STRING);
@@ -58,6 +59,7 @@ public class AIMLCommand extends ShellCommand
      * Tries to process a given fragment of template-side AIML.
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
      */
+    @Override
     public void handle(String commandLine, Shell shell)
     {
         // See if there is some content.

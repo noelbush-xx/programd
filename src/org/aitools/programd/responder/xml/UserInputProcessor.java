@@ -37,6 +37,7 @@ public class UserInputProcessor extends XMLTemplateProcessor
      * @param parser the parser that is at work
      * @return the result of processing the element
      */
+    @Override
     public String process(Element element, XMLTemplateParser parser)
     {
         return parser.getResponder().getUserInput();

@@ -351,6 +351,7 @@ public class Graphmaster
      * @param expiration when this response process expires
      * @return the resulting <code>Match</code> object
      */
+    @SuppressWarnings("incomplete-switch")
     private Match match(Nodemapper nodemapper, Nodemapper parent, List<String> input,
             String wildcardContent, StringBuffer path, MatchState matchState, long expiration)
     {

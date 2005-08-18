@@ -47,6 +47,7 @@ public class InputProcessor extends IndexedPredicateProcessor
      * @param parser the parser that is at work
      * @return the result of processing the element
      */
+    @Override
     public String process(Element element, TemplateParser parser)
     {
         return super.process(element, parser, label, 2);

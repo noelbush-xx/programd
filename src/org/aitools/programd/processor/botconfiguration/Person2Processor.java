@@ -39,6 +39,7 @@ public class Person2Processor extends SubstitutionElementProcessor
      * @see BotConfigurationElementProcessor#process(Element,
      *      BotsConfigurationFileParser)
      */
+    @Override
     public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         addSubstitutions(SubstitutionType.PERSON2, element, parser);

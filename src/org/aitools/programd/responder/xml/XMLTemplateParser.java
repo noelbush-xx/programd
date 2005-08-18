@@ -83,6 +83,7 @@ public class XMLTemplateParser extends GenericParser<XMLTemplateProcessor>
      * 
      * @see org.aitools.programd.parser.GenericParser#evaluate(Document)
      */
+    @Override
     public String evaluate(Document document) throws ProcessorException
     {
         String response = super.evaluate(document);
@@ -118,6 +119,7 @@ public class XMLTemplateParser extends GenericParser<XMLTemplateProcessor>
      * @return the result of processing the children
      * @see GenericParser#handleUnknownElement
      */
+    @Override
     protected String handleUnknownElement(Element element, NotARegisteredClassException e)
     {
         logger.log(Level.WARNING, "Ignoring unknown element \"" + element.getTagName() + "\".");

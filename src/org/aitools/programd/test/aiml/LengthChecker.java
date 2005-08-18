@@ -35,6 +35,7 @@ public class LengthChecker extends Checker
      * @return whether the given input has the expected length
      * @see org.aitools.programd.test.aiml.Checker#test(java.lang.String)
      */
+    @Override
     public boolean test(String input)
     {
         if (this.expectedLength != -1)
@@ -53,6 +54,7 @@ public class LengthChecker extends Checker
     /**
      * @see org.aitools.programd.test.aiml.Checker#getContent()
      */
+    @Override
     public String getContent()
     {
         return "" + this.expectedLength;
@@ -61,6 +63,7 @@ public class LengthChecker extends Checker
     /**
      * @see org.aitools.programd.test.aiml.Checker#getTagName()
      */
+    @Override
     public String getTagName()
     {
         return Checker.TAG_EXPECTED_LENGTH;

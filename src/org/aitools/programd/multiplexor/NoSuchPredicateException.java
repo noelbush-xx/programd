@@ -46,6 +46,7 @@ public class NoSuchPredicateException extends Exception
     /**
      * @see java.lang.Throwable#getMessage()
      */
+    @Override
     public String getMessage()
     {
         if (index != -1)

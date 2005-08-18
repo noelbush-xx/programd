@@ -70,6 +70,7 @@ public class TestResult
     /**
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString()
     {
         return "Suite:\t" + this.suite + "\ttestcase:\t " + this.testCase + "\tinput:\t\""

@@ -39,6 +39,7 @@ public class ListCommandablesCommand extends ShellCommand
     /**
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
      */
+    @Override
     public boolean handles(String commandLine)
     {
         return commandLine.toLowerCase().equals(COMMAND_STRING);
@@ -49,6 +50,7 @@ public class ListCommandablesCommand extends ShellCommand
      * 
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
      */
+    @Override
     public void handle(String commandLine, Shell shell)
     {
         int commandableCount = 0;

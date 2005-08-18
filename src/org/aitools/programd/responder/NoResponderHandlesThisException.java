@@ -38,6 +38,7 @@ public class NoResponderHandlesThisException extends Exception
      * @return a message giving information about the request that could not be
      *         handled
      */
+    @Override
     public String getMessage()
     {
         return "Request could not be handled: " + this.request.toString();

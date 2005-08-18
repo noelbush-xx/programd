@@ -303,58 +303,17 @@ public class Core extends Thread
                 this.aimlWatcher = new AIMLWatcher(this);
             }
 
+            // Setup a JavaScript interpreter if supposed to.
+            setupInterpreter();
+
+            // Start the AIMLWatcher if configured to do so.
+            startWatcher();
+
             this.logger.log(Level.INFO, "Starting up the Graphmaster.");
 
             // Start loading bots.
             loadBots(this.settings.getStartupFilePath());
             
-            // Start the AIMLWatcher if configured to do so.
-            if (this.settings.useWatcher())
-            {
-                this.aimlWatcher.start();
-                this.logger.log(Level.INFO, "The AIML Watcher is active.");
-            }
-            else
-            {
-                this.logger.log(Level.INFO, "The AIML Watcher is not active.");
-            }
-
-            // Setup a JavaScript interpreter if supposed to.
-            if (this.settings.javascriptAllowed())
-            {
-                if (this.settings.getJavascriptInterpreterClassname() == null)
-                {
-                    throw new UserError(new UnspecifiedParameterError(
-                            "javascript-interpreter.classname"));
-                }
-
-                String javascriptInterpreterClassname = this.settings
-                        .getJavascriptInterpreterClassname();
-
-                if (javascriptInterpreterClassname.equals(EMPTY_STRING))
-                {
-                    throw new UserError(new UnspecifiedParameterError(
-                            "javascript-interpreter.classname"));
-                }
-
-                this.logger.log(Level.INFO, "Initializing " + javascriptInterpreterClassname + ".");
-
-                try
-                {
-                    this.interpreter = (Interpreter) Class.forName(javascriptInterpreterClassname)
-                            .newInstance();
-                }
-                catch (Exception e)
-                {
-                    throw new DeveloperError(
-                            "Error while creating new instance of JavaScript interpreter.", e);
-                }
-            }
-            else
-            {
-                this.logger.log(Level.INFO, "JavaScript interpreter not started.");
-            }
-
             // Request garbage collection.
             System.gc();
 
@@ -369,15 +328,7 @@ public class Core extends Thread
                                     (runtime.maxMemory() / 1048576.0)));
 
             // Start the heart, if enabled.
-            if (this.settings.heartEnabled())
-            {
-                this.heart = new Heart(this.settings.getHeartPulserate());
-                // Add a simple IAmAlive Pulse (this should be more
-                // configurable).
-                this.heart.addPulse(new org.aitools.programd.util.IAmAlivePulse());
-                this.heart.start();
-                this.logger.log(Level.INFO, "Heart started.");
-            }
+            startHeart();
         }
         catch (DeveloperError e)
         {
@@ -404,10 +355,75 @@ public class Core extends Thread
         this.status = Status.READY;
     }
 
+    private void startWatcher()
+    {
+        if (this.settings.useWatcher())
+        {
+            this.aimlWatcher.start();
+            this.logger.log(Level.INFO, "The AIML Watcher is active.");
+        }
+        else
+        {
+            this.logger.log(Level.INFO, "The AIML Watcher is not active.");
+        }
+    }
+
+    private void startHeart()
+    {
+        if (this.settings.heartEnabled())
+        {
+            this.heart = new Heart(this.settings.getHeartPulserate());
+            // Add a simple IAmAlive Pulse (this should be more
+            // configurable).
+            this.heart.addPulse(new org.aitools.programd.util.IAmAlivePulse());
+            this.heart.start();
+            this.logger.log(Level.INFO, "Heart started.");
+        }
+    }
+
+    private void setupInterpreter() throws UserError, DeveloperError
+    {
+        if (this.settings.javascriptAllowed())
+        {
+            if (this.settings.getJavascriptInterpreterClassname() == null)
+            {
+                throw new UserError(new UnspecifiedParameterError(
+                        "javascript-interpreter.classname"));
+            }
+
+            String javascriptInterpreterClassname = this.settings
+                    .getJavascriptInterpreterClassname();
+
+            if (javascriptInterpreterClassname.equals(EMPTY_STRING))
+            {
+                throw new UserError(new UnspecifiedParameterError(
+                        "javascript-interpreter.classname"));
+            }
+
+            this.logger.log(Level.INFO, "Initializing " + javascriptInterpreterClassname + ".");
+
+            try
+            {
+                this.interpreter = (Interpreter) Class.forName(javascriptInterpreterClassname)
+                        .newInstance();
+            }
+            catch (Exception e)
+            {
+                throw new DeveloperError(
+                        "Error while creating new instance of JavaScript interpreter.", e);
+            }
+        }
+        else
+        {
+            this.logger.log(Level.INFO, "JavaScript interpreter not started.");
+        }
+    }
+
     /**
      * Runs the Core -- this just means keeping it alive until the status flag
      * is changed to <code>SHUT_DOWN</code>.
      */
+    @Override
     public void run()
     {
         if (this.status != Status.READY)
@@ -600,16 +616,12 @@ public class Core extends Thread
             if (bot != null)
             {
                 this.multiplexor.getResponse(input, this.hostname, bot.getID());
+                return;
             }
-            else
-            {
-                this.logger.log(Level.WARNING, "No bot available to process response!");
-            }
+            this.logger.log(Level.WARNING, "No bot available to process response!");
+            return;
         }
-        else
-        {
-            throw new DeveloperError("Check that the Core is ready before sending it messages.", new CoreNotReadyException());
-        }
+        //throw new DeveloperError("Check that the Core is ready before sending it messages.", new CoreNotReadyException());
     }
 
     /**
@@ -629,7 +641,8 @@ public class Core extends Thread
             return response;
         }
         // otherwise...
-        throw new DeveloperError("Check that the Core is running before sending it messages.", new CoreNotReadyException());
+        //throw new DeveloperError("Check that the Core is running before sending it messages.", new CoreNotReadyException());
+        return null;
     }
 
     /**
@@ -651,7 +664,8 @@ public class Core extends Thread
             return response;
         }
         // otherwise...
-        throw new DeveloperError("Check that the Core is running before sending it messages.", new CoreNotReadyException());
+        //throw new DeveloperError("Check that the Core is running before sending it messages.", new CoreNotReadyException());
+        return null;
     }
 
     /**

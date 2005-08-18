@@ -42,6 +42,7 @@ public class SRProcessor extends AIMLProcessor
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
+    @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         return parser.shortcutTag(element, SRAIProcessor.label, StarProcessor.label, Node.ELEMENT_NODE);

@@ -24,6 +24,7 @@ public class AlertKeywordChecker extends ExpectedKeywordChecker
      * 
      * @see org.aitools.programd.test.aiml.ExpectedKeywordChecker#test(java.lang.String)
      */
+    @Override
     public boolean test(String input)
     {
         return !super.test(input);

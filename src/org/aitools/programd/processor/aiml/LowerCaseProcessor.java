@@ -42,6 +42,7 @@ public class LowerCaseProcessor extends AIMLProcessor
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
+    @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         return parser.evaluate(element.getChildNodes()).toLowerCase();

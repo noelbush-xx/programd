@@ -252,7 +252,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
      * 
      * @param seed the seed to use
      */
-
+    @Override
     synchronized public void setSeed(final long seed)
     {
         // it's always good style to call super
@@ -286,6 +286,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
      * @param bits the number of bits to use
      * @return an integer with <i>bits</i> bits filled with a random number
      */
+    @Override
     synchronized protected int next(final int bits)
     {
         int y;
@@ -377,7 +378,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
      * 
      * @param bytes the bytes for which to get the next bytes (?)
      */
-
+    @Override
     public void nextBytes(final byte[] bytes)
     {
         for (int x = 0; x < bytes.length; x++)
@@ -426,6 +427,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
      * @return the next Gaussian
      */
 
+    @Override
     synchronized public double nextGaussian()
     {
         if (this.__haveNextNextGaussian)

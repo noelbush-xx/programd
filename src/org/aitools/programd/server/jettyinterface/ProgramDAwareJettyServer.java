@@ -39,6 +39,7 @@ public class ProgramDAwareJettyServer extends Server
     /**
      * @see org.mortbay.http.HttpServer#addContext(org.mortbay.http.HttpContext)
      */
+    @Override
     public HttpContext addContext(HttpContext context)
     {
         ServletHttpContext result = (ServletHttpContext) super.addContext(context);

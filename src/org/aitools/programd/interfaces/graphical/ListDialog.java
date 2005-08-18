@@ -85,6 +85,7 @@ public class ListDialog extends JDialog
         final JButton setButton = new JButton("Set");
         cancelButton.addActionListener(new ActionEventIgnoringActionListener()
         {
+            @Override
             public void actionPerformed()
             {
                 dialog.setVisible(false);
@@ -92,6 +93,7 @@ public class ListDialog extends JDialog
         });
         setButton.addActionListener(new ActionEventIgnoringActionListener()
         {
+            @Override
             public void actionPerformed()
             {
                 ListDialog.value = (String) ListDialog.this.list.getSelectedValue();
@@ -104,6 +106,7 @@ public class ListDialog extends JDialog
         this.list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         this.list.addMouseListener(new MouseAdapter()
         {
+            @Override
             public void mouseClicked(MouseEvent e)
             {
                 if (e.getClickCount() == 2)

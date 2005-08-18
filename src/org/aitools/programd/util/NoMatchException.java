@@ -31,6 +31,7 @@ public class NoMatchException extends Exception
     /**
      * @see java.lang.Throwable#getMessage()
      */
+    @Override
     public String getMessage()
     {
         return "No match found for path \"" + this.path + "\".";

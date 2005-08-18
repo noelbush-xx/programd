@@ -45,6 +45,7 @@ public class PersonProcessor extends SubstitutionProcessor
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
+    @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         return process(PersonProcessor.class, element, parser);

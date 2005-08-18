@@ -67,6 +67,7 @@ public class XMLChatLogFormatter extends XMLFormatter
      * @return the result of formatting the given ChatLogRecord
      * @throws IllegalArgumentException if the record is not a ChatLogRecord
      */
+    @Override
     public String format(LogRecord record)
     {
         if (!(record instanceof ChatLogRecord))

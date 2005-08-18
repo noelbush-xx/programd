@@ -31,6 +31,7 @@ public class ClassUtils
      * @param constructorArgs the arguments to the constructor (actual arguments, not types)
      * @return the desired class
      */
+    @SuppressWarnings("unchecked")
     public static <T> T getSubclassInstance(Class<T> baseType, String classname, String description, Object ... constructorArgs)
     {
         // Get the subclass.

@@ -73,6 +73,7 @@ public class ConsoleSettings extends Settings
     /**
      * Initializes the Settings with values from properties, or defaults.
      */
+    @Override
     protected void initialize()
     {
         setEnableConsole(Boolean.valueOf(this.properties.getProperty("programd.console.enable-console", "true")).booleanValue());

@@ -53,6 +53,7 @@ public class JavaScriptProcessor extends AIMLProcessor
      * @return the result of processing the element
      * @throws ProcessorException if there is an error in processing
      */
+    @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         // Don't use the system tag if not permitted.
