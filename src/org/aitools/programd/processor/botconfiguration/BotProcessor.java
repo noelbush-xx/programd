@@ -20,6 +20,7 @@ import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
+import org.aitools.programd.util.URITools;
 
 /**
  * Supports configuration of a bot from the startup file.
@@ -65,7 +66,7 @@ public class BotProcessor extends BotConfigurationElementProcessor
     {
         if (element.hasAttribute(HREF))
         {
-            return this.core.loadBot(element.getAttribute(HREF));
+            return this.core.loadBot(URITools.createValidURL(element.getAttribute(HREF)));
         }
 
         String botID = element.getAttribute(ID);
