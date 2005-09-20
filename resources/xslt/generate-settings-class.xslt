@@ -52,6 +52,8 @@ package </xsl:text>
         <xsl:value-of select="$package"/>
         <xsl:text>;
 
+import java.net.URL;
+
 </xsl:text>
         <xsl:if test="$package != 'org.aitools.programd.util'">
             <xsl:text>import org.aitools.programd.util.Settings;
@@ -95,7 +97,7 @@ public class </xsl:text>
      */
     public </xsl:text>
         <xsl:value-of select="$classname"/>
-        <xsl:text>(String propertiesPath)
+        <xsl:text>(URL propertiesPath)
     {
         super(propertiesPath);
     }
