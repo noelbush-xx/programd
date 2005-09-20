@@ -9,6 +9,8 @@
  
 package org.aitools.programd;
 
+import java.net.URL;
+
 import org.aitools.programd.util.Settings;
 
 /**
@@ -276,7 +278,7 @@ public class CoreSettings extends Settings
      *
      * @param propertiesPath the path to the configuration file
      */
-    public CoreSettings(String propertiesPath)
+    public CoreSettings(URL propertiesPath)
     {
         super(propertiesPath);
     }

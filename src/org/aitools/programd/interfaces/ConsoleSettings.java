@@ -9,6 +9,8 @@
 
 package org.aitools.programd.interfaces;
 
+import java.net.URL;
+
 import org.aitools.programd.util.Settings;
 
 /**
@@ -65,7 +67,7 @@ public class ConsoleSettings extends Settings
      * 
      * @param propertiesPath the path to the configuration file
      */
-    public ConsoleSettings(String propertiesPath)
+    public ConsoleSettings(URL propertiesPath)
     {
         super(propertiesPath);
     }

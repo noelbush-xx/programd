@@ -9,12 +9,10 @@
 
 package org.aitools.programd.util;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
-
-import org.aitools.programd.util.FileManager;
 
 /**
  * A Settings object can read properties from a given path, or initialize itself
@@ -46,12 +44,12 @@ abstract public class Settings
      * 
      * @param propertiesPath the path to the properties file
      */
-    public Settings(String propertiesPath)
+    public Settings(URL propertiesPath)
     {
         this.properties = new Properties();
         try
         {
-            this.properties.loadFromXML(new FileInputStream(FileManager.getExistingFile(propertiesPath)));
+            this.properties.loadFromXML(propertiesPath.openStream());
         }
         catch (InvalidPropertiesFormatException e)
         {

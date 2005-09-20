@@ -9,6 +9,8 @@
 
 package org.aitools.programd.responder;
 
+import java.net.URL;
+
 import org.aitools.programd.util.Settings;
 
 /**
@@ -125,7 +127,7 @@ public class HTMLResponderSettings extends Settings
      * 
      * @param propertiesPath the path to the configuration file
      */
-    public HTMLResponderSettings(String propertiesPath)
+    public HTMLResponderSettings(URL propertiesPath)
     {
         super(propertiesPath);
     }

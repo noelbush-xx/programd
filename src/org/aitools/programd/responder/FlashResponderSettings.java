@@ -9,6 +9,8 @@
  
 package org.aitools.programd.responder;
 
+import java.net.URL;
+
 import org.aitools.programd.util.Settings;
 
 /**
@@ -53,7 +55,7 @@ public class FlashResponderSettings extends Settings
      *
      * @param propertiesPath the path to the configuration file
      */
-    public FlashResponderSettings(String propertiesPath)
+    public FlashResponderSettings(URL propertiesPath)
     {
         super(propertiesPath);
     }

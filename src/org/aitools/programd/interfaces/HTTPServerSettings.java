@@ -9,6 +9,8 @@
  
 package org.aitools.programd.interfaces;
 
+import java.net.URL;
+
 import org.aitools.programd.util.Settings;
 
 /**
@@ -45,7 +47,7 @@ public class HTTPServerSettings extends Settings
      *
      * @param propertiesPath the path to the configuration file
      */
-    public HTTPServerSettings(String propertiesPath)
+    public HTTPServerSettings(URL propertiesPath)
     {
         super(propertiesPath);
     }
