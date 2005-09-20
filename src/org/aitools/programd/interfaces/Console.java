@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.interfaces.shell.Shell;
+import org.aitools.programd.util.URITools;
 
 /**
  * Creating a Console essentially means that loggers (as configured) will (may)
@@ -72,7 +73,7 @@ public class Console
      */
     private void initialize(String settingsPath, PrintStream out, PrintStream err)
     {
-        this.settings = new ConsoleSettings(settingsPath);
+        this.settings = new ConsoleSettings(URITools.contextualize(this.core.getBaseURL(), settingsPath));
 
         // Messages to all logs will go up to the parent "programd" log, and out
         // to the console.

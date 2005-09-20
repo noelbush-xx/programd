@@ -1,6 +1,7 @@
 package org.aitools.programd.test.aiml;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -30,7 +31,7 @@ public class TestSuite implements Iterable<TestCase>
 
     /** The test cases schema location (local). */
     private static final String SCHEMA_LOCATION = "resources/schema/test-cases.xsd";
-
+    
     /** The test cases in this suite. */
     ArrayList<TestCase> testCases = new ArrayList<TestCase>();
 
@@ -186,28 +187,30 @@ public class TestSuite implements Iterable<TestCase>
     /**
      * Loads a test suite from the given path.
      * 
+     * @param base the base URL to use
      * @param path the path from which to load the test suite
      * @return the loaded test suite
      */
-    public static TestSuite load(String path)
+    public static TestSuite load(URL base, URL path)
     {
-        return load(path, null);
+        return load(base, path, null);
     }
 
     /**
      * Loads a test suite from the given path.
      * 
+     * @param base the base URL to use
      * @param path the path from which to load the test suite
      * @param multiplexor the multiplexor to use
      * @return the loaded test suite
      */
-    public static TestSuite load(String path, Multiplexor multiplexor)
+    public static TestSuite load(URL base, URL path, Multiplexor multiplexor)
     {
-        DocumentBuilder builder = XMLKit.getDocumentBuilder(URITools.createValidURL(SCHEMA_LOCATION), "test cases");
+        DocumentBuilder builder = XMLKit.getDocumentBuilder(URITools.contextualize(base, SCHEMA_LOCATION), "test cases");
         Document doc;
         try
         {
-            doc = builder.parse(URITools.createValidURL(path).toExternalForm());
+            doc = builder.parse(path.openStream());
         }
         catch (IOException e)
         {

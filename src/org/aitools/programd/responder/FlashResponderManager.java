@@ -16,6 +16,7 @@ import org.aitools.programd.CoreSettings;
 import org.aitools.programd.server.ServletRequestTransactionEnvelope;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.SuffixFilenameFilter;
+import org.aitools.programd.util.URITools;
 
 /**
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -47,7 +48,7 @@ public class FlashResponderManager extends AbstractXMLResponderManager implement
     {
         super(coreToUse);
         CoreSettings coreSettings = this.core.getSettings();
-        this.settings = new FlashResponderSettings(coreSettings.getConfLocationFlashResponder());
+        this.settings = new FlashResponderSettings(URITools.contextualize(this.core.getBaseURL(), coreSettings.getConfLocationFlashResponder()));
         setConvertHTMLLineBreakers(this.settings.convertHtmlLineBreakers());
         setStripMarkup(this.settings.stripMarkup());
         setDefaultTemplateName(this.settings.getChatDefaultTemplateName());

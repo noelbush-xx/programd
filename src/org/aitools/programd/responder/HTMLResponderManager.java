@@ -27,6 +27,7 @@ import org.aitools.programd.server.ServletRequestTransactionEnvelope;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.SuffixFilenameFilter;
+import org.aitools.programd.util.URITools;
 import org.aitools.programd.util.UserError;
 
 /**
@@ -126,7 +127,7 @@ public class HTMLResponderManager extends AbstractXMLResponderManager implements
         super(coreToUse);
         this.multiplexor = this.core.getMultiplexor();
         CoreSettings coreSettings = this.core.getSettings();
-        this.settings = new HTMLResponderSettings(coreSettings.getConfLocationHtmlResponder());
+        this.settings = new HTMLResponderSettings(URITools.contextualize(this.core.getBaseURL(), coreSettings.getConfLocationHtmlResponder()));
         setDefaultTemplateName(this.settings.getChatDefaultTemplateName());
         // Scan and register other templates.
         registerTemplates(FileManager.getExistingFile(this.settings.getTemplateDirectory())

@@ -18,6 +18,7 @@ import gnu.getopt.LongOpt;
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreShutdownHook;
 import org.aitools.programd.interfaces.Console;
+import org.aitools.programd.util.URITools;
 
 /**
  * A <code>SimpleConsole</code> gives you a running
@@ -47,7 +48,7 @@ public class SimpleConsole
             rootLogger.removeHandler(handlers[index]);
         }
 
-        this.core = new Core(corePropertiesPath);
+        this.core = new Core(URITools.createValidURL(corePropertiesPath));
         this.console = new Console(consolePropertiesPath);
         this.console.attachTo(this.core);
         this.core.setup();

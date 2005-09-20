@@ -19,6 +19,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.CoreShutdownHook;
 import org.aitools.programd.interfaces.Console;
 import org.aitools.programd.interfaces.HTTPServer;
+import org.aitools.programd.util.URITools;
 
 /**
  * An implementation of Program D combined with a web server.
@@ -69,7 +70,7 @@ public class WebServer
             rootLogger.removeHandler(handlers[index]);
         }
 
-        this.core = new Core(corePropertiesPath);
+        this.core = new Core(URITools.createValidURL(corePropertiesPath));
         if (this.console != null)
         {
             this.console.attachTo(this.core);

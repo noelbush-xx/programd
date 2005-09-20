@@ -3,6 +3,7 @@ package org.aitools.programd.test.aiml;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.multiplexor.Multiplexor;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
+import org.aitools.programd.util.URITools;
 
 /**
  * A Tester loads one or more test suites and runs them, logging output.
@@ -31,6 +33,9 @@ public class Tester
 
     /** The test failures. */
     private LinkedList<TestResult> failures = new LinkedList<TestResult>();
+    
+    /** The base URL. */
+    private URL baseURL;
 
     /** The Multiplexor that this Tester will use. */
     private Multiplexor multiplexor;
@@ -61,6 +66,7 @@ public class Tester
     public Tester(Core core, Logger testLogger, String testSuites, String testReports)
     {
         this.multiplexor = core.getMultiplexor();
+        this.baseURL = core.getBaseURL();
         this.logger = testLogger;
         this.testSuitePathSpec = testSuites;
         try
@@ -87,7 +93,7 @@ public class Tester
     public String run(String botid, String suite, int runCount)
     {
         this.suites.clear();
-        this.suites = loadTests(this.testSuitePathSpec, this.multiplexor, this.logger);
+        this.suites = loadTests(this.baseURL, this.testSuitePathSpec, this.multiplexor, this.logger);
         if (null == botid)
         {
             this.logger.log(Level.WARNING, "No botid defined for tests.");
@@ -152,6 +158,8 @@ public class Tester
 
     /**
      * Loads all test suites from a given pathspec (may use wildcards).
+     * 
+     * @param base the base URL to use
      * @param directory the directory from which to load the tests
      * @param multiplexorToUse the Multiplexor to assign to the suites
      * @param logger the logger to use for tracking progress
@@ -159,7 +167,7 @@ public class Tester
      * @param pathspec
      * @return the map of suite names to suites
      */
-    private static HashMap<String, TestSuite> loadTests(String pathspec, Multiplexor multiplexorToUse, Logger logger)
+    private static HashMap<String, TestSuite> loadTests(URL base, String pathspec, Multiplexor multiplexorToUse, Logger logger)
     {
         HashMap<String, TestSuite> suites = new HashMap<String, TestSuite>();
         String[] fileList = null;
@@ -186,7 +194,7 @@ public class Tester
             {
                 String path = fileList[index];
                 logger.log(Level.INFO, "Loading tests from \"" + pathspec + "\".");
-                TestSuite suite = TestSuite.load(path, multiplexorToUse);
+                TestSuite suite = TestSuite.load(base, URITools.createValidURL(path), multiplexorToUse);
                 suites.put(suite.getName(), suite);
             }
         }

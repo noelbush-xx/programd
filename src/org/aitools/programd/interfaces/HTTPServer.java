@@ -20,6 +20,7 @@ import org.aitools.programd.server.ServletRequestResponderManagerRegistry;
 import org.aitools.programd.util.ClassUtils;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.ManagedProcess;
+import org.aitools.programd.util.URITools;
 import org.aitools.programd.util.UnspecifiedParameterError;
 import org.aitools.programd.util.UserError;
 
@@ -56,7 +57,7 @@ public class HTTPServer implements ManagedProcess
     {
         this.core = coreToUse;
         this.servletRequestResponderRegistry = new ServletRequestResponderManagerRegistry(this.core);
-        this.settings = new HTTPServerSettings(webServerPropertiesPath);
+        this.settings = new HTTPServerSettings(URITools.contextualize(this.core.getBaseURL(), webServerPropertiesPath));
         this.logger = this.core.setupLogger("programd.web-server", this.settings.getLogPathPattern());
     }
 
