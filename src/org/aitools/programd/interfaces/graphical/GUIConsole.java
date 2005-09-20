@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -145,7 +146,15 @@ public class GUIConsole extends JPanel
             throw new DeveloperError("The requested LookAndFeel is not supported.", e);
         }
 
-        URL logoURL = URITools.getResource(LOGO_PATH);
+        URL logoURL;
+        try
+        {
+            logoURL = URITools.getResource(LOGO_PATH);
+        }
+        catch (FileNotFoundException e)
+        {
+            throw new DeveloperError("Could not find logo.", e);
+        }
         if (logoURL != null)
         {
             this.logo = new ImageIcon(logoURL);
@@ -155,7 +164,15 @@ public class GUIConsole extends JPanel
             throw new DeveloperError("Logo is missing from \"" + LOGO_PATH + "\"!", new NullPointerException());
         }
 
-        URL iconURL = URITools.getResource(ICON_PATH);
+        URL iconURL;
+        try
+        {
+            iconURL = URITools.getResource(ICON_PATH);
+        }
+        catch (FileNotFoundException e)
+        {
+            throw new DeveloperError("Could not find icon.", e);
+        }
         if (iconURL != null)
         {
             this.icon = new ImageIcon(iconURL);
