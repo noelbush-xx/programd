@@ -11,3 +11,4 @@ distributable.bin.tmp
 distributable.src.tmp
 *.bz2
 *.zip
+test-report-*.xml
