@@ -82,6 +82,9 @@ public class Core extends Thread
 
     /** The location of the plugin configuration schema. */
     private static final String PLUGIN_CONFIG_SCHEMA_LOCATION = "resources/schema/plugins.xsd";
+    
+    /** The base URL. */
+    private URL baseURL;
 
     /** The Settings. */
     protected CoreSettings settings;
@@ -163,40 +166,49 @@ public class Core extends Thread
     public static final String ASTERISK = "*";
 
     /**
-     * Initializes a new Core object with the properties from the given file.
+     * Initializes a new Core object with default property values
+     * and the given base URL.
      * 
-     * @param propertiesPath
+     * @param base the base URL to use
      */
-    public Core(String propertiesPath)
+    public Core(URL base)
     {
         super("Core");
-        this.settings = new CoreSettings(propertiesPath);
-        FileManager.setRootPath(URITools.contextualize(URITools.createValidURL(propertiesPath),
-                this.settings.getRootDirectory()));
-        initialize();
-    }
-
-    /**
-     * Initializes a new Core object with the given CoreSettings object.
-     * 
-     * @param settingsToUse the settings to use
-     */
-    public Core(CoreSettings settingsToUse)
-    {
-        super("Core");
-        this.settings = settingsToUse;
+        this.settings = new CoreSettings();
+        this.baseURL = base;
         FileManager.setRootPath(URITools.contextualize(FileManager.getWorkingDirectory(),
                 this.settings.getRootDirectory()));
         initialize();
     }
 
     /**
-     * Initializes a new Core object with default property values.
+     * Initializes a new Core object with the properties from the given file
+     * and the given base URL.
+     * 
+     * @param base the base URL to use
+     * @param propertiesPath
      */
-    public Core()
+    public Core(URL base, URL propertiesPath)
     {
         super("Core");
-        this.settings = new CoreSettings();
+        this.baseURL = base;
+        this.settings = new CoreSettings(propertiesPath);
+        FileManager.setRootPath(URITools.getParent(this.baseURL));
+        initialize();
+    }
+
+    /**
+     * Initializes a new Core object with the given CoreSettings object
+     * and the given base URL.
+     * 
+     * @param base the base URL to use
+     * @param settingsToUse the settings to use
+     */
+    public Core(URL base, CoreSettings settingsToUse)
+    {
+        super("Core");
+        this.settings = settingsToUse;
+        this.baseURL = base;
         FileManager.setRootPath(URITools.contextualize(FileManager.getWorkingDirectory(),
                 this.settings.getRootDirectory()));
         initialize();
@@ -207,10 +219,15 @@ public class Core extends Thread
      */
     private void initialize()
     {
+        // Set up loggers based on the settings.
+        this.logger = setupLogger("programd", this.settings.getActivityLogPattern());
+        this.logger.setLevel(Level.ALL);
+
+        this.logger.log(Level.INFO, "Using base URL " + this.baseURL);
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
-        this.parser = XMLKit.getSAXParser(URITools.getResource(AIML_SCHEMA_LOCATION), "AIML");
+        this.parser = XMLKit.getSAXParser(URITools.contextualize(this.baseURL, AIML_SCHEMA_LOCATION), "AIML");
         this.graphmaster = new Graphmaster(this.settings);
         this.bots = new Bots();
         this.processes = new ManagedProcesses(this);
@@ -222,10 +239,6 @@ public class Core extends Thread
         // Initialize the PredicateMaster and attach it to the Multiplexor.
         this.predicateMaster = new PredicateMaster(this);
         this.multiplexor.attach(this.predicateMaster);
-
-        // Set up loggers based on the settings.
-        this.logger = setupLogger("programd", this.settings.getActivityLogPattern());
-        this.logger.setLevel(Level.ALL);
 
         // Get the hostname (used occasionally).
         try
@@ -240,7 +253,7 @@ public class Core extends Thread
         // Load the plugin config.
         try
         {
-            this.pluginConfig = XMLKit.getDocumentBuilder(URITools.getResource(PLUGIN_CONFIG_SCHEMA_LOCATION),
+            this.pluginConfig = XMLKit.getDocumentBuilder(URITools.contextualize(this.baseURL, PLUGIN_CONFIG_SCHEMA_LOCATION),
                     "plugin configuration").parse(
                     URITools.createValidURL(this.settings.getConfLocationPlugins())
                             .toExternalForm());
@@ -817,20 +830,19 @@ public class Core extends Thread
      * @param path the bot config file
      * @return the id of the bot loaded
      */
-    public String loadBot(String path)
+    public String loadBot(URL path)
     {
         this.logger.log(Level.INFO, "Loading bot from \"" + path + "\".");
-        URL url = URITools.createValidURL(path);
-        if (url.getProtocol().equals(FileManager.FILE))
+        if (path.getProtocol().equals(FileManager.FILE))
         {
-            FileManager.pushFileParentAsWorkingDirectory(url.getPath());
+            FileManager.pushFileParentAsWorkingDirectory(path.getPath());
         }
 
         String id = null;
 
         try
         {
-            id = new BotsConfigurationFileParser(this).processResponse(url);
+            id = new BotsConfigurationFileParser(this).processResponse(path);
         }
         catch (ProcessorException e)
         {
@@ -1003,5 +1015,13 @@ public class Core extends Thread
     public Document getPluginConfig()
     {
         return this.pluginConfig;
+    }
+    
+    /**
+     * @return the base URL
+     */
+    public URL getBaseURL()
+    {
+        return this.baseURL;
     }
 }
