@@ -370,21 +370,46 @@ public class URITools
     
     /**
      * Tries to get a URL for a resource, first by looking in the root directory,
-     * then looking in jar files and the classpath (via ClassLoader.getSystemResource()).
+     * then looking in jar files and the classpath (via Class.getResource()).
      * 
      * @param name the resource identifier
      * @return the URL of the resource
+     * @throws FileNotFoundException if the resource could not be found at all
      */
-    public static URL getResource(String name)
+    public static URL getResource(String name) throws FileNotFoundException
     {
+        File file = FileManager.getExistingFile(name);
+        if (file != null)
+        {
+            URL result = createValidURL(file.getAbsolutePath());
+            if (result != null)
+            {
+                return result;
+            }
+        }
+        URL result = URITools.class.getClass().getResource(name);
+        if (result != null)
+        {
+            return result;
+        }
+        throw new FileNotFoundException(name);
+    }
+    
+    /**
+     * @param url some URL
+     * 
+     * @return the "parent" of the given URL, if possible
+     */
+    public static URL getParent(URL url)
+    {
+        String file = url.getFile();
         try
         {
-            File file = FileManager.getExistingFile(name);
-            return createValidURL(file.getAbsolutePath());
+            return new URL(url.getProtocol(), url.getHost(), url.getPort(), file.substring(0, file.lastIndexOf('/')));
         }
-        catch (Error e)
+        catch (MalformedURLException e)
         {
-            return ClassLoader.getSystemResource(name);
+            return url;
         }
     }
 }
