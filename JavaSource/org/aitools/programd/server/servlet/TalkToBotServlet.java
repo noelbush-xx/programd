@@ -25,7 +25,7 @@ public class TalkToBotServlet extends HttpServlet
     protected Core core;
     
     /** A default bot page if none other is provided. */
-    protected static final String DEFAULT_BOT_PAGE = "/pages/TalkToBot.jspx";
+    protected static final String DEFAULT_BOT_SERVLET_PAGE = "/pages/TalkToBot.jspx";
 
     /**
      * Gets the Core (should have already been initialized by a listener,
@@ -90,9 +90,6 @@ public class TalkToBotServlet extends HttpServlet
         // Get/create the session.
         HttpSession session = req.getSession(true);
         
-        // Get the bot parameter, if there is one.
-        String botid = req.getParameter("bot");
-        
         // Look for a userid.
         String userid = null;
         Principal principal = req.getUserPrincipal();
@@ -113,14 +110,16 @@ public class TalkToBotServlet extends HttpServlet
         // Put the userid into a session attribute (so it can be accessed by other things; but we always recompute it!)
         session.setAttribute("userid", userid);
         
+        // Get the bot parameter, if there is one.
+        String botid = req.getParameter("bot");
+        
         // We intend to wind up with some sort of Program D Bot object, one way or another.
         org.aitools.programd.bot.Bot programDBot = null;
         
-        /*
-         * If the session already contains a bot, and its ID matches the specified bot ID,
-         * or no bot ID is specified, just forward the request.
-         */
+        // See if there is already a bot object in the session.
         Object botObject = session.getAttribute("bot");
+        
+        // If it's null, or if it is a bot but there's a bot id specified that doesn't match it, try to replace it.
         if (botObject == null ||
                 !(botObject instanceof Bot &&
                 (botid == null || ((Bot)botObject).getBotId().equals(botid))))
@@ -136,18 +135,20 @@ public class TalkToBotServlet extends HttpServlet
                 }
                 botid = programDBot.getID();
             }
-            else
-            {
-                programDBot = this.core.getBot(botid);
-            }
             Bot bot = new Bot(this.core, botid, userid);
             session.setAttribute("bot", bot);
         }
-        if (programDBot == null)
+        // Otherwise (should have a valid bot object here), just get the program D bot
+        else
         {
-            this.log("Could not find a bot.  Cannot continue.", new NullPointerException());
+            programDBot = ((Bot)botObject).getBot();
         }
-        forward(programDBot.getServletPage(), req, resp);
+        String page = programDBot.getServletPage();
+        if (page == null)
+        {
+            page = DEFAULT_BOT_SERVLET_PAGE;
+        }
+        forward(page, req, resp);
     }
     
     protected void forward(String page, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
