@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>ProgramD</display-name>
+    <welcome-file-list>
+        <welcome-file>TalkToBot</welcome-file>
+    </welcome-file-list>
+    <description>Bot hosting platform</description>
+    <!--Location of the Core config.-->
+    <context-param>
+    	<param-name>config</param-name>
+    	<param-value>conf/core.xml</param-value>
+    </context-param>
+	<!--JSP config-->
+    <jsp-config>
+        <taglib>
+            <taglib-uri>http://java.sun.com/jstl/core</taglib-uri>
+            <taglib-location>/WEB-INF/c.tld</taglib-location>
+        </taglib>
+		<taglib>
+			<taglib-uri>http://java.sun.com/jstl/core-rt</taglib-uri>
+			<taglib-location>/WEB-INF/c-rt.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>http://aitools.org/programd/4.6/taglib/aiml</taglib-uri>
+			<taglib-location>/WEB-INF/aiml.tld</taglib-location>
+		</taglib>
+    </jsp-config>
+    <!--Listeners-->
+    <listener>
+        <listener-class>org.aitools.programd.server.servlet.ContextListener</listener-class>
+    </listener>
+    <!--Servlet Descriptors-->
+    <servlet>
+        <servlet-name>TalkToBotServlet</servlet-name>
+        <servlet-class>org.aitools.programd.server.servlet.TalkToBotServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>dwr-invoker</servlet-name>
+        <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+    <!--Servlet Mappings-->
+    <servlet-mapping>
+        <servlet-name>TalkToBotServlet</servlet-name>
+        <url-pattern>/TalkToBot</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>dwr-invoker</servlet-name>
+        <url-pattern>/dwr/*</url-pattern>
+    </servlet-mapping>
+    <!--Application-Level Security-->
+    <!--
+    <security-role>
+        <role-name>User</role-name>
+    </security-role>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Program D</web-resource-name>
+            <url-pattern>/pages/programd.css</url-pattern>
+            <url-pattern>/favicon.ico</url-pattern>
+        </web-resource-collection>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Program D</web-resource-name>
+            <url-pattern>/</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>User</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>botmachine</realm-name>
+    </login-config>
+    -->
+</web-app>

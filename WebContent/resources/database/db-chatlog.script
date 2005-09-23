@@ -1,0 +1,1 @@
+create table chatlog (id int not null auto_increment primary key, timestamp timestamp, userid varchar(128), botid varchar(128), input blob, response blob);

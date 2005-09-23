@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://aitools.org/programd/4.5/plugins" xmlns:d="http://aitools.org/programd/4.5"
+    targetNamespace="http://aitools.org/programd/4.5/plugins" elementFormDefault="qualified"
+    attributeFormDefault="unqualified" version="1.0" xml:lang="EN">
+    <xs:annotation>
+        <xs:documentation>This is the schema for plugin configuration for Program
+        D.</xs:documentation>
+    </xs:annotation>
+    <xs:import namespace="http://aitools.org/programd/4.5" schemaLocation="./common-types.xsd"/>
+    <xs:element name="plugins">
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="shell-commands">
+                    <xs:complexType>
+                        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                            <xs:element name="command">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="parameter" minOccurs="0"
+                                            maxOccurs="unbounded" type="d:Parameter"/>
+                                    </xs:sequence>
+                                    <xs:attribute name="class" type="d:JavaClassname" use="required"/>
+                                    <xs:attribute name="enabled" type="xs:boolean" use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

@@ -1,14 +1,1 @@
-aiml
-classes
-ffm
-logs
-.classpath
-secret.key
-logs
-*~
-build.tmp
-distributable.bin.tmp
-distributable.src.tmp
-*.bz2
-*.zip
-test-report-*.xml
+.deployables

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE catalog PUBLIC "-//OASIS//DTD Entity Resolution XML Catalog V1.0//EN"
+  "http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd">
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <system systemId="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" uri="./DTD/xhtml1-transitional.dtd"/>
+  <system systemId="http://java.sun.com/dtd/properties.dtd" uri="./DTD/java-properties.dtd"/>
+  <system systemId="http://jetty.mortbay.org/configure_1_3.dtd" uri="./DTD/jetty-configure_1_3.dtd"/>
+  <system systemId="http://aitools.org/aiml/schema/AIML.xsd" uri="./schema/AIML.xsd"/>
+  <system systemId="http://aitools.org/programd/4.5/common-types.xsd" uri="./schema/common-types.xsd"/>
+  <system systemId="http://aitools.org/programd/4.5/bot-configuration.xsd" uri="./schema/bot-configuration.xsd"/>
+  <system systemId="http://aitools.org/programd/4.5/plugins.xsd" uri="./schema/plugins.xsd"/>
+  <system systemId="http://aitools.org/programd/4.5/test-cases.xsd" uri="./schema/test-cases.xsd"/>
+</catalog>
