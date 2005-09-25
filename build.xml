@@ -16,11 +16,12 @@
 		
 		<property name="base.dir" value="."/>
 		<property name="src.dir" value="${base.dir}/JavaSource"/>
-		<property name="lib.dir" value="${base.dir}/WebContent/WEB-INF/lib"/>
-		<property name="output.lib.dir" value="${base.dir}/WebContent/WEB-INF/lib"/>
+		<property name="webapp.lib.dir" value="${base.dir}/WebContent/WEB-INF/lib"/>
+		<property name="compile.lib.dir" value="${base.dir}/lib"/>
+		<property name="output.lib.dir" value="${base.dir}/lib"/>
 		
 		<property name="build.dir" value="./build.tmp"/>
-		<property name="build.classpath" value="${lib.dir}/commons-logging.jar:${lib.dir}/gnu.getopt-1.0.10.jar:${lib.dir}/js.jar:${lib.dir}/org.mortbay.jetty.jar:${lib.dir}/javax.servlet.jar"/>
+		<property name="build.classpath" value="${compile.lib.dir}/jsp-api.jar:${compile.lib.dir}/servlet-api.jar:${webapp.lib.dir}/js.jar"/>
 		<property name="javadoc.dir" value="./docs/api"/>
 		
 		<property name="main.jar" value="${output.lib.dir}/programd-main.jar"/>
