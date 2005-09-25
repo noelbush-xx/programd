@@ -10,12 +10,13 @@
 package org.aitools.programd.interfaces;
 
 import java.io.PrintStream;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
+import org.aitools.programd.Core.Status;
 import org.aitools.programd.interfaces.shell.Shell;
-import org.aitools.programd.util.URITools;
 
 /**
  * Creating a Console essentially means that loggers (as configured) will (may)
@@ -46,7 +47,7 @@ public class Console
      * 
      * @param settingsPath the path to the settings file for the console
      */
-    public Console(String settingsPath)
+    public Console(URL settingsPath)
     {
         initialize(settingsPath, System.out, System.err);
     }
@@ -59,7 +60,7 @@ public class Console
      * @param out the stream to use for normal messages
      * @param err the stream to use for error messages
      */
-    public Console(String settingsPath, PrintStream out, PrintStream err)
+    public Console(URL settingsPath, PrintStream out, PrintStream err)
     {
         initialize(settingsPath, out, err);
     }
@@ -71,9 +72,9 @@ public class Console
      * @param out the stream to use for normal output messages
      * @param err the stream to use for error messages
      */
-    private void initialize(String settingsPath, PrintStream out, PrintStream err)
+    private void initialize(URL settingsPath, PrintStream out, PrintStream err)
     {
-        this.settings = new ConsoleSettings(URITools.contextualize(this.core.getBaseURL(), settingsPath));
+        this.settings = new ConsoleSettings(settingsPath);
 
         // Messages to all logs will go up to the parent "programd" log, and out
         // to the console.
@@ -84,15 +85,16 @@ public class Console
         this.stdErrHandler = new StdStreamHandler(this.settings, err, new StdErrFilter());
         Logger.getLogger("programd").addHandler(this.stdErrHandler);
     }
-
+    
     /**
-     * Attaches the Console to the given Core.
+     * Attaches the console to the given core.
      * 
-     * @param coreToUse the Core to which to attach
+     * @param coreToUse the core to which to attach
      */
     public void attachTo(Core coreToUse)
     {
         this.core = coreToUse;
+
         if (this.settings.useShell())
         {
             addShell(new Shell(this.settings), this.core);
@@ -125,6 +127,19 @@ public class Console
         if (this.settings.useShell())
         {
             this.shell.start();
+        }
+
+        // Now just run as long as the core status stays at READY.
+        while (this.core.getStatus() == Status.READY)
+        {
+            try
+            {
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException e)
+            {
+                break;
+            }
         }
     }
 
