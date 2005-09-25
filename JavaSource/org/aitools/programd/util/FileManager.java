@@ -36,6 +36,12 @@ public class FileManager
     /** The current working directory. */
     private static Stack<URL> workingDirectory = new Stack<URL>();
 
+    /** Put the working directory into the stack right away. */
+    static
+    {
+        pushWorkingDirectory(URITools.createValidURL(System.getProperty("user.dir")));
+    }
+
     /** The error logger. */
     private static Logger logger = Logger.getLogger("programd");
 
@@ -466,7 +472,14 @@ public class FileManager
         {
             pattern = path.substring(separatorIndex + 1);
             dirName = path.substring(0, separatorIndex + 1);
-            dir = new File(workingDirectory.peek().getPath() + dirName);
+            if (!dirName.startsWith(File.separator))
+            {
+                dir = new File(workingDirectory.peek().getPath() + dirName);
+            }
+            else
+            {
+                dir = new File(dirName);
+            }
         }
         else
         {
@@ -492,7 +505,7 @@ public class FileManager
         }
         for (int i = list.length; --i >= 0;)
         {
-            list[i] = dirName + File.separator + list[i];
+            list[i] = dirName + list[i];
         }
         return list;
     }
