@@ -210,7 +210,7 @@ public class TestSuite implements Iterable<TestCase>
         Document doc;
         try
         {
-            doc = builder.parse(path.openStream());
+            doc = builder.parse(path.toString());
         }
         catch (IOException e)
         {
