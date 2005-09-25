@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--
+Program D StandardConsole Configuration
+===============================================================
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 
+02111-1307, USA.
+-->
+
+<!--
+GENERAL NOTES
+
+1. Configuration options are grouped for easy maintenance.
+2. Unless otherwise noted, commenting out a property will
+   cause the engine's default value to be used.
+3. A property may only be defined once.
+4. The notations in [square brackets] are used to generate
+   the Settings class that corresponds with this properties
+   file.  Please do not change these notations unless you
+   know what you are doing.
+-->
+
+<properties version="1.0">
+    <!--[generate: org.aitools.programd.interfaces.ConsoleSettings]
+        [strip-prefix: programd.console.]-->
+
+    <!--
+    CONSOLE/TRACE CONFIGURATION
+    -->
+    
+    <!-- Show information on console? [boolean: true]-->
+    <entry key="programd.console.enable-console">true</entry>
+    
+    <!-- Show developer info messages on console? [boolean: true]-->
+    <entry key="programd.console.show-developer-info">true</entry>
+    
+    <!-- (developer) Show caller methods for errors? [boolean: false]
+         * This is an advanced debugging feature.  You likely want to leave it set to false.-->
+    <entry key="programd.console.show-method-names-for-errors">false</entry>
+    
+    <!-- (developer) Show caller methods for *all* messages? [boolean: false]
+         * This is an advanced debugging feature.  You likely want to leave it set to false.-->
+    <entry key="programd.console.show-method-names-always">false</entry>
+    
+    <!-- The date-time format to use on the console. [String: H:mm:ss]
+         * See http://java.sun.com/jdk1.5.0_02/docs/api/java/text/SimpleDateFormat.html
+           for formatting codes.
+         * Setting the value to blank means no timestamp will be displayed.-->
+    <entry key="programd.console.timestamp-format">H:mm:ss</entry>
+    
+    <!-- Use interactive command-line shell? [boolean: true]-->
+    <entry key="programd.console.use-shell">true</entry>
+    
+</properties>
