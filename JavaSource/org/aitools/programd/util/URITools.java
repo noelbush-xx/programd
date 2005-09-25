@@ -35,6 +35,12 @@ public class URITools
 
     /** The string "://". */
     private static final String COLON_SLASH = ":/";
+    
+    /** A dot (period). */
+    private static final String DOT = ".";
+    
+    /** The empty string. */
+    private static final String EMPTY_STRING = "";
 
     /**
      * <p>
@@ -62,13 +68,7 @@ public class URITools
         {
             return subject;
         }
-        String contextFile = context.getFile();
-        /*
-         * If the context URL ends with a /, this is good enough (for our
-         * purposes) to regard this as "not specifying a file", even though, of
-         * course, it could actually point to one.
-         */
-        if (contextFile.endsWith(SLASH))
+        if (probablyIsNotFile(context))
         {
             // Transform the subject into a URI for manipulation.
             URI subjectURI = null;
@@ -143,17 +143,11 @@ public class URITools
                 throw new DeveloperError("Subject URL is malformed.", e);
             }
         }
-        String contextFile = context.getFile();
-        /*
-         * If the context URL ends with a /, this is good enough (for our
-         * purposes) to regard this as "not specifying a file", even though, of
-         * course, it could actually point to one.
-         */
-        if (contextFile.endsWith(SLASH))
+        if (probablyIsNotFile(context))
         {
             try
             {
-                return context.toURI().resolve(subject).toURL();
+                return new URL(context.getProtocol(), context.getHost(), context.getPort(), context.getFile() + SLASH).toURI().resolve(subject).toURL();
             }
             catch (URISyntaxException e)
             {
@@ -166,14 +160,19 @@ public class URITools
         }
         // If the context *does* specify a file, then we need to remove it
         // first.
-        String contextString = context.toString();
+        URL parent = getParent(context);
+        if (!parent.getFile().equals(context.getFile()))
+        {
+            return contextualize(parent, subject);
+        }
+        // otherwise...
         try
         {
-            return contextualize(new URL(contextString.substring(0, contextString.lastIndexOf('/') + 1)), subject);
+            return new URL(context.getProtocol(), context.getHost(), context.getPort(), subject);
         }
         catch (MalformedURLException e)
         {
-            throw new DeveloperError("Cannot remove file part from context URL.", e);
+            throw new DeveloperError("Given subject cannot be contextualized in given context.", e);
         }
     }
 
@@ -199,16 +198,11 @@ public class URITools
                 throw new DeveloperError("Subject URL is malformed.", e);
             }
         }
-        /*
-         * If the context URL ends with a /, this is good enough (for our
-         * purposes) to regard this as "not specifying a file", even though, of
-         * course, it could actually point to one.
-         */
-        if (context.endsWith(SLASH))
+        if (probablyIsNotFile(context))
         {
             try
             {
-                return new URI(context).resolve(subject).toURL();
+                return new URI(context + SLASH).resolve(subject).toURL();
             }
             catch (URISyntaxException e)
             {
@@ -229,6 +223,43 @@ public class URITools
         {
             throw new DeveloperError("Cannot remove file part from context URL.", e);
         }
+    }
+    
+    /**
+     * Uses a couple of simple heuristics to guess whether a
+     * given URL probably is not pointing at a file.
+     * 
+     * NOTE: This is <em>way</em> imperfect! :-)
+     * 
+     * @param url the URL to check
+     * @return whether it probably is not a file
+     */
+    private static boolean probablyIsNotFile(URL url)
+    {
+        return probablyIsNotFile(url.getFile());
+    }
+    
+    /**
+     * Uses a couple of simple heuristics to guess whether a
+     * given URL probably is not pointing at a file.
+     * 
+     * NOTE: This is <em>way</em> imperfect! :-)
+     * 
+     * @param file the path to check
+     * @return whether it probably is not a file
+     */
+    private static boolean probablyIsNotFile(String file)
+    {
+        /*
+         * If the part of the context URL after the last "/" does not contain a ".",
+         * this is good enough (for our purposes) to regard this as "not specifying
+         * a file", even though, of course, it could actually point to one.
+         * 
+         * We first test the simpler cases that contextFile is "" or "/", or ends with "/".
+         */
+        int slash = file.lastIndexOf(SLASH);
+        return file.equals(EMPTY_STRING) || file.equals(SLASH) || file.endsWith(SLASH) ||
+                (slash < file.length() - 1 && !file.substring(slash).contains(DOT));
     }
 
     /**
@@ -371,33 +402,6 @@ public class URITools
     }
     
     /**
-     * Tries to get a URL for a resource, first by looking in the root directory,
-     * then looking in jar files and the classpath (via Class.getResource()).
-     * 
-     * @param name the resource identifier
-     * @return the URL of the resource
-     * @throws FileNotFoundException if the resource could not be found at all
-     */
-    public static URL getResource(String name) throws FileNotFoundException
-    {
-        File file = FileManager.getExistingFile(name);
-        if (file != null)
-        {
-            URL result = createValidURL(file.getAbsolutePath());
-            if (result != null)
-            {
-                return result;
-            }
-        }
-        URL result = URITools.class.getClass().getResource(name);
-        if (result != null)
-        {
-            return result;
-        }
-        throw new FileNotFoundException(name);
-    }
-    
-    /**
      * @param url some URL
      * 
      * @return the "parent" of the given URL, if possible
@@ -407,7 +411,12 @@ public class URITools
         String file = url.getFile();
         try
         {
-            return new URL(url.getProtocol(), url.getHost(), url.getPort(), file.substring(0, file.lastIndexOf('/')));
+            int slash = file.lastIndexOf(SLASH);
+            if (slash >= 1)
+            {
+                return new URL(url.getProtocol(), url.getHost(), url.getPort(), file.substring(0, slash));
+            }
+            return new URL(url.getProtocol(), url.getHost(), url.getPort(), SLASH);
         }
         catch (MalformedURLException e)
         {
@@ -423,6 +432,11 @@ public class URITools
      */
     public static boolean seemsToExist(URL url)
     {
+        if (url.getProtocol().equals(FileManager.FILE))
+        {
+            File file = new File(unescape(url.getFile()));
+            return file.exists();
+        }
         InputStream test = null;
         try
         {
@@ -469,5 +483,28 @@ public class URITools
             return 0;
         }
         return connection.getLastModified();
+    }
+    
+    /**
+     * Does very minimal URL escaping -- just enough to avoid complaints
+     * from the URI &amp; URL constructors (maybe).
+     * 
+     * @param url the URL to escape
+     * @return the escaped URL
+     */
+    public static String escape(String url)
+    {
+        return url.replace(" ", "%20");
+    }
+    
+    /**
+     * Reverses {@link #escape(String)}.
+     * 
+     * @param url the URL to unescape
+     * @return the unescaped URL
+     */
+    public static String unescape(String url)
+    {
+        return url.replace("%20", " ");
     }
 }
