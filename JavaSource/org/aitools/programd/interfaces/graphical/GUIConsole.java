@@ -17,7 +17,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -124,7 +123,7 @@ public class GUIConsole extends JPanel
      * 
      * @param consolePropertiesPath the path to the console properties file
      */
-    public GUIConsole(String consolePropertiesPath)
+    public GUIConsole(URL consolePropertiesPath)
     {
         try
         {
@@ -147,15 +146,7 @@ public class GUIConsole extends JPanel
             throw new DeveloperError("The requested LookAndFeel is not supported.", e);
         }
 
-        URL logoURL;
-        try
-        {
-            logoURL = URITools.getResource(LOGO_PATH);
-        }
-        catch (FileNotFoundException e)
-        {
-            throw new DeveloperError("Could not find logo.", e);
-        }
+        URL logoURL = URITools.createValidURL(LOGO_PATH);
         if (logoURL != null)
         {
             this.logo = new ImageIcon(logoURL);
@@ -165,15 +156,7 @@ public class GUIConsole extends JPanel
             throw new DeveloperError("Logo is missing from \"" + LOGO_PATH + "\"!", new NullPointerException());
         }
 
-        URL iconURL;
-        try
-        {
-            iconURL = URITools.getResource(ICON_PATH);
-        }
-        catch (FileNotFoundException e)
-        {
-            throw new DeveloperError("Could not find icon.", e);
-        }
+        URL iconURL = URITools.createValidURL(ICON_PATH);
         if (iconURL != null)
         {
             this.icon = new ImageIcon(iconURL);
@@ -417,7 +400,7 @@ public class GUIConsole extends JPanel
      */
     public void start()
     {
-        this.core.start();
+        //this.core.start();
     }
 
     protected void shutdown()
