@@ -36,10 +36,10 @@ public class ContextListener implements ServletContextListener
         logger.log(Level.INFO, "Configuring Program D Core from servlet context listener.");
         
         // Check for the config parameter.
-        String config = this.context.getInitParameter("config");
+        String config = this.context.getInitParameter("programd-core-config");
         if (config == null || config.length() == 0)
         {
-            logger.log(Level.SEVERE, "No config init-param specified for Program D.  Cannot continue.");
+            logger.log(Level.SEVERE, "No \"programd-core-config\" init-param specified for Program D.  Cannot continue.");
             return;
         }
         
@@ -57,8 +57,6 @@ public class ContextListener implements ServletContextListener
 
         // Set up the Program D Core.
         Core core = new Core(baseURL, URITools.contextualize(baseURL, config));
-        core.setup();
-        core.start();
         this.context.setAttribute("core", core);
     }
 
