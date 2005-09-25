@@ -9,6 +9,8 @@
 
 package org.aitools.programd.processor.aiml;
 
+import java.net.URL;
+
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
@@ -54,7 +56,10 @@ public class LearnProcessor extends AIMLProcessor
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        parser.getCore().load(URITools.contextualize(FileManager.getWorkingDirectory(), parser.evaluate(element.getChildNodes())), parser.getBotID());
+        URL path = URITools.contextualize(FileManager.getWorkingDirectory(), parser.evaluate(element.getChildNodes()));
+        FileManager.pushWorkingDirectory(path);
+        parser.getCore().load(path, parser.getBotID());
+        FileManager.popWorkingDirectory();
         return EMPTY_STRING;
     }
 }

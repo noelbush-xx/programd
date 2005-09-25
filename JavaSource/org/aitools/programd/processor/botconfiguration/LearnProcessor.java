@@ -9,6 +9,8 @@
 
 package org.aitools.programd.processor.botconfiguration;
 
+import java.net.URL;
+
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
@@ -46,7 +48,10 @@ public class LearnProcessor extends BotConfigurationElementProcessor
     @Override
     public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
-        parser.getCore().load(URITools.contextualize(FileManager.getWorkingDirectory(), parser.evaluate(element.getChildNodes())), parser.getCurrentBot().getID());
+        URL path = URITools.contextualize(FileManager.getWorkingDirectory(), parser.evaluate(element.getChildNodes()));
+        FileManager.pushWorkingDirectory(URITools.getParent(path));
+        parser.getCore().load(path, parser.getCurrentBot().getID());
+        FileManager.popWorkingDirectory();
         return EMPTY_STRING;
     }
 }
