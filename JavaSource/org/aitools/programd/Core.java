@@ -53,7 +53,7 @@ import org.w3c.dom.Document;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class Core extends Thread
+public class Core
 {
     // Public access informational constants.
 
@@ -65,7 +65,7 @@ public class Core extends Thread
             "of the License, or (at your option) any later version." };
 
     /** Version of this package. */
-    public static final String VERSION = "4.5.1";
+    public static final String VERSION = "4.6";
 
     /** Build identifier. */
     public static final String BUILD = "";
@@ -169,12 +169,11 @@ public class Core extends Thread
      */
     public Core(URL base)
     {
-        super("Core");
         this.settings = new CoreSettings();
         this.baseURL = base;
         FileManager.setRootPath(URITools.contextualize(FileManager.getWorkingDirectory(),
                 this.settings.getRootDirectory()));
-        initialize();
+        start();
     }
 
     /**
@@ -186,11 +185,10 @@ public class Core extends Thread
      */
     public Core(URL base, URL propertiesPath)
     {
-        super("Core");
         this.baseURL = base;
         this.settings = new CoreSettings(propertiesPath);
         FileManager.setRootPath(URITools.getParent(this.baseURL));
-        initialize();
+        start();
     }
 
     /**
@@ -202,24 +200,22 @@ public class Core extends Thread
      */
     public Core(URL base, CoreSettings settingsToUse)
     {
-        super("Core");
         this.settings = settingsToUse;
         this.baseURL = base;
         FileManager.setRootPath(URITools.contextualize(FileManager.getWorkingDirectory(),
                 this.settings.getRootDirectory()));
-        initialize();
+        start();
     }
 
     /**
-     * Initialization common to all constructors.
+     * Initializes and starts up the Core.
      */
-    private void initialize()
+    protected void start()
     {
         // Set up loggers based on the settings.
         this.logger = setupLogger("programd", this.settings.getActivityLogPattern());
         this.logger.setLevel(Level.ALL);
 
-        this.logger.log(Level.INFO, "Using base URL " + this.baseURL);
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
@@ -252,7 +248,7 @@ public class Core extends Thread
             this.pluginConfig = XMLKit.getDocumentBuilder(URITools.contextualize(this.baseURL, PLUGIN_CONFIG_SCHEMA_LOCATION),
                     "plugin configuration").parse(
                     URITools.contextualize(this.baseURL, this.settings.getConfLocationPlugins())
-                            .openStream());
+                            .toString());
         }
         catch (IOException e)
         {
@@ -263,21 +259,6 @@ public class Core extends Thread
             throw new DeveloperError("Error trying to parse plugin configuration.", e);
         }
 
-        // Set the status indicator.
-        this.status = Status.INITIALIZED;
-    }
-
-    /**
-     * Sets up the Core and prepares it to work. This should be called by every
-     * Core user after creating the Core but before starting it.
-     */
-    public void setup()
-    {
-        if (this.status != Status.INITIALIZED)
-        {
-            throw new DeveloperError(new IllegalStateException(
-                    "Core has not been initialized; cannot set up."));
-        }
         this.logger.log(Level.INFO, "Starting Program D version " + VERSION + BUILD + '.');
         this.logger.log(Level.INFO, "Using Java VM " + System.getProperty("java.vm.version")
                 + " from " + System.getProperty("java.vendor"));
@@ -429,38 +410,6 @@ public class Core extends Thread
     }
 
     /**
-     * Runs the Core -- this just means keeping it alive until the status flag
-     * is changed to <code>SHUT_DOWN</code>.
-     */
-    @Override
-    public void run()
-    {
-        if (this.status != Status.READY)
-        {
-            throw new DeveloperError(new IllegalStateException(
-                    "Core has not been set up; cannot run."));
-        }
-
-        synchronized (this)
-        {
-            notifyAll();
-        }
-
-        // Now just run as long as the status flag stays at READY.
-        while (this.status == Status.READY)
-        {
-            try
-            {
-                Thread.sleep(1000);
-            }
-            catch (InterruptedException e)
-            {
-                break;
-            }
-        }
-    }
-
-    /**
      * Loads the <code>Graphmaster</code> with the contents of a given path.
      * 
      * @param path path to the file(s) to load
@@ -488,7 +437,7 @@ public class Core extends Thread
                 {
                     for (int index = files.length; --index >= 0;)
                     {
-                        load(URITools.contextualize(URITools.getParent(path), files[index]), botid);
+                        load(URITools.contextualize(URITools.getParent(path), URITools.escape(files[index])), botid);
                     }
                 }
                 return;
@@ -515,18 +464,18 @@ public class Core extends Thread
             {
                 this.logger.log(Level.INFO, "Loading " + path + "....");
             }
-            this.parser.parse(path.openStream(), new AIMLReader(this.graphmaster, path, botid, this.bots
+            this.parser.parse(path.toString(), new AIMLReader(this.graphmaster, path, botid, this.bots
                     .getBot(botid), this.settings.getAimlSchemaNamespaceUri()));
             System.gc();
             // this.parser.reset();
         }
         catch (IOException e)
         {
-            this.logger.log(Level.WARNING, "Error reading \"" + path + "\".");
+            this.logger.log(Level.WARNING, "Error reading \"" + path + "\": " + e.getMessage(), e);
         }
         catch (SAXException e)
         {
-            this.logger.log(Level.WARNING, "Error parsing \"" + path + "\": " + e.getMessage());
+            this.logger.log(Level.WARNING, "Error parsing \"" + path + "\": " + e.getMessage(), e);
         }
 
         FileManager.popWorkingDirectory();
@@ -723,10 +672,10 @@ public class Core extends Thread
         {
             System.err.println("Uncaught exception " + e.getClass().getSimpleName()
                     + " in thread \"" + t.getName() + "\".");
-            if (Core.this.settings.onUncaughtExceptionsPrintStackTrace())
-            {
+            //if (Core.this.settings.onUncaughtExceptionsPrintStackTrace())
+            //{
                 e.printStackTrace(System.err);
-            }
+            //}
             Core.this.status = Core.Status.CRASHED;
             System.err.println("Core has crashed.  Shutdown may not have completed properly.");
         }
@@ -975,5 +924,13 @@ public class Core extends Thread
     public URL getBaseURL()
     {
         return this.baseURL;
+    }
+    
+    /**
+     * @return the logger
+     */
+    public Logger getLogger()
+    {
+        return this.logger;
     }
 }
