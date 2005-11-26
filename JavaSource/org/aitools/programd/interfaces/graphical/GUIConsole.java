@@ -110,11 +110,11 @@ public class GUIConsole extends JPanel
 
     private static JMenuBar menuBar;
 
-    private static String LOGO_PATH = "org/aitools/programd/gui/icons/logo.jpg";
+    private static String LOGO_PATH = "resources/icons/logo.jpg";
 
     private ImageIcon logo;
 
-    private static String ICON_PATH = "org/aitools/programd/gui/icons/icon.jpg";
+    private static String ICON_PATH = "resources/icons/icon.jpg";
 
     private ImageIcon icon;
 
@@ -384,6 +384,7 @@ public class GUIConsole extends JPanel
      */
     public void attachTo(Core coreToUse)
     {
+        this.core = coreToUse;
         if (this.console.getSettings().useShell())
         {
             this.shell = new Shell(this.console.getSettings(), this.inStream, this.outStream, this.errStream, this.promptStream);
