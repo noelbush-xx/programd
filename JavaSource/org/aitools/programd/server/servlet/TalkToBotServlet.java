@@ -157,6 +157,10 @@ public class TalkToBotServlet extends HttpServlet
                 }
                 botid = programDBot.getID();
             }
+            else
+            {
+                programDBot = this.core.getBot(botid);
+            }
             BotAccess bot = new BotAccess(this.core, botid, userid);
             session.setAttribute("bot", bot);
         }
