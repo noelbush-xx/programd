@@ -78,7 +78,7 @@ public class Bot
             .synchronizedMap(new HashMap<String, PredicateMap>());
     
     /** The page to use for this bot when communicating via the servlet interface. */
-    private String servletPage;
+    private String servletPage = EMPTY_STRING;
     
     /** The directory where test suites are found. */
     private String testSuitePathspec;
@@ -100,6 +100,7 @@ public class Bot
 
     /**
      * Creates a new Bot with the given id. The bot's chat log is also set up.
+     * A default servlet page is set.
      * 
      * @param botID the id to use for the new bot
      * @param coreSettings the core settings to use
