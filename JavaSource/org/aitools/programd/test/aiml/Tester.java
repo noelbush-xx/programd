@@ -160,11 +160,10 @@ public class Tester
      * Loads all test suites from a given pathspec (may use wildcards).
      * 
      * @param base the base URL to use
-     * @param directory the directory from which to load the tests
+     * @param pathspec the pathspec from which to load the tests
      * @param multiplexorToUse the Multiplexor to assign to the suites
      * @param logger the logger to use for tracking progress
      * 
-     * @param pathspec
      * @return the map of suite names to suites
      */
     private static HashMap<String, TestSuite> loadTests(URL base, String pathspec, Multiplexor multiplexorToUse, Logger logger)
