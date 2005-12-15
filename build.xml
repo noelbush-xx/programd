@@ -21,7 +21,7 @@
 		<property name="output.lib.dir" value="${base.dir}/lib"/>
 		
 		<property name="build.dir" value="./build.tmp"/>
-		<property name="build.classpath" value="${compile.lib.dir}/gnu.getopt-1.0.10.jar:${compile.lib.dir}/jsp-api.jar:${compile.lib.dir}/servlet-api.jar:${webapp.lib.dir}/js.jar"/>
+		<property name="build.classpath" value="${compile.lib.dir}/gnu.getopt-1.0.10.jar:${webapp.lib.dir}/jsp-api.jar:${compile.lib.dir}/servlet-api.jar:${webapp.lib.dir}/js.jar"/>
 		<property name="javadoc.dir" value="./docs/api"/>
 		
 		<property name="main.jar" value="${output.lib.dir}/programd-main.jar"/>
