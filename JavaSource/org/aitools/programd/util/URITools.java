@@ -80,7 +80,28 @@ public class URITools
             {
                 throw new DeveloperError("Subject URL is malformed.", e);
             }
-            // If the subject is absolute,
+            // If the subject has "file" scheme, try to make sure it is absolute (in a file path sense).
+            if (subjectURI.getScheme().equals(FileManager.FILE))
+            {
+                String originalPath = subjectURI.getPath();
+                if (originalPath != null)
+                {
+                    File file = FileManager.checkOrCreate(originalPath, "path");
+                    String path = file.getAbsolutePath();
+                    if (!path.equals(originalPath))
+                    {
+                        try
+                        {
+                            subjectURI = new URI(FileManager.FILE, subjectURI.getAuthority(), path, subjectURI.getQuery(), subjectURI.getFragment());
+                        }
+                        catch (URISyntaxException e)
+                        {
+                            throw new DeveloperError("Error resolving file URI.", e);
+                        }
+                    }
+                }
+            }
+            // If the subject is absolute (in a URI sense),
             if (subjectURI.isAbsolute())
             {
                 // then we just return it.
@@ -122,8 +143,9 @@ public class URITools
 
     /**
      * Same as {@link #contextualize(URL, URL)}, except the
-     * <code>subject</code> is a String which is assumed to <i>not</i> be
-     * absolute.
+     * <code>subject</code> is a String which is supposed to <i>not</i> be
+     * absolute (a quick check is made of this, and if the <code>subject</code>
+     * does look absolute, it is made into a URL and sent to {@link #contextualize(URL, URL)}).
      * 
      * @param context
      * @param subject
@@ -137,6 +159,17 @@ public class URITools
             try
             {
                 return new URL(subject);
+            }
+            catch (MalformedURLException e)
+            {
+                throw new DeveloperError("Subject URL is malformed.", e);
+            }
+        }
+        if (subject.matches("^[a-z]+:.*"))
+        {
+            try
+            {
+                return contextualize(context, new URL(subject));
             }
             catch (MalformedURLException e)
             {
