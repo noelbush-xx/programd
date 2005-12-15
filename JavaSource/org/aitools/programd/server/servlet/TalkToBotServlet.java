@@ -170,7 +170,7 @@ public class TalkToBotServlet extends HttpServlet
             programDBot = ((BotAccess)botAccess).getBot();
         }
         String page = programDBot.getServletPage();
-        if (page == null)
+        if (page == null || page.length() == 0)
         {
             page = this.defaultBotServletPage;
         }
