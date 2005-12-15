@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId">
+<wb-module deploy-name="ProgramD">
+<module-type module-type-id="jst.web">
+<version>2.4</version>
+<property name="context-root" value="test"/>
+<property name="java-output-path" value="/bin/"/>
+</module-type>
+<wb-resource deploy-path="/WEB-INF/classes" source-path="/JavaSource"/>
+<wb-resource deploy-path="/" source-path="/WebContent"/>
+</wb-module>
+</project-modules>
