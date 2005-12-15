@@ -260,17 +260,17 @@ public class FileManager
                     }
                     catch (IOException ee)
                     {
-                        throw new UserError("Could not create " + description + ".", new CouldNotCreateFileException(file.getAbsolutePath()));
+                        throw new UserError("Could not create " + description + " \"" + path + "\".", new CouldNotCreateFileException(file.getAbsolutePath()));
                     }
                 }
                 else
                 {
-                    throw new UserError(new CouldNotCreateFileException(directory.getAbsolutePath()));
+                    throw new UserError("Could not create " + description + " directory \"" + path + "\".", new CouldNotCreateFileException(directory.getAbsolutePath()));
                 }
             }
             else
             {
-                throw new UserError("Could not create " + description + " directory.", new CouldNotCreateFileException(directory.getAbsolutePath()));
+                throw new UserError("Could not create " + description + " directory \"" + path + "\".", new CouldNotCreateFileException(directory.getAbsolutePath()));
             }
         }
         Logger.getLogger("programd").log(Level.FINE, "Created new " + description + " \"" + path + "\".");
@@ -307,7 +307,7 @@ public class FileManager
 
         if (!file.mkdirs())
         {
-            throw new UserError("Could not create " + description + " directory.", new CouldNotCreateFileException(file.getAbsolutePath()));
+            throw new UserError("Could not create " + description + " directory at \"" + path + "\".", new CouldNotCreateFileException(file.getAbsolutePath()));
         }
         Logger.getLogger("programd").log(Level.FINE, "Created new " + description + " \"" + path + "\".");
         return file;
