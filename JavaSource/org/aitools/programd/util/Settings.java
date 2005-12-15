@@ -57,7 +57,7 @@ abstract public class Settings
         }
         catch (IOException e)
         {
-            throw new DeveloperError("I/O Exception while loading properties: ", e);
+            throw new DeveloperError("I/O Exception while loading properties from \"" + propertiesPath.toString() + "\".", e);
         }
         catch (NullPointerException e)
         {
