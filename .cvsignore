@@ -1,2 +1,7 @@
 .deployables
 build.tmp
+classes
+ffm
+aiml
+logs
+secret.key
