@@ -169,12 +169,12 @@ public class TalkToBotServlet extends HttpServlet
         {
             programDBot = ((BotAccess)botAccess).getBot();
         }
-        String page = programDBot.getServletPage();
-        if (page == null || page.length() == 0)
+        String botPage = programDBot.getServletPage();
+        if (botPage == null || botPage.length() == 0)
         {
-            page = this.defaultBotServletPage;
+            botPage = this.defaultBotServletPage;
         }
-        forward(page, req, resp);
+        forward(botPage, req, resp);
     }
     
     protected void forward(String page, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
