@@ -16,6 +16,7 @@ import org.aitools.programd.util.XMLKit;
  * that inputs.
  * 
  * @author Albertas Mickensas
+ * @author <a href="noel@aitools.org">Noel Bush</a>
  */
 public class TestCase
 {
@@ -29,16 +30,16 @@ public class TestCase
     public static String TAG_INPUT = "Input";
 
     /** The name of this test case. */
-    private String name;
+    protected String name;
 
     /** The inputs that this test case should send. */
-    private String input;
+    protected String input;
 
     /** The checker(s) contained in this test case. */
-    private ArrayList<Checker> checkers = new ArrayList<Checker>();
+    protected List<Checker> checkers = new ArrayList<Checker>();
 
     /** The last response received by this test case. */
-    private String lastResponse;
+    protected String lastResponse;
 
     /**
      * Creates a new TestCase from the given XML element.
@@ -119,6 +120,14 @@ public class TestCase
         this.input = testInput;
     }
 
+    /**
+     * A private constructor, for use in persistence.
+     */
+    private TestCase()
+    {
+        // Do nothing.
+    }
+    
     /**
      * @return the name of this test case
      */
@@ -206,5 +215,31 @@ public class TestCase
     public void addChecker(Checker checker)
     {
         this.checkers.add(checker);
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (!(obj instanceof TestCase))
+        {
+            return false;
+        }
+        TestCase other = (TestCase)obj;
+        return (other.name.equals(this.name) &&
+                other.input.equals(this.input) &&
+                other.checkers.equals(this.checkers) &&
+                other.lastResponse.equals(this.lastResponse));
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return (this.name + this.input + this.checkers.toString() + this.lastResponse).hashCode();
     }
 }

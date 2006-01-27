@@ -7,6 +7,7 @@ import java.util.List;
  * Checks that a string contains all of a list of expected keywords.
  * 
  * @author Albertas Mickensas
+ * @author <a href="noel@aitools.org">Noel Bush</a>
  */
 public class ExpectedKeywordChecker extends Checker
 {

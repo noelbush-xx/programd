@@ -10,16 +10,16 @@ package org.aitools.programd.test.aiml;
 public class TestResult
 {
     /** The name of the suite that failed. */
-    private String suite;
+    protected String suite;
 
     /** The name of the test case that failed. */
-    private String testCase;
+    protected String testCase;
 
     /** The input that produced this result. */
-    private String input;
+    protected String input;
 
     /** The response that constitutes this result. */
-    private String response;
+    protected String response;
 
     /**
      * Creates an object that represents the test result.
@@ -50,7 +50,15 @@ public class TestResult
         this.input = in;
         this.response = out;
     }
-    
+
+    /**
+     * A protected constructor, for use in persistence.
+     */
+    protected TestResult()
+    {
+        // Do nothing.
+    }
+
     /**
      * @return the input
      */

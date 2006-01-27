@@ -12,6 +12,7 @@ import org.aitools.programd.util.XMLKit;
  * Tests whether a given input equals an expected string.
  * 
  * @author Albertas Mickensas
+ * @author <a href="noel@aitools.org">Noel Bush</a>
  */
 public class AnswerChecker extends Checker
 {

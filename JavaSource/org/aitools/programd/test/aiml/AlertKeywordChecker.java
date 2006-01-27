@@ -1,10 +1,12 @@
 package org.aitools.programd.test.aiml;
 
+
 /**
  * Tests whether a given input does <i>not</i> contain all of a list of
  * expected keywords.
  * 
  * @author Albertas Mickensas
+ * @author <a href="noel@aitools.org">Noel Bush</a>
  */
 public class AlertKeywordChecker extends ExpectedKeywordChecker
 {

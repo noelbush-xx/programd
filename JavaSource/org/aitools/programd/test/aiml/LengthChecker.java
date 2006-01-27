@@ -6,6 +6,7 @@ import org.aitools.programd.util.DeveloperError;
  * Tests whether a given input has an expected length.
  * 
  * @author Albertas Mickensas
+ * @author <a href="noel@aitools.org">Noel Bush</a>
  */
 public class LengthChecker extends Checker
 {

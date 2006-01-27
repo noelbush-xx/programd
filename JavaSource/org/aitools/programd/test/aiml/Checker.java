@@ -37,6 +37,14 @@ abstract public class Checker
     abstract public boolean test(String input);
 
     /**
+     * A protected constructor, for use in persistence.
+     */
+    protected Checker()
+    {
+        // Do nothing.
+    }
+    
+    /**
      * Creates a new Checker of the correct type based on the contents of the
      * given XML element.
      * 
