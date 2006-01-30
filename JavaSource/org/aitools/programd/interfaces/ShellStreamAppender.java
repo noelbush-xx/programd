@@ -13,7 +13,6 @@ import java.io.PrintStream;
 
 import org.aitools.programd.interfaces.shell.Shell;
 import org.apache.log4j.Level;
-import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.WriterAppender;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.varia.LevelRangeFilter;
@@ -37,10 +36,11 @@ public class ShellStreamAppender extends WriterAppender
      * @param stream the stream to handle
      * @param min the minimum level to log (may be null for no minimum)
      * @param max the maximum level to log (may be null for no maximum)
+     * @param settings the console settings to use to configure the console output
      */
-    public ShellStreamAppender(PrintStream stream, Level min, Level max)
+    public ShellStreamAppender(PrintStream stream, Level min, Level max, ConsoleSettings settings)
     {
-        super(new SimpleLayout(), stream); //TODO: new ConsoleLayout(consoleSettings)
+        super(new ConsoleLayout(settings), stream);
         LevelRangeFilter filter = new LevelRangeFilter();
         if (min != null)
         {

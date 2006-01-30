@@ -12,7 +12,7 @@ package org.aitools.programd.test.aiml;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.interfaces.shell.Shell;
 import org.aitools.programd.interfaces.shell.ShellCommand;
-import org.aitools.programd.logging.LogUtils;
+import org.apache.log4j.LogManager;
 
 /**
  * A TestCommand provides an interface to the AIML testing facility.
@@ -90,7 +90,7 @@ public class TestCommand extends ShellCommand
         if (logPattern != null && testSuitePathspec != null && testReportDirectory != null)
         {
             new Tester(shell.getCore(),
-                    LogUtils.setupLogger("programd.testing", logPattern),
+                    LogManager.getLogger("programd.testing"),
                     testSuitePathspec,
                     testReportDirectory).run(shell
                     .getCurrentBotID(), suite, runCount);

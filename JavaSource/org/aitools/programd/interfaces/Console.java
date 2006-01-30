@@ -78,11 +78,11 @@ public class Console
 
         // Messages to all logs will go up to the parent "programd" log, and out
         // to the console.
-        this.stdOutAppender = new ShellStreamAppender(out, null, Level.INFO);
+        this.stdOutAppender = new ShellStreamAppender(out, null, Level.INFO, this.settings);
         Logger.getLogger("programd").addAppender(this.stdOutAppender);
 
         // Error messages will be printed to stderr.
-        this.stdErrAppender = new ShellStreamAppender(err, Level.WARN, null);
+        this.stdErrAppender = new ShellStreamAppender(err, Level.WARN, null, this.settings);
         Logger.getLogger("programd").addAppender(this.stdErrAppender);
     }
     

@@ -25,7 +25,6 @@ import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.graph.Nodemapper;
 import org.aitools.programd.interpreter.Interpreter;
-import org.aitools.programd.logging.LogUtils;
 import org.aitools.programd.multiplexor.Multiplexor;
 import org.aitools.programd.multiplexor.PredicateMaster;
 import org.aitools.programd.parser.AIMLReader;
@@ -44,6 +43,7 @@ import org.aitools.programd.util.URITools;
 import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.XMLKit;
 import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Document;
@@ -116,7 +116,7 @@ public class Core
     private Interpreter interpreter;
 
     /** The logger for the Core. */
-    private Logger logger;
+    private Logger logger = LogManager.getLogger("programd");
 
     /** Load time marker. */
     private boolean loadtime;
@@ -212,10 +212,6 @@ public class Core
      */
     protected void start()
     {
-        // Set up loggers based on the settings.
-        this.logger = setupLogger("programd", this.settings.getActivityLogPattern());
-        this.logger.setLevel(Level.ALL);
-
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
@@ -679,20 +675,6 @@ public class Core
             Core.this.status = Core.Status.CRASHED;
             System.err.println("Core has crashed.  Shutdown may not have completed properly.");
         }
-    }
-
-    /**
-     * Sets up a Logger in a standard way. (A FileHandler is attached with some
-     * generic settings.)
-     * 
-     * @param name the name of the logger
-     * @param pattern the pattern for the determining the logger's file output
-     *            file
-     * @return the Logger that was set up.
-     */
-    public Logger setupLogger(String name, String pattern)
-    {
-        return LogUtils.setupLogger(name, pattern, this.settings.getLogTimestampFormat());
     }
     
     /**
