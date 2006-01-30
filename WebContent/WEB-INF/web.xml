@@ -29,7 +29,7 @@
     </jsp-config>
     <!--Listeners-->
     <listener>
-        <listener-class>org.aitools.programd.server.servlet.ContextListener</listener-class>
+        <listener-class>org.aitools.programd.server.servlet.ProgramDContextListener</listener-class>
     </listener>
     <!--Servlet Descriptors-->
     <servlet>
