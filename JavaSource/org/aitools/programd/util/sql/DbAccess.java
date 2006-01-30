@@ -5,11 +5,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.UserError;
+import org.apache.log4j.Logger;
 
 /**
  * <p>
@@ -159,7 +158,7 @@ public class DbAccess
         }
         catch (SQLException e)
         {
-            logger.log(Level.SEVERE, "Problem executing a query on the database.  Check structure and availability." + LINE_SEPARATOR
+            logger.error("Problem executing a query on the database.  Check structure and availability." + LINE_SEPARATOR
                     + e.getMessage());
             throw new DeveloperError("SQL error while executing query: " + query, e);
         }
@@ -184,7 +183,7 @@ public class DbAccess
         }
         catch (SQLException e)
         {
-            logger.log(Level.SEVERE, "Problem executing an update on your database.  Check structure and availability." + LINE_SEPARATOR
+            logger.error("Problem executing an update on your database.  Check structure and availability." + LINE_SEPARATOR
                     + e.getMessage());
             throw new UserError("SQL error while executing update: " + update, e);
         }

@@ -9,8 +9,6 @@
 
 package org.aitools.programd.processor.botconfiguration;
 
-import java.util.logging.Logger;
-
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
@@ -18,6 +16,7 @@ import org.aitools.programd.parser.GenericParser;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.Processor;
 import org.aitools.programd.processor.ProcessorException;
+import org.apache.log4j.Logger;
 
 /**
  * A <code>BotConfigurationElementProcessor</code> is responsible for

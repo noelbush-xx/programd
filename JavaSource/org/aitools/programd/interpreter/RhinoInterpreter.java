@@ -1,8 +1,7 @@
 package org.aitools.programd.interpreter;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
@@ -33,7 +32,7 @@ public class RhinoInterpreter implements Interpreter
      */
     public String evaluate(String expression)
     {
-        logger.log(Level.FINE, "evaluate: \"" + expression + "\"");
+        logger.debug("evaluate: \"" + expression + "\"");
         Context context = Context.enter();
         Scriptable scope = context.initStandardObjects(null);
 
@@ -44,8 +43,8 @@ public class RhinoInterpreter implements Interpreter
         }
         catch (Exception e)
         {
-            logger.log(Level.WARNING, "JavaScript exception (see interpreter log).");
-            logger.log(Level.WARNING, "Got exception:" + LINE_SEPARATOR + e + LINE_SEPARATOR + "when processing:" + LINE_SEPARATOR + expression);
+            logger.warn("JavaScript exception (see interpreter log).");
+            logger.warn("Got exception:" + LINE_SEPARATOR + e + LINE_SEPARATOR + "when processing:" + LINE_SEPARATOR + expression);
         }
         Context.exit();
         if (result != null)
@@ -53,7 +52,7 @@ public class RhinoInterpreter implements Interpreter
             return result.toString();
         }
         // (otherwise...)
-        logger.log(Level.INFO, "JavaScript returned null!");
+        logger.info("JavaScript returned null!");
         return EMPTY_STRING;
     }
 }

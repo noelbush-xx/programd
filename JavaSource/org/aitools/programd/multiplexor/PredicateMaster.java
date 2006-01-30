@@ -12,8 +12,6 @@ package org.aitools.programd.multiplexor;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
@@ -21,6 +19,7 @@ import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.XMLKit;
+import org.apache.log4j.Logger;
 
 /**
  * <p>
@@ -582,7 +581,7 @@ public class PredicateMaster
      */
     public void saveAll()
     {
-        this.logger.log(Level.INFO, "PredicateMaster saving all cached predicates (" + cacheSize + ")");
+        this.logger.info("PredicateMaster saving all cached predicates (" + cacheSize + ")");
         save(cacheSize);
     }
 

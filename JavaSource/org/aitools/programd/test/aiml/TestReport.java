@@ -12,12 +12,11 @@ package org.aitools.programd.test.aiml;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.XMLKit;
+import org.apache.log4j.Logger;
 
 /**
  * Contains a list of test successes and failures, and can generate a report
@@ -53,7 +52,7 @@ public class TestReport
      */
     public void logSummary(Logger logger)
     {
-        logger.log(Level.INFO, this.successes.size() + "/" + (this.successes.size() + this.failures.size())
+        logger.info(this.successes.size() + "/" + (this.successes.size() + this.failures.size())
                 + " tests succeeded.");
     }
 

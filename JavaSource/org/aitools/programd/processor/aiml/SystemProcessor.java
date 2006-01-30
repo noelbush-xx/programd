@@ -16,14 +16,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.FileManager;
+import org.apache.log4j.Logger;
 
 /**
  * <p>
@@ -101,7 +100,7 @@ public class SystemProcessor extends AIMLProcessor
         // Don't use the system tag if not permitted.
         if (!coreSettings.osAccessAllowed())
         {
-            logger.log(Level.WARNING, "Use of <system> prohibited!");
+            logger.warn("Use of <system> prohibited!");
             return EMPTY_STRING;
         }
 
@@ -115,24 +114,24 @@ public class SystemProcessor extends AIMLProcessor
         }
         String output = EMPTY_STRING;
         response = response.trim();
-        logger.log(Level.FINEST, "<system> call:" + LINE_SEPARATOR + response);
+        logger.trace("<system> call:" + LINE_SEPARATOR + response);
         try
         {
             File directory = null;
             if (directoryPath != null)
             {
-                logger.log(Level.FINEST, "Executing <system> call in \"" + directoryPath + "\"");
+                logger.trace("Executing <system> call in \"" + directoryPath + "\"");
                 directory = FileManager.getFile(directoryPath);
                 if (!directory.isDirectory())
                 {
-                    logger.log(Level.WARNING, "programd.system-interpreter.directory (\"" + directoryPath
+                    logger.warn("programd.system-interpreter.directory (\"" + directoryPath
                             + "\") does not exist or is not a directory.");
                     return EMPTY_STRING;
                 }
             }
             else
             {
-                logger.log(Level.SEVERE, "No programd.interpreter.system.directory defined!");
+                logger.error("No programd.interpreter.system.directory defined!");
                 return EMPTY_STRING;
             }
             Process child;
@@ -146,7 +145,7 @@ public class SystemProcessor extends AIMLProcessor
             }
             if (child == null)
             {
-                logger.log(Level.SEVERE, "Could not get separate process for <system> command.");
+                logger.error("Could not get separate process for <system> command.");
                 return EMPTY_STRING;
             }
 
@@ -156,7 +155,7 @@ public class SystemProcessor extends AIMLProcessor
             }
             catch (InterruptedException e)
             {
-                logger.log(Level.SEVERE, "System process interruped; could not complete.");
+                logger.error("System process interruped; could not complete.");
                 return EMPTY_STRING;
             }
 
@@ -168,15 +167,15 @@ public class SystemProcessor extends AIMLProcessor
                 output = output + line + "\n";
             }
 
-            logger.log(Level.FINEST, "output:" + LINE_SEPARATOR + output);
+            logger.trace("output:" + LINE_SEPARATOR + output);
 
             response = output;
             in.close();
-            logger.log(Level.FINEST, "System process exit value: " + child.exitValue());
+            logger.trace("System process exit value: " + child.exitValue());
         }
         catch (IOException e)
         {
-            logger.log(Level.WARNING, "Cannot execute <system> command:" + LINE_SEPARATOR + e.getMessage());
+            logger.warn("Cannot execute <system> command:" + LINE_SEPARATOR + e.getMessage());
         }
 
         return response.trim();

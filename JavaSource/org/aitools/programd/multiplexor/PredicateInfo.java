@@ -29,7 +29,7 @@ public class PredicateInfo
      * @param defaultPredicateValue the default predicate value
      * @param returnNameSetting whether to return the name when setting the predicate
      */
-    public PredicateInfo(String predicateName, String defaultPredicateValue, boolean returnNameSetting)
+    public PredicateInfo(@SuppressWarnings("unused") String predicateName, String defaultPredicateValue, boolean returnNameSetting)
     {
         this.defaultValue = defaultPredicateValue;
         this.returnNameWhenSet = returnNameSetting;

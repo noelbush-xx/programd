@@ -10,7 +10,6 @@
 package org.aitools.programd.processor.botconfiguration;
 
 import java.util.List;
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -114,6 +113,6 @@ abstract public class SubstitutionElementProcessor extends BotConfigurationEleme
                     break;
             }
         }
-        logger.log(Level.INFO, "Loaded " + substitutions.size() + " " + element.getNodeName() + " substitutions.");
+        logger.info("Loaded " + substitutions.size() + " " + element.getNodeName() + " substitutions.");
     }
 }

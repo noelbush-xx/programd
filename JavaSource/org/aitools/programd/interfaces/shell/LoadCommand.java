@@ -9,13 +9,12 @@
 
 package org.aitools.programd.interfaces.shell;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.URITools;
+import org.apache.log4j.Logger;
 
 /**
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -70,7 +69,7 @@ public class LoadCommand extends ShellCommand
             int categories = graphmaster.getTotalCategories();
             String path = commandLine.substring(space + 1);
             core.load(URITools.contextualize(FileManager.getWorkingDirectory(), path), shell.getCurrentBotID());
-            Logger.getLogger("programd").log(Level.INFO,
+            Logger.getLogger("programd").info(
                     graphmaster.getTotalCategories() - categories + " categories loaded from \"" + path + "\".");
         }
     }

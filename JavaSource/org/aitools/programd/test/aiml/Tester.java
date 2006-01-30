@@ -8,14 +8,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.multiplexor.Multiplexor;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.URITools;
+import org.apache.log4j.Logger;
 
 /**
  * A Tester loads one or more test suites and runs them, logging output.
@@ -96,12 +95,12 @@ public class Tester
         this.suites = loadTests(this.baseURL, this.testSuitePathSpec, this.multiplexor, this.logger);
         if (null == botid)
         {
-            this.logger.log(Level.WARNING, "No botid defined for tests.");
+            this.logger.warn("No botid defined for tests.");
             return "";
         }
         if (this.suites.size() == 0)
         {
-            this.logger.log(Level.WARNING, "No suites defined.");
+            this.logger.warn("No suites defined.");
             return "";
         }
         this.successes.clear();
@@ -129,7 +128,7 @@ public class Tester
         TestSuite suite = this.suites.get(suiteName);
         if (suite == null)
         {
-            this.logger.log(Level.WARNING, "No suite \"" + suiteName + "\" could be found.");
+            this.logger.warn("No suite \"" + suiteName + "\" could be found.");
             return;
         }
         while (runCount-- > 0)
@@ -179,7 +178,7 @@ public class Tester
             }
             catch (FileNotFoundException e)
             {
-                logger.log(Level.WARNING, e.getMessage());
+                logger.warn(e.getMessage());
             }
         }
         else
@@ -192,14 +191,14 @@ public class Tester
             for (int index = 0; index < fileCount; index++)
             {
                 String path = fileList[index];
-                logger.log(Level.INFO, "Loading tests from \"" + pathspec + "\".");
+                logger.info("Loading tests from \"" + pathspec + "\".");
                 TestSuite suite = TestSuite.load(base, URITools.createValidURL(path), multiplexorToUse);
                 suites.put(suite.getName(), suite);
             }
         }
         else
         {
-            logger.log(Level.WARNING, "No test files found in \"" + pathspec + "\".");
+            logger.warn("No test files found in \"" + pathspec + "\".");
         }
         return suites;
     }

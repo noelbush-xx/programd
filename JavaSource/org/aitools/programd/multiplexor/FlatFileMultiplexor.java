@@ -79,7 +79,7 @@ public class FlatFileMultiplexor extends Multiplexor
      * @return true always
      */
     @Override
-    public boolean checkUser(String userid, String password, String botid)
+    public boolean checkUser(@SuppressWarnings("unused") String userid, @SuppressWarnings("unused") String password, @SuppressWarnings("unused") String botid)
     {
         return true;
     }
@@ -94,7 +94,7 @@ public class FlatFileMultiplexor extends Multiplexor
      *            userid/password combination
      */
     @Override
-    public void createUser(String userid, String password, String botid)
+    public void createUser(@SuppressWarnings("unused") String userid, @SuppressWarnings("unused") String password, @SuppressWarnings("unused") String botid)
     {
         // Do nothing.
     }
@@ -110,7 +110,7 @@ public class FlatFileMultiplexor extends Multiplexor
      * @return true always
      */
     @Override
-    public boolean changePassword(String userid, String password, String botid)
+    public boolean changePassword(@SuppressWarnings("unused") String userid, @SuppressWarnings("unused") String password, @SuppressWarnings("unused") String botid)
     {
         return true;
     }
@@ -238,7 +238,7 @@ public class FlatFileMultiplexor extends Multiplexor
      * @see org.aitools.programd.multiplexor.Multiplexor#useridCount(java.lang.String)
      */
     @Override
-    public int useridCount(String botid)
+    public int useridCount(@SuppressWarnings("unused") String botid)
     {
         return 0;
     }

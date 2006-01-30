@@ -12,8 +12,6 @@ package org.aitools.programd.processor.botconfiguration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
@@ -113,7 +111,7 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         // Start listener
         this.core.getManagedProcesses().start(listener, classname + SEPARATOR + bot.getID());
 
-        logger.log(Level.INFO, "Started \"" + classname + "\" listener for bot \"" + bot.getID() + "\".");
+        logger.info("Started \"" + classname + "\" listener for bot \"" + bot.getID() + "\".");
         return EMPTY_STRING;
     }
 }

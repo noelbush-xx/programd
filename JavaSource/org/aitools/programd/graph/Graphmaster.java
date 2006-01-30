@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.aitools.programd.CoreSettings;
 import org.aitools.programd.bot.Bot;
@@ -24,6 +22,7 @@ import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.NoMatchException;
 import org.aitools.programd.util.StringKit;
 import org.aitools.programd.util.XMLKit;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -672,7 +671,7 @@ public class Graphmaster
 
         if (this.totalCategories % this.categoryLoadNotifyInterval == 0 && this.totalCategories > 0)
         {
-            this.logger.log(Level.INFO, this.totalCategories + " categories loaded so far.");
+            this.logger.info(this.totalCategories + " categories loaded so far.");
         }
 
         Nodemapper node = add(pattern, that, topic, botid);
@@ -692,7 +691,7 @@ public class Graphmaster
                 case SKIP:
                     if (this.noteEachMerge)
                     {
-                        this.logger.log(Level.WARNING, "Skipping path-identical category from \""
+                        this.logger.warn("Skipping path-identical category from \""
                                 + url + "\" which duplicates path of category from \""
                                 + node.get(FILENAME) + "\": " + pattern + ":" + that + ":" + topic);
                     }
@@ -701,7 +700,7 @@ public class Graphmaster
                 case OVERWRITE:
                     if (this.noteEachMerge)
                     {
-                        this.logger.log(Level.WARNING,
+                        this.logger.warn(
                                 "Overwriting path-identical category from \""
                                         + node.get(Graphmaster.FILENAME)
                                         + "\" with new category from \"" + url + "\".  Path: "
@@ -714,7 +713,7 @@ public class Graphmaster
                 case APPEND:
                     if (this.noteEachMerge)
                     {
-                        this.logger.log(Level.WARNING, "Appending template of category from \""
+                        this.logger.warn("Appending template of category from \""
                                 + url + "\" to template of path-identical category from \""
                                 + node.get(Graphmaster.FILENAME) + "\": " + pattern + ":" + that
                                 + ":" + topic);
@@ -728,7 +727,7 @@ public class Graphmaster
                 case COMBINE:
                     if (this.noteEachMerge)
                     {
-                        this.logger.log(Level.WARNING, "Combining template of category from \""
+                        this.logger.warn("Combining template of category from \""
                                 + url + "\" with template of path-identical category from \""
                                 + node.get(Graphmaster.FILENAME) + "\": " + pattern + ":" + that
                                 + ":" + topic);
@@ -800,10 +799,10 @@ public class Graphmaster
         {
             synchronized (this.logger)
             {
-                this.logger.log(Level.WARNING, "Problem with existing or new template when performing merge combine.");
-                this.logger.log(Level.WARNING, "existing template: " + existingTemplate);
-                this.logger.log(Level.WARNING, "new template: " + newTemplate);
-                this.logger.log(Level.WARNING, "Existing template will be retained as-is.");
+                this.logger.warn("Problem with existing or new template when performing merge combine.");
+                this.logger.warn("existing template: " + existingTemplate);
+                this.logger.warn("new template: " + newTemplate);
+                this.logger.warn("Existing template will be retained as-is.");
             }
             return existingTemplate;
         }
@@ -888,10 +887,10 @@ public class Graphmaster
         {
             synchronized (this.logger)
             {
-                this.logger.log(Level.WARNING, "Problem with existing or new template when performing merge append.");
-                this.logger.log(Level.WARNING, "existing template: " + existingTemplate);
-                this.logger.log(Level.WARNING, "new template: " + newTemplate);
-                this.logger.log(Level.WARNING, "Existing template will be retained as-is.");
+                this.logger.warn("Problem with existing or new template when performing merge append.");
+                this.logger.warn("existing template: " + existingTemplate);
+                this.logger.warn("new template: " + newTemplate);
+                this.logger.warn("Existing template will be retained as-is.");
             }
             return existingTemplate;
         }

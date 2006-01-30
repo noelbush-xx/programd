@@ -11,12 +11,12 @@ package org.aitools.programd.interfaces;
 
 import java.io.PrintStream;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.Core.Status;
 import org.aitools.programd.interfaces.shell.Shell;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * Creating a Console essentially means that loggers (as configured) will (may)
@@ -34,10 +34,10 @@ public class Console
     private ConsoleSettings settings;
 
     /** The stdout handler. */
-    private StdStreamHandler stdOutHandler;
+    private ShellStreamAppender stdOutAppender;
 
     /** The stderr handler. */
-    private StdStreamHandler stdErrHandler;
+    private ShellStreamAppender stdErrAppender;
 
     /** The Shell that will (may) be activated for this console. */
     private Shell shell;
@@ -78,12 +78,12 @@ public class Console
 
         // Messages to all logs will go up to the parent "programd" log, and out
         // to the console.
-        this.stdOutHandler = new StdStreamHandler(this.settings, out, new StdOutFilter());
-        Logger.getLogger("programd").addHandler(this.stdOutHandler);
+        this.stdOutAppender = new ShellStreamAppender(out, null, Level.INFO);
+        Logger.getLogger("programd").addAppender(this.stdOutAppender);
 
         // Error messages will be printed to stderr.
-        this.stdErrHandler = new StdStreamHandler(this.settings, err, new StdErrFilter());
-        Logger.getLogger("programd").addHandler(this.stdErrHandler);
+        this.stdErrAppender = new ShellStreamAppender(err, Level.WARN, null);
+        Logger.getLogger("programd").addAppender(this.stdErrAppender);
     }
     
     /**
@@ -101,7 +101,7 @@ public class Console
         }
         else
         {
-            Logger.getLogger("programd").log(Level.INFO, "Interactive shell disabled.  Awaiting SIGHUP to shut down.");
+            Logger.getLogger("programd").info("Interactive shell disabled.  Awaiting SIGHUP to shut down.");
         }
     }
 
@@ -115,8 +115,8 @@ public class Console
     {
         this.shell = shellToAdd;
         this.shell.attachTo(coreToUse);
-        this.stdOutHandler.watch(this.shell);
-        this.stdErrHandler.watch(this.shell);
+        this.stdOutAppender.watch(this.shell);
+        this.stdErrAppender.watch(this.shell);
     }
 
     /**

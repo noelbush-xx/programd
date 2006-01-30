@@ -10,37 +10,49 @@
 package org.aitools.programd.interfaces;
 
 import java.io.PrintStream;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.StreamHandler;
 
 import org.aitools.programd.interfaces.shell.Shell;
+import org.apache.log4j.Level;
+import org.apache.log4j.SimpleLayout;
+import org.apache.log4j.WriterAppender;
+import org.apache.log4j.spi.LoggingEvent;
+import org.apache.log4j.varia.LevelRangeFilter;
 
 /**
- * A <code>StdStreamHandler</code> publishes any record it's passed to the
+ * A <code>ShellStreamAppender</code> publishes any record it's passed to the
  * given <code>stream</code>, except those messages which are discarded by
  * the given {@link StdFilter}.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.2
  */
-public class StdStreamHandler extends StreamHandler
+public class ShellStreamAppender extends WriterAppender
 {
     /** A Shell to watch. */
     private Shell shell;
 
     /**
-     * Creates a new StdStreamHandler.
+     * Creates a new ShellStreamAppender.
      * 
-     * @param consoleSettings the console settings to use
      * @param stream the stream to handle
-     * @param filter the filter to use
+     * @param min the minimum level to log (may be null for no minimum)
+     * @param max the maximum level to log (may be null for no maximum)
      */
-    public StdStreamHandler(ConsoleSettings consoleSettings, PrintStream stream, StdFilter filter)
+    public ShellStreamAppender(PrintStream stream, Level min, Level max)
     {
-        super(stream, new ConsoleFormatter(consoleSettings));
-        setFilter(filter);
-        setLevel(Level.ALL);
+        super(new SimpleLayout(), stream); //TODO: new ConsoleLayout(consoleSettings)
+        LevelRangeFilter filter = new LevelRangeFilter();
+        if (min != null)
+        {
+            filter.setLevelMin(min);
+        }
+        if (max != null)
+        {
+            filter.setLevelMax(max);
+        }
+        addFilter(filter);
+        setImmediateFlush(true);
+        setThreshold(Level.ALL);
     }
 
     /**
@@ -59,13 +71,12 @@ public class StdStreamHandler extends StreamHandler
      * @see java.util.logging.StreamHandler#publish(java.util.logging.LogRecord)
      */
     @Override
-    public void publish(LogRecord record)
+    public void doAppend(LoggingEvent event)
     {
-        super.publish(record);
+        super.doAppend(event);
         if (this.shell != null)
         {
             this.shell.gotLine();
         }
-        super.flush();
     }
 }

@@ -35,7 +35,7 @@ public class SuffixFilenameFilter implements FilenameFilter
     /**
      * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
      */
-    public boolean accept(File dir, String name)
+    public boolean accept(@SuppressWarnings("unused") File dir, String name)
     {
         if (name == null)
         {

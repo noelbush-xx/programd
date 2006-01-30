@@ -17,8 +17,6 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
@@ -26,6 +24,7 @@ import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.sql.DbAccess;
 import org.aitools.programd.util.sql.DbAccessRefsPoolMgr;
+import org.apache.log4j.Logger;
 
 /**
  * <p>
@@ -77,12 +76,12 @@ public class DBMultiplexor extends Multiplexor
     {
         CoreSettings coreSettings = this.core.getSettings();
 
-        this.dbLogger.log(Level.FINE, "Opening database pool.");
+        this.dbLogger.debug("Opening database pool.");
 
         this.dbManager = new DbAccessRefsPoolMgr(coreSettings.getDatabaseDriver(), coreSettings.getDatabaseUrl(), coreSettings.getDatabaseUser(),
                 coreSettings.getDatabasePassword());
 
-        this.dbLogger.log(Level.FINE, "Populating database pool.");
+        this.dbLogger.debug("Populating database pool.");
 
         this.dbManager.populate(coreSettings.getDatabaseConnections());
     }
@@ -146,7 +145,7 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (SQLException e)
         {
-            this.dbLogger.log(Level.SEVERE, "Database error: " + e);
+            this.dbLogger.error("Database error: " + e);
         }
     }
 
@@ -190,7 +189,7 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (SQLException e)
         {
-            this.dbLogger.log(Level.SEVERE, "Database error: " + e);
+            this.dbLogger.error("Database error: " + e);
             throw new NoSuchPredicateException(name);
         }
         if (result == null)

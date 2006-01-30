@@ -60,7 +60,7 @@ public class HelpCommand extends ShellCommand
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
      */
     @Override
-    public void handle(String commandLine, Shell shell)
+    public void handle(@SuppressWarnings("unused") String commandLine, Shell shell)
     {
         shell.showMessage(HELP_PREFACE);
         for (ShellCommand command : shell.getCommands())

@@ -12,9 +12,7 @@ package org.aitools.programd.logging;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.logging.Handler;
-import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 
 import org.aitools.programd.CoreSettings;
 import org.aitools.programd.util.DeveloperError;
@@ -22,6 +20,7 @@ import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.XMLKit;
 import org.aitools.programd.util.sql.DbAccess;
 import org.aitools.programd.util.sql.DbAccessRefsPoolMgr;
+import org.apache.log4j.Logger;
 
 /**
  * Provides a logging handler that writes to a database.
@@ -47,12 +46,12 @@ public class DatabaseChatLogHandler extends Handler
     public DatabaseChatLogHandler(CoreSettings settings)
     {
         this.logger = Logger.getLogger("programd");
-        this.logger.log(Level.FINE, "Opening database pool.");
+        this.logger.debug("Opening database pool.");
 
         dbManager = new DbAccessRefsPoolMgr(settings.getDatabaseDriver(), settings.getDatabaseUrl(), settings.getDatabaseUser(), settings
                 .getDatabasePassword());
 
-        this.logger.log(Level.FINE, "Populating database pool.");
+        this.logger.debug("Populating database pool.");
 
         dbManager.populate(settings.getDatabaseConnections());
     }

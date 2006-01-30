@@ -10,13 +10,12 @@
 package org.aitools.programd.parser;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.w3c.dom.Element;
 import org.aitools.programd.Core;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.processor.aiml.AIMLProcessor;
+import org.apache.log4j.Logger;
 
 /**
  * <code>TemplateParser</code> has been rewritten (starting in 4.5) to use DOM
@@ -93,7 +92,7 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
         }
         catch (StackOverflowError e)
         {
-            Logger.getLogger("programd").log(Level.SEVERE, "Stack overflow error processing " + element.getLocalName() + " tag.");
+            Logger.getLogger("programd").error("Stack overflow error processing " + element.getLocalName() + " tag.");
             return EMPTY_STRING;
         }
     }

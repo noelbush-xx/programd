@@ -30,7 +30,7 @@ abstract public class ActionEventIgnoringActionListener implements ActionListene
     /**
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
-    public void actionPerformed(ActionEvent ae)
+    public void actionPerformed(@SuppressWarnings("unused") ActionEvent ae)
     {
         actionPerformed();
     }

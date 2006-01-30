@@ -9,11 +9,10 @@
 
 package org.aitools.programd.interfaces.shell;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.graph.Graphmaster;
+import org.apache.log4j.Logger;
 
 /**
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -69,7 +68,7 @@ public class UnloadCommand extends ShellCommand
             String path = commandLine.substring(space + 1);
             graphmaster.unload(path, bot);
             bot.getLoadedFilesMap().remove(path);
-            Logger.getLogger("programd").log(Level.INFO, categories - graphmaster.getTotalCategories() + " categories unloaded.");
+            Logger.getLogger("programd").info(categories - graphmaster.getTotalCategories() + " categories unloaded.");
         }
     }
 }

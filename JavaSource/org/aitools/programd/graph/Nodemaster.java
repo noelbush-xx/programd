@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 /**
  * <p>
@@ -121,7 +121,7 @@ public class Nodemaster implements Nodemapper
             if (keyToRemove == null)
             {
                 // We didn't find a key.
-                Logger.getLogger("programd.graphmaster").log(Level.SEVERE, "Key was not found for value when trying to remove \"" + valueToRemove.toString() + "\"", new NullPointerException());
+                Logger.getLogger("programd.graphmaster").error("Key was not found for value when trying to remove \"" + valueToRemove.toString() + "\"", new NullPointerException());
             }
             if (this.size > 2)
             {

@@ -187,7 +187,7 @@ public class AIMLReader extends DefaultHandler
      *      java.lang.String, java.lang.String)
      */
     @Override
-    public void endElement(String uri, String localName, String qName)
+    public void endElement(@SuppressWarnings("unused") String uri, String localName, String qName)
     {
         String elementName;
         if (localName.equals(EMPTY_STRING))

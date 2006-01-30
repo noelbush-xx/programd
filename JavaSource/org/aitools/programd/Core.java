@@ -17,8 +17,6 @@ import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
@@ -45,6 +43,8 @@ import org.aitools.programd.util.UnspecifiedParameterError;
 import org.aitools.programd.util.URITools;
 import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.XMLKit;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Document;
 
@@ -259,11 +259,11 @@ public class Core
             throw new DeveloperError("Error trying to parse plugin configuration.", e);
         }
 
-        this.logger.log(Level.INFO, "Starting Program D version " + VERSION + BUILD + '.');
-        this.logger.log(Level.INFO, "Using Java VM " + System.getProperty("java.vm.version")
+        this.logger.info("Starting Program D version " + VERSION + BUILD + '.');
+        this.logger.info("Using Java VM " + System.getProperty("java.vm.version")
                 + " from " + System.getProperty("java.vendor"));
         Runtime runtime = Runtime.getRuntime();
-        this.logger.log(Level.INFO, "On " + System.getProperty("os.name") + " version "
+        this.logger.info("On " + System.getProperty("os.name") + " version "
                 + System.getProperty("os.version") + " (" + System.getProperty("os.arch")
                 + ") with " + runtime.availableProcessors() + " processor(s) available.");
         this.logger
@@ -276,12 +276,12 @@ public class Core
                                         (runtime.totalMemory() / 1048576.0),
                                         (runtime.maxMemory() / 1048576.0)));
 
-        this.logger.log(Level.INFO, "Predicates with no values defined will return: \""
+        this.logger.info("Predicates with no values defined will return: \""
                 + this.settings.getPredicateEmptyDefault() + "\".");
 
         try
         {
-            this.logger.log(Level.INFO, "Initializing "
+            this.logger.info("Initializing "
                     + this.multiplexor.getClass().getSimpleName() + ".");
 
             // Initialize the Multiplexor.
@@ -299,7 +299,7 @@ public class Core
             // Start the AIMLWatcher if configured to do so.
             startWatcher();
 
-            this.logger.log(Level.INFO, "Starting up the Graphmaster.");
+            this.logger.info("Starting up the Graphmaster.");
 
             // Start loading bots.
             loadBots(URITools.contextualize(this.baseURL, this.settings.getStartupFilePath()));
@@ -350,11 +350,11 @@ public class Core
         if (this.settings.useWatcher())
         {
             this.aimlWatcher.start();
-            this.logger.log(Level.INFO, "The AIML Watcher is active.");
+            this.logger.info("The AIML Watcher is active.");
         }
         else
         {
-            this.logger.log(Level.INFO, "The AIML Watcher is not active.");
+            this.logger.info("The AIML Watcher is not active.");
         }
     }
 
@@ -367,7 +367,7 @@ public class Core
             // configurable).
             this.heart.addPulse(new org.aitools.programd.util.IAmAlivePulse());
             this.heart.start();
-            this.logger.log(Level.INFO, "Heart started.");
+            this.logger.info("Heart started.");
         }
     }
 
@@ -390,7 +390,7 @@ public class Core
                         "javascript-interpreter.classname"));
             }
 
-            this.logger.log(Level.INFO, "Initializing " + javascriptInterpreterClassname + ".");
+            this.logger.info("Initializing " + javascriptInterpreterClassname + ".");
 
             try
             {
@@ -405,7 +405,7 @@ public class Core
         }
         else
         {
-            this.logger.log(Level.INFO, "JavaScript interpreter not started.");
+            this.logger.info("JavaScript interpreter not started.");
         }
     }
 
@@ -431,7 +431,7 @@ public class Core
                 }
                 catch (FileNotFoundException e)
                 {
-                    this.logger.log(Level.WARNING, e.getMessage());
+                    this.logger.warn(e.getMessage());
                 }
                 if (files != null)
                 {
@@ -462,7 +462,7 @@ public class Core
         {
             if (this.settings.loadNotifyEachFile())
             {
-                this.logger.log(Level.INFO, "Loading " + path + "....");
+                this.logger.info("Loading " + path + "....");
             }
             this.parser.parse(path.toString(), new AIMLReader(this.graphmaster, path, botid, this.bots
                     .getBot(botid), this.settings.getAimlSchemaNamespaceUri()));
@@ -471,11 +471,11 @@ public class Core
         }
         catch (IOException e)
         {
-            this.logger.log(Level.WARNING, "Error reading \"" + path + "\": " + e.getMessage(), e);
+            this.logger.warn("Error reading \"" + path + "\": " + e.getMessage(), e);
         }
         catch (SAXException e)
         {
-            this.logger.log(Level.WARNING, "Error parsing \"" + path + "\": " + e.getMessage(), e);
+            this.logger.warn("Error parsing \"" + path + "\": " + e.getMessage(), e);
         }
 
         FileManager.popWorkingDirectory();
@@ -551,7 +551,7 @@ public class Core
                 this.multiplexor.getResponse(input, this.hostname, bot.getID());
                 return;
             }
-            this.logger.log(Level.WARNING, "No bot available to process response!");
+            this.logger.warn("No bot available to process response!");
             return;
         }
         //throw new DeveloperError("Check that the Core is ready before sending it messages.", new CoreNotReadyException());
@@ -583,10 +583,10 @@ public class Core
      */
     public void shutdown()
     {
-        this.logger.log(Level.INFO, "Program D is shutting down.");
+        this.logger.info("Program D is shutting down.");
         this.processes.shutdownAll();
         this.predicateMaster.saveAll();
-        this.logger.log(Level.INFO, "Shutdown complete.");
+        this.logger.info("Shutdown complete.");
         this.status = Status.SHUT_DOWN;
     }
 
@@ -641,7 +641,7 @@ public class Core
         {
             throwableDescription += ".";
         }
-        this.logger.log(Level.SEVERE, "Core is exiting abnormally due to " + description + ":\n"
+        this.logger.error("Core is exiting abnormally due to " + description + ":\n"
                 + throwableDescription);
 
         System.err.println();
@@ -709,7 +709,7 @@ public class Core
         }
         catch (ProcessorException e)
         {
-            this.logger.log(Level.SEVERE, e.getExplanatoryMessage());
+            this.logger.error(e.getExplanatoryMessage());
             fail("processor exception during startup", e);
         }
     }
@@ -724,7 +724,7 @@ public class Core
      */
     public String loadBot(URL path)
     {
-        this.logger.log(Level.INFO, "Loading bot from \"" + path + "\".");
+        this.logger.info("Loading bot from \"" + path + "\".");
         if (path.getProtocol().equals(FileManager.FILE))
         {
             FileManager.pushWorkingDirectory(URITools.getParent(path));
@@ -738,9 +738,9 @@ public class Core
         }
         catch (ProcessorException e)
         {
-            this.logger.log(Level.SEVERE, e.getExplanatoryMessage());
+            this.logger.error(e.getExplanatoryMessage());
         }
-        this.logger.log(Level.INFO, "Bot \"" + id + "\" has been loaded.");
+        this.logger.info("Bot \"" + id + "\" has been loaded.");
 
         return id;
     }
@@ -754,7 +754,7 @@ public class Core
     {
         if (!this.bots.include(id))
         {
-            this.logger.log(Level.WARNING, "Bot \"" + id + "\" is not loaded; cannot unload.");
+            this.logger.warn("Bot \"" + id + "\" is not loaded; cannot unload.");
             return;
         }
         Bot bot = this.bots.getBot(id);
@@ -763,7 +763,7 @@ public class Core
             this.graphmaster.unload(path, bot);
         }
         this.bots.removeBot(id);
-        this.logger.log(Level.INFO, "Bot \"" + id + "\" has been unloaded.");
+        this.logger.info("Bot \"" + id + "\" has been unloaded.");
     }
 
     /*

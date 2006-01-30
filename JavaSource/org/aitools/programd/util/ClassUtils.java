@@ -32,7 +32,7 @@ public class ClassUtils
      * @return the desired class
      */
     @SuppressWarnings("unchecked")
-    public static <T> T getSubclassInstance(Class<T> baseType, String classname, String description, Object ... constructorArgs)
+    public static <T> T getSubclassInstance(@SuppressWarnings("unused") Class<T> baseType, String classname, String description, Object ... constructorArgs)
     {
         // Get the subclass.
         Class<? extends T> subclass = null;

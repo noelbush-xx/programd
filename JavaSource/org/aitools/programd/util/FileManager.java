@@ -20,10 +20,9 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.aitools.programd.util.DeveloperError;
+import org.apache.log4j.Logger;
 
 /**
  * FileManager provides a standard interface for getting File objects and paths.
@@ -273,7 +272,7 @@ public class FileManager
                 throw new UserError("Could not create " + description + " directory \"" + path + "\".", new CouldNotCreateFileException(directory.getAbsolutePath()));
             }
         }
-        Logger.getLogger("programd").log(Level.FINE, "Created new " + description + " \"" + path + "\".");
+        Logger.getLogger("programd").debug("Created new " + description + " \"" + path + "\".");
         return file;
     }
 
@@ -309,7 +308,7 @@ public class FileManager
         {
             throw new UserError("Could not create " + description + " directory at \"" + path + "\".", new CouldNotCreateFileException(file.getAbsolutePath()));
         }
-        Logger.getLogger("programd").log(Level.FINE, "Created new " + description + " \"" + path + "\".");
+        Logger.getLogger("programd").debug("Created new " + description + " \"" + path + "\".");
         return file;
     }
 
@@ -335,7 +334,7 @@ public class FileManager
             }
             catch (MalformedURLException e)
             {
-                logger.log(Level.WARNING, "Malformed URL: \"" + path + "\"");
+                logger.warn("Malformed URL: \"" + path + "\"");
             }
 
             try
@@ -345,7 +344,7 @@ public class FileManager
             }
             catch (IOException e)
             {
-                logger.log(Level.WARNING, "I/O error trying to read \"" + path + "\"");
+                logger.warn("I/O error trying to read \"" + path + "\"");
             }
         }
         // Handle paths which are apparently files.
@@ -369,7 +368,7 @@ public class FileManager
                 }
                 catch (IOException e)
                 {
-                    logger.log(Level.WARNING, "I/O error trying to read \"" + path + "\"");
+                    logger.warn("I/O error trying to read \"" + path + "\"");
                     return null;
                 }
             }
@@ -397,7 +396,7 @@ public class FileManager
         }
         catch (IOException e)
         {
-            logger.log(Level.WARNING, "I/O error trying to read \"" + path + "\"");
+            logger.warn("I/O error trying to read \"" + path + "\"");
             return null;
         }
         return result.toString();

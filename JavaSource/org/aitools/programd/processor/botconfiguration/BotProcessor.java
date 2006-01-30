@@ -10,7 +10,6 @@
 package org.aitools.programd.processor.botconfiguration;
 
 import java.util.Date;
-import java.util.logging.Level;
 
 import org.w3c.dom.Element;
 
@@ -78,7 +77,7 @@ public class BotProcessor extends BotConfigurationElementProcessor
             {
                 Bot bot = new Bot(botID, parser.getCore().getSettings());
                 
-                logger.log(Level.INFO, "Configuring bot \"" + botID + "\".");
+                logger.info("Configuring bot \"" + botID + "\".");
                 parser.setCurrentBot(bot);
                 bots.addBot(botID, bot);
                 
@@ -112,19 +111,19 @@ public class BotProcessor extends BotConfigurationElementProcessor
                     this.core.getAIMLWatcher().start();
                 }
                 
-                logger.log(Level.INFO, (graphmaster.getTotalCategories() - previousCategoryCount)
+                logger.info((graphmaster.getTotalCategories() - previousCategoryCount)
                         + " unique categories loaded in " + time / 1000.00 + " seconds.");
                 
                 int dupes = graphmaster.getDuplicateCategories() - previousDuplicateCount;
                 if (dupes > 0)
                 {
-                    logger.log(Level.WARNING, dupes
+                    logger.warn(dupes
                         + " path-identical categories were encountered, and handled according to the " + this.core.getSettings().getMergePolicy() + " merge policy.");
                 }
             }
             else
             {
-                logger.log(Level.WARNING, "Bot \"" + botID + "\" has already been configured.");
+                logger.warn("Bot \"" + botID + "\" has already been configured.");
             }
         }
         return botID;

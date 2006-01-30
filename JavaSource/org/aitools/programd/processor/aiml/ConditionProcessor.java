@@ -9,8 +9,6 @@
 
 package org.aitools.programd.processor.aiml;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -22,6 +20,7 @@ import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.NotAnAIMLPatternException;
 import org.aitools.programd.util.PatternArbiter;
 import org.aitools.programd.util.UserError;
+import org.apache.log4j.Logger;
 
 /**
  * Handles a
@@ -92,7 +91,7 @@ public class ConditionProcessor extends AIMLProcessor
             }
             catch (NotAnAIMLPatternException e)
             {
-                Logger.getLogger("programd").log(Level.WARNING, "ConditionProcessor got a non-AIML pattern in a value attribute.", e);
+                Logger.getLogger("programd").warn("ConditionProcessor got a non-AIML pattern in a value attribute.", e);
                 return EMPTY_STRING;
             }
             return EMPTY_STRING;
@@ -223,7 +222,7 @@ public class ConditionProcessor extends AIMLProcessor
                                     }
                                     catch (NotAnAIMLPatternException e)
                                     {
-                                        Logger.getLogger("programd").log(Level.WARNING,
+                                        Logger.getLogger("programd").warn(
                                                 "ConditionProcessor got a non-AIML pattern in a value attribute.", e);
                                     }
                                     break;
@@ -255,7 +254,7 @@ public class ConditionProcessor extends AIMLProcessor
                                         }
                                         catch (NotAnAIMLPatternException e)
                                         {
-                                            Logger.getLogger("programd").log(Level.WARNING,
+                                            Logger.getLogger("programd").warn(
                                                     "ConditionProcessor got a non-AIML pattern in a value attribute.", e);
                                         }
                                     }

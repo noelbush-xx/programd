@@ -50,7 +50,7 @@ public class ListBotFilesCommand extends ShellCommand
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
      */
     @Override
-    public void handle(String commandLine, Shell shell)
+    public void handle(@SuppressWarnings("unused") String commandLine, Shell shell)
     {
         String botID = shell.getCurrentBotID();
         Set<URL> keys = shell.getBots().getBot(botID).getLoadedFilesMap().keySet();

@@ -16,10 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
+import org.apache.log4j.Logger;
 
 /**
  * Watches a set of AIML files. Any file changes will be loaded automatically.
@@ -78,7 +77,7 @@ public class AIMLWatcher
      */
     protected void reload(URL path, String botid)
     {
-        logger.log(Level.INFO, "AIMLWatcher reloading \"" + path + "\".");
+        logger.info("AIMLWatcher reloading \"" + path + "\".");
         this.core.load(path, botid);
     }
 
@@ -100,7 +99,7 @@ public class AIMLWatcher
         }
         else
         {
-            logger.log(Level.WARNING, "AIMLWatcher cannot read path \"" + path + "\"", new IOException());
+            logger.warn("AIMLWatcher cannot read path \"" + path + "\"", new IOException());
         }
     }
 

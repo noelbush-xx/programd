@@ -51,7 +51,7 @@ public class ListCommandablesCommand extends ShellCommand
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
      */
     @Override
-    public void handle(String commandLine, Shell shell)
+    public void handle(@SuppressWarnings("unused") String commandLine, Shell shell)
     {
         int commandableCount = 0;
         shell.showMessage("Available shell commandables:");

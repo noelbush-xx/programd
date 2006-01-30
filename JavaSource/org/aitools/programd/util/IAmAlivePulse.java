@@ -9,8 +9,8 @@
 
 package org.aitools.programd.util;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
+
 
 /**
  * Prints the message &quot;I am alive!&quot; to the console/log.
@@ -26,6 +26,6 @@ public class IAmAlivePulse implements Pulse
      */
     public void emit()
     {
-        this.logger.log(Level.INFO, "I am alive!");
+        this.logger.info("I am alive!");
     }
 }

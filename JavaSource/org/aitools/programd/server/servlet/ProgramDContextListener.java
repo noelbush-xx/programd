@@ -8,8 +8,6 @@ package org.aitools.programd.server.servlet;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -17,12 +15,17 @@ import javax.servlet.ServletContextListener;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.util.URITools;
+import org.apache.log4j.Logger;
 
 /**
  * @author <a href="mailto:noel@x-31.com">Noel Bush</a>
  */
-public class ContextListener implements ServletContextListener
+public class ProgramDContextListener implements ServletContextListener
 {
+    public static final String KEY_CORE = "core";
+    
+    public static final String PARAM_CORE_CONFIG = "programd-core-config";
+    
     private ServletContext context = null;
 
     /**
@@ -33,13 +36,13 @@ public class ContextListener implements ServletContextListener
         this.context = sce.getServletContext();
 
         Logger logger = Logger.getLogger("programd");
-        logger.log(Level.INFO, "Configuring Program D Core from servlet context listener.");
+        logger.info("Configuring Program D Core from servlet context listener.");
         
         // Check for the config parameter.
-        String config = this.context.getInitParameter("programd-core-config");
+        String config = this.context.getInitParameter(PARAM_CORE_CONFIG);
         if (config == null || config.length() == 0)
         {
-            logger.log(Level.SEVERE, "No \"programd-core-config\" init-param specified for Program D.  Cannot continue.");
+            logger.error("No \"" + PARAM_CORE_CONFIG + "\" init-param specified for Program D.  Cannot continue.");
             return;
         }
         
@@ -51,13 +54,13 @@ public class ContextListener implements ServletContextListener
         }
         catch (MalformedURLException e)
         {
-            logger.log(Level.INFO, "Error when getting base URL!", e);
+            logger.info("Error when getting base URL!", e);
             return;
         }
 
         // Set up the Program D Core.
         Core core = new Core(baseURL, URITools.contextualize(baseURL, config));
-        this.context.setAttribute("core", core);
+        this.context.setAttribute(KEY_CORE, core);
     }
 
     /**
@@ -68,7 +71,7 @@ public class ContextListener implements ServletContextListener
         this.context = sce.getServletContext();
         if (this.context != null)
         {
-            this.context.removeAttribute("core");
+            this.context.removeAttribute(KEY_CORE);
         }
     }
 }

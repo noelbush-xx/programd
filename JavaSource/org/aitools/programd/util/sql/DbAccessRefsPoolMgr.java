@@ -85,13 +85,13 @@ public class DbAccessRefsPoolMgr extends ObjectPool
     }
 
     @Override
-    protected boolean validate(Object o)
+    protected boolean validate(@SuppressWarnings("unused") Object o)
     {
         return true;
     }
 
     @Override
-    protected void expire(Object o)
+    protected void expire(@SuppressWarnings("unused") Object o)
     {
         // Nothing to do.
     }

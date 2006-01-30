@@ -13,10 +13,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
+import org.apache.log4j.Logger;
 
 /**
  * Controls processes that run in separate threads and need to be shut down
@@ -82,13 +81,13 @@ public class ManagedProcesses
     public void shutdownAll()
     {
         Logger logger = Logger.getLogger("programd");
-        logger.log(Level.INFO, "Shutting down all ManagedProcesses.");
+        logger.info("Shutting down all ManagedProcesses.");
         for (ManagedProcess process : this.registry.values())
         {
-            logger.log(Level.FINE, "Shutting down " + process);
+            logger.debug("Shutting down " + process);
             process.shutdown();
         }
-        logger.log(Level.INFO, "Finished shutting down ManagedProcesses.");
+        logger.info("Finished shutting down ManagedProcesses.");
     }
 
     /**

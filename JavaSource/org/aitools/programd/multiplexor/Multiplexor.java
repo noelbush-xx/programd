@@ -12,8 +12,6 @@ package org.aitools.programd.multiplexor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
@@ -29,6 +27,7 @@ import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.InputNormalizer;
 import org.aitools.programd.util.NoMatchException;
 import org.aitools.programd.util.XMLKit;
+import org.apache.log4j.Logger;
 
 /**
  * <p>
@@ -314,7 +313,7 @@ abstract public class Multiplexor
             // Calculate the average response time.
             this.totalTime += time;
             this.avgResponseTime = (float) this.totalTime / (float) this.responseCount;
-            this.logger.log(Level.FINE, RESPONSE_SPACE + this.responseCount + SPACE_IN_SPACE + time + MS_AVERAGE + this.avgResponseTime + MS);
+            this.logger.debug(RESPONSE_SPACE + this.responseCount + SPACE_IN_SPACE + time + MS_AVERAGE + this.avgResponseTime + MS);
         }
 
         // Invoke targeting if appropriate.
@@ -387,7 +386,7 @@ abstract public class Multiplexor
         // Always show the input path (in any case, if match trace is on).
         if (this.recordMatchTrace)
         {
-            this.logger.log(Level.FINE, userid + PROMPT + input + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + that + SPACE
+            this.logger.debug(userid + PROMPT + input + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + that + SPACE
                     + Graphmaster.PATH_SEPARATOR + SPACE + topic + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + botid);
         }
 
@@ -399,20 +398,20 @@ abstract public class Multiplexor
         }
         catch (NoMatchException e)
         {
-            this.logger.log(Level.INFO, e.getMessage());
+            this.logger.info(e.getMessage());
             return EMPTY_STRING;
         }
 
         if (match == null)
         {
-            this.logger.log(Level.INFO, "No match found for input \"" + input + "\".");
+            this.logger.info("No match found for input \"" + input + "\".");
             return EMPTY_STRING;
         }
 
         if (this.recordMatchTrace)
         {
-            this.logger.log(Level.FINE, LABEL_MATCH + match.getPath());
-            this.logger.log(Level.FINE, LABEL_FILENAME + QUOTE_MARK + match.getFileName() + QUOTE_MARK);
+            this.logger.debug(LABEL_MATCH + match.getPath());
+            this.logger.debug(LABEL_FILENAME + QUOTE_MARK + match.getFileName() + QUOTE_MARK);
         }
 
         ArrayList<String> stars = match.getInputStars();
@@ -443,7 +442,7 @@ abstract public class Multiplexor
         catch (ProcessorException e)
         {
             // Log the error message.
-            Logger.getLogger("programd").log(Level.SEVERE, e.getExplanatoryMessage());
+            Logger.getLogger("programd").error(e.getExplanatoryMessage());
 
             // Set response to empty string.
             return EMPTY_STRING;
@@ -451,7 +450,7 @@ abstract public class Multiplexor
         catch (DeveloperError e)
         {
             // Log the error message.
-            Logger.getLogger("programd").log(Level.SEVERE, e.getCause().getMessage());
+            Logger.getLogger("programd").error(e.getCause().getMessage());
 
             // Set response to empty string.
             return EMPTY_STRING;

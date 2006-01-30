@@ -10,8 +10,6 @@
 package org.aitools.programd.processor.botconfiguration;
 
 import java.util.List;
-import java.util.logging.Level;
-
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
@@ -65,7 +63,7 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
             bot.addSentenceSplitter(splitter.getAttribute(VALUE));
         }
 
-        logger.log(Level.INFO, "Loaded " + splitters.size() + " sentence-splitters.");
+        logger.info("Loaded " + splitters.size() + " sentence-splitters.");
         return EMPTY_STRING;
     }
 }

@@ -20,8 +20,6 @@ import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -32,6 +30,7 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -422,7 +421,7 @@ public class XMLKit
         }
         catch (DeveloperError e)
         {
-            Logger.getLogger("programd").log(Level.WARNING, "XML could not be rendered; returning original string: " + content);
+            Logger.getLogger("programd").warn("XML could not be rendered; returning original string: " + content);
             return content;
         }
         StringBuffer result = new StringBuffer();

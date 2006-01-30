@@ -11,11 +11,12 @@ package org.aitools.programd.logging;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
 
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.UserError;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.SimpleLayout;
 
 /**
  * Contains utilities for logging.
@@ -38,23 +39,22 @@ public class LogUtils
      * @param timestampFormat the timestamp format to use
      * @return the Logger that was set up.
      */
-    public static Logger setupLogger(String name, String pattern, String timestampFormat)
+    public static Logger setupLogger(String name, String pattern, @SuppressWarnings("unused") String timestampFormat)
     {
         Logger newLogger = Logger.getLogger(name);
         pattern =
             FileManager.checkOrCreateDirectory((new File(pattern)).
                     getParent(), "log file directory").getAbsolutePath() + File.separator + pattern.substring(pattern.lastIndexOf(File.separatorChar));
-        FileHandler newHandler = null;
+        FileAppender appender = null;
         try
         {
-            newHandler = new FileHandler(pattern, 1048576, 10, true);
+            appender = new FileAppender(new SimpleLayout(), pattern, true);
         }
         catch (IOException e)
         {
             throw new UserError("I/O Error setting up a logger: ", e);
         }
-        newHandler.setFormatter(new SimpleFormatter(timestampFormat));
-        newLogger.addHandler(newHandler);
+        newLogger.addAppender(appender);
         return newLogger;
     }
     

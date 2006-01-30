@@ -9,8 +9,6 @@
 
 package org.aitools.programd.processor.botconfiguration;
 
-import java.util.logging.Level;
-
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
@@ -60,7 +58,7 @@ public class TestingProcessor extends BotConfigurationElementProcessor
         bot.setTestReportDirectory(XMLKit.getChildText(element, "test-report-directory"));
         bot.setTestingLogPattern(XMLKit.getChildText(element, "log-pattern"));
 
-        logger.log(Level.INFO, "Configured testing.");
+        logger.info("Configured testing.");
         return EMPTY_STRING;
     }
 }

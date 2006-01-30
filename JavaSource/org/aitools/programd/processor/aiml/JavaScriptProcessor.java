@@ -9,14 +9,13 @@
 
 package org.aitools.programd.processor.aiml;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
+import org.apache.log4j.Logger;
 
 /**
  * Handles a
@@ -59,10 +58,10 @@ public class JavaScriptProcessor extends AIMLProcessor
         // Don't use the system tag if not permitted.
         if (!parser.getCore().getSettings().javascriptAllowed())
         {
-            logger.log(Level.WARNING, "Use of <javascript> prohibited!");
+            logger.warn("Use of <javascript> prohibited!");
             return EMPTY_STRING;
         }
-        logger.log(Level.FINE, "Calling JavaScript interpreter.");
+        logger.debug("Calling JavaScript interpreter.");
         return parser.getCore().getInterpreter().evaluate(parser.evaluate(element.getChildNodes()));
     }
 }

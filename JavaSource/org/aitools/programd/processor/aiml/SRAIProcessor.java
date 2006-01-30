@@ -12,12 +12,11 @@ package org.aitools.programd.processor.aiml;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
+import org.apache.log4j.Logger;
 
 /**
  * Implements the &lt;srai/&gt; element.
@@ -79,11 +78,11 @@ public class SRAIProcessor extends AIMLProcessor
                         if (!input.equalsIgnoreCase(infiniteLoopInput))
                         {
                             sraiChild.setTextContent(infiniteLoopInput);
-                            logger.log(Level.WARNING, "Infinite loop detected; substituting \"" + infiniteLoopInput + "\".");
+                            logger.warn("Infinite loop detected; substituting \"" + infiniteLoopInput + "\".");
                         }
                         else
                         {
-                            logger.log(Level.SEVERE, "Unrecoverable infinite loop.");
+                            logger.error("Unrecoverable infinite loop.");
                             return EMPTY_STRING;
                         }
                     }
@@ -94,7 +93,7 @@ public class SRAIProcessor extends AIMLProcessor
 
         if (recordMatchTrace)
         {
-            matchLogger.log(Level.FINE, "Symbolic Reduction:");
+            matchLogger.debug("Symbolic Reduction:");
         }
 
         return this.core.getMultiplexor()

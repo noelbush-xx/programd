@@ -20,8 +20,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.logging.Level;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
@@ -442,7 +440,7 @@ public class Shell extends Thread
      */
     private void printExitMessage()
     {
-        Logger.getLogger("programd").log(Level.INFO, "Exiting at user request.");
+        Logger.getLogger("programd").info("Exiting at user request.");
     }
 
     /**
