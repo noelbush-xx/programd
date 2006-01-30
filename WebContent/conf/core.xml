@@ -171,11 +171,14 @@ GENERAL NOTES
     <!--The main Program D log file. [String: /var/log/programd/programd-%g.log]-->
     <entry key="programd.activity.log.pattern">/var/log/programd/programd-%g.log</entry>
     
-    <!--The date-time format to use in general logs. [String: yyyy-MM-dd H:mm:ss]
-        * See http://java.sun.com/jdk1.5.0/docs/api/java/text/SimpleDateFormat.html
-          for formatting codes.
+    <!--The date-time format to use in general logs. [String: ISO8601]
+        * For best performance, use ABSOLUTE, DATE or ISO8601.
+          See http://logging.apache.org/log4j/docs/api/org/apache/log4j/PatternLayout.html
+          for details.
+        * Or see http://java.sun.com/jdk1.5.0/docs/api/java/text/SimpleDateFormat.html
+          for old-style formatting codes, but these will not be as fast.
         * Setting the value to blank means no timestamp will be displayed.-->
-    <entry key="programd.log.timestamp-format">yyyy-MM-dd H:mm:ss</entry>
+    <entry key="programd.log.timestamp-format">ISO8601</entry>
 
     <!--The directory for chat logs. [String: /var/log/programd/chat]-->
     <entry key="programd.chat.log.directory">/var/log/programd/chat</entry>
