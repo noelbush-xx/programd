@@ -16,12 +16,13 @@
 		
 		<property name="base.dir" value="."/>
 		<property name="src.dir" value="${base.dir}/JavaSource"/>
-		<property name="webapp.lib.dir" value="${base.dir}/WebContent/WEB-INF/lib"/>
+		<property name="webapp.dir" value="${base.dir}/WebContent"/>
+		<property name="webapp.lib.dir" value="${webapp.dir}/WEB-INF/lib"/>
 		<property name="compile.lib.dir" value="${base.dir}/lib"/>
 		<property name="output.lib.dir" value="${base.dir}/lib"/>
 		
 		<property name="build.dir" value="./build.tmp"/>
-		<property name="build.classpath" value="${compile.lib.dir}/gnu.getopt-1.0.10.jar:${webapp.lib.dir}/jsp-api.jar:${compile.lib.dir}/servlet-api.jar:${webapp.lib.dir}/js.jar"/>
+		<property name="build.classpath" value="${compile.lib.dir}/gnu.getopt-1.0.10.jar:${webapp.lib.dir}/jsp-api.jar:${webapp.lib.dir}/js.jar:${compile.lib.dir}/servlet-api.jar:${webapp.lib.dir}/log4j-1.2.12.jar"/>
 		<property name="javadoc.dir" value="./docs/api"/>
 		
 		<property name="main.jar" value="${output.lib.dir}/programd-main.jar"/>
@@ -50,11 +51,9 @@
 	<!--Prepare the source code.-->
 	<target name="prepare-src" depends="prepare">
 		<mkdir dir="${build.dir}"/>
-		<!-- copy over xml files -->
+		<!--Copy resources.-->
 		<copy todir="${build.dir}">
-			<fileset dir="${src.dir}">
-				<include name="**/*.xml"/>
-			</fileset>
+			<fileset dir="${webapp.dir}" includes="resources/schema/**"/>
 		</copy>
 	</target>
 	
@@ -70,7 +69,7 @@
 				includes="org/**"
 				excludes="org/aitools/programd/interpreter/RhinoInterpreter.class"/>
 			<fileset dir="${src.dir}/" includes="org/aitools/programd/gui/icons/**"/>
-			<fileset dir="${base.dir}/" includes="resources/schema/**"/>
+			<fileset dir="${build.dir}/" includes="resources/schema/**"/>
 		</jar>
 		<jar jarfile="${rhino.jar}">
 			<fileset dir="${build.dir}/"
