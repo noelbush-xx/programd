@@ -9,13 +9,12 @@
 
 package org.aitools.programd.interfaces;
 
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
-import java.net.URL;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.Core.Status;
 import org.aitools.programd.interfaces.shell.Shell;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -30,9 +29,6 @@ public class Console
     /** The Core to which this console is (may be) attached. */
     private Core core;
 
-    /** The settings for this console. */
-    private ConsoleSettings settings;
-
     /** The stdout handler. */
     private ShellStreamAppender stdOutAppender;
 
@@ -44,46 +40,44 @@ public class Console
 
     /**
      * Creates a <code>Console</code> with default output streams.
-     * 
-     * @param settingsPath the path to the settings file for the console
      */
-    public Console(URL settingsPath)
+    public Console()
     {
-        initialize(settingsPath, System.out, System.err);
+        initialize(System.out, System.err);
     }
 
     /**
      * Creates a <code>Console</code> with specified input, output and prompt
      * streams (this implies that a shell will be enabled).
      * 
-     * @param settingsPath the path to the settings file
      * @param out the stream to use for normal messages
      * @param err the stream to use for error messages
      */
-    public Console(URL settingsPath, PrintStream out, PrintStream err)
+    public Console(PrintStream out, PrintStream err)
     {
-        initialize(settingsPath, out, err);
+        initialize(out, err);
     }
 
     /**
-     * Performs initialization common to all constructors.
+     * Sets up the stdout and stderr appenders (if they are
+     * defined in the log4j configuration).
      * 
-     * @param settingsPath the path for the settings file to use
      * @param out the stream to use for normal output messages
      * @param err the stream to use for error messages
      */
-    private void initialize(URL settingsPath, PrintStream out, PrintStream err)
+    private void initialize(PrintStream out, PrintStream err)
     {
-        this.settings = new ConsoleSettings(settingsPath);
-
-        // Messages to all logs will go up to the parent "programd" log, and out
-        // to the console.
-        this.stdOutAppender = new ShellStreamAppender(out, null, Level.INFO, this.settings);
-        Logger.getLogger("programd").addAppender(this.stdOutAppender);
-
-        // Error messages will be printed to stderr.
-        this.stdErrAppender = new ShellStreamAppender(err, Level.WARN, null, this.settings);
-        Logger.getLogger("programd").addAppender(this.stdErrAppender);
+        this.stdOutAppender = ((ShellStreamAppender)Logger.getLogger("programd").getAppender("stdout"));
+        if (this.stdOutAppender != null)
+        {
+            this.stdOutAppender.setWriter(new OutputStreamWriter(out));
+        }
+        
+        this.stdErrAppender = ((ShellStreamAppender)Logger.getLogger("programd").getAppender("stderr"));
+        if (this.stdErrAppender != null)
+        {
+            this.stdErrAppender.setWriter(new OutputStreamWriter(err));
+        }
     }
     
     /**
@@ -95,9 +89,9 @@ public class Console
     {
         this.core = coreToUse;
 
-        if (this.settings.useShell())
+        if (this.core.getSettings().consoleUseShell())
         {
-            addShell(new Shell(this.settings), this.core);
+            addShell(new Shell(), this.core);
         }
         else
         {
@@ -115,8 +109,14 @@ public class Console
     {
         this.shell = shellToAdd;
         this.shell.attachTo(coreToUse);
-        this.stdOutAppender.watch(this.shell);
-        this.stdErrAppender.watch(this.shell);
+        if (this.stdOutAppender != null)
+        {
+            this.stdOutAppender.watch(this.shell);
+        }
+        if (this.stdErrAppender != null)
+        {
+            this.stdErrAppender.watch(this.shell);
+        }
     }
 
     /**
@@ -124,7 +124,7 @@ public class Console
      */
     public void startShell()
     {
-        if (this.settings.useShell())
+        if (this.core.getSettings().consoleUseShell())
         {
             this.shell.start();
         }
@@ -141,13 +141,5 @@ public class Console
                 break;
             }
         }
-    }
-
-    /**
-     * @return the console settings
-     */
-    public ConsoleSettings getSettings()
-    {
-        return this.settings;
     }
 }
