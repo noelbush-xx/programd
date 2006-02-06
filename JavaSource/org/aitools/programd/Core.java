@@ -11,6 +11,7 @@ package org.aitools.programd;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -24,6 +25,7 @@ import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.graph.Nodemapper;
+import org.aitools.programd.interfaces.ShellStreamAppender;
 import org.aitools.programd.interpreter.Interpreter;
 import org.aitools.programd.multiplexor.Multiplexor;
 import org.aitools.programd.multiplexor.PredicateMaster;
@@ -68,7 +70,7 @@ public class Core
     public static final String VERSION = "4.6";
 
     /** Build identifier. */
-    public static final String BUILD = "";
+    public static final String BUILD = "rc1";
 
     /** The namespace URI of the bot configuration. */
     public static final String BOT_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.5/bot-configuration";
@@ -213,6 +215,26 @@ public class Core
     protected void start()
     {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
+        
+        // Use the stdout and stderr appenders in a special way, if they are defined.
+        ShellStreamAppender stdOutAppender = ((ShellStreamAppender)Logger.getLogger("programd").getAppender("stdout"));
+        if (stdOutAppender != null)
+        {
+            if (!stdOutAppender.isWriterSet())
+            {
+                stdOutAppender.setWriter(new OutputStreamWriter(System.out));
+            }
+        }
+        
+        ShellStreamAppender stdErrAppender = ((ShellStreamAppender)Logger.getLogger("programd").getAppender("stderr"));
+        if (stdErrAppender != null)
+        {
+            if (!stdErrAppender.isWriterSet())
+            {
+                stdErrAppender.setWriter(new OutputStreamWriter(System.err));
+            }
+        }
+        
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
         this.parser = XMLKit.getSAXParser(URITools.contextualize(this.baseURL, AIML_SCHEMA_LOCATION), "AIML");
@@ -248,11 +270,11 @@ public class Core
         }
         catch (IOException e)
         {
-            throw new DeveloperError("IO error trying to read plugin configuration.", e);
+            this.logger.error("IO error trying to read plugin configuration.", e);
         }
         catch (SAXException e)
         {
-            throw new DeveloperError("Error trying to parse plugin configuration.", e);
+            this.logger.error("Error trying to parse plugin configuration.", e);
         }
 
         this.logger.info("Starting Program D version " + VERSION + BUILD + '.');
@@ -461,7 +483,7 @@ public class Core
                 this.logger.info("Loading " + path + "....");
             }
             this.parser.parse(path.toString(), new AIMLReader(this.graphmaster, path, botid, this.bots
-                    .getBot(botid), this.settings.getAimlSchemaNamespaceUri()));
+                    .getBot(botid), this.settings.getAimlSchemaNamespaceUri().toString()));
             System.gc();
             // this.parser.reset();
         }
@@ -639,8 +661,6 @@ public class Core
         }
         this.logger.error("Core is exiting abnormally due to " + description + ":\n"
                 + throwableDescription);
-
-        System.err.println();
 
         if (this.settings.onUncaughtExceptionsPrintStackTrace())
         {
