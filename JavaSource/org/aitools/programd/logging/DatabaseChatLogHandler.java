@@ -56,18 +56,15 @@ public class DatabaseChatLogHandler extends Handler
         dbManager.populate(settings.getDatabaseConnections());
     }
 
-    /**
-     * @see java.util.logging.Handler#publish(java.util.logging.LogRecord)
-     */
     @Override
     public void publish(LogRecord record)
-    {
-        if (!(record instanceof ChatLogRecord))
+    {/*
+        if (!(record instanceof ChatLogEvent))
         {
             throw new IllegalArgumentException(
                     "DatabaseChatLogHandler is intended to handle ChatRecords only.");
         }
-        publish((ChatLogRecord) record);
+        publish((ChatLogEvent) record);*/
     }
 
     /**
@@ -75,7 +72,7 @@ public class DatabaseChatLogHandler extends Handler
      * 
      * @param record the record to publish
      */
-    public void publish(ChatLogRecord record)
+    public void publish(ChatLogEvent record)
     {
         // Get a database reference.
         DbAccess dbaRef = null;
@@ -112,9 +109,6 @@ public class DatabaseChatLogHandler extends Handler
         // Nothing to do.
     }
 
-    /**
-     * @see java.util.logging.Handler#close()
-     */
     @Override
     public void close()
     {
