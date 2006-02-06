@@ -14,21 +14,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
-import org.aitools.programd.interfaces.ConsoleSettings;
 import org.aitools.programd.multiplexor.PredicateMaster;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.ManagedProcess;
 import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.XMLKit;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
 /**
@@ -46,24 +43,13 @@ public class Shell extends Thread
     /** Shell exit command. */
     private static final String EXIT = "/exit";
 
-    private static final String EMPTY_STRING = "";
-
     // Instance variables.
 
-    private static final String RBRACKET_SPACE = "] ";
-
-    private SimpleDateFormat timestampFormat;
-
-    private boolean showTimestamp;
-    
     /** The command registry. */
     private ShellCommandRegistry commandRegistry;
 
     /** The Core to which this Shell is attached. */
     private Core core;
-
-    /** The console settings to use. */
-    private ConsoleSettings consoleSettings;
 
     /** The PredicateMaster in use by the attached Core. */
     private PredicateMaster predicateMaster;
@@ -108,56 +94,31 @@ public class Shell extends Thread
      * A <code>Shell</code> with default input and output streams (
      * <code>System.in</code> and <code>System.out</code>).
      * 
-     * @param consoleSettingsToUse the object containing the console settings to
-     *            use
      */
-    public Shell(ConsoleSettings consoleSettingsToUse)
+    public Shell()
     {
         super("Shell");
         this.consoleIn = new BufferedReader(new InputStreamReader(System.in));
         this.consoleOut = this.consoleErr = this.consolePrompt = System.out;
-        initialize(consoleSettingsToUse);
+        this.setDaemon(true);
     }
 
     /**
      * A <code>Shell</code> with custom input and output streams.
      * 
-     * @param consoleSettingsToUse
      * @param in the input stream
      * @param out the output stream
      * @param err the error stream
      * @param prompt the prompt output stream
      */
-    public Shell(ConsoleSettings consoleSettingsToUse, InputStream in, PrintStream out, PrintStream err, PrintStream prompt)
+    public Shell(InputStream in, PrintStream out, PrintStream err, PrintStream prompt)
     {
         super("Shell");
         this.consoleIn = new BufferedReader(new InputStreamReader(in));
         this.consoleOut = out;
         this.consoleErr = err;
         this.consolePrompt = prompt;
-        initialize(consoleSettingsToUse);
-    }
-
-    /**
-     * Initialization common to both constructors.
-     * 
-     * @param consoleSettingsToUse the object containing the console settings to
-     *            use
-     */
-    private void initialize(ConsoleSettings consoleSettingsToUse)
-    {
         this.setDaemon(true);
-        this.consoleSettings = consoleSettingsToUse;
-        String timestampFormatString = this.consoleSettings.getTimestampFormat();
-        if (timestampFormatString.length() > 0)
-        {
-            this.timestampFormat = new SimpleDateFormat(timestampFormatString);
-            this.showTimestamp = true;
-        }
-        else
-        {
-            this.showTimestamp = false;
-        }
     }
 
     /**
@@ -323,7 +284,7 @@ public class Shell extends Thread
      */
     public void processCommandLine(String commandLine) throws NoSuchCommandException
     {
-        this.consolePrompt.println(timestamp() + this.hostname + PROMPT + commandLine);
+        this.consolePrompt.println(this.hostname + PROMPT + commandLine);
         this.commandRegistry.getHandlerFor(commandLine).handle(commandLine, this);
     }
 
@@ -351,7 +312,7 @@ public class Shell extends Thread
         {
             this.consolePrompt.println();
         }
-        this.consolePrompt.print(timestamp() + preprompt + PROMPT);
+        this.consolePrompt.print(preprompt + PROMPT);
         this.midLine = true;
     }
 
@@ -406,7 +367,7 @@ public class Shell extends Thread
         {
             this.consoleOut.println();
         }
-        this.consoleOut.println(timestamp() + message);
+        this.consoleOut.println(message);
         this.midLine = false;
     }
 
@@ -422,7 +383,7 @@ public class Shell extends Thread
         {
             this.consoleErr.println();
         }
-        this.consoleErr.println(timestamp() + message);
+        this.consoleErr.println(message);
         this.midLine = false;
     }
 
@@ -457,19 +418,6 @@ public class Shell extends Thread
     public Core getCore()
     {
         return this.core;
-    }
-
-    /**
-     * @return timestamp in specified long or short format
-     */
-    private String timestamp()
-    {
-        if (this.showTimestamp)
-        {
-            return '[' + this.timestampFormat.format(new Date()) + RBRACKET_SPACE;
-        }
-        // (otherwise...)
-        return EMPTY_STRING;
     }
     
     /**
