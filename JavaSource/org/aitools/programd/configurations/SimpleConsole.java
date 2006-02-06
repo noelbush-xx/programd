@@ -10,8 +10,6 @@
 package org.aitools.programd.configurations;
 
 import java.net.URL;
-import java.util.logging.Handler;
-import java.util.logging.Logger;
 
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
@@ -39,18 +37,10 @@ public class SimpleConsole
     /** The console. */
     private Console console;
 
-    private SimpleConsole(String corePropertiesPath, String consolePropertiesPath)
+    private SimpleConsole(String corePropertiesPath)
     {
-        // Remove all Handlers from the root logger.
-        Logger rootLogger = Logger.getLogger("");
-        Handler[] handlers = rootLogger.getHandlers();
-        for (int index = 0; index < handlers.length; index++)
-        {
-            rootLogger.removeHandler(handlers[index]);
-        }
-
         URL baseURL = URITools.createValidURL(System.getProperty("user.dir"));
-        this.console = new Console(URITools.contextualize(baseURL, consolePropertiesPath));
+        this.console = new Console();
         this.core = new Core(baseURL, URITools.createValidURL(corePropertiesPath));
         this.console.attachTo(this.core);
     }
@@ -71,7 +61,6 @@ public class SimpleConsole
         System.out.println("Start up a simple console version of Program D using the specified config files.");
         System.out.println();
         System.out.println("  -c, --core-properties     the path to the core configuration (XML properties) file");
-        System.out.println("  -n, --console-properties  the path to the console configuration (XML properties) file");
         System.out.println();
         System.out.println("Report bugs to <programd@aitools.org>");
     }
@@ -80,7 +69,6 @@ public class SimpleConsole
      * Starts up the SimpleConsole configuration. Required arguments are:
      * <ul>
      * <li><code>-c, --core-properties     the path to the core configuration (XML properties) file</code></li>
-     * <li><code>-n, --console-properties  the path to the console configuration (XML properties) file</code></li>
      * </ul>
      * 
      * @param argv
@@ -88,12 +76,10 @@ public class SimpleConsole
     public static void main(String[] argv)
     {
         String corePropertiesPath = null;
-        String consolePropertiesPath = null;
 
         int opt;
-        LongOpt[] longopts = new LongOpt[2];
+        LongOpt[] longopts = new LongOpt[1];
         longopts[0] = new LongOpt("core-properties", LongOpt.REQUIRED_ARGUMENT, null, 'c');
-        longopts[1] = new LongOpt("console-properties", LongOpt.REQUIRED_ARGUMENT, null, 'n');
 
         Getopt getopt = new Getopt("simple-console", argv, ":c:n:", longopts);
 
@@ -103,10 +89,6 @@ public class SimpleConsole
             {
                 case 'c':
                     corePropertiesPath = getopt.getOptarg();
-                    break;
-
-                case 'n':
-                    consolePropertiesPath = getopt.getOptarg();
                     break;
             }
         }
@@ -118,14 +100,7 @@ public class SimpleConsole
             System.exit(1);
         }
 
-        if (consolePropertiesPath == null)
-        {
-            System.err.println("You must specify a console properties path.");
-            usage();
-            System.exit(1);
-        }
-
-        SimpleConsole console = new SimpleConsole(corePropertiesPath, consolePropertiesPath);
+        SimpleConsole console = new SimpleConsole(corePropertiesPath);
         // Add a shutdown hook so the Core will be properly shut down if the
         // system exits.
         Runtime.getRuntime().addShutdownHook(new CoreShutdownHook(console.core));

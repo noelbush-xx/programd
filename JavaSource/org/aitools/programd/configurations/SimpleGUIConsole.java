@@ -10,8 +10,6 @@
 package org.aitools.programd.configurations;
 
 import java.net.URL;
-import java.util.logging.Handler;
-import java.util.logging.Logger;
 
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
@@ -39,18 +37,10 @@ public class SimpleGUIConsole
     /** The console. */
     private GUIConsole console;
 
-    private SimpleGUIConsole(String corePropertiesPath, String consolePropertiesPath)
+    private SimpleGUIConsole(String corePropertiesPath)
     {
-        // Remove all Handlers from the root logger.
-        Logger rootLogger = Logger.getLogger("");
-        Handler[] handlers = rootLogger.getHandlers();
-        for (int index = 0; index < handlers.length; index++)
-        {
-            rootLogger.removeHandler(handlers[index]);
-        }
-
         URL baseURL = URITools.createValidURL(System.getProperty("user.dir"));
-        this.console = new GUIConsole(URITools.contextualize(baseURL, consolePropertiesPath));
+        this.console = new GUIConsole();
         this.core = new Core(baseURL, URITools.createValidURL(corePropertiesPath));
         this.console.attachTo(this.core);
     }
@@ -71,7 +61,6 @@ public class SimpleGUIConsole
         System.out.println("Start up a simple console version of Program D using the specified config files.");
         System.out.println();
         System.out.println("  -c, --core-properties     the path to the core configuration (XML properties) file");
-        System.out.println("  -n, --console-properties  the path to the console configuration (XML properties) file");
         System.out.println();
         System.out.println("Report bugs to <programd@aitools.org>");
     }
@@ -88,12 +77,10 @@ public class SimpleGUIConsole
     public static void main(String[] argv)
     {
         String corePropertiesPath = null;
-        String consolePropertiesPath = null;
 
         int opt;
-        LongOpt[] longopts = new LongOpt[2];
+        LongOpt[] longopts = new LongOpt[1];
         longopts[0] = new LongOpt("core-properties", LongOpt.REQUIRED_ARGUMENT, null, 'c');
-        longopts[1] = new LongOpt("console-properties", LongOpt.REQUIRED_ARGUMENT, null, 'n');
 
         Getopt getopt = new Getopt("simple-gui-console", argv, ":c:n:", longopts);
 
@@ -103,10 +90,6 @@ public class SimpleGUIConsole
             {
                 case 'c':
                     corePropertiesPath = getopt.getOptarg();
-                    break;
-
-                case 'n':
-                    consolePropertiesPath = getopt.getOptarg();
                     break;
             }
         }
@@ -118,14 +101,7 @@ public class SimpleGUIConsole
             System.exit(1);
         }
 
-        if (consolePropertiesPath == null)
-        {
-            System.err.println("You must specify a console properties path.");
-            usage();
-            System.exit(1);
-        }
-
-        SimpleGUIConsole console = new SimpleGUIConsole(corePropertiesPath, consolePropertiesPath);
+        SimpleGUIConsole console = new SimpleGUIConsole(corePropertiesPath);
         // Add a shutdown hook so the Core will be properly shut down if the
         // system exits.
         Runtime.getRuntime().addShutdownHook(new CoreShutdownHook(console.core));
