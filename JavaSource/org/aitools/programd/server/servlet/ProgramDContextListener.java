@@ -15,7 +15,6 @@ import javax.servlet.ServletContextListener;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.util.URITools;
-import org.apache.log4j.Logger;
 
 /**
  * @author <a href="mailto:noel@x-31.com">Noel Bush</a>
@@ -35,14 +34,13 @@ public class ProgramDContextListener implements ServletContextListener
     {
         this.context = sce.getServletContext();
 
-        Logger logger = Logger.getLogger("programd");
-        logger.info("Configuring Program D Core from servlet context listener.");
+        this.context.log("Configuring Program D Core from servlet context listener.");
         
         // Check for the config parameter.
         String config = this.context.getInitParameter(PARAM_CORE_CONFIG);
         if (config == null || config.length() == 0)
         {
-            logger.error("No \"" + PARAM_CORE_CONFIG + "\" init-param specified for Program D.  Cannot continue.");
+            this.context.log("No \"" + PARAM_CORE_CONFIG + "\" init-param specified for Program D.  Cannot continue.");
             return;
         }
         
@@ -54,7 +52,7 @@ public class ProgramDContextListener implements ServletContextListener
         }
         catch (MalformedURLException e)
         {
-            logger.info("Error when getting base URL!", e);
+            this.context.log("Error when getting base URL!", e);
             return;
         }
 
