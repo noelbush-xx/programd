@@ -10,6 +10,7 @@
 package org.aitools.programd.util;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
@@ -26,6 +27,9 @@ import java.util.Properties;
  */
 abstract public class Settings
 {
+    /** Path to the properties. */
+    protected URL path;
+    
     /** The properties. */
     protected Properties properties;
 
@@ -34,6 +38,14 @@ abstract public class Settings
      */
     public Settings()
     {
+        try
+        {
+            this.path = new URL("file:" + System.getProperty("user.dir"));
+        }
+        catch (MalformedURLException e)
+        {
+            assert false : "There is no current working directory!";
+        }
         this.properties = new Properties();
         initialize();
     }
@@ -46,6 +58,7 @@ abstract public class Settings
      */
     public Settings(URL propertiesPath)
     {
+        this.path = propertiesPath;
         this.properties = new Properties();
         try
         {
