@@ -9,12 +9,17 @@
  
 package org.aitools.programd;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+
+import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.UserError;
 
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2005-08-06T13:39:56.319-04:00
+ * Automatically generated from properties file, 2006-02-06T12:10:03.601-05:00
  */
 public class CoreSettings extends Settings
 {
@@ -26,17 +31,17 @@ public class CoreSettings extends Settings
     /**
      * The namespace URI of AIML to use.
      */
-    private String aimlSchemaNamespaceUri;
+    private URI aimlSchemaNamespaceUri;
         
     /**
      * The location of the AIML schema (or a copy of it).
      */
-    private String aimlSchemaLocation;
+    private URL aimlSchemaLocation;
         
     /**
      * The bot configuration startup file.
      */
-    private String startupFilePath;
+    private URL startupFilePath;
         
     /**
      * What to do when a category is loaded whose pattern:that:topic path is identical to one already loaded (for the same bot).
@@ -145,7 +150,7 @@ public class CoreSettings extends Settings
     private String multiplexorClassname;
         
     /**
-     * The subdirectory in which to save flat-file predicates (FFM only).
+     * The directory in which to save flat-file predicates (FFM only).
      */
     private String multiplexorFfmDir;
         
@@ -163,6 +168,11 @@ public class CoreSettings extends Settings
      * The maximum size of the cache before writing to disk/database.
      */
     private int predicateCacheMax;
+        
+    /**
+     * Use interactive command-line shell?
+     */
+    private boolean consoleUseShell;
         
     /**
      * The directory in which to execute <system> commands.
@@ -188,41 +198,6 @@ public class CoreSettings extends Settings
      * The delay period when checking changed AIML (milliseconds).
      */
     private int watcherTimer;
-        
-    /**
-     * The main Program D log file.
-     */
-    private String activityLogPattern;
-        
-    /**
-     * The date-time format to use in general logs.
-     */
-    private String logTimestampFormat;
-        
-    /**
-     * The subdirectory for chat logs.
-     */
-    private String chatLogDirectory;
-        
-    /**
-     * The date-time format to use in chat logs.
-     */
-    private String chatLogTimestampFormat;
-        
-    /**
-     * Enable chat logging to plain text files?
-     */
-    private boolean chatLogToPlainText;
-        
-    /**
-     * Enable chat logging to XML?
-     */
-    private boolean chatLogToXml;
-        
-    /**
-     * Enable chat logging to the database?
-     */
-    private boolean chatLogToDatabase;
         
     /**
      * The URL of the database to use.
@@ -252,17 +227,7 @@ public class CoreSettings extends Settings
     /**
      * Configuration file for plugins.
      */
-    private String confLocationPlugins;
-        
-    /**
-     * Configuration file for HTMLResponder.
-     */
-    private String confLocationHtmlResponder;
-        
-    /**
-     * Configuration file for FlashResponder.
-     */
-    private String confLocationFlashResponder;
+    private URL confLocationPlugins;
         
     /**
      * Creates a <code>CoreSettings</code> using default property values.
@@ -291,11 +256,18 @@ public class CoreSettings extends Settings
     {
         setRootDirectory(this.properties.getProperty("programd.root-directory", ".."));
 
-        setAimlSchemaNamespaceUri(this.properties.getProperty("programd.aiml-schema.namespace-uri", "http://alicebot.org/2001/AIML-1.0.1"));
+        try
+        {
+            setAimlSchemaNamespaceUri(new URI(this.properties.getProperty("programd.aiml-schema.namespace-uri", "http://alicebot.org/2001/AIML-1.0.1")));
+        }
+        catch (URISyntaxException e)
+        {
+            throw new UserError(e);
+        }
 
-        setAimlSchemaLocation(this.properties.getProperty("programd.aiml-schema.location", "resources/schema/AIML.xsd"));
+        setAimlSchemaLocation(URITools.contextualize(this.path, this.properties.getProperty("programd.aiml-schema.location", "resources/schema/AIML.xsd")));
 
-        setStartupFilePath(this.properties.getProperty("programd.startup-file-path", "conf/bots.xml"));
+        setStartupFilePath(URITools.contextualize(this.path, this.properties.getProperty("programd.startup-file-path", "bots.xml")));
 
         String mergePolicyValue = this.properties.getProperty("programd.merge.policy", "combine");
          
@@ -357,7 +329,7 @@ public class CoreSettings extends Settings
 
         setJavascriptAllowed(Boolean.valueOf(this.properties.getProperty("programd.javascript-allowed", "false")).booleanValue());
 
-        setGossipPath(this.properties.getProperty("programd.gossip.path", "logs/gossip.txt"));
+        setGossipPath(this.properties.getProperty("programd.gossip.path", "/var/log/programd/gossip.txt"));
 
         setConnectString(this.properties.getProperty("programd.connect-string", "CONNECT"));
 
@@ -365,7 +337,7 @@ public class CoreSettings extends Settings
 
         setMultiplexorClassname(this.properties.getProperty("programd.multiplexor-classname", "org.aitools.programd.multiplexor.FlatFileMultiplexor"));
 
-        setMultiplexorFfmDir(this.properties.getProperty("programd.multiplexor.ffm-dir", "ffm"));
+        setMultiplexorFfmDir(this.properties.getProperty("programd.multiplexor.ffm-dir", "/var/programd/ffm"));
 
         setHeartEnabled(Boolean.valueOf(this.properties.getProperty("programd.heart.enabled", "false")).booleanValue());
 
@@ -387,6 +359,8 @@ public class CoreSettings extends Settings
             setPredicateCacheMax(500);
         }
 
+        setConsoleUseShell(Boolean.valueOf(this.properties.getProperty("programd.console.use-shell", "true")).booleanValue());
+
         setSystemInterpreterDirectory(this.properties.getProperty("programd.system-interpreter.directory", "."));
 
         setSystemInterpreterPrefix(this.properties.getProperty("programd.system-interpreter.prefix", ""));
@@ -403,20 +377,6 @@ public class CoreSettings extends Settings
         {
             setWatcherTimer(2000);
         }
-
-        setActivityLogPattern(this.properties.getProperty("programd.activity.log.pattern", "logs/activity-%g.log"));
-
-        setLogTimestampFormat(this.properties.getProperty("programd.log.timestamp-format", "yyyy-MM-dd H:mm:ss"));
-
-        setChatLogDirectory(this.properties.getProperty("programd.chat.log.directory", "logs/chat"));
-
-        setChatLogTimestampFormat(this.properties.getProperty("programd.chat.log.timestamp-format", "yyyy-MM-dd H:mm:ss"));
-
-        setChatLogToPlainText(Boolean.valueOf(this.properties.getProperty("programd.chat.log.to-plain-text", "true")).booleanValue());
-
-        setChatLogToXml(Boolean.valueOf(this.properties.getProperty("programd.chat.log.to-xml", "true")).booleanValue());
-
-        setChatLogToDatabase(Boolean.valueOf(this.properties.getProperty("programd.chat.log.to-database", "false")).booleanValue());
 
         setDatabaseUrl(this.properties.getProperty("programd.database.url", "jdbc:mysql:///programdbot"));
 
@@ -435,11 +395,7 @@ public class CoreSettings extends Settings
 
         setDatabasePassword(this.properties.getProperty("programd.database.password", "yourpassword"));
 
-        setConfLocationPlugins(this.properties.getProperty("programd.conf-location.plugins", "conf/plugins.xml"));
-
-        setConfLocationHtmlResponder(this.properties.getProperty("programd.conf-location.html-responder", "conf/html-responder.xml"));
-
-        setConfLocationFlashResponder(this.properties.getProperty("programd.conf-location.flash-responder", "conf/flash-responder.xml"));
+        setConfLocationPlugins(URITools.contextualize(this.path, this.properties.getProperty("programd.conf-location.plugins", "plugins.xml")));
 
     }
 
@@ -454,7 +410,7 @@ public class CoreSettings extends Settings
     /**
      * @return the value of aimlSchemaNamespaceUri
      */
-    public String getAimlSchemaNamespaceUri()
+    public URI getAimlSchemaNamespaceUri()
     {
         return this.aimlSchemaNamespaceUri;
     }
@@ -462,7 +418,7 @@ public class CoreSettings extends Settings
     /**
      * @return the value of aimlSchemaLocation
      */
-    public String getAimlSchemaLocation()
+    public URL getAimlSchemaLocation()
     {
         return this.aimlSchemaLocation;
     }
@@ -470,7 +426,7 @@ public class CoreSettings extends Settings
     /**
      * @return the value of startupFilePath
      */
-    public String getStartupFilePath()
+    public URL getStartupFilePath()
     {
         return this.startupFilePath;
     }
@@ -652,6 +608,14 @@ public class CoreSettings extends Settings
     }
 
     /**
+     * @return the value of consoleUseShell
+     */
+    public boolean consoleUseShell()
+    {
+        return this.consoleUseShell;
+    }
+
+    /**
      * @return the value of systemInterpreterDirectory
      */
     public String getSystemInterpreterDirectory()
@@ -689,62 +653,6 @@ public class CoreSettings extends Settings
     public int getWatcherTimer()
     {
         return this.watcherTimer;
-    }
-
-    /**
-     * @return the value of activityLogPattern
-     */
-    public String getActivityLogPattern()
-    {
-        return this.activityLogPattern;
-    }
-
-    /**
-     * @return the value of logTimestampFormat
-     */
-    public String getLogTimestampFormat()
-    {
-        return this.logTimestampFormat;
-    }
-
-    /**
-     * @return the value of chatLogDirectory
-     */
-    public String getChatLogDirectory()
-    {
-        return this.chatLogDirectory;
-    }
-
-    /**
-     * @return the value of chatLogTimestampFormat
-     */
-    public String getChatLogTimestampFormat()
-    {
-        return this.chatLogTimestampFormat;
-    }
-
-    /**
-     * @return the value of chatLogToPlainText
-     */
-    public boolean chatLogToPlainText()
-    {
-        return this.chatLogToPlainText;
-    }
-
-    /**
-     * @return the value of chatLogToXml
-     */
-    public boolean chatLogToXml()
-    {
-        return this.chatLogToXml;
-    }
-
-    /**
-     * @return the value of chatLogToDatabase
-     */
-    public boolean chatLogToDatabase()
-    {
-        return this.chatLogToDatabase;
     }
 
     /**
@@ -790,25 +698,9 @@ public class CoreSettings extends Settings
     /**
      * @return the value of confLocationPlugins
      */
-    public String getConfLocationPlugins()
+    public URL getConfLocationPlugins()
     {
         return this.confLocationPlugins;
-    }
-
-    /**
-     * @return the value of confLocationHtmlResponder
-     */
-    public String getConfLocationHtmlResponder()
-    {
-        return this.confLocationHtmlResponder;
-    }
-
-    /**
-     * @return the value of confLocationFlashResponder
-     */
-    public String getConfLocationFlashResponder()
-    {
-        return this.confLocationFlashResponder;
     }
 
     /**
@@ -822,7 +714,7 @@ public class CoreSettings extends Settings
     /**
      * @param aimlSchemaNamespaceUriToSet   the value to which to set aimlSchemaNamespaceUri
      */
-    public void setAimlSchemaNamespaceUri(String aimlSchemaNamespaceUriToSet)
+    public void setAimlSchemaNamespaceUri(URI aimlSchemaNamespaceUriToSet)
     {
         this.aimlSchemaNamespaceUri = aimlSchemaNamespaceUriToSet;
     }
@@ -830,7 +722,7 @@ public class CoreSettings extends Settings
     /**
      * @param aimlSchemaLocationToSet   the value to which to set aimlSchemaLocation
      */
-    public void setAimlSchemaLocation(String aimlSchemaLocationToSet)
+    public void setAimlSchemaLocation(URL aimlSchemaLocationToSet)
     {
         this.aimlSchemaLocation = aimlSchemaLocationToSet;
     }
@@ -838,7 +730,7 @@ public class CoreSettings extends Settings
     /**
      * @param startupFilePathToSet   the value to which to set startupFilePath
      */
-    public void setStartupFilePath(String startupFilePathToSet)
+    public void setStartupFilePath(URL startupFilePathToSet)
     {
         this.startupFilePath = startupFilePathToSet;
     }
@@ -1020,6 +912,14 @@ public class CoreSettings extends Settings
     }
 
     /**
+     * @param consoleUseShellToSet   the value to which to set consoleUseShell
+     */
+    public void setConsoleUseShell(boolean consoleUseShellToSet)
+    {
+        this.consoleUseShell = consoleUseShellToSet;
+    }
+
+    /**
      * @param systemInterpreterDirectoryToSet   the value to which to set systemInterpreterDirectory
      */
     public void setSystemInterpreterDirectory(String systemInterpreterDirectoryToSet)
@@ -1057,62 +957,6 @@ public class CoreSettings extends Settings
     public void setWatcherTimer(int watcherTimerToSet)
     {
         this.watcherTimer = watcherTimerToSet;
-    }
-
-    /**
-     * @param activityLogPatternToSet   the value to which to set activityLogPattern
-     */
-    public void setActivityLogPattern(String activityLogPatternToSet)
-    {
-        this.activityLogPattern = activityLogPatternToSet;
-    }
-
-    /**
-     * @param logTimestampFormatToSet   the value to which to set logTimestampFormat
-     */
-    public void setLogTimestampFormat(String logTimestampFormatToSet)
-    {
-        this.logTimestampFormat = logTimestampFormatToSet;
-    }
-
-    /**
-     * @param chatLogDirectoryToSet   the value to which to set chatLogDirectory
-     */
-    public void setChatLogDirectory(String chatLogDirectoryToSet)
-    {
-        this.chatLogDirectory = chatLogDirectoryToSet;
-    }
-
-    /**
-     * @param chatLogTimestampFormatToSet   the value to which to set chatLogTimestampFormat
-     */
-    public void setChatLogTimestampFormat(String chatLogTimestampFormatToSet)
-    {
-        this.chatLogTimestampFormat = chatLogTimestampFormatToSet;
-    }
-
-    /**
-     * @param chatLogToPlainTextToSet   the value to which to set chatLogToPlainText
-     */
-    public void setChatLogToPlainText(boolean chatLogToPlainTextToSet)
-    {
-        this.chatLogToPlainText = chatLogToPlainTextToSet;
-    }
-
-    /**
-     * @param chatLogToXmlToSet   the value to which to set chatLogToXml
-     */
-    public void setChatLogToXml(boolean chatLogToXmlToSet)
-    {
-        this.chatLogToXml = chatLogToXmlToSet;
-    }
-
-    /**
-     * @param chatLogToDatabaseToSet   the value to which to set chatLogToDatabase
-     */
-    public void setChatLogToDatabase(boolean chatLogToDatabaseToSet)
-    {
-        this.chatLogToDatabase = chatLogToDatabaseToSet;
     }
 
     /**
@@ -1158,25 +1002,9 @@ public class CoreSettings extends Settings
     /**
      * @param confLocationPluginsToSet   the value to which to set confLocationPlugins
      */
-    public void setConfLocationPlugins(String confLocationPluginsToSet)
+    public void setConfLocationPlugins(URL confLocationPluginsToSet)
     {
         this.confLocationPlugins = confLocationPluginsToSet;
-    }
-
-    /**
-     * @param confLocationHtmlResponderToSet   the value to which to set confLocationHtmlResponder
-     */
-    public void setConfLocationHtmlResponder(String confLocationHtmlResponderToSet)
-    {
-        this.confLocationHtmlResponder = confLocationHtmlResponderToSet;
-    }
-
-    /**
-     * @param confLocationFlashResponderToSet   the value to which to set confLocationFlashResponder
-     */
-    public void setConfLocationFlashResponder(String confLocationFlashResponderToSet)
-    {
-        this.confLocationFlashResponder = confLocationFlashResponderToSet;
     }
 
 }
