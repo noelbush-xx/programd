@@ -9,8 +9,6 @@
 
 package org.aitools.programd.bot;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,23 +18,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.aitools.programd.CoreSettings;
 import org.aitools.programd.graph.Nodemapper;
-import org.aitools.programd.logging.DatabaseChatLogHandler;
-import org.aitools.programd.logging.SimpleChatLogFormatter;
-import org.aitools.programd.logging.XMLChatLogFormatter;
 import org.aitools.programd.multiplexor.PredicateInfo;
 import org.aitools.programd.multiplexor.PredicateMap;
 import org.aitools.programd.processor.Processor;
 import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.InputNormalizer;
 import org.aitools.programd.util.Substituter;
-import org.aitools.programd.util.UserError;
 
 /**
  * Handles all of the properties of a bot.
@@ -92,9 +83,6 @@ public class Bot
     /** The predicate empty default. */
     protected String predicateEmptyDefault;
 
-    /** The XML chat logger for this bot. */
-    private Logger logger;
-
     /** An empty string. */
     private static final String EMPTY_STRING = "";
 
@@ -109,56 +97,6 @@ public class Bot
     {
         this.id = botID;
         this.predicateEmptyDefault = coreSettings.getPredicateEmptyDefault();
-        String chatlogDirectoryName = coreSettings.getChatLogDirectory();
-
-        this.logger = Logger.getLogger("programd.chat." + this.id);
-        this.logger.setUseParentHandlers(false);
-        File chatlogDirectory = FileManager.checkOrCreateDirectory(chatlogDirectoryName,
-                "chat log directory");
-
-        String chatlogDirectoryPath = chatlogDirectory.getAbsolutePath();
-
-        // Set up plain text logging of chat.
-        if (coreSettings.chatLogToPlainText())
-        {
-            FileHandler chatLogFileHandler;
-            try
-            {
-                chatLogFileHandler = new FileHandler(chatlogDirectoryPath + File.separator
-                        + this.id + "-%g.log", 1048576, 10, true);
-            }
-            catch (IOException e)
-            {
-                throw new UserError("Could not create XML chat log for bot \"" + this.id
-                        + "\" in \"" + chatlogDirectory + "\"!", e);
-            }
-            chatLogFileHandler.setFormatter(new SimpleChatLogFormatter(coreSettings));
-            this.logger.addHandler(chatLogFileHandler);
-        }
-
-        // Set up XML logging of chat.
-        if (coreSettings.chatLogToXml())
-        {
-            FileHandler xmlChatLogFileHandler;
-            try
-            {
-                xmlChatLogFileHandler = new FileHandler(chatlogDirectoryPath + File.separator
-                        + this.id + "-%g.xml", 1048576, 10, false);
-            }
-            catch (IOException e)
-            {
-                throw new UserError("Could not create XML chat log for bot \"" + this.id
-                        + "\" in \"" + chatlogDirectory + "\"!", e);
-            }
-            xmlChatLogFileHandler.setFormatter(new XMLChatLogFormatter());
-            this.logger.addHandler(xmlChatLogFileHandler);
-        }
-
-        // Set up XML logging of chat.
-        if (coreSettings.chatLogToDatabase())
-        {
-            this.logger.addHandler(new DatabaseChatLogHandler(coreSettings));
-        }
     }
 
     /**
@@ -169,14 +107,6 @@ public class Bot
     public String getID()
     {
         return this.id;
-    }
-
-    /**
-     * @return the chat logger for this bot
-     */
-    public Logger getLogger()
-    {
-        return this.logger;
     }
 
     /**
