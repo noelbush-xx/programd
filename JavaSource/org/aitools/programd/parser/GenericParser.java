@@ -175,6 +175,12 @@ abstract public class GenericParser<P extends Processor>
         evaluate(document);
     }
 
+    /**
+     * Sets the current docURL to the given URL, contextualizing
+     * the given URL with respect to the current docURL (if set).
+     * 
+     * @param url
+     */
     private void contextualize(URL url)
     {
         if (url != null)
