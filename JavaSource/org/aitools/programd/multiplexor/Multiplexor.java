@@ -19,7 +19,7 @@ import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.graph.Match;
-import org.aitools.programd.logging.ChatLogRecord;
+import org.aitools.programd.logging.ChatLogEvent;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.parser.TemplateParserException;
 import org.aitools.programd.processor.ProcessorException;
@@ -70,38 +70,11 @@ abstract public class Multiplexor
     /** An empty string. */
     protected static final String EMPTY_STRING = "";
 
-    /** A space. */
-    protected static final String SPACE = " ";
-
     /** The word &quot;value&quot;. */
     protected static final String VALUE = "value";
 
     /** An asterisk (used in String production) */
     protected static final String ASTERISK = "*";
-
-    /** A quote mark. */
-    protected static final String QUOTE_MARK = "\"";
-
-    /** The string &quot;{@value}&quot;. */
-    protected static final String PROMPT = "> ";
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String LABEL_MATCH = "Match: ";
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String LABEL_FILENAME = "Filename: ";
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String RESPONSE_SPACE = "Response ";
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String SPACE_IN_SPACE = " in ";
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String MS_AVERAGE = " ms. (Average: ";
-
-    /* The string &quot; ms).&quot; */
-    private static final String MS = " ms.)";
 
     /** The predicate empty default. */
     protected String predicateEmptyDefault;
@@ -313,7 +286,8 @@ abstract public class Multiplexor
             // Calculate the average response time.
             this.totalTime += time;
             this.avgResponseTime = (float) this.totalTime / (float) this.responseCount;
-            this.logger.debug(RESPONSE_SPACE + this.responseCount + SPACE_IN_SPACE + time + MS_AVERAGE + this.avgResponseTime + MS);
+            this.logger.debug(String.format("Response %d in %dms. (Average: %.2fms)",
+                    this.responseCount, time, this.avgResponseTime));
         }
 
         // Invoke targeting if appropriate.
@@ -386,8 +360,8 @@ abstract public class Multiplexor
         // Always show the input path (in any case, if match trace is on).
         if (this.recordMatchTrace)
         {
-            this.logger.debug(userid + PROMPT + input + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + that + SPACE
-                    + Graphmaster.PATH_SEPARATOR + SPACE + topic + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + botid);
+            this.logger.debug(String.format("%s> %s : %s : %s : %s",
+                    userid, input, that, topic, botid));
         }
 
         Match match = null;
@@ -410,8 +384,8 @@ abstract public class Multiplexor
 
         if (this.recordMatchTrace)
         {
-            this.logger.debug(LABEL_MATCH + match.getPath());
-            this.logger.debug(LABEL_FILENAME + QUOTE_MARK + match.getFileName() + QUOTE_MARK);
+            this.logger.debug(String.format("Match: %s (\"%s\")",
+                    match.getPath(), match.getFileName()));
         }
 
         ArrayList<String> stars = match.getInputStars();
@@ -487,7 +461,7 @@ abstract public class Multiplexor
      */
     private void logResponse(String input, String response, String userid, String botid)
     {
-        this.bots.getBot(botid).getLogger().log(new ChatLogRecord(botid, userid, input, response));
+        this.logger.info(new ChatLogEvent(this.logger, botid, userid, input, response));
     }
 
     /**
