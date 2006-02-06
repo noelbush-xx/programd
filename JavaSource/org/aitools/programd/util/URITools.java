@@ -178,18 +178,38 @@ public class URITools
         }
         if (probablyIsNotFile(context))
         {
+            URI resolved;
             try
             {
-                return new URL(context.getProtocol(), context.getHost(), context.getPort(), context.getFile() + SLASH).toURI().resolve(subject).toURL();
+                String contextString = context.toString();
+                int colon = contextString.indexOf(':');
+                if (colon > -1)
+                {
+                    resolved = new URI(context.getProtocol() + ':' + new URI(contextString.substring(colon + 1) + SLASH).resolve(subject).toString());
+                }
+                else
+                {
+                    resolved = context.toURI().resolve(subject);
+                }
+                
             }
             catch (URISyntaxException e)
             {
-                throw new DeveloperError("Context URL is malformed.", e);
+                throw new DeveloperError("Context URL is malformed. (\"" + context + "\")", e);
             }
-            catch (MalformedURLException e)
+            if (resolved.isAbsolute())
             {
-                throw new DeveloperError("Given subject cannot be contextualized in given context.", e);
+                try
+                {
+                    return resolved.toURL();
+                }
+                catch (MalformedURLException e)
+                {
+                    throw new DeveloperError("URI cannot be converted to URL (\"" + resolved.toString() + "\")", e);
+                }
             }
+            // otherwise...
+            throw new DeveloperError("URI is not absolute (\"" + resolved.toString() + "\")", new IllegalArgumentException());
         }
         // If the context *does* specify a file, then we need to remove it
         // first.
@@ -291,7 +311,7 @@ public class URITools
          * We first test the simpler cases that contextFile is "" or "/", or ends with "/".
          */
         int slash = file.lastIndexOf(SLASH);
-        return file.equals(EMPTY_STRING) || file.equals(SLASH) || file.endsWith(SLASH) ||
+        return slash == -1 || file.equals(EMPTY_STRING) || file.equals(SLASH) || file.endsWith(SLASH) ||
                 (slash < file.length() - 1 && !file.substring(slash).contains(DOT));
     }
 
