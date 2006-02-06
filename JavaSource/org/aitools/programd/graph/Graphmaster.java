@@ -148,7 +148,7 @@ public class Graphmaster
         this.noteEachMerge = settings.mergeNoteEach();
         this.responseTimeout = settings.getResponseTimeout();
         this.categoryLoadNotifyInterval = settings.getCategoryLoadNotifyInterval();
-        this.aimlNamespaceURI = settings.getAimlSchemaNamespaceUri();
+        this.aimlNamespaceURI = settings.getAimlSchemaNamespaceUri().toString();
     }
     
     /**
