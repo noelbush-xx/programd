@@ -1,0 +1,30 @@
+#!/bin/sh
+# ==========================================================================
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, 
+# USA.
+# ==========================================================================
+
+# This script launches a simple console-based version of Program D.
+# You can pipe input to stdin, and output and error from stdout and stderr.
+
+# Get "base" directory (root of Program D installation)
+BASE=`cd \`dirname $0\`/.. && echo \`pwd\``
+
+# Include utility functions.
+source $BASE/bin/common_functions.sh
+
+# Configuration
+MAIN_CLASS=org.aitools.programd.configurations.SimpleConsole
+START_MEM=128m
+MAX_MEM=256m
+CORE_CONF=$BASE/conf/core.xml
+
+# Start Program D using the SimpleConsole main class.
+start_programd $MAIN_CLASS $START_MEM $MAX_MEM $CORE_CONF
