@@ -21,8 +21,6 @@ public class ProcessorException extends Exception
 {
     private String offendingInput;
 
-    private static final String DUE_TO = " due to: ";
-
     /**
      * @param message the message describing the error
      * @param exception the exception that generated the error
@@ -72,7 +70,7 @@ public class ProcessorException extends Exception
         {
             return this.getMessage();
         }
-        return this.getMessage() + DUE_TO + this.offendingInput;
+        return String.format("\"%s\" due to \"%s\"", this.getMessage(), this.offendingInput);
     }
 
 }
