@@ -9,13 +9,12 @@
 
 package org.aitools.programd.interfaces;
 
-import java.io.PrintStream;
+import java.io.OutputStream;
 
 import org.aitools.programd.interfaces.shell.Shell;
 import org.apache.log4j.Level;
 import org.apache.log4j.WriterAppender;
 import org.apache.log4j.spi.LoggingEvent;
-import org.apache.log4j.varia.LevelRangeFilter;
 
 /**
  * A <code>ShellStreamAppender</code> publishes any record it's passed to the
@@ -32,25 +31,10 @@ public class ShellStreamAppender extends WriterAppender
 
     /**
      * Creates a new ShellStreamAppender.
-     * 
-     * @param stream the stream to handle
-     * @param min the minimum level to log (may be null for no minimum)
-     * @param max the maximum level to log (may be null for no maximum)
-     * @param settings the console settings to use to configure the console output
      */
-    public ShellStreamAppender(PrintStream stream, Level min, Level max, ConsoleSettings settings)
+    public ShellStreamAppender()
     {
-        super(new ConsoleLayout(settings), stream);
-        LevelRangeFilter filter = new LevelRangeFilter();
-        if (min != null)
-        {
-            filter.setLevelMin(min);
-        }
-        if (max != null)
-        {
-            filter.setLevelMax(max);
-        }
-        addFilter(filter);
+        super();
         setImmediateFlush(true);
         setThreshold(Level.ALL);
     }
@@ -67,8 +51,6 @@ public class ShellStreamAppender extends WriterAppender
 
     /**
      * Publishes the given record, also to the shell if one is attached.
-     * 
-     * @see java.util.logging.StreamHandler#publish(java.util.logging.LogRecord)
      */
     @Override
     public void doAppend(LoggingEvent event)
@@ -78,5 +60,18 @@ public class ShellStreamAppender extends WriterAppender
         {
             this.shell.gotLine();
         }
+    }
+    
+    public synchronized void setWriter(OutputStream stream)
+    {
+        super.setWriter(createWriter(stream));
+    }
+
+    /**
+     * @return whether the writer has been set
+     */
+    public boolean isWriterSet()
+    {
+        return this.qw != null;
     }
 }
