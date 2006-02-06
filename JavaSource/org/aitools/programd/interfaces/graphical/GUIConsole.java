@@ -22,8 +22,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
-import java.util.logging.Logger;
-import java.util.logging.Level;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -57,6 +55,8 @@ import org.aitools.programd.interfaces.shell.Shell;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.URITools;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * Provides a very simple GUI console for the bot.
@@ -75,9 +75,6 @@ public class GUIConsole extends JPanel
 
     /** The Shell that will (may) be used by the underlying console. */
     protected Shell shell;
-
-    /** The logger. */
-    protected static Logger logger = Logger.getLogger("programd");
 
     /** Where console messages will be displayed. */
     protected JTextArea display;
@@ -120,10 +117,8 @@ public class GUIConsole extends JPanel
 
     /**
      * Constructs a new simple console gui with a new shell.
-     * 
-     * @param consolePropertiesPath the path to the console properties file
      */
-    public GUIConsole(URL consolePropertiesPath)
+    public GUIConsole()
     {
         try
         {
@@ -166,7 +161,7 @@ public class GUIConsole extends JPanel
             throw new DeveloperError("Icon is missing from \"" + ICON_PATH + "\"!", new NullPointerException());
         }
 
-        this.console = new Console(consolePropertiesPath, this.outStream, this.errStream);
+        this.console = new Console(this.outStream, this.errStream);
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -385,9 +380,10 @@ public class GUIConsole extends JPanel
     public void attachTo(Core coreToUse)
     {
         this.core = coreToUse;
-        if (this.console.getSettings().useShell())
+        this.console.attachTo(this.core);
+        if (this.core.getSettings().consoleUseShell())
         {
-            this.shell = new Shell(this.console.getSettings(), this.inStream, this.outStream, this.errStream, this.promptStream);
+            this.shell = new Shell(this.inStream, this.outStream, this.errStream, this.promptStream);
             this.console.addShell(this.shell, coreToUse);
         }
         else
