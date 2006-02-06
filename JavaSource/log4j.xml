@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "http://logging.apache.org/log4j/log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+  
+  <!-- Program D will use the stdout and stderr appenders configured here
+       in a special way, routing error messages to stderr and everything
+       else to stdout, so leave this as-is if you want that behavior. -->
+
+  <!--The console output: stdout-->
+  <appender name="stdout" class="org.aitools.programd.interfaces.ShellStreamAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="[%d{ISO8601}] %p: %m%n"/>
+    </layout>
+    <filter class="org.apache.log4j.varia.LevelRangeFilter">
+      <param name="LevelMax" value="info"/>
+    </filter>
+  </appender>
+  
+  <!--The console output: stderr-->
+  <appender name="stderr" class="org.aitools.programd.interfaces.ShellStreamAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="[%d{ISO8601}] %p: %m%n"/>
+    </layout>
+    <filter class="org.apache.log4j.varia.LevelRangeFilter">
+      <param name="LevelMin" value="warn"/>
+    </filter>
+  </appender>
+  
+  <!--The main log file-->
+  <appender name="log" class="org.apache.log4j.RollingFileAppender">
+    <param name="File" value="/var/log/programd/activity.log"/>
+    <param name="MaxFileSize" value="10MB"/>
+    <param name="MaxBackupIndex" value="10"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="[%d{ISO8601}] %p: %m%n"/>
+    </layout>
+  </appender>
+  
+  <!--XML chat log file for a bot called SampleBot-->
+  <appender name="xmlchatSampleBot" class="org.apache.log4j.RollingFileAppender">
+    <param name="File" value="/var/log/programd/chat.xml"/>
+    <param name="MaxFileSize" value="10MB"/>
+    <param name="MaxBackupIndex" value="10"/>
+    <layout class="org.aitools.programd.logging.XMLChatLogLayout">
+      <param name="TimestampFormat" value="HH:mm:ss"/>
+    </layout>
+    <filter class="org.aitools.programd.logging.BotIDFilter">
+      <param name="BotID" value="SampleBot"/>
+    </filter>
+  </appender>
+  
+  <!--Plain text log file for a bot called SampleBot-->
+  <appender name="txtchatSampleBot" class="org.apache.log4j.RollingFileAppender">	
+    <param name="File" value="/var/log/programd/chat.log"/>
+    <param name="MaxFileSize" value="10MB"/>
+    <param name="MaxBackupIndex" value="10"/>
+    <layout class="org.aitools.programd.logging.SimpleChatLogLayout">
+      <param name="TimestampFormat" value="HH:mm:ss"/>
+    </layout>
+    <filter class="org.aitools.programd.logging.BotIDFilter">
+      <param name="BotID" value="SampleBot"/>
+    </filter>
+  </appender>
+  
+  <!--Database logging for a bot called SampleBot-->
+  
+  <!--Program D (remove/add what you like)-->
+  <logger name="programd">
+    <appender-ref ref="stdout"/>
+    <appender-ref ref="stderr"/>
+    <appender-ref ref="log"/>
+    <appender-ref ref="xmlchatSampleBot"/>
+    <appender-ref ref="txtchatSampleBot"/>
+  </logger>
+</log4j:configuration>
