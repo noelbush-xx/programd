@@ -47,8 +47,8 @@ GENERAL NOTES
     <!--The location of the AIML schema (or a copy of it). [URI: resources/schema/AIML.xsd]-->
     <entry key="programd.aiml-schema.location">resources/schema/AIML.xsd</entry>
     
-    <!--The bot configuration startup file. [URI: file:/var/programd/conf/bots.xml]--> 
-    <entry key="programd.startup-file-path">file:/home/noel/workspace/ProgramD/conf/bots.xml</entry>
+    <!--The bot configuration startup file. [URI: bots.xml]--> 
+    <entry key="programd.startup-file-path">bots.xml</entry>
     
     <!--What to do when a category is loaded whose pattern:that:topic path
         is identical to one already loaded (for the same bot).
@@ -134,7 +134,10 @@ GENERAL NOTES
     <!--The maximum size of the cache before writing to disk/database. [int: 500]-->
     <entry key="programd.predicate-cache.max">500</entry>
     
-        
+    <!-- Use interactive command-line shell? [boolean: true]-->
+    <entry key="programd.console.use-shell">true</entry>
+    
+            
     <!--
     INTERPRETER CONFIGURATION
     -->
@@ -161,48 +164,7 @@ GENERAL NOTES
     <!--The delay period when checking changed AIML (milliseconds). [int: 2000]
         * Only applicable if the AIML Watcher is enabled.-->
     <entry key="programd.watcher.timer">2000</entry>
-    
-    
-    <!--
-    LOGGING CONFIGURATION
-    For pattern syntax, see http://java.sun.com/j2se/1.5.0/docs/api/java/util/logging/FileHandler.html
-    -->
-    
-    <!--The main Program D log file. [String: /var/log/programd/programd-%g.log]-->
-    <entry key="programd.activity.log.pattern">/var/log/programd/programd-%g.log</entry>
-    
-    <!--The date-time format to use in general logs. [String: ISO8601]
-        * For best performance, use ABSOLUTE, DATE or ISO8601.
-          See http://logging.apache.org/log4j/docs/api/org/apache/log4j/PatternLayout.html
-          for details.
-        * Or see http://java.sun.com/jdk1.5.0/docs/api/java/text/SimpleDateFormat.html
-          for old-style formatting codes, but these will not be as fast.
-        * Setting the value to blank means no timestamp will be displayed.-->
-    <entry key="programd.log.timestamp-format">ISO8601</entry>
-
-    <!--The directory for chat logs. [String: /var/log/programd/chat]-->
-    <entry key="programd.chat.log.directory">/var/log/programd/chat</entry>
-
-    <!--The date-time format to use in chat logs. [String: yyyy-MM-dd H:mm:ss]
-        * See http://java.sun.com/jdk1.5.0/docs/api/java/text/SimpleDateFormat.html
-          for formatting codes.
-        * Setting the value to blank means no timestamp will be displayed.-->
-    <entry key="programd.chat.log.timestamp-format"></entry>
-
-    <!--Enable chat logging to plain text files? [boolean: true]-->
-    <entry key="programd.chat.log.to-plain-text">true</entry>
-    
-    <!--Enable chat logging to XML? [boolean: true]-->
-    <entry key="programd.chat.log.to-xml">true</entry>
-    
-    <!--
-    Database logging
-    -->
-    
-    <!--Enable chat logging to the database? [boolean: false]
-        * Be sure that the database configuration (later in this file) is valid.-->
-    <entry key="programd.chat.log.to-database">false</entry>
-    
+        
     
     <!--
     DATABASE CONFIGURATION
@@ -233,7 +195,7 @@ GENERAL NOTES
     OTHER CONFIGURATION FILE LOCATIONS
     -->
     
-    <!--Configuration file for plugins. [URI: file:/var/programd/conf/plugins.xml]-->
-    <entry key="programd.conf-location.plugins">file:/home/noel/workspace/ProgramD/conf/plugins.xml</entry>
+    <!--Configuration file for plugins. [URI: plugins.xml]-->
+    <entry key="programd.conf-location.plugins">plugins.xml</entry>
     
 </properties>
