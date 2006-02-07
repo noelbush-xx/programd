@@ -14,7 +14,7 @@ import java.net.URL;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.ext.DefaultHandler2;
 
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.graph.Graphmaster;
@@ -31,7 +31,7 @@ import org.aitools.programd.util.XMLKit;
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @version 4.5
  */
-public class AIMLReader extends DefaultHandler
+public class AIMLReader extends DefaultHandler2
 {
     private String defaultNamespaceURI;
     
@@ -69,22 +69,6 @@ public class AIMLReader extends DefaultHandler
     /** The system line separator. */
     protected static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    /** Parser states. */
-    private enum State
-    {
-    /** inside the pattern element */
-    IN_PATTERN,
-
-    /** inside the that element */
-    IN_THAT,
-
-    /** inside the template element */
-    IN_TEMPLATE,
-
-    /** inside an element that is not specially handled */
-    IN_UNHANDLED
-    }
-
     /** The string &quot;{@value}&quot;. */
     private static final String PATTERN = "pattern";
 
@@ -106,17 +90,17 @@ public class AIMLReader extends DefaultHandler
     /** The string &quot;{@value}&quot;. */
     private static final String NAME = "name";
 
-    /** The current state. */
-    private State state = State.IN_UNHANDLED;
-
     /** The most recently collected &lt;pattern&gt;&lt;/pattern&gt; contents. */
-    private StringBuffer patternBuffer;
+    private StringBuilder patternBuffer;
 
     /** The most recently collected &lt;that&gt;&lt;/that&gt; contents. */
-    private StringBuffer thatBuffer;
+    private StringBuilder thatBuffer;
 
     /** The most recently collected &lt;template&gt;&lt;/template&gt; contents. */
-    private StringBuffer templateBuffer;
+    private StringBuilder templateBuffer;
+    
+    /** A pointer to the current buffer. */
+    private StringBuilder currentBuffer;
 
     /** The finalized &lt;pattern&gt;&lt;/pattern&gt; contents. */
     private String pattern;
@@ -160,25 +144,78 @@ public class AIMLReader extends DefaultHandler
     @Override
     public void characters(char[] ch, int start, int length)
     {
-        String s = XMLKit.escapeXMLChars(new String(ch, start, length));
-
-        switch (this.state)
+        if (this.currentBuffer != null)
         {
-            case IN_PATTERN:
-                this.patternBuffer.append(s);
-                break;
+            this.currentBuffer.append(XMLKit.escapeXMLChars(new String(ch, start, length)));
+        }
+    }
 
-            case IN_THAT:
-                this.thatBuffer.append(s);
-                break;
+    /**
+     * @see org.xml.sax.ext.DefaultHandler2#startCDATA()
+     */
+    @Override
+    public void startCDATA()
+    {
+        assert this.currentBuffer != null : "Got CDATA start outside of a known element!";
+        this.currentBuffer.append(XMLKit.CDATA_START);
+    }
 
-            case IN_TEMPLATE:
-                this.templateBuffer.append(s);
-                break;
-                
-            case IN_UNHANDLED:
-                assert false;
-                break;
+    /**
+     * @see org.xml.sax.ext.DefaultHandler2#endCDATA()
+     */
+    @Override
+    public void endCDATA()
+    {
+        assert this.currentBuffer != null : "Got CDATA end outside of a known element!";
+        this.currentBuffer.append(XMLKit.CDATA_END);
+    }
+
+    /**
+     * @see org.xml.sax.ContentHandler#startElement(java.lang.String,
+     *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
+     */
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes attributes)
+    {
+        String elementName;
+        if (localName.equals(EMPTY_STRING))
+        {
+            elementName = qName;
+        }
+        else
+        {
+            elementName = localName;
+        }
+        if (elementName.equals(PATTERN))
+        {
+            this.currentBuffer = this.patternBuffer = new StringBuilder();
+        }
+        else if (elementName.equals(BOT) && this.currentBuffer != null && this.currentBuffer == this.patternBuffer)
+        {
+            // Insert the value of the given bot predicate (no warning if doesn't exist!).
+            this.patternBuffer.append(this.bot.getPropertyValue(attributes.getValue(NAME)));
+        }
+        else if (elementName.equals(THAT) && this.currentBuffer == null || this.currentBuffer != this.templateBuffer)
+        {
+            this.currentBuffer = this.thatBuffer = new StringBuilder();
+        }
+        else if (elementName.equals(TEMPLATE))
+        {
+            this.currentBuffer = this.templateBuffer = new StringBuilder();
+        }
+        else if (this.currentBuffer != null && this.currentBuffer == this.templateBuffer)
+        {
+            /* We don't want to parse the template into
+             * some big memory structure, since it may never be used. So
+             * we just reconstitute the XML text for later
+             * processing.
+             */
+            this.templateBuffer.append(XMLKit.renderStartTag(elementName, attributes, !uri.equals(this.defaultNamespaceURI), uri));
+        }
+        else if (elementName.equals(TOPIC))
+        {
+            // We don't check that it's valid, because it's supposed to have been schema-validated already!
+            this.topic = attributes.getValue(NAME);
         }
     }
 
@@ -199,15 +236,15 @@ public class AIMLReader extends DefaultHandler
             elementName = localName;
         }
 
-        if (this.state == State.IN_PATTERN)
+        if (this.currentBuffer != null && this.currentBuffer == this.patternBuffer)
         {
             this.pattern = XMLKit.filterWhitespace(this.patternBuffer.toString());
-            this.state = State.IN_UNHANDLED;
+            this.currentBuffer = null;
         }
-        else if (this.state == State.IN_THAT)
+        else if (this.currentBuffer != null && this.currentBuffer == this.thatBuffer)
         {
             this.that = XMLKit.filterWhitespace(this.thatBuffer.toString());
-            this.state = State.IN_UNHANDLED;
+            this.currentBuffer = null;
         }
         else if (elementName.equals(TEMPLATE))
         {
@@ -217,10 +254,9 @@ public class AIMLReader extends DefaultHandler
             this.graphmaster.addCategory(this.pattern, this.that, this.topic, this.template, this.botid, this.bot, this.path);
             // Reset the pattern, that and template.
             this.pattern = this.that = this.template = null;
-            this.patternBuffer = this.thatBuffer = this.templateBuffer = null;
-            this.state = State.IN_UNHANDLED;
+            this.currentBuffer = this.patternBuffer = this.thatBuffer = this.templateBuffer = null;
         }
-        else if (this.state == State.IN_TEMPLATE)
+        else if (this.currentBuffer != null && this.currentBuffer == this.templateBuffer)
         {
             // See if we are ending an empty element.
             boolean makeClosingTag = true;
@@ -255,61 +291,6 @@ public class AIMLReader extends DefaultHandler
         else if (elementName.equals(TOPIC))
         {
             this.topic = WILDCARD;
-        }
-    }
-
-    /**
-     * @see org.xml.sax.ContentHandler#startElement(java.lang.String,
-     *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
-     */
-    @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes)
-    {
-        String elementName;
-        if (localName.equals(EMPTY_STRING))
-        {
-            elementName = qName;
-        }
-        else
-        {
-            elementName = localName;
-        }
-        if (elementName.equals(PATTERN))
-        {
-            this.state = State.IN_PATTERN;
-            this.patternBuffer = null;
-            this.patternBuffer = new StringBuffer();
-        }
-        else if (elementName.equals(BOT) && this.state == State.IN_PATTERN)
-        {
-            // Insert the value of the given bot predicate (no warning if doesn't exist!).
-            this.patternBuffer.append(this.bot.getPropertyValue(attributes.getValue(NAME)));
-        }
-        else if (elementName.equals(THAT) && this.state != State.IN_TEMPLATE)
-        {
-            this.state = State.IN_THAT;
-            this.thatBuffer = null;
-            this.thatBuffer = new StringBuffer();
-        }
-        else if (elementName.equals(TEMPLATE))
-        {
-            this.state = State.IN_TEMPLATE;
-            this.templateBuffer = null;
-            this.templateBuffer = new StringBuffer();
-        }
-        else if (this.state == State.IN_TEMPLATE)
-        {
-            /* We don't want to parse the template into
-             * some big memory structure, since it may never be used. So
-             * we just reconstitute the XML text for later
-             * processing.
-             */
-            this.templateBuffer.append(XMLKit.renderStartTag(elementName, attributes, !uri.equals(this.defaultNamespaceURI), uri));
-        }
-        else if (elementName.equals(TOPIC))
-        {
-            // We don't check that it's valid, because it's supposed to have been schema-validated already!
-            this.topic = attributes.getValue(NAME);
         }
     }
 
