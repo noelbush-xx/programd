@@ -47,8 +47,8 @@ GENERAL NOTES
     <!--The location of the AIML schema (or a copy of it). [String: resources/schema/AIML.xsd]-->
     <entry key="programd.aiml-schema.location">resources/schema/AIML.xsd</entry>
     
-    <!--The bot configuration startup file. [String: conf/bots.xml]--> 
-    <entry key="programd.startup-file-path">conf/bots.xml</entry>
+    <!--The bot configuration startup file. [String: bots.xml]--> 
+    <entry key="programd.startup-file-path">bots.xml</entry>
     
     <!--What to do when a category is loaded whose pattern:that:topic path
         is identical to one already loaded (for the same bot).
@@ -231,6 +231,6 @@ GENERAL NOTES
     -->
     
     <!--Configuration file for plugins. [String: plugins.xml]-->
-    <entry key="programd.conf-location.plugins">conf/plugins.xml</entry>
+    <entry key="programd.conf-location.plugins">plugins.xml</entry>
     
 </properties>
