@@ -577,12 +577,7 @@ abstract public class GenericParser<P extends Processor>
      */
     public Core getCore()
     {
-        if (this.core == null)
-        {
-            throw new DeveloperError(
-                    "Tried to get the Core from a GenericParser that does not have one!",
-                    new NullPointerException());
-        }
+        assert this.core != null : "Tried to get the Core from a GenericParser that does not have one!";
         return this.core;
     }
 }
