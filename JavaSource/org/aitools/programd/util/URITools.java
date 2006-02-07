@@ -86,7 +86,7 @@ public class URITools
                 String originalPath = subjectURI.getPath();
                 if (originalPath != null)
                 {
-                    File file = FileManager.checkOrCreate(originalPath, "path");
+                    File file = FileManager.getFile(originalPath);
                     String path = file.getAbsolutePath();
                     if (!path.equals(originalPath))
                     {
