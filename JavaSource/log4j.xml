@@ -44,6 +44,7 @@
     <layout class="org.aitools.programd.logging.XMLChatLogLayout">
       <param name="TimestampFormat" value="HH:mm:ss"/>
     </layout>
+    <filter class="org.aitools.programd.logging.ChatLogEventFilter"/>
     <filter class="org.aitools.programd.logging.BotIDFilter">
       <param name="BotID" value="SampleBot"/>
     </filter>
@@ -57,6 +58,7 @@
     <layout class="org.aitools.programd.logging.SimpleChatLogLayout">
       <param name="TimestampFormat" value="HH:mm:ss"/>
     </layout>
+    <filter class="org.aitools.programd.logging.ChatLogEventFilter"/>
     <filter class="org.aitools.programd.logging.BotIDFilter">
       <param name="BotID" value="SampleBot"/>
     </filter>
@@ -66,10 +68,10 @@
   
   <!--Program D (remove/add what you like)-->
   <logger name="programd">
+    <appender-ref ref="txtchatSampleBot"/>
     <appender-ref ref="stdout"/>
     <appender-ref ref="stderr"/>
     <appender-ref ref="log"/>
     <appender-ref ref="xmlchatSampleBot"/>
-    <appender-ref ref="txtchatSampleBot"/>
   </logger>
 </log4j:configuration>
