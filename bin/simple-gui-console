@@ -24,8 +24,8 @@ source $BASE/bin/common_functions.sh
 
 # Configuration
 MAIN_CLASS=org.aitools.programd.configurations.SimpleGUIConsole
-START_MEM=256m
-MAX_MEM=512m
+START_MEM=128m
+MAX_MEM=256m
 CORE_CONF=$BASE/conf/core.xml
 
 # Start Program D using the SimpleGUIConsole main class.
