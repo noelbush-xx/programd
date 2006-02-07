@@ -86,7 +86,7 @@ function setup_other_libs()
 
   # Set SQL_LIB to the location of your database driver.
   # No warning is provided if it cannot be found (since it is optional).
-  SQL_LIB=$LIBS/mysql_comp.jar  
+  SQL_LIB=$LIBS/mysql-connector-java-3.1.12-bin.jar
 
   # Set JS_LIB to the location of the Rhino JavaScript interpreter.
   # No warning is provided if it cannot be found (since it is optional).
@@ -158,13 +158,9 @@ function check_java_home()
   then
     echo I can\'t find your JAVA_HOME directory.
     echo \(\"$JAVA_HOME\" doesn\'t seem to exist.\)
-    echo Please be sure that a JDK 5.0 compatible SDK is installed
+    echo Please be sure that a JDK 5.0 compatible JRE is installed
     echo and \(even better\) set the \$JAVA_HOME environment variable to point to
     echo the directory where it is installed.
-    echo
-    echo \(Note: If you are not going to build Program D, but
-    echo only run it, you can install the JRE instead of
-    echo the whole JDK.\)
     echo
     exit 1
   fi
