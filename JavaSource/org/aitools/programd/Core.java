@@ -48,6 +48,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 import org.w3c.dom.Document;
 
 /**
@@ -237,7 +239,9 @@ public class Core
         
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
+        
         this.parser = XMLKit.getSAXParser(URITools.contextualize(this.baseURL, AIML_SCHEMA_LOCATION), "AIML");
+        
         this.graphmaster = new Graphmaster(this.settings);
         this.bots = new Bots();
         this.processes = new ManagedProcesses(this);
@@ -482,8 +486,25 @@ public class Core
             {
                 this.logger.info("Loading " + path + "....");
             }
-            this.parser.parse(path.toString(), new AIMLReader(this.graphmaster, path, botid, this.bots
-                    .getBot(botid), this.settings.getAimlSchemaNamespaceUri().toString()));
+            AIMLReader reader = new AIMLReader(this.graphmaster, path, botid, this.bots
+                    .getBot(botid), this.settings.getAimlSchemaNamespaceUri().toString());
+            try
+            {
+                this.parser.getXMLReader().setProperty("http://xml.org/sax/properties/lexical-handler", reader);
+            }
+            catch (SAXNotRecognizedException e)
+            {
+                this.logger.warn("The XML reader in use does not support lexical handlers -- CDATA will not be handled.", e);
+            }
+            catch (SAXNotSupportedException e)
+            {
+                this.logger.warn("The XML reader in use cannot enable the lexical handler feature -- CDATA will not be handled.", e);
+            }
+            catch (SAXException e)
+            {
+                this.logger.warn("An exception occurred when trying to enable the lexical handler feature on the XML reader -- CDATA will not be handled.", e);
+            }
+            this.parser.parse(path.toString(), reader);
             System.gc();
             // this.parser.reset();
         }
