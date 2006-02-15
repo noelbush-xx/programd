@@ -9,6 +9,7 @@
 
 package org.aitools.programd;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -16,6 +17,7 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -75,13 +77,10 @@ public class Core
     public static final String BUILD = "rc1";
 
     /** The namespace URI of the bot configuration. */
-    public static final String BOT_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.5/bot-configuration";
+    public static final String BOT_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.6/bot-configuration";
 
     /** The namespace URI of the plugin configuration. */
-    public static final String PLUGIN_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.5/plugins";
-
-    /** The location of the plugin configuration schema. */
-    private static final String PLUGIN_CONFIG_SCHEMA_LOCATION = "resources/schema/plugins.xsd";
+    public static final String PLUGIN_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.6/plugins";
     
     /** The base URL. */
     private URL baseURL;
@@ -155,9 +154,6 @@ public class Core
         /** The Core has crashed. */
         CRASHED
     }
-    
-    /** The AIML schema location. */
-    private static final String AIML_SCHEMA_LOCATION = "resources/schema/AIML.xsd";
 
     // Convenience constants.
     private static final String EMPTY_STRING = "";
@@ -175,8 +171,7 @@ public class Core
     {
         this.settings = new CoreSettings();
         this.baseURL = base;
-        FileManager.setRootPath(URITools.contextualize(FileManager.getWorkingDirectory(),
-                this.settings.getRootDirectory()));
+        FileManager.setRootPath(FileManager.getWorkingDirectory());
         start();
     }
 
@@ -206,8 +201,7 @@ public class Core
     {
         this.settings = settingsToUse;
         this.baseURL = base;
-        FileManager.setRootPath(URITools.contextualize(FileManager.getWorkingDirectory(),
-                this.settings.getRootDirectory()));
+        FileManager.setRootPath(URITools.getParent(this.baseURL));
         start();
     }
 
@@ -240,7 +234,7 @@ public class Core
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
         
-        this.parser = XMLKit.getSAXParser(URITools.contextualize(this.baseURL, AIML_SCHEMA_LOCATION), "AIML");
+        this.parser = XMLKit.getSAXParser(URITools.contextualize(this.baseURL, this.settings.getSchemaLocationAIML()), "AIML");
         
         this.graphmaster = new Graphmaster(this.settings);
         this.bots = new Bots();
@@ -267,7 +261,7 @@ public class Core
         // Load the plugin config.
         try
         {
-            this.pluginConfig = XMLKit.getDocumentBuilder(URITools.contextualize(this.baseURL, PLUGIN_CONFIG_SCHEMA_LOCATION),
+            this.pluginConfig = XMLKit.getDocumentBuilder(URITools.contextualize(this.baseURL, this.settings.getSchemaLocationPlugins()),
                     "plugin configuration").parse(
                     URITools.contextualize(this.baseURL, this.settings.getConfLocationPlugins())
                             .toString());
@@ -442,14 +436,14 @@ public class Core
         // Handle paths with wildcards that need to be expanded.
         if (path.getProtocol().equals(FileManager.FILE))
         {
-            String file = path.getFile();
-            if (file.indexOf(ASTERISK) != -1)
+            String spec = path.getFile();
+            if (spec.indexOf(ASTERISK) != -1)
             {
-                String[] files = null;
+                List<File> files = null;
     
                 try
                 {
-                    files = FileManager.glob(file);
+                    files = FileManager.glob(spec);
                 }
                 catch (FileNotFoundException e)
                 {
@@ -457,9 +451,9 @@ public class Core
                 }
                 if (files != null)
                 {
-                    for (int index = files.length; --index >= 0;)
+                    for (File file : files)
                     {
-                        load(URITools.contextualize(URITools.getParent(path), URITools.escape(files[index])), botid);
+                        load(URITools.contextualize(URITools.getParent(path), file.getAbsolutePath()), botid);
                     }
                 }
                 return;
