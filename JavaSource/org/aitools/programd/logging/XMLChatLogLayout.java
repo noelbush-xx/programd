@@ -9,31 +9,31 @@
 
 package org.aitools.programd.logging;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.aitools.programd.logging.ChatLogEvent;
 import org.aitools.programd.util.XMLKit;
 import org.apache.log4j.Layout;
+import org.apache.log4j.helpers.ISO8601DateFormat;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * Formats a ChatLogEvent by printing a number of extra fields as we like them.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.5
+ * @since 4.6
  */
 public class XMLChatLogLayout extends Layout
 {
-    private SimpleDateFormat dateFormatter;
+    private ISO8601DateFormat timestampFormatter = new ISO8601DateFormat();
 
     private static final String EVENT_START = "<record>\n";
 
     private static final String EVENT_END = "</record>\n";
 
-    private static final String DATE_START = "  <date>";
+    private static final String TIME_START = "  <time>";
 
-    private static final String DATE_END = "</date>\n";
+    private static final String TIME_END = "</time>\n";
 
     private static final String BOTID_START = "  <botid>";
 
@@ -50,11 +50,6 @@ public class XMLChatLogLayout extends Layout
     private static final String REPLY_START = "  <reply>";
 
     private static final String REPLY_END = "</reply>\n";
-
-    public void setTimestampFormat(String format)
-    {
-        this.dateFormatter = new SimpleDateFormat(format);
-    }
     
     /**
      * We insist that the record be a ChatLogEvent.
@@ -82,9 +77,9 @@ public class XMLChatLogLayout extends Layout
         StringBuffer result = new StringBuffer(1000);
         result.append(EVENT_START);
 
-        result.append(DATE_START);
-        result.append(this.dateFormatter.format(new Date(event.timeStamp)));
-        result.append(DATE_END);
+        result.append(TIME_START);
+        result.append(this.timestampFormatter.format(new Date(event.timeStamp)));
+        result.append(TIME_END);
 
         result.append(BOTID_START);
         result.append(event.getBotID());
@@ -130,6 +125,7 @@ public class XMLChatLogLayout extends Layout
     /**
      * @see org.apache.log4j.spi.OptionHandler#activateOptions()
      */
+    @Override
     public void activateOptions()
     {
         // Do nothing.
