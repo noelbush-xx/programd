@@ -70,12 +70,6 @@ abstract public class GenericParser<P extends Processor>
 
     /** A DocumentBuilder for producing new Documents. */
     protected static DocumentBuilder utilDocBuilder;
-    
-    /** The comment start marker. */
-    protected static final String COMMENT_START = "<!--";
-
-    /** The comment end marker. */
-    protected static final String COMMENT_END = "-->";
 
     /**
      * Creates a new GenericParser with the given Core as its owner.
@@ -251,8 +245,8 @@ abstract public class GenericParser<P extends Processor>
             }
 
             // Process the element with a new instance of the processor.
-            return XMLKit.filterWhitespace(ClassUtils.getNewInstance(processorClass, "Processor",
-                    this.core).process(element, this));
+            return ClassUtils.getNewInstance(processorClass, "Processor",
+                    this.core).process(element, this);
         }
         // otherwise (if this element is from a different namespace)
         if (element.getChildNodes().getLength() == 0)
@@ -343,12 +337,15 @@ abstract public class GenericParser<P extends Processor>
 
             // Text chunks should just be added to the response.
             case Node.TEXT_NODE:
-            case Node.CDATA_SECTION_NODE:
                 response += node.getNodeValue();
                 break;
                 
+            case Node.CDATA_SECTION_NODE:
+                response += XMLKit.CDATA_START + node.getNodeValue() + XMLKit.CDATA_END;
+                break;
+                
             case Node.COMMENT_NODE:
-                response += COMMENT_START + node.getTextContent() + COMMENT_END;
+                response += XMLKit.COMMENT_START + node.getTextContent() + XMLKit.COMMENT_END;
                 break;
 
             default:
@@ -579,5 +576,13 @@ abstract public class GenericParser<P extends Processor>
     {
         assert this.core != null : "Tried to get the Core from a GenericParser that does not have one!";
         return this.core;
+    }
+    
+    /**
+     * @return the docURL
+     */
+    public URL getDocURL()
+    {
+        return this.docURL;
     }
 }
