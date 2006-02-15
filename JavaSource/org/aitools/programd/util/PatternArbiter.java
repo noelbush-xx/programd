@@ -40,7 +40,7 @@ public class PatternArbiter
      */
     public static String genericallyNormalize(String string)
     {
-        return XMLKit.filterWhitespace(NON_ALPHANUMERIC.matcher(string).replaceAll(" "));
+        return NON_ALPHANUMERIC.matcher(string).replaceAll(" ");
     }
     
     /**

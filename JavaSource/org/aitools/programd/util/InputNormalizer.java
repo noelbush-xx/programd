@@ -154,7 +154,7 @@ public class InputNormalizer
                 result.append(Character.toUpperCase(aChar));
             }
         }
-        return XMLKit.filterWhitespace(result.toString());
+        return result.toString();
 
     }
 
@@ -195,7 +195,7 @@ public class InputNormalizer
                 result.append(aChar);
             }
         }
-        return XMLKit.filterWhitespace(result.toString());
+        return result.toString();
 
     }
 }
