@@ -9,6 +9,7 @@
 
 package org.aitools.programd.processor.botconfiguration;
 
+import java.io.FileNotFoundException;
 import java.util.Date;
 
 import org.w3c.dom.Element;
@@ -20,6 +21,7 @@ import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.UserError;
 
 /**
  * Supports configuration of a bot from the startup file.
@@ -65,7 +67,15 @@ public class BotProcessor extends BotConfigurationElementProcessor
     {
         if (element.hasAttribute(HREF))
         {
-            return this.core.loadBot(URITools.createValidURL(element.getAttribute(HREF)));
+            String href = element.getAttribute(HREF);
+            try
+            {
+                return this.core.loadBot(URITools.createValidURL(href));
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new UserError("Could not load bot from \"" + href + "\".", e);
+            }
         }
 
         String botID = element.getAttribute(ID);
