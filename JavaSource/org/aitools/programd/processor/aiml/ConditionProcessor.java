@@ -34,16 +34,19 @@ import org.apache.log4j.Logger;
  */
 public class ConditionProcessor extends AIMLProcessor
 {
-    // Public constants.
+    /** Different types of condition. */
+    public static enum ListItemType
+    {
+        /** A nameValueListItem in a &lt;condition/&gt;. */
+        NAME_VALUE,
 
-    /** A nameValueListItem in a &lt;condition/&gt;. */
-    public static final int NAME_VALUE_LI = 1;
+        /** A defaultListItem in a &lt;condition/&gt;. */
+        DEFAULT,
 
-    /** A defaultListItem in a &lt;condition/&gt;. */
-    public static final int DEFAULT_LI = 2;
+        /** A valueOnlyListItem in a &lt;condition/&gt;. */
+        VALUE_ONLY
+    }
 
-    /** A valueOnlyListItem in a &lt;condition/&gt;. */
-    public static final int VALUE_ONLY_LI = 3;
 
     /** The label (as required by the registration scheme). */
     public static final String label = "condition";
@@ -73,7 +76,11 @@ public class ConditionProcessor extends AIMLProcessor
          */
         if (name.equals(EMPTY_STRING) && value.equals(EMPTY_STRING))
         {
-            return processListItem(parser, element.getChildNodes(), NAME_VALUE_LI, name);
+            if (aimlLogger.isDebugEnabled())
+            {
+                aimlLogger.debug("Processing multiPredicateCondition.");
+            }
+            return processListItem(parser, element.getChildNodes(), ListItemType.NAME_VALUE, name);
         }
 
         /*
@@ -82,16 +89,20 @@ public class ConditionProcessor extends AIMLProcessor
          */
         if (!name.equals(EMPTY_STRING) && !value.equals(EMPTY_STRING))
         {
+            if (aimlLogger.isDebugEnabled())
+            {
+                aimlLogger.debug("Processing blockCondition.");
+            }
             try
             {
                 if (PatternArbiter.matches(parser.getCore().getPredicateMaster().get(name, parser.getUserID(), parser.getBotID()), value, true))
                 {
-                    return processListItem(parser, element.getChildNodes(), DEFAULT_LI, EMPTY_STRING);
+                    return processListItem(parser, element.getChildNodes(), ListItemType.DEFAULT, EMPTY_STRING);
                 }
             }
             catch (NotAnAIMLPatternException e)
             {
-                Logger.getLogger("programd").warn("ConditionProcessor got a non-AIML pattern in a value attribute.", e);
+                logger.warn("ConditionProcessor got a non-AIML pattern in a value attribute.", e);
                 return EMPTY_STRING;
             }
             return EMPTY_STRING;
@@ -103,7 +114,11 @@ public class ConditionProcessor extends AIMLProcessor
          */
         if (!name.equals(EMPTY_STRING) && value.equals(EMPTY_STRING))
         {
-            return processListItem(parser, element.getChildNodes(), VALUE_ONLY_LI, name);
+            if (aimlLogger.isDebugEnabled())
+            {
+                aimlLogger.debug("Processing singlePredicateCondition.");
+            }
+            return processListItem(parser, element.getChildNodes(), ListItemType.VALUE_ONLY, name);
         }
 
         // In other cases, return an empty string.
@@ -115,13 +130,13 @@ public class ConditionProcessor extends AIMLProcessor
      * 
      * @param parser the TemplateParser object responsible for this
      * @param list the XML trie
-     * @param listItemType one of {@link #NAME_VALUE_LI},{@link #DEFAULT_LI}or
-     *            {@link #VALUE_ONLY_LI}
+     * @param listItemType one of {@link #NAME_VALUE},{@link #DEFAULT}or
+     *            {@link #VALUE_ONLY}
      * @param name the name attribute of the &lt;li/&gt; (if applicable)
      * @return the result of processing this &lt;li/&gt;
      * @throws ProcessorException if there is an error in processing
      */
-    public String processListItem(TemplateParser parser, NodeList list, int listItemType, String name) throws ProcessorException
+    public String processListItem(TemplateParser parser, NodeList list, ListItemType type, String name) throws ProcessorException
     {
         String response = EMPTY_STRING;
         Node node;
@@ -134,7 +149,7 @@ public class ConditionProcessor extends AIMLProcessor
          * For <code> valueOnlyListItem </code> s, look at the parent
          * &lt;condition/&gt; to get the predicate <code> name </code> .
          */
-        if (listItemType == VALUE_ONLY_LI)
+        if (type == ListItemType.VALUE_ONLY)
         {
             predicateValue = this.core.getPredicateMaster().get(name, parser.getUserID(), parser.getBotID());
         }
@@ -173,11 +188,11 @@ public class ConditionProcessor extends AIMLProcessor
                              * which indicates what to expect from the parent
                              * &lt;condition/&gt;.
                              */
-                            switch (listItemType)
+                            switch (type)
                             {
                                 // Evaluate listitems with both name and value
                                 // attributes.
-                                case NAME_VALUE_LI:
+                                case NAME_VALUE:
                                     /*
                                      * Look for tokens in the XML attributes for
                                      * name and value. If none are present, this
@@ -229,12 +244,12 @@ public class ConditionProcessor extends AIMLProcessor
 
                                 // Evaluate listitems that are designated
                                 // &quot;defaultListItem&quot; types.
-                                case DEFAULT_LI:
-                                    response = response + parser.evaluate(node.getChildNodes());
+                                case DEFAULT:
+                                    response = response + parser.evaluate(node);
                                     break;
 
                                 // Evaluate valueOnlyListItems.
-                                case VALUE_ONLY_LI:
+                                case VALUE_ONLY:
                                     // If there is a value attribute, get it.
                                     if (node.getAttributes().getNamedItem(VALUE) != null)
                                     {
