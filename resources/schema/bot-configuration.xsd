@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://aitools.org/programd/4.5/bot-configuration"
-    xmlns:d="http://aitools.org/programd/4.5"
+    xmlns="http://aitools.org/programd/4.6/bot-configuration"
+    xmlns:d="http://aitools.org/programd/4.6"
     xmlns:sch="http://www.ascc.net/xml/schematron"
-    targetNamespace="http://aitools.org/programd/4.5/bot-configuration"
+    targetNamespace="http://aitools.org/programd/4.6/bot-configuration"
     elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xml:lang="EN">
     <xs:annotation>
         <xs:documentation>This is the schema for bot configuration files for Program D.</xs:documentation>
         <xs:appinfo>
             <sch:title>Schematron validation</sch:title>
-            <sch:ns prefix="bc" uri="http://aitools.org/programd/4.5/bot-configuration"/>
+            <sch:ns prefix="bc" uri="http://aitools.org/programd/4.6/bot-configuration"/>
         </xs:appinfo>
     </xs:annotation>
-    <xs:import namespace="http://aitools.org/programd/4.5" schemaLocation="http://aitools.org/programd/4.5/common-types.xsd"/>
+    <xs:import namespace="http://aitools.org/programd/4.6" schemaLocation="http://aitools.org/programd/4.6/common-types.xsd"/>
     <xs:element name="bots">
         <xs:annotation>
             <xs:documentation>The bots element contains all configuration
@@ -279,11 +279,6 @@
                 <xs:element name="report-directory" type="xs:string">
                     <xs:annotation>
                         <xs:documentation>A report-directory element gives the path to a directory where test reports should be stored.</xs:documentation>
-                    </xs:annotation>
-                </xs:element>
-                <xs:element name="log-pattern" type="xs:string">
-                    <xs:annotation>
-                        <xs:documentation>A log-pattern defines the pattern (including path) for writing log files of testing activity.</xs:documentation>
                     </xs:annotation>
                 </xs:element>
             </xs:sequence>

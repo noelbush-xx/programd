@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://aitools.org/programd/4.5/chatlog"
-    targetNamespace="http://aitools.org/programd/4.5/chatlog" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://aitools.org/programd/4.6/chatlog"
+    targetNamespace="http://aitools.org/programd/4.6/chatlog" elementFormDefault="qualified">
     <xs:annotation>
         <xs:documentation>This is derived from the JDK format for XML logs. It omits some things
             that aren't relevant to chat logging, and adds some elements that are specific to

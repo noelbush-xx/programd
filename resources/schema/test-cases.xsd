@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://aitools.org/programd/4.5/test-cases"
-    targetNamespace="http://aitools.org/programd/4.5/test-cases" elementFormDefault="qualified"
+    xmlns="http://aitools.org/programd/4.6/test-cases"
+    targetNamespace="http://aitools.org/programd/4.6/test-cases" elementFormDefault="qualified"
     attributeFormDefault="unqualified" version="1.0" xml:lang="EN">
     <xs:element name="TestSuite">
         <xs:complexType>
