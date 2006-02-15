@@ -3,8 +3,8 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
   
   <!-- Program D will use the stdout and stderr appenders configured here
-       in a special way, routing error messages to stderr and everything
-       else to stdout, so leave this as-is if you want that behavior. -->
+       in a special way, routing error messages (WARN, SEVERE) to stderr
+       and everything else to stdout, so leave this as-is if you want that behavior. -->
 
   <!--The console output: stdout-->
   <appender name="stdout" class="org.aitools.programd.interfaces.ShellStreamAppender">
@@ -26,8 +26,8 @@
     </filter>
   </appender>
   
-  <!--The main log file-->
-  <appender name="log" class="org.apache.log4j.RollingFileAppender">
+  <!--The main activity log file-->
+  <appender name="activitylog" class="org.apache.log4j.RollingFileAppender">
     <param name="File" value="/var/log/programd/activity.log"/>
     <param name="MaxFileSize" value="10MB"/>
     <param name="MaxBackupIndex" value="10"/>
@@ -36,8 +36,30 @@
     </layout>
   </appender>
   
-  <!--XML chat log file for a bot called SampleBot-->
-  <appender name="xmlchatSampleBot" class="org.apache.log4j.RollingFileAppender">
+  <!--The matching log
+      WARNING: The conversion pattern used here is slow!
+      Only use this appender when debugging!-->
+  <appender name="matchlog" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <!--<param name="ConversionPattern" value="[%d{ISO8601}] %C{1}: %m%n"/>-->
+      <!--An uglier but more useful conversion pattern:-->
+      <param name="ConversionPattern" value="[%r] %l %m%n"/>
+    </layout>
+  </appender>
+  
+  <!--The AIML processing log
+      WARNING: The conversion pattern used here is slow!
+      Only use this appender when debugging!-->
+  <appender name="aimllog" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <!--<param name="ConversionPattern" value="[%d{ISO8601}] %C{1}: %m%n"/>-->
+      <!--An uglier but more useful conversion pattern:-->
+      <param name="ConversionPattern" value="[%r] %l %m%n"/>
+    </layout>
+  </appender>
+  
+  <!--XML chat log file for a bot called SampleBot (using botid filter)-->
+  <appender name="XMLChatlog-SampleBot-only" class="org.apache.log4j.RollingFileAppender">
     <param name="File" value="/var/log/programd/chat.xml"/>
     <param name="MaxFileSize" value="10MB"/>
     <param name="MaxBackupIndex" value="10"/>
@@ -50,8 +72,8 @@
     </filter>
   </appender>
   
-  <!--Plain text log file for a bot called SampleBot-->
-  <appender name="txtchatSampleBot" class="org.apache.log4j.RollingFileAppender">	
+  <!--Plain text log file for all bots (no botid filter applied)-->
+  <appender name="TxtChatlog" class="org.apache.log4j.RollingFileAppender">	
     <param name="File" value="/var/log/programd/chat.log"/>
     <param name="MaxFileSize" value="10MB"/>
     <param name="MaxBackupIndex" value="10"/>
@@ -59,19 +81,31 @@
       <param name="TimestampFormat" value="HH:mm:ss"/>
     </layout>
     <filter class="org.aitools.programd.logging.ChatLogEventFilter"/>
-    <filter class="org.aitools.programd.logging.BotIDFilter">
-      <param name="BotID" value="SampleBot"/>
-    </filter>
   </appender>
   
   <!--Database logging for a bot called SampleBot-->
   
-  <!--Program D (remove/add what you like)-->
+  <!--General activity (including chat)-->
   <logger name="programd">
-    <appender-ref ref="txtchatSampleBot"/>
     <appender-ref ref="stdout"/>
     <appender-ref ref="stderr"/>
-    <appender-ref ref="log"/>
-    <appender-ref ref="xmlchatSampleBot"/>
+    <appender-ref ref="activitylog"/>
+    <appender-ref ref="XMLChatlog-SampleBot-only"/>
+    <appender-ref ref="TxtChatlog"/>
   </logger>
+  
+  <!--Matching: will be slow!
+      Set level higher than debug (or off) for production.-->
+  <logger name="programd.matching" additivity="false">
+    <level value="off"/>
+    <appender-ref ref="matchlog"/>
+  </logger>
+  
+  <!--AIML processing: will be slow!
+      Set level higher than debug (or off) for production.-->
+  <logger name="programd.aiml-processing" additivity="false">
+    <level value="off"/>
+    <appender-ref ref="aimllog"/>
+  </logger>
+  
 </log4j:configuration>
