@@ -328,7 +328,8 @@ abstract public class Multiplexor
         String reply = getMatchResult(input, that, topic, userid, botid, parser);
         if (reply == null)
         {
-            this.core.fail(new DeveloperError("getMatchReply generated a null reply!", new NullPointerException()));
+            logger.error("getMatchReply generated a null reply!", new NullPointerException());
+            return EMPTY_STRING;
         }
 
         // Push the reply onto the <that/> stack.
@@ -409,7 +410,7 @@ abstract public class Multiplexor
         catch (ProcessorException e)
         {
             // Log the error message.
-            Logger.getLogger("programd").error(e.getExplanatoryMessage());
+            Logger.getLogger("programd").error("Error while processing response: " + e.getExplanatoryMessage(), e);
 
             // Set response to empty string.
             return EMPTY_STRING;
@@ -417,7 +418,7 @@ abstract public class Multiplexor
         catch (DeveloperError e)
         {
             // Log the error message.
-            Logger.getLogger("programd").error(e.getCause().getMessage());
+            Logger.getLogger("programd").error("Error while processing response: " + e.getCause().getMessage(), e);
 
             // Set response to empty string.
             return EMPTY_STRING;

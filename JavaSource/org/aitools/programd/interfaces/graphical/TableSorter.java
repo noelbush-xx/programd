@@ -271,7 +271,7 @@ public class TableSorter extends TableMap
     {
         if (this.indexes.length != this.model.getRowCount())
         {
-            throw new DeveloperError(new IllegalStateException("Sorter not informed of a change in model."));
+            throw new DeveloperError("TableSorter model is not valid.", new IllegalStateException("Sorter not informed of a change in model."));
         }
     }
 

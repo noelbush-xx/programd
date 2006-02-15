@@ -20,6 +20,7 @@ import java.util.Properties;
 import org.aitools.programd.Core;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
+import org.aitools.programd.util.UserError;
 
 /**
  * <p>
@@ -196,7 +197,7 @@ public class FlatFileMultiplexor extends Multiplexor
             }
             catch (IOException e)
             {
-                throw new DeveloperError("Error trying to load predicates.", e);
+                throw new UserError("Error trying to load predicates.", e);
             }
         }
         return predicates;
@@ -230,7 +231,7 @@ public class FlatFileMultiplexor extends Multiplexor
         }
         catch (IOException e)
         {
-            throw new DeveloperError("Error trying to save predicates.", e);
+            throw new UserError("Error trying to save predicates.", e);
         }
     }
 

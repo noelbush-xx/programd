@@ -50,7 +50,7 @@ public class ManagedProcesses
         }
         catch (Throwable e)
         {
-            this.core.fail(e);
+            this.core.getLogger().error("Error starting \"" + name + "\".", e);
         }
     }
 

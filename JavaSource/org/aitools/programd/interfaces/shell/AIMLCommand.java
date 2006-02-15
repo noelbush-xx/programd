@@ -86,7 +86,7 @@ public class AIMLCommand extends ShellCommand
             }
             catch (ProcessorException e)
             {
-                throw new UserError(e);
+                throw new UserError("Error occurred while processing template.", e);
             }
         }
     }

@@ -103,7 +103,7 @@ public class TestReport
         }
         catch (IOException e)
         {
-            throw new DeveloperError(e);
+            throw new DeveloperError("Error while trying to write test report.", e);
         }
     }
 }

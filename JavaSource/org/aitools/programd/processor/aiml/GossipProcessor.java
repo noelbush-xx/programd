@@ -81,7 +81,7 @@ public class GossipProcessor extends AIMLProcessor
         }
         catch (IOException e)
         {
-            throw new DeveloperError(e);
+            throw new DeveloperError("Error trying to write gossip.", e);
         }
         return EMPTY_STRING;
     }

@@ -19,17 +19,6 @@ public class DeveloperError extends Error
     /**
      * Creates a new DeveloperError associated with the given Throwable.
      * 
-     * @param e the Throwable that is responsible for this DeveloperError
-     */
-    public DeveloperError(Throwable e)
-    {
-        super("Developer did not describe exception.");
-        initCause(e);
-    }
-
-    /**
-     * Creates a new DeveloperError associated with the given Throwable.
-     * 
      * @param message the message describing the error
      * @param e the Throwable that is responsible for this DeveloperError
      */

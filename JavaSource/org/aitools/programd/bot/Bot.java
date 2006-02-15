@@ -25,7 +25,6 @@ import org.aitools.programd.graph.Nodemapper;
 import org.aitools.programd.multiplexor.PredicateInfo;
 import org.aitools.programd.multiplexor.PredicateMap;
 import org.aitools.programd.processor.Processor;
-import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.InputNormalizer;
 import org.aitools.programd.util.Substituter;
 
@@ -261,11 +260,7 @@ public class Bot
         else
         {
             userPredicates = this.predicateCache.get(userid);
-            if (userPredicates == null)
-            {
-                // This should never happen!
-                throw new DeveloperError("userPredicates is null.", new NullPointerException());
-            }
+            assert userPredicates != null : "userPredicates is null!";
         }
         return userPredicates;
     }

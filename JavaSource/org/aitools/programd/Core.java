@@ -338,22 +338,22 @@ public class Core
         }
         catch (DeveloperError e)
         {
-            fail("developer error", e);
+            alert("developer error", e);
             return;
         }
         catch (UserError e)
         {
-            fail("user error", e);
+            alert("user error", e);
             return;
         }
         catch (RuntimeException e)
         {
-            fail("unforeseen runtime exception", e);
+            alert("unforeseen runtime exception", e);
             return;
         }
         catch (Throwable e)
         {
-            fail("unforeseen problem", e);
+            alert("unforeseen problem", e);
             return;
         }
 
@@ -624,45 +624,49 @@ public class Core
     }
 
     /**
-     * Logs the given Throwable and shuts down.
+     * Notes the given Throwable and advises that the Core
+     * may no longer be stable.
      * 
      * @param e the Throwable to log
      */
-    public void fail(Throwable e)
+    public void alert(Throwable e)
     {
-        fail(e.getClass().getSimpleName(), Thread.currentThread(), e);
+        alert(e.getClass().getSimpleName(), Thread.currentThread(), e);
     }
 
     /**
-     * Logs the given Throwable and shuts down.
+     * Notes the given Throwable and advises that the Core
+     * may no longer be stable.
      * 
      * @param t the thread in which the Throwable was thrown
      * @param e the Throwable to log
      */
-    public void fail(Thread t, Throwable e)
+    public void alert(Thread t, Throwable e)
     {
-        fail(e.getClass().getSimpleName(), t, e);
+        alert(e.getClass().getSimpleName(), t, e);
     }
 
     /**
-     * Logs the given Throwable and shuts down.
+     * Notes the given Throwable and advises that the Core
+     * may no longer be stable.
      * 
      * @param description the description of the Throwable
      * @param e the Throwable to log
      */
-    public void fail(String description, Throwable e)
+    public void alert(String description, Throwable e)
     {
-        fail(description, Thread.currentThread(), e);
+        alert(description, Thread.currentThread(), e);
     }
 
     /**
-     * Logs the given Throwable and shuts down.
+     * Notes the given Throwable and advises that the Core
+     * may no longer be stable.
      * 
      * @param description the description of the Throwable
      * @param t the thread in which the Throwable was thrown
      * @param e the Throwable to log
      */
-    public void fail(String description, Thread t, Throwable e)
+    public void alert(String description, Thread t, Throwable e)
     {
         String throwableDescription = e.getClass().getSimpleName() + " in thread \"" + t.getName()
                 + "\"";
@@ -674,7 +678,7 @@ public class Core
         {
             throwableDescription += ".";
         }
-        this.logger.error("Core is exiting abnormally due to " + description + ":\n"
+        this.logger.error("Core may no longer be stable due to " + description + ":\n"
                 + throwableDescription);
 
         if (this.settings.onUncaughtExceptionsPrintStackTrace())
@@ -688,7 +692,7 @@ public class Core
                 e.printStackTrace(System.err);
             }
         }
-        shutdown();
+        //shutdown();
     }
 
     class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
@@ -726,8 +730,7 @@ public class Core
         }
         catch (ProcessorException e)
         {
-            this.logger.error(e.getExplanatoryMessage());
-            fail("processor exception during startup", e);
+            this.logger.error("Processor exception during startup: " + e.getExplanatoryMessage(), e);
         }
     }
     

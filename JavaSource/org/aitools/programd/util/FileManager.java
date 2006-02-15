@@ -145,7 +145,7 @@ public class FileManager
         {
             if (!file.isDirectory())
             {
-                throw new DeveloperError(new FileAlreadyExistsAsFileException(file));
+                throw new DeveloperError("Could not find directory \"" + path + "\".", new FileAlreadyExistsAsFileException(file));
             }
             // otherwise...
             return file.getCanonicalFile();
