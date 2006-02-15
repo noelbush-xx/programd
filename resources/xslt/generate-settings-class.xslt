@@ -56,7 +56,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.URLTools;
 import org.aitools.programd.util.UserError;
 
 </xsl:text>
