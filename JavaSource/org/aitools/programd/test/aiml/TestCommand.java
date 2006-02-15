@@ -9,6 +9,9 @@
 
 package org.aitools.programd.test.aiml;
 
+import java.net.URL;
+import java.util.List;
+
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.interfaces.shell.Shell;
 import org.aitools.programd.interfaces.shell.ShellCommand;
@@ -84,14 +87,13 @@ public class TestCommand extends ShellCommand
         }
         String botid = shell.getCurrentBotID();
         Bot bot = shell.getBots().getBot(botid);
-        String logPattern = bot.getTestingLogPattern();
-        String testSuitePathspec = bot.getTestSuitePathspec();
-        String testReportDirectory = bot.getTestReportDirectory();
-        if (logPattern != null && testSuitePathspec != null && testReportDirectory != null)
+        List<URL> testSuites = bot.getTestSuites();
+        URL testReportDirectory = bot.getTestReportDirectory();
+        if (testSuites != null && testReportDirectory != null)
         {
             new Tester(shell.getCore(),
                     LogManager.getLogger("programd.testing"),
-                    testSuitePathspec,
+                    testSuites,
                     testReportDirectory).run(shell
                     .getCurrentBotID(), suite, runCount);
         }
