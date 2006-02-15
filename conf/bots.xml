@@ -2,7 +2,7 @@
 <bots xmlns="http://aitools.org/programd/4.6/bot-configuration"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://aitools.org/programd/4.6/bot-configuration http://aitools.org/programd/4.6/bot-configuration.xsd">
-    <bot id="yourbot" enabled="true">
+    <bot id="SampleBot" enabled="true">
         <properties href="properties.xml"/>
         <predicates href="predicates.xml"/>
         <substitutions href="substitutions.xml"/>
