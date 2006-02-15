@@ -43,10 +43,9 @@ public class ChatLogEvent extends LoggingEvent
      * @param inputToUse the input from the user
      * @param replyToUse the reply from the bot
      */
-    public ChatLogEvent(Logger logger,
-            String botidToUse, String useridToUse, String inputToUse, String replyToUse)
+    public ChatLogEvent(String botidToUse, String useridToUse, String inputToUse, String replyToUse)
     {
-        super(logger.getClass().getName(), logger, Level.INFO, "chat log event", null);
+        super(Logger.class.getName(), Logger.getLogger("programd." + botidToUse), Level.INFO, "chat log event", null);
         this.botid = botidToUse;
         this.userid = useridToUse;
         this.input = inputToUse;
@@ -89,6 +88,6 @@ public class ChatLogEvent extends LoggingEvent
     public String toString()
     {
         return String.format("%s -> %s: \"%s\"; %s -> %s: \"%s\"",
-                this.userid, this.botid, this.input, this.botid, this.userid, XMLKit.removeMarkup(this.reply));
+                this.userid, this.botid, this.input, this.botid, this.userid, XMLKit.filterWhitespace(XMLKit.removeMarkup(this.reply)));
     }
 }
