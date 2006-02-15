@@ -12,6 +12,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 
 02111-1307, USA.
+
+An XML valid copy of
+http://java.sun.com/dtd/properties.dtd
+is at
+../resources/DTD/java-properties.dtd
+
 -->
 
 <!--
@@ -20,8 +26,12 @@ GENERAL NOTES
 1. Configuration options are grouped for easy maintenance.
 2. Unless otherwise noted, commenting out a property will
    cause the engine's default value to be used.
-3. A property may only be defined once.
-4. The notations in [square brackets] are used to generate
+3. Relative URLs will be (attempted to be) resolved from
+   the parent of this file (i.e., if this file is at
+   file:/ProgramD/conf/core.xml, they will be resolved
+   from file:/ProgramD/conf).
+4. A property may only be defined once.
+5. The notations in [square brackets] are used to generate
    the Settings class that corresponds with this properties
    file.  Please do not change these notations unless you
    know what you are doing.
@@ -35,19 +45,10 @@ GENERAL NOTES
     MAIN PROGRAM D CONFIGURATION
     -->
     
-    <!--The root directory for all paths. [String: ..]
-         * This is generally relative to the current directory
-         * (i.e., the conf directory), although you can change
-         * that in your startup script.-->
-    <entry key="programd.root-directory">.</entry>
-    
-    <!--The namespace URI of AIML to use. [String: http://alicebot.org/2001/AIML-1.0.1]-->
+    <!--The namespace URI of AIML to use. [URI: http://alicebot.org/2001/AIML-1.0.1]-->
     <entry key="programd.aiml-schema.namespace-uri">http://alicebot.org/2001/AIML-1.0.1</entry>
     
-    <!--The location of the AIML schema (or a copy of it). [String: resources/schema/AIML.xsd]-->
-    <entry key="programd.aiml-schema.location">resources/schema/AIML.xsd</entry>
-    
-    <!--The bot configuration startup file. [String: bots.xml]--> 
+    <!--The bot configuration startup file. [URL: bots.xml]--> 
     <entry key="programd.startup-file-path">bots.xml</entry>
     
     <!--What to do when a category is loaded whose pattern:that:topic path
@@ -96,13 +97,13 @@ GENERAL NOTES
     <!-- Print stack trace on uncaught exceptions? [boolean: false]-->
     <entry key="programd.on-uncaught-exceptions.print-stack-trace">true</entry>
     
-    <!--Allow use of <system> element? [boolean: false]-->
-    <entry key="programd.os-access-allowed">false</entry>
+    <!--Execute contents of <system> elements? [boolean: false]-->
+    <entry key="programd.os-access-allowed">true</entry>
     
-    <!--Allow use of <javascript> element? [boolean: false]-->
-    <entry key="programd.javascript-allowed">false</entry>
+    <!--Execute contents of <javascript> elements? [boolean: false]-->
+    <entry key="programd.javascript-allowed">true</entry>
     
-    <!--Where to write gossip entries.                       [String: logs/gossip.txt]
+    <!--Where to write gossip entries.                       [URL: /var/log/programd/gossip.txt]
         * Gossip entries will be written like this:
           <li>the gossip</li>.-->
     <entry key="programd.gossip.path">/var/log/programd/gossip.txt</entry>
@@ -119,7 +120,7 @@ GENERAL NOTES
     <entry key="programd.multiplexor-classname">org.aitools.programd.multiplexor.FlatFileMultiplexor</entry>
     <!--<entry key="programd.multiplexor-classname">org.aitools.programd.multiplexor.DBMultiplexor</entry>-->
     
-    <!--The directory in which to save flat-file predicates (FFM only). [String: /var/programd/ffm]-->
+    <!--The directory in which to save flat-file predicates (FFM only). [URL: /var/programd/ffm]-->
     <entry key="programd.multiplexor.ffm-dir">/var/programd/ffm</entry>
     
     <!--Enable the heart? [boolean: false]
@@ -134,13 +135,30 @@ GENERAL NOTES
     <!--The maximum size of the cache before writing to disk/database. [int: 500]-->
     <entry key="programd.predicate-cache.max">500</entry>
     
-        
+    <!-- Use interactive command-line shell? [boolean: true]-->
+    <entry key="programd.console.use-shell">true</entry>
+    
+    
+    <!--
+    SCHEMA LOCATIONS
+    -->
+    
+    <!--The location of the AIML schema (or a copy of it). [URL: ../resources/schema/AIML.xsd]-->
+    <entry key="programd.schema-location.AIML">../resources/schema/AIML.xsd</entry>
+
+    <!--The location of the plugin schema (or a copy of it). [URL: ../resources/schema/plugins.xsd]-->
+    <entry key="programd.schema-location.plugins">../resources/schema/plugins.xsd</entry>
+
+    <!--The location of the test cases schema (or a copy of it). [URL: ../resources/schema/test-cases.xsd]-->
+    <entry key="programd.schema-location.test-cases">../resources/schema/test-cases.xsd</entry>
+    
+            
     <!--
     INTERPRETER CONFIGURATION
     -->
     
-    <!--The directory in which to execute <system> commands. [String: .]-->
-    <entry key="programd.system-interpreter.directory"></entry>
+    <!--The directory in which to execute <system> commands. [URL: ..]-->
+    <entry key="programd.system-interpreter.directory">..</entry>
     
     <!--The string to prepend to all <system> calls (platform-specific). [String: ]
          * Windows requires something like "cmd /c "; Linux doesn't (just comment out)-->
@@ -161,45 +179,7 @@ GENERAL NOTES
     <!--The delay period when checking changed AIML (milliseconds). [int: 2000]
         * Only applicable if the AIML Watcher is enabled.-->
     <entry key="programd.watcher.timer">2000</entry>
-    
-    
-    <!--
-    LOGGING CONFIGURATION
-    For pattern syntax, see http://java.sun.com/j2se/1.5.0/docs/api/java/util/logging/FileHandler.html
-    -->
-    
-    <!--The main Program D log file. [String: /var/log/programd/activity-%g.log]-->
-    <entry key="programd.activity.log.pattern">/var/log/programd/programd-%g.log</entry>
-    
-    <!--The date-time format to use in general logs. [String: yyyy-MM-dd H:mm:ss]
-        * See http://java.sun.com/jdk1.5.0/docs/api/java/text/SimpleDateFormat.html
-          for formatting codes.
-        * Setting the value to blank means no timestamp will be displayed.-->
-    <entry key="programd.log.timestamp-format">yyyy-MM-dd H:mm:ss</entry>
-
-    <!--The directory for chat logs. [String: /var/log/programd/chat]-->
-    <entry key="programd.chat.log.directory">/var/log/programd/chat</entry>
-
-    <!--The date-time format to use in chat logs. [String: yyyy-MM-dd H:mm:ss]
-        * See http://java.sun.com/jdk1.5.0/docs/api/java/text/SimpleDateFormat.html
-          for formatting codes.
-        * Setting the value to blank means no timestamp will be displayed.-->
-    <entry key="programd.chat.log.timestamp-format"></entry>
-
-    <!--Enable chat logging to plain text files? [boolean: true]-->
-    <entry key="programd.chat.log.to-plain-text">true</entry>
-    
-    <!--Enable chat logging to XML? [boolean: true]-->
-    <entry key="programd.chat.log.to-xml">true</entry>
-    
-    <!--
-    Database logging
-    -->
-    
-    <!--Enable chat logging to the database? [boolean: false]
-        * Be sure that the database configuration (later in this file) is valid.-->
-    <entry key="programd.chat.log.to-database">false</entry>
-    
+        
     
     <!--
     DATABASE CONFIGURATION
@@ -212,8 +192,8 @@ GENERAL NOTES
     <!--The URL of the database to use. [String: jdbc:mysql:///programdbot]-->
     <entry key="programd.database.url">jdbc:mysql:///programdbot</entry>
     
-    <!--The database driver to use. [String: org.gjt.mm.mysql.Driver]-->
-    <entry key="programd.database.driver">org.gjt.mm.mysql.Driver</entry>
+    <!--The database driver to use. [String: com.mysql.jdbc.Driver]-->
+    <entry key="programd.database.driver">com.mysql.jdbc.Driver</entry>
     
     
     <!--The maximum number of simultaneous connections to the database. [int: 25]-->
@@ -230,7 +210,7 @@ GENERAL NOTES
     OTHER CONFIGURATION FILE LOCATIONS
     -->
     
-    <!--Configuration file for plugins. [String: plugins.xml]-->
+    <!--Configuration file for plugins. [URL: plugins.xml]-->
     <entry key="programd.conf-location.plugins">plugins.xml</entry>
     
 </properties>
