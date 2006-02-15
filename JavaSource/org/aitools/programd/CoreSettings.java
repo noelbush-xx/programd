@@ -19,24 +19,14 @@ import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2006-02-06T12:10:03.601-05:00
+ * Automatically generated from properties file, 2006-02-08T16:28:04.816-05:00
  */
 public class CoreSettings extends Settings
 {
     /**
-     * The root directory for all paths.
-     */
-    private String rootDirectory;
-        
-    /**
      * The namespace URI of AIML to use.
      */
     private URI aimlSchemaNamespaceUri;
-        
-    /**
-     * The location of the AIML schema (or a copy of it).
-     */
-    private URL aimlSchemaLocation;
         
     /**
      * The bot configuration startup file.
@@ -132,7 +122,7 @@ public class CoreSettings extends Settings
     /**
      * Where to write gossip entries.
      */
-    private String gossipPath;
+    private URL gossipPath;
         
     /**
      * The string to send when first connecting to the bot.
@@ -152,7 +142,7 @@ public class CoreSettings extends Settings
     /**
      * The directory in which to save flat-file predicates (FFM only).
      */
-    private String multiplexorFfmDir;
+    private URL multiplexorFfmDir;
         
     /**
      * Enable the heart?
@@ -175,9 +165,24 @@ public class CoreSettings extends Settings
     private boolean consoleUseShell;
         
     /**
+     * The location of the AIML schema (or a copy of it).
+     */
+    private URL schemaLocationAIML;
+        
+    /**
+     * The location of the plugin schema (or a copy of it).
+     */
+    private URL schemaLocationPlugins;
+        
+    /**
+     * The location of the test cases schema (or a copy of it).
+     */
+    private URL schemaLocationTestCases;
+        
+    /**
      * The directory in which to execute <system> commands.
      */
-    private String systemInterpreterDirectory;
+    private URL systemInterpreterDirectory;
         
     /**
      * The string to prepend to all <system> calls (platform-specific).
@@ -254,8 +259,6 @@ public class CoreSettings extends Settings
     @Override
     protected void initialize()
     {
-        setRootDirectory(this.properties.getProperty("programd.root-directory", ".."));
-
         try
         {
             setAimlSchemaNamespaceUri(new URI(this.properties.getProperty("programd.aiml-schema.namespace-uri", "http://alicebot.org/2001/AIML-1.0.1")));
@@ -264,8 +267,6 @@ public class CoreSettings extends Settings
         {
             throw new UserError(e);
         }
-
-        setAimlSchemaLocation(URITools.contextualize(this.path, this.properties.getProperty("programd.aiml-schema.location", "resources/schema/AIML.xsd")));
 
         setStartupFilePath(URITools.contextualize(this.path, this.properties.getProperty("programd.startup-file-path", "bots.xml")));
 
@@ -329,7 +330,7 @@ public class CoreSettings extends Settings
 
         setJavascriptAllowed(Boolean.valueOf(this.properties.getProperty("programd.javascript-allowed", "false")).booleanValue());
 
-        setGossipPath(this.properties.getProperty("programd.gossip.path", "/var/log/programd/gossip.txt"));
+        setGossipPath(URITools.contextualize(this.path, this.properties.getProperty("programd.gossip.path", "/var/log/programd/gossip.txt")));
 
         setConnectString(this.properties.getProperty("programd.connect-string", "CONNECT"));
 
@@ -337,7 +338,7 @@ public class CoreSettings extends Settings
 
         setMultiplexorClassname(this.properties.getProperty("programd.multiplexor-classname", "org.aitools.programd.multiplexor.FlatFileMultiplexor"));
 
-        setMultiplexorFfmDir(this.properties.getProperty("programd.multiplexor.ffm-dir", "/var/programd/ffm"));
+        setMultiplexorFfmDir(URITools.contextualize(this.path, this.properties.getProperty("programd.multiplexor.ffm-dir", "/var/programd/ffm")));
 
         setHeartEnabled(Boolean.valueOf(this.properties.getProperty("programd.heart.enabled", "false")).booleanValue());
 
@@ -361,7 +362,13 @@ public class CoreSettings extends Settings
 
         setConsoleUseShell(Boolean.valueOf(this.properties.getProperty("programd.console.use-shell", "true")).booleanValue());
 
-        setSystemInterpreterDirectory(this.properties.getProperty("programd.system-interpreter.directory", "."));
+        setSchemaLocationAIML(URITools.contextualize(this.path, this.properties.getProperty("programd.schema-location.AIML", "../resources/schema/AIML.xsd")));
+
+        setSchemaLocationPlugins(URITools.contextualize(this.path, this.properties.getProperty("programd.schema-location.plugins", "../resources/schema/plugins.xsd")));
+
+        setSchemaLocationTestCases(URITools.contextualize(this.path, this.properties.getProperty("programd.schema-location.test-cases", "../resources/schema/test-cases.xsd")));
+
+        setSystemInterpreterDirectory(URITools.contextualize(this.path, this.properties.getProperty("programd.system-interpreter.directory", "")));
 
         setSystemInterpreterPrefix(this.properties.getProperty("programd.system-interpreter.prefix", ""));
 
@@ -380,7 +387,7 @@ public class CoreSettings extends Settings
 
         setDatabaseUrl(this.properties.getProperty("programd.database.url", "jdbc:mysql:///programdbot"));
 
-        setDatabaseDriver(this.properties.getProperty("programd.database.driver", "org.gjt.mm.mysql.Driver"));
+        setDatabaseDriver(this.properties.getProperty("programd.database.driver", "com.mysql.jdbc.Driver"));
 
         try
         {
@@ -400,27 +407,11 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @return the value of rootDirectory
-     */
-    public String getRootDirectory()
-    {
-        return this.rootDirectory;
-    }
-
-    /**
      * @return the value of aimlSchemaNamespaceUri
      */
     public URI getAimlSchemaNamespaceUri()
     {
         return this.aimlSchemaNamespaceUri;
-    }
-
-    /**
-     * @return the value of aimlSchemaLocation
-     */
-    public URL getAimlSchemaLocation()
-    {
-        return this.aimlSchemaLocation;
     }
 
     /**
@@ -546,7 +537,7 @@ public class CoreSettings extends Settings
     /**
      * @return the value of gossipPath
      */
-    public String getGossipPath()
+    public URL getGossipPath()
     {
         return this.gossipPath;
     }
@@ -578,7 +569,7 @@ public class CoreSettings extends Settings
     /**
      * @return the value of multiplexorFfmDir
      */
-    public String getMultiplexorFfmDir()
+    public URL getMultiplexorFfmDir()
     {
         return this.multiplexorFfmDir;
     }
@@ -616,9 +607,33 @@ public class CoreSettings extends Settings
     }
 
     /**
+     * @return the value of schemaLocationAIML
+     */
+    public URL getSchemaLocationAIML()
+    {
+        return this.schemaLocationAIML;
+    }
+
+    /**
+     * @return the value of schemaLocationPlugins
+     */
+    public URL getSchemaLocationPlugins()
+    {
+        return this.schemaLocationPlugins;
+    }
+
+    /**
+     * @return the value of schemaLocationTestCases
+     */
+    public URL getSchemaLocationTestCases()
+    {
+        return this.schemaLocationTestCases;
+    }
+
+    /**
      * @return the value of systemInterpreterDirectory
      */
-    public String getSystemInterpreterDirectory()
+    public URL getSystemInterpreterDirectory()
     {
         return this.systemInterpreterDirectory;
     }
@@ -704,27 +719,11 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param rootDirectoryToSet   the value to which to set rootDirectory
-     */
-    public void setRootDirectory(String rootDirectoryToSet)
-    {
-        this.rootDirectory = rootDirectoryToSet;
-    }
-
-    /**
      * @param aimlSchemaNamespaceUriToSet   the value to which to set aimlSchemaNamespaceUri
      */
     public void setAimlSchemaNamespaceUri(URI aimlSchemaNamespaceUriToSet)
     {
         this.aimlSchemaNamespaceUri = aimlSchemaNamespaceUriToSet;
-    }
-
-    /**
-     * @param aimlSchemaLocationToSet   the value to which to set aimlSchemaLocation
-     */
-    public void setAimlSchemaLocation(URL aimlSchemaLocationToSet)
-    {
-        this.aimlSchemaLocation = aimlSchemaLocationToSet;
     }
 
     /**
@@ -850,7 +849,7 @@ public class CoreSettings extends Settings
     /**
      * @param gossipPathToSet   the value to which to set gossipPath
      */
-    public void setGossipPath(String gossipPathToSet)
+    public void setGossipPath(URL gossipPathToSet)
     {
         this.gossipPath = gossipPathToSet;
     }
@@ -882,7 +881,7 @@ public class CoreSettings extends Settings
     /**
      * @param multiplexorFfmDirToSet   the value to which to set multiplexorFfmDir
      */
-    public void setMultiplexorFfmDir(String multiplexorFfmDirToSet)
+    public void setMultiplexorFfmDir(URL multiplexorFfmDirToSet)
     {
         this.multiplexorFfmDir = multiplexorFfmDirToSet;
     }
@@ -920,9 +919,33 @@ public class CoreSettings extends Settings
     }
 
     /**
+     * @param schemaLocationAIMLToSet   the value to which to set schemaLocationAIML
+     */
+    public void setSchemaLocationAIML(URL schemaLocationAIMLToSet)
+    {
+        this.schemaLocationAIML = schemaLocationAIMLToSet;
+    }
+
+    /**
+     * @param schemaLocationPluginsToSet   the value to which to set schemaLocationPlugins
+     */
+    public void setSchemaLocationPlugins(URL schemaLocationPluginsToSet)
+    {
+        this.schemaLocationPlugins = schemaLocationPluginsToSet;
+    }
+
+    /**
+     * @param schemaLocationTestCasesToSet   the value to which to set schemaLocationTestCases
+     */
+    public void setSchemaLocationTestCases(URL schemaLocationTestCasesToSet)
+    {
+        this.schemaLocationTestCases = schemaLocationTestCasesToSet;
+    }
+
+    /**
      * @param systemInterpreterDirectoryToSet   the value to which to set systemInterpreterDirectory
      */
-    public void setSystemInterpreterDirectory(String systemInterpreterDirectoryToSet)
+    public void setSystemInterpreterDirectory(URL systemInterpreterDirectoryToSet)
     {
         this.systemInterpreterDirectory = systemInterpreterDirectoryToSet;
     }
