@@ -16,10 +16,13 @@ import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * A ChatLogEvent contains additional information about an exchange in a chat.
- * Note that the "message" member of a ChatLogEvent will be null.
+ * Note that a ChatLogEvent must be logged using {@link Logger#callAppenders(LoggingEvent)},
+ * not one of the wrapper methods like "info" nor the basic "log" method.  This is due to a
+ * limitation with log4j (the provided logging methods will re-cast the event as a LoggingEvent
+ * and it won't be recognized by the chatlog-specific filters and layouts).
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.2
+ * @since 4.6
  */
 public class ChatLogEvent extends LoggingEvent
 {
@@ -35,6 +38,9 @@ public class ChatLogEvent extends LoggingEvent
     /** The id of the bot. */
     private String botid;
     
+    /** The fully qualified class name of the Logger class. */
+    private static final String LOGGER_FQCN = Logger.class.getName();
+    
     /**
      * Creates a new ChatLogEvent.
      * 
@@ -43,13 +49,18 @@ public class ChatLogEvent extends LoggingEvent
      * @param inputToUse the input from the user
      * @param replyToUse the reply from the bot
      */
-    public ChatLogEvent(String botidToUse, String useridToUse, String inputToUse, String replyToUse)
+    public ChatLogEvent(String bot, String user, String in, String out)
     {
-        super(Logger.class.getName(), Logger.getLogger("programd." + botidToUse), Level.INFO, "chat log event", null);
-        this.botid = botidToUse;
-        this.userid = useridToUse;
-        this.input = inputToUse;
-        this.reply = replyToUse;
+        super(LOGGER_FQCN,
+                Logger.getLogger("programd." + bot),
+                Level.INFO,
+                String.format("%s -> %s: \"%s\"; %s -> %s: \"%s\"",
+                        user, bot, in, bot, user, XMLKit.filterWhitespace(XMLKit.removeMarkup(out))),
+                null);
+        this.botid = bot;
+        this.userid = user;
+        this.input = in;
+        this.reply = out;
     }
 
     /**
@@ -82,12 +93,5 @@ public class ChatLogEvent extends LoggingEvent
     public String getReply()
     {
         return this.reply;
-    }
-
-    @Override
-    public String toString()
-    {
-        return String.format("%s -> %s: \"%s\"; %s -> %s: \"%s\"",
-                this.userid, this.botid, this.input, this.botid, this.userid, XMLKit.filterWhitespace(XMLKit.removeMarkup(this.reply)));
     }
 }
