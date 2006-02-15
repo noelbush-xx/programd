@@ -14,7 +14,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.aitools.programd.Core;
-import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.URLTools;
 
 /**
  * @author <a href="mailto:noel@x-31.com">Noel Bush</a>
@@ -57,7 +57,7 @@ public class ProgramDContextListener implements ServletContextListener
         }
 
         // Set up the Program D Core.
-        Core core = new Core(baseURL, URITools.contextualize(baseURL, config));
+        Core core = new Core(baseURL, URLTools.contextualize(baseURL, config));
         this.context.setAttribute(KEY_CORE, core);
     }
 

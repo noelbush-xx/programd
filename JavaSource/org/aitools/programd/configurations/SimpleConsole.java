@@ -18,7 +18,7 @@ import gnu.getopt.LongOpt;
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreShutdownHook;
 import org.aitools.programd.interfaces.Console;
-import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.URLTools;
 
 /**
  * A <code>SimpleConsole</code> gives you a running
@@ -40,9 +40,9 @@ public class SimpleConsole
 
     private SimpleConsole(String corePropertiesPath) throws FileNotFoundException
     {
-        URL baseURL = URITools.createValidURL(System.getProperty("user.dir"));
+        URL baseURL = URLTools.createValidURL(System.getProperty("user.dir"));
         this.console = new Console();
-        this.core = new Core(baseURL, URITools.createValidURL(corePropertiesPath));
+        this.core = new Core(baseURL, URLTools.createValidURL(corePropertiesPath));
         this.console.attachTo(this.core);
     }
 

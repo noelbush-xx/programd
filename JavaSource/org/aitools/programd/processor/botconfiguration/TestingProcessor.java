@@ -17,7 +17,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.URLTools;
 import org.aitools.programd.util.XMLKit;
 
 /**
@@ -59,8 +59,8 @@ public class TestingProcessor extends BotConfigurationElementProcessor
         Bot bot = parser.getCurrentBot();
         URL docURL = parser.getDocURL();
         
-        bot.setTestSuitePathspec(URITools.getURLs(XMLKit.getChildText(element, "test-suite-path"), docURL));
-        bot.setTestReportDirectory(URITools.contextualize(docURL, XMLKit.getChildText(element, "report-directory")));
+        bot.setTestSuitePathspec(URLTools.getURLs(XMLKit.getChildText(element, "test-suite-path"), docURL));
+        bot.setTestReportDirectory(URLTools.contextualize(docURL, XMLKit.getChildText(element, "report-directory")));
 
         logger.info("Configured testing.");
         return EMPTY_STRING;

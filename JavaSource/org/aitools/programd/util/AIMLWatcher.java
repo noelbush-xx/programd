@@ -89,13 +89,13 @@ public class AIMLWatcher
      */
     public void addWatchFile(URL path, String botid)
     {
-        if (URITools.seemsToExist(path))
+        if (URLTools.seemsToExist(path))
         {
             if (!this.watchMaps.containsKey(botid))
             {
                 this.watchMaps.put(botid, Collections.checkedMap(new HashMap<URL, Long>(), URL.class, Long.class));
             }
-            this.watchMaps.get(botid).put(path, URITools.getLastModified(path));
+            this.watchMaps.get(botid).put(path, URLTools.getLastModified(path));
         }
         else
         {
@@ -131,7 +131,7 @@ public class AIMLWatcher
                     long previousTime = watchMap.get(path);
                     if (previousTime != 0)
                     {
-                        long lastModified = URITools.getLastModified(path);
+                        long lastModified = URLTools.getLastModified(path);
                         if (lastModified > previousTime)
                         {
                             watchMap.put(path, lastModified);

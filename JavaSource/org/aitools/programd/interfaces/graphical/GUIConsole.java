@@ -55,7 +55,7 @@ import org.aitools.programd.interfaces.shell.NoSuchCommandException;
 import org.aitools.programd.interfaces.shell.Shell;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.URLTools;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -145,7 +145,7 @@ public class GUIConsole extends JPanel
         URL logoURL;
         try
         {
-            logoURL = URITools.createValidURL(LOGO_PATH, FileManager.getWorkingDirectory());
+            logoURL = URLTools.createValidURL(LOGO_PATH, FileManager.getWorkingDirectory());
         }
         catch (FileNotFoundException e)
         {
@@ -163,7 +163,7 @@ public class GUIConsole extends JPanel
         URL iconURL;
         try
         {
-            iconURL = URITools.createValidURL(ICON_PATH, FileManager.getWorkingDirectory());
+            iconURL = URLTools.createValidURL(ICON_PATH, FileManager.getWorkingDirectory());
         }
         catch (FileNotFoundException e)
         {
@@ -760,7 +760,7 @@ public class GUIConsole extends JPanel
 
         Graphmaster graphmaster = this.core.getGraphmaster();
         int categories = graphmaster.getTotalCategories();
-        this.core.load(URITools.contextualize(FileManager.getWorkingDirectory(), (String) response), this.shell.getCurrentBotID());
+        this.core.load(URLTools.contextualize(FileManager.getWorkingDirectory(), (String) response), this.shell.getCurrentBotID());
         Logger.getLogger("programd").log(Level.INFO,
                 graphmaster.getTotalCategories() - categories + " categories loaded from \"" + (String) response + "\".");
     }
@@ -785,7 +785,7 @@ public class GUIConsole extends JPanel
             }
             int categories = this.core.getGraphmaster().getTotalCategories();
             Graphmaster graphmaster = this.core.getGraphmaster();
-            this.core.load(URITools.contextualize(FileManager.getWorkingDirectory(), newPath), this.shell.getCurrentBotID());
+            this.core.load(URLTools.contextualize(FileManager.getWorkingDirectory(), newPath), this.shell.getCurrentBotID());
             Logger.getLogger("programd").log(Level.INFO,
                     graphmaster.getTotalCategories() - categories + " categories loaded from \"" + newPath + "\".");
         }

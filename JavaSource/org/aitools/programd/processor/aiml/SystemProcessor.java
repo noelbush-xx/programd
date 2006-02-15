@@ -22,7 +22,6 @@ import org.aitools.programd.CoreSettings;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.FileManager;
-import org.apache.log4j.Logger;
 
 /**
  * <p>
@@ -58,8 +57,6 @@ public class SystemProcessor extends AIMLProcessor
 
     /** Whether to use the array form of Runtime.exec(). */
     private static boolean useArrayExecForm;
-
-    private static final Logger logger = Logger.getLogger("programd");
 
     /**
      * Tries to guess whether to use the array form of Runtime.exec().
@@ -104,23 +101,23 @@ public class SystemProcessor extends AIMLProcessor
             return EMPTY_STRING;
         }
 
-        String directoryPath = coreSettings.getSystemInterpreterDirectory();
+        String directoryPath = coreSettings.getSystemInterpreterDirectory().toString();
         String prefix = coreSettings.getSystemInterpreterPrefix();
 
-        String response = parser.evaluate(element.getChildNodes());
+        String commandLine = parser.evaluate(element.getChildNodes());
         if (prefix != null)
         {
-            response = prefix + response;
+            commandLine = prefix + commandLine;
         }
         String output = EMPTY_STRING;
-        response = response.trim();
-        logger.trace("<system> call:" + LINE_SEPARATOR + response);
+        commandLine = commandLine.trim();
+        logger.debug("<system> call: " + commandLine);
         try
         {
             File directory = null;
             if (directoryPath != null)
             {
-                logger.trace("Executing <system> call in \"" + directoryPath + "\"");
+                logger.debug("Executing <system> call in \"" + directoryPath + "\"");
                 directory = FileManager.getFile(directoryPath);
                 if (!directory.isDirectory())
                 {
@@ -137,11 +134,11 @@ public class SystemProcessor extends AIMLProcessor
             Process child;
             if (useArrayExecForm)
             {
-                child = Runtime.getRuntime().exec(response.split(WORD_BOUNDARY_REGEX), null, directory);
+                child = Runtime.getRuntime().exec(commandLine.split(WORD_BOUNDARY_REGEX), null, directory);
             }
             else
             {
-                child = Runtime.getRuntime().exec(response, null, directory);
+                child = Runtime.getRuntime().exec(commandLine, null, directory);
             }
             if (child == null)
             {
@@ -167,17 +164,17 @@ public class SystemProcessor extends AIMLProcessor
                 output = output + line + "\n";
             }
 
-            logger.trace("output:" + LINE_SEPARATOR + output);
+            logger.debug("output: " + output);
 
-            response = output;
+            commandLine = output;
             in.close();
-            logger.trace("System process exit value: " + child.exitValue());
+            logger.debug("System process exit value: " + child.exitValue());
         }
         catch (IOException e)
         {
-            logger.warn("Cannot execute <system> command:" + LINE_SEPARATOR + e.getMessage());
+            logger.warn("Cannot execute <system> command: " + e.getMessage());
         }
 
-        return response.trim();
+        return commandLine.trim();
     }
 }

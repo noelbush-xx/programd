@@ -43,7 +43,7 @@ import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.Heart;
 import org.aitools.programd.util.ManagedProcesses;
 import org.aitools.programd.util.UnspecifiedParameterError;
-import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.URLTools;
 import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.XMLKit;
 import org.apache.log4j.Level;
@@ -186,7 +186,7 @@ public class Core
     {
         this.baseURL = base;
         this.settings = new CoreSettings(propertiesPath);
-        FileManager.setRootPath(URITools.getParent(this.baseURL));
+        FileManager.setRootPath(URLTools.getParent(this.baseURL));
         start();
     }
 
@@ -201,7 +201,7 @@ public class Core
     {
         this.settings = settingsToUse;
         this.baseURL = base;
-        FileManager.setRootPath(URITools.getParent(this.baseURL));
+        FileManager.setRootPath(URLTools.getParent(this.baseURL));
         start();
     }
 
@@ -234,7 +234,7 @@ public class Core
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
         
-        this.parser = XMLKit.getSAXParser(URITools.contextualize(this.baseURL, this.settings.getSchemaLocationAIML()), "AIML");
+        this.parser = XMLKit.getSAXParser(URLTools.contextualize(this.baseURL, this.settings.getSchemaLocationAIML()), "AIML");
         
         this.graphmaster = new Graphmaster(this.settings);
         this.bots = new Bots();
@@ -261,9 +261,9 @@ public class Core
         // Load the plugin config.
         try
         {
-            this.pluginConfig = XMLKit.getDocumentBuilder(URITools.contextualize(this.baseURL, this.settings.getSchemaLocationPlugins()),
+            this.pluginConfig = XMLKit.getDocumentBuilder(URLTools.contextualize(this.baseURL, this.settings.getSchemaLocationPlugins()),
                     "plugin configuration").parse(
-                    URITools.contextualize(this.baseURL, this.settings.getConfLocationPlugins())
+                    URLTools.contextualize(this.baseURL, this.settings.getConfLocationPlugins())
                             .toString());
         }
         catch (IOException e)
@@ -318,7 +318,7 @@ public class Core
             this.logger.info("Starting up the Graphmaster.");
 
             // Start loading bots.
-            loadBots(URITools.contextualize(this.baseURL, this.settings.getStartupFilePath()));
+            loadBots(URLTools.contextualize(this.baseURL, this.settings.getStartupFilePath()));
             
             // Request garbage collection.
             System.gc();
@@ -453,7 +453,7 @@ public class Core
                 {
                     for (File file : files)
                     {
-                        load(URITools.contextualize(URITools.getParent(path), file.getAbsolutePath()), botid);
+                        load(URLTools.contextualize(URLTools.getParent(path), file.getAbsolutePath()), botid);
                     }
                 }
                 return;
@@ -472,7 +472,7 @@ public class Core
         {
             this.aimlWatcher.addWatchFile(path, botid);
         }
-        FileManager.pushWorkingDirectory(URITools.getParent(path));
+        FileManager.pushWorkingDirectory(URLTools.getParent(path));
 
         try
         {
@@ -744,7 +744,7 @@ public class Core
         this.logger.info("Loading bot from \"" + path + "\".");
         if (path.getProtocol().equals(FileManager.FILE))
         {
-            FileManager.pushWorkingDirectory(URITools.getParent(path));
+            FileManager.pushWorkingDirectory(URLTools.getParent(path));
         }
 
         String id = null;

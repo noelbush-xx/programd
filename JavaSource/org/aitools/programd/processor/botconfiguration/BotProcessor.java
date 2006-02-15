@@ -20,7 +20,7 @@ import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.URLTools;
 import org.aitools.programd.util.UserError;
 
 /**
@@ -70,7 +70,7 @@ public class BotProcessor extends BotConfigurationElementProcessor
             String href = element.getAttribute(HREF);
             try
             {
-                return this.core.loadBot(URITools.createValidURL(href));
+                return this.core.loadBot(URLTools.createValidURL(href));
             }
             catch (FileNotFoundException e)
             {

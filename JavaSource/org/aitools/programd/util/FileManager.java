@@ -42,7 +42,7 @@ public class FileManager
     {
         try
         {
-            pushWorkingDirectory(URITools.createValidURL(System.getProperty("user.dir")));
+            pushWorkingDirectory(URLTools.createValidURL(System.getProperty("user.dir")));
         }
         catch (FileNotFoundException e)
         {
@@ -375,7 +375,7 @@ public class FileManager
                 String parent = toRead.getParent();
                 try
                 {
-                    workingDirectory.push(URITools.createValidURL(parent));
+                    workingDirectory.push(URLTools.createValidURL(parent));
                 }
                 catch (FileNotFoundException e)
                 {

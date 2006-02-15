@@ -13,7 +13,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.URLTools;
 import org.aitools.programd.util.UserError;
 
 import org.aitools.programd.util.Settings;
@@ -268,7 +268,7 @@ public class CoreSettings extends Settings
             throw new UserError(e);
         }
 
-        setStartupFilePath(URITools.contextualize(this.path, this.properties.getProperty("programd.startup-file-path", "bots.xml")));
+        setStartupFilePath(URLTools.contextualize(this.path, this.properties.getProperty("programd.startup-file-path", "bots.xml")));
 
         String mergePolicyValue = this.properties.getProperty("programd.merge.policy", "combine");
          
@@ -330,7 +330,7 @@ public class CoreSettings extends Settings
 
         setJavascriptAllowed(Boolean.valueOf(this.properties.getProperty("programd.javascript-allowed", "false")).booleanValue());
 
-        setGossipPath(URITools.contextualize(this.path, this.properties.getProperty("programd.gossip.path", "/var/log/programd/gossip.txt")));
+        setGossipPath(URLTools.contextualize(this.path, this.properties.getProperty("programd.gossip.path", "/var/log/programd/gossip.txt")));
 
         setConnectString(this.properties.getProperty("programd.connect-string", "CONNECT"));
 
@@ -338,7 +338,7 @@ public class CoreSettings extends Settings
 
         setMultiplexorClassname(this.properties.getProperty("programd.multiplexor-classname", "org.aitools.programd.multiplexor.FlatFileMultiplexor"));
 
-        setMultiplexorFfmDir(URITools.contextualize(this.path, this.properties.getProperty("programd.multiplexor.ffm-dir", "/var/programd/ffm")));
+        setMultiplexorFfmDir(URLTools.contextualize(this.path, this.properties.getProperty("programd.multiplexor.ffm-dir", "/var/programd/ffm")));
 
         setHeartEnabled(Boolean.valueOf(this.properties.getProperty("programd.heart.enabled", "false")).booleanValue());
 
@@ -362,13 +362,13 @@ public class CoreSettings extends Settings
 
         setConsoleUseShell(Boolean.valueOf(this.properties.getProperty("programd.console.use-shell", "true")).booleanValue());
 
-        setSchemaLocationAIML(URITools.contextualize(this.path, this.properties.getProperty("programd.schema-location.AIML", "../resources/schema/AIML.xsd")));
+        setSchemaLocationAIML(URLTools.contextualize(this.path, this.properties.getProperty("programd.schema-location.AIML", "../resources/schema/AIML.xsd")));
 
-        setSchemaLocationPlugins(URITools.contextualize(this.path, this.properties.getProperty("programd.schema-location.plugins", "../resources/schema/plugins.xsd")));
+        setSchemaLocationPlugins(URLTools.contextualize(this.path, this.properties.getProperty("programd.schema-location.plugins", "../resources/schema/plugins.xsd")));
 
-        setSchemaLocationTestCases(URITools.contextualize(this.path, this.properties.getProperty("programd.schema-location.test-cases", "../resources/schema/test-cases.xsd")));
+        setSchemaLocationTestCases(URLTools.contextualize(this.path, this.properties.getProperty("programd.schema-location.test-cases", "../resources/schema/test-cases.xsd")));
 
-        setSystemInterpreterDirectory(URITools.contextualize(this.path, this.properties.getProperty("programd.system-interpreter.directory", "")));
+        setSystemInterpreterDirectory(URLTools.contextualize(this.path, this.properties.getProperty("programd.system-interpreter.directory", "")));
 
         setSystemInterpreterPrefix(this.properties.getProperty("programd.system-interpreter.prefix", ""));
 
@@ -402,7 +402,7 @@ public class CoreSettings extends Settings
 
         setDatabasePassword(this.properties.getProperty("programd.database.password", "yourpassword"));
 
-        setConfLocationPlugins(URITools.contextualize(this.path, this.properties.getProperty("programd.conf-location.plugins", "plugins.xml")));
+        setConfLocationPlugins(URLTools.contextualize(this.path, this.properties.getProperty("programd.conf-location.plugins", "plugins.xml")));
 
     }
 

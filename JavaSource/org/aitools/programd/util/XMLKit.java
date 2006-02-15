@@ -128,9 +128,6 @@ public class XMLKit
     
     /** The length of {@link BR}. */
     private static final int BR_LEN = BR.length();
-    
-    /** The XML namespace URI. */
-    private static final String XML_NAMESPACE_URI = "http://www.w3.org/XML/1998/namespace";
 
     /**
      * An HTML &lt;/p&gt; end tag.

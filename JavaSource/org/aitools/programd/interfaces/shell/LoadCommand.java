@@ -13,7 +13,7 @@ package org.aitools.programd.interfaces.shell;
 import org.aitools.programd.Core;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.URLTools;
 import org.apache.log4j.Logger;
 
 /**
@@ -68,7 +68,7 @@ public class LoadCommand extends ShellCommand
             Graphmaster graphmaster = core.getGraphmaster();
             int categories = graphmaster.getTotalCategories();
             String path = commandLine.substring(space + 1);
-            core.load(URITools.contextualize(FileManager.getWorkingDirectory(), path), shell.getCurrentBotID());
+            core.load(URLTools.contextualize(FileManager.getWorkingDirectory(), path), shell.getCurrentBotID());
             Logger.getLogger("programd").info(
                     graphmaster.getTotalCategories() - categories + " categories loaded from \"" + path + "\".");
         }

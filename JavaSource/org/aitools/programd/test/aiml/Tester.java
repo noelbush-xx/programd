@@ -11,7 +11,7 @@ import java.util.List;
 import org.aitools.programd.Core;
 import org.aitools.programd.multiplexor.Multiplexor;
 import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.URLTools;
 import org.apache.log4j.Logger;
 
 /**
@@ -112,7 +112,7 @@ public class Tester
         }
         TestReport report = new TestReport(this.successes, this.failures);
         report.logSummary(this.logger);
-        String reportPath = URITools.contextualize(this.testReportDirectory,
+        String reportPath = URLTools.contextualize(this.testReportDirectory,
                 "test-report-" + timestampFormat.format(new Date()) + ".xml").getFile();
         report.write(reportPath);
         // Good time to request garbage collection.

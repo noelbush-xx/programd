@@ -372,8 +372,6 @@ public class Shell extends Thread
 
     /**
      * Print a message line of error to the console.
-     * TODO: Make the formatting
-     * different here.
      * 
      * @param message the message to print
      */
