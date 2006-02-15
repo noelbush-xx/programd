@@ -26,7 +26,6 @@ import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.InputNormalizer;
 import org.aitools.programd.util.NoMatchException;
-import org.aitools.programd.util.XMLKit;
 import org.apache.log4j.Logger;
 
 /**
@@ -94,10 +93,10 @@ abstract public class Multiplexor
     protected Bots bots;
 
     /** The general log where we will record some events. */
-    protected Logger logger;
-
-    /** Whether or not to record match trace info. */
-    protected boolean recordMatchTrace;
+    protected static final Logger logger = Logger.getLogger("programd");
+    
+    /** The log where match info will be recorded. */
+    protected static final Logger matchLogger = Logger.getLogger("programd.matching");
 
     /** The time that the Multiplexor started operation. */
     protected long startTime = System.currentTimeMillis();
@@ -116,17 +115,15 @@ abstract public class Multiplexor
      * object's settings. Note that the {@link #predicateMaster} is <i>not</i>
      * initialized -- it must be {@link #attach}ed subsequently.
      * 
-     * @param coreOwner the Core that owns this Multiplexor
+     * @param owner the Core that owns this Multiplexor
      */
-    public Multiplexor(Core coreOwner)
+    public Multiplexor(Core owner)
     {
-        this.core = coreOwner;
+        this.core = owner;
         this.graphmaster = this.core.getGraphmaster();
-        this.logger = Logger.getLogger("programd");
         this.bots = this.core.getBots();
         CoreSettings coreSettings = this.core.getSettings();
         this.predicateEmptyDefault = coreSettings.getPredicateEmptyDefault();
-        this.recordMatchTrace = coreSettings.recordMatchTrace();
     }
 
     /**
@@ -261,11 +258,8 @@ abstract public class Multiplexor
         // We might use this to track matching statistics.
         long time = 0;
 
-        // If match trace info is on, mark the time just before matching starts.
-        if (this.recordMatchTrace)
-        {
-            time = System.currentTimeMillis();
-        }
+        // Mark the time just before matching starts.
+        time = System.currentTimeMillis();
 
         // Get a reply for each sentence.
         for (String sentence : sentenceList)
@@ -276,17 +270,16 @@ abstract public class Multiplexor
         // Increment the (static) response count.
         this.responseCount++;
 
-        // If match trace info is on, produce statistics about the response
-        // time.
-        if (this.recordMatchTrace)
-        {
-            // Mark the time that processing is finished.
-            time = System.currentTimeMillis() - time;
+        // Produce statistics about the response time.
+        // Mark the time that processing is finished.
+        time = System.currentTimeMillis() - time;
 
-            // Calculate the average response time.
-            this.totalTime += time;
-            this.avgResponseTime = (float) this.totalTime / (float) this.responseCount;
-            this.logger.debug(String.format("Response %d in %dms. (Average: %.2fms)",
+        // Calculate the average response time.
+        this.totalTime += time;
+        this.avgResponseTime = (float) this.totalTime / (float) this.responseCount;
+        if (matchLogger.isDebugEnabled())
+        {
+            matchLogger.debug(String.format("Response %d in %dms. (Average: %.2fms)",
                     this.responseCount, time, this.avgResponseTime));
         }
 
@@ -341,7 +334,7 @@ abstract public class Multiplexor
         // Push the reply onto the <that/> stack.
         this.predicateMaster.push(THAT, reply, userid, botid);
 
-        return XMLKit.filterWhitespace(reply);
+        return reply;
     }
 
     /**
@@ -357,10 +350,10 @@ abstract public class Multiplexor
      */
     private String getMatchResult(String input, String that, String topic, String userid, String botid, TemplateParser parser)
     {
-        // Always show the input path (in any case, if match trace is on).
-        if (this.recordMatchTrace)
+        // Show the input path.
+        if (matchLogger.isDebugEnabled())
         {
-            this.logger.debug(String.format("%s> %s : %s : %s : %s",
+            matchLogger.debug(String.format("%s> %s : %s : %s : %s",
                     userid, input, that, topic, botid));
         }
 
@@ -372,19 +365,19 @@ abstract public class Multiplexor
         }
         catch (NoMatchException e)
         {
-            this.logger.info(e.getMessage());
+            logger.warn(e.getMessage());
             return EMPTY_STRING;
         }
 
         if (match == null)
         {
-            this.logger.info("No match found for input \"" + input + "\".");
+            logger.warn("No match found for input \"" + input + "\".");
             return EMPTY_STRING;
         }
 
-        if (this.recordMatchTrace)
+        if (matchLogger.isDebugEnabled())
         {
-            this.logger.debug(String.format("Match: %s (\"%s\")",
+            matchLogger.debug(String.format("Match: %s (\"%s\")",
                     match.getPath(), match.getFileName()));
         }
 
@@ -461,7 +454,7 @@ abstract public class Multiplexor
      */
     private void logResponse(String input, String response, String userid, String botid)
     {
-        this.logger.info(new ChatLogEvent(this.logger, botid, userid, input, response));
+        logger.info(new ChatLogEvent(botid, userid, input, response));
     }
 
     /**
