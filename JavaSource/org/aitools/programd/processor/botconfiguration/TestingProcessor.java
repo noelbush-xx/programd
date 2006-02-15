@@ -9,12 +9,15 @@
 
 package org.aitools.programd.processor.botconfiguration;
 
+import java.net.URL;
+
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
+import org.aitools.programd.util.URITools;
 import org.aitools.programd.util.XMLKit;
 
 /**
@@ -54,9 +57,10 @@ public class TestingProcessor extends BotConfigurationElementProcessor
         }
         // (otherwise...)
         Bot bot = parser.getCurrentBot();
-        bot.setTestSuiteDirectory(XMLKit.getChildText(element, "test-suite-path"));
-        bot.setTestReportDirectory(XMLKit.getChildText(element, "test-report-directory"));
-        bot.setTestingLogPattern(XMLKit.getChildText(element, "log-pattern"));
+        URL docURL = parser.getDocURL();
+        
+        bot.setTestSuitePathspec(URITools.getURLs(XMLKit.getChildText(element, "test-suite-path"), docURL));
+        bot.setTestReportDirectory(URITools.contextualize(docURL, XMLKit.getChildText(element, "report-directory")));
 
         logger.info("Configured testing.");
         return EMPTY_STRING;
