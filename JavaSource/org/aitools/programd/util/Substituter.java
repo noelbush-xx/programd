@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 /**
  * Provides substitution utilities for all classes.
  * 
@@ -24,6 +26,8 @@ import java.util.regex.Pattern;
  */
 public class Substituter
 {
+    private static final Logger aimlLogger = Logger.getLogger("programd.aiml-processing");
+    
     /**
      * Performs replacements specified by the <code>substitutionMap</code>
      * in the given <code>input</code>.
@@ -37,6 +41,11 @@ public class Substituter
         if (substitutionMap == null)
         {
             return input;
+        }
+        
+        if (aimlLogger.isDebugEnabled())
+        {
+            aimlLogger.debug(String.format("Applying %d-element substituion map to input \"%s\".", substitutionMap.size(), input));
         }
         
         // This will contain all pieces of the input untouched by substitution.
@@ -54,7 +63,7 @@ public class Substituter
             ListIterator<String> untouchedIterator = untouchedPieces.listIterator(0);
             while (untouchedIterator.hasNext())
             {
-                // Is the find string in the untouched input?
+                // Get the next untouched piece, and set up the matcher.
                 String untouchedTest = untouchedIterator.next();
                 if (matcher != null)
                 {
@@ -65,27 +74,53 @@ public class Substituter
                     matcher = find.matcher(untouchedTest);
                 }
 
-                // We only look at the first match -- we'll get others later
+                // Is the find string in the untouched input? We only look at the first match -- we'll get others later
                 if (matcher.find())
                 {
+                    if (aimlLogger.isDebugEnabled())
+                    {
+                        aimlLogger.debug(String.format("Matched \"%s\" in \"%s\".", find, untouchedTest));
+                    }
+                    
                     // If there is a match, replace the current untouched input with the
                     // substring up to startIndex,
                     int startIndex = matcher.start();
-                    untouchedIterator.set(untouchedTest.substring(0, startIndex));
+                    String newUntouched = untouchedTest.substring(0, startIndex);
+                    untouchedIterator.set(newUntouched);
+                    if (aimlLogger.isDebugEnabled())
+                    {
+
+                        aimlLogger.debug(String.format("From \"%s\" leaving untouched \"%s\".", untouchedTest, newUntouched));
+                    }
                     
                     // put the replacement text into the replacements list,
                     String replacement = substitutionMap.get(find);
                     replacements.add(untouchedIterator.nextIndex() - 1, replacement);
-
+                    if (aimlLogger.isDebugEnabled())
+                    {
+                        aimlLogger.debug(String.format("Added \"%s\" to replacements list.", replacement));
+                    }
+                    
                     // and put the remainder of the untouched input into the
                     // untouched list.
-                    untouchedIterator.add(untouchedTest.substring(matcher.end()));
+                    String remainingUntouched = untouchedTest.substring(matcher.end());
+                    untouchedIterator.add(remainingUntouched);
+                    untouchedIterator.previous();
+                    if (aimlLogger.isDebugEnabled())
+                    {
+                        aimlLogger.debug(String.format("Stored remaining untouched: \"%s\".", remainingUntouched));
+                    }
                 }
             }
         }
 
         // Now construct the result.
         StringBuffer result = new StringBuffer();
+        if (aimlLogger.isDebugEnabled())
+        {
+            aimlLogger.debug(String.format("Constructing result using %d untouched piece(s) and %d replacement(s).",
+                    untouchedPieces.size(), replacements.size()));
+        }
 
         // Iterate through the untouched pieces and the replacements.
         ListIterator<String> untouchedIterator = untouchedPieces.listIterator(0);
