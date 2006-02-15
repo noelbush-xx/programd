@@ -56,7 +56,7 @@ public class FlatFileMultiplexor extends Multiplexor
     public FlatFileMultiplexor(Core coreOwner)
     {
         super(coreOwner);
-        this.ffmDirName = this.core.getSettings().getMultiplexorFfmDir();
+        this.ffmDirName = this.core.getSettings().getMultiplexorFfmDir().getFile();
     }
 
     /**
