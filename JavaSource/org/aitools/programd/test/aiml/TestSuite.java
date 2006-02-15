@@ -10,9 +10,9 @@ import javax.xml.parsers.DocumentBuilder;
 
 import org.aitools.programd.multiplexor.Multiplexor;
 import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.URITools;
 import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.XMLKit;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -27,11 +27,8 @@ import org.xml.sax.SAXException;
 public class TestSuite implements Iterable<TestCase>
 {
     /** The test cases namespace URI. */
-    public static final String TESTCASE_NAMESPACE_URI = "http://aitools.org/programd/4.5/test-cases";
+    public static final String TESTCASE_NAMESPACE_URI = "http://aitools.org/programd/4.6/test-cases";
 
-    /** The test cases schema location (local). */
-    private static final String SCHEMA_LOCATION = "resources/schema/test-cases.xsd";
-    
     /** The test cases in this suite. */
     ArrayList<TestCase> testCases = new ArrayList<TestCase>();
 
@@ -43,6 +40,9 @@ public class TestSuite implements Iterable<TestCase>
 
     /** The Multiplexor to use. */
     private Multiplexor multiplexor;
+    
+    /** The Logger. */
+    private Logger logger;
 
     /** The test auccesses accumulated by this suite. */
     private LinkedList<TestResult> successes = new LinkedList<TestResult>();
@@ -60,11 +60,12 @@ public class TestSuite implements Iterable<TestCase>
      * @param clearInputToUse the clearInput for the test suite
      * @param multiplexorToUse the multiplexor to use
      */
-    public TestSuite(String nameToUse, String clearInputToUse, Multiplexor multiplexorToUse)
+    public TestSuite(String nameToUse, String clearInputToUse, Multiplexor multiplexorToUse, Logger loggerToUse)
     {
         this.name = nameToUse;
         this.clearInput = clearInputToUse;
         this.multiplexor = multiplexorToUse;
+        this.logger = loggerToUse;
     }
 
     /**
@@ -73,10 +74,11 @@ public class TestSuite implements Iterable<TestCase>
      * @param nameToUse the name to give the test suite
      * @param multiplexorToUse the multiplexor to use
      */
-    public TestSuite(String nameToUse, Multiplexor multiplexorToUse)
+    public TestSuite(String nameToUse, Multiplexor multiplexorToUse, Logger loggerToUse)
     {
         this.name = nameToUse;
         this.multiplexor = multiplexorToUse;
+        this.logger = loggerToUse;
     }
 
     /**
@@ -85,9 +87,10 @@ public class TestSuite implements Iterable<TestCase>
      * @param nameToUse the name to give the test suite
      */
     @SuppressWarnings("unused")
-    private TestSuite(String nameToUse)
+    private TestSuite(String nameToUse, Logger loggerToUse)
     {
         this.name = nameToUse;
+        this.logger = loggerToUse;
     }
 
     /**
@@ -143,13 +146,17 @@ public class TestSuite implements Iterable<TestCase>
         for (TestCase testCase : this.testCases)
         {
             boolean caseSuccessful = testCase.run(this.multiplexor, TESTER_ID, botid);
+            String testcaseName = testCase.getName();
             if (!caseSuccessful)
             {
+                this.logger.warn("Test case \"" + testcaseName + "\" failed with response \"" +
+                        XMLKit.removeMarkup(testCase.getLastResponse()) + "\".");
                 registerFailure(this.name, testCase.getName(), testCase.getInput(), testCase
                         .getLastResponse());
             }
             else
             {
+                this.logger.info("Test case " + testcaseName + " succeeded.");
                 registerSuccess(this.name, testCase.getName(), testCase.getInput(), testCase
                         .getLastResponse());
             }
@@ -187,26 +194,26 @@ public class TestSuite implements Iterable<TestCase>
     /**
      * Loads a test suite from the given path.
      * 
-     * @param base the base URL to use
      * @param path the path from which to load the test suite
+     * @param schema the URL to the copy of the schema for test cases
      * @return the loaded test suite
      */
-    public static TestSuite load(URL base, URL path)
+    public static TestSuite load(URL path, URL schema, Logger logger)
     {
-        return load(base, path, null);
+        return load(path, schema, null, logger);
     }
 
     /**
      * Loads a test suite from the given path.
      * 
-     * @param base the base URL to use
      * @param path the path from which to load the test suite
+     * @param schema the URL to the copy of the schema for test cases
      * @param multiplexor the multiplexor to use
      * @return the loaded test suite
      */
-    public static TestSuite load(URL base, URL path, Multiplexor multiplexor)
+    public static TestSuite load(URL path, URL schema, Multiplexor multiplexor, Logger logger)
     {
-        DocumentBuilder builder = XMLKit.getDocumentBuilder(URITools.contextualize(base, SCHEMA_LOCATION), "test cases");
+        DocumentBuilder builder = XMLKit.getDocumentBuilder(schema, "test cases");
         Document doc;
         try
         {
@@ -224,7 +231,7 @@ public class TestSuite implements Iterable<TestCase>
         String encoding = doc.getXmlEncoding();
         Element testSuiteElement = doc.getDocumentElement();
         TestSuite suite = new TestSuite(testSuiteElement.getAttribute("name"), testSuiteElement
-                .getAttribute("clearInput"), multiplexor);
+                .getAttribute("clearInput"), multiplexor, logger);
     
         NodeList testCases = doc.getElementsByTagNameNS(TESTCASE_NAMESPACE_URI,
                 TestCase.TAG_TESTCASE);

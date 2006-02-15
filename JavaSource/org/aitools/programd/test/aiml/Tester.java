@@ -1,17 +1,15 @@
 package org.aitools.programd.test.aiml;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.multiplexor.Multiplexor;
-import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.URITools;
 import org.apache.log4j.Logger;
@@ -33,9 +31,9 @@ public class Tester
     /** The test failures. */
     private LinkedList<TestResult> failures = new LinkedList<TestResult>();
     
-    /** The base URL. */
-    private URL baseURL;
-
+    /** The Core that this Tester will use. */
+    private Core core;
+    
     /** The Multiplexor that this Tester will use. */
     private Multiplexor multiplexor;
 
@@ -43,10 +41,10 @@ public class Tester
     private Logger logger;
 
     /** The pathspec for the test suites. */
-    private String testSuitePathSpec;
+    private List<URL> suiteURLs;
 
     /** The path to the test report directory. */
-    private String testReportDirectory;
+    private URL testReportDirectory;
 
     /** The timestamp format to use for reports. */
     private static final SimpleDateFormat timestampFormat = new SimpleDateFormat(
@@ -59,24 +57,23 @@ public class Tester
      * @param core the Core to use for finding plugin configuration, active
      *            multiplexor, etc.
      * @param testLogger the logger to which to send output
-     * @param testSuites the path to the test suite directory
+     * @param suites the test suites
      * @param testReports the directory in which to store test reports
      */
-    public Tester(Core core, Logger testLogger, String testSuites, String testReports)
+    public Tester(Core coreToUse, Logger testLogger, List<URL> suitePaths, URL testReports)
     {
-        this.multiplexor = core.getMultiplexor();
-        this.baseURL = core.getBaseURL();
+        this.core = coreToUse;
+        this.multiplexor = this.core.getMultiplexor();
         this.logger = testLogger;
-        this.testSuitePathSpec = testSuites;
+        this.suiteURLs = suitePaths;
         try
         {
-            this.testReportDirectory = FileManager.getExistingDirectory(testReports)
-                    .getCanonicalPath();
+            this.testReportDirectory = FileManager.checkOrCreateDirectory(testReports.getFile(),
+                    "test report directory").getCanonicalFile().toURL();
         }
         catch (IOException e)
         {
-            throw new DeveloperError("A directory that FileManager found cannot be found anymore.",
-                    e);
+            assert false : "A directory that FileManager found cannot be found anymore.";
         }
     }
 
@@ -92,7 +89,7 @@ public class Tester
     public String run(String botid, String suite, int runCount)
     {
         this.suites.clear();
-        this.suites = loadTests(this.baseURL, this.testSuitePathSpec, this.multiplexor, this.logger);
+        this.suites = loadTests(this.suiteURLs, this.core.getSettings().getSchemaLocationTestCases(), this.multiplexor, this.logger);
         if (null == botid)
         {
             this.logger.warn("No botid defined for tests.");
@@ -115,8 +112,8 @@ public class Tester
         }
         TestReport report = new TestReport(this.successes, this.failures);
         report.logSummary(this.logger);
-        String reportPath = this.testReportDirectory + File.separator + "test-report-"
-        + timestampFormat.format(new Date()) + ".xml";
+        String reportPath = URITools.contextualize(this.testReportDirectory,
+                "test-report-" + timestampFormat.format(new Date()) + ".xml").getFile();
         report.write(reportPath);
         // Good time to request garbage collection.
         System.gc();
@@ -158,47 +155,21 @@ public class Tester
     /**
      * Loads all test suites from a given pathspec (may use wildcards).
      * 
-     * @param base the base URL to use
-     * @param pathspec the pathspec from which to load the tests
+     * @param pathspec the list of suites
+     * @param schema the URL to the copy of the schema for test cases
      * @param multiplexorToUse the Multiplexor to assign to the suites
      * @param logger the logger to use for tracking progress
      * 
      * @return the map of suite names to suites
      */
-    private static HashMap<String, TestSuite> loadTests(URL base, String pathspec, Multiplexor multiplexorToUse, Logger logger)
+    private static HashMap<String, TestSuite> loadTests(List<URL> suiteList, URL schema, Multiplexor multiplexorToUse, Logger logger)
     {
         HashMap<String, TestSuite> suites = new HashMap<String, TestSuite>();
-        String[] fileList = null;
-        // Handle paths with wildcards that need to be expanded.
-        if (pathspec.indexOf("*") != -1)
+        for (URL path : suiteList)
         {
-            try
-            {
-                fileList = FileManager.glob(pathspec);
-            }
-            catch (FileNotFoundException e)
-            {
-                logger.warn(e.getMessage());
-            }
-        }
-        else
-        {
-            fileList = new String[] {pathspec};
-        }
-        int fileCount = fileList.length;
-        if (null != fileList && fileCount > 0)
-        {
-            for (int index = 0; index < fileCount; index++)
-            {
-                String path = fileList[index];
-                logger.info("Loading tests from \"" + pathspec + "\".");
-                TestSuite suite = TestSuite.load(base, URITools.createValidURL(path), multiplexorToUse);
-                suites.put(suite.getName(), suite);
-            }
-        }
-        else
-        {
-            logger.warn("No test files found in \"" + pathspec + "\".");
+            logger.info("Loading tests from \"" + path + "\".");
+            TestSuite suite = TestSuite.load(path, schema, multiplexorToUse, logger);
+            suites.put(suite.getName(), suite);
         }
         return suites;
     }
