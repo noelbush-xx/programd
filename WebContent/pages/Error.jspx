@@ -8,8 +8,7 @@
     </head>
     <body>
         <h1>Error</h1>
-        <p><c:out value="${error-text}"/></p>
+        <p><c:out value="${errortext}"/></p>
         <p><a href="${header['referer']}">Back</a>.</p>
-	    </div>
     </body>
 </html>
