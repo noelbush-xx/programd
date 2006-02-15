@@ -17,7 +17,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.URLTools;
 
 /**
  * Handles a
@@ -56,7 +56,7 @@ public class LearnProcessor extends AIMLProcessor
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        URL path = URITools.contextualize(FileManager.getWorkingDirectory(), parser.evaluate(element.getChildNodes()));
+        URL path = URLTools.contextualize(FileManager.getWorkingDirectory(), parser.evaluate(element.getChildNodes()));
         FileManager.pushWorkingDirectory(path);
         parser.getCore().load(path, parser.getBotID());
         FileManager.popWorkingDirectory();

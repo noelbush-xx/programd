@@ -31,7 +31,7 @@ import org.aitools.programd.processor.ProcessorRegistry;
 import org.aitools.programd.util.ClassUtils;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.NotARegisteredClassException;
-import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.URLTools;
 import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.XMLKit;
 
@@ -181,7 +181,7 @@ abstract public class GenericParser<P extends Processor>
         {
             if (this.docURL != null)
             {
-                this.docURL = URITools.contextualize(this.docURL, url);
+                this.docURL = URLTools.contextualize(this.docURL, url);
             }
             else
             {
@@ -428,7 +428,7 @@ abstract public class GenericParser<P extends Processor>
         URL url = null;
         if (this.docURL != null)
         {
-            url = URITools.contextualize(this.docURL, urlString);
+            url = URLTools.contextualize(this.docURL, urlString);
         }
         verifyAndProcess(url);
     }
@@ -446,7 +446,7 @@ abstract public class GenericParser<P extends Processor>
         URL url = null;
         if (this.docURL != null)
         {
-            url = URITools.contextualize(this.docURL, urlString);
+            url = URLTools.contextualize(this.docURL, urlString);
         }
         return verifyAndProcessResponse(url);
     }
