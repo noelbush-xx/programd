@@ -238,18 +238,18 @@ public class AIMLReader extends DefaultHandler2
 
         if (this.currentBuffer != null && this.currentBuffer == this.patternBuffer)
         {
-            this.pattern = XMLKit.filterWhitespace(this.patternBuffer.toString());
+            this.pattern = this.patternBuffer.toString();
             this.currentBuffer = null;
         }
         else if (this.currentBuffer != null && this.currentBuffer == this.thatBuffer)
         {
-            this.that = XMLKit.filterWhitespace(this.thatBuffer.toString());
+            this.that = this.thatBuffer.toString();
             this.currentBuffer = null;
         }
         else if (elementName.equals(TEMPLATE))
         {
             // Whitespace-normalize the template contents.
-            this.template = XMLKit.filterWhitespace(this.templateStartTag + this.templateBuffer.toString() + TEMPLATE_END_TAG);
+            this.template = this.templateStartTag + this.templateBuffer.toString() + TEMPLATE_END_TAG;
             // Finally, deliver the newly defined category to the Graphmaster.
             this.graphmaster.addCategory(this.pattern, this.that, this.topic, this.template, this.botid, this.bot, this.path);
             // Reset the pattern, that and template.
