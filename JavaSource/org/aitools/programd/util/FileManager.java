@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import org.aitools.programd.util.DeveloperError;
@@ -38,7 +40,14 @@ public class FileManager
     /** Put the working directory into the stack right away. */
     static
     {
-        pushWorkingDirectory(URITools.createValidURL(System.getProperty("user.dir")));
+        try
+        {
+            pushWorkingDirectory(URITools.createValidURL(System.getProperty("user.dir")));
+        }
+        catch (FileNotFoundException e)
+        {
+            throw new DeveloperError("Current working directory (according to system properties) does not exist!", e);
+        }
     }
 
     /** The error logger. */
@@ -93,7 +102,7 @@ public class FileManager
      *            directory)
      * @return the file
      */
-    public static File getExistingFile(String path)
+    public static File getExistingFile(String path) throws FileNotFoundException
     {
         File file = getFile(path);
         if (!file.exists())
@@ -101,7 +110,7 @@ public class FileManager
             file = getFile(workingDirectory.peek().getPath() + path);
             if (!file.exists())
             {
-                throw new DeveloperError("Couldn't find \"" + path + "\".", new FileNotFoundException());
+                throw new FileNotFoundException("Couldn't find \"" + path + "\".");
             }
         }
         try
@@ -272,7 +281,8 @@ public class FileManager
                 throw new UserError("Could not create " + description + " directory \"" + path + "\".", new CouldNotCreateFileException(directory.getAbsolutePath()));
             }
         }
-        Logger.getLogger("programd").debug("Created new " + description + " \"" + path + "\".");
+        assert file.exists();
+        logger.info(String.format("Created %s \"%s\".", description != null ? "new " + description : "", file.getAbsolutePath()));
         return file;
     }
 
@@ -350,11 +360,27 @@ public class FileManager
         // Handle paths which are apparently files.
         else
         {
-            File toRead = getExistingFile(path);
+            File toRead = null;
+            try
+            {
+                toRead = getExistingFile(path);
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new UserError(new FileNotFoundException(path));
+            }
 
             if (toRead.isAbsolute())
             {
-                workingDirectory.push(URITools.createValidURL(toRead.getParent()));
+                String parent = toRead.getParent();
+                try
+                {
+                    workingDirectory.push(URITools.createValidURL(parent));
+                }
+                catch (FileNotFoundException e)
+                {
+                    throw new DeveloperError("Created an invalid parent file: \"" + parent + "\".", e);
+                }
             }
 
             if (toRead.exists() && !toRead.isDirectory())
@@ -374,10 +400,7 @@ public class FileManager
             }
             else
             {
-                if (!toRead.exists())
-                {
-                    throw new UserError(new FileNotFoundException(path));
-                }
+                assert toRead.exists() : "getExistingFile() returned a non-existent file";
                 if (toRead.isDirectory())
                 {
                     throw new UserError(new FileAlreadyExistsAsDirectoryException(toRead));
@@ -412,7 +435,7 @@ public class FileManager
      * @return array of file names without wildcards
      * @throws FileNotFoundException if wild card is misused
      */
-    public static String[] glob(String path) throws FileNotFoundException
+    public static List<File> glob(String path) throws FileNotFoundException
     {
         return glob(path, workingDirectory.peek().getPath());
     }
@@ -436,12 +459,14 @@ public class FileManager
      * @see <a href="http://sourceforge.net/projects/jmk/">JMK</a>
      * @throws FileNotFoundException if wild card is misused
      */
-    public static String[] glob(String path, String workingDirectoryToUse) throws FileNotFoundException
+    public static List<File> glob(String path, String workingDirectoryToUse) throws FileNotFoundException
     {
         int wildCardIndex = path.indexOf('*');
         if (wildCardIndex < 0)
         {
-            return new String[] { path };
+            List<File> list = new ArrayList<File>(1);
+            list.add(new File(path));
+            return list;
         }
         // (otherwise...)
         int separatorIndex = path.lastIndexOf(File.separatorChar);
@@ -497,14 +522,15 @@ public class FileManager
         {
             throw new UserError("\"" + dirName + "\" is not a valid directory path!", new FileNotFoundException(dirName));
         }
-        String[] list = dir.list(new WildCardFilter(pattern, '*'));
-        if (list == null)
+        String[] files = dir.list(new WildCardFilter(pattern, '*'));
+        if (files == null)
         {
-            return new String[0];
+            return new ArrayList<File>();
         }
-        for (int i = list.length; --i >= 0;)
+        List<File> list = new ArrayList<File>(files.length);
+        for (int i = files.length; --i >= 0;)
         {
-            list[i] = dirName + list[i];
+            list.add(new File(dirName + files[i]));
         }
         return list;
     }
@@ -546,7 +572,7 @@ public class FileManager
      * @param path the path to the file
      * @return the loaded template
      */
-    public static String loadFileAsString(String path)
+    public static String loadFileAsString(String path) throws FileNotFoundException
     {
         return loadFileAsString(getExistingFile(path));
     }
