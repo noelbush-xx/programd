@@ -15,7 +15,6 @@ import org.w3c.dom.Element;
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.apache.log4j.Logger;
 
 /**
  * Handles a
@@ -30,8 +29,6 @@ public class JavaScriptProcessor extends AIMLProcessor
 {
     /** The label (as required by the registration scheme). */
     public static final String label = "javascript";
-
-    private static final Logger logger = Logger.getLogger("programd");
 
     /**
      * Creates a new JavaScriptProcessor using the given Core.

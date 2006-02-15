@@ -31,8 +31,6 @@ public class SRAIProcessor extends AIMLProcessor
     /** The label (as required by the registration scheme). */
     public static final String label = "srai";
 
-    private static boolean recordMatchTrace;
-
     private static Logger matchLogger = Logger.getLogger("programd.matching");
 
     /**
@@ -43,10 +41,7 @@ public class SRAIProcessor extends AIMLProcessor
     public SRAIProcessor(Core coreToUse)
     {
         super(coreToUse);
-        recordMatchTrace = this.core.getSettings().recordMatchTrace();
     }
-
-    private static final Logger logger = Logger.getLogger("programd");
 
     /**
      * Processes a &lt;srai/&gt; element. First, all elements contained within a
@@ -78,11 +73,11 @@ public class SRAIProcessor extends AIMLProcessor
                         if (!input.equalsIgnoreCase(infiniteLoopInput))
                         {
                             sraiChild.setTextContent(infiniteLoopInput);
-                            logger.warn("Infinite loop detected; substituting \"" + infiniteLoopInput + "\".");
+                            aimlLogger.warn("Infinite loop detected; substituting \"" + infiniteLoopInput + "\".");
                         }
                         else
                         {
-                            logger.error("Unrecoverable infinite loop.");
+                            aimlLogger.error("Unrecoverable infinite loop.");
                             return EMPTY_STRING;
                         }
                     }
@@ -91,10 +86,7 @@ public class SRAIProcessor extends AIMLProcessor
             }
         }
 
-        if (recordMatchTrace)
-        {
-            matchLogger.debug("Symbolic Reduction:");
-        }
+        matchLogger.debug("Symbolic Reduction:");
 
         return this.core.getMultiplexor()
                 .getInternalResponse(parser.evaluate(element.getChildNodes()), parser.getUserID(), parser.getBotID(), parser);
