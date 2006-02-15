@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<TestSuite xmlns="http://aitools.org/programd/4.5/test-cases"
+<TestSuite xmlns="http://aitools.org/programd/4.6/test-cases"
     xmlns:html="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://aitools.org/programd/4.5/test-cases http://aitools.org/programd/4.5/test-cases.xsd"
+    xsi:schemaLocation="http://aitools.org/programd/4.6/test-cases http://aitools.org/programd/4.6/test-cases.xsd"
     name="AIML 1.0.1">
     <TestCase name="connect">
         <Input>CONNECT</Input>
@@ -474,6 +474,11 @@
         <ExpectedAnswer>Test case #31.<html:br/>
             him becomes her</ExpectedAnswer>
     </TestCase>
+    <TestCase name="gender (31) [015]">
+        <Input>testgender he she he she he she he</Input>
+        <ExpectedAnswer>Test case #31.<html:br/>
+            he she he she he she he becomes she he she he she he she</ExpectedAnswer>
+    </TestCase>
     <TestCase name="thatstar (32) setup">
         <Description>Tests the thatstar element.</Description>
         <Input>testthatstar</Input>
@@ -688,5 +693,29 @@
         <Input>testinfiniteloop</Input>
         <ExpectedAnswer>Test case #41.<html:br/>
             Test passed.</ExpectedAnswer>
+    </TestCase>
+    <TestCase name="element in set (42)">
+        <Description>Probably redundant - just verifies that set elements can contain
+          other elements.</Description>
+        <Input>testelementinset</Input>
+        <ExpectedAnswer>Test case #42.<html:br />
+          Test passed.</ExpectedAnswer>
+    </TestCase>
+    <TestCase name="mixed content in set (43)">
+        <Description>Also probably redundant - just verifies that set elements can contain
+          mixed content.</Description>
+        <Input>testmixedinset</Input>
+        <ExpectedAnswer>Test case #43.<html:br />
+          Test passed.</ExpectedAnswer>
+    </TestCase>
+    <TestCase name="elements in block condition (45) setup">
+        <Description>Verifies that AIML elements within a block condition are properly processed.</Description>
+        <Input>testelementsinblockconditionsetup</Input>
+        <ExpectedAnswer>Test case #45 setup okay.</ExpectedAnswer>
+    </TestCase>
+    <TestCase name="elements in block condition (45)">
+        <Description/>
+        <Input>testelementsinblockcondition</Input>
+        <ExpectedAnswer>Test passed if this sentence was capitalized.</ExpectedAnswer>
     </TestCase>
 </TestSuite>
