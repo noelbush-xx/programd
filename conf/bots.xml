@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<?oxygen SCHSchema="../resources/schema/bot-configuration.xsd"?>
-<bots xmlns="http://aitools.org/programd/4.5/bot-configuration"
+<bots xmlns="http://aitools.org/programd/4.6/bot-configuration"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://aitools.org/programd/4.5/bot-configuration http://aitools.org/programd/4.5/bot-configuration.xsd">
+    xsi:schemaLocation="http://aitools.org/programd/4.6/bot-configuration http://aitools.org/programd/4.6/bot-configuration.xsd">
     <bot id="yourbot" enabled="true">
         <properties href="properties.xml"/>
         <predicates href="predicates.xml"/>
@@ -17,8 +16,7 @@
         <learn>../aiml/standard/*.aiml</learn>-->
         <testing>
             <test-suite-path>../resources/testing/AIML.xml</test-suite-path>
-            <report-directory>../resources/testing/reports</report-directory>
-            <log-pattern>../logs/testing-%g.log</log-pattern>
+            <report-directory>/var/log/programd/test-reports</report-directory>
         </testing>
         <learn>../resources/testing/AIML.aiml</learn>
     </bot>
