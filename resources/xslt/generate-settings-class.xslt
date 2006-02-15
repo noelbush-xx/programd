@@ -52,7 +52,12 @@ package </xsl:text>
         <xsl:value-of select="$package"/>
         <xsl:text>;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+
+import org.aitools.programd.util.URITools;
+import org.aitools.programd.util.UserError;
 
 </xsl:text>
         <xsl:if test="$package != 'org.aitools.programd.util'">
@@ -128,6 +133,7 @@ public class </xsl:text>
         <xsl:text>    /**
     * Initializes the Settings with values from properties, or defaults.
     */
+    @Override
     protected void initialize()
     {
 </xsl:text>
@@ -212,6 +218,31 @@ public class </xsl:text>
          }
              </xsl:text>
                 </xsl:for-each>
+            </xsl:when>
+            <xsl:when test="$type = 'URI'">
+                <xsl:text>        try
+        {
+            set</xsl:text>
+                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:text>(new URI(this.properties.getProperty("</xsl:text>
+                <xsl:value-of select="@key"/>
+                <xsl:text>", "</xsl:text>
+                <xsl:value-of select="$default"/>
+                <xsl:text>")));
+        }
+        catch (URISyntaxException e)
+        {
+            throw new UserError(e);
+        }</xsl:text>
+            </xsl:when>
+            <xsl:when test="$type = 'URL'">
+                <xsl:text>        set</xsl:text>
+                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:text>(URITools.contextualize(this.path, this.properties.getProperty("</xsl:text>
+                <xsl:value-of select="@key"/>
+                <xsl:text>", "</xsl:text>
+                <xsl:value-of select="$default"/>
+                <xsl:text>")));</xsl:text>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:text>        set</xsl:text>
