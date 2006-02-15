@@ -70,16 +70,16 @@ public class XMLKit
     private static final String EMPTY_ELEMENT_TAG_END = "/>";
 
     /** CDATA start marker. */
-    private static final String CDATA_START = "<![CDATA[";
+    public static final String CDATA_START = "<![CDATA[";
 
     /** CDATA end marker. */
-    private static final String CDATA_END = "]]>";
+    public static final String CDATA_END = "]]>";
 
     /** Comment start marker. */
-    private static final String COMMENT_START = "<!--";
+    public static final String COMMENT_START = "<!--";
 
     /** Comment end marker. */
-    private static final String COMMENT_END = "-->";
+    public static final String COMMENT_END = "-->";
 
     /** A common string we search for when parsing attributes in tags. */
     protected static final String EQUAL_QUOTE = "=\"";
@@ -125,12 +125,33 @@ public class XMLKit
 
     /** An HTML &lt;br/&gt; element, including namespace attribute. (&apos;{@value}&apos;) */
     private static final String BR = "<br xmlns=\"http://www.w3.org/1999/xhtml\"/>";
+    
+    /** The length of {@link BR}. */
+    private static final int BR_LEN = BR.length();
+    
+    /** The XML namespace URI. */
+    private static final String XML_NAMESPACE_URI = "http://www.w3.org/XML/1998/namespace";
 
     /**
-     * An HTML &lt;/p&gt; end tag (<i>not</i> including namespace attribute).
+     * An HTML &lt;/p&gt; end tag.
      * (&apos;{@value}&apos;)
      */
     private static final String END_P = "</p>";
+    
+    /** The length of {@link END_P}. */
+    private static final int END_P_LEN = END_P.length();
+    
+    /** The beginning of an HTML preformatted element, including namespace attribute. */
+    private static final String BEGIN_PRE = "<pre xmlns=\"http://www.w3.org/1999/xhtml\">";
+    
+    /** The length of {@link BEGIN_PRE}. */
+    private static final int BEGIN_PRE_LEN = BEGIN_PRE.length();
+    
+    /** The end of an HTML preformatted element. */
+    private static final String END_PRE = "</pre>";
+    
+    /** The length of {@link END_PRE}. */
+    private static final int END_PRE_LEN = END_PRE.length();
 
     /** A DocumentBuilder for producing new documents. */
     protected static DocumentBuilder utilBuilder;
@@ -621,6 +642,7 @@ public class XMLKit
      * </p>
      * 
      * @param input the input to filter
+     * @param whether to honor xml:space attributes for preserving whitespace -- this will slow down the method!
      * @return the input with white space filtered.
      * @throws StringIndexOutOfBoundsException if there is malformed text in the
      *             input.
@@ -737,7 +759,7 @@ public class XMLKit
         Vector<String> result = new Vector<String>();
 
         // This will hold each line as it is assembled.
-        StringBuffer line = new StringBuffer();
+        StringBuilder line = new StringBuilder();
 
         // Break lines at tags.
         while ((tagStart > -1) && (tagEnd > -1))
@@ -755,11 +777,40 @@ public class XMLKit
 
             // If the tag start begins a <br/> or a </p>, then this is the end
             // of the line.
-            if (input.indexOf(BR, tagStart) == tagStart
-                    || input.indexOf(END_P, tagStart) == tagStart)
+            if (input.indexOf(BR, tagStart) == tagStart)
             {
                 result.addElement(line.toString());
-                line = new StringBuffer();
+                line = new StringBuilder();
+                tagEnd = tagStart + BR_LEN;
+            }
+            else if (input.indexOf(END_P, tagStart) == tagStart)
+            {
+                result.addElement(line.toString());
+                line = new StringBuilder();
+                tagEnd = tagStart + END_P_LEN;
+            }
+            // If the tag start begins a <pre>, copy everything inside of it
+            // to the end </pre> tag.
+            else if (input.indexOf(BEGIN_PRE, tagStart) == tagStart &&
+                    input.indexOf(END_PRE) > -1)
+            {
+                // Note linebreaks and add separate lines separately here too.
+                String[] pre = input.substring(input.indexOf(BEGIN_PRE, tagStart) + BEGIN_PRE_LEN, input.indexOf(END_PRE)).split("[\\n\\r\\f]");
+                int prelines = pre.length;
+                if (prelines > 0)
+                {
+                    line.append(pre[0]);
+                }
+                result.addElement(line.toString());
+                if (prelines > 1)
+                {
+                    for (int index = 1; index < prelines; index++)
+                    {
+                        result.addElement(pre[index]);
+                    }
+                }
+                line = new StringBuilder();
+                tagEnd = input.indexOf(END_PRE) + END_PRE_LEN;
             }
 
             // Set last end to the character following the end of the tag.
@@ -1215,6 +1266,6 @@ public class XMLKit
         {
             return child.getTextContent();
         }
-        return "";
+        throw new NullPointerException(String.format("No child named \"%s\".", childName));
     }
 }

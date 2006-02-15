@@ -322,9 +322,22 @@ public class URITools
      * @param path
      * @return a valid URL, if possible
      */
-    public static URL createValidURL(String path)
+    public static URL createValidURL(String path) throws FileNotFoundException
     {
-        return createValidURL(path, true);
+        return createValidURL(path, null, true);
+    }
+
+    /**
+     * Attempts to create the given <code>path</code> into a valid URL, using
+     * a few heuristics.  Tries to validate the given path (if it is a file).
+     * 
+     * @param path
+     * @param context the context in which to resolve relative URLs (may be null)
+     * @return a valid URL, if possible
+     */
+    public static URL createValidURL(String path, URL context) throws FileNotFoundException
+    {
+        return createValidURL(path, context, true);
     }
 
     /**
@@ -332,10 +345,11 @@ public class URITools
      * a few heuristics.
      * 
      * @param path
+     * @param context the context in which to resolve relative URLs (may be null)
      * @param tryToValidate whether the method should try to validate the existence of the path
      * @return a valid URL, if possible
      */
-    public static URL createValidURL(String path, boolean tryToValidate)
+    public static URL createValidURL(String path, URL context, boolean tryToValidate) throws FileNotFoundException
     {
         URL url;
         if (path.indexOf(COLON_SLASH) > 0)
@@ -354,7 +368,21 @@ public class URITools
             File file;
             if (tryToValidate)
             {
-                file = FileManager.getExistingFile(path);
+                try
+                {
+                    file = FileManager.getExistingFile(path);
+                }
+                catch (FileNotFoundException e)
+                {
+                    if (context == null)
+                    {
+                        throw e;
+                    }
+                    // Otherwise...
+                    url = URITools.contextualize(context, path);
+                    file = FileManager.getExistingFile(url.getFile());
+                    // Let the FileNotFoundException be thrown this time, if file isn't found.
+                }
             }
             else
             {
@@ -362,7 +390,7 @@ public class URITools
             }
             try
             {
-                url = file.toURI().toURL();
+                url = file.toURL();
             }
             catch (MalformedURLException e)
             {
@@ -379,7 +407,7 @@ public class URITools
      * @param path
      * @return a valid URI, if possible
      */
-    public static URI createValidURI(String path)
+    public static URI createValidURI(String path) throws FileNotFoundException
     {
         return createValidURI(path, true);
     }
@@ -392,11 +420,11 @@ public class URITools
      * @param tryToValidate whether to try to validate the given path (if it is a file)
      * @return a valid URI, if possible
      */
-    public static URI createValidURI(String path, boolean tryToValidate)
+    public static URI createValidURI(String path, boolean tryToValidate) throws FileNotFoundException
     {
         try
         {
-            return createValidURL(path, tryToValidate).toURI();
+            return createValidURL(path, null, tryToValidate).toURI();
         }
         catch (URISyntaxException e)
         {
@@ -414,7 +442,7 @@ public class URITools
      * @return the subject relativized to the first argument
      * 
      */
-    public static URI relativize(URI relativizeTo, String subject)
+    public static URI relativize(URI relativizeTo, String subject) throws FileNotFoundException
     {
         return relativizeTo.relativize(createValidURI(subject, false));
     }
@@ -426,30 +454,57 @@ public class URITools
      * 
      * @param pathspec the path specification that may point to one or many files
      * @return a list of URLs
-     */
+     *
     public static List<URL> getURLs(String pathspec)
+    {
+        return getURLs(null, pathspec);
+    }*/
+    
+    /**
+     * Take a path spec that may, or may not, use glob-style wildcards to
+     * indicate multiple files, and returns a list of URLs pointing to those
+     * files.
+     * 
+     * @param pathspec the path specification that may point to one or many files
+     * @return a list of URLs
+     */
+    public static List<URL> getURLs(String pathspec, URL context)
     {
         ArrayList<URL> result = new ArrayList<URL>();
         if (pathspec.indexOf('*') != -1 || pathspec.indexOf('?') != -1)
         {
-            String[] files;
+            List<File> files;
             try
             {
                 files = FileManager.glob(pathspec);
             }
             catch (FileNotFoundException e)
             {
-                throw new DeveloperError("File not found when processing glob!", e);
+                throw new UserError("File not found when globbing \"" + pathspec + "\".", e);
             }
-            int fileCount = files.length;
+            int fileCount = files.size();
             for (int index = 0; index < fileCount; index++)
             {
-                result.add(createValidURL(files[index]));
+                try
+                {
+                    result.add(createValidURL(files.get(index).getAbsolutePath(), context));
+                }
+                catch (FileNotFoundException e)
+                {
+                    throw new UserError("Could not find file \"" + files.get(index) + "\" from \"" + pathspec + "\".", e);
+                }
             }
         }
         else
         {
-            result.add(createValidURL(pathspec));
+            try
+            {
+                result.add(createValidURL(pathspec, context));
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new UserError("Could not find file \"" + pathspec + "\".", e);
+            }
         }
         return result;
     }
