@@ -16,6 +16,7 @@ import org.aitools.programd.parser.GenericParser;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.Processor;
 import org.aitools.programd.processor.ProcessorException;
+import org.apache.log4j.Logger;
 
 /**
  * An <code>AIMLProcessor</code> is responsible for processing a particular
@@ -28,6 +29,10 @@ import org.aitools.programd.processor.ProcessorException;
  */
 abstract public class AIMLProcessor extends Processor
 {
+    protected static final Logger logger = Logger.getLogger("programd");
+    
+    protected static final Logger aimlLogger = Logger.getLogger("programd.aiml-processing");
+    
     /**
      * Creates a new AIMLProcessor using the given Core.
      * 
