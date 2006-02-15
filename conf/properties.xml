@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<properties xmlns="http://aitools.org/programd/4.5/bot-configuration"
+<properties xmlns="http://aitools.org/programd/4.6/bot-configuration"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://aitools.org/programd/4.5/bot-configuration http://aitools.org/programd/4.5/bot-configuration.xsd">
+      xsi:schemaLocation="http://aitools.org/programd/4.6/bot-configuration http://aitools.org/programd/4.6/bot-configuration.xsd">
       <!--This is an example properties set definition.-->
       <property name="name" value="YourBot"/>
       <property name="gender" value="unknown"/>
