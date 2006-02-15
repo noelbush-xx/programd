@@ -111,3 +111,7 @@ input
 	font-size: 8pt;
 	font-style: italic;
 }
+pre
+{
+	font-family: monospace;
+}
