@@ -177,8 +177,7 @@ public class Shell extends Thread
         Bot bot = this.bots.getABot();
         if (bot == null)
         {
-            showError("No bot to talk to!");
-            return;
+            throw new UserError("No bot to talk to!", new NullPointerException());
         }
         this.botid = bot.getID();
         this.botName = bot.getPropertyValue(this.botNamePredicate);
