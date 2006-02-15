@@ -9,6 +9,7 @@
 
 package org.aitools.programd.configurations;
 
+import java.io.FileNotFoundException;
 import java.net.URL;
 
 import gnu.getopt.Getopt;
@@ -37,7 +38,7 @@ public class SimpleGUIConsole
     /** The console. */
     private GUIConsole console;
 
-    private SimpleGUIConsole(String corePropertiesPath)
+    private SimpleGUIConsole(String corePropertiesPath) throws FileNotFoundException
     {
         URL baseURL = URITools.createValidURL(System.getProperty("user.dir"));
         this.console = new GUIConsole();
@@ -101,7 +102,15 @@ public class SimpleGUIConsole
             System.exit(1);
         }
 
-        SimpleGUIConsole console = new SimpleGUIConsole(corePropertiesPath);
+        SimpleGUIConsole console = null;
+        try
+        {
+            console = new SimpleGUIConsole(corePropertiesPath);
+        }
+        catch (FileNotFoundException e)
+        {
+            System.err.println("Core properties file \"" + corePropertiesPath + "\" not found.");
+        }
         // Add a shutdown hook so the Core will be properly shut down if the
         // system exits.
         Runtime.getRuntime().addShutdownHook(new CoreShutdownHook(console.core));
