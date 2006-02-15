@@ -454,7 +454,7 @@ abstract public class Multiplexor
      */
     private void logResponse(String input, String response, String userid, String botid)
     {
-        logger.info(new ChatLogEvent(botid, userid, input, response));
+        logger.callAppenders(new ChatLogEvent(botid, userid, input, response));
     }
 
     /**
