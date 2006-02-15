@@ -71,15 +71,12 @@ public class Bot
     /** The page to use for this bot when communicating via the servlet interface. */
     private String servletPage = EMPTY_STRING;
     
-    /** The directory where test suites are found. */
-    private String testSuitePathspec;
+    /** The files containing test suites. */
+    private List<URL> testSuites;
     
     /** The directory where test reports are to be written. */
-    private String testReportDirectory;
+    private URL testReportDirectory;
     
-    /** The pattern for logs of testing. */
-    private String testingLogPattern;
-
     /** The predicate empty default. */
     protected String predicateEmptyDefault;
 
@@ -358,51 +355,35 @@ public class Bot
     }
 
     /**
-     * @return Returns the testingLogPattern.
-     */
-    public String getTestingLogPattern()
-    {
-        return this.testingLogPattern;
-    }
-
-    /**
-     * @param testingLogPatternToSet The testingLogPattern to set.
-     */
-    public void setTestingLogPattern(String testingLogPatternToSet)
-    {
-        this.testingLogPattern = testingLogPatternToSet;
-    }
-
-    /**
      * @return Returns the testReportDirectory.
      */
-    public String getTestReportDirectory()
+    public URL getTestReportDirectory()
     {
         return this.testReportDirectory;
     }
 
     /**
-     * @param testReportDirectoryToSet The testReportDirectory to set.
+     * @param url The testReportDirectory to set.
      */
-    public void setTestReportDirectory(String testReportDirectoryToSet)
+    public void setTestReportDirectory(URL url)
     {
-        this.testReportDirectory = testReportDirectoryToSet;
+        this.testReportDirectory = url;
     }
 
     /**
-     * @return Returns the testSuitePathspec.
+     * @return Returns the list of test suite files.
      */
-    public String getTestSuitePathspec()
+    public List<URL> getTestSuites()
     {
-        return this.testSuitePathspec;
+        return this.testSuites;
     }
 
     /**
-     * @param testSuitePathspecToSet The testSuitePathspec to set.
+     * @param url The list of test suite files to set
      */
-    public void setTestSuiteDirectory(String testSuitePathspecToSet)
+    public void setTestSuitePathspec(List<URL> files)
     {
-        this.testSuitePathspec = testSuitePathspecToSet;
+        this.testSuites = files;
     }
     
     /**
