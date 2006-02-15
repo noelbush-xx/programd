@@ -159,6 +159,14 @@ public class TalkToBotServlet extends HttpServlet
             }
             else
             {
+                // Forward to error page if invalid botid requested.
+                if (!this.core.getBots().include(botid))
+                {
+                    req.setAttribute("errortext", "Requested botid not found.");
+                    forward(this.errorPage, req, resp);
+                    return;
+                }
+                // otherwise...
                 programDBot = this.core.getBot(botid);
             }
             BotAccess bot = new BotAccess(this.core, botid, userid);
