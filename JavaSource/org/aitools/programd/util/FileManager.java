@@ -37,7 +37,7 @@ public class FileManager
     /** The current working directory. */
     private static Stack<URL> workingDirectory = new Stack<URL>();
 
-    /** Put the working directory into the stack right away. */
+    /** Put the working directory onto the stack right away. */
     static
     {
         try
