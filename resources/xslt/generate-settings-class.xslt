@@ -238,7 +238,7 @@ public class </xsl:text>
             <xsl:when test="$type = 'URL'">
                 <xsl:text>        set</xsl:text>
                 <xsl:value-of select="d:title-case($propertyName)"/>
-                <xsl:text>(URITools.contextualize(this.path, this.properties.getProperty("</xsl:text>
+                <xsl:text>(URLTools.contextualize(this.path, this.properties.getProperty("</xsl:text>
                 <xsl:value-of select="@key"/>
                 <xsl:text>", "</xsl:text>
                 <xsl:value-of select="$default"/>
