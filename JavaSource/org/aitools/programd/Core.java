@@ -75,13 +75,19 @@ public class Core
 
     /** Build identifier. */
     public static final String BUILD = "rc1";
+    
+    /** The location of the AIML schema. */
+    private static final String AIML_SCHEMA_LOCATION = "resources/schema/AIML.xsd";
 
     /** The namespace URI of the bot configuration. */
     public static final String BOT_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.6/bot-configuration";
-
+    
     /** The namespace URI of the plugin configuration. */
     public static final String PLUGIN_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.6/plugins";
     
+    /** The location of the plugins schema. */
+    private static final String PLUGINS_SCHEMA_LOCATION = "resources/schema/plugins.xsd";
+        
     /** The base URL. */
     private URL baseURL;
 
@@ -234,7 +240,7 @@ public class Core
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
         
-        this.parser = XMLKit.getSAXParser(URLTools.contextualize(this.baseURL, this.settings.getSchemaLocationAIML()), "AIML");
+        this.parser = XMLKit.getSAXParser(URLTools.contextualize(FileManager.getWorkingDirectory(), AIML_SCHEMA_LOCATION), "AIML");
         
         this.graphmaster = new Graphmaster(this.settings);
         this.bots = new Bots();
@@ -261,7 +267,7 @@ public class Core
         // Load the plugin config.
         try
         {
-            this.pluginConfig = XMLKit.getDocumentBuilder(URLTools.contextualize(this.baseURL, this.settings.getSchemaLocationPlugins()),
+            this.pluginConfig = XMLKit.getDocumentBuilder(URLTools.contextualize(FileManager.getWorkingDirectory(), PLUGINS_SCHEMA_LOCATION),
                     "plugin configuration").parse(
                     URLTools.contextualize(this.baseURL, this.settings.getConfLocationPlugins())
                             .toString());

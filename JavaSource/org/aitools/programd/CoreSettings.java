@@ -19,7 +19,7 @@ import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2006-02-08T16:28:04.816-05:00
+ * Automatically generated from properties file, 2006-02-15T22:48:05.733-05:00
  */
 public class CoreSettings extends Settings
 {
@@ -110,12 +110,12 @@ public class CoreSettings extends Settings
     private boolean onUncaughtExceptionsPrintStackTrace;
         
     /**
-     * Allow use of <system> element?
+     * Execute contents of <system> elements?
      */
     private boolean osAccessAllowed;
         
     /**
-     * Allow use of <javascript> element?
+     * Execute contents of <javascript> elements?
      */
     private boolean javascriptAllowed;
         
@@ -163,21 +163,6 @@ public class CoreSettings extends Settings
      * Use interactive command-line shell?
      */
     private boolean consoleUseShell;
-        
-    /**
-     * The location of the AIML schema (or a copy of it).
-     */
-    private URL schemaLocationAIML;
-        
-    /**
-     * The location of the plugin schema (or a copy of it).
-     */
-    private URL schemaLocationPlugins;
-        
-    /**
-     * The location of the test cases schema (or a copy of it).
-     */
-    private URL schemaLocationTestCases;
         
     /**
      * The directory in which to execute <system> commands.
@@ -362,13 +347,7 @@ public class CoreSettings extends Settings
 
         setConsoleUseShell(Boolean.valueOf(this.properties.getProperty("programd.console.use-shell", "true")).booleanValue());
 
-        setSchemaLocationAIML(URLTools.contextualize(this.path, this.properties.getProperty("programd.schema-location.AIML", "../resources/schema/AIML.xsd")));
-
-        setSchemaLocationPlugins(URLTools.contextualize(this.path, this.properties.getProperty("programd.schema-location.plugins", "../resources/schema/plugins.xsd")));
-
-        setSchemaLocationTestCases(URLTools.contextualize(this.path, this.properties.getProperty("programd.schema-location.test-cases", "../resources/schema/test-cases.xsd")));
-
-        setSystemInterpreterDirectory(URLTools.contextualize(this.path, this.properties.getProperty("programd.system-interpreter.directory", "")));
+        setSystemInterpreterDirectory(URLTools.contextualize(this.path, this.properties.getProperty("programd.system-interpreter.directory", "..")));
 
         setSystemInterpreterPrefix(this.properties.getProperty("programd.system-interpreter.prefix", ""));
 
@@ -604,30 +583,6 @@ public class CoreSettings extends Settings
     public boolean consoleUseShell()
     {
         return this.consoleUseShell;
-    }
-
-    /**
-     * @return the value of schemaLocationAIML
-     */
-    public URL getSchemaLocationAIML()
-    {
-        return this.schemaLocationAIML;
-    }
-
-    /**
-     * @return the value of schemaLocationPlugins
-     */
-    public URL getSchemaLocationPlugins()
-    {
-        return this.schemaLocationPlugins;
-    }
-
-    /**
-     * @return the value of schemaLocationTestCases
-     */
-    public URL getSchemaLocationTestCases()
-    {
-        return this.schemaLocationTestCases;
     }
 
     /**
@@ -916,30 +871,6 @@ public class CoreSettings extends Settings
     public void setConsoleUseShell(boolean consoleUseShellToSet)
     {
         this.consoleUseShell = consoleUseShellToSet;
-    }
-
-    /**
-     * @param schemaLocationAIMLToSet   the value to which to set schemaLocationAIML
-     */
-    public void setSchemaLocationAIML(URL schemaLocationAIMLToSet)
-    {
-        this.schemaLocationAIML = schemaLocationAIMLToSet;
-    }
-
-    /**
-     * @param schemaLocationPluginsToSet   the value to which to set schemaLocationPlugins
-     */
-    public void setSchemaLocationPlugins(URL schemaLocationPluginsToSet)
-    {
-        this.schemaLocationPlugins = schemaLocationPluginsToSet;
-    }
-
-    /**
-     * @param schemaLocationTestCasesToSet   the value to which to set schemaLocationTestCases
-     */
-    public void setSchemaLocationTestCases(URL schemaLocationTestCasesToSet)
-    {
-        this.schemaLocationTestCases = schemaLocationTestCasesToSet;
     }
 
     /**
