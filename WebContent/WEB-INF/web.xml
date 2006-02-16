@@ -8,7 +8,7 @@
     <!--Location of the Program D Core config.-->
     <context-param>
     	<param-name>programd-core-config</param-name>
-    	<param-value>file:/home/noel/workspace/ProgramD/conf/core.xml</param-value>
+    	<param-value>file:/var/programd/conf/core.xml</param-value>
     </context-param>
 	<!--JSP config-->
     <jsp-config>
