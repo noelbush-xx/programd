@@ -1,4 +1,4 @@
-<project default="package" basedir=".">
+<project default="jars" basedir=".">
 
 	<!--Initialization Target-->
 	<target name="init">
@@ -17,7 +17,6 @@
 		<property name="webapp.dir" value="${base.dir}/WebContent"/>
 		<property name="webapp.lib.dir" value="${webapp.dir}/WEB-INF/lib"/>
 		<property name="compile.lib.dir" value="${base.dir}/lib"/>
-		<property name="output.lib.dir" value="${base.dir}/lib"/>
 	    
 	    <path id="saxon.classpath">
 	    	<pathelement location="/usr/share/java/saxon8.jar"/>
@@ -33,8 +32,10 @@
 		</path>
 		<property name="javadoc.dir" value="./docs/api"/>
 		
-		<property name="main.jar" value="${output.lib.dir}/programd-main.jar"/>
-		<property name="rhino.jar" value="${output.lib.dir}/programd-rhino.jar"/>
+		<property name="main.jar" value="${base.dir}/programd-main.jar"/>
+		<property name="rhino.jar" value="${base.dir}/programd-rhino.jar"/>
+	    
+	    <property name="war" value="${base.dir}/programd.war"/>
 		
 		<property name="distributable.src.dir" value="${base.dir}/distributable.src.tmp"/>
 		<property name="distributable.bin.dir" value="${base.dir}/distributable.bin.tmp"/>
@@ -88,7 +89,7 @@
 	</target>
 	
 	<!--Create the jars.-->
-	<target name="package" depends="compile">
+	<target name="jars" depends="compile">
 		<jar jarfile="${main.jar}">
 			<fileset dir="${build.dir}/"
 				includes="org/**"
@@ -101,6 +102,36 @@
 				includes="org/aitools/programd/interpreter/RhinoInterpreter.class"/>
 		</jar>
 	</target>
+    
+    <!--Create a WAR file.-->
+    <target name="war" depends="compile">
+        <delete file="${war}"/>
+        <war destfile="${war}"
+        	 webxml="${webapp.dir}/WEB-INF/web.xml"
+             manifest="${webapp.dir}/META-INF/MANIFEST.MF">
+            <fileset dir="${webapp.dir}">
+            	<include name="pages/**"/>
+            </fileset>
+            <fileset dir="${base.dir}">
+            	<include name="resources/**"/>
+                <exclude name="resources/database/**"/>
+                <exclude name="resources/icons/**"/>
+                <exclude name="resources/testing/**"/>
+                <exclude name="resources/xslt/**"/>
+            </fileset>
+            <lib dir="${webapp.lib.dir}"/>
+            <classes dir="${build.dir}"/>
+            <classes dir="${src.dir}">
+                <include name="log4j.xml"/>
+            </classes>
+            <webinf dir="${webapp.dir}/WEB-INF">
+            	<include name="aiml.tld"/>
+            	<include name="c.tld"/>
+            	<include name="c-rt.tld"/>
+		    	<include name="dwr.xml"/>
+            </webinf>
+        </war>
+    </target>
 	
 	<!--Create the API documentation.-->
 	<target name="javadoc" depends="prepare-src">
@@ -145,7 +176,7 @@
 	</target>
 	
 	<!--Make the distributables.-->
-	<target name="distributables" depends="distclean,package">
+	<target name="distributables" depends="distclean,jars">
 		<!--The source distributables.-->
 		<delete dir="${distributable.src.dir}"/>
 		<copy todir="${distributable.src.dir}">
