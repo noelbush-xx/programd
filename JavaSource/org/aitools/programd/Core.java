@@ -345,22 +345,22 @@ public class Core
         catch (DeveloperError e)
         {
             alert("developer error", e);
-            return;
+            //return;
         }
         catch (UserError e)
         {
             alert("user error", e);
-            return;
+            //return;
         }
         catch (RuntimeException e)
         {
             alert("unforeseen runtime exception", e);
-            return;
+            //return;
         }
         catch (Throwable e)
         {
             alert("unforeseen problem", e);
-            return;
+            //return;
         }
 
         // Set the status indicator.
