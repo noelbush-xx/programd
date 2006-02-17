@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <uri name="http://alicebot.org/2001/AIML-1.0.1" uri="platform:/resource/ProgramD/resources/schema/AIML.xsd" />
+    <system systemId="http://aitools.org/aiml/schema/AIML.xsd" uri="platform:/resource/ProgramD/resources/schema/AIML.xsd" />
+    <system systemId="http://java.sun.com/dtd/properties.dtd" uri="platform:/resource/ProgramD/resources/DTD/java-properties.dtd" />
+    <system systemId="http://aitools.org/programd/4.6/bot-configuration.xsd"
+        uri="platform:/resource/ProgramD/resources/schema/bot-configuration.xsd" />
+    <system systemId="http://aitools.org/programd/4.6/test-cases.xsd" uri="platform:/resource/ProgramD/resources/schema/test-cases.xsd" />
+    <system systemId="http://aitools.org/programd/4.6/common-types.xsd" uri="platform:/resource/ProgramD/resources/schema/common-types.xsd" />
+    <system systemId="http://aitools.org/programd/4.6/plugins.xsd" uri="platform:/resource/ProgramD/resources/schema/plugins.xsd" />
+</catalog>
