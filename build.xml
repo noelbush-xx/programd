@@ -12,17 +12,17 @@
 		<property name="optimize" value="on"/>
 		<property name="deprecation" value="on"/>
 		
-		<property name="base.dir" value="${user.dir}"/>
-		<property name="src.dir" value="${base.dir}/JavaSource"/>
-		<property name="webapp.dir" value="${base.dir}/WebContent"/>
+		<property name="src.dir" value="${basedir}/JavaSource"/>
+		<property name="webapp.dir" value="${basedir}/WebContent"/>
 		<property name="webapp.lib.dir" value="${webapp.dir}/WEB-INF/lib"/>
-		<property name="compile.lib.dir" value="${base.dir}/lib"/>
+		<property name="compile.lib.dir" value="${basedir}/lib"/>
+	    <property name="distrib.dir" value="${basedir}/distrib"/>
 	    
 	    <path id="saxon.classpath">
 	    	<pathelement location="/usr/share/java/saxon8.jar"/>
 	    </path>
 		
-		<property name="build.dir" value="./build.tmp"/>
+		<property name="build.dir" value="${basedir}/build.tmp"/>
 		<path id="build.classpath">
 	    	<pathelement location="${compile.lib.dir}/gnu.getopt-1.0.10.jar"/>
 	    	<pathelement location="${compile.lib.dir}/jsp-api.jar"/>
@@ -30,19 +30,19 @@
 		    <pathelement location="${compile.lib.dir}/servlet-api.jar"/>
 		    <pathelement location="${webapp.lib.dir}/log4j-1.2.13.jar"/>
 		</path>
-		<property name="javadoc.dir" value="./docs/api"/>
+		<property name="javadoc.dir" value="${basedir}/docs/api"/>
 		
-		<property name="main.jar" value="${base.dir}/programd-main.jar"/>
-		<property name="rhino.jar" value="${base.dir}/programd-rhino.jar"/>
+		<property name="main.jar" value="${distrib.dir}/programd-main.jar"/>
+		<property name="rhino.jar" value="${distrib.dir}/programd-rhino.jar"/>
 	    
-	    <property name="war" value="${base.dir}/programd.war"/>
+	    <property name="war" value="${basedir}/programd.war"/>
 		
-		<property name="distributable.src.dir" value="${base.dir}/distributable.src.tmp"/>
-		<property name="distributable.bin.dir" value="${base.dir}/distributable.bin.tmp"/>
-		<property name="distributable.src.zip" value="${base.dir}/programd-${version}-src.zip"/>
-		<property name="distributable.bin.zip" value="${base.dir}/programd-${version}-bin.zip"/>
-		<property name="distributable.src.tar.bz2" value="${base.dir}/programd-${version}-src.tar.bz2"/>
-		<property name="distributable.bin.tar.bz2" value="${base.dir}/programd-${version}-bin.tar.bz2"/>
+		<property name="distrib.src.dir" value="${distrib.dir}/distrib.src.tmp"/>
+		<property name="distrib.bin.dir" value="${distrib.dir}/distrib.bin.tmp"/>
+		<property name="distrib.src.zip" value="${distrib.dir}/programd-${version}-src.zip"/>
+		<property name="distrib.bin.zip" value="${distrib.dir}/programd-${version}-bin.zip"/>
+		<property name="distrib.src.tar.bz2" value="${distrib.dir}/programd-${version}-src.tar.bz2"/>
+		<property name="distrib.bin.tar.bz2" value="${distrib.dir}/programd-${version}-bin.tar.bz2"/>
 		
 		<filter token="year" value="${year}"/>
 		<filter token="version" value="${version}"/>
@@ -90,6 +90,7 @@
 	
 	<!--Create the jars.-->
 	<target name="jars" depends="compile">
+	    <mkdir dir="${distrib.dir}"/>
 		<jar jarfile="${main.jar}">
 			<fileset dir="${build.dir}/"
 				includes="org/**"
@@ -112,7 +113,7 @@
             <fileset dir="${webapp.dir}">
             	<include name="pages/**"/>
             </fileset>
-            <fileset dir="${base.dir}">
+            <fileset dir="${basedir}">
             	<include name="resources/**"/>
                 <exclude name="resources/database/**"/>
                 <exclude name="resources/icons/**"/>
@@ -136,7 +137,17 @@
 	<!--Create the API documentation.-->
 	<target name="javadoc" depends="prepare-src">
 		<mkdir dir="${javadoc.dir}"/>
-		<javadoc packagenames="*" sourcepath="${src.dir}" destdir="${javadoc.dir}" classpath="${build.classpath}" author="true" version="true" use="true" splitindex="true" noindex="false" windowtitle="${Name} API" doctitle="${Name} API">
+		<javadoc packagenames="*"
+		         sourcepath="${src.dir}"
+		         destdir="${javadoc.dir}"
+		         classpathref="build.classpath"
+		         author="true"
+		         version="true"
+		         use="true"
+		         splitindex="true"
+		         noindex="false"
+	             windowtitle="${Name} API"
+		         doctitle="${Name} API">
 			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
 			<link href="http://www.urbanophile.com/arenn/hacking/getopt/"/>
 			<link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
@@ -175,17 +186,17 @@
 		<delete dir="${build.dir}"/>
 	</target>
 	
-	<!--Make the distributables.-->
-	<target name="distributables" depends="distclean,jars">
-		<!--The source distributables.-->
-		<delete dir="${distributable.src.dir}"/>
-		<copy todir="${distributable.src.dir}">
-			<fileset dir="${base.dir}">
+	<!--Make the distribs.-->
+	<target name="distribs" depends="distclean,jars">
+		<!--The source distribs.-->
+		<delete dir="${distrib.src.dir}"/>
+		<copy todir="${distrib.src.dir}">
+			<fileset dir="${basedir}">
 				<exclude name="aiml/**"/>
 				<exclude name="build.tmp/**"/>
 				<exclude name="classes/**"/>
 				<exclude name="conf/test-listeners.xml"/>
-				<exclude name="distributable*.tmp/**"/>
+				<exclude name="distrib*.tmp/**"/>
 				<exclude name="docs/**"/>
 				<exclude name="ffm/**"/>
 				<exclude name="lib/*-listener/*.jar"/>
@@ -195,21 +206,21 @@
 				<exclude name="programd-*.tar.bz2"/>
 			</fileset>
 		</copy>
-		<zip destfile="${distributable.src.zip}">
-			<zipfileset dir="${distributable.src.dir}" prefix="ProgramD/"/>
+		<zip destfile="${distrib.src.zip}">
+			<zipfileset dir="${distrib.src.dir}" prefix="ProgramD/"/>
 		</zip>
-		<tar destfile="${distributable.src.tar.bz2}" compression="bzip2">
-			<tarfileset dir="${distributable.src.dir}" prefix="ProgramD/"/>
+		<tar destfile="${distrib.src.tar.bz2}" compression="bzip2">
+			<tarfileset dir="${distrib.src.dir}" prefix="ProgramD/"/>
 		</tar>
-		<!--The binary distributables.-->
-		<delete dir="${distributable.bin.dir}"/>
-		<copy todir="${distributable.bin.dir}">
-			<fileset dir="${base.dir}">
+		<!--The binary distribs.-->
+		<delete dir="${distrib.bin.dir}"/>
+		<copy todir="${distrib.bin.dir}">
+			<fileset dir="${basedir}">
 				<exclude name="aiml/**"/>
 				<exclude name="build.tmp/**"/>
 				<exclude name="classes/**"/>
 				<exclude name="conf/test-listeners.xml"/>
-				<exclude name="distributable*.tmp/**"/>
+				<exclude name="distrib*.tmp/**"/>
 				<exclude name="docs/**"/>
 				<exclude name="ffm/**"/>
 				<exclude name="lib/*-listener/*.jar"/>
@@ -223,17 +234,17 @@
 				<exclude name="secret.key"/>
 			</fileset>
 		</copy>
-		<zip destfile="${distributable.bin.zip}">
-			<zipfileset dir="${distributable.bin.dir}" prefix="ProgramD/"/>
+		<zip destfile="${distrib.bin.zip}">
+			<zipfileset dir="${distrib.bin.dir}" prefix="ProgramD/"/>
 		</zip>
-		<tar destfile="${distributable.bin.tar.bz2}" compression="bzip2">
-			<tarfileset dir="${distributable.bin.dir}" prefix="ProgramD/"/>
+		<tar destfile="${distrib.bin.tar.bz2}" compression="bzip2">
+			<tarfileset dir="${distrib.bin.dir}" prefix="ProgramD/"/>
 		</tar>
-		<delete dir="${distributable.src.dir}"/>
-	    <delete dir="${distributable.bin.dir}"/>
+		<delete dir="${distrib.src.dir}"/>
+	    <delete dir="${distrib.bin.dir}"/>
 	</target>
 	
-    <!--Clean up the distributables.-->
+    <!--Clean up the distribs.-->
 	<target name="distclean" depends="clean">
 		<delete dir="${dist.root}"/>
 		<delete dir="${build.dir}"/>
@@ -243,13 +254,13 @@
 		<delete file="${listeners.jar}"/>
 		<delete file="${rhino.jar}"/>
 		
-		<delete dir="${distributable.src.dir}"/>
-		<delete dir="${distributable.bin.dir}"/>
+		<delete dir="${distrib.src.dir}"/>
+		<delete dir="${distrib.bin.dir}"/>
 		
-		<delete file="${distributable.src.zip}"/>
-		<delete file="${distributable.bin.zip}"/>
-		<delete file="${distributable.src.tar.bz2}"/>
-		<delete file="${distributable.bin.tar.bz2}"/>
+		<delete file="${distrib.src.zip}"/>
+		<delete file="${distrib.bin.zip}"/>
+		<delete file="${distrib.src.tar.bz2}"/>
+		<delete file="${distrib.bin.tar.bz2}"/>
 	</target>
 
 </project>
