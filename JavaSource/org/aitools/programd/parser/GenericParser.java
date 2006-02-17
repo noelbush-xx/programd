@@ -328,28 +328,35 @@ abstract public class GenericParser<P extends Processor>
             return response;
         }
 
-        switch (node.getNodeType())
+        try
         {
-            // Collect and process elements.
-            case Node.ELEMENT_NODE:
-                response += processElement((Element) node);
-                break;
-
-            // Text chunks should just be added to the response.
-            case Node.TEXT_NODE:
-                response += node.getNodeValue();
-                break;
-                
-            case Node.CDATA_SECTION_NODE:
-                response += XMLKit.CDATA_START + node.getNodeValue() + XMLKit.CDATA_END;
-                break;
-                
-            case Node.COMMENT_NODE:
-                response += XMLKit.COMMENT_START + node.getTextContent() + XMLKit.COMMENT_END;
-                break;
-
-            default:
-                break;
+            switch (node.getNodeType())
+            {
+                // Collect and process elements.
+                case Node.ELEMENT_NODE:
+                    response += processElement((Element) node);
+                    break;
+    
+                // Text chunks should just be added to the response.
+                case Node.TEXT_NODE:
+                    response += node.getNodeValue();
+                    break;
+                    
+                case Node.CDATA_SECTION_NODE:
+                    response += XMLKit.CDATA_START + node.getNodeValue() + XMLKit.CDATA_END;
+                    break;
+                    
+                case Node.COMMENT_NODE:
+                    response += XMLKit.COMMENT_START + node.getTextContent() + XMLKit.COMMENT_END;
+                    break;
+    
+                default:
+                    break;
+            }
+        }
+        catch (UserError e)
+        {
+            this.core.getLogger().error("Error in processing.", e);
         }
         return response;
     }
