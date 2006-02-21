@@ -87,7 +87,7 @@ public class URLTools
                 {
                     File file = FileManager.getFile(originalPath);
                     String path = file.getAbsolutePath();
-                    if (!path.equals(originalPath))
+                    if (!pathsAreEquivalent(path, originalPath))
                     {
                         try
                         {
@@ -351,6 +351,7 @@ public class URLTools
     public static URL createValidURL(String path, URL context, boolean tryToValidate) throws FileNotFoundException
     {
         URL url;
+        // See if this already appears to be a URL (over-simple heuristic).
         if (path.indexOf(COLON_SLASH) > 0)
         {
             try
@@ -553,5 +554,37 @@ public class URLTools
     public static String unescape(String url)
     {
         return url.replace("%20", " ");
+    }
+    
+    /**
+     * Using some rather uncomfortable heuristics, judges whether
+     * two given paths are (probably) equivalent, by ignoring
+     * certain differences like platform-specific path separators
+     * vs. the URI/URL standard slash, and the use of a Windows
+     * drive letter preceded, or not, by a slash.  Yuck.
+     * 
+     * @param path1
+     * @param path2
+     * @return whether or not they are (probably) equivalent
+     */
+    public static boolean pathsAreEquivalent(String path1, String path2)
+    {
+    	// Get out as fast as possible.
+    	if (path1.equals(path2))
+    	{
+    		return true;
+    	}
+    	// Now try fixing path separators and check again.
+    	path1 = path1.replace(File.separatorChar, '/');
+    	path2 = path2.replace(File.separatorChar, '/');
+    	if (path1.equals(path2))
+    	{
+    		return true;
+    	}
+    	// Now try the yucky drive letter check.
+    	path1 = path1.replaceAll("^/(\\p{Upper}:)", "$1");
+    	path2 = path2.replaceAll("^/(\\p{Upper}:)", "$1");
+    	// This is the last check, so return whether or not these match.
+    	return path1.equals(path2);
     }
 }
