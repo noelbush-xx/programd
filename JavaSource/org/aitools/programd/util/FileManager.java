@@ -74,32 +74,24 @@ public class FileManager
     }
 
     /**
-     * Gets a file from a given path. First tries to use the path as-is if it's
-     * absolute, then (otherwise) looks in the defined root directory.
+     * Gets a file from a given path.  Tries to return it as a
+     * canonical file; failing that, returns the absolute file,
+     * (which may not be valid, but we do not check that here).
      * 
-     * @param path the path for the file (may be absolute or relative to root
-     *            directory)
+     * @param path the path for the file
      * @return the file (may not exist!)
      */
-    public static File getFile(String path)
+    public static File getBestFile(String path)
     {
         File file = new File(path);
-        if (file.exists())
+        try
         {
-            try
-            {
-                return file.getCanonicalFile();
-            }
-            catch (IOException e)
-            {
-                throw new DeveloperError("Could not create canonical file for \"" + file.getAbsolutePath() + "\".", e);
-            }
+            return file.getCanonicalFile();
         }
-        if (path.indexOf(File.separator) != 0 && root != null)
+        catch (IOException e)
         {
-            return new File(root.getPath() + path);
+            return file.getAbsoluteFile();
         }
-        return file;
     }
 
     /**
@@ -113,10 +105,10 @@ public class FileManager
      */
     public static File getExistingFile(String path) throws FileNotFoundException
     {
-        File file = getFile(path);
+        File file = getBestFile(path);
         if (!file.exists())
         {
-            file = getFile(workingDirectory.peek().getPath() + path);
+            file = getBestFile(workingDirectory.peek().getPath() + path);
             if (!file.exists())
             {
                 throw new FileNotFoundException("Couldn't find \"" + path + "\".");
@@ -141,10 +133,10 @@ public class FileManager
      */
     public static File getExistingDirectory(String path)
     {
-        File file = getFile(path);
+        File file = getBestFile(path);
         if (!file.exists())
         {
-            file = getFile(workingDirectory.peek().getPath() + path);
+            file = getBestFile(workingDirectory.peek().getPath() + path);
             if (!file.exists())
             {
                 throw new DeveloperError("Couldn't find \"" + path + "\".", new FileNotFoundException(path));
@@ -207,7 +199,7 @@ public class FileManager
      */
     public static FileWriter getFileWriter(String path, boolean append) throws IOException
     {
-        File file = getFile(path);
+        File file = getBestFile(path);
         return new FileWriter(file, append);
     }
 
@@ -249,7 +241,7 @@ public class FileManager
      */
     public static File checkOrCreate(String path, String description)
     {
-        File file = getFile(path);
+        File file = getBestFile(path);
         if (file.exists())
         {
             return file;
@@ -308,7 +300,7 @@ public class FileManager
      */
     public static File checkOrCreateDirectory(String path, String description)
     {
-        File file = getFile(path);
+        File file = getBestFile(path);
         if (file.exists())
         {
             if (!file.isDirectory())
