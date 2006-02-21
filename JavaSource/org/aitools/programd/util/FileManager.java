@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
 public class FileManager
 {
     /** The root path for running Program D. */
-    private static URL baseURL;
+    private static URL root;
 
     /** The current working directory. */
     private static Stack<URL> workingDirectory = new Stack<URL>();
@@ -60,8 +60,17 @@ public class FileManager
      */
     public static void setRootPath(URL url)
     {
-        baseURL = url;
+        root = url;
         workingDirectory.push(url);
+    }
+    
+    /**
+     * Returns the root path.
+     * @return the root path
+     */
+    public static URL getRootPath()
+    {
+    	return root;
     }
 
     /**
@@ -86,9 +95,9 @@ public class FileManager
                 throw new DeveloperError("Could not create canonical file for \"" + file.getAbsolutePath() + "\".", e);
             }
         }
-        if (path.indexOf(File.separator) != 0 && baseURL != null)
+        if (path.indexOf(File.separator) != 0 && root != null)
         {
-            return new File(baseURL.getPath() + path);
+            return new File(root.getPath() + path);
         }
         return file;
     }
@@ -219,7 +228,7 @@ public class FileManager
         {
             return file.getAbsolutePath();
         }
-        file = new File(baseURL.getPath() + path);
+        file = new File(root.getPath() + path);
         if (!file.exists())
         {
             throw new FileNotFoundException("Could not find \"" + path + "\".");
