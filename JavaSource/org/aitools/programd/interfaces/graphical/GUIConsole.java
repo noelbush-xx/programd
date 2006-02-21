@@ -182,8 +182,8 @@ public class GUIConsole extends JPanel
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        this.display = new JTextArea(40, 90);
-        this.display.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        this.display = new JTextArea(30, 150);
+        this.display.setFont(new Font("Monospaced", Font.PLAIN, 11));
         this.display.setLineWrap(true);
         this.display.setWrapStyleWord(true);
         this.display.setTabSize(4);
@@ -457,14 +457,14 @@ public class GUIConsole extends JPanel
             this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
             this.prompt = new JLabel();
-            this.prompt.setFont(new Font("Monospaced", Font.PLAIN, 12));
+            //this.prompt.setFont(new Font("Monospaced", Font.PLAIN, 12));
             this.prompt.setForeground(Color.black);
             this.prompt.setBackground(Color.white);
             this.prompt.setHorizontalAlignment(SwingConstants.LEFT);
             this.prompt.setAlignmentY(Component.CENTER_ALIGNMENT);
 
             this.input = new JTextField();
-            this.input.setFont(new Font("Monospaced", Font.PLAIN, 12));
+            //this.input.setFont(new Font("Monospaced", Font.PLAIN, 12));
             this.input.setForeground(Color.black);
             this.input.setMinimumSize(new Dimension(50, 20));
             this.input.setPreferredSize(new Dimension(200, 20));
@@ -474,7 +474,7 @@ public class GUIConsole extends JPanel
             this.input.addActionListener(new InputSender());
 
             this.enter = new JButton("Enter");
-            this.enter.setFont(new Font("Sans-serif", Font.PLAIN, 10));
+            //this.enter.setFont(new Font("Sans-serif", Font.PLAIN, 10));
             this.enter.setForeground(Color.black);
             this.enter.setMinimumSize(new Dimension(70, 20));
             this.enter.setPreferredSize(new Dimension(70, 20));
