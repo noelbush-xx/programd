@@ -73,8 +73,8 @@ public class SystemProcessor extends AIMLProcessor
         }
     }
 
-    /** A word boundary pattern (for splitting strings into words). */
-    private static final String WORD_BOUNDARY_REGEX = "\\b";
+    /** A regex matching any amount of whitespace (for splitting strings into words). */
+    private static final String STRING_SPLIT_REGEX = "\\s";
 
     /**
      * Creates a new SystemProcessor using the given Core.
@@ -101,7 +101,7 @@ public class SystemProcessor extends AIMLProcessor
             return EMPTY_STRING;
         }
 
-        String directoryPath = coreSettings.getSystemInterpreterDirectory().toString();
+        String directoryPath = coreSettings.getSystemInterpreterDirectory().getPath();
         String prefix = coreSettings.getSystemInterpreterPrefix();
 
         String commandLine = parser.evaluate(element.getChildNodes());
@@ -134,7 +134,7 @@ public class SystemProcessor extends AIMLProcessor
             Process child;
             if (useArrayExecForm)
             {
-                child = Runtime.getRuntime().exec(commandLine.split(WORD_BOUNDARY_REGEX), null, directory);
+                child = Runtime.getRuntime().exec(commandLine.split(STRING_SPLIT_REGEX), null, directory);
             }
             else
             {
@@ -172,7 +172,7 @@ public class SystemProcessor extends AIMLProcessor
         }
         catch (IOException e)
         {
-            logger.warn("Cannot execute <system> command: " + e.getMessage());
+            logger.warn(String.format("Error executing <system> command \"%s\"", commandLine), e);
         }
 
         return commandLine.trim();
