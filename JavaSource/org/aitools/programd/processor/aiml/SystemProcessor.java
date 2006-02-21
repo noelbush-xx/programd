@@ -46,11 +46,11 @@ public class SystemProcessor extends AIMLProcessor
     public static final String label = "system";
 
     /**
-     * Known names of Unix-like operating systems, which tend to require the
-     * array form of Runtime.exec().
+     * Known names of operating systems which tend to require the
+     * array form of ProcessBuilder().
      */
     private static final String[] arrayFormOSnames = { "mac os x", "linux", "solaris", "sunos", "mpe", "hp-ux", "pa_risc", "aix", "freebsd", "irix",
-            "unix" };
+            "unix", "windows xp" };
 
     /** For convenience, the system line separator. */
     protected static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
@@ -112,50 +112,51 @@ public class SystemProcessor extends AIMLProcessor
         String output = EMPTY_STRING;
         commandLine = commandLine.trim();
         logger.debug("<system> call: " + commandLine);
+        if (directoryPath == null || EMPTY_STRING.equals(directoryPath))
+        {
+            logger.error("No programd.interpreter.system.directory defined!");
+            return EMPTY_STRING;
+        }
+        File directory = FileManager.getExistingDirectory(directoryPath);
+        logger.debug("Executing <system> call in \"" + directory.getPath() + "\"");
+        ProcessBuilder processBuilder = null;
+        if (useArrayExecForm)
+        {
+        	processBuilder = new ProcessBuilder(commandLine.split(STRING_SPLIT_REGEX));
+        }
+        else
+        {
+        	processBuilder = new ProcessBuilder(commandLine);
+        }
+        processBuilder.directory(directory);
+        Process child = null;
         try
         {
-            File directory = null;
-            if (directoryPath != null)
-            {
-                logger.debug("Executing <system> call in \"" + directoryPath + "\"");
-                directory = FileManager.getBestFile(directoryPath);
-                if (!directory.isDirectory())
-                {
-                    logger.warn("programd.system-interpreter.directory (\"" + directoryPath
-                            + "\") does not exist or is not a directory.");
-                    return EMPTY_STRING;
-                }
-            }
-            else
-            {
-                logger.error("No programd.interpreter.system.directory defined!");
-                return EMPTY_STRING;
-            }
-            Process child;
-            if (useArrayExecForm)
-            {
-                child = Runtime.getRuntime().exec(commandLine.split(STRING_SPLIT_REGEX), null, directory);
-            }
-            else
-            {
-                child = Runtime.getRuntime().exec(commandLine, null, directory);
-            }
-            if (child == null)
-            {
-                logger.error("Could not get separate process for <system> command.");
-                return EMPTY_STRING;
-            }
+        	child = processBuilder.start();
+        }
+        catch (IOException e)
+        {
+            logger.warn(String.format("Error executing <system> command \"%s\"", commandLine), e);
+            return EMPTY_STRING;
+        }
+        if (child == null)
+        {
+            logger.error("Could not get separate process for <system> command.");
+            return EMPTY_STRING;
+        }
 
-            try
-            {
-                child.waitFor();
-            }
-            catch (InterruptedException e)
-            {
-                logger.error("System process interruped; could not complete.");
-                return EMPTY_STRING;
-            }
+        try
+        {
+            child.waitFor();
+        }
+        catch (InterruptedException e)
+        {
+            logger.error("System process interruped; could not complete.");
+            return EMPTY_STRING;
+        }
 
+        try
+        {
             InputStream in = child.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String line;
@@ -172,7 +173,7 @@ public class SystemProcessor extends AIMLProcessor
         }
         catch (IOException e)
         {
-            logger.warn(String.format("Error executing <system> command \"%s\"", commandLine), e);
+            logger.warn(String.format("Error reading result of <system> command \"%s\"", commandLine), e);
         }
 
         return commandLine.trim();
