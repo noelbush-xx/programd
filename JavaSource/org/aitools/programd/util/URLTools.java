@@ -85,7 +85,7 @@ public class URLTools
                 String originalPath = subjectURI.getPath();
                 if (originalPath != null)
                 {
-                    File file = FileManager.getFile(originalPath);
+                    File file = FileManager.getBestFile(originalPath);
                     String path = file.getAbsolutePath();
                     if (!pathsAreEquivalent(path, originalPath))
                     {

@@ -118,7 +118,7 @@ public class SystemProcessor extends AIMLProcessor
             if (directoryPath != null)
             {
                 logger.debug("Executing <system> call in \"" + directoryPath + "\"");
-                directory = FileManager.getFile(directoryPath);
+                directory = FileManager.getBestFile(directoryPath);
                 if (!directory.isDirectory())
                 {
                     logger.warn("programd.system-interpreter.directory (\"" + directoryPath
