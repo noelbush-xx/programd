@@ -92,7 +92,7 @@ public class Tester
     public String run(String botid, String suite, int runCount)
     {
         this.suites.clear();
-        this.suites = loadTests(this.suiteURLs, URLTools.contextualize(FileManager.getWorkingDirectory(), TEST_CASES_SCHEMA_LOCATION), this.multiplexor, this.logger);
+        this.suites = loadTests(this.suiteURLs, URLTools.contextualize(FileManager.getRootPath(), TEST_CASES_SCHEMA_LOCATION), this.multiplexor, this.logger);
         if (null == botid)
         {
             this.logger.warn("No botid defined for tests.");
