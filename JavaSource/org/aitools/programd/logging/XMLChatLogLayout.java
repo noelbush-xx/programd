@@ -104,7 +104,7 @@ public class XMLChatLogLayout extends Layout
     @Override
     public String getHeader()
     {
-        return "<?xml version=\"1.0\">\n<log xmlns=\"http://aitools.org/programd/4.6/chatlog\">\n";
+        return "<?xml version=\"1.0\"?>\n<log xmlns=\"http://aitools.org/programd/4.6/chatlog\">\n";
     }
     
     @Override
