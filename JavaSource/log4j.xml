@@ -99,7 +99,7 @@
         <appender-ref ref="stdout" />
         <appender-ref ref="stderr" />
         <appender-ref ref="activitylog" />
-        <appender-ref ref="DBChatlog" />
+        <!--<appender-ref ref="DBChatlog" />-->
         <appender-ref ref="XMLChatlog-SampleBot-only" />
         <appender-ref ref="TxtChatlog" />
     </logger>
