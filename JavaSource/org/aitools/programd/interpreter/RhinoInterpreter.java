@@ -33,7 +33,17 @@ public class RhinoInterpreter implements Interpreter
     public String evaluate(String expression)
     {
         logger.debug("evaluate: \"" + expression + "\"");
-        Context context = Context.enter();
+        Context context;
+        try
+        {
+        	context = Context.enter();
+        }
+        // If the Rhino js library is somehow missing....
+        catch (NoClassDefFoundError e)
+        {
+        	logger.error("Rhino JavaScript library is missing!", e);
+        	return EMPTY_STRING;
+        }
         Scriptable scope = context.initStandardObjects(null);
 
         Object result = null;
