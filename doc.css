@@ -1,0 +1,224 @@
+*
+{
+    font-family: sans-serif;
+    font-size: 10pt;
+    color: black;
+    background-color: transparent;
+}
+p
+{
+    margin-left: 6pt;
+    margin-right: 10pt;
+}
+h1
+{
+    font-size: 18pt;
+    font-weight: bold;
+    margin-left: 0pt;
+}
+h2, h2 *
+{
+    background-color: #cccccc;
+    font-size: 16pt;
+    font-weight: bold;
+    margin-top: 12pt;
+    margin-bottom: 3pt;
+    margin-left: 0pt;
+}
+h3, h3 *
+{
+    font-size: 14pt;
+    font-weight: bold;
+    margin-bottom: 0pt;
+    margin-left: 1pt;
+}
+h4, h4 *
+{
+    font-size: 12pt;
+    font-weight: bold;
+    margin-top: 8pt;
+    margin-bottom: 0pt;
+    margin-left: 2pt;
+}
+p
+{
+    margin-top: 0pt;
+    margin-bottom: 8pt;
+}
+p.docinfo
+{
+    font-style: italic;
+    margin-top: 0pt;
+}
+em
+{
+    font-style: italic;
+}
+strong
+{
+    font-weight: bold;
+}
+kbd
+{
+    font-family: monospace;
+    font-weight: bold;
+    font-style: normal;
+    font-size: 9pt;
+    color: #000055;
+}
+code
+{
+    font-family: monospace;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 9pt;
+}
+code.start-tag, code.end-tag, code.element
+{
+    color: #3f7f7f;
+}
+code.start-tag:before
+{
+    content: "<";
+}
+code.start-tag:after
+{
+    content: ">";
+}
+code.end-tag:before
+{
+    content: "</";
+}
+code.end-tag:after
+{
+    content: ">";
+}
+code.element:before
+    content: "<";
+}
+code.element:after
+    content: "/>";
+}
+code.name
+{
+	color: #7f007f;
+}
+code.value
+{
+	color: #2a00ff;
+}
+code.path
+{
+	color: #9c7747;
+}
+code.java-annotation
+{
+	color: #646464;
+}
+var
+{
+    font-family: monospace;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 9pt;
+    color: #005500;
+}
+.example
+{
+    margin-left: 20px;
+    margin-right: 20px;
+}
+pre.example, code.output
+{
+    font-family: monospace;
+    font-style: normal;
+    font-size: 9pt;
+    color: #000055;
+}
+p.example-head
+{
+    font-family: monospace;
+    font-weight: bold;
+    font-style: normal;
+    color: #000055;
+    margin-left: 20px;
+    margin-right: 100pt;
+    margin-top: 16pt;
+    margin-bottom: 4pt;
+    border: solid windowtext 0.5pt;
+    padding: 1.0pt 4.0pt 1.0pt 4.0pt;
+}
+p.blockquote
+{
+    font-style: italic;
+    margin-left: 14pt;
+    margin-right: 14pt;
+    margin-bottom: 8pt;
+}
+p.faq, p.faq *
+{
+    font-weight: bold;
+    margin-bottom: 0pt;
+}
+p.important-note
+{
+    background-color: #ffdddd;
+}
+a:link
+{
+    color: #114466;
+    background-color: transparent;
+}
+a:visited
+{
+    color: #441166;
+    background-color: transparent;
+}
+a:hover
+{
+    color: #664411;
+    background-color: #ffbb44;
+}
+a.nohover:hover
+{
+    color: #664411;
+    background-color: transparent;
+}
+a:active
+{
+    color: #664411;
+    background-color: transparent;
+}
+div.box
+{
+    border: solid windowtext 1.0pt;
+    padding: 1.0pt 4.0pt 1.0pt 4.0pt;
+    margin-left: 10pt;
+    margin-right: 100pt;
+    margin-top: 10pt;
+    margin-bottom: 10pt;
+}
+table
+{
+    margin-left: 20pt;
+    margin-right: 14pt;
+    margin-bottom: 8pt;
+}
+thead tr td
+{
+    background-color: #e0e0e0;
+}
+td ul
+{
+    margin-top: 0pt;
+    padding-left: 14pt;
+}
+tbody tr td
+{
+    background-color: #f0f0f0;
+}
+td
+{
+    vertical-align: top;
+    padding: 2pt;
+}
