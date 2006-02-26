@@ -10,12 +10,15 @@
 package org.aitools.programd.parser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Stack;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -34,6 +37,7 @@ import org.aitools.programd.util.NotARegisteredClassException;
 import org.aitools.programd.util.URLTools;
 import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.XMLKit;
+import org.apache.log4j.Logger;
 
 /**
  * A generic parser that allows us to register processors for any element type.
@@ -52,10 +56,13 @@ abstract public class GenericParser<P extends Processor>
     private ProcessorRegistry<P> processorRegistry;
 
     /** The URL of this document. */
-    protected URL docURL;
+    protected Stack<URL> docURL = new Stack<URL>();
 
     /** The Core in use. */
     protected Core core;
+    
+    /** The logger to use. */
+    protected Logger logger;
 
     // Convenience constants.
 
@@ -80,6 +87,7 @@ abstract public class GenericParser<P extends Processor>
     public GenericParser(ProcessorRegistry<P> registry, Core coreToUse)
     {
         this.core = coreToUse;
+        this.logger = this.core.getLogger();
         this.processorRegistry = registry;
         if (utilDocBuilder == null)
         {
@@ -97,27 +105,26 @@ abstract public class GenericParser<P extends Processor>
     }
 
     /**
-     * <p>
-     * Processes a given URL.
-     * </p>
-     * <p>
-     * This is the general access method for external classes.
-     * </p>
+     * Processes the current document URL.
+     * This is an internal method.
      * 
-     * @param url the XML content
      * @return the DOM produced by parsing
      * @throws ProcessorException if the content cannot be processed
      */
-    public Document parse(URL url) throws ProcessorException
+    private Document parseCurrentURL() throws ProcessorException
     {
-        contextualize(url);
+        URL url = this.docURL.peek();
         Document document;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         try
         {
             DocumentBuilder builder = factory.newDocumentBuilder();
-            document = builder.parse(this.docURL.toString());
+            InputStream stream = url.openStream();
+            InputSource inputSource = new InputSource(stream);
+            inputSource.setSystemId(url.toString());
+            document = builder.parse(inputSource);
+            stream.close();
         }
         catch (IOException e)
         {
@@ -136,7 +143,6 @@ abstract public class GenericParser<P extends Processor>
         {
             throw new ProcessorException("SAX exception while parsing \"" + url + "\".", e);
         }
-
         return document;
     }
 
@@ -151,8 +157,10 @@ abstract public class GenericParser<P extends Processor>
     public String processResponse(URL url) throws ProcessorException
     {
         contextualize(url);
-        Document document = parse(this.docURL);
-        return evaluate(document);
+        Document document = parseCurrentURL();
+        String response = evaluate(document);
+        this.docURL.pop();
+        return response;
     }
 
     /**
@@ -165,12 +173,14 @@ abstract public class GenericParser<P extends Processor>
     public void process(URL url) throws ProcessorException
     {
         contextualize(url);
-        Document document = parse(this.docURL);
+        this.logger.info(String.format("Loading \"%s\".", url));
+        Document document = parseCurrentURL();
         evaluate(document);
+        this.docURL.pop();
     }
 
     /**
-     * Sets the current docURL to the given URL, contextualizing
+     * Pushes the given URL onto the docURL stack, contextualizing
      * the given URL with respect to the current docURL (if set).
      * 
      * @param url
@@ -179,13 +189,13 @@ abstract public class GenericParser<P extends Processor>
     {
         if (url != null)
         {
-            if (this.docURL != null)
+            if (this.docURL.size() > 0)
             {
-                this.docURL = URLTools.contextualize(this.docURL, url);
+                this.docURL.push(URLTools.contextualize(this.docURL.peek(), url));
             }
             else
             {
-                this.docURL = url;
+                this.docURL.push(url);
             }
         }
         else
@@ -435,7 +445,7 @@ abstract public class GenericParser<P extends Processor>
         URL url = null;
         if (this.docURL != null)
         {
-            url = URLTools.contextualize(this.docURL, urlString);
+            url = URLTools.contextualize(this.docURL.peek(), urlString);
         }
         verifyAndProcess(url);
     }
@@ -453,7 +463,7 @@ abstract public class GenericParser<P extends Processor>
         URL url = null;
         if (this.docURL != null)
         {
-            url = URLTools.contextualize(this.docURL, urlString);
+            url = URLTools.contextualize(this.docURL.peek(), urlString);
         }
         return verifyAndProcessResponse(url);
     }
@@ -586,10 +596,10 @@ abstract public class GenericParser<P extends Processor>
     }
     
     /**
-     * @return the docURL
+     * @return the current docURL
      */
-    public URL getDocURL()
+    public URL getCurrentDocURL()
     {
-        return this.docURL;
+        return this.docURL.peek();
     }
 }
