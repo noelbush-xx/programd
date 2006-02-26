@@ -14,7 +14,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.Properties;
 
 import org.aitools.programd.Core;
@@ -37,9 +36,6 @@ import org.aitools.programd.util.UserError;
  */
 public class FlatFileMultiplexor extends Multiplexor
 {
-    /** The container for all predicate sets. */
-    private static Hashtable predicateSets;
-
     /** The name of the subdirectory for the predicate files. */
     private String ffmDirName;
 
@@ -127,12 +123,6 @@ public class FlatFileMultiplexor extends Multiplexor
     @Override
     public void savePredicate(String name, String value, String userid, String botid)
     {
-        // Test whether predicateSets is intialized.
-        if (predicateSets == null)
-        {
-            predicateSets = new Hashtable();
-        }
-
         Properties predicates = loadPredicates(userid, botid);
 
         // Store the predicate value.
@@ -156,12 +146,6 @@ public class FlatFileMultiplexor extends Multiplexor
     @Override
     public String loadPredicate(String name, String userid, String botid) throws NoSuchPredicateException
     {
-        // Test whether predicateSets is intialized.
-        if (predicateSets == null)
-        {
-            predicateSets = new Hashtable();
-        }
-
         Properties predicates = loadPredicates(userid, botid);
 
         // Try to get the predicate value.
