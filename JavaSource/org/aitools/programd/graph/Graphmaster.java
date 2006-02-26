@@ -50,7 +50,7 @@ import org.w3c.dom.NodeList;
  * @author Thomas Ringate/Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @author Eion Robb
- * @version 4.5
+ * @version 4.6
  */
 public class Graphmaster
 {
@@ -106,6 +106,9 @@ public class Graphmaster
         /** Trying to match the botid part of the path. */
         IN_BOTID
     }
+    
+    /** A terminal node (same for all). */
+    protected static final Nodemapper TERMINUS = new Nodemaster();
 
     // Instance variables.
     
@@ -121,7 +124,7 @@ public class Graphmaster
     /** A map of loaded file URLs to botids. */
     protected Map<URL, Set<String>> urlCatalog = new HashMap<URL, Set<String>>();
     
-    /** A map of KB URLs to botid nodes. */
+    /** A map of KB URLs to &lt;BOTID&gt; nodes. */
     protected Map<URL, Set<Nodemapper>> botidNodes = new HashMap<URL, Set<Nodemapper>>();
 
     /** The merge policy. */
@@ -225,38 +228,48 @@ public class Graphmaster
         }
         // Otherwise, get the next word.
         String word = pathIterator.next();
+        
+        // Handle botids specially.
 
         Nodemapper node;
 
         // If the parent contains this word, get the node with the word.
         if (parent.containsKey(word))
         {
-            node = (Nodemapper) parent.get(word);
+            node = (Nodemapper)parent.get(word);
         }
-        // Otherwise create a new node with this word.
         else
         {
+            // Otherwise create a new node with this word.
             node = new Nodemaster();
+        	
             parent.put(word, node);
             node.setParent(parent);
         }
-        // Associate <BOTID> nodes with their sources.
+    	/*
+    	 * Handle botids specially (they are last node, no need for a Nodemapper).
+         * Associate <BOTID> nodes with their sources.
+         */
         if (word.equals(BOTID))
         {
-            Set<Nodemapper> nodes;
+            Set<Nodemapper> botids;
             if (this.botidNodes.containsKey(source))
             {
-                nodes = this.botidNodes.get(source);
+                botids = this.botidNodes.get(source);
             }
             else
             {
-                nodes = new HashSet<Nodemapper>();
-                this.botidNodes.put(source, nodes);
+                botids = new HashSet<Nodemapper>();
+                this.botidNodes.put(source, botids);
             }
-            nodes.add(node);
+            botids.add(node);
+            node.put(pathIterator.next(), TERMINUS);
+            node.setTop();
+            return node;
         }
+
         // Return the result of adding the new node to the parent.
-        return add(pathIterator, node, source);
+    	return add(pathIterator, node, source);
     }
 
     /**
@@ -780,7 +793,7 @@ public class Graphmaster
      * @param path the filename
      * @param bot the bot for whom to remove the given path
      */
-    public void unload(Object path, Bot bot)
+    public void unload(URL path, Bot bot)
     {
         Set<Nodemapper> nodemappers = bot.getLoadedFilesMap().get(path);
 
@@ -985,6 +998,20 @@ public class Graphmaster
     }
     
     /**
+     * Returns whether or not the Graphmaster has already loaded the given URL
+     * for the given botid.
+     */
+    public boolean hasAlreadyLoadedForBot(URL path, String botid)
+    {
+    	Set<String> botids = this.urlCatalog.get(path);
+    	if (botids == null)
+    	{
+    		return false;
+    	}
+    	return botids.contains(botid);
+    }
+    
+    /**
      * Adds the given URL to the catalog of URLs loaded
      * for the given botid.  This should only be called
      * using a URL that has <i>not</i> previously been loaded
@@ -994,7 +1021,7 @@ public class Graphmaster
      * @param botid
      * @throws IllegalArgumentException if the given path has already been loaded
      */
-    public void addPath(URL path, String botid)
+    public void addURL(URL path, String botid)
     {
         if (this.urlCatalog.containsKey(path))
         {
@@ -1031,9 +1058,7 @@ public class Graphmaster
         }
         for (Nodemapper node : this.botidNodes.get(path))
         {
-            Nodemapper botIDNode = new Nodemaster();
-            node.put(botid, botIDNode);
-            botIDNode.setParent(node);
+            node.put(botid, TERMINUS);
             this.totalCategories++;
         }
         this.urlCatalog.get(path).add(botid);
