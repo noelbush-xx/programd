@@ -1,0 +1,8 @@
+LICENSING
+
+Most of the code in Program D is covered by the GNU General Public License.  Please see
+the file "GPL.txt" for details.
+
+Some code provided with Program D (such as the logging system, log4j) is covered by the
+Apache Software License, version 2.0.  Please see the file "Apache-license.txt" for
+details of this license.

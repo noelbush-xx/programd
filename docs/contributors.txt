@@ -1,0 +1,16 @@
+The maintainer of Program D since version 4.1.3 is Noel Bush.
+
+Jon Baer reworked Program B into Program D.
+Zayn Blore contributed to documentation.
+Noel Bush reworked the architecture of Program D, several times, and concentrated heavily on standards compliance, high performance, and reliability.
+Ing. Pedro E. Colla made ProgramD reference AIML 1.0 compliant.
+Kris Drent provided significant contributions to the Program B application, Applet and Servlet. He created the <topic> tag. Kris also wrote a fast, small-footprint XML parser tuned for AIML files (no longer used).
+Chris Fahey created the Alice Flash Toolkit.
+Daniel Ireland fixed the Flash interface for Program D 4.5 and helped discover an error in the AIML Schema.
+Anne Kootstra contributed to the chat log viewing XSL.
+Albertas Mickensas contributed the test case framework.
+Jay Myers supplied a correction to the random number use in RandomProcessor.
+Thomas Ringate made ProgramD reference AIML 1.0 compliant.
+Eionn Robb contributed a fix to Graphmaster.unload().
+Kim Sullivan cleaned code, wrote a new HTML responder, and wrote documentation.
+Kevin W. provided fixes for the IRC listener.
