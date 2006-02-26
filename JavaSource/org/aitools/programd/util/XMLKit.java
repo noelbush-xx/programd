@@ -126,7 +126,7 @@ public class XMLKit
     /** An HTML &lt;br/&gt; element, including namespace attribute. (&apos;{@value}&apos;) */
     private static final String BR = "<br xmlns=\"http://www.w3.org/1999/xhtml\"/>";
     
-    /** The length of {@link BR}. */
+    /** The length of {@link #BR}. */
     private static final int BR_LEN = BR.length();
 
     /**
@@ -135,19 +135,19 @@ public class XMLKit
      */
     private static final String END_P = "</p>";
     
-    /** The length of {@link END_P}. */
+    /** The length of {@link #END_P}. */
     private static final int END_P_LEN = END_P.length();
     
     /** The beginning of an HTML preformatted element, including namespace attribute. */
     private static final String BEGIN_PRE = "<pre xmlns=\"http://www.w3.org/1999/xhtml\">";
     
-    /** The length of {@link BEGIN_PRE}. */
+    /** The length of {@link #BEGIN_PRE}. */
     private static final int BEGIN_PRE_LEN = BEGIN_PRE.length();
     
     /** The end of an HTML preformatted element. */
     private static final String END_PRE = "</pre>";
     
-    /** The length of {@link END_PRE}. */
+    /** The length of {@link #END_PRE}. */
     private static final int END_PRE_LEN = END_PRE.length();
 
     /** A DocumentBuilder for producing new documents. */
@@ -639,7 +639,6 @@ public class XMLKit
      * </p>
      * 
      * @param input the input to filter
-     * @param whether to honor xml:space attributes for preserving whitespace -- this will slow down the method!
      * @return the input with white space filtered.
      * @throws StringIndexOutOfBoundsException if there is malformed text in the
      *             input.
