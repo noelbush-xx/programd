@@ -45,8 +45,8 @@ import org.aitools.programd.util.ManagedProcesses;
 import org.aitools.programd.util.UnspecifiedParameterError;
 import org.aitools.programd.util.URLTools;
 import org.aitools.programd.util.UserError;
+import org.aitools.programd.util.UserSystem;
 import org.aitools.programd.util.XMLKit;
-import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
@@ -242,7 +242,7 @@ public class Core
         
         this.parser = XMLKit.getSAXParser(URLTools.contextualize(FileManager.getWorkingDirectory(), AIML_SCHEMA_LOCATION), "AIML");
         
-        this.graphmaster = new Graphmaster(this.settings);
+        this.graphmaster = new Graphmaster(this);
         this.bots = new Bots();
         this.processes = new ManagedProcesses(this);
 
@@ -282,22 +282,9 @@ public class Core
         }
 
         this.logger.info("Starting Program D version " + VERSION + BUILD + '.');
-        this.logger.info("Using Java VM " + System.getProperty("java.vm.version")
-                + " from " + System.getProperty("java.vendor"));
-        Runtime runtime = Runtime.getRuntime();
-        this.logger.info("On " + System.getProperty("os.name") + " version "
-                + System.getProperty("os.version") + " (" + System.getProperty("os.arch")
-                + ") with " + runtime.availableProcessors() + " processor(s) available.");
-        this.logger
-                .log(
-                        Level.INFO,
-                        String
-                                .format(
-                                        "%.1f MB of memory free out of %.1f MB total in JVM.  Configured maximum: %.1f MB.",
-                                        (runtime.freeMemory() / 1048576.0),
-                                        (runtime.totalMemory() / 1048576.0),
-                                        (runtime.maxMemory() / 1048576.0)));
-
+        this.logger.info(UserSystem.jvmDescription());
+        this.logger.info(UserSystem.osDescription());
+        this.logger.info(UserSystem.memoryReport());
         this.logger.info("Predicates with no values defined will return: \""
                 + this.settings.getPredicateEmptyDefault() + "\".");
 
@@ -329,15 +316,7 @@ public class Core
             // Request garbage collection.
             System.gc();
 
-            this.logger
-            .log(
-                    Level.INFO,
-                    String
-                            .format(
-                                    "%.1f MB of memory free out of %.1f MB total in JVM.  (Configured maximum: %.1f MB.)",
-                                    (runtime.freeMemory() / 1048576.0),
-                                    (runtime.totalMemory() / 1048576.0),
-                                    (runtime.maxMemory() / 1048576.0)));
+            this.logger.info(UserSystem.memoryReport());
 
             // Start the heart, if enabled.
             startHeart();
@@ -468,7 +447,7 @@ public class Core
 
         Bot bot = this.bots.getBot(botid);
 
-        if (!loadCheck(path, bot))
+        if (!shouldLoad(path, bot))
         {
             return;
         }
@@ -478,46 +457,58 @@ public class Core
         {
             this.aimlWatcher.addWatchFile(path, botid);
         }
-        FileManager.pushWorkingDirectory(URLTools.getParent(path));
-
-        try
+        //FileManager.pushWorkingDirectory(URLTools.getParent(path));
+        
+        // Let the Graphmaster use a shortcut if possible.
+        if (this.graphmaster.hasAlreadyLoaded(path))
         {
-            if (this.settings.loadNotifyEachFile())
+            if (this.logger.isDebugEnabled())
             {
-                this.logger.info("Loading " + path + "....");
+                this.logger.debug(String.format("Graphaster has already loaded \"%s\" for some other bot.", path));
             }
-            AIMLReader reader = new AIMLReader(this.graphmaster, path, botid, this.bots
-                    .getBot(botid), this.settings.getAimlSchemaNamespaceUri().toString());
+            this.graphmaster.addForBot(path, botid);
+        }
+        else
+        {
             try
             {
-                this.parser.getXMLReader().setProperty("http://xml.org/sax/properties/lexical-handler", reader);
+                if (this.settings.loadNotifyEachFile())
+                {
+                    this.logger.info("Loading " + path + "....");
+                }
+                AIMLReader reader = new AIMLReader(this.graphmaster, path, botid, this.bots
+                        .getBot(botid), this.settings.getAimlSchemaNamespaceUri().toString());
+                try
+                {
+                    this.parser.getXMLReader().setProperty("http://xml.org/sax/properties/lexical-handler", reader);
+                }
+                catch (SAXNotRecognizedException e)
+                {
+                    this.logger.warn("The XML reader in use does not support lexical handlers -- CDATA will not be handled.", e);
+                }
+                catch (SAXNotSupportedException e)
+                {
+                    this.logger.warn("The XML reader in use cannot enable the lexical handler feature -- CDATA will not be handled.", e);
+                }
+                catch (SAXException e)
+                {
+                    this.logger.warn("An exception occurred when trying to enable the lexical handler feature on the XML reader -- CDATA will not be handled.", e);
+                }
+                this.parser.parse(path.toString(), reader);
+                //System.gc();
             }
-            catch (SAXNotRecognizedException e)
+            catch (IOException e)
             {
-                this.logger.warn("The XML reader in use does not support lexical handlers -- CDATA will not be handled.", e);
-            }
-            catch (SAXNotSupportedException e)
-            {
-                this.logger.warn("The XML reader in use cannot enable the lexical handler feature -- CDATA will not be handled.", e);
+                this.logger.warn("Error reading \"" + path + "\": " + e.getMessage(), e);
             }
             catch (SAXException e)
             {
-                this.logger.warn("An exception occurred when trying to enable the lexical handler feature on the XML reader -- CDATA will not be handled.", e);
+                this.logger.warn("Error parsing \"" + path + "\": " + e.getMessage(), e);
             }
-            this.parser.parse(path.toString(), reader);
-            System.gc();
-            // this.parser.reset();
-        }
-        catch (IOException e)
-        {
-            this.logger.warn("Error reading \"" + path + "\": " + e.getMessage(), e);
-        }
-        catch (SAXException e)
-        {
-            this.logger.warn("Error parsing \"" + path + "\": " + e.getMessage(), e);
+            this.graphmaster.addPath(path, botid);
         }
 
-        FileManager.popWorkingDirectory();
+        //FileManager.popWorkingDirectory();
     }
 
     /**
@@ -529,7 +520,7 @@ public class Core
      * @param bot the bot for whom to check
      * @return whether or not the given path should be loaded
      */
-    private boolean loadCheck(URL path, Bot bot)
+    private boolean shouldLoad(URL path, Bot bot)
     {
         if (bot == null)
         {
@@ -729,7 +720,10 @@ public class Core
      */
     public void loadBots(URL path)
     {
-        FileManager.pushWorkingDirectory(path);
+        if (path.getProtocol().equals(FileManager.FILE))
+        {
+            FileManager.pushWorkingDirectory(URLTools.getParent(path));
+        }
         try
         {
             new BotsConfigurationFileParser(this).process(path);
@@ -737,6 +731,10 @@ public class Core
         catch (ProcessorException e)
         {
             this.logger.error("Processor exception during startup: " + e.getExplanatoryMessage(), e);
+        }
+        if (path.getProtocol().equals(FileManager.FILE))
+        {
+            FileManager.popWorkingDirectory();
         }
     }
     
@@ -751,10 +749,10 @@ public class Core
     public String loadBot(URL path)
     {
         this.logger.info("Loading bot from \"" + path + "\".");
-        if (path.getProtocol().equals(FileManager.FILE))
+        /*if (path.getProtocol().equals(FileManager.FILE))
         {
             FileManager.pushWorkingDirectory(URLTools.getParent(path));
-        }
+        }*/
 
         String id = null;
 
@@ -766,7 +764,11 @@ public class Core
         {
             this.logger.error(e.getExplanatoryMessage());
         }
-        this.logger.info("Bot \"" + id + "\" has been loaded.");
+        this.logger.info(String.format("Bot \"%s\" has been loaded.", id));
+        /*if (path.getProtocol().equals(FileManager.FILE))
+        {
+            FileManager.popWorkingDirectory();
+        }*/
 
         return id;
     }
