@@ -57,10 +57,10 @@ public class Tester
      * Creates a new Tester which will use the given Core to find out its
      * configuration and run tests.
      * 
-     * @param core the Core to use for finding plugin configuration, active
+     * @param coreToUse the Core to use for finding plugin configuration, active
      *            multiplexor, etc.
      * @param testLogger the logger to which to send output
-     * @param suites the test suites
+     * @param suitePaths the test suites
      * @param testReports the directory in which to store test reports
      */
     public Tester(Core coreToUse, Logger testLogger, List<URL> suitePaths, URL testReports)
@@ -158,7 +158,7 @@ public class Tester
     /**
      * Loads all test suites from a given pathspec (may use wildcards).
      * 
-     * @param pathspec the list of suites
+     * @param suiteList the list of suites
      * @param schema the URL to the copy of the schema for test cases
      * @param multiplexorToUse the Multiplexor to assign to the suites
      * @param logger the logger to use for tracking progress
