@@ -462,6 +462,11 @@ public class Core
         // Let the Graphmaster use a shortcut if possible.
         if (this.graphmaster.hasAlreadyLoaded(path))
         {
+        	if (this.graphmaster.hasAlreadyLoadedForBot(path, botid))
+        	{
+        		this.graphmaster.unload(path, bot);
+        		doLoad(path, botid);
+        	}
             if (this.logger.isDebugEnabled())
             {
                 this.logger.debug(String.format("Graphaster has already loaded \"%s\" for some other bot.", path));
@@ -470,45 +475,54 @@ public class Core
         }
         else
         {
-            try
+            if (this.settings.loadNotifyEachFile())
             {
-                if (this.settings.loadNotifyEachFile())
-                {
-                    this.logger.info("Loading " + path + "....");
-                }
-                AIMLReader reader = new AIMLReader(this.graphmaster, path, botid, this.bots
-                        .getBot(botid), this.settings.getAimlSchemaNamespaceUri().toString());
-                try
-                {
-                    this.parser.getXMLReader().setProperty("http://xml.org/sax/properties/lexical-handler", reader);
-                }
-                catch (SAXNotRecognizedException e)
-                {
-                    this.logger.warn("The XML reader in use does not support lexical handlers -- CDATA will not be handled.", e);
-                }
-                catch (SAXNotSupportedException e)
-                {
-                    this.logger.warn("The XML reader in use cannot enable the lexical handler feature -- CDATA will not be handled.", e);
-                }
-                catch (SAXException e)
-                {
-                    this.logger.warn("An exception occurred when trying to enable the lexical handler feature on the XML reader -- CDATA will not be handled.", e);
-                }
-                this.parser.parse(path.toString(), reader);
-                //System.gc();
+                this.logger.info("Loading " + path + "....");
             }
-            catch (IOException e)
-            {
-                this.logger.warn("Error reading \"" + path + "\": " + e.getMessage(), e);
-            }
-            catch (SAXException e)
-            {
-                this.logger.warn("Error parsing \"" + path + "\": " + e.getMessage(), e);
-            }
-            this.graphmaster.addPath(path, botid);
+            doLoad(path, botid);
         }
-
         //FileManager.popWorkingDirectory();
+    }
+    
+    /**
+     * An internal method used by {@link #load(URL, String)}.
+     * @param path
+     * @param botid
+     */
+    private void doLoad(URL path, String botid)
+    {
+    	try
+    	{
+	        AIMLReader reader = new AIMLReader(this.graphmaster, path, botid, this.bots
+	                .getBot(botid), this.settings.getAimlSchemaNamespaceUri().toString());
+	        try
+	        {
+	            this.parser.getXMLReader().setProperty("http://xml.org/sax/properties/lexical-handler", reader);
+	        }
+	        catch (SAXNotRecognizedException e)
+	        {
+	            this.logger.warn("The XML reader in use does not support lexical handlers -- CDATA will not be handled.", e);
+	        }
+	        catch (SAXNotSupportedException e)
+	        {
+	            this.logger.warn("The XML reader in use cannot enable the lexical handler feature -- CDATA will not be handled.", e);
+	        }
+	        catch (SAXException e)
+	        {
+	            this.logger.warn("An exception occurred when trying to enable the lexical handler feature on the XML reader -- CDATA will not be handled.", e);
+	        }
+	        this.parser.parse(path.toString(), reader);
+	        //System.gc();
+	        this.graphmaster.addURL(path, botid);
+        }
+        catch (IOException e)
+        {
+            this.logger.warn("Error reading \"" + path + "\": " + e.getMessage(), e);
+        }
+        catch (SAXException e)
+        {
+            this.logger.warn("Error parsing \"" + path + "\": " + e.getMessage(), e);
+        }
     }
 
     /**
