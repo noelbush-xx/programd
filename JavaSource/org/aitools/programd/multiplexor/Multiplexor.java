@@ -232,6 +232,7 @@ abstract public class Multiplexor
      * @param botid
      * @return the list of replies to the input sentences
      */
+    @SuppressWarnings("boxing")
     private List<String> getReplies(List<String> sentenceList, String userid, String botid)
     {
         // All replies will be assembled in this ArrayList.
