@@ -46,6 +46,7 @@ abstract public class BotConfigurationElementProcessor extends Processor
      * @see org.aitools.programd.processor.Processor#process(Element,
      *      GenericParser)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public String process(Element element, GenericParser parser) throws ProcessorException
     {
