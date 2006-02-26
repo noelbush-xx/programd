@@ -44,6 +44,7 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
      * @see BotConfigurationElementProcessor#process(Element,
      *      BotsConfigurationFileParser)
      */
+    @SuppressWarnings("boxing")
     @Override
     public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
@@ -63,7 +64,7 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
             bot.addSentenceSplitter(splitter.getAttribute(VALUE));
         }
 
-        logger.info("Loaded " + splitters.size() + " sentence-splitters.");
+        logger.info(String.format("Loaded %d sentence-splitters.", splitters.size()));
         return EMPTY_STRING;
     }
 }
