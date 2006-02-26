@@ -1,5 +1,7 @@
 package org.aitools.programd.util.sql;
 
+import org.apache.log4j.Logger;
+
 /**
  * Calls the cleanup method of an {@link ObjectPool} at a period determined by
  * its {@link #sleepTime} .
@@ -43,7 +45,7 @@ class CleanUpThread extends Thread
             }
             catch (InterruptedException e)
             {
-                // ignore it
+                Logger.getLogger("programd").debug("ObjectPool cleanup thread was interrupted.");
             }
             this.pool.cleanUp();
         }
