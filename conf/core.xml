@@ -48,8 +48,9 @@ GENERAL NOTES
     <!--The namespace URI of AIML to use. [URI: http://alicebot.org/2001/AIML-1.0.1]-->
     <entry key="programd.aiml-schema.namespace-uri">http://alicebot.org/2001/AIML-1.0.1</entry>
     
-    <!--The bot configuration startup file. [URL: bots.xml]--> 
+    <!--The bot configuration startup file. [URL: bots.xml]-->
     <entry key="programd.startup-file-path">bots.xml</entry>
+    <!--<entry key="programd.startup-file-path">../resources/testing/multibot/bots.xml</entry>-->
     
     <!--What to do when a category is loaded whose pattern:that:topic path
         is identical to one already loaded (for the same bot).
@@ -172,9 +173,9 @@ GENERAL NOTES
     AIMLWATCHER CONFIGURATION
     -->
     
-    <!--Enable the AIML Watcher? [boolean: false]
+    <!--Enable the AIML Watcher? [boolean: true]
         * This will automatically load your AIML files if they are changed.-->
-    <entry key="programd.use-watcher">false</entry>
+    <entry key="programd.use-watcher">true</entry>
     
     <!--The delay period when checking changed AIML (milliseconds). [int: 2000]
         * Only applicable if the AIML Watcher is enabled.-->
@@ -193,8 +194,7 @@ GENERAL NOTES
     <entry key="programd.database.url">jdbc:mysql:///programdbot</entry>
     
     <!--The database driver to use. [String: com.mysql.jdbc.Driver]-->
-    <entry key="programd.database.driver">com.mysql.jdbc.Driver</entry>
-    
+    <entry key="programd.database.driver">com.mysql.jdbc.Driver</entry>    
     
     <!--The maximum number of simultaneous connections to the database. [int: 25]-->
     <entry key="programd.database.connections">25</entry>
