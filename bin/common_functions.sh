@@ -36,7 +36,7 @@ function setup_programd()
   # Set lib directories
   setup_lib_dirs
   
-  PROGRAMD_MAIN_LIB=$LIBS/programd-main.jar
+  PROGRAMD_MAIN_LIB=$DISTRIB/programd-main.jar
   if [ ! -r $PROGRAMD_MAIN_LIB ]
   then
     echo I can\'t find your programd-main.jar file.  Have you compiled it?
@@ -48,7 +48,7 @@ function setup_programd()
   fi
   
   # Define the other programd jars, but don't worry if they don't exist.
-  PROGRAMD_JS_LIB=$LIBS/programd-rhino.jar
+  PROGRAMD_JS_LIB=$DISTRIB/programd-rhino.jar
   
   # Set up external jars.
   setup_other_libs
@@ -81,7 +81,7 @@ function setup_other_libs()
   # No warning is provided if they cannot be found (since they are optional).
   ICQ_AIM_LISTENER_LIBS=$LIBS/icq-aim-listener/icq-aim-listener.jar:$LIBS/icq-aim-listener/daim.jar:$LIBS/icq-aim-listener/log4j-1.2.9.jar
   IRC_LISTENER_LIBS=$LIBS/irc-listener/irc-listener.jar
-  YAHOO_LISTENER_LIBS=$LIBS/yahoo-listener/yahoo-listener.jar:$LIBS/yahoo-listener/ymsg_network_v0_6.jar
+  YAHOO_LISTENER_LIBS=$LIBS/yahoo-listener/yahoo-listener.jar:$LIBS/yahoo-listener/ymsg_network_v0_61.jar
   LISTENER_LIBS=$ICQ_AIM_LISTENER_LIBS:$IRC_LISTENER_LIBS:$YAHOO_LISTENER_LIBS
 
   # Set SQL_LIB to the location of your database driver.
@@ -90,7 +90,7 @@ function setup_other_libs()
 
   # Set JS_LIB to the location of the Rhino JavaScript interpreter.
   # No warning is provided if it cannot be found (since it is optional).
-  JS_LIB=$LIBS/js.jar
+  JS_LIB=$WEBLIBS/js.jar
   
   OTHER_LIBS=$GETOPT_LIB:$LOG4J_LIB:$LISTENER_LIBS:$SQL_LIB:$JS_LIB
 }
@@ -99,6 +99,7 @@ function setup_other_libs()
 function setup_lib_dirs()
 {
   LIBS=$BASE/lib
+  DISTRIB=$BASE/distrib
   WEBLIBS=$BASE/WebContent/WEB-INF/lib
 }
 
@@ -169,7 +170,7 @@ function check_java_home()
 # Sets the JVM launcher command.
 function set_jvm_command()
 {
-  JVM_COMMAND="$JAVA_HOME/bin/java -Dlog4j.configuration=file:$BASE/JavaSource/log4j.xml"
+  JVM_COMMAND="$JAVA_HOME/bin/java -Dlog4j.configuration=file:$BASE/conf/log4j.xml"
 }
 
 # Checks the version of the JVM command.
