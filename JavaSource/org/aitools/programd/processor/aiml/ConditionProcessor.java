@@ -130,8 +130,7 @@ public class ConditionProcessor extends AIMLProcessor
      * 
      * @param parser the TemplateParser object responsible for this
      * @param list the XML trie
-     * @param listItemType one of {@link #NAME_VALUE},{@link #DEFAULT}or
-     *            {@link #VALUE_ONLY}
+     * @param type one of NAME_VALUE, DEFAULT, VALUE_ONLY
      * @param name the name attribute of the &lt;li/&gt; (if applicable)
      * @return the result of processing this &lt;li/&gt;
      * @throws ProcessorException if there is an error in processing
@@ -290,6 +289,7 @@ public class ConditionProcessor extends AIMLProcessor
                                     break;
                             }
                         }
+                        break;
 
                     default:
                         break;
