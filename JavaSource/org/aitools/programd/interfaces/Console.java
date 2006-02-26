@@ -138,7 +138,7 @@ public class Console
             }
             catch (InterruptedException e)
             {
-                break;
+                this.core.getLogger().warn("Console was interrupted; shell will not run anymore.");
             }
         }
     }
