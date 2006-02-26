@@ -181,6 +181,7 @@ public class Nodemaster implements Nodemapper
     /**
      * @return the keyset of the Nodemaster
      */
+    @SuppressWarnings("unchecked")
     public Set keySet()
     {
         if (this.size <= 1)

@@ -50,6 +50,7 @@ public interface Nodemapper
      * 
      * @return the Set of keys
      */
+    @SuppressWarnings("unchecked")
     public Set keySet();
 
     /**
