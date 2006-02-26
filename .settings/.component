@@ -4,14 +4,9 @@
 <module-type module-type-id="jst.web">
 <version>2.4</version>
 </module-type>
-<wb-resource deploy-path="/WEB-INF/classes" source-path="/JavaSource"/>
 <wb-resource deploy-path="/" source-path="/WebContent"/>
+<wb-resource deploy-path="/WEB-INF/classes" source-path="/JavaSource"/>
 <wb-resource deploy-path="/resources" source-path="/resources"/>
-<wb-resource deploy-path="/WEB-INF/lib" source-path="WebContent/WEB-INF/lib"/>
-<wb-resource deploy-path="/WEB-INF/lib/js.jar" source-path="WebContent/WEB-INF/lib/js.jar"/>
-<wb-resource deploy-path="/WEB-INF/lib/standard.jar" source-path="WebContent/WEB-INF/lib/standard.jar"/>
-<wb-resource deploy-path="/WEB-INF/lib/dwr.jar" source-path="WebContent/WEB-INF/lib/dwr.jar"/>
-<wb-resource deploy-path="/WEB-INF/lib/jstl.jar" source-path="WebContent/WEB-INF/lib/jstl.jar"/>
 <property name="context-root" value="ProgramD"/>
 <property name="java-output-path" value="/classes/"/>
 </wb-module>
