@@ -62,14 +62,22 @@ public class ClassUtils
      * @param constructorArgs the arguments to the constructor (actual arguments, not types)
      * @return the desired class
      */
+    @SuppressWarnings("unchecked")
     public static <T> T getNewInstance(Class<T> theClass, String description, Object ... constructorArgs)
     {
         // Get the types of the arguments.
         int argCount = constructorArgs.length;
-        ArrayList<Class> argumentTypes = new ArrayList<Class>(argCount);
+        ArrayList<Class<T>> argumentTypes = new ArrayList<Class<T>>(argCount);
         for (int index = 0; index < argCount; index++)
         {
-             argumentTypes.add(constructorArgs[index].getClass());
+            try
+            {
+                argumentTypes.add((Class<T>) constructorArgs[index].getClass());
+            }
+            catch (ClassCastException e)
+            {
+                throw new DeveloperError("Invalid arguments provided for constructor to create new " + description, e);
+            }
         }
 
         // Get the constructor that takes the given argument types.
