@@ -15,6 +15,7 @@ import org.w3c.dom.Node;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
+import org.aitools.programd.parser.TemplateParserException;
 import org.aitools.programd.processor.ProcessorException;
 import org.apache.log4j.Logger;
 
@@ -88,7 +89,18 @@ public class SRAIProcessor extends AIMLProcessor
 
         matchLogger.debug("Symbolic Reduction:");
 
-        return this.core.getMultiplexor()
-                .getInternalResponse(parser.evaluate(element.getChildNodes()), parser.getUserID(), parser.getBotID(), parser);
+        String input = parser.evaluate(element.getChildNodes());
+        String userid = parser.getUserID();
+        String botid = parser.getBotID();
+        try
+        {
+            return this.core.getMultiplexor()
+                    .getInternalResponse(input, userid, botid,
+                            new TemplateParser(input, userid, botid, this.core));
+        }
+        catch (TemplateParserException e)
+        {
+            throw new ProcessorException("Could not create new TemplateParser for <srai/>.", e);
+        }
     }
 }
