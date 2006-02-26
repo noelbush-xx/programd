@@ -34,6 +34,9 @@ public class FileManager
     /** The root path for running Program D. */
     private static URL root;
 
+    /** The logger. */
+    private static Logger logger = Logger.getLogger("programd");
+
     /** The current working directory. */
     private static Stack<URL> workingDirectory = new Stack<URL>();
 
@@ -42,16 +45,14 @@ public class FileManager
     {
         try
         {
-            pushWorkingDirectory(URLTools.createValidURL(System.getProperty("user.dir")));
+            // We do it directly, instead of using the push method, so we don't get complaints about a logger not being ready.
+            workingDirectory.add(URLTools.createValidURL(System.getProperty("user.dir")));
         }
         catch (FileNotFoundException e)
         {
             throw new DeveloperError("Current working directory (according to system properties) does not exist!", e);
         }
     }
-
-    /** The error logger. */
-    private static Logger logger = Logger.getLogger("programd");
 
     /**
      * Sets the root path.
@@ -541,19 +542,37 @@ public class FileManager
      * 
      * @param path the directory path
      */
+    @SuppressWarnings("boxing")
     public static void pushWorkingDirectory(URL path)
     {
         workingDirectory.push(path);
+        if (logger.isDebugEnabled())
+        {
+            logger.debug(String.format("Pushed working directory \"%s\".  Stack size now: %d", path, workingDirectory.size()));
+        }
     }
 
     /**
      * Pops a working directory off the stack.
      */
+    @SuppressWarnings("boxing")
     public static void popWorkingDirectory()
     {
+        URL popped;
         if (workingDirectory.size() > 1)
         {
-            workingDirectory.pop();
+            popped = workingDirectory.pop();
+            if (logger.isDebugEnabled())
+            {
+                logger.debug(String.format("Popped working directory \"%s\".  Stack size now: %d", popped, workingDirectory.size()));
+            }
+        }
+        else
+        {
+            if (logger.isDebugEnabled())
+            {
+                logger.debug("No more working directories to pop.");
+            }
         }
     }
 
