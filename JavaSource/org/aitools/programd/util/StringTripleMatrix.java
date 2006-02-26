@@ -47,7 +47,7 @@ public class StringTripleMatrix
     /**
      * @return an iterator over the horizontal component
      */
-    public Iterator iterator()
+    public Iterator<StringTriple> iterator()
     {
         return this.horizontal.iterator();
     }
@@ -55,7 +55,7 @@ public class StringTripleMatrix
     /**
      * @return a list iterator for this StringTripleMatrix
      */
-    public ListIterator listIterator()
+    public ListIterator<StringTriple> listIterator()
     {
         return this.horizontal.listIterator();
     }
