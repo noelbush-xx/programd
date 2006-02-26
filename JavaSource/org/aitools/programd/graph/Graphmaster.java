@@ -11,10 +11,14 @@ package org.aitools.programd.graph;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Set;
 
+import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.processor.aiml.RandomProcessor;
@@ -104,12 +108,21 @@ public class Graphmaster
     }
 
     // Instance variables.
+    
+    /** The Core with which this Graphmaster is associated. */
+    protected Core core;
 
     /** The logger. */
     private Logger logger = Logger.getLogger("programd");
 
     /** The root {@link Nodemaster} . */
     protected Nodemapper root = new Nodemaster();
+    
+    /** A map of loaded file URLs to botids. */
+    protected Map<URL, Set<String>> urlCatalog = new HashMap<URL, Set<String>>();
+    
+    /** A map of KB URLs to botid nodes. */
+    protected Map<URL, Set<Nodemapper>> botidNodes = new HashMap<URL, Set<Nodemapper>>();
 
     /** The merge policy. */
     private CoreSettings.MergePolicy mergePolicy;
@@ -137,12 +150,14 @@ public class Graphmaster
 
     /**
      * Creates a new Graphmaster, reading settings from
-     * the given CoreSettings object.
+     * the given Core.
      * 
-     * @param settings the CoreSettings object from which to read settings
+     * @param coreToUse the CoreSettings object from which to read settings
      */
-    public Graphmaster(CoreSettings settings)
+    public Graphmaster(Core coreToUse)
     {
+        this.core = coreToUse;
+        CoreSettings settings = this.core.getSettings();
         this.mergePolicy = settings.getMergePolicy();
         this.mergeAppendSeparator = settings.getMergeAppendSeparatorString();
         this.noteEachMerge = settings.mergeNoteEach();
@@ -173,9 +188,10 @@ public class Graphmaster
      * @param that &lt;that/&gt; path component
      * @param topic &lt;topic/&gt; path component
      * @param botid
+     * @param source the source of this path
      * @return <code>Nodemapper</code> which is the result of adding the path.
      */
-    public Nodemapper add(String pattern, String that, String topic, String botid)
+    public Nodemapper add(String pattern, String that, String topic, String botid, URL source)
     {
         ArrayList<String> path = StringKit.wordSplit(pattern);
         path.add(THAT);
@@ -185,7 +201,7 @@ public class Graphmaster
         path.add(BOTID);
         path.add(botid);
 
-        return add(path.listIterator(), this.root);
+        return add(path.listIterator(), this.root, source);
     }
 
     /**
@@ -196,9 +212,10 @@ public class Graphmaster
      *            the path
      * @param parent the <code>Nodemapper</code> parent to which the child
      *            should be appended
+     * @param source the source of the original path
      * @return <code>Nodemapper</code> which is the result of adding the node
      */
-    private Nodemapper add(ListIterator<String> pathIterator, Nodemapper parent)
+    private Nodemapper add(ListIterator<String> pathIterator, Nodemapper parent, URL source)
     {
         // If there are no more words in the path, return the parent node
         if (!pathIterator.hasNext())
@@ -223,9 +240,23 @@ public class Graphmaster
             parent.put(word, node);
             node.setParent(parent);
         }
-
+        // Associate <BOTID> nodes with their sources.
+        if (word.equals(BOTID))
+        {
+            Set<Nodemapper> nodes;
+            if (this.botidNodes.containsKey(source))
+            {
+                nodes = this.botidNodes.get(source);
+            }
+            else
+            {
+                nodes = new HashSet<Nodemapper>();
+                this.botidNodes.put(source, nodes);
+            }
+            nodes.add(node);
+        }
         // Return the result of adding the new node to the parent.
-        return add(pathIterator, node);
+        return add(pathIterator, node, source);
     }
 
     /**
@@ -650,10 +681,10 @@ public class Graphmaster
      * @param template the category's template
      * @param botid the bot id for whom to add the category
      * @param bot the bot for whom the category is being added
-     * @param url the path from which the category comes
+     * @param source the path from which the category comes
      */
     public void addCategory(String pattern, String that, String topic, String template,
-            String botid, Bot bot, URL url)
+            String botid, Bot bot, URL source)
     {
         // Make sure the path components are right.
         if (pattern == null)
@@ -674,12 +705,12 @@ public class Graphmaster
             this.logger.info(this.totalCategories + " categories loaded so far.");
         }
 
-        Nodemapper node = add(pattern, that, topic, botid);
+        Nodemapper node = add(pattern, that, topic, botid, source);
         String storedTemplate = (String) node.get(TEMPLATE);
         if (storedTemplate == null)
         {
-            node.put(FILENAME, url.toExternalForm());
-            bot.addToPathMap(url, node);
+            node.put(FILENAME, source.toExternalForm());
+            bot.addToPathMap(source, node);
             node.put(TEMPLATE, template);
             this.totalCategories++;
         }
@@ -692,7 +723,7 @@ public class Graphmaster
                     if (this.noteEachMerge)
                     {
                         this.logger.warn("Skipping path-identical category from \""
-                                + url + "\" which duplicates path of category from \""
+                                + source + "\" which duplicates path of category from \""
                                 + node.get(FILENAME) + "\": " + pattern + ":" + that + ":" + topic);
                     }
                     break;
@@ -703,10 +734,10 @@ public class Graphmaster
                         this.logger.warn(
                                 "Overwriting path-identical category from \""
                                         + node.get(Graphmaster.FILENAME)
-                                        + "\" with new category from \"" + url + "\".  Path: "
+                                        + "\" with new category from \"" + source + "\".  Path: "
                                         + pattern + ":" + that + ":" + topic);
                     }
-                    node.put(Graphmaster.FILENAME, url);
+                    node.put(Graphmaster.FILENAME, source);
                     node.put(Graphmaster.TEMPLATE, template);
                     break;
 
@@ -714,13 +745,13 @@ public class Graphmaster
                     if (this.noteEachMerge)
                     {
                         this.logger.warn("Appending template of category from \""
-                                + url + "\" to template of path-identical category from \""
+                                + source + "\" to template of path-identical category from \""
                                 + node.get(Graphmaster.FILENAME) + "\": " + pattern + ":" + that
                                 + ":" + topic);
                     }
                     node
                             .put(Graphmaster.FILENAME, node.get(Graphmaster.FILENAME) + ", "
-                                    + url);
+                                    + source);
                     node.put(Graphmaster.TEMPLATE, appendTemplate(storedTemplate, template));
                     break;
 
@@ -728,13 +759,13 @@ public class Graphmaster
                     if (this.noteEachMerge)
                     {
                         this.logger.warn("Combining template of category from \""
-                                + url + "\" with template of path-identical category from \""
+                                + source + "\" with template of path-identical category from \""
                                 + node.get(Graphmaster.FILENAME) + "\": " + pattern + ":" + that
                                 + ":" + topic);
                     }
                     node
                             .put(Graphmaster.FILENAME, node.get(Graphmaster.FILENAME) + ", "
-                                    + url);
+                                    + source);
                     String combined = combineTemplates(storedTemplate, template);
                     node.put(Graphmaster.TEMPLATE, combined);
                     break;
@@ -920,6 +951,17 @@ public class Graphmaster
     {
         return this.totalCategories;
     }
+    
+    /**
+     * Returns a string reporting the current number of total categories
+     * 
+     * @return a string reporting category information
+     */
+    @SuppressWarnings("boxing")
+    public String getCategoryReport()
+    {
+        return String.format("%d total categories currently loaded.", this.totalCategories);
+    }
 
     /**
      * Returns the number of path-identical categories encountered.
@@ -929,5 +971,71 @@ public class Graphmaster
     public int getDuplicateCategories()
     {
         return this.duplicateCategories;
+    }
+    
+    /**
+     * Returns whether or not the Graphmaster has already loaded the given URL.
+     * 
+     * @param path
+     * @return whether or not the Graphmaster has already loaded the given URL
+     */
+    public boolean hasAlreadyLoaded(URL path)
+    {
+        return this.urlCatalog.containsKey(path);
+    }
+    
+    /**
+     * Adds the given URL to the catalog of URLs loaded
+     * for the given botid.  This should only be called
+     * using a URL that has <i>not</i> previously been loaded
+     * for another bot.
+     * 
+     * @param path
+     * @param botid
+     * @throws IllegalArgumentException if the given path has already been loaded
+     */
+    public void addPath(URL path, String botid)
+    {
+        if (this.urlCatalog.containsKey(path))
+        {
+            throw new IllegalArgumentException("Must not call addPath() using a URL already loaded.");
+        }
+        Set<String> botids = new HashSet<String>();
+        botids.add(botid);
+        this.urlCatalog.put(path, botids);
+    }
+    
+    /**
+     * Adds the given botid to the &lt;botid&gt; node
+     * for all branches associated with the given URL.
+     * This should only be called using a URL that <i>has</i>
+     * previously been loaded for <i>another</i> bot.
+     * 
+     * @param path
+     * @param botid
+     * @throws IllegalArgumentException if the given path has not already been loaded, or if it has been loaded for the same botid
+     */
+    public void addForBot(URL path, String botid)
+    {
+        if (!this.urlCatalog.containsKey(path))
+        {
+            throw new IllegalArgumentException("Must not call addForBot() using a URL that has not already been loaded.");
+        }
+        if (this.urlCatalog.get(path).contains(botid))
+        {
+            throw new IllegalArgumentException("Must not call addForBot() using a URL and botid that have already been associated.");
+        }
+        if (this.logger.isDebugEnabled())
+        {
+            this.logger.debug(String.format("Adding botid \"%s\" to all paths associated with \"%s\".", botid, path));
+        }
+        for (Nodemapper node : this.botidNodes.get(path))
+        {
+            Nodemapper botIDNode = new Nodemaster();
+            node.put(botid, botIDNode);
+            botIDNode.setParent(node);
+            this.totalCategories++;
+        }
+        this.urlCatalog.get(path).add(botid);
     }
 }
