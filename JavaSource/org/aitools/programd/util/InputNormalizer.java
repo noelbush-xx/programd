@@ -40,6 +40,7 @@ public class InputNormalizer
      * @param input the input to split
      * @return the input split into sentences
      */
+    @SuppressWarnings("boxing")
     public static List<String> sentenceSplit(List<String> sentenceSplitters, String input)
     {
         List<String> result = Collections.checkedList(new ArrayList<String>(), String.class);

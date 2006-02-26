@@ -566,9 +566,18 @@ public class LRUCache<K, V>
      * @param oldIter the old iterator to use
      * @return keys stored in the cache using an old iterator
      */
+    @SuppressWarnings("unchecked")
     public Iterator<K> keys(Iterator<K> oldIter)
     {
-        KeyIterator<K, V> iter = (KeyIterator<K, V>) oldIter;
+        KeyIterator<K, V> iter;
+        try
+        {
+        	iter = (KeyIterator<K, V>) oldIter;
+        }
+    	catch (ClassCastException e)
+    	{
+    		throw new DeveloperError("Passed a non-ValueIterator to values().", e);
+    	}
         iter.init(this);
         return oldIter;
     }
@@ -587,9 +596,18 @@ public class LRUCache<K, V>
      * @param oldIter the old iterator
      * @return the values of the old iterator
      */
+    @SuppressWarnings("unchecked")
     public Iterator<V> values(Iterator<V> oldIter)
     {
-        ValueIterator<K, V> iter = (ValueIterator<K, V>) oldIter;
+    	ValueIterator<K, V> iter;
+    	try
+    	{
+    		iter = (ValueIterator<K, V>) oldIter;
+    	}
+    	catch (ClassCastException e)
+    	{
+    		throw new DeveloperError("Passed a non-ValueIterator to values().", e);
+    	}
         iter.init(this);
         return oldIter;
     }

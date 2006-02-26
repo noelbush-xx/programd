@@ -36,6 +36,7 @@ public class Substituter
      * @param input the string on which to perform the replacement
      * @return the input with substitutions applied
      */
+    @SuppressWarnings("boxing")
     public static String applySubstitutions(Map<Pattern, String> substitutionMap, String input)
     {
         if (substitutionMap == null)
