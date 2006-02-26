@@ -188,7 +188,7 @@ public class Bot
     /**
      * @return the properties
      */
-    public Map getProperties()
+    public Map<String, String> getProperties()
     {
         return this.properties;
     }
@@ -374,7 +374,7 @@ public class Bot
     }
 
     /**
-     * @param url The list of test suite files to set
+     * @param files The list of test suite files to set
      */
     public void setTestSuitePathspec(List<URL> files)
     {
