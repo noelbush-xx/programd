@@ -560,7 +560,7 @@ public class GUIConsole extends JPanel
                 }
                 catch (InterruptedException e)
                 {
-                    // Nothing to do.
+                    Logger.getLogger("programd").warn("GUIConsole was interrupted; shell will not run anymore.");
                 }
             }
             GUIConsole.this.display.append(new String(b, off, len));
@@ -581,7 +581,7 @@ public class GUIConsole extends JPanel
                 }
                 catch (InterruptedException e)
                 {
-                    // Do nothing.
+                    Logger.getLogger("programd").warn("GUIConsole was interrupted; shell will not run anymore.");
                 }
             }
             GUIConsole.this.display.append(String.valueOf((char) b));
