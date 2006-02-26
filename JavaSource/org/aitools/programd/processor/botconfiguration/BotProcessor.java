@@ -63,6 +63,7 @@ public class BotProcessor extends BotConfigurationElementProcessor
      * @see BotConfigurationElementProcessor#process(Element,
      *      BotsConfigurationFileParser)
      */
+    @SuppressWarnings("boxing")
     public String processResponse(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         if (element.hasAttribute(HREF))
@@ -121,14 +122,17 @@ public class BotProcessor extends BotConfigurationElementProcessor
                     this.core.getAIMLWatcher().start();
                 }
                 
-                logger.info((graphmaster.getTotalCategories() - previousCategoryCount)
-                        + " unique categories loaded in " + time / 1000.00 + " seconds.");
+                logger.info(String.format("%d categories loaded in %.4f seconds.",
+                        graphmaster.getTotalCategories() - previousCategoryCount,
+                        time / 1000.00));
+                logger.info(graphmaster.getCategoryReport());
                 
                 int dupes = graphmaster.getDuplicateCategories() - previousDuplicateCount;
                 if (dupes > 0)
                 {
-                    logger.warn(dupes
-                        + " path-identical categories were encountered, and handled according to the " + this.core.getSettings().getMergePolicy() + " merge policy.");
+                    logger.warn(String.format("%d path-identical categories were encountered, and handled according to the %s merge policy.",
+                            dupes,
+                            this.core.getSettings().getMergePolicy()));
                 }
             }
             else
