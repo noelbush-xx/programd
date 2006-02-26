@@ -18,8 +18,7 @@ import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * A <code>ShellStreamAppender</code> publishes any record it's passed to the
- * given <code>stream</code>, except those messages which are discarded by
- * the given {@link StdFilter}.
+ * given <code>stream</code>.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.2
