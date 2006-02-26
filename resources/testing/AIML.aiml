@@ -586,6 +586,186 @@
     <category>
         <pattern>TESTEXTREMESRAI</pattern>
         <template>Test case #37.<html:br/>
+            <srai>srai50</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI50</pattern>
+        <template>
+            <srai>srai49</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI49</pattern>
+        <template>
+            <srai>srai48</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI48</pattern>
+        <template>
+            <srai>srai47</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI47</pattern>
+        <template>
+            <srai>srai46</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI46</pattern>
+        <template>
+            <srai>srai45</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI45</pattern>
+        <template>
+            <srai>srai44</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI44</pattern>
+        <template>
+            <srai>srai43</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI43</pattern>
+        <template>
+            <srai>srai42</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI42</pattern>
+        <template>
+            <srai>srai41</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI41</pattern>
+        <template>
+            <srai>srai40</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI40</pattern>
+        <template>
+            <srai>srai39</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI39</pattern>
+        <template>
+            <srai>srai38</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI38</pattern>
+        <template>
+            <srai>srai37</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI37</pattern>
+        <template>
+            <srai>srai36</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI36</pattern>
+        <template>
+            <srai>srai35</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI35</pattern>
+        <template>
+            <srai>srai34</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI34</pattern>
+        <template>
+            <srai>srai33</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI33</pattern>
+        <template>
+            <srai>srai32</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI32</pattern>
+        <template>
+            <srai>srai31</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI31</pattern>
+        <template>
+            <srai>srai30</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI30</pattern>
+        <template>
+            <srai>srai29</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI29</pattern>
+        <template>
+            <srai>srai28</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI28</pattern>
+        <template>
+            <srai>srai27</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI27</pattern>
+        <template>
+            <srai>srai26</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI26</pattern>
+        <template>
+            <srai>srai25</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI25</pattern>
+        <template>
+            <srai>srai24</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI24</pattern>
+        <template>
+            <srai>srai23</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI23</pattern>
+        <template>
+            <srai>srai22</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI22</pattern>
+        <template>
+            <srai>srai21</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>SRAI21</pattern>
+        <template>
             <srai>srai20</srai>
         </template>
     </category>
@@ -806,4 +986,42 @@ DDDDDDDDDD</html:pre>
             passed if this sentence was capitalized.
         </template>
     </category>
+    <category>
+        <pattern>TESTSTARRECURSION</pattern>
+        <template>
+            Test case #46.
+            <html:br/>
+            <think><set name="oldtopic"><get name="topic"/></set></think>
+            <think><set name="topic">SW0</set></think>
+            <srai>WILDCARD AND RECURSION TEST</srai>
+            <think><set name="topic"><get name="oldtopic"/></set></think>
+        </template>
+    </category>
+    <topic name="SW0">
+        <category>
+            <pattern>*</pattern>
+            <template>
+                <think><set name="topic">SW1</set></think>
+                <srai><star/></srai>
+                <think><set name="topic">SW2</set></think>
+                <srai><star/></srai>
+            </template>
+        </category>
+    </topic>
+    <topic name="SW1">
+        <category>
+            <pattern>* *</pattern>
+            <template></template>
+        </category>
+    </topic>
+    <topic name="SW2">
+        <category>
+            <pattern>WILDCARD AND RECURSION TEST</pattern>
+            <template>Test passed.</template>
+        </category>
+        <category>
+            <pattern>WILDCARD</pattern>
+            <template>Test failed.</template>
+        </category>
+    </topic>
 </aiml>
