@@ -57,9 +57,9 @@ public class LearnProcessor extends AIMLProcessor
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         URL path = URLTools.contextualize(FileManager.getWorkingDirectory(), parser.evaluate(element.getChildNodes()));
-        FileManager.pushWorkingDirectory(path);
+        //FileManager.pushWorkingDirectory(URLTools.getParent(path));
         parser.getCore().load(path, parser.getBotID());
-        FileManager.popWorkingDirectory();
+        //FileManager.popWorkingDirectory();
         return EMPTY_STRING;
     }
 }
