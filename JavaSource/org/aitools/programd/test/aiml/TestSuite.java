@@ -115,7 +115,7 @@ public class TestSuite implements Iterable<TestCase>
     /**
      * @return the test cases in this suite
      */
-    public ArrayList getTestCases()
+    public ArrayList<TestCase> getTestCases()
     {
         return this.testCases;
     }
