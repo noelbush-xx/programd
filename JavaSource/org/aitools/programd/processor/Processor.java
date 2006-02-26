@@ -74,5 +74,5 @@ abstract public class Processor
      * @throws ProcessorException if the <code>tag</code> or its contents are
      *             invalid
      */
-    abstract public String process(Element element, GenericParser parser) throws ProcessorException;
+    abstract public <P extends Processor> String process(Element element, GenericParser<P> parser) throws ProcessorException;
 }
