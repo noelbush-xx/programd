@@ -10,8 +10,11 @@
 package org.aitools.programd.interfaces.shell;
 
 
+import java.io.FileNotFoundException;
+
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.graph.Graphmaster;
+import org.aitools.programd.util.URLTools;
 import org.apache.log4j.Logger;
 
 /**
@@ -66,9 +69,16 @@ public class UnloadCommand extends ShellCommand
             int categories = graphmaster.getTotalCategories();
             Bot bot = shell.getBots().getBot(shell.getCurrentBotID());
             String path = commandLine.substring(space + 1);
-            graphmaster.unload(path, bot);
-            bot.getLoadedFilesMap().remove(path);
-            Logger.getLogger("programd").info(categories - graphmaster.getTotalCategories() + " categories unloaded.");
+            try
+            {
+	            graphmaster.unload(URLTools.createValidURL(path), bot);
+	            bot.getLoadedFilesMap().remove(path);
+	            Logger.getLogger("programd").info(categories - graphmaster.getTotalCategories() + " categories unloaded.");
+            }
+            catch (FileNotFoundException e)
+            {
+            	shell.showError(String.format("Could not find \"%s\".", path));
+            }
         }
     }
 }
