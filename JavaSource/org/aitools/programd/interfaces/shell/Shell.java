@@ -10,6 +10,7 @@
 package org.aitools.programd.interfaces.shell;
 
 import java.io.BufferedReader;
+//import java.io.IOException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -56,15 +57,15 @@ public class Shell extends Thread
 
     /** The Bots object in use by the attached Core. */
     private Bots bots;
-
+    
     /** A BufferedReader for user input to the shell. */
-    private BufferedReader consoleIn;
+    private BufferedReader inReader;
 
     /** Where regular console output will go. */
-    private PrintStream consoleOut;
+    private PrintStream outStream;
 
     /** Where console errors will go. */
-    private PrintStream consoleErr;
+    private PrintStream errStream;
 
     /** Where console prompt output will go. */
     private PrintStream consolePrompt;
@@ -98,8 +99,8 @@ public class Shell extends Thread
     public Shell()
     {
         super("Shell");
-        this.consoleIn = new BufferedReader(new InputStreamReader(System.in));
-        this.consoleOut = this.consoleErr = this.consolePrompt = System.out;
+        this.inReader = new BufferedReader(new InputStreamReader(System.in));
+        this.outStream = this.errStream = this.consolePrompt = System.out;
         this.setDaemon(true);
     }
 
@@ -114,9 +115,9 @@ public class Shell extends Thread
     public Shell(InputStream in, PrintStream out, PrintStream err, PrintStream prompt)
     {
         super("Shell");
-        this.consoleIn = new BufferedReader(new InputStreamReader(in));
-        this.consoleOut = out;
-        this.consoleErr = err;
+        this.inReader = new BufferedReader(new InputStreamReader(in));
+        this.outStream = out;
+        this.errStream = err;
         this.consolePrompt = prompt;
         this.setDaemon(true);
     }
@@ -172,7 +173,7 @@ public class Shell extends Thread
         {
             throw new DeveloperError("Must attach the shell to a Core before calling run()!", new NullPointerException());
         }
-
+        
         showMessage("Interactive shell: type \"" + EXIT + "\" to shut down; \"" + HelpCommand.COMMAND_STRING + "\" for help.");
         Bot bot = this.bots.getABot();
         if (bot == null)
@@ -188,34 +189,12 @@ public class Shell extends Thread
             String commandLine = null;
             try
             {
-                commandLine = this.consoleIn.readLine();
+                commandLine = this.inReader.readLine();
             }
             catch (IOException e)
             {
-                // Do nothing -- the next block will handle this.
+                noShell();
             }
-            if (commandLine == null)
-            {
-                /*
-                 * A null line probably means that the shell is being mistakenly
-                 * run in interactive mode when in fact there is no System.in
-                 * available. In this case, sleep for 100 days :-) and wait to
-                 * be interrupted.
-                 */
-                while (true)
-                {
-                    try
-                    {
-                        Thread.sleep(86400000);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        break;
-                    }
-                }
-                break;
-            }
-            // (otherwise...)
             this.midLine = false;
 
             // Handle commands.
@@ -269,6 +248,25 @@ public class Shell extends Thread
                 showConsole(this.botName, XMLKit.filterViaHTMLTags(this.core.getResponse(commandLine, this.hostname, this.botid)));
             }
             // If the command line has zero length, ignore it.
+        }
+    }
+    
+    /**
+     * Notes that the shell will not run, and sleeps.
+     */
+    private void noShell()
+    {
+        this.core.getLogger().warn("No input stream found; shell is disabled.");
+        while (true)
+        {
+            try
+            {
+                Thread.sleep(86400000);
+            }
+            catch (InterruptedException e)
+            {
+                this.core.getLogger().warn("Shell was interrupted; shell will not run anymore.");
+            }
         }
     }
     
@@ -364,9 +362,9 @@ public class Shell extends Thread
     {
         if (this.midLine)
         {
-            this.consoleOut.println();
+            this.outStream.println();
         }
-        this.consoleOut.println(message);
+        this.outStream.println(message);
         this.midLine = false;
     }
 
@@ -379,9 +377,9 @@ public class Shell extends Thread
     {
         if (this.midLine)
         {
-            this.consoleErr.println();
+            this.errStream.println();
         }
-        this.consoleErr.println(message);
+        this.errStream.println(message);
         this.midLine = false;
     }
 
