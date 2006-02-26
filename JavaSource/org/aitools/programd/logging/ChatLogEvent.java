@@ -44,10 +44,10 @@ public class ChatLogEvent extends LoggingEvent
     /**
      * Creates a new ChatLogEvent.
      * 
-     * @param botidToUse the botid with whom this exchange occurred
-     * @param useridToUse the userid with whom this exchange occurred
-     * @param inputToUse the input from the user
-     * @param replyToUse the reply from the bot
+     * @param bot the botid with whom this exchange occurred
+     * @param user the userid with whom this exchange occurred
+     * @param in the input from the user
+     * @param out the reply from the bot
      */
     public ChatLogEvent(String bot, String user, String in, String out)
     {
