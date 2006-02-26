@@ -49,9 +49,9 @@ public class LearnProcessor extends BotConfigurationElementProcessor
     public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         URL path = URLTools.contextualize(FileManager.getWorkingDirectory(), parser.evaluate(element.getChildNodes()));
-        FileManager.pushWorkingDirectory(URLTools.getParent(path));
+        //FileManager.pushWorkingDirectory(URLTools.getParent(URLTools.getParent(path)));
         parser.getCore().load(path, parser.getCurrentBot().getID());
-        FileManager.popWorkingDirectory();
+        //FileManager.popWorkingDirectory();
         return EMPTY_STRING;
     }
 }
