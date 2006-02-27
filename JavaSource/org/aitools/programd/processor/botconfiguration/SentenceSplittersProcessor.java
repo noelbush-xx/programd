@@ -64,7 +64,7 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
             bot.addSentenceSplitter(splitter.getAttribute(VALUE));
         }
 
-        logger.info(String.format("Loaded %d sentence-splitters.", splitters.size()));
+        logger.info(String.format("Loaded %,d sentence-splitters.", splitters.size()));
         return EMPTY_STRING;
     }
 }

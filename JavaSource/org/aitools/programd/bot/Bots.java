@@ -119,7 +119,7 @@ public class Bots
         {
             return "";
         }
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         for (String botName : this.botMap.keySet())
         {
             if (result.length() > 0)

@@ -50,6 +50,6 @@ public class CategoriesCommand extends ShellCommand
     @Override
     public void handle(@SuppressWarnings("unused") String commandLine, Shell shell)
     {
-        shell.showMessage(String.format("%d categories currently loaded.", shell.getCore().getGraphmaster().getTotalCategories()));
+        shell.showMessage(shell.getCore().getGraphmaster().getCategoryReport());
     }
 }

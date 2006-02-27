@@ -292,7 +292,7 @@ public class Graphmaster
      * synchronized!
      * </p>
      * 
-     * @see #match(Nodemapper, Nodemapper, List, String, StringBuffer,
+     * @see #match(Nodemapper, Nodemapper, List, String, StringBuilder,
      *      MatchState, long)
      * @param input &lt;input/&gt; path component
      * @param that &lt;that/&gt; path component
@@ -352,7 +352,7 @@ public class Graphmaster
 
         // Get the match, starting at the root, with an empty star and path,
         // starting in "in input" mode.
-        Match match = match(this.root, this.root, inputPath, EMPTY_STRING, new StringBuffer(),
+        Match match = match(this.root, this.root, inputPath, EMPTY_STRING, new StringBuilder(),
                 MatchState.IN_INPUT, System.currentTimeMillis() + this.responseTimeout);
 
         // Return it if not null; throw an exception if null.
@@ -383,7 +383,7 @@ public class Graphmaster
      * @return the resulting <code>Match</code> object
      */
     private Match match(Nodemapper nodemapper, Nodemapper parent, List<String> input,
-            String wildcardContent, StringBuffer path, MatchState matchState, long expiration)
+            String wildcardContent, StringBuilder path, MatchState matchState, long expiration)
     {
         // Return null if expiration has been reached.
         if (System.currentTimeMillis() >= expiration)
@@ -430,7 +430,7 @@ public class Graphmaster
         {
             // If so, construct a new path from the current path plus a _
             // wildcard.
-            StringBuffer newPath = new StringBuffer();
+            StringBuilder newPath = new StringBuilder();
             synchronized (newPath)
             {
                 if (path.length() > 0)
@@ -513,7 +513,7 @@ public class Graphmaster
                 // Now try to get a match using the tail and an empty star and
                 // empty path.
                 match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, EMPTY_STRING,
-                        new StringBuffer(), matchState, expiration);
+                        new StringBuilder(), matchState, expiration);
 
                 // If that did result in a match,
                 if (match != null)
@@ -565,8 +565,7 @@ public class Graphmaster
             else
             {
                 // Construct a new path from the current path plus the head.
-                //TODO: Use StringBuilder here
-                StringBuffer newPath = new StringBuffer();
+                StringBuilder newPath = new StringBuilder();
                 synchronized (newPath)
                 {
                     if (path.length() > 0)
@@ -599,7 +598,7 @@ public class Graphmaster
         {
             // If so, construct a new path from the current path plus a *
             // wildcard.
-            StringBuffer newPath = new StringBuffer();
+            StringBuilder newPath = new StringBuilder();
             synchronized (newPath)
             {
                 if (path.length() > 0)
@@ -684,6 +683,7 @@ public class Graphmaster
      * @param bot the bot for whom the category is being added
      * @param source the path from which the category comes
      */
+    @SuppressWarnings("boxing")
     public void addCategory(String pattern, String that, String topic, String template,
             String botid, Bot bot, URL source)
     {
@@ -703,7 +703,7 @@ public class Graphmaster
 
         if (this.totalCategories % this.categoryLoadNotifyInterval == 0 && this.totalCategories > 0)
         {
-            this.logger.info(this.totalCategories + " categories loaded so far.");
+            this.logger.info(String.format("%,d categories loaded so far.", this.totalCategories));
         }
 
         Nodemapper node = add(pattern, that, topic, botid, source);
@@ -723,20 +723,16 @@ public class Graphmaster
                 case SKIP:
                     if (this.noteEachMerge)
                     {
-                        this.logger.warn("Skipping path-identical category from \""
-                                + source + "\" which duplicates path of category from \""
-                                + node.get(FILENAME) + "\": " + pattern + ":" + that + ":" + topic);
+                        this.logger.warn(String.format("Skipping path-identical category from \"%s\" which duplicates path of category from \"%s\": %s:%s:%s",
+                                source, node.get(FILENAME), pattern, that, topic));
                     }
                     break;
 
                 case OVERWRITE:
                     if (this.noteEachMerge)
                     {
-                        this.logger.warn(
-                                "Overwriting path-identical category from \""
-                                        + node.get(Graphmaster.FILENAME)
-                                        + "\" with new category from \"" + source + "\".  Path: "
-                                        + pattern + ":" + that + ":" + topic);
+                        this.logger.warn(String.format("Overwriting path-identical category from \"%s\" with new category from \"%s\".  Path: %s:%s:%s",
+                                node.get(Graphmaster.FILENAME), source, pattern, that, topic));
                     }
                     node.put(Graphmaster.FILENAME, source);
                     node.put(Graphmaster.TEMPLATE, template);
@@ -745,10 +741,8 @@ public class Graphmaster
                 case APPEND:
                     if (this.noteEachMerge)
                     {
-                        this.logger.warn("Appending template of category from \""
-                                + source + "\" to template of path-identical category from \""
-                                + node.get(Graphmaster.FILENAME) + "\": " + pattern + ":" + that
-                                + ":" + topic);
+                        this.logger.warn(String.format("Appending template of category from \"%s\" to template of path-identical category from \"%s\": %s:%s:%s",
+                                source, node.get(Graphmaster.FILENAME), pattern, that, topic));
                     }
                     node
                             .put(Graphmaster.FILENAME, node.get(Graphmaster.FILENAME) + ", "
@@ -759,10 +753,8 @@ public class Graphmaster
                 case COMBINE:
                     if (this.noteEachMerge)
                     {
-                        this.logger.warn("Combining template of category from \""
-                                + source + "\" with template of path-identical category from \""
-                                + node.get(Graphmaster.FILENAME) + "\": " + pattern + ":" + that
-                                + ":" + topic);
+                        this.logger.warn(String.format("Combining template of category from \"%s\" with template of path-identical category from \"%s\": %s:%s:%s",
+                                source, node.get(Graphmaster.FILENAME), pattern, that, topic));
                     }
                     node
                             .put(Graphmaster.FILENAME, node.get(Graphmaster.FILENAME) + ", "
@@ -961,7 +953,7 @@ public class Graphmaster
     @SuppressWarnings("boxing")
     public String getCategoryReport()
     {
-        return String.format("%d total categories currently loaded.", this.totalCategories);
+        return String.format("%,d total categories currently loaded.", this.totalCategories);
     }
 
     /**

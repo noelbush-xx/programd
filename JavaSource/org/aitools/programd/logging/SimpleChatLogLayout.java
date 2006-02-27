@@ -88,7 +88,7 @@ public class SimpleChatLogLayout extends SimpleLayout
     public String format(ChatLogEvent event)
     {
         String[] responseLines = XMLKit.filterViaHTMLTags(event.getReply());
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         int responseLineCount = responseLines.length;
         String datetime = null;
         if (this.showTimestamp)

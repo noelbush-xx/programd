@@ -47,7 +47,7 @@ public class ExpectedKeywordChecker extends Checker
     @Override
     public String getContent()
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         int keywordCount = this.keywords.size();
         for (String keyword : this.keywords)
         {

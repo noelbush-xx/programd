@@ -122,7 +122,7 @@ public class BotProcessor extends BotConfigurationElementProcessor
                     this.core.getAIMLWatcher().start();
                 }
                 
-                logger.info(String.format("%d categories loaded in %.4f seconds.",
+                logger.info(String.format("%,d categories loaded in %.4f seconds.",
                         graphmaster.getTotalCategories() - previousCategoryCount,
                         time / 1000.00));
                 logger.info(graphmaster.getCategoryReport());
@@ -130,7 +130,7 @@ public class BotProcessor extends BotConfigurationElementProcessor
                 int dupes = graphmaster.getDuplicateCategories() - previousDuplicateCount;
                 if (dupes > 0)
                 {
-                    logger.warn(String.format("%d path-identical categories were encountered, and handled according to the %s merge policy.",
+                    logger.warn(String.format("%,d path-identical categories were encountered, and handled according to the %s merge policy.",
                             dupes,
                             this.core.getSettings().getMergePolicy()));
                 }

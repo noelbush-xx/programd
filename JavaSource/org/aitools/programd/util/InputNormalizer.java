@@ -140,7 +140,7 @@ public class InputNormalizer
         input = XMLKit.removeMarkup(input);
 
         StringCharacterIterator iterator = new StringCharacterIterator(input);
-        StringBuffer result = new StringBuffer(input.length());
+        StringBuilder result = new StringBuilder(input.length());
 
         // Iterate over the input.
         for (char aChar = iterator.first(); aChar != CharacterIterator.DONE; aChar = iterator.next())
@@ -181,7 +181,7 @@ public class InputNormalizer
         input = XMLKit.removeMarkup(input);
 
         StringCharacterIterator iterator = new StringCharacterIterator(input);
-        StringBuffer result = new StringBuffer(input.length());
+        StringBuilder result = new StringBuilder(input.length());
 
         // Iterate over the input.
         for (char aChar = iterator.first(); aChar != CharacterIterator.DONE; aChar = iterator.next())

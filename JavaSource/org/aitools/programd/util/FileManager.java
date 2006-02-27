@@ -409,7 +409,7 @@ public class FileManager
                 }
             }
         }
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         String line;
         try
         {
@@ -548,7 +548,7 @@ public class FileManager
         workingDirectory.push(path);
         if (logger.isDebugEnabled())
         {
-            logger.debug(String.format("Pushed working directory \"%s\".  Stack size now: %d", path, workingDirectory.size()));
+            logger.debug(String.format("Pushed working directory \"%s\".  Stack size now: %,d", path, workingDirectory.size()));
         }
     }
 
@@ -564,7 +564,7 @@ public class FileManager
             popped = workingDirectory.pop();
             if (logger.isDebugEnabled())
             {
-                logger.debug(String.format("Popped working directory \"%s\".  Stack size now: %d", popped, workingDirectory.size()));
+                logger.debug(String.format("Popped working directory \"%s\".  Stack size now: %,d", popped, workingDirectory.size()));
             }
         }
         else
@@ -606,7 +606,7 @@ public class FileManager
     public static String loadFileAsString(File file)
     {
         String templateLine;
-        StringBuffer result = new StringBuffer(1000);
+        StringBuilder result = new StringBuilder(1000);
 
         BufferedReader reader;
         try

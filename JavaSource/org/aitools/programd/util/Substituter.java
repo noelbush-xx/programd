@@ -46,7 +46,7 @@ public class Substituter
         
         if (aimlLogger.isDebugEnabled())
         {
-            aimlLogger.debug(String.format("Applying %d-element substituion map to input \"%s\".", substitutionMap.size(), input));
+            aimlLogger.debug(String.format("Applying %,d-element substituion map to input \"%s\".", substitutionMap.size(), input));
         }
         
         // This will contain all pieces of the input untouched by substitution.
@@ -116,7 +116,7 @@ public class Substituter
         }
 
         // Now construct the result.
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         if (aimlLogger.isDebugEnabled())
         {
             aimlLogger.debug(String.format("Constructing result using %d untouched piece(s) and %d replacement(s).",

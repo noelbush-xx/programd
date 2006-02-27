@@ -74,7 +74,7 @@ public class XMLChatLogLayout extends Layout
      */
     public String format(ChatLogEvent event)
     {
-        StringBuffer result = new StringBuffer(1000);
+        StringBuilder result = new StringBuilder(1000);
         result.append(EVENT_START);
 
         result.append(TIME_START);
