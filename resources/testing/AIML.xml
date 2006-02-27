@@ -718,4 +718,12 @@
         <Input>testelementsinblockcondition</Input>
         <ExpectedAnswer>Test passed if this sentence was capitalized.</ExpectedAnswer>
     </TestCase>
+    <TestCase name="retention of star values during srai (46)">
+        <Description>Verifies that values assigned to star elements from pattern matching are
+        retained after a srai (i.e., that the srai does not improperly cause the reassignment
+        of a new value to the star, based on the srai'ed pattern match.</Description>
+        <Input>testsrecursion</Input>
+        <ExpectedAnswer>Test case #46.<html:br/>
+        Test passed.</ExpectedAnswer>
+    </TestCase>
 </TestSuite>
