@@ -563,7 +563,7 @@ public class GUIConsole extends JPanel
                     Logger.getLogger("programd").warn("GUIConsole was interrupted; shell will not run anymore.");
                 }
             }
-            GUIConsole.this.display.append(new String(b, off, len));
+            GUIConsole.this.display.append(new String(b, off, len).intern());
             GUIConsole.this.display.setCaretPosition(GUIConsole.this.display.getText().length());
         }
 
@@ -616,7 +616,7 @@ public class GUIConsole extends JPanel
         @Override
         public void write(byte[] b, int off, int len)
         {
-            GUIConsole.this.inputPanel.setPrompt(new String(b, off, len));
+            GUIConsole.this.inputPanel.setPrompt(new String(b, off, len).intern());
         }
 
         /**
