@@ -61,7 +61,7 @@ abstract public class Checker
         {
             try
             {
-                return new AlertKeywordChecker(new String(element.getTextContent().getBytes(encoding)));
+                return new AlertKeywordChecker(new String(element.getTextContent().getBytes(encoding)).intern());
             }
             catch (UnsupportedEncodingException e)
             {
@@ -76,7 +76,7 @@ abstract public class Checker
         {
             try
             {
-                return new ExpectedKeywordChecker(new String(element.getTextContent().getBytes(encoding)));
+                return new ExpectedKeywordChecker(new String(element.getTextContent().getBytes(encoding)).intern());
             }
             catch (UnsupportedEncodingException e)
             {
@@ -87,7 +87,7 @@ abstract public class Checker
         {
             try
             {
-                return new LengthChecker(new String(element.getTextContent().getBytes(encoding)));
+                return new LengthChecker(new String(element.getTextContent().getBytes(encoding)).intern());
             }
             catch (UnsupportedEncodingException e)
             {
@@ -98,7 +98,7 @@ abstract public class Checker
         {
             try
             {
-                return new MatchChecker(new String(element.getTextContent().getBytes(encoding)));
+                return new MatchChecker(new String(element.getTextContent().getBytes(encoding)).intern());
             }
             catch (UnsupportedEncodingException e)
             {

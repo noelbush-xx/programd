@@ -42,7 +42,7 @@ public class StringKit
         {
             result[index] = '\t';
         }
-        return new String(result);
+        return new String(result).intern();
     }
 
     /**

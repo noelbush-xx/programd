@@ -54,7 +54,7 @@ public class TestCase
         {
             try
             {
-                this.name = new String(element.getAttribute("name").getBytes(encoding));
+                this.name = new String(element.getAttribute("name").getBytes(encoding)).intern();
             }
             catch (UnsupportedEncodingException e)
             {
@@ -82,7 +82,7 @@ public class TestCase
 
         try
         {
-            this.input = new String(children.get(checkersStart - 1).getTextContent().getBytes(encoding));
+            this.input = new String(children.get(checkersStart - 1).getTextContent().getBytes(encoding)).intern();
         }
         catch (UnsupportedEncodingException e)
         {
