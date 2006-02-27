@@ -9,9 +9,8 @@
 
 package org.aitools.programd.graph;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,7 +40,7 @@ public class Nodemaster implements Nodemapper
 
     protected Object value;
 
-    protected Map<String, Object> hidden;
+    protected LinkedHashMap<String, Object> hidden;
 
     /**
      * The minimum number of words needed to reach a leaf node from here.
@@ -76,8 +75,10 @@ public class Nodemaster implements Nodemapper
         }
         else if (this.size == 1)
         {
-            this.hidden = Collections.checkedMap(new HashMap<String, Object>(), String.class, Object.class);
+            this.hidden = new LinkedHashMap<String, Object>();
             this.hidden.put(this.key, this.value);
+            this.key = null;
+            this.value = null;
             this.size = 2;
             if (valueToPut instanceof String)
             {
