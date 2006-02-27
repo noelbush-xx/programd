@@ -9,7 +9,6 @@
 
 package org.aitools.programd.interfaces.shell;
 
-
 import java.io.FileNotFoundException;
 
 import org.aitools.programd.bot.Bot;
@@ -19,19 +18,19 @@ import org.apache.log4j.Logger;
 
 /**
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- *
+ * 
  */
 public class UnloadCommand extends ShellCommand
 {
     /** Shell command string. */
     private static final String COMMAND_STRING = "/unload";
-    
+
     /** Argument template. */
     public static final String ARGUMENT_TEMPLATE = "filename";
-    
+
     /** Shell help line. */
     private static final String HELP_LINE = "unloads given filename for active bot";
-    
+
     /**
      * Creates a new UnloadCommand.
      */
@@ -50,9 +49,11 @@ public class UnloadCommand extends ShellCommand
     }
 
     /**
-     * Attempts to unload the file named on the command line from the Graphmaster.
+     * Attempts to unload the file named on the command line from the
+     * Graphmaster.
      * 
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
+     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
+     *      org.aitools.programd.interfaces.shell.Shell)
      */
     @Override
     public void handle(String commandLine, Shell shell)
@@ -71,13 +72,13 @@ public class UnloadCommand extends ShellCommand
             String path = commandLine.substring(space + 1);
             try
             {
-	            graphmaster.unload(URLTools.createValidURL(path), bot);
-	            bot.getLoadedFilesMap().remove(path);
-	            Logger.getLogger("programd").info(categories - graphmaster.getTotalCategories() + " categories unloaded.");
+                graphmaster.unload(URLTools.createValidURL(path), bot);
+                bot.getLoadedFilesMap().remove(path);
+                Logger.getLogger("programd").info(categories - graphmaster.getTotalCategories() + " categories unloaded.");
             }
             catch (FileNotFoundException e)
             {
-            	shell.showError(String.format("Could not find \"%s\".", path));
+                shell.showError(String.format("Could not find \"%s\".", path));
             }
         }
     }
