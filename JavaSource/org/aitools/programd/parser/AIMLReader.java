@@ -146,7 +146,7 @@ public class AIMLReader extends DefaultHandler2
     {
         if (this.currentBuffer != null)
         {
-            this.currentBuffer.append(XMLKit.escapeXMLChars(new String(ch, start, length)));
+            this.currentBuffer.append(XMLKit.escapeXMLChars(ch, start, length));
         }
     }
 
