@@ -106,9 +106,6 @@ public class Graphmaster
         /** Trying to match the botid part of the path. */
         IN_BOTID
     }
-    
-    /** A terminal node (same for all). */
-    protected static final Nodemapper TERMINUS = new Nodemaster();
 
     // Instance variables.
     
@@ -229,8 +226,6 @@ public class Graphmaster
         // Otherwise, get the next word.
         String word = pathIterator.next();
         
-        // Handle botids specially.
-
         Nodemapper node;
 
         // If the parent contains this word, get the node with the word.
@@ -246,28 +241,21 @@ public class Graphmaster
             parent.put(word, node);
             node.setParent(parent);
         }
-    	/*
-    	 * Handle botids specially (they are last node, no need for a Nodemapper).
-         * Associate <BOTID> nodes with their sources.
-         */
+        // Associate <BOTID> nodes with their sources.
         if (word.equals(BOTID))
         {
-            Set<Nodemapper> botids;
+            Set<Nodemapper> nodes;
             if (this.botidNodes.containsKey(source))
             {
-                botids = this.botidNodes.get(source);
+                nodes = this.botidNodes.get(source);
             }
             else
             {
-                botids = new HashSet<Nodemapper>();
-                this.botidNodes.put(source, botids);
+                nodes = new HashSet<Nodemapper>();
+                this.botidNodes.put(source, nodes);
             }
-            botids.add(node);
-            node.put(pathIterator.next(), TERMINUS);
-            node.setTop();
-            return node;
+            nodes.add(node);
         }
-
         // Return the result of adding the new node to the parent.
     	return add(pathIterator, node, source);
     }
@@ -415,9 +403,8 @@ public class Graphmaster
         // If no more tokens in the input, see if this is a template.
         if (input.size() == 0)
         {
-            // If so, the wildcard content is from the topic, and the path
-            // component is the
-            // topic.
+            // If so, the path
+            // component is the botid.
             if (nodemapper.containsKey(TEMPLATE))
             {
                 match = new Match();
@@ -578,6 +565,7 @@ public class Graphmaster
             else
             {
                 // Construct a new path from the current path plus the head.
+                //TODO: Use StringBuilder here
                 StringBuffer newPath = new StringBuffer();
                 synchronized (newPath)
                 {
@@ -1058,7 +1046,9 @@ public class Graphmaster
         }
         for (Nodemapper node : this.botidNodes.get(path))
         {
-            node.put(botid, TERMINUS);
+            // Hook up with the existing template.
+            Object t = node.get(node.keySet().iterator().next());
+            node.put(botid, t);
             this.totalCategories++;
         }
         this.urlCatalog.get(path).add(botid);
