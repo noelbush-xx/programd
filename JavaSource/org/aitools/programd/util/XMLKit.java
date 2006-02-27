@@ -220,6 +220,39 @@ public class XMLKit
         }
         return input.replace(AMPERSAND, XML_AMPERSAND).replace(LESS_THAN, XML_LESS_THAN).replace(GREATER_THAN, XML_GREATER_THAN);
     }
+    
+    /**
+     * Like {@link #escapeXMLChars(String)}, but takes an array of chars
+     * instead of a String.  This might be faster (but should be tested).
+     */
+    public static String escapeXMLChars(char[] ch, int start, int length)
+    {
+        if (ch == null ||  length < 1 || start >= ch.length || start < 0 || ch.length == 0)
+        {
+            return EMPTY_STRING;
+        }
+        StringBuilder result = new StringBuilder(length);
+        int end = start + length;
+        for (int index = start; index < end; index++)
+        {
+            char cha = ch[index];
+            switch (cha)
+            {
+                case '&':
+                    result.append(XML_AMPERSAND);
+                    break;
+                case '<':
+                    result.append(XML_LESS_THAN);
+                    break;
+                case '>':
+                    result.append(XML_GREATER_THAN);
+                    break;
+                default:
+                    result.append(cha);
+            }
+        }
+        return result.toString();
+    }
 
     /**
      * Removes all characters that are not considered <a
