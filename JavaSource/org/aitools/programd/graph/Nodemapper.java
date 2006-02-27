@@ -50,8 +50,7 @@ public interface Nodemapper
      * 
      * @return the Set of keys
      */
-    @SuppressWarnings("unchecked")
-    public Set keySet();
+    public Set<String> keySet();
 
     /**
      * Tells whether the <code>Nodemapper</code> contains the given key.
