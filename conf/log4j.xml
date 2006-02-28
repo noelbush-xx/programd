@@ -119,5 +119,13 @@
         <level value="off" />
         <appender-ref ref="aimllog" />
     </logger>
+    
+    <!--Logging for the daim library used by the ICQ/AIM Listener.-->
+    <logger name="org.walluck">
+        <level value="off"/>
+        <appender-ref ref="stdout" />
+        <appender-ref ref="stderr" />
+        <appender-ref ref="activitylog" />
+    </logger>
 
 </log4j:configuration>
