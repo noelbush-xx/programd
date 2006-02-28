@@ -54,17 +54,17 @@ goto end
 :start_programd
 
   @rem Set up the Program D variables.
-  if "%quit%"=="" call %0 setup_programd
+  if "%quit%"=="" call "%0" setup_programd
 
   @rem Set up the Java environment.
-  if "%quit%"=="" call %0 setup_java
+  if "%quit%"=="" call "%0" setup_java
 
   @rem Concatenate all paths into the classpath to be used.
   set PROGRAMD_CLASSPATH=%PROGRAMD_LIBS%;%JS_LIB%;%SQL_LIB%
 
   @rem Change to the Program D directory and start the main class.
-  pushd %BASE%
-  %JVM_COMMAND% -classpath %PROGRAMD_CLASSPATH% -Xms%3 -Xmx%4 %2 -c %5
+  pushd "%BASE%"
+  %JVM_COMMAND% -classpath "%PROGRAMD_CLASSPATH%" -Xms%3 -Xmx%4 %2 -c %5
 
   @rem On exit, leave the base directory.
   :finished
@@ -75,10 +75,10 @@ goto end
 :setup_programd
 
   @rem Set lib directories
-  call %0 setup_lib_dirs
+  call "%0" setup_lib_dirs
   
   set PROGRAMD_MAIN_LIB=%DISTRIB%\programd-main.jar
-  if exist %PROGRAMD_MAIN_LIB% goto check_other_programd_jars
+  if exist "%PROGRAMD_MAIN_LIB%" goto check_other_programd_jars
   
   echo.
   echo I can't find your programd-main.jar file.  Have you compiled it?
@@ -93,7 +93,7 @@ goto end
   set PROGRAMD_JS_LIB=%DISTRIB%\programd-rhino.jar
   
   @rem Set up external jars.
-  call %0 setup_other_libs
+  call "%0" setup_other_libs
   
   set PROGRAMD_LIBS=%PROGRAMD_MAIN_LIB%;%PROGRAMD_JS_LIB%;%OTHER_LIBS%
 goto end
@@ -101,7 +101,7 @@ goto end
 :setup_other_libs
   
   set GETOPT_LIB=%LIBS%\gnu.getopt-1.0.10.jar
-  if exist %GETOPT_LIB% goto set_log4j_lib
+  if exist "%GETOPT_LIB%" goto set_log4j_lib
   echo.
   echo I can't find the gnu.getopt-1.0.10.jar that ships with Program D.
   set quit=yes
@@ -109,7 +109,7 @@ goto end
   
   :set_log4j_lib
   set LOG4J_LIB=%WEBLIBS%\log4j-1.2.13.jar
-  if exist %LOG4J_LIB% goto check_optional_components
+  if exist "%LOG4J_LIB%" goto check_optional_components
   echo.
   echo I can't find the log4j-1.2.13.jar that ships with Program D.
   set quit=yes
@@ -120,7 +120,7 @@ goto end
   
   @rem Set LISTENER_LIBS to the location of your listener jars.
   @rem No warning is provided if they cannot be found (since they are optional).
-  set ICQ_AIM_LISTENER_LIBS=%LIBS%\icqaim-listener\icq-aim-listener.jar;%LIBS%\icqaim-listener\daim.jar
+  set ICQ_AIM_LISTENER_LIBS=%LIBS%\icq-aim-listener\icq-aim-listener.jar;%LIBS%\icq-aim-listener\daim.jar;%LIBS%\icq-aim-listener\log4j-1.2.9.jar
   set IRC_LISTENER_LIBS=%LIBS%\irc-listener\irc-listener.jar
   set YAHOO_LISTENER_LIBS=%LIBS%\yahoo-listener\yahoo-listener.jar;%LIBS%\yahoo-listener\ymsg_network_v0_61.jar
   set LISTENER_LIBS=%ICQ_AIM_LISTENER_LIBS%;%IRC_LISTENER_LIBS%;%YAHOO_LISTENER_LIBS%
@@ -149,9 +149,9 @@ goto end
 @rem (or fails informatively).
 :setup_java
   set quit=
-  if "%quit%"=="" call %0 set_java_vars
-  if "%quit%"=="" call %0 check_java_home
-  if "%quit%"=="" call %0 set_jvm_command
+  if "%quit%"=="" call "%0" set_java_vars
+  if "%quit%"=="" call "%0" check_java_home
+  if "%quit%"=="" call "%0" set_jvm_command
   @rem We don't check JVM version because
   @rem I don't know equivalent text manipulation
   @rem tools in DOS for parsing java -version output.
@@ -166,15 +166,19 @@ goto end
   echo JAVA_HOME is not set in your environment.
 
   @rem Try the standard JDK 5.0 install location.
-  if not exist c:\jdk1.5.0_02\bin\java.exe goto seek_known_javas
+  if not exist c:\jdk1.5.0_06\bin\java.exe goto seek_known_javas
 
-  set JAVA_HOME=c:Progra~1\Java\\jdk1.5.0_02\
+  set JAVA_HOME=c:Progra~1\Java\\jdk1.5.0_06\
   set JVM_COMMAND=%JAVA_HOME%\bin\java.exe
   goto successful
 
   :seek_known_javas
   @rem Common paths for compatible Java SDKs (or JREs) should go here.
+  if exist d:Progra~1\Java\\jdk1.5.0_05\bin\java.exe set JAVA_HOME=d:\jdk1.5.0_05
+  if exist d:Progra~1\Java\\jdk1.5.0_04\bin\java.exe set JAVA_HOME=d:\jdk1.5.0_04
+  if exist d:Progra~1\Java\\jdk1.5.0_03\bin\java.exe set JAVA_HOME=d:\jdk1.5.0_03
   if exist d:Progra~1\Java\\jdk1.5.0_02\bin\java.exe set JAVA_HOME=d:\jdk1.5.0_02
+  if exist d:Progra~1\Java\\jdk1.5.0_01\bin\java.exe set JAVA_HOME=d:\jdk1.5.0_01
    if not defined JAVA_HOME goto cannot_find
 
   :successful
@@ -203,7 +207,7 @@ goto end
 goto end
 
 :set_jvm_command
-  set JVM_COMMAND="%JAVA_HOME%\bin\java.exe" -server -Dlog4j.configuration=file:/%BASE%\conf\log4j.xml
+  set JVM_COMMAND="%JAVA_HOME%\bin\java.exe" -server -Dlog4j.configuration="file:/%BASE%\conf\log4j.xml"
 goto end
 
 :end

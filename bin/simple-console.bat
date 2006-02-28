@@ -18,7 +18,7 @@
 set quit=
 
 @rem Enter the bin directory.
-pushd %~p0
+pushd "%~p0"
 
 @rem Check for needed environment space.
 call common_functions.bat check_env %1 %2 %3 %4
@@ -33,7 +33,7 @@ set MAX_MEM=256m
 set CORE_CONF=%BASE%\conf\core.xml
 
 @rem Start Program D using the SimpleConsole main class.
-if "%quit%"=="" call common_functions.bat start_programd %MAIN_CLASS% %START_MEM% %MAX_MEM% %CORE_CONF%
+if "%quit%"=="" call common_functions.bat start_programd %MAIN_CLASS% %START_MEM% %MAX_MEM% "%CORE_CONF%"
 
 :end
 @rem On exit, go back to the original directory.
