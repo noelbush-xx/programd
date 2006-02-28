@@ -173,7 +173,7 @@ abstract public class GenericParser<P extends Processor>
     public void process(URL url) throws ProcessorException
     {
         contextualize(url);
-        this.logger.info(String.format("Loading \"%s\".", url));
+        this.logger.info(String.format("Loading \"%s\".", URLTools.unescape(url)));
         Document document = parseCurrentURL();
         evaluate(document);
         this.docURL.pop();
