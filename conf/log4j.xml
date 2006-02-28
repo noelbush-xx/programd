@@ -11,7 +11,7 @@
         core.xml.)-->
 
     <!--The console output: stdout-->
-    <appender name="stdout" class="org.aitools.programd.interfaces.ShellStreamAppender">
+    <appender name="stdout" class="org.aitools.programd.interfaces.ConsoleStreamAppender">
         <param name="PrintStackTraces" value="false"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="[%d{ISO8601}] %p: %m%n" />
@@ -22,7 +22,7 @@
     </appender>
 
     <!--The console output: stderr-->
-    <appender name="stderr" class="org.aitools.programd.interfaces.ShellStreamAppender">
+    <appender name="stderr" class="org.aitools.programd.interfaces.ConsoleStreamAppender">
         <param name="PrintStackTraces" value="false"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="[%d{ISO8601}] %p: %m%n" />
