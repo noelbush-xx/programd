@@ -11,7 +11,6 @@ package org.aitools.programd.util;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -25,7 +24,7 @@ import org.apache.log4j.Logger;
  * 
  * @author Jon Baer
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @version 4.5
+ * @version 4.6
  */
 public class AIMLWatcher
 {
@@ -35,9 +34,9 @@ public class AIMLWatcher
     private Core core;
 
     /** Used for storing information about file changes. */
-    protected HashMap<String, Map<URL, Long>> watchMaps = new HashMap<String, Map<URL, Long>>();
+    protected Map<URL, Long> watchMap = new HashMap<URL, Long>();
 
-    protected static final Logger logger = Logger.getLogger("programd");
+    protected Logger logger = Logger.getLogger("programd");
 
     /**
      * Creates a new AIMLWatcher using the given Graphmaster
@@ -47,6 +46,7 @@ public class AIMLWatcher
     public AIMLWatcher(Core coreToUse)
     {
         this.core = coreToUse;
+        this.logger = this.core.getLogger();
     }
 
     /**
@@ -73,33 +73,38 @@ public class AIMLWatcher
      * Reloads AIML from a given path.
      * 
      * @param path the path to reload
-     * @param botid the bot for whom to reload the file
      */
-    protected void reload(URL path, String botid)
+    protected void reload(URL path)
     {
-        logger.info("AIMLWatcher reloading \"" + path + "\".");
-        this.core.load(path, botid);
+        this.logger.info(String.format("AIMLWatcher reloading \"%s\".", path));
+        this.core.reload(path);
     }
 
     /**
      * Adds a file to the watchlist.
      * 
      * @param path the path to the file
-     * @param botid
      */
-    public void addWatchFile(URL path, String botid)
+    @SuppressWarnings("boxing")
+    public void addWatchFile(URL path)
     {
-        if (URLTools.seemsToExist(path))
+        if (this.logger.isDebugEnabled())
         {
-            if (!this.watchMaps.containsKey(botid))
-            {
-                this.watchMaps.put(botid, Collections.checkedMap(new HashMap<URL, Long>(), URL.class, Long.class));
-            }
-            this.watchMaps.get(botid).put(path, URLTools.getLastModified(path));
+            this.logger.debug(String.format("Adding watch file \"%s\".", path));
         }
-        else
+        synchronized(this)
         {
-            logger.warn("AIMLWatcher cannot read path \"" + path + "\"", new IOException());
+            if (URLTools.seemsToExist(path))
+            {
+                if (this.watchMap.containsKey(path))
+                {
+                    this.watchMap.put(path, URLTools.getLastModified(path));
+                }
+            }
+            else
+            {
+                this.logger.warn(String.format("AIMLWatcher cannot read path \"%s\"", path), new IOException());
+            }
         }
     }
 
@@ -119,30 +124,26 @@ public class AIMLWatcher
         /**
          * @see java.util.TimerTask#run()
          */
+        @SuppressWarnings("boxing")
         @Override
         public void run()
         {
-            for (String botid : AIMLWatcher.this.watchMaps.keySet())
+            synchronized (AIMLWatcher.this)
             {
-                Map<URL, Long> watchMap = AIMLWatcher.this.watchMaps.get(botid);
-
-                for (URL path : watchMap.keySet())
+                for (URL path : AIMLWatcher.this.watchMap.keySet())
                 {
-                    long previousTime = watchMap.get(path);
+                    long previousTime = AIMLWatcher.this.watchMap.get(path);
                     if (previousTime != 0)
                     {
                         long lastModified = URLTools.getLastModified(path);
                         if (lastModified > previousTime)
                         {
-                            watchMap.put(path, lastModified);
-                            reload(path, botid);
+                            AIMLWatcher.this.watchMap.put(path, lastModified);
+                            reload(path);
                         }
                     }
                 }
             }
-            // This, unfortunately, seems to be the only way to prevent a memory
-            // leak.
-            System.gc();
         }
     }
 }
