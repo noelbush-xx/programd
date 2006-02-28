@@ -150,6 +150,14 @@ p.important-note
 {
     background-color: #ffdddd;
 }
+p.footnote, p.footnote *
+{
+	font-size: 8pt;
+}
+p.screenshot
+{
+	text-align: center;
+}
 a:link
 {
     color: #114466;
