@@ -3,7 +3,7 @@
    maintainer: [1]Noel Bush
    previous authors: [2]Noel Bush, Kim Sullivan, Thomas Ringate, Pedro E.
    Colla
-   Last updated: 27 Feb 2006
+   Last updated: 28 Feb 2006
 
    The latest version of this document can always be found at
    [3]http://aitools.org/programd/docs/release-notes.html. Probably.
@@ -30,8 +30,9 @@
    server, and can interact with a web client using "Ajax" technologies.
 
      * [14]What's New
-     * [15]Important Notes on System Requirements
-     * [16]Significant Open Issues
+     * [15]Release Candidate Notes
+     * [16]Important Notes on System Requirements
+     * [17]Significant Open Issues
 
   What's New
 
@@ -59,15 +60,15 @@
        The "simple console" and "simple GUI console" modes are still
        available, and of course if you only need Program D for IM/IRC
        connectivity, then one of these (probably the non-GUI version) will be
-       your choice. (But please see the [17]aitools.org web site and
-       [18]Program D mailing list for the latest word on IM & IRC
+       your choice. (But please see the [18]aitools.org web site and
+       [19]Program D mailing list for the latest word on IM & IRC
        compatibility issues with those listeners--lately there have been some
        problems.)
 
      * Ajax-Enabled
 
        Program D can now be easily used with "Ajax" technologies. Included in
-       the download is a simple working example, making use of the [19]DWR
+       the download is a simple working example, making use of the [20]DWR
        Ajax toolkit. This example can be viewed by deploying the Program D
        .war file to a J2EE application server.
 
@@ -81,7 +82,7 @@
 
        The logging mechanism for Program D has been vastly improved by
        replacing the off-the-shelf JDK logging mechanism with the vastly
-       superior [20]Log4J library. Logging to text files, XML files, and
+       superior [21]Log4J library. Logging to text files, XML files, and
        databases is still supported, and is now configured in the log4j.xml
        file.
 
@@ -89,28 +90,28 @@
 
        The following bugs have been fixed in version 4.6:
 
-          * [21]0000008: Entire HTML response gets logged to database!
+          * [22]0000008: Entire HTML response gets logged to database!
 
             This was resolved in a release candidate for 4.5, but some
             reports indicated it may have resurfaced in the final release. In
             any case, this is fixed in 4.6, and what's more, the entire
-            logging infrastructure has been redone (see [22]above), so
+            logging infrastructure has been redone (see [23]above), so
             database logging should also show better performance and more
             flexibility.
 
-          * [23]0000036: templates should be per-bot
+          * [24]0000036: templates should be per-bot
 
             This issue is resolved by the use of JSP and the web server
             architecture. Botmasters now have full control over which
             templates are used for which requests, using the application
             server's mechanisms for mapping URLs.
 
-          * [24]0000037: should use standard authentication
+          * [25]0000037: should use standard authentication
 
             Authentication may now be configured at the application server
             level.
 
-          * [25]0000094: The <gender> tag does not function correctly when given
+          * [26]0000094: The <gender> tag does not function correctly when given
       multiple instances of the same gender'ed word.
 
             This issue was caused by a problem in the substitution mechanism,
@@ -119,23 +120,23 @@
             been corrected, and a new test case has been added to the AIML
             test suite to verify it.
 
-          * [26]0000095: Block Condition ignoring all aiml tags inside of it.
+          * [27]0000095: Block Condition ignoring all aiml tags inside of it.
 
             This has been corrected, and a new test case has been added to
             the AIML test suite to verify it.
 
-          * [27]0000020: Invalid URL contents passed to Webserver Listener
+          * [28]0000020: Invalid URL contents passed to Webserver Listener
       causes Crash
 
             This issue has been obviated by the switch to the web application
             architecture. There is now an error page (customizable, of
             course) that can be displayed when an error occurs in Program D.
 
-          * [28]0000091: ProgramD does not handle <html:pre> correctly
+          * [29]0000091: ProgramD does not handle <html:pre> correctly
 
             This issue arose because whitespace was being "normalized" in
             several places in the Program D code, with the intention of
-            obeying the [29]specification. A solution has been implemented
+            obeying the [30]specification. A solution has been implemented
             which does not technically match the specification, but which
             does not seem to preclude producing the desired results in any
             case. Basically, for now, whitespace is generally not normalized,
@@ -159,7 +160,7 @@
             desired result to be achieved. At some future point, this may be
             revisited.
 
-          * [30]0000098: ALL listeners crash, no matter what
+          * [31]0000098: ALL listeners crash, no matter what
 
             Listeners in general are a lot of trouble, because IM protocols,
             and even IRC practices, change very often. Specialized libraries
@@ -169,18 +170,18 @@
             are not Java-based, or are not open source/free. However, with
             all that said, the Program D core should not crash simply because
             a listener cannot connect or has some other error. As also noted
-            in [31]issue 99 (next item), the Program D code was previously
+            in [32]issue 99 (next item), the Program D code was previously
             much too skittish about error conditions, and pretty much gave up
             the ghost whenever any serious error occurred. That has now been
             corrected, and as a result, issues with listeners should not
             impact the core (even if the listeners themselves have unrelated
             problems).
 
-          * [32]0000099: reduce use of DeveloperError
+          * [33]0000099: reduce use of DeveloperError
 
             In an attempt to motivate myself to quickly fix problems in the
-            Program D code, I created a subclass of [33]java.lang.Error
-            called [34]DeveloperError. This was to be thrown in cases where
+            Program D code, I created a subclass of [34]java.lang.Error
+            called [35]DeveloperError. This was to be thrown in cases where
             some error occurred that I felt could be reasonably blamed on the
             Program D code, rather than some third party. In the event of a
             DeveloperError, Program D was set up to terminate immediately,
@@ -195,7 +196,7 @@
             much as possible, Program D will attempt to continue execution no
             matter what happens.
 
-          * [35]0000106: Wildcards are not saved onto a stack properly
+          * [36]0000106: Wildcards are not saved onto a stack properly
 
             Kim Sullivan discovered that <srai><star/></srai> operations were
             improperly returning with modified <star/> contents--in other
@@ -204,26 +205,44 @@
             and a test case provided by Kim has been added to the test suite
             to verify the fix.
 
+  Release Candidate Notes
+
+   Here are notes about the release candidates.
+
+     * [37]Release Candidate 2
+
+     * Release Candidate 2
+
+          * A bug was discovered by Frank (Mehri) that caused wildcards not
+            to work properly when loading multiple files on Windows. This has
+            been fixed.
+
+          * The requirement that Program D not be installed in a path with
+            spaces on Windows has been removed.
+
+          * A mistake in the common-functions.bat file was causing listener
+            jars not to be found. This has been corrected.
+
   Important Notes on System Requirements
 
-   Program D requires [36]JDK 5.
+   Program D requires [38]JDK 5.
 
    If you want to build Program D from the source distribution, you can
-   easily import it into a Java IDE such as [37]Eclipse. Or you can use the
+   easily import it into a Java IDE such as [39]Eclipse. Or you can use the
    included Ant buildfile, which is the same file used to create the binary
-   distributions. You will need to have [38]Ant installed.
+   distributions. You will need to have [40]Ant installed.
 
    To use Program D with a web interface, you will need to run a web
-   application server. Some free/open source suggestions are: [39]Tomcat,
-   [40]JBoss, or [41]Jetty. For quick start instructions, see the [42]Readme
+   application server. Some free/open source suggestions are: [41]Tomcat,
+   [42]JBoss, or [43]Jetty. For quick start instructions, see the [44]Readme
    file.
 
   Significant Open Issues
 
-     * The AIML schema's [43]Schematron directives are not yet used at load
+     * The AIML schema's [45]Schematron directives are not yet used at load
        time.
 
-     * Bug [44]0000014 ("merge-combine incorrectly unescapes XML entities")
+     * Bug [46]0000014 ("merge-combine incorrectly unescapes XML entities")
        has not been addressed.
 
      * Class-level unit testing is not yet implemented.
@@ -256,35 +275,35 @@
    published with the previous version, as well as a few more.
 
    Following are details of what has been addressed. Please note that, as of
-   the final release, items originally found only under the [45]Release
+   the final release, items originally found only under the [47]Release
    Candidate Notes section have been included here, when appropriate.
 
-     * [46]What's New
-     * [47]Release Candidate Notes
-     * [48]Important Notes on System Requirements
-     * [49]Significant Open Issues
+     * [48]What's New
+     * [49]Release Candidate Notes
+     * [50]Important Notes on System Requirements
+     * [51]Significant Open Issues
 
   What's New
 
-     * [50]Component Orientation
-     * [51]Enhanced Configurability
-     * [52]Vastly Improved XML Parsing
-     * [53]Schema-Based Validation
-     * [54]Revised Logging Scheme
-     * [55]XML Templating for Responders
-     * [56]Regular Expressions for Substitutions
-     * [57]Improved Responder Architecture
-     * [58]Merge Policies
-     * [59]AIML Testing System
-     * [60]AIML Test Suite
-     * [61]Plugin architecture
-     * [62]AIML Shell Command
-     * [63]Graphmaster.unload()
-     * [64]Listener Updates and Package Separation
-     * [65]Type Safety and Other JDK-Supported Enhancements
-     * [66]Tighter Coding Standards
-     * [67]Better Error Checking
-     * [68]Unknown Bug Fixes
+     * [52]Component Orientation
+     * [53]Enhanced Configurability
+     * [54]Vastly Improved XML Parsing
+     * [55]Schema-Based Validation
+     * [56]Revised Logging Scheme
+     * [57]XML Templating for Responders
+     * [58]Regular Expressions for Substitutions
+     * [59]Improved Responder Architecture
+     * [60]Merge Policies
+     * [61]AIML Testing System
+     * [62]AIML Test Suite
+     * [63]Plugin architecture
+     * [64]AIML Shell Command
+     * [65]Graphmaster.unload()
+     * [66]Listener Updates and Package Separation
+     * [67]Type Safety and Other JDK-Supported Enhancements
+     * [68]Tighter Coding Standards
+     * [69]Better Error Checking
+     * [70]Unknown Bug Fixes
 
      * Component Orientation
 
@@ -358,7 +377,7 @@
      * Schema-Based Validation
 
        Program D now ships with a W3C XML Schema for AIML (also available at
-       [69]http://aitools.org/aiml/schema/AIML.xsd). As AIML files are read
+       [71]http://aitools.org/aiml/schema/AIML.xsd). As AIML files are read
        in by the program, they are validated against this schema. Any errors
        are reported to the console and log files. As long as an error is not
        fatal, the remainder of the AIML continues to load.
@@ -387,7 +406,7 @@
        specified as regular expressions. This lends a great deal more power
        and precision to the input normalization step, and to the gender,
        person and person2 processors. For a guide to the regular expression
-       syntax that is available, see the [70]JDK documentation.
+       syntax that is available, see the [72]JDK documentation.
 
      * Improved Responder Architecture
 
@@ -461,13 +480,13 @@
        listener was completely rewritten using a new library, and a Yahoo
        listener was introduced.
 
-       You can find pages describing the [71]ICQ/AIM Listener, [72]Yahoo
-       Listener, and [73]IRC Listener on the [74]aitools.org web site.
+       You can find pages describing the [73]ICQ/AIM Listener, [74]Yahoo
+       Listener, and [75]IRC Listener on the [76]aitools.org web site.
 
      * Type Safety and Other JDK-Supported Enhancements
 
        This new version of Program D makes very extensive use of the new
-       features introduced by [75]JDK 5. The generics framework is used
+       features introduced by [77]JDK 5. The generics framework is used
        throughout the code to achieve a very high level of type safety, with
        far less verbosity, and virtually no (expensive) casting. Typesafe
        enums have also been employed to great effect in quite a few places.
@@ -505,7 +524,7 @@
      * Unknown Bug Fixes
 
        Numerous bugs that were never widely known or reported have been
-       fixed. Going forward, all new bugs should be visible in the [76]bug
+       fixed. Going forward, all new bugs should be visible in the [78]bug
        tracking system, but there are no plans at the moment to retroactively
        publicly document all the problems that have already been found and
        corrected. Suffice it to say that the current codebase is
@@ -516,9 +535,9 @@
 
    Here are notes about the release candidates and the final release.
 
-     * [77]Final Release
-     * [78]Release Candidate 3
-     * [79]Release Candidate 2
+     * [79]Final Release
+     * [80]Release Candidate 3
+     * [81]Release Candidate 2
 
      * Final Release
 
@@ -602,18 +621,18 @@
           * other corrected bugs-Other bugs reported and discovered during
             the life of rc2 have been corrected, including:
 
-               * [80]0000004: omitting trailing slash on absolute path value
+               * [82]0000004: omitting trailing slash on absolute path value
                  for programd.root-directory causes paths to fail
 
-               * [81]0000005: Should do better error checking on file paths
+               * [83]0000005: Should do better error checking on file paths
 
-               * [82]0000006: XML templates reprint namespace URIs over and
+               * [84]0000006: XML templates reprint namespace URIs over and
                  over again
 
-               * [83]0000008: Entire HTML response gets logged to database!
+               * [85]0000008: Entire HTML response gets logged to database!
                  (Thanks to "WildFox" for uncovering this one.)
 
-               * [84]0000009: PredicateMaster fails to save predicates after
+               * [86]0000009: PredicateMaster fails to save predicates after
                  a while (Thanks to Albertas Mickensas for reporting this.)
 
                * The AIML schema did not permit element content inside the
@@ -638,22 +657,22 @@
 
   Important Notes on System Requirements
 
-   Program D requires [85]JDK 5. See [86]above for the reasons why. The
+   Program D requires [87]JDK 5. See [88]above for the reasons why. The
    benefits available from this new release far outweigh the problem that JDK
    5 is not yet available for all platforms. If you are a user of a platform
    that does not yet have JDK 5 support, you are strongly encouraged to get
    involved in hastening the day when it does.
 
    If you want to build Program D from the source distribution, you can
-   easily import it into a Java IDE such as [87]Eclipse. Or you can use the
+   easily import it into a Java IDE such as [89]Eclipse. Or you can use the
    included Ant buildfile, which is the same file used to create the binary
    distributions. Starting with 4.5(rc3), you will need to have your own copy
-   of [88]Ant installed.
+   of [90]Ant installed.
 
   Significant Open Issues
 
-     * The AIML schema includes embedded [89]Schematron directives that fill
-       in a validation gap that [90]W3C XML Schemas cannot address-namely,
+     * The AIML schema includes embedded [91]Schematron directives that fill
+       in a validation gap that [92]W3C XML Schemas cannot address-namely,
        the three forms of condition. A similar approach could probably take
        care of the other remaining gap of which I'm aware: the text part of
        mixed pattern expressions, which is currently not fully constrained by
@@ -686,9 +705,9 @@
    Sheynihovich, Kim Sullivan, Andrew Teal and Richard Wallace.
    - Noel
 
-     * [91]What's New
-     * [92]Important Notes on System Requirements
-     * [93]Significant Open Issues
+     * [93]What's New
+     * [94]Important Notes on System Requirements
+     * [95]Significant Open Issues
 
   What's New
 
@@ -782,7 +801,7 @@
 
      * Graphmaster "Node Height" Optimization
 
-       An optimization to the Graphmaster algorithm [94]suggested by Richard
+       An optimization to the Graphmaster algorithm [96]suggested by Richard
        Wallace on the alicebot-developer list has been implemented. This
        optimization is intended to reduce match times for patterns that
        include multiple consecutive wildcards.
@@ -807,7 +826,7 @@
      * Bug Fixes
 
        4.1.5 is the last release that predates the Foundation's new
-       [95]bug-tracking system. Subsequent releases will make use of this
+       [97]bug-tracking system. Subsequent releases will make use of this
        system to enumerate bugs and their status. The following bug
        descriptions are more anecdotal than we'd like to provide in the
        future.
@@ -834,14 +853,14 @@
 
   Important Notes on System Requirements
 
-   Program D 4.1.5 requires a JVM or JRE that is compatible with the [96]Java
+   Program D 4.1.5 requires a JVM or JRE that is compatible with the [98]Java
    2 Platform version 1.4. If you do not intend to modify the source code,
    you can download just the JRE (Java Runtime Edition), which is
    significantly smaller than the SDK (about 9MB as compared with ~40!).
 
    The current reason for the Java upgrade requirement is an
    internationalization-related issue that may not pertain to all users. If
-   the upgrade is onerous for you, post to the [97]alicebot-developer mailing
+   the upgrade is onerous for you, post to the [99]alicebot-developer mailing
    list for assistance with learning the necessary steps to build a version
    that will be compatible with JDK 1.3.
 
@@ -1171,7 +1190,7 @@
      * compiles 'out of the box'
      * speech support moved to another branch (development stopped)
 
-   [98]Valid XHTML 1.0!
+   [100]Valid XHTML 1.0!
 
 References
 
@@ -1190,87 +1209,89 @@ References
   12. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.0.2
   13. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.0.1
   14. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.6.whatsnew
-  15. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.6.requirements
-  16. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.6.openissues
-  17. http://aitools.org/
-  18. http://aitools.org/mailinglists.html
-  19. http://getahead.ltd.uk/dwr/
-  20. http://logging.apache.org/log4j/docs/
-  21. http://bugs.aitools.org/view.php?id=8
-  22. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.6.whatsnew.logging
-  23. http://bugs.aitools.org/view.php?id=36
-  24. http://bugs.aitools.org/view.php?id=37
-  25. http://bugs.aitools.org/view.php?id=94
-  26. http://bugs.aitools.org/view.php?id=95
-  27. http://bugs.aitools.org/view.php?id=20
-  28. http://bugs.aitools.org/view.php?id=91
-  29. http://aitools.org/aiml/spec/#section-white-space-handling
-  30. http://bugs.aitools.org/view.php?id=98
-  31. http://bugs.aitools.org/view.php?id=99
+  15. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.6.rc-notes
+  16. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.6.requirements
+  17. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.6.openissues
+  18. http://aitools.org/
+  19. http://aitools.org/mailinglists.html
+  20. http://getahead.ltd.uk/dwr/
+  21. http://logging.apache.org/log4j/docs/
+  22. http://bugs.aitools.org/view.php?id=8
+  23. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.6.whatsnew.logging
+  24. http://bugs.aitools.org/view.php?id=36
+  25. http://bugs.aitools.org/view.php?id=37
+  26. http://bugs.aitools.org/view.php?id=94
+  27. http://bugs.aitools.org/view.php?id=95
+  28. http://bugs.aitools.org/view.php?id=20
+  29. http://bugs.aitools.org/view.php?id=91
+  30. http://aitools.org/aiml/spec/#section-white-space-handling
+  31. http://bugs.aitools.org/view.php?id=98
   32. http://bugs.aitools.org/view.php?id=99
-  33. http://java.sun.com/j2se/1.5.0/docs/api/java/lang/Error.html
-  34. http://aitools.org/programd/docs/api/org/aitools/programd/util/DeveloperError.html
-  35. http://bugs.aitools.org/view.php?id=106
-  36. http://java.sun.com/j2se/1.5.0/
-  37. http://eclipse.org/
-  38. http://ant.apache.org/
-  39. http://tomcat.apache.org/
-  40. http://www.jboss.com/developers/index
-  41. http://jetty.mortbay.org/jetty/index.html
-  42. file:///home/noel/workspace/ProgramD/docs/readme.html
-  43. http://xml.ascc.net/resource/schematron/schematron.html
-  44. http://bugs.aitools.org/view.php?id=14
-  45. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.rc-notes
-  46. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew
+  33. http://bugs.aitools.org/view.php?id=99
+  34. http://java.sun.com/j2se/1.5.0/docs/api/java/lang/Error.html
+  35. http://aitools.org/programd/docs/api/org/aitools/programd/util/DeveloperError.html
+  36. http://bugs.aitools.org/view.php?id=106
+  37. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.6.rc-notes.rc2
+  38. http://java.sun.com/j2se/1.5.0/
+  39. http://eclipse.org/
+  40. http://ant.apache.org/
+  41. http://tomcat.apache.org/
+  42. http://www.jboss.com/developers/index
+  43. http://jetty.mortbay.org/jetty/index.html
+  44. file:///home/noel/workspace/ProgramD/docs/readme.html
+  45. http://xml.ascc.net/resource/schematron/schematron.html
+  46. http://bugs.aitools.org/view.php?id=14
   47. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.rc-notes
-  48. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.requirements
-  49. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.openissues
-  50. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.component-orientation
-  51. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.configurability
-  52. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.xml-parsing
-  53. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.schema-validation
-  54. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.logging
-  55. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.xml-templates
-  56. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.regex-substitutions
-  57. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.responder-refactoring
-  58. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.merge-policies
-  59. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.aiml-testing
-  60. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.aiml-test-suite
-  61. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.plugin-architecture
-  62. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.aiml-shell
-  63. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.graphmaster-unload
-  64. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.listeners
-  65. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.java-language
-  66. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.coding-standards
-  67. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.error-checking
-  68. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.unknown-bug-fixes
-  69. http://aitools.org/aiml/schema/AIML.xsd
-  70. http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html#sum
-  71. http://aitools.org/icqaimlistener
-  72. http://aitools.org/yahoolistener
-  73. http://aitools.org/irclistener
-  74. http://aitools.org/
-  75. http://java.sun.com/j2se/1.5.0/
-  76. http://bugs.aitools.org/
-  77. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.rc-notes.final
-  78. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.rc-notes.rc3
-  79. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.rc-notes.rc2
-  80. http://bugs.aitools.org/view.php?id=4
-  81. http://bugs.aitools.org/view.php?id=5
-  82. http://bugs.aitools.org/view.php?id=6
-  83. http://bugs.aitools.org/view.php?id=8
-  84. http://bugs.aitools.org/view.php?id=9
-  85. http://java.sun.com/j2se/1.5.0/
-  86. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.java-language
-  87. http://eclipse.org/
-  88. http://ant.apache.org/
-  89. http://xml.ascc.net/resource/schematron/schematron.html
-  90. http://lists.w3.org/Archives/Public/xmlschema-dev/2001Jun/0026.html
-  91. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.1.5.whatsnew
-  92. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.1.5.requirements
-  93. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.1.5.openissues
-  94. http://list.alicebot.org/pipermail/alicebot-developer/2002-March/000723.html
-  95. http://alicebot.org/bugzilla
-  96. http://java.sun.com/j2se/1.4/download.html
-  97. http://list.alicebot.org/mailman/listinfo/alicebot-developer
-  98. http://validator.w3.org/check/referer
+  48. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew
+  49. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.rc-notes
+  50. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.requirements
+  51. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.openissues
+  52. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.component-orientation
+  53. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.configurability
+  54. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.xml-parsing
+  55. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.schema-validation
+  56. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.logging
+  57. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.xml-templates
+  58. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.regex-substitutions
+  59. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.responder-refactoring
+  60. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.merge-policies
+  61. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.aiml-testing
+  62. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.aiml-test-suite
+  63. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.plugin-architecture
+  64. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.aiml-shell
+  65. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.graphmaster-unload
+  66. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.listeners
+  67. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.java-language
+  68. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.coding-standards
+  69. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.error-checking
+  70. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.unknown-bug-fixes
+  71. http://aitools.org/aiml/schema/AIML.xsd
+  72. http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html#sum
+  73. http://aitools.org/icqaimlistener
+  74. http://aitools.org/yahoolistener
+  75. http://aitools.org/irclistener
+  76. http://aitools.org/
+  77. http://java.sun.com/j2se/1.5.0/
+  78. http://bugs.aitools.org/
+  79. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.rc-notes.final
+  80. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.rc-notes.rc3
+  81. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.rc-notes.rc2
+  82. http://bugs.aitools.org/view.php?id=4
+  83. http://bugs.aitools.org/view.php?id=5
+  84. http://bugs.aitools.org/view.php?id=6
+  85. http://bugs.aitools.org/view.php?id=8
+  86. http://bugs.aitools.org/view.php?id=9
+  87. http://java.sun.com/j2se/1.5.0/
+  88. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.5.whatsnew.java-language
+  89. http://eclipse.org/
+  90. http://ant.apache.org/
+  91. http://xml.ascc.net/resource/schematron/schematron.html
+  92. http://lists.w3.org/Archives/Public/xmlschema-dev/2001Jun/0026.html
+  93. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.1.5.whatsnew
+  94. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.1.5.requirements
+  95. file:///home/noel/workspace/ProgramD/docs/release-notes.html#v4.1.5.openissues
+  96. http://list.alicebot.org/pipermail/alicebot-developer/2002-March/000723.html
+  97. http://alicebot.org/bugzilla
+  98. http://java.sun.com/j2se/1.4/download.html
+  99. http://list.alicebot.org/mailman/listinfo/alicebot-developer
+ 100. http://validator.w3.org/check/referer
