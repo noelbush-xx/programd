@@ -30,10 +30,10 @@ public class Console
     private Core core;
 
     /** The stdout handler. */
-    private ShellStreamAppender stdOutAppender;
+    private ConsoleStreamAppender stdOutAppender;
 
     /** The stderr handler. */
-    private ShellStreamAppender stdErrAppender;
+    private ConsoleStreamAppender stdErrAppender;
 
     /** The Shell that will (may) be activated for this console. */
     private Shell shell;
@@ -67,13 +67,13 @@ public class Console
      */
     private void initialize(PrintStream out, PrintStream err)
     {
-        this.stdOutAppender = ((ShellStreamAppender)Logger.getLogger("programd").getAppender("stdout"));
+        this.stdOutAppender = ((ConsoleStreamAppender)Logger.getLogger("programd").getAppender("stdout"));
         if (this.stdOutAppender != null)
         {
             this.stdOutAppender.setWriter(new OutputStreamWriter(out));
         }
         
-        this.stdErrAppender = ((ShellStreamAppender)Logger.getLogger("programd").getAppender("stderr"));
+        this.stdErrAppender = ((ConsoleStreamAppender)Logger.getLogger("programd").getAppender("stderr"));
         if (this.stdErrAppender != null)
         {
             this.stdErrAppender.setWriter(new OutputStreamWriter(err));
