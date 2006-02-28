@@ -79,7 +79,7 @@ function setup_other_libs()
 
   # Set LISTENER_LIBS to the location of your listener jars.
   # No warning is provided if they cannot be found (since they are optional).
-  ICQ_AIM_LISTENER_LIBS=$LIBS/icq-aim-listener/icq-aim-listener.jar:$LIBS/icq-aim-listener/daim.jar:$LIBS/icq-aim-listener/log4j-1.2.9.jar
+  ICQ_AIM_LISTENER_LIBS=$LIBS/icqaim-listener/icq-aim-listener.jar:$LIBS/icqaim-listener/daim.jar
   IRC_LISTENER_LIBS=$LIBS/irc-listener/irc-listener.jar
   YAHOO_LISTENER_LIBS=$LIBS/yahoo-listener/yahoo-listener.jar:$LIBS/yahoo-listener/ymsg_network_v0_61.jar
   LISTENER_LIBS=$ICQ_AIM_LISTENER_LIBS:$IRC_LISTENER_LIBS:$YAHOO_LISTENER_LIBS
