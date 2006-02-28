@@ -39,7 +39,7 @@ public class Substituter
     @SuppressWarnings("boxing")
     public static String applySubstitutions(Map<Pattern, String> substitutionMap, String input)
     {
-        if (substitutionMap == null)
+        if (substitutionMap == null || input == null)
         {
             return input;
         }

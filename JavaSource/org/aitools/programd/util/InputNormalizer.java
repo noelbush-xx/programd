@@ -43,6 +43,11 @@ public class InputNormalizer
     @SuppressWarnings("boxing")
     public static List<String> sentenceSplit(List<String> sentenceSplitters, String input)
     {
+        if (input == null)
+        {
+            return null;
+        }
+        
         List<String> result = Collections.checkedList(new ArrayList<String>(), String.class);
 
         int inputLength = input.length();
