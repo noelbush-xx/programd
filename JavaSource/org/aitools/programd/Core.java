@@ -472,7 +472,7 @@ public class Core
         {
             if (this.settings.loadNotifyEachFile())
             {
-                this.logger.info("Loading " + path + "....");
+                this.logger.info("Loading " + URLTools.unescape(path) + "....");
             }
             doLoad(path, botid);
             // Add it to the AIMLWatcher, if active.
@@ -737,10 +737,10 @@ public class Core
         {
             System.err.println("Uncaught exception " + e.getClass().getSimpleName()
                     + " in thread \"" + t.getName() + "\".");
-            //if (Core.this.settings.onUncaughtExceptionsPrintStackTrace())
-            //{
+            if (Core.this.settings.onUncaughtExceptionsPrintStackTrace())
+            {
                 e.printStackTrace(System.err);
-            //}
+            }
             Core.this.status = Core.Status.CRASHED;
             System.err.println("Core has crashed.  Shutdown may not have completed properly.");
         }
