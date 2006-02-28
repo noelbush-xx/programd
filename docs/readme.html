@@ -321,6 +321,16 @@ Interactive shell: type &quot;/exit&quot; to shut down; &quot;/help&quot; for he
 [2006-02-23 16:17:52,836] INFO: Created new test report &quot;/var/log/programd/test-reports/test-report-2006-02-23-16-17-52.xml&quot;.
 </pre>
         <p>
+            Please note that on Windows platforms, and possibly others (but not Linux), you will need to adjust
+            this item in <code class="path">core.xml</code> in order for the test of the <code class="markup">&lt;system/&gt;</code>
+            element to succeed:
+        </p>
+<pre class="example">
+    <code class="comment">&lt;!--The string to prepend to all &lt;system&gt; calls (platform-specific). [String: ]</code>
+         <code class="comment">* Windows requires something like "cmd /c "; Linux doesn't (just comment out)--&gt;</code>
+    <code class="markup">&lt;entry</code> <code class="name">key</code>=&quot;<code class="value">programd.system-interpreter.prefix</code>&quot;<code class="markup">&gt;&lt;/entry&gt;</code>
+</pre>
+        <p>
             You should also be able to exit the program smoothly:
         </p>
 <pre class="example">

@@ -203,6 +203,14 @@
  [2006-02-23 16:17:52,782] INFO: 109/109 tests succeeded.
  [2006-02-23 16:17:52,836] INFO: Created new test report "/var/log/programd/test-reports/test-report-2006-02-23-16-17-52.xml".
 
+   Please note that on Windows platforms, and possibly others (but not
+   Linux), you will need to adjust this item in core.xml in order for the
+   test of the <system/> element to succeed:
+
+     <!--The string to prepend to all <system> calls (platform-specific). [String: ]
+          * Windows requires something like "cmd /c "; Linux doesn't (just comment out)-->
+     <entry key="programd.system-interpreter.prefix"></entry>
+
    You should also be able to exit the program smoothly:
 
  [YourBot] user> /exit
