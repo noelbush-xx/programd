@@ -452,11 +452,6 @@ public class Core
             return;
         }
 
-        // Add it to the AIMLWatcher, if active.
-        if (this.settings.useWatcher())
-        {
-            this.aimlWatcher.addWatchFile(path, botid);
-        }
         //FileManager.pushWorkingDirectory(URLTools.getParent(path));
         
         // Let the Graphmaster use a shortcut if possible.
@@ -480,8 +475,32 @@ public class Core
                 this.logger.info("Loading " + path + "....");
             }
             doLoad(path, botid);
+            // Add it to the AIMLWatcher, if active.
+            if (this.settings.useWatcher())
+            {
+                this.aimlWatcher.addWatchFile(path);
+            }
         }
         //FileManager.popWorkingDirectory();
+    }
+    
+    /**
+     * Reloads a file&mdash;it is not necessary to specify a particular
+     * botid here, because a reload of a file for one botid suffices
+     * for all bots associated with that file.
+     * 
+     * @param path
+     * @throws IllegalArgumentException if the given path is not actually loaded for <em>any</em> bot
+     */
+    public void reload(URL path)
+    {
+        Set<String> botids = this.graphmaster.getURLCatalog().get(path);
+        if (botids == null || botids.size() == 0)
+        {
+            throw new IllegalArgumentException("Called Core.reload() with a path that is not loaded by any bot.");
+        }
+        // Get any botid -- we don't care.
+        doLoad(path, botids.iterator().next());
     }
     
     /**
@@ -734,6 +753,11 @@ public class Core
      */
     public void loadBots(URL path)
     {
+        if (this.settings.useWatcher())
+        {
+            this.logger.debug("Suspending AIMLWatcher.");
+            this.aimlWatcher.stop();
+        }
         if (path.getProtocol().equals(FileManager.FILE))
         {
             FileManager.pushWorkingDirectory(URLTools.getParent(path));
@@ -749,6 +773,11 @@ public class Core
         if (path.getProtocol().equals(FileManager.FILE))
         {
             FileManager.popWorkingDirectory();
+        }
+        if (this.settings.useWatcher())
+        {
+            this.logger.debug("Restarting AIMLWatcher.");
+            this.aimlWatcher.start();
         }
     }
     
