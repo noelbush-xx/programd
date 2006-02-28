@@ -203,7 +203,7 @@ goto end
 goto end
 
 :set_jvm_command
-  set JVM_COMMAND="%JAVA_HOME%\bin\java.exe" -Dlog4j.configuration=file:/%BASE%\conf\log4j.xml
+  set JVM_COMMAND="%JAVA_HOME%\bin\java.exe" -server -Dlog4j.configuration=file:/%BASE%\conf\log4j.xml
 goto end
 
 :end
