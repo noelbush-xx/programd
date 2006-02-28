@@ -27,7 +27,7 @@ import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.graph.Nodemapper;
-import org.aitools.programd.interfaces.ShellStreamAppender;
+import org.aitools.programd.interfaces.ConsoleStreamAppender;
 import org.aitools.programd.interpreter.Interpreter;
 import org.aitools.programd.multiplexor.Multiplexor;
 import org.aitools.programd.multiplexor.PredicateMaster;
@@ -219,7 +219,7 @@ public class Core
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
         
         // Use the stdout and stderr appenders in a special way, if they are defined.
-        ShellStreamAppender stdOutAppender = ((ShellStreamAppender)Logger.getLogger("programd").getAppender("stdout"));
+        ConsoleStreamAppender stdOutAppender = ((ConsoleStreamAppender)Logger.getLogger("programd").getAppender("stdout"));
         if (stdOutAppender != null)
         {
             if (!stdOutAppender.isWriterSet())
@@ -228,7 +228,7 @@ public class Core
             }
         }
         
-        ShellStreamAppender stdErrAppender = ((ShellStreamAppender)Logger.getLogger("programd").getAppender("stderr"));
+        ConsoleStreamAppender stdErrAppender = ((ConsoleStreamAppender)Logger.getLogger("programd").getAppender("stderr"));
         if (stdErrAppender != null)
         {
             if (!stdErrAppender.isWriterSet())
@@ -536,11 +536,11 @@ public class Core
         }
         catch (IOException e)
         {
-            this.logger.warn("Error reading \"" + path + "\": " + e.getMessage(), e);
+            this.logger.warn(String.format("Error reading \"%s\": %s", URLTools.unescape(path), e.getMessage()), e);
         }
         catch (SAXException e)
         {
-            this.logger.warn("Error parsing \"" + path + "\": " + e.getMessage(), e);
+            this.logger.warn(String.format("Error parsing \"%s\": %s", URLTools.unescape(path), e.getMessage()), e);
         }
     }
 
