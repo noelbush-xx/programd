@@ -21,6 +21,8 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 /**
  * <code>URLTools</code> contains helper methods for dealing with URLs.
  * 
@@ -32,7 +34,7 @@ public class URLTools
     /** A slash. */
     private static final String SLASH = "/";
 
-    /** The string "://". */
+    /** The string ":/". */
     private static final String COLON_SLASH = ":/";
     
     /** A dot (period). */
@@ -40,6 +42,8 @@ public class URLTools
     
     /** The empty string. */
     private static final String EMPTY_STRING = "";
+    
+    private static final Logger logger = Logger.getLogger("programd");
 
     /**
      * <p>
@@ -153,6 +157,17 @@ public class URLTools
      */
     public static URL contextualize(URL context, String subject)
     {
+    	// Avoid the most obvious problem...
+    	subject = escape(subject.replace(File.separatorChar, '/'));
+    	try
+    	{
+	    	context = new URL(escape(context.toString().replace(File.separatorChar, '/')));
+    	}
+    	catch (MalformedURLException e)
+    	{
+    		// Do nothing, but we may fail.
+    		logger.warn(String.format("Could not escape context URL \"%s\".", context));
+    	}
         if (context.toString().equals(subject))
         {
             try
@@ -164,7 +179,7 @@ public class URLTools
                 throw new DeveloperError("Subject URL is malformed.", e);
             }
         }
-        if (subject.matches("^[a-z]+:.*"))
+        if (subject.matches("^[a-z]+:/.*"))
         {
             try
             {
@@ -177,14 +192,21 @@ public class URLTools
         }
         if (probablyIsNotFile(context))
         {
-            URI resolved;
+            URI resolved = null;
             try
             {
                 String contextString = context.toString();
-                int colon = contextString.indexOf(':');
+                int colon = contextString.indexOf(COLON_SLASH);
                 if (colon > -1)
                 {
-                    resolved = new URI(context.getProtocol() + ':' + new URI(contextString.substring(colon + 1) + SLASH).resolve(subject).toString());
+                	try
+                	{
+                		resolved = new URI(context.getProtocol() + ':' + new URI(contextString.substring(colon + 1) + SLASH).resolve(subject).toString());
+                	}
+                	catch (IllegalArgumentException e)
+                	{
+                		throw new UserError(String.format("Could not resolve \"%s\" against \"%s\".", subject, context), e);
+                	}
                 }
                 else
                 {
@@ -239,6 +261,9 @@ public class URLTools
      */
     public static URL contextualize(String context, String subject)
     {
+    	// Avoid the most obvious problem...
+    	subject = escape(subject.replace(File.separatorChar, '/'));
+    	context = escape(context.toString().replace(File.separatorChar, '/'));
         if (context.equals(subject))
         {
             try
@@ -554,6 +579,16 @@ public class URLTools
     public static String unescape(String url)
     {
         return url.replace("%20", " ");
+    }
+    
+    /**
+     * A convenience method that calls toString()
+     * on the given URL, then returns the result of
+     * {@link #unescape(String)}.
+     */
+    public static String unescape(URL url)
+    {
+    	return unescape(url.toString());
     }
     
     /**

@@ -53,6 +53,8 @@ public class FileManager
             throw new DeveloperError("Current working directory (according to system properties) does not exist!", e);
         }
     }
+    
+    private static final String SLASH = "/";
 
     /**
      * Sets the root path.
@@ -84,7 +86,7 @@ public class FileManager
      */
     public static File getBestFile(String path)
     {
-        File file = new File(path);
+        File file = new File(URLTools.unescape(path));
         try
         {
             return file.getCanonicalFile();
@@ -497,8 +499,8 @@ public class FileManager
         if (separatorIndex >= 0)
         {
             pattern = path.substring(separatorIndex + 1);
-            dirName = path.substring(0, separatorIndex + 1);
-            if (!dirName.startsWith(File.separator))
+            dirName = URLTools.unescape(path.substring(0, separatorIndex + 1));
+            if (!dirName.startsWith(File.separator) && !dirName.startsWith(SLASH))
             {
                 dir = new File(workingDirectory.peek().getPath() + dirName);
             }
@@ -510,7 +512,7 @@ public class FileManager
         else
         {
             pattern = path;
-            dirName = workingDirectoryToUse;
+            dirName = URLTools.unescape(workingDirectoryToUse);
             try
             {
                 dir = new File(dirName).getCanonicalFile();
