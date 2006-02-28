@@ -3,7 +3,7 @@
    author: [1]Noel Bush
    revised from a document by Kim Sullivan, with contributions from Zayn
    Blore and Dennis Daniels.
-   Last updated: 27 February 2006
+   Last updated: 28 February 2006
 
    Please check [2]http://aitools.org for more documentation, including
    updates to this document.
@@ -99,10 +99,6 @@
 
    We`ll refer to the root directory created by the unzip/untar (such as
    /usr/alice/ProgramD) as PROGRAMD.
-
-   IMPORTANT NOTE: Windows users should be sure that Program D is installed
-   in a path that does not include spaces. For instance, use C:\ProgramD, but
-   do not use C:\Program Files\Program D.
 
     1.1.1 Compile (source downloads only)
 
