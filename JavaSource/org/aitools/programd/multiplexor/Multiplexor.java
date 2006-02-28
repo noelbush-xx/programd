@@ -162,6 +162,11 @@ abstract public class Multiplexor
 
         // Get the replies.
         List<String> replies = getReplies(sentenceList, userid, botid);
+        
+        if (replies == null)
+        {
+            return null;
+        }
 
         // Start by assuming an empty response.
         StringBuilder responseBuffer = new StringBuilder(EMPTY_STRING);
@@ -235,6 +240,11 @@ abstract public class Multiplexor
     @SuppressWarnings("boxing")
     private List<String> getReplies(List<String> sentenceList, String userid, String botid)
     {
+        if (sentenceList == null)
+        {
+            return null;
+        }
+        
         // All replies will be assembled in this ArrayList.
         List<String> replies = Collections.checkedList(new ArrayList<String>(sentenceList.size()), String.class);
 
