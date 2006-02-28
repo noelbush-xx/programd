@@ -74,7 +74,7 @@ public class Core
     public static final String VERSION = "4.6";
 
     /** Build identifier. */
-    public static final String BUILD = "rc1";
+    public static final String BUILD = "rc2";
     
     /** The location of the AIML schema. */
     private static final String AIML_SCHEMA_LOCATION = "resources/schema/AIML.xsd";
