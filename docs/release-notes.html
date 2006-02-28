@@ -127,11 +127,11 @@ a:active, a:active *
             maintainer: <a href="mailto:noel@aitools.org">Noel Bush</a><br />
              previous authors: <a href="mailto:noel@aitools.org">Noel Bush</a>, Kim Sullivan, Thomas Ringate, Pedro E.
             Colla<br />
-             Last updated: 22 Feb 2006
+             Last updated: 27 Feb 2006
         </p>
         <p class="docinfo">
             The latest version of this document can always be found at <a
-            href="http://aitools.org/programd/release-notes.html">http://aitools.org/programd/release-notes.html</a>.
+            href="http://aitools.org/programd/docs/release-notes.html">http://aitools.org/programd/docs/release-notes.html</a>.
             Probably.
         </p>
         <p>
@@ -173,10 +173,10 @@ a:active, a:active *
             <a id="v4.6" name="v4.6">4.6</a>
         </h2>
         <p>
-            This is a highly-recommended release which preserves AIML functionality, fixes a number of important bugs,
-            and brings some major architectural improvements-most notably, Program D can now be deployed as a .war file
-            to a web application server, and can interact with a web client using &quot;Ajax&quot; technologies. New
-            code also allows Program D to interact with a web page using &quot;Ajax&quot;.
+            This is a highly-recommended release which preserves AIML functionality, introduces some interesting
+            perforamnce improvements, fixes a number of important bugs,
+            and brings some major architectural improvements&mdash;most notably, Program D can now be deployed as a .war file
+            to a web application server, and can interact with a web client using &quot;Ajax&quot; technologies.
         </p>
         <ul>
             <li>
@@ -199,27 +199,11 @@ a:active, a:active *
                 </h4>
                 <p>
                     Several strategic optimizations have dramatically increased the number of bots that
-                    Program D can handle. To understand the improvements, first consider two extreme cases:
-                </p>
-                <ul>
-                    <li>
-                        <p>
-                            Case 1: You have <var>x</var> bots (where <var>x</var> is some very large number in terms
-                            of bot count, say 1,000), and all of them share the same set of AIML files.
-                        </p>
-                    </li>
-                    <li>
-                        <p>
-                            Case 2: You have <var>x</var> bots (same as above), and each one uses a completely unique
-                            set of AIML files, with absolutely no overlapping patterns.
-                        </p>
-                    </li>
-                </ul>
-                <p>
-                    In Case 1, Program D can now be expected to perform reasonably well.  Loading of AIML files has
-                    been optimized so that any AIML file that is shared by more than one bot only needs to be loaded once
-                    (except when it changes).  So, for instance, in a test case that creates 100 bots that all use
-                    a copy of the AAA AIML set, console output looks like this:
+                    Program D can handle, improved response rates, and reduced memory usage. 
+                    Most notably, if you have bots that share AIML files, Program D
+                    will now detect this, and will
+                    use a shortcut at loadtime to rapidly add an association
+                    with the AIML file for the new bot, without actually re-parsing the entire AIML file.
                 </p>
             </li>
             <li>
@@ -241,7 +225,7 @@ a:active, a:active *
                     course if you only need Program D for IM/IRC connectivity, then one of these (probably the non-GUI
                     version) will be your choice. (But please see the <a href="http://aitools.org">aitools.org</a> web
                     site and <a href="http://aitools.org/mailinglists.html">Program D mailing list</a> for the latest
-                    word on IM &amp; IRC compatibility issues with those listeners-lately there have been some
+                    word on IM &amp; IRC compatibility issues with those listeners&mdash;lately there have been some
                     problems.)
                 </p>
             </li>
@@ -261,7 +245,8 @@ a:active, a:active *
                     <a id="v4.6.whatsnew.shell-commands">New Shell Commands</a>
                 </h4>
                 <p>
-                    The interactive shell now offers several new commands:
+                    The interactive shell has a couple of new commands: <b>/memory</b>, which provides statistics
+                    on memory usage, and <b>/categories</b>, which shows the number of loaded categories.
                 </p>
             </li>
             <li>
@@ -272,7 +257,7 @@ a:active, a:active *
                     The logging mechanism for Program D has been vastly improved by replacing the off-the-shelf JDK
                     logging mechanism with the vastly superior <a
                     href="http://logging.apache.org/log4j/docs/">Log4J</a> library. Logging to text files, XML files,
-                    and databases
+                    and databases is still supported, and is now configured in the <b>log4j.xml</b> file.
                 </p>
             </li>
             <li>
