@@ -11,6 +11,7 @@ package org.aitools.programd.graph;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1044,5 +1045,15 @@ public class Graphmaster
             this.totalCategories++;
         }
         this.urlCatalog.get(path).add(botid);
+    }
+    
+    /**
+     * Returns an unmodifiable view of the url-to-botid catalog.
+     * 
+     * @return an unmodifiable view of the url-to-botid catalog
+     */
+    public Map<URL, Set<String>> getURLCatalog()
+    {
+        return Collections.unmodifiableMap(this.urlCatalog);
     }
 }
