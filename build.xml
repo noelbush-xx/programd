@@ -54,7 +54,7 @@
     </target>
 
     <!--Generate CoreSettings from core.xml.-->
-    <target name="core-settings">
+    <target name="core-settings" depends="init">
         <xslt in="conf/core.xml" out="JavaSource/org/aitools/programd/CoreSettings.java" style="resources/xslt/generate-settings-class.xslt">
             <factory name="net.sf.saxon.TransformerFactoryImpl" />
         </xslt>
@@ -66,7 +66,7 @@
     </target>
 
     <!--Prepare the source code.-->
-    <target name="prepare-src" depends="prepare">
+    <target name="prepare-src" depends="init, prepare">
         <mkdir dir="${build.dir}" />
         <!--Copy resources.-->
         <copy todir="${build.dir}">
@@ -75,7 +75,7 @@
     </target>
 
     <!--Compile the source directory.-->
-    <target name="compile" depends="prepare-src">
+    <target name="compile" depends="init, prepare-src">
         <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="build.classpath" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" target="${javac.jvm-target}" source="${javac.source}">
             <compilerarg value="-Xlint" />
             <compilerarg value="-Xlint:-path" />
@@ -84,7 +84,7 @@
     </target>
 
     <!--Create the jars.-->
-    <target name="jars" depends="compile">
+    <target name="jars" depends="init, compile">
         <mkdir dir="${distrib.dir}" />
         <jar jarfile="${main.jar}">
             <fileset dir="${build.dir}/" includes="org/**" excludes="org/aitools/programd/interpreter/RhinoInterpreter.class" />
@@ -97,7 +97,7 @@
     </target>
 
     <!--Create a WAR file.-->
-    <target name="war" depends="compile">
+    <target name="war" depends="init, compile">
         <delete file="${war}" />
         <war destfile="${war}" webxml="${webapp.dir}/WEB-INF/web.xml" manifest="${webapp.dir}/META-INF/MANIFEST.MF">
             <fileset dir="${webapp.dir}">
@@ -125,7 +125,7 @@
     </target>
 
     <!--Create the API documentation.-->
-    <target name="javadoc" depends="prepare-src">
+    <target name="javadoc" depends="init, prepare-src">
         <mkdir dir="${javadoc.dir}" />
         <javadoc packagenames="*" sourcepath="${src.dir}" destdir="${javadoc.dir}" classpathref="build.classpath" author="true" version="true" use="true" splitindex="true" noindex="false" windowtitle="${Name} API" doctitle="${Name} API">
             <link href="http://java.sun.com/j2se/1.5.0/docs/api/" />
@@ -138,7 +138,7 @@
     <!--Note: You'll need the xs3p stylesheet
 	    (from http://titanium.dstc.edu.au/xml/xs3p/) to generate this.
 	    Change the xs3p property below to match wherever you install it.-->
-    <target name="schema-doc">
+    <target name="schema-doc" depends="init">
         <property name="xs3p" value="/usr/local/xs3p/xs3p.xsl" />
         <property name="schema" value="../resources/schema" />
         <property name="schema-doc" value="../docs/schema" />
@@ -162,7 +162,7 @@
     </target>
 
     <!--Make the distribs.-->
-    <target name="distribs" depends="source-distribs,binary-distribs,war-distribs" />
+    <target name="distribs" depends="init, source-distribs, binary-distribs, war-distribs" />
 
     <!--The source distribs.-->
     <target name="source-distribs" depends="init">
@@ -205,7 +205,7 @@
     </target>
 
     <!--The binary distribs.-->
-    <target name="binary-distribs" depends="jars">
+    <target name="binary-distribs" depends="init, jars">
         <delete dir="${distrib.bin.dir}" />
         <copy todir="${distrib.bin.dir}">
             <fileset dir="${basedir}">
@@ -253,7 +253,7 @@
     </target>
 
     <!--The war distribs.-->
-    <target name="war-distribs" depends="war">
+    <target name="war-distribs" depends="init, war">
         <delete dir="${distrib.war.dir}" />
         <copy todir="${distrib.war.dir}">
             <fileset dir="${basedir}">
@@ -274,7 +274,7 @@
     </target>
 
     <!--Clean up everything.-->
-    <target name="clean" depends="buildclean,distclean"/>
+    <target name="clean" depends="init, buildclean, distclean"/>
 
     <!--Clean the build stuff.-->
     <target name="buildclean" depends="init">
@@ -284,17 +284,17 @@
     </target>
 
     <!--Clean up all the distrib stuff.-->
-    <target name="distclean" depends="init,source-distclean,binary-distclean,war-distclean"/>
+    <target name="distclean" depends="init, source-distclean, binary-distclean, war-distclean"/>
 
     <!--Clean up the source distribs.-->
-    <target name="source-distclean">
+    <target name="source-distclean" depends="init">
         <delete dir="${distrib.src.dir}"/>
         <delete file="${distrib.src.zip}"/>
         <delete file="${distrib.src.tar.bz2}"/>
     </target>
 
     <!--Clean up the binary distribs.-->
-    <target name="binary-distclean">
+    <target name="binary-distclean" depends="init">
         <delete dir="${build.dir}"/>
         <delete file="${main.jar}"/>
         <delete file="${rhino.jar}"/>
@@ -304,7 +304,7 @@
     </target>
 
     <!--Clean up the war distribs.-->
-    <target name="war-distclean">
+    <target name="war-distclean" depends="init">
         <delete file="${war}"/>
         <delete dir="${distrib.war.dir}"/>
         <delete file="${distrib.war.zip}"/>
@@ -312,7 +312,8 @@
     </target>
 
     <!--Generate the multibot test files.-->
-    <target name="multibot">
+    <target name="multibot" depends="init">
+        <delete file="resources/testing/multibot/bots.xml"/>
         <xslt in="resources/xslt/generate-multibot.xslt"
               out="resources/testing/multibot/bots.xml"
     	      style="resources/xslt/generate-multibot.xslt">
