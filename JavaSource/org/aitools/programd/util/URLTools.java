@@ -89,8 +89,15 @@ public class URLTools
                 String originalPath = subjectURI.getPath();
                 if (originalPath != null)
                 {
-                    File file = FileManager.getBestFile(originalPath);
-                    String path = file.getAbsolutePath();
+                    String path;
+					try
+					{
+						path = FileManager.getBestFile(originalPath).toURL().getPath();
+					}
+					catch (MalformedURLException e)
+					{
+                        throw new DeveloperError(String.format("Error getting URL from file \"%s\".", originalPath), e);
+					}
                     if (!pathsAreEquivalent(path, originalPath))
                     {
                         try
@@ -99,7 +106,7 @@ public class URLTools
                         }
                         catch (URISyntaxException e)
                         {
-                            throw new DeveloperError(String.format("Error resolving file URI \"%s\".", subject), e);
+                            throw new DeveloperError(String.format("Error resolving file URI \"%s\".", subjectURI), e);
                         }
                     }
                 }
@@ -131,16 +138,20 @@ public class URLTools
                 throw new DeveloperError("Given subject cannot be contextualized in given context.", e);
             }
         }
-        // If the context *does* specify a file, then we need to remove it
-        // first.
-        String contextString = context.toString();
+        // If the context *does* specify a file, then we need to remove the file (get the parent) first.
+        URL parent = getParent(context);
+        if (!parent.getFile().equals(context.getFile()))
+        {
+            return contextualize(parent, subject);
+        }
+        // otherwise...
         try
         {
-            return contextualize(new URL(contextString.substring(0, contextString.lastIndexOf('/') + 1)), subject);
+            return new URL(context.getProtocol(), context.getHost(), context.getPort(), subject.getPath());
         }
         catch (MalformedURLException e)
         {
-            throw new DeveloperError("Cannot remove file part from context URL.", e);
+            throw new DeveloperError("Given subject cannot be contextualized in given context.", e);
         }
     }
 
@@ -170,15 +181,9 @@ public class URLTools
     	}
         if (context.toString().equals(subject))
         {
-            try
-            {
-                return new URL(subject);
-            }
-            catch (MalformedURLException e)
-            {
-                throw new DeveloperError("Subject URL is malformed.", e);
-            }
+        	return context;
         }
+        // See if the subject seems to specify a URL, and if so, send it to the other method.
         if (subject.matches("^[a-z]+:/.*"))
         {
             try
@@ -187,7 +192,7 @@ public class URLTools
             }
             catch (MalformedURLException e)
             {
-                throw new DeveloperError("Subject URL is malformed.", e);
+                throw new DeveloperError(String.format("Subject URL is malformed: \"%s\".", subject), e);
             }
         }
         if (probablyIsNotFile(context))
@@ -232,8 +237,7 @@ public class URLTools
             // otherwise...
             throw new DeveloperError("URI is not absolute (\"" + resolved.toString() + "\")", new IllegalArgumentException());
         }
-        // If the context *does* specify a file, then we need to remove it
-        // first.
+        // If the context *does* specify a file, then we need to remove the file (get the parent) first.
         URL parent = getParent(context);
         if (!parent.getFile().equals(context.getFile()))
         {
@@ -250,58 +254,6 @@ public class URLTools
         }
     }
 
-    /**
-     * Same as {@link #contextualize(URL, String)}, except the
-     * <code>context</code> is also a String.
-     * 
-     * @param context
-     * @param subject
-     * @return the result of &quot;contextualizing&quot; the given
-     *         <code>subject</code> in the <code>context</code>
-     */
-    public static URL contextualize(String context, String subject)
-    {
-    	// Avoid the most obvious problem...
-    	subject = escape(subject.replace(File.separatorChar, '/'));
-    	context = escape(context.toString().replace(File.separatorChar, '/'));
-        if (context.equals(subject))
-        {
-            try
-            {
-                return new URL(subject);
-            }
-            catch (MalformedURLException e)
-            {
-                throw new DeveloperError("Subject URL is malformed.", e);
-            }
-        }
-        if (probablyIsNotFile(context))
-        {
-            try
-            {
-                return new URI(context + SLASH).resolve(subject).toURL();
-            }
-            catch (URISyntaxException e)
-            {
-                throw new DeveloperError("Context URL is malformed.", e);
-            }
-            catch (MalformedURLException e)
-            {
-                throw new DeveloperError("Given subject cannot be contextualized in given context.", e);
-            }
-        }
-        // If the context *does* specify a file, then we need to remove it
-        // first.
-        try
-        {
-            return contextualize(new URL(context.substring(0, context.lastIndexOf('/') + 1)), subject);
-        }
-        catch (MalformedURLException e)
-        {
-            throw new DeveloperError("Cannot remove file part from context URL.", e);
-        }
-    }
-    
     /**
      * Uses a couple of simple heuristics to guess whether a
      * given URL probably is not pointing at a file.
