@@ -99,7 +99,7 @@ public class URLTools
                         }
                         catch (URISyntaxException e)
                         {
-                            throw new DeveloperError("Error resolving file URI.", e);
+                            throw new DeveloperError(String.format("Error resolving file URI \"%s\".", subject), e);
                         }
                     }
                 }
