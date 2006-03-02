@@ -259,6 +259,7 @@
             <fileset dir="${basedir}">
                 <include name="conf/**" />
                 <include name="resources/testing/AIML.aiml" />
+                <include name="resources/testing/AIML.xml" />
             </fileset>
             <fileset dir="${distrib.dir}">
                 <include name="programd.war" />
