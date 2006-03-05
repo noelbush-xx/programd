@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
+import org.aitools.programd.bot.Bots;
 import org.aitools.programd.server.BotAccess;
 
 /**
@@ -148,14 +149,26 @@ public class TalkToBotServlet extends HttpServlet
             // If a bot parameter is not specified, try to get any bot.
             if (botid == null || botid.length() == 0)
             {
-                programDBot = this.core.getBots().getABot();
-                if (programDBot == null)
+                boolean noBot = true;
+                if (this.core != null)
+                {
+                    Bots bots = this.core.getBots();
+                    if (bots != null && bots.getCount() > 0)
+                    {
+                        programDBot = this.core.getBots().getABot();
+                        if (programDBot != null)
+                        {
+                            botid = programDBot.getID();
+                            noBot = false;
+                        }
+                    }
+                }
+                if (noBot)
                 {
                     req.setAttribute("error", "No bots are available from the Core.  Cannot continue.");
                     forward(this.errorPage, req, resp);
                     return;
                 }
-                botid = programDBot.getID();
             }
             else
             {
