@@ -262,7 +262,7 @@ public class XMLKit
      * @param input the input to filter
      * @return the input with all non-XML characters removed
      */
-    private static String filterXML(String input)
+    public static String filterXML(String input)
     {
         // Null inputs return an empty string.
         if (input == null)
