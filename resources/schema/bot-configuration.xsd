@@ -39,27 +39,26 @@
             </xs:appinfo>
         </xs:annotation>
         <xs:complexType>
-            <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element name="servlet-page" minOccurs="0">
                     <xs:annotation>
                         <xs:documentation>The page to use when talking to this bot via the servlet interface.</xs:documentation>
                     </xs:annotation>
                 </xs:element>
-                <xs:element ref="properties" minOccurs="0"/>
-                <xs:element ref="predicates" minOccurs="0"/>
-                <xs:element ref="substitutions" minOccurs="0"/>
-                <xs:element ref="sentence-splitters" minOccurs="0"/>
-                <xs:element ref="listeners" minOccurs="0"/>
-                <xs:element ref="testing" minOccurs="0"/>
-                <xs:element name="learn" minOccurs="0" maxOccurs="unbounded"
-                    type="xs:anyURI">
+                <xs:element ref="properties"/>
+                <xs:element ref="predicates"/>
+                <xs:element ref="substitutions"/>
+                <xs:element ref="sentence-splitters"/>
+                <xs:element ref="listeners"/>
+                <xs:element ref="testing"/>
+                <xs:element name="learn" type="xs:anyURI">
                     <xs:annotation>
                         <xs:documentation>A learn element specifies an AIML file, or a
                             glob-style pattern indicating several AIML files, that
                             should be loaded by the bot. </xs:documentation>
                     </xs:annotation>
                 </xs:element>
-            </xs:sequence>
+            </xs:choice>
             <xs:attribute name="id" type="xs:Name"/>
             <xs:attribute name="enabled" type="xs:boolean"/>
             <xs:attribute name="href" type="xs:anyURI"/>
