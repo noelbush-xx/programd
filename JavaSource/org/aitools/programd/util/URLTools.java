@@ -81,7 +81,7 @@ public class URLTools
             }
             catch (URISyntaxException e)
             {
-                throw new DeveloperError("Subject URL is malformed.", e);
+                throw new DeveloperError(String.format("Subject URL is malformed: \"%s\".", subject), e);
             }
             // If the subject has "file" scheme, try to make sure it is absolute (in a file path sense).
             if (subjectURI.getScheme().equals(FileManager.FILE))
