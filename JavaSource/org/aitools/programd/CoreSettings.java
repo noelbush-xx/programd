@@ -19,7 +19,7 @@ import org.aitools.programd.util.UserError;
 import org.aitools.programd.util.Settings;
 
 /**
- * Automatically generated from properties file, 2006-02-25T11:39:23.567-05:00
+ * Automatically generated from properties file, 2006-03-08T14:08:00.612-05:00
  */
 public class CoreSettings extends Settings
 {
@@ -100,11 +100,6 @@ public class CoreSettings extends Settings
     private String botNamePredicate;
         
     /**
-     * Log/display match trace messages?
-     */
-    private boolean recordMatchTrace;
-        
-    /**
      * Print stack trace on uncaught exceptions?
      */
     private boolean onUncaughtExceptionsPrintStackTrace;
@@ -135,9 +130,14 @@ public class CoreSettings extends Settings
     private String inactivityString;
         
     /**
-     * The Multiplexor to use.
+     * The Nodemapper implementation to use.
      */
-    private String multiplexorClassname;
+    private String nodemapperImplementation;
+        
+    /**
+     * The Multiplexor implementation to use.
+     */
+    private String multiplexorImplementation;
         
     /**
      * The directory in which to save flat-file predicates (FFM only).
@@ -163,6 +163,11 @@ public class CoreSettings extends Settings
      * Use interactive command-line shell?
      */
     private boolean consoleUseShell;
+        
+    /**
+     * Exit immediately upon startup?
+     */
+    private boolean exitImmediatelyOnStartup;
         
     /**
      * The location of the AIML schema (or a copy of it).
@@ -322,8 +327,6 @@ public class CoreSettings extends Settings
 
         setBotNamePredicate(this.properties.getProperty("programd.bot-name-predicate", "name"));
 
-        setRecordMatchTrace(Boolean.valueOf(this.properties.getProperty("programd.record-match-trace", "true")).booleanValue());
-
         setOnUncaughtExceptionsPrintStackTrace(Boolean.valueOf(this.properties.getProperty("programd.on-uncaught-exceptions.print-stack-trace", "false")).booleanValue());
 
         setOsAccessAllowed(Boolean.valueOf(this.properties.getProperty("programd.os-access-allowed", "false")).booleanValue());
@@ -336,7 +339,9 @@ public class CoreSettings extends Settings
 
         setInactivityString(this.properties.getProperty("programd.inactivity-string", "INACTIVITY"));
 
-        setMultiplexorClassname(this.properties.getProperty("programd.multiplexor-classname", "org.aitools.programd.multiplexor.FlatFileMultiplexor"));
+        setNodemapperImplementation(this.properties.getProperty("programd.nodemapper-implementation", "org.aitools.programd.graph.TwoOptimalNodemaster"));
+
+        setMultiplexorImplementation(this.properties.getProperty("programd.multiplexor-implementation", "org.aitools.programd.multiplexor.FlatFileMultiplexor"));
 
         setMultiplexorFfmDir(URLTools.contextualize(this.path, this.properties.getProperty("programd.multiplexor.ffm-dir", "/var/programd/ffm")));
 
@@ -361,6 +366,8 @@ public class CoreSettings extends Settings
         }
 
         setConsoleUseShell(Boolean.valueOf(this.properties.getProperty("programd.console.use-shell", "true")).booleanValue());
+
+        setExitImmediatelyOnStartup(Boolean.valueOf(this.properties.getProperty("programd.exit-immediately-on-startup", "false")).booleanValue());
 
         setSchemaLocationAIML(URLTools.contextualize(this.path, this.properties.getProperty("programd.schema-location.AIML", "../resources/schema/AIML.xsd")));
 
@@ -503,14 +510,6 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @return the value of recordMatchTrace
-     */
-    public boolean recordMatchTrace()
-    {
-        return this.recordMatchTrace;
-    }
-
-    /**
      * @return the value of onUncaughtExceptionsPrintStackTrace
      */
     public boolean onUncaughtExceptionsPrintStackTrace()
@@ -559,11 +558,19 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @return the value of multiplexorClassname
+     * @return the value of nodemapperImplementation
      */
-    public String getMultiplexorClassname()
+    public String getNodemapperImplementation()
     {
-        return this.multiplexorClassname;
+        return this.nodemapperImplementation;
+    }
+
+    /**
+     * @return the value of multiplexorImplementation
+     */
+    public String getMultiplexorImplementation()
+    {
+        return this.multiplexorImplementation;
     }
 
     /**
@@ -604,6 +611,14 @@ public class CoreSettings extends Settings
     public boolean consoleUseShell()
     {
         return this.consoleUseShell;
+    }
+
+    /**
+     * @return the value of exitImmediatelyOnStartup
+     */
+    public boolean exitImmediatelyOnStartup()
+    {
+        return this.exitImmediatelyOnStartup;
     }
 
     /**
@@ -815,14 +830,6 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param recordMatchTraceToSet   the value to which to set recordMatchTrace
-     */
-    public void setRecordMatchTrace(boolean recordMatchTraceToSet)
-    {
-        this.recordMatchTrace = recordMatchTraceToSet;
-    }
-
-    /**
      * @param onUncaughtExceptionsPrintStackTraceToSet   the value to which to set onUncaughtExceptionsPrintStackTrace
      */
     public void setOnUncaughtExceptionsPrintStackTrace(boolean onUncaughtExceptionsPrintStackTraceToSet)
@@ -871,11 +878,19 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param multiplexorClassnameToSet   the value to which to set multiplexorClassname
+     * @param nodemapperImplementationToSet   the value to which to set nodemapperImplementation
      */
-    public void setMultiplexorClassname(String multiplexorClassnameToSet)
+    public void setNodemapperImplementation(String nodemapperImplementationToSet)
     {
-        this.multiplexorClassname = multiplexorClassnameToSet;
+        this.nodemapperImplementation = nodemapperImplementationToSet;
+    }
+
+    /**
+     * @param multiplexorImplementationToSet   the value to which to set multiplexorImplementation
+     */
+    public void setMultiplexorImplementation(String multiplexorImplementationToSet)
+    {
+        this.multiplexorImplementation = multiplexorImplementationToSet;
     }
 
     /**
@@ -916,6 +931,14 @@ public class CoreSettings extends Settings
     public void setConsoleUseShell(boolean consoleUseShellToSet)
     {
         this.consoleUseShell = consoleUseShellToSet;
+    }
+
+    /**
+     * @param exitImmediatelyOnStartupToSet   the value to which to set exitImmediatelyOnStartup
+     */
+    public void setExitImmediatelyOnStartup(boolean exitImmediatelyOnStartupToSet)
+    {
+        this.exitImmediatelyOnStartup = exitImmediatelyOnStartupToSet;
     }
 
     /**
