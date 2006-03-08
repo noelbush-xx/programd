@@ -88,14 +88,14 @@ public class BotProcessor extends BotConfigurationElementProcessor
             {
                 Bot bot = new Bot(botID, parser.getCore().getSettings());
                 
-                logger.info("Configuring bot \"" + botID + "\".");
+                logger.info(String.format("Configuring bot \"%s\".", botID));
                 parser.setCurrentBot(bot);
                 bots.addBot(botID, bot);
                 
                 Graphmaster graphmaster = this.core.getGraphmaster();
                 
-                int previousCategoryCount = graphmaster.getTotalCategories();
-                int previousDuplicateCount = graphmaster.getDuplicateCategories();
+                int previousCategoryCount = graphmaster.getCategoryCount();
+                int previousDuplicateCount = graphmaster.getDuplicateCategoryCount();
 
                 this.core.setLoadtime();
                 
@@ -123,11 +123,16 @@ public class BotProcessor extends BotConfigurationElementProcessor
                 }
                 
                 logger.info(String.format("%,d categories loaded in %.4f seconds.",
-                        graphmaster.getTotalCategories() - previousCategoryCount,
+                        graphmaster.getCategoryCount() - previousCategoryCount,
                         time / 1000.00));
                 logger.info(graphmaster.getCategoryReport());
+                if (logger.isDebugEnabled())
+                {
+                    logger.debug(String.format("%,d Nodemappers in Graphmaster.", graphmaster.getNodemapperCount()));
+                    logger.debug(String.format("Average Nodemapper size: %,.4f.", graphmaster.getAverageNodemapperSize()));
+                }
                 
-                int dupes = graphmaster.getDuplicateCategories() - previousDuplicateCount;
+                int dupes = graphmaster.getDuplicateCategoryCount() - previousDuplicateCount;
                 if (dupes > 0)
                 {
                     logger.warn(String.format("%,d path-identical categories were encountered, and handled according to the %s merge policy.",
