@@ -365,7 +365,7 @@ abstract public class Multiplexor
         // Show the input path.
         if (matchLogger.isDebugEnabled())
         {
-            matchLogger.debug(String.format("%s> %s : %s : %s : %s",
+            matchLogger.debug(String.format("[INPUT (%s)] %s : %s : %s : %s",
                     userid, input, that, topic, botid));
         }
 
@@ -383,13 +383,13 @@ abstract public class Multiplexor
 
         if (match == null)
         {
-            logger.warn("No match found for input \"" + input + "\".");
+            logger.warn(String.format("No match found for input \"%s\".", input));
             return EMPTY_STRING;
         }
 
         if (matchLogger.isDebugEnabled())
         {
-            matchLogger.debug(String.format("Match: %s (\"%s\")",
+            matchLogger.debug(String.format("[MATCHED] %s (\"%s\")",
                     match.getPath(), match.getFileName()));
         }
 
