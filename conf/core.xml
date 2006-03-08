@@ -92,11 +92,8 @@ GENERAL NOTES
     <!-- Which bot predicate contains the bot's name? [String: name]-->
     <entry key="programd.bot-name-predicate">name</entry>
     
-    <!-- Log/display match trace messages? [boolean: true]-->
-    <entry key="programd.record-match-trace">true</entry>
-    
     <!-- Print stack trace on uncaught exceptions? [boolean: false]-->
-    <entry key="programd.on-uncaught-exceptions.print-stack-trace">false</entry>
+    <entry key="programd.on-uncaught-exceptions.print-stack-trace">true</entry>
     
     <!--Execute contents of <system> elements? [boolean: false]-->
     <entry key="programd.os-access-allowed">true</entry>
@@ -117,8 +114,14 @@ GENERAL NOTES
     <!--The string to send after an inactivity timeout. [String: INACTIVITY]-->
     <entry key="programd.inactivity-string">INACTIVITY</entry>
     
-    <!--The Multiplexor to use. [String: org.aitools.programd.multiplexor.FlatFileMultiplexor]-->
-    <entry key="programd.multiplexor-classname">org.aitools.programd.multiplexor.FlatFileMultiplexor</entry>
+    <!--The Nodemapper implementation to use. [String: org.aitools.programd.graph.TwoOptimalNodemaster]-->
+    <entry key="programd.nodemapper-implementation">org.aitools.programd.graph.TwoOptimalNodemaster</entry>
+    <!--<entry key="programd.nodemapper-implementation">org.aitools.programd.graph.NonOptimalNodemaster</entry>-->
+    <!--<entry key="programd.nodemapper-implementation">org.aitools.programd.graph.OneOptimalNodemaster</entry>-->
+    <!--<entry key="programd.nodemapper-implementation">org.aitools.programd.graph.ThreeOptimalNodemaster</entry>-->
+    
+    <!--The Multiplexor implementation to use. [String: org.aitools.programd.multiplexor.FlatFileMultiplexor]-->
+    <entry key="programd.multiplexor-implementation">org.aitools.programd.multiplexor.FlatFileMultiplexor</entry>
     <!--<entry key="programd.multiplexor-classname">org.aitools.programd.multiplexor.DBMultiplexor</entry>-->
     
     <!--The directory in which to save flat-file predicates (FFM only). [URL: /var/programd/ffm]-->
@@ -138,6 +141,11 @@ GENERAL NOTES
     
     <!-- Use interactive command-line shell? [boolean: true]-->
     <entry key="programd.console.use-shell">true</entry>
+    
+    <!-- Exit immediately upon startup? [boolean: false]
+         * This is for purposes of timing the program; after all bots have
+           been loaded, the program will immediately exit.-->
+    <entry key="programd.exit-immediately-on-startup">false</entry>
     
     
     <!--
