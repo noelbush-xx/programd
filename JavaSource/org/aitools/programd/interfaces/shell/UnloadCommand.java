@@ -67,14 +67,14 @@ public class UnloadCommand extends ShellCommand
         else
         {
             Graphmaster graphmaster = shell.getCore().getGraphmaster();
-            int categories = graphmaster.getTotalCategories();
+            int categories = graphmaster.getCategoryCount();
             Bot bot = shell.getBots().getBot(shell.getCurrentBotID());
             String path = commandLine.substring(space + 1);
             try
             {
                 graphmaster.unload(URLTools.createValidURL(path), bot);
                 bot.getLoadedFilesMap().remove(path);
-                Logger.getLogger("programd").info(categories - graphmaster.getTotalCategories() + " categories unloaded.");
+                Logger.getLogger("programd").info(categories - graphmaster.getCategoryCount() + " categories unloaded.");
             }
             catch (FileNotFoundException e)
             {

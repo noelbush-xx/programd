@@ -66,11 +66,11 @@ public class LoadCommand extends ShellCommand
         {
             Core core = shell.getCore();
             Graphmaster graphmaster = core.getGraphmaster();
-            int categories = graphmaster.getTotalCategories();
+            int categories = graphmaster.getCategoryCount();
             String path = commandLine.substring(space + 1);
             core.load(URLTools.contextualize(FileManager.getWorkingDirectory(), path), shell.getCurrentBotID());
             Logger.getLogger("programd").info(
-                    graphmaster.getTotalCategories() - categories + " categories loaded from \"" + path + "\".");
+                    graphmaster.getCategoryCount() - categories + " categories loaded from \"" + path + "\".");
         }
     }
 }
