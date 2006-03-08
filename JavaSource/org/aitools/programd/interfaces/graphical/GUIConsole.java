@@ -759,10 +759,10 @@ public class GUIConsole extends JPanel
         }
 
         Graphmaster graphmaster = this.core.getGraphmaster();
-        int categories = graphmaster.getTotalCategories();
+        int categories = graphmaster.getCategoryCount();
         this.core.load(URLTools.contextualize(FileManager.getWorkingDirectory(), (String) response), this.shell.getCurrentBotID());
         Logger.getLogger("programd").log(Level.INFO,
-                graphmaster.getTotalCategories() - categories + " categories loaded from \"" + (String) response + "\".");
+                graphmaster.getCategoryCount() - categories + " categories loaded from \"" + (String) response + "\".");
     }
 
     protected void loadAIMLFilePathChooser()
@@ -783,11 +783,11 @@ public class GUIConsole extends JPanel
             {
                 return;
             }
-            int categories = this.core.getGraphmaster().getTotalCategories();
+            int categories = this.core.getGraphmaster().getCategoryCount();
             Graphmaster graphmaster = this.core.getGraphmaster();
             this.core.load(URLTools.contextualize(FileManager.getWorkingDirectory(), newPath), this.shell.getCurrentBotID());
             Logger.getLogger("programd").log(Level.INFO,
-                    graphmaster.getTotalCategories() - categories + " categories loaded from \"" + newPath + "\".");
+                    graphmaster.getCategoryCount() - categories + " categories loaded from \"" + newPath + "\".");
         }
     }
 
