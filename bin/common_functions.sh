@@ -79,10 +79,10 @@ function setup_other_libs()
 
   # Set LISTENER_LIBS to the location of your listener jars.
   # No warning is provided if they cannot be found (since they are optional).
-  ICQ_AIM_LISTENER_LIBS=$LIBS/icqaim-listener/icq-aim-listener.jar:$LIBS/icqaim-listener/daim.jar
-  IRC_LISTENER_LIBS=$LIBS/irc-listener/irc-listener.jar
+  AIM_LISTENER_LIBS=$LIBS/aim-listener/aim-listener.jar:$LIBS/aim-listener/jaimbot-lib-1.4.jar
+  IRC_LISTENER_LIBS=$LIBS/irc-listener/irc-listener.jar:$LIBS/irc-listener/pircbot.jar
   YAHOO_LISTENER_LIBS=$LIBS/yahoo-listener/yahoo-listener.jar:$LIBS/yahoo-listener/ymsg_network_v0_61.jar
-  LISTENER_LIBS=$ICQ_AIM_LISTENER_LIBS:$IRC_LISTENER_LIBS:$YAHOO_LISTENER_LIBS
+  LISTENER_LIBS=$AIM_LISTENER_LIBS:$IRC_LISTENER_LIBS:$YAHOO_LISTENER_LIBS
 
   # Set SQL_LIB to the location of your database driver.
   # No warning is provided if it cannot be found (since it is optional).
