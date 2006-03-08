@@ -247,7 +247,7 @@ public class Core
         this.processes = new ManagedProcesses(this);
 
         // Get an instance of the settings-specified Multiplexor.
-        this.multiplexor = ClassUtils.getSubclassInstance(Multiplexor.class, this.settings.getMultiplexorClassname(),
+        this.multiplexor = ClassUtils.getSubclassInstance(Multiplexor.class, this.settings.getMultiplexorImplementation(),
                 "Multiplexor", this);
 
         // Initialize the PredicateMaster and attach it to the Multiplexor.
@@ -344,6 +344,12 @@ public class Core
 
         // Set the status indicator.
         this.status = Status.READY;
+        
+        // Exit immediately if configured to do so (for timing purposes).
+        if (this.settings.exitImmediatelyOnStartup())
+        {
+            shutdown();
+        }
     }
 
     private void startWatcher()
