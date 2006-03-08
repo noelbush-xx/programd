@@ -97,4 +97,16 @@ public interface Nodemapper
      * root node. Not sure if this is correct.
      */
     public void setTop();
+
+    
+    /**
+     * Returns a weighted average of the sizes of this Nodemapper and its
+     * children.  The average is &quot;weighted&quot; by giving this
+     * Nodemapper's size and the average size of its children equal weight.
+     * If this Nodemapper does not have a parent (i.e., is the root), then
+     * its size is excluded from the calculation.
+     * 
+     * @return the sizes of this Nodemapper and all its children.
+     */
+    public double getAverageSize();
 }
