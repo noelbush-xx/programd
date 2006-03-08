@@ -116,8 +116,14 @@ public class Graphmaster
     /** The logger. */
     private Logger logger = Logger.getLogger("programd");
 
-    /** The root {@link Nodemaster} . */
-    protected Nodemapper root = new Nodemaster();
+    /** The match logger. */
+    private Logger matchLogger = Logger.getLogger("programd.matching");
+
+    /** The factory that will be used to create Nodemappers. */
+    protected NodemapperFactory nodemapperFactory;
+    
+    /** The root {@link NodemapperFactory} . */
+    protected Nodemapper root;
     
     /** A map of loaded file URLs to botids. */
     protected Map<URL, Set<String>> urlCatalog = new HashMap<URL, Set<String>>();
@@ -148,6 +154,12 @@ public class Graphmaster
 
     /** The response timeout. */
     protected int responseTimeout;
+    
+    /** A count of Nodemappers. */
+    protected int nodemapperCount = 1;
+    
+    /** A running average of Nodemapper size. */
+    protected float averageNodemapperSize;
 
     /**
      * Creates a new Graphmaster, reading settings from
@@ -159,26 +171,14 @@ public class Graphmaster
     {
         this.core = coreToUse;
         CoreSettings settings = this.core.getSettings();
+        this.nodemapperFactory = new NodemapperFactory(settings.getNodemapperImplementation());
+        this.root = this.nodemapperFactory.getNodemapper();
         this.mergePolicy = settings.getMergePolicy();
         this.mergeAppendSeparator = settings.getMergeAppendSeparatorString();
         this.noteEachMerge = settings.mergeNoteEach();
         this.responseTimeout = settings.getResponseTimeout();
         this.categoryLoadNotifyInterval = settings.getCategoryLoadNotifyInterval();
         this.aimlNamespaceURI = settings.getAimlSchemaNamespaceUri().toString();
-    }
-    
-    /**
-     * Creates a new Graphmaster, using default
-     * settings as necessary.
-     */
-    public Graphmaster()
-    {
-        this.mergePolicy = CoreSettings.MergePolicy.COMBINE;
-        this.mergeAppendSeparator = " ";
-        this.noteEachMerge = false;
-        this.responseTimeout = 1000;
-        this.categoryLoadNotifyInterval = 5000;
-        this.aimlNamespaceURI = "http://alicebot.org/2001/AIML-1.0.1";
     }
 
     /**
@@ -237,7 +237,8 @@ public class Graphmaster
         else
         {
             // Otherwise create a new node with this word.
-            node = new Nodemaster();
+            node = this.nodemapperFactory.getNodemapper();
+            this.nodemapperCount++;
         	
             parent.put(word, node);
             node.setParent(parent);
@@ -383,6 +384,7 @@ public class Graphmaster
      * @param expiration when this response process expires
      * @return the resulting <code>Match</code> object
      */
+    @SuppressWarnings("boxing")
     private Match match(Nodemapper nodemapper, Nodemapper parent, List<String> input,
             String wildcardContent, StringBuilder path, MatchState matchState, long expiration)
     {
@@ -395,6 +397,11 @@ public class Graphmaster
         // Halt matching if this node is higher than the length of the input.
         if (input.size() < nodemapper.getHeight())
         {
+            if (this.matchLogger.isDebugEnabled())
+            {
+                this.matchLogger.debug(String.format("Halting match because input size %d < nodemapper height %d.%ninput: %s%nnodemapper: %s",
+                        input.size(), nodemapper.getHeight(), input.toString(), nodemapper.toString()));
+            }
             return null;
         }
 
@@ -941,7 +948,7 @@ public class Graphmaster
      * 
      * @return the number of categories presently loaded
      */
-    public int getTotalCategories()
+    public int getCategoryCount()
     {
         return this.totalCategories;
     }
@@ -962,9 +969,39 @@ public class Graphmaster
      * 
      * @return the number of path-identical categories encountered
      */
-    public int getDuplicateCategories()
+    public int getDuplicateCategoryCount()
     {
         return this.duplicateCategories;
+    }
+    
+    /**
+     * Returns the number of Nodemappers in the Graphmaster.
+     * 
+     * @return the number of Nodemapper in the Graphmaster.
+     */
+    public int getNodemapperCount()
+    {
+        return this.nodemapperCount;
+    }
+    
+    /**
+     * Returns the average Nodemapper size.  Note that this method
+     * actually performs the count when called.
+     * 
+     * @return the average Nodemapper size
+     */
+    public double getAverageNodemapperSize()
+    {
+        /*
+        List<Integer> sizes = this.root.getSizes();
+        int sum = 0;
+        for (int value : sizes)
+        {
+            sum += value;
+        }
+        return (float)sum / (float)sizes.size();
+        */
+        return this.root.getAverageSize();
     }
     
     /**
