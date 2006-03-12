@@ -16,6 +16,8 @@ package org.aitools.programd.util;
  */
 public class UserSystem
 {
+    private static double BYTES_PER_MB = 1024.0 * 1024.0; 
+    
     /**
      * Returns a description of the JVM.
      * 
@@ -54,11 +56,14 @@ public class UserSystem
     public static String memoryReport()
     {
         Runtime runtime = Runtime.getRuntime();
+        long freemem = runtime.freeMemory();
+        long totalmem = runtime.totalMemory();
         return String
         .format(
-                "%.1f MB of memory free out of %.1f MB total in JVM.  Configured maximum: %.1f MB.",
-                (runtime.freeMemory() / 1048576.0),
-                (runtime.totalMemory() / 1048576.0),
-                (runtime.maxMemory() / 1048576.0));
+                "%.1f MB of memory free out of %.1f MB total in JVM (%.1f MB used).  Configured maximum: %.1f MB.",
+                freemem / BYTES_PER_MB,
+                totalmem / BYTES_PER_MB,
+                (totalmem - freemem) / BYTES_PER_MB,
+                runtime.maxMemory() / BYTES_PER_MB);
     }
 }
