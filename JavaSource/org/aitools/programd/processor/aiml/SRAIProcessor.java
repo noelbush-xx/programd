@@ -87,7 +87,7 @@ public class SRAIProcessor extends AIMLProcessor
             }
         }
 
-        matchLogger.debug("Symbolic Reduction:");
+        matchLogger.debug("[SYMBOLIC REDUCTION]");
 
         String input = parser.evaluate(element.getChildNodes());
         String userid = parser.getUserID();
