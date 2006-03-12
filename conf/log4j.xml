@@ -47,9 +47,9 @@
         Only use this appender when debugging!-->
     <appender name="matchlog" class="org.apache.log4j.ConsoleAppender">
         <layout class="org.apache.log4j.PatternLayout">
-            <!--<param name="ConversionPattern" value="[%d{ISO8601}] %C{1}: %m%n"/>-->
+            <param name="ConversionPattern" value="[%d{ISO8601}] %C{1}: %m%n"/>
             <!--An uglier but more useful conversion pattern:-->
-            <param name="ConversionPattern" value="[%r] %l %m%n" />
+            <!--<param name="ConversionPattern" value="[%r] %l %m%n" />-->
         </layout>
     </appender>
 
