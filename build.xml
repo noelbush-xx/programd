@@ -4,7 +4,7 @@
     <target name="init">
         <tstamp />
         <property name="Name" value="Program D" />
-        <property name="version" value="4.6rc3" />
+        <property name="version" value="4.6" />
         <property name="year" value="2006" />
 
         <property name="javac.compiler" value="modern" />
