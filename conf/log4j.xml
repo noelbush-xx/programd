@@ -42,6 +42,25 @@
         </layout>
     </appender>
 
+    <!--The listener console appender-->
+    <appender name="listener-console" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d{ISO8601}] %p: (%C{1}) %m%n" />
+        </layout>
+    </appender>
+
+    <!--The listener log file
+        NOTE: Currently set to same path as main activity log;
+        this just includes the listener classname-->
+    <appender name="listener-log" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="/var/log/programd/activity.log" />
+        <param name="MaxFileSize" value="10MB" />
+        <param name="MaxBackupIndex" value="10" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d{ISO8601}] %p: (%C{1}) %m%n" />
+        </layout>
+    </appender>
+
     <!--The matching log
         WARNING: The conversion pattern used here is slow!
         Only use this appender when debugging!-->
@@ -111,6 +130,20 @@
         <appender-ref ref="XMLChatlog-SampleBot-only" />
         <appender-ref ref="TxtChatlog" />
     </logger>
+    
+    <!--Logging for listeners.-->
+    <logger name="programd.listener" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="listener-console" />
+        <appender-ref ref="listener-log" />
+    </logger>
+    
+    <!--Logging for the JAIM library used by the AIM Listener.-->
+    <logger name="com.levelonelabs.aim" additivity="false">
+        <level value="off"/>
+        <appender-ref ref="listener-console" />
+        <appender-ref ref="listener-log" />
+    </logger>
 
     <!--Matching: will be slow!
         Set level higher than debug (or off) for production.-->
@@ -124,14 +157,6 @@
     <logger name="programd.aiml-processing" additivity="false">
         <level value="off" />
         <appender-ref ref="aimllog" />
-    </logger>
-    
-    <!--Logging for the daim library used by the ICQ/AIM Listener.-->
-    <logger name="org.walluck">
-        <level value="off"/>
-        <appender-ref ref="stdout" />
-        <appender-ref ref="stderr" />
-        <appender-ref ref="activitylog" />
     </logger>
 
 </log4j:configuration>
