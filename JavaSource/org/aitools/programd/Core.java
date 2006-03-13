@@ -41,6 +41,7 @@ import org.aitools.programd.util.ClassUtils;
 import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.Heart;
+import org.aitools.programd.util.JDKLogHandler;
 import org.aitools.programd.util.ManagedProcesses;
 import org.aitools.programd.util.UnspecifiedParameterError;
 import org.aitools.programd.util.URLTools;
@@ -236,6 +237,9 @@ public class Core
                 stdErrAppender.setWriter(new OutputStreamWriter(System.err));
             }
         }
+        
+        // Set up an interception of calls to the JDK logging system and re-route to log4j.
+        JDKLogHandler.setupInterception();
         
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
