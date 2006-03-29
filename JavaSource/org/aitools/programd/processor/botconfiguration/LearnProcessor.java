@@ -16,14 +16,13 @@ import org.w3c.dom.Element;
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.URLTools;
 
 /**
  * Loads AIML at load-time.
  * 
  * @since 4.1.2
- * @version 4.5
+ * @version 4.6
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class LearnProcessor extends BotConfigurationElementProcessor
@@ -48,7 +47,7 @@ public class LearnProcessor extends BotConfigurationElementProcessor
     @Override
     public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
-        URL path = URLTools.contextualize(FileManager.getWorkingDirectory(), parser.evaluate(element.getChildNodes()));
+        URL path = URLTools.contextualize(parser.getCurrentDocURL(), parser.evaluate(element.getChildNodes()));
         //FileManager.pushWorkingDirectory(URLTools.getParent(URLTools.getParent(path)));
         parser.getCore().load(path, parser.getCurrentBot().getID());
         //FileManager.popWorkingDirectory();
