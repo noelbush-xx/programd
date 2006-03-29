@@ -12,7 +12,7 @@
                             suite.</xs:documentation>
                     </xs:annotation>
                 </xs:element>
-                <xs:element name="TestCase" maxOccurs="unbounded">
+                <xs:element name="TestCase" minOccurs="0" maxOccurs="unbounded">
                     <xs:annotation>
                         <xs:documentation>A TestCase has a single input string that it sends to the
                             engine, and one or more Checkers that are used to validate the response
