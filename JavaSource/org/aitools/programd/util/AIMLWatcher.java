@@ -76,7 +76,7 @@ public class AIMLWatcher
      */
     protected void reload(URL path)
     {
-        this.logger.info(String.format("AIMLWatcher reloading \"%s\".", path));
+        this.logger.info(String.format("AIMLWatcher reloading \"%s\".", URLTools.unescape(path)));
         this.core.reload(path);
     }
 
@@ -88,10 +88,12 @@ public class AIMLWatcher
     @SuppressWarnings("boxing")
     public void addWatchFile(URL path)
     {
+        /*
         if (this.logger.isDebugEnabled())
         {
             this.logger.debug(String.format("Adding watch file \"%s\".", path));
         }
+        */
         synchronized(this)
         {
             if (URLTools.seemsToExist(path))
@@ -103,7 +105,7 @@ public class AIMLWatcher
             }
             else
             {
-                this.logger.warn(String.format("AIMLWatcher cannot read path \"%s\"", path), new IOException());
+                this.logger.warn(String.format("AIMLWatcher cannot read path \"%s\"", URLTools.unescape(path)), new IOException());
             }
         }
     }
