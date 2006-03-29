@@ -790,6 +790,12 @@ public class Graphmaster
             remove(nodemapper);
             this.totalCategories--;
         }
+        Set<String> botids = this.urlCatalog.get(path);
+        botids.remove(bot.getID());
+        if (botids.size() == 0)
+        {
+            this.urlCatalog.remove(path);
+        }
     }
 
     /**
