@@ -751,8 +751,10 @@ public class Core
             {
                 e.printStackTrace(System.err);
             }
+            /*
             Core.this.status = Core.Status.CRASHED;
             System.err.println("Core has crashed.  Shutdown may not have completed properly.");
+            */
         }
     }
     
