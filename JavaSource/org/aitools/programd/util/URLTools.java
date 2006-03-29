@@ -253,6 +253,88 @@ public class URLTools
             throw new DeveloperError("Given subject cannot be contextualized in given context.", e);
         }
     }
+    
+    /**
+     * A smarter version of {@link URI#relativize(URI)}.  In addition
+     * to performing the relativation (and catching exceptions when converting
+     * from URL to URI and back again), this will try to replace common "parent"
+     * portions of the resulting path with "../" structures.
+     * 
+     * @param context
+     * @param subject
+     * @return the subject relative to the context
+     */
+    public static URL relativize(URL context, URL subject)
+    {
+        URI contextURI = null;
+        try
+        {
+            contextURI = context.toURI();
+        }
+        catch (URISyntaxException e)
+        {
+            throw new DeveloperError(String.format("Cannot create URI from context URL \"%s\".", context), e);
+        }
+        URI relativizedURI = null;
+        try
+        {
+            relativizedURI = contextURI.relativize(subject.toURI());
+        }
+        catch (URISyntaxException e)
+        {
+            throw new DeveloperError(String.format("Cannot create URI from subject URL \"%s\".", subject), e);
+        }
+        URL relativizedURL = null;
+        try
+        {
+            relativizedURL = relativizedURI.toURL();
+        }
+        catch (MalformedURLException e)
+        {
+            throw new DeveloperError(String.format("Cannot create URL from relativization result \"%s\".", relativizedURI), e);
+        }
+        String relativizedString = relativizedURI.toString();
+        
+        URL parent = getParent(context);
+        int levelUp = 1;
+        do 
+        {
+            parent = getParent(parent);
+            relativizedString = relativizedString.replace(parent.toString(), upLevel(levelUp));
+            levelUp++;
+        }
+        while (!parent.equals(getParent(parent)));
+        
+        try
+        {
+            return new URL(relativizedString);
+        }
+        catch (MalformedURLException e)
+        {
+            try
+            {
+                return new URL(String.format("%s:%s", context.getProtocol(), relativizedString));
+            }
+            catch (MalformedURLException ee)
+            {
+                throw new DeveloperError(String.format("Cannot create URL from relativization result \"%s\".", relativizedString), ee);
+            }
+        }
+    }
+    
+    private static String upLevel(int count)
+    {
+        StringBuilder result = new StringBuilder(count * 3);
+        for (int index = 0; index < count; index++)
+        {
+            if (result.length() > 0)
+            {
+                result.append('/');
+            }
+            result.append("..");
+        }
+        return result.toString();
+    }
 
     /**
      * Uses a couple of simple heuristics to guess whether a
