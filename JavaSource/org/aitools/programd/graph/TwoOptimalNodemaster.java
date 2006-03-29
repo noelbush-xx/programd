@@ -136,7 +136,7 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
             Object keyToRemove = null;
             for (Map.Entry<String, Object> item : this.hidden.entrySet())
             {
-                if (item.getValue().equals(valueToRemove))
+                if (valueToRemove.equals(item.getValue()))
                 {
                     // Found it.
                     keyToRemove = item.getKey();
