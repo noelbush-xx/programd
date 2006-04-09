@@ -12,7 +12,7 @@ package org.aitools.programd.logging;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.aitools.programd.logging.ChatLogEvent;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.xml.XML;
 import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.spi.LoggingEvent;
 
@@ -87,7 +87,7 @@ public class SimpleChatLogLayout extends SimpleLayout
      */
     public String format(ChatLogEvent event)
     {
-        String[] responseLines = XMLKit.filterViaHTMLTags(event.getReply());
+        String[] responseLines = XML.filterViaHTMLTags(event.getReply());
         StringBuilder result = new StringBuilder();
         int responseLineCount = responseLines.length;
         String datetime = null;

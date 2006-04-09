@@ -12,7 +12,7 @@ package org.aitools.programd.logging;
 import java.util.Date;
 
 import org.aitools.programd.logging.ChatLogEvent;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.xml.XML;
 import org.apache.log4j.Layout;
 import org.apache.log4j.helpers.ISO8601DateFormat;
 import org.apache.log4j.spi.LoggingEvent;
@@ -90,11 +90,11 @@ public class XMLChatLogLayout extends Layout
         result.append(USERID_END);
 
         result.append(INPUT_START);
-        result.append(XMLKit.escapeXMLChars(event.getInput()));
+        result.append(XML.escapeXMLChars(event.getInput()));
         result.append(INPUT_END);
 
         result.append(REPLY_START);
-        result.append(XMLKit.escapeXMLChars(event.getReply()));
+        result.append(XML.escapeXMLChars(event.getReply()));
         result.append(REPLY_END);
 
         result.append(EVENT_END);

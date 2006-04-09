@@ -9,7 +9,7 @@
 
 package org.aitools.programd.interfaces.shell;
 
-import org.aitools.programd.util.UserSystem;
+import org.aitools.util.runtime.UserSystem;
 
 /**
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>

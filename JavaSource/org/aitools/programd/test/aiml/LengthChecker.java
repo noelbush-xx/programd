@@ -1,6 +1,6 @@
 package org.aitools.programd.test.aiml;
 
-import org.aitools.programd.util.DeveloperError;
+import org.aitools.util.runtime.DeveloperError;
 
 /**
  * Tests whether a given input has an expected length.

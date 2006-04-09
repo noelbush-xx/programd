@@ -7,9 +7,9 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 import org.aitools.programd.multiplexor.Multiplexor;
-import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.StringKit;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.StringKit;
+import org.aitools.util.xml.XML;
 
 /**
  * A TestCase contains an inputs and a set of checkers that test the response to
@@ -66,7 +66,7 @@ public class TestCase
             this.name = "case-" + index;
         }
 
-        List<Element> children = XMLKit.getElementChildrenOf(element);
+        List<Element> children = XML.getElementChildrenOf(element);
 
         int checkersStart = 0;
         // Might be a description here.
@@ -162,8 +162,8 @@ public class TestCase
      */
     public boolean run(Multiplexor multiplexor, String userid, String botid)
     {
-        this.lastResponse = XMLKit.filterWhitespace(multiplexor.getResponse(this.input, userid, botid));
-        return responseIsValid(StringKit.renderAsLines(XMLKit.filterViaHTMLTags(this.lastResponse)));
+        this.lastResponse = XML.filterWhitespace(multiplexor.getResponse(this.input, userid, botid));
+        return responseIsValid(StringKit.renderAsLines(XML.filterViaHTMLTags(this.lastResponse)));
     }
 
     /**

@@ -18,7 +18,7 @@ import gnu.getopt.LongOpt;
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreShutdownHook;
 import org.aitools.programd.interfaces.Console;
-import org.aitools.programd.util.URLTools;
+import org.aitools.util.resource.URLTools;
 
 /**
  * A <code>SimpleConsole</code> gives you a running

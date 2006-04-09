@@ -16,7 +16,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.xml.XML;
 
 /**
  * The <code>sentence-splitters</code> element is a container for defining
@@ -57,7 +57,7 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
         // (otherwise...)
         Bot bot = parser.getCurrentBot();
 
-        List<Element> splitters = XMLKit.getElementChildrenOf(element);
+        List<Element> splitters = XML.getElementChildrenOf(element);
 
         for (Element splitter : splitters)
         {

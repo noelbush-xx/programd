@@ -22,10 +22,10 @@ import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
 import org.aitools.programd.multiplexor.PredicateMaster;
-import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.ManagedProcess;
-import org.aitools.programd.util.UserError;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.runtime.UserError;
+import org.aitools.util.xml.XML;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 
@@ -139,16 +139,16 @@ public class Shell extends Thread
         this.commandRegistry = new ShellCommandRegistry();
         
         // Look for any shell command plugins and add them to the registry.
-        Element shellCommandSet = XMLKit.getFirstElementNamed(this.core.getPluginConfig().getDocumentElement(), "shell-commands");
+        Element shellCommandSet = XML.getFirstElementNamed(this.core.getPluginConfig().getDocumentElement(), "shell-commands");
         if (shellCommandSet != null)
         {
-            List<Element> commands = XMLKit.getAllElementsNamed(shellCommandSet, "command");
+            List<Element> commands = XML.getAllElementsNamed(shellCommandSet, "command");
             if (commands != null)
             {
                 for (Element commandElement : commands)
                 {
                     String classname = commandElement.getAttribute("class");
-                    List<Element> parameterElements = XMLKit.getAllElementsNamed(commandElement, "parameter");
+                    List<Element> parameterElements = XML.getAllElementsNamed(commandElement, "parameter");
                     if (parameterElements != null)
                     {
                         HashMap<String, String> parameters = new HashMap<String, String>(parameterElements.size());
@@ -245,7 +245,7 @@ public class Shell extends Thread
             }
             else if (commandLine.length() > 0)
             {
-                showConsole(this.botName, XMLKit.filterViaHTMLTags(this.core.getResponse(commandLine, this.hostname, this.botid)));
+                showConsole(this.botName, XML.filterViaHTMLTags(this.core.getResponse(commandLine, this.hostname, this.botid)));
             }
             // If the command line has zero length, ignore it.
         }
@@ -448,7 +448,7 @@ public class Shell extends Thread
         this.botName = this.bots.getBot(newBotID).getPropertyValue(this.botNamePredicate);
         showMessage("Switched to bot \"" + newBotID + "\" (name: \"" + this.botName + "\").");
         // Send the connect string and print the first response.
-        showConsole(this.botName, XMLKit.filterViaHTMLTags(this.core.getResponse(this.core.getSettings().getConnectString(), this.hostname,
+        showConsole(this.botName, XML.filterViaHTMLTags(this.core.getResponse(this.core.getSettings().getConnectString(), this.hostname,
                 this.botid)));
     }
 

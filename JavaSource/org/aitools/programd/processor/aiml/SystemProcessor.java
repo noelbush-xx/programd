@@ -21,7 +21,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.FileManager;
+import org.aitools.util.resource.Filesystem;
 
 /**
  * <p>
@@ -117,7 +117,7 @@ public class SystemProcessor extends AIMLProcessor
             logger.error("No programd.interpreter.system.directory defined!");
             return EMPTY_STRING;
         }
-        File directory = FileManager.getExistingDirectory(directoryPath);
+        File directory = Filesystem.getExistingDirectory(directoryPath);
         logger.debug("Executing <system> call in \"" + directory.getPath() + "\"");
         ProcessBuilder processBuilder = null;
         if (useArrayExecForm)

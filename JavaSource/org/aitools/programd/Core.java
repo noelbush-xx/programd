@@ -37,17 +37,17 @@ import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.processor.aiml.AIMLProcessorRegistry;
 import org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessorRegistry;
 import org.aitools.programd.util.AIMLWatcher;
-import org.aitools.programd.util.ClassUtils;
-import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.FileManager;
 import org.aitools.programd.util.Heart;
-import org.aitools.programd.util.JDKLogHandler;
 import org.aitools.programd.util.ManagedProcesses;
-import org.aitools.programd.util.UnspecifiedParameterError;
-import org.aitools.programd.util.URLTools;
-import org.aitools.programd.util.UserError;
-import org.aitools.programd.util.UserSystem;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.ClassUtils;
+import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.resource.Filesystem;
+import org.aitools.util.JDKLogHandler;
+import org.aitools.util.resource.URLTools;
+import org.aitools.util.UnspecifiedParameterError;
+import org.aitools.util.runtime.UserError;
+import org.aitools.util.runtime.UserSystem;
+import org.aitools.util.xml.XML;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
@@ -72,10 +72,10 @@ public class Core
             "of the License, or (at your option) any later version." };
 
     /** Version of this package. */
-    public static final String VERSION = "4.6";
+    public static final String VERSION = "4.6.1";
 
     /** Build identifier. */
-    public static final String BUILD = "";
+    public static final String BUILD = "[004]";
     
     /** The location of the AIML schema. */
     private static final String AIML_SCHEMA_LOCATION = "resources/schema/AIML.xsd";
@@ -178,7 +178,7 @@ public class Core
     {
         this.settings = new CoreSettings();
         this.baseURL = base;
-        FileManager.setRootPath(FileManager.getWorkingDirectory());
+        Filesystem.setRootPath(Filesystem.getWorkingDirectory());
         start();
     }
 
@@ -193,7 +193,7 @@ public class Core
     {
         this.baseURL = base;
         this.settings = new CoreSettings(propertiesPath);
-        FileManager.setRootPath(URLTools.getParent(this.baseURL));
+        Filesystem.setRootPath(URLTools.getParent(this.baseURL));
         start();
     }
 
@@ -208,7 +208,7 @@ public class Core
     {
         this.settings = settingsToUse;
         this.baseURL = base;
-        FileManager.setRootPath(URLTools.getParent(this.baseURL));
+        Filesystem.setRootPath(URLTools.getParent(this.baseURL));
         start();
     }
 
@@ -244,7 +244,7 @@ public class Core
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
         
-        this.parser = XMLKit.getSAXParser(URLTools.contextualize(FileManager.getWorkingDirectory(), AIML_SCHEMA_LOCATION), "AIML");
+        this.parser = XML.getSAXParser(URLTools.contextualize(Filesystem.getWorkingDirectory(), AIML_SCHEMA_LOCATION), "AIML");
         
         this.graphmaster = new Graphmaster(this);
         this.bots = new Bots();
@@ -271,7 +271,7 @@ public class Core
         // Load the plugin config.
         try
         {
-            this.pluginConfig = XMLKit.getDocumentBuilder(URLTools.contextualize(FileManager.getWorkingDirectory(), PLUGINS_SCHEMA_LOCATION),
+            this.pluginConfig = XML.getDocumentBuilder(URLTools.contextualize(Filesystem.getWorkingDirectory(), PLUGINS_SCHEMA_LOCATION),
                     "plugin configuration").parse(
                     URLTools.contextualize(this.baseURL, this.settings.getConfLocationPlugins())
                             .toString());
@@ -429,7 +429,7 @@ public class Core
     public void load(URL path, String botid)
     {
         // Handle paths with wildcards that need to be expanded.
-        if (path.getProtocol().equals(FileManager.FILE))
+        if (path.getProtocol().equals(Filesystem.FILE))
         {
             String spec = path.getFile();
             if (spec.indexOf(ASTERISK) != -1)
@@ -438,7 +438,7 @@ public class Core
     
                 try
                 {
-                    files = FileManager.glob(spec);
+                    files = Filesystem.glob(spec);
                 }
                 catch (FileNotFoundException e)
                 {
@@ -462,7 +462,7 @@ public class Core
             return;
         }
 
-        //FileManager.pushWorkingDirectory(URLTools.getParent(path));
+        //Filesystem.pushWorkingDirectory(URLTools.getParent(path));
         
         // Let the Graphmaster use a shortcut if possible.
         if (this.graphmaster.hasAlreadyLoaded(path))
@@ -491,7 +491,7 @@ public class Core
                 this.aimlWatcher.addWatchFile(path);
             }
         }
-        //FileManager.popWorkingDirectory();
+        //Filesystem.popWorkingDirectory();
     }
     
     /**
@@ -770,9 +770,9 @@ public class Core
             this.logger.debug("Suspending AIMLWatcher.");
             this.aimlWatcher.stop();
         }
-        if (path.getProtocol().equals(FileManager.FILE))
+        if (path.getProtocol().equals(Filesystem.FILE))
         {
-            FileManager.pushWorkingDirectory(URLTools.getParent(path));
+            Filesystem.pushWorkingDirectory(URLTools.getParent(path));
         }
         try
         {
@@ -782,9 +782,9 @@ public class Core
         {
             this.logger.error("Processor exception during startup: " + e.getExplanatoryMessage(), e);
         }
-        if (path.getProtocol().equals(FileManager.FILE))
+        if (path.getProtocol().equals(Filesystem.FILE))
         {
-            FileManager.popWorkingDirectory();
+            Filesystem.popWorkingDirectory();
         }
         if (this.settings.useWatcher())
         {
@@ -804,9 +804,9 @@ public class Core
     public String loadBot(URL path)
     {
         this.logger.info("Loading bot from \"" + path + "\".");
-        /*if (path.getProtocol().equals(FileManager.FILE))
+        /*if (path.getProtocol().equals(Filesystem.FILE))
         {
-            FileManager.pushWorkingDirectory(URLTools.getParent(path));
+            Filesystem.pushWorkingDirectory(URLTools.getParent(path));
         }*/
 
         String id = null;
@@ -820,9 +820,9 @@ public class Core
             this.logger.error(e.getExplanatoryMessage());
         }
         this.logger.info(String.format("Bot \"%s\" has been loaded.", id));
-        /*if (path.getProtocol().equals(FileManager.FILE))
+        /*if (path.getProtocol().equals(Filesystem.FILE))
         {
-            FileManager.popWorkingDirectory();
+            Filesystem.popWorkingDirectory();
         }*/
 
         return id;

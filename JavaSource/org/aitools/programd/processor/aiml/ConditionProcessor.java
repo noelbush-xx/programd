@@ -19,7 +19,7 @@ import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.NotAnAIMLPatternException;
 import org.aitools.programd.util.PatternArbiter;
-import org.aitools.programd.util.UserError;
+import org.aitools.util.runtime.UserError;
 import org.apache.log4j.Logger;
 
 /**

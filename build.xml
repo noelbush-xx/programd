@@ -22,6 +22,7 @@
 
         <property name="build.dir" value="${basedir}/build.tmp" />
         <path id="build.classpath">
+            <pathelement location="${compile.lib.dir}/aitools-utils.jar" />
             <pathelement location="${compile.lib.dir}/gnu.getopt-1.0.10.jar" />
             <pathelement location="${compile.lib.dir}/jsp-api.jar" />
             <pathelement location="${webapp.lib.dir}/js.jar" />

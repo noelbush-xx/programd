@@ -17,9 +17,9 @@ import org.w3c.dom.Element;
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.UserError;
+import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.resource.Filesystem;
+import org.aitools.util.runtime.UserError;
 
 /**
  * Handles a
@@ -65,7 +65,7 @@ public class GossipProcessor extends AIMLProcessor
         {
             try
             {
-                gossipFile = new FileWriter(FileManager.checkOrCreate(parser.getCore().getSettings().getGossipPath().getPath(), "gossip file"));
+                gossipFile = new FileWriter(Filesystem.checkOrCreate(parser.getCore().getSettings().getGossipPath().getPath(), "gossip file"));
             }
             catch (IOException e)
             {

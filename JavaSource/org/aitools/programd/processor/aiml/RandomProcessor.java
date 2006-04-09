@@ -16,9 +16,9 @@ import org.w3c.dom.Element;
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.LRUCache;
-import org.aitools.programd.util.MersenneTwisterFast;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.LRUCache;
+import org.aitools.util.math.MersenneTwisterFast;
+import org.aitools.util.xml.XML;
 
 /**
  * <p>
@@ -99,7 +99,7 @@ public class RandomProcessor extends AIMLProcessor
             generators.put(identifier, generator);
         }
 
-        List<Element> listitems = XMLKit.getElementChildrenOf(element);
+        List<Element> listitems = XML.getElementChildrenOf(element);
         int nodeCount = listitems.size();
 
         // Only one <li></li> child means we don't have to pick anything.

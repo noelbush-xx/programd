@@ -23,9 +23,10 @@ import org.aitools.programd.logging.ChatLogEvent;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.parser.TemplateParserException;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.InputNormalizer;
 import org.aitools.programd.util.NoMatchException;
+import org.aitools.util.runtime.DeveloperError;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 /**
@@ -466,7 +467,22 @@ abstract public class Multiplexor
      */
     private void logResponse(String input, String response, String userid, String botid)
     {
-        logger.callAppenders(new ChatLogEvent(botid, userid, input, response));
+        /*
+         * NOTA BENE: This is a very specific workaround for a problem with the log4j
+         * JDBCAppender.  It appears that the appender fails to maintain the database
+         * connection after some period of time, and thus stops working.  Here, we
+         * catch the exception thrown in this case, and force log4j to reinitialize
+         * the appender.  This is horribly specific and should go away as soon as possible.
+         * - 2006-03-29, NB
+         */
+        try
+        {
+            logger.callAppenders(new ChatLogEvent(botid, userid, input, response));
+        }
+        catch (Exception e)
+        {
+            LogManager.resetConfiguration();
+        }
     }
 
     /**

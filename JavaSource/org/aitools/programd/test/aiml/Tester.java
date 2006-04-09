@@ -10,8 +10,8 @@ import java.util.List;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.multiplexor.Multiplexor;
-import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.URLTools;
+import org.aitools.util.resource.Filesystem;
+import org.aitools.util.resource.URLTools;
 import org.apache.log4j.Logger;
 
 /**
@@ -71,12 +71,12 @@ public class Tester
         this.suiteURLs = suitePaths;
         try
         {
-            this.testReportDirectory = FileManager.checkOrCreateDirectory(testReports.getFile(),
+            this.testReportDirectory = Filesystem.checkOrCreateDirectory(testReports.getFile(),
                     "test report directory").getCanonicalFile().toURL();
         }
         catch (IOException e)
         {
-            assert false : "A directory that FileManager found cannot be found anymore.";
+            assert false : "A directory that Filesystem found cannot be found anymore.";
         }
     }
 
@@ -92,7 +92,7 @@ public class Tester
     public String run(String botid, String suite, int runCount)
     {
         this.suites.clear();
-        this.suites = loadTests(this.suiteURLs, URLTools.contextualize(FileManager.getRootPath(), TEST_CASES_SCHEMA_LOCATION), this.multiplexor, this.logger);
+        this.suites = loadTests(this.suiteURLs, URLTools.contextualize(Filesystem.getRootPath(), TEST_CASES_SCHEMA_LOCATION), this.multiplexor, this.logger);
         if (null == botid)
         {
             this.logger.warn("No botid defined for tests.");

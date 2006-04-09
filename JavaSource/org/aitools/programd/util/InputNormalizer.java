@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.aitools.util.xml.XML;
+
 /**
  * <code>InputNormalizer</code> replaces <code>Substituter</code> as the
  * utility class for performing various stages of <a
@@ -142,7 +144,7 @@ public class InputNormalizer
     public static String patternFit(String input)
     {
         // Remove all tags.
-        input = XMLKit.removeMarkup(input);
+        input = XML.removeMarkup(input);
 
         StringCharacterIterator iterator = new StringCharacterIterator(input);
         StringBuilder result = new StringBuilder(input.length());
@@ -183,7 +185,7 @@ public class InputNormalizer
     public static String patternFitIgnoreCase(String input)
     {
         // Remove all tags.
-        input = XMLKit.removeMarkup(input);
+        input = XML.removeMarkup(input);
 
         StringCharacterIterator iterator = new StringCharacterIterator(input);
         StringBuilder result = new StringBuilder(input.length());

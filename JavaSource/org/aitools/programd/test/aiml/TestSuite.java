@@ -9,9 +9,9 @@ import java.util.LinkedList;
 import javax.xml.parsers.DocumentBuilder;
 
 import org.aitools.programd.multiplexor.Multiplexor;
-import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.UserError;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.runtime.UserError;
+import org.aitools.util.xml.XML;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -150,7 +150,7 @@ public class TestSuite implements Iterable<TestCase>
             if (!caseSuccessful)
             {
                 this.logger.warn("Test case \"" + testcaseName + "\" failed with response \"" +
-                        XMLKit.removeMarkup(testCase.getLastResponse()) + "\".");
+                        XML.removeMarkup(testCase.getLastResponse()) + "\".");
                 registerFailure(this.name, testCase.getName(), testCase.getInput(), testCase
                         .getLastResponse());
             }
@@ -213,7 +213,7 @@ public class TestSuite implements Iterable<TestCase>
      */
     public static TestSuite load(URL path, URL schema, Multiplexor multiplexor, Logger logger)
     {
-        DocumentBuilder builder = XMLKit.getDocumentBuilder(schema, "test cases");
+        DocumentBuilder builder = XML.getDocumentBuilder(schema, "test cases");
         Document doc;
         try
         {

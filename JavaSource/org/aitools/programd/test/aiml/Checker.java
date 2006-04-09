@@ -2,7 +2,7 @@ package org.aitools.programd.test.aiml;
 
 import java.io.UnsupportedEncodingException;
 
-import org.aitools.programd.util.DeveloperError;
+import org.aitools.util.runtime.DeveloperError;
 import org.w3c.dom.Element;
 
 /**

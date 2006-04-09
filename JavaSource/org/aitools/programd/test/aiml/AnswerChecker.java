@@ -4,9 +4,9 @@ import java.io.UnsupportedEncodingException;
 
 import org.w3c.dom.Element;
 
-import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.StringKit;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.StringKit;
+import org.aitools.util.xml.XML;
 
 /**
  * Tests whether a given input equals an expected string.
@@ -28,7 +28,7 @@ public class AnswerChecker extends Checker
     {
         try
         {
-            this.expectedAnswer = new String(StringKit.renderAsLines(XMLKit.filterViaHTMLTags(XMLKit.renderXML(
+            this.expectedAnswer = new String(StringKit.renderAsLines(XML.filterViaHTMLTags(XML.renderXML(
                     element.getChildNodes(), false))).getBytes(encoding)).intern();
         }
         catch (UnsupportedEncodingException e)

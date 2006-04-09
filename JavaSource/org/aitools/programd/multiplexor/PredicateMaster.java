@@ -17,8 +17,8 @@ import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
-import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.xml.XML;
 import org.apache.log4j.Logger;
 
 /**
@@ -174,7 +174,7 @@ public class PredicateMaster
         PredicateValue value = getLoadOrCreateMultivaluedPredicateValue(name, userPredicates, userid, botid);
 
         // Push the new value onto the indexed predicate list.
-        value.push(XMLKit.removeMarkup(newValue));
+        value.push(XML.removeMarkup(newValue));
 
         // Increment the cache count.
         cacheSize++;

@@ -12,8 +12,8 @@ package org.aitools.programd.interfaces.shell;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.parser.TemplateParserException;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.UserError;
+import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.runtime.UserError;
 
 /**
  * Tries to process a given fragment of template-side AIML.

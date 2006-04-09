@@ -9,8 +9,8 @@
 
 package org.aitools.programd.graph;
 
-import org.aitools.programd.util.ClassUtils;
-import org.aitools.programd.util.UserError;
+import org.aitools.util.ClassUtils;
+import org.aitools.util.runtime.UserError;
 
 /**
  * Produces {@link Nodemapper}s based on the classname that

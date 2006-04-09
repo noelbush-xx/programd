@@ -13,9 +13,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.resource.Filesystem;
+import org.aitools.util.xml.XML;
 import org.apache.log4j.Logger;
 
 /**
@@ -65,7 +65,7 @@ public class TestReport
     {
         try
         {
-            FileWriter writer = new FileWriter(FileManager.checkOrCreate(path, "test report"));
+            FileWriter writer = new FileWriter(Filesystem.checkOrCreate(path, "test report"));
             writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
             writer.write("<TestReport>\n");
             writer.write("  <Successes>\n");
@@ -74,10 +74,10 @@ public class TestReport
             {
                 writer.write("    <Success>\n");
                 writer.write("      <Input>");
-                writer.write(XMLKit.escapeXMLChars(success.getInput()));
+                writer.write(XML.escapeXMLChars(success.getInput()));
                 writer.write("</Input>\n");
                 writer.write("      <Response>");
-                writer.write(XMLKit.escapeXMLChars(success.getResponse()));
+                writer.write(XML.escapeXMLChars(success.getResponse()));
                 writer.write("</Response>\n");
                 writer.write("    </Success>\n");
                 writer.flush();
@@ -88,10 +88,10 @@ public class TestReport
             {
                 writer.write("    <Failure>\n");
                 writer.write("      <Input>");
-                writer.write(XMLKit.escapeXMLChars(failure.getInput()));
+                writer.write(XML.escapeXMLChars(failure.getInput()));
                 writer.write("</Input>\n");
                 writer.write("      <Response>");
-                writer.write(XMLKit.escapeXMLChars(failure.getResponse()));
+                writer.write(XML.escapeXMLChars(failure.getResponse()));
                 writer.write("</Response>\n");
                 writer.write("    </Failure>\n");
                 writer.flush();

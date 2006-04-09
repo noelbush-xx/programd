@@ -19,8 +19,8 @@ import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.UserError;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.runtime.UserError;
+import org.aitools.util.xml.XML;
 
 /**
  * @version 4.5
@@ -80,7 +80,7 @@ abstract public class SubstitutionElementProcessor extends BotConfigurationEleme
         }
         
         Bot bot = parser.getCurrentBot();
-        List<Element> substitutions = XMLKit.getElementChildrenOf(element);
+        List<Element> substitutions = XML.getElementChildrenOf(element);
 
         for (Element substitution : substitutions)
         {

@@ -18,7 +18,7 @@ import org.xml.sax.ext.DefaultHandler2;
 
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.graph.Graphmaster;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.xml.XML;
 
 /**
  * <p>
@@ -146,7 +146,7 @@ public class AIMLReader extends DefaultHandler2
     {
         if (this.currentBuffer != null)
         {
-            this.currentBuffer.append(XMLKit.escapeXMLChars(ch, start, length));
+            this.currentBuffer.append(XML.escapeXMLChars(ch, start, length));
         }
     }
 
@@ -157,7 +157,7 @@ public class AIMLReader extends DefaultHandler2
     public void startCDATA()
     {
         assert this.currentBuffer != null : "Got CDATA start outside of a known element!";
-        this.currentBuffer.append(XMLKit.CDATA_START);
+        this.currentBuffer.append(XML.CDATA_START);
     }
 
     /**
@@ -167,7 +167,7 @@ public class AIMLReader extends DefaultHandler2
     public void endCDATA()
     {
         assert this.currentBuffer != null : "Got CDATA end outside of a known element!";
-        this.currentBuffer.append(XMLKit.CDATA_END);
+        this.currentBuffer.append(XML.CDATA_END);
     }
 
     /**
@@ -210,7 +210,7 @@ public class AIMLReader extends DefaultHandler2
              * we just reconstitute the XML text for later
              * processing.
              */
-            this.templateBuffer.append(XMLKit.renderStartTag(elementName, attributes, !uri.equals(this.defaultNamespaceURI), uri));
+            this.templateBuffer.append(XML.renderStartTag(elementName, attributes, !uri.equals(this.defaultNamespaceURI), uri));
         }
         else if (elementName.equals(TOPIC))
         {

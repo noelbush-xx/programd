@@ -17,6 +17,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.aitools.programd.Core;
+import org.aitools.util.resource.URLTools;
 import org.apache.log4j.Logger;
 
 /**

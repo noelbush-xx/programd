@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.aitools.programd.util.DeveloperError;
+import org.aitools.util.runtime.DeveloperError;
 
 /**
  * Contains all descriptions of bots.

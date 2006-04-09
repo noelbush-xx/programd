@@ -20,9 +20,9 @@ import org.aitools.programd.listener.Listener;
 import org.aitools.programd.listener.InvalidListenerParameterException;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.ClassUtils;
-import org.aitools.programd.util.UserError;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.ClassUtils;
+import org.aitools.util.runtime.UserError;
+import org.aitools.util.xml.XML;
 
 /**
  * The <code>listener</code> element is a container for defining parameters of
@@ -85,7 +85,7 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         Bot bot = parser.getCurrentBot();
 
         // Set up the parameters for the listener.
-        List<Element> parameterElements = XMLKit.getElementChildrenOf(element);
+        List<Element> parameterElements = XML.getElementChildrenOf(element);
         
         Map<String, String> parameters = new HashMap<String, String>(parameterElements.size());
         

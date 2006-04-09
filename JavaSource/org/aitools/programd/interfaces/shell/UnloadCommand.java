@@ -13,7 +13,7 @@ import java.io.FileNotFoundException;
 
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.graph.Graphmaster;
-import org.aitools.programd.util.URLTools;
+import org.aitools.util.resource.URLTools;
 import org.apache.log4j.Logger;
 
 /**

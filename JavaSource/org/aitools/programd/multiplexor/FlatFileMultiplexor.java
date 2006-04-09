@@ -17,9 +17,9 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.aitools.programd.Core;
-import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.FileManager;
-import org.aitools.programd.util.UserError;
+import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.resource.Filesystem;
+import org.aitools.util.runtime.UserError;
 
 /**
  * <p>
@@ -172,7 +172,7 @@ public class FlatFileMultiplexor extends Multiplexor
 
         String fileName = this.ffmDirName + File.separator + botid + File.separator + userid + PREDICATES_SUFFIX;
 
-        File predicateFile = FileManager.checkOrCreate(fileName, FFM_FILE_LABEL);
+        File predicateFile = Filesystem.checkOrCreate(fileName, FFM_FILE_LABEL);
         if (predicateFile.canRead())
         {
             try
@@ -198,11 +198,11 @@ public class FlatFileMultiplexor extends Multiplexor
     private void savePredicates(Properties predicates, String userid, String botid)
     {
         String fileName = this.ffmDirName + File.separator + botid + File.separator + userid + PREDICATES_SUFFIX;
-        FileManager.checkOrCreate(fileName, FFM_FILE_LABEL);
+        Filesystem.checkOrCreate(fileName, FFM_FILE_LABEL);
         FileOutputStream outputStream;
         try
         {
-            outputStream = FileManager.getFileOutputStream(fileName);
+            outputStream = Filesystem.getFileOutputStream(fileName);
         }
         catch (FileNotFoundException e)
         {

@@ -12,7 +12,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
-import org.aitools.programd.util.DeveloperError;
+import org.aitools.util.runtime.DeveloperError;
 
 /**
  * A sorter for TableModels. The sorter has a model (conforming to TableModel)

@@ -13,10 +13,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.aitools.programd.util.URLTools;
-import org.aitools.programd.util.UserError;
 
-import org.aitools.programd.util.Settings;
+import org.aitools.util.Settings;
+import org.aitools.util.resource.URLTools;
+import org.aitools.util.runtime.UserError;
 
 /**
  * Automatically generated from properties file, 2006-03-08T14:08:00.612-05:00

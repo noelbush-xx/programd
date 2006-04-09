@@ -31,12 +31,12 @@ import org.aitools.programd.Core;
 import org.aitools.programd.processor.Processor;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.processor.ProcessorRegistry;
-import org.aitools.programd.util.ClassUtils;
-import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.NotARegisteredClassException;
-import org.aitools.programd.util.URLTools;
-import org.aitools.programd.util.UserError;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.ClassUtils;
+import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.NotARegisteredClassException;
+import org.aitools.util.resource.URLTools;
+import org.aitools.util.runtime.UserError;
+import org.aitools.util.xml.XML;
 import org.apache.log4j.Logger;
 
 /**
@@ -216,7 +216,7 @@ abstract public class GenericParser<P extends Processor>
      */
     public String processResponse(String input) throws ProcessorException
     {
-        Document template = XMLKit.parseAsDocumentFragment(input);
+        Document template = XML.parseAsDocumentFragment(input);
         return evaluate(template);
     }
 
@@ -261,11 +261,11 @@ abstract public class GenericParser<P extends Processor>
         // otherwise (if this element is from a different namespace)
         if (element.getChildNodes().getLength() == 0)
         {
-            return XMLKit.renderEmptyElement(element, emitXMLNS);
+            return XML.renderEmptyElement(element, emitXMLNS);
         }
         // otherwise...
-        return XMLKit.renderStartTag(element, emitXMLNS) + evaluate(element.getChildNodes())
-                + XMLKit.renderEndTag(element);
+        return XML.renderStartTag(element, emitXMLNS) + evaluate(element.getChildNodes())
+                + XML.renderEndTag(element);
     }
 
     /**
@@ -353,11 +353,11 @@ abstract public class GenericParser<P extends Processor>
                     break;
                     
                 case Node.CDATA_SECTION_NODE:
-                    response += XMLKit.CDATA_START + node.getNodeValue() + XMLKit.CDATA_END;
+                    response += XML.CDATA_START + node.getNodeValue() + XML.CDATA_END;
                     break;
                     
                 case Node.COMMENT_NODE:
-                    response += XMLKit.COMMENT_START + node.getTextContent() + XMLKit.COMMENT_END;
+                    response += XML.COMMENT_START + node.getTextContent() + XML.COMMENT_END;
                     break;
     
                 default:

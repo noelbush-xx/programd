@@ -18,8 +18,8 @@ import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.parser.GenericParser;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.xml.XML;
 
 /**
  * Processes an indexed predicate.
@@ -92,7 +92,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
             return EMPTY_STRING;
         }
         // Get the nth "sentence" (1 is most recent, 2 just before that, etc.)
-        return XMLKit.removeMarkup(sentenceList.get(sentenceCount - indexes[1])).trim();
+        return XML.removeMarkup(sentenceList.get(sentenceCount - indexes[1])).trim();
     }
 
     /**
@@ -138,6 +138,6 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         }
 
         // Retrieve and prettify the result.
-        return XMLKit.removeMarkup(predicates.get(index)).trim();
+        return XML.removeMarkup(predicates.get(index)).trim();
     }
 }

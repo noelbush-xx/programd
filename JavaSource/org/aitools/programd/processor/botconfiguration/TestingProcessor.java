@@ -17,8 +17,8 @@ import org.aitools.programd.Core;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.URLTools;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.resource.URLTools;
+import org.aitools.util.xml.XML;
 
 /**
  * The <code>sentence-splitters</code> element is a container for defining
@@ -59,8 +59,8 @@ public class TestingProcessor extends BotConfigurationElementProcessor
         Bot bot = parser.getCurrentBot();
         URL docURL = parser.getCurrentDocURL();
         
-        bot.setTestSuitePathspec(URLTools.getURLs(XMLKit.getChildText(element, "test-suite-path"), docURL));
-        bot.setTestReportDirectory(URLTools.contextualize(docURL, XMLKit.getChildText(element, "report-directory")));
+        bot.setTestSuitePathspec(URLTools.getURLs(XML.getChildText(element, "test-suite-path"), docURL));
+        bot.setTestReportDirectory(URLTools.contextualize(docURL, XML.getChildText(element, "report-directory")));
 
         logger.info("Configured testing.");
         return EMPTY_STRING;

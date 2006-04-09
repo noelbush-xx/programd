@@ -9,7 +9,7 @@
 
 package org.aitools.programd.processor;
 
-import org.aitools.programd.util.ClassRegistry;
+import org.aitools.util.ClassRegistry;
 
 /**
  * Registers {@link Processor}s associated with a given namespace URI.

@@ -20,10 +20,10 @@ import java.util.Map;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
-import org.aitools.programd.util.DeveloperError;
-import org.aitools.programd.util.UserError;
-import org.aitools.programd.util.sql.DbAccess;
-import org.aitools.programd.util.sql.DbAccessRefsPoolMgr;
+import org.aitools.util.sql.DbAccess;
+import org.aitools.util.sql.DbAccessRefsPoolMgr;
+import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.runtime.UserError;
 import org.apache.log4j.Logger;
 
 /**

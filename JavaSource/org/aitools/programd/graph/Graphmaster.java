@@ -23,10 +23,10 @@ import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.processor.aiml.RandomProcessor;
-import org.aitools.programd.util.DeveloperError;
 import org.aitools.programd.util.NoMatchException;
-import org.aitools.programd.util.StringKit;
-import org.aitools.programd.util.XMLKit;
+import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.StringKit;
+import org.aitools.util.xml.XML;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -826,11 +826,11 @@ public class Graphmaster
 
         try
         {
-            existingDoc = XMLKit.parseAsDocumentFragment(existingTemplate);
+            existingDoc = XML.parseAsDocumentFragment(existingTemplate);
             existingRoot = existingDoc.getDocumentElement();
             existingContent = existingRoot.getChildNodes();
     
-            newDoc = XMLKit.parseAsDocumentFragment(newTemplate);
+            newDoc = XML.parseAsDocumentFragment(newTemplate);
             newContent = newDoc.getDocumentElement().getChildNodes();
         }
         catch (DeveloperError e)
@@ -865,7 +865,7 @@ public class Graphmaster
                 }
                 firstElement.appendChild(newListItem);
             }
-            return XMLKit.renderXML(existingDoc.getChildNodes(), false);
+            return XML.renderXML(existingDoc.getChildNodes(), false);
         }
         Element listItemForExisting = existingDoc.createElementNS(this.aimlNamespaceURI,
                 RandomProcessor.LI);
@@ -895,7 +895,7 @@ public class Graphmaster
 
         existingRoot.appendChild(newRandom);
 
-        return XMLKit.renderXML(existingDoc.getChildNodes(), false);
+        return XML.renderXML(existingDoc.getChildNodes(), false);
     }
 
     /**
@@ -915,10 +915,10 @@ public class Graphmaster
 
         try
         {
-            existingDoc = XMLKit.parseAsDocumentFragment(existingTemplate);
+            existingDoc = XML.parseAsDocumentFragment(existingTemplate);
             existingRoot = existingDoc.getDocumentElement();
 
-            newDoc = XMLKit.parseAsDocumentFragment(newTemplate);
+            newDoc = XML.parseAsDocumentFragment(newTemplate);
             newContent = newDoc.getDocumentElement().getChildNodes();
         }
         catch (DeveloperError e)
@@ -946,7 +946,7 @@ public class Graphmaster
             Node newNode = existingDoc.importNode(newContent.item(index), true);
             existingRoot.appendChild(newNode);
         }
-        return XMLKit.renderXML(existingDoc.getChildNodes(), false);
+        return XML.renderXML(existingDoc.getChildNodes(), false);
     }
 
     /**

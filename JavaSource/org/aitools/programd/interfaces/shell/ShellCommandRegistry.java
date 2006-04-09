@@ -11,7 +11,7 @@ package org.aitools.programd.interfaces.shell;
 
 import java.util.Collection;
 
-import org.aitools.programd.util.ObjectExemplarRegistry;
+import org.aitools.util.ObjectExemplarRegistry;
 
 /**
  * Maps ShellCommands to their command strings.

@@ -20,8 +20,8 @@ import org.aitools.programd.bot.Bots;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.URLTools;
-import org.aitools.programd.util.UserError;
+import org.aitools.util.resource.URLTools;
+import org.aitools.util.runtime.UserError;
 
 /**
  * Supports configuration of a bot from the startup file.

@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.programd.util.URLTools;
+import org.aitools.util.resource.URLTools;
 
 /**
  * Loads AIML at load-time.
@@ -48,9 +48,9 @@ public class LearnProcessor extends BotConfigurationElementProcessor
     public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         URL path = URLTools.contextualize(parser.getCurrentDocURL(), parser.evaluate(element.getChildNodes()));
-        //FileManager.pushWorkingDirectory(URLTools.getParent(URLTools.getParent(path)));
+        //Filesystem.pushWorkingDirectory(URLTools.getParent(URLTools.getParent(path)));
         parser.getCore().load(path, parser.getCurrentBot().getID());
-        //FileManager.popWorkingDirectory();
+        //Filesystem.popWorkingDirectory();
         return EMPTY_STRING;
     }
 }
