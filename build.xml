@@ -87,12 +87,12 @@
     <!--Create the jars.-->
     <target name="jars" depends="init, compile">
         <mkdir dir="${distrib.dir}" />
-        <jar jarfile="${main.jar}">
+        <jar jarfile="${main.jar}" compress="false">
             <fileset dir="${build.dir}/" includes="org/**" excludes="org/aitools/programd/interpreter/RhinoInterpreter.class" />
             <fileset dir="${src.dir}/" includes="org/aitools/programd/gui/icons/**" />
             <fileset dir="${build.dir}/" includes="resources/schema/**" />
         </jar>
-        <jar jarfile="${rhino.jar}">
+        <jar jarfile="${rhino.jar}" compress="false">
             <fileset dir="${build.dir}/" includes="org/aitools/programd/interpreter/RhinoInterpreter.class" />
         </jar>
     </target>
