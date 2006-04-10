@@ -37,11 +37,11 @@ public class BotProcessor extends BotConfigurationElementProcessor
     /**
      * Creates a new BotProcessor with the given Core.
      * 
-     * @param coreToUse the Core to use
+     * @param core the Core to use
      */
-    public BotProcessor(Core coreToUse)
+    public BotProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
     
     /**
@@ -71,7 +71,7 @@ public class BotProcessor extends BotConfigurationElementProcessor
             String href = element.getAttribute(HREF);
             try
             {
-                return this.core.loadBot(URLTools.createValidURL(href));
+                return this._core.loadBot(URLTools.createValidURL(href));
             }
             catch (FileNotFoundException e)
             {
@@ -83,7 +83,7 @@ public class BotProcessor extends BotConfigurationElementProcessor
 
         if (Boolean.valueOf(element.getAttribute(ENABLED)).booleanValue())
         {
-            Bots bots = this.core.getBots();
+            Bots bots = this._core.getBots();
             if (!bots.include(botID))
             {
                 Bot bot = new Bot(botID, parser.getCore().getSettings());
@@ -92,17 +92,17 @@ public class BotProcessor extends BotConfigurationElementProcessor
                 parser.setCurrentBot(bot);
                 bots.addBot(botID, bot);
                 
-                Graphmaster graphmaster = this.core.getGraphmaster();
+                Graphmaster graphmaster = this._core.getGraphmaster();
                 
                 int previousCategoryCount = graphmaster.getCategoryCount();
                 int previousDuplicateCount = graphmaster.getDuplicateCategoryCount();
 
-                this.core.setLoadtime();
+                this._core.setLoadtime();
                 
                 // Stop the AIMLWatcher while loading.
-                if (this.core.getSettings().useWatcher())
+                if (this._core.getSettings().useWatcher())
                 {
-                    this.core.getAIMLWatcher().stop();
+                    this._core.getAIMLWatcher().stop();
                 }
                 
                 // Index the start time before loading.
@@ -114,12 +114,12 @@ public class BotProcessor extends BotConfigurationElementProcessor
                 // Calculate the time used to load all categories.
                 time = new Date().getTime() - time;
 
-                this.core.unsetLoadtime();
+                this._core.unsetLoadtime();
 
                 // Restart the AIMLWatcher.
-                if (this.core.getSettings().useWatcher())
+                if (this._core.getSettings().useWatcher())
                 {
-                    this.core.getAIMLWatcher().start();
+                    this._core.getAIMLWatcher().start();
                 }
                 
                 logger.info(String.format("%,d categories loaded in %.4f seconds.",
@@ -137,7 +137,7 @@ public class BotProcessor extends BotConfigurationElementProcessor
                 {
                     logger.warn(String.format("%,d path-identical categories were encountered, and handled according to the %s merge policy.",
                             dupes,
-                            this.core.getSettings().getMergePolicy()));
+                            this._core.getSettings().getMergePolicy()));
                 }
             }
             else

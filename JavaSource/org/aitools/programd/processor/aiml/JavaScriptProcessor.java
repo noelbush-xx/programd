@@ -33,11 +33,11 @@ public class JavaScriptProcessor extends AIMLProcessor
     /**
      * Creates a new JavaScriptProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public JavaScriptProcessor(Core coreToUse)
+    public JavaScriptProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

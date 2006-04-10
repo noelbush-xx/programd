@@ -24,20 +24,20 @@ public class ProcessorRegistry<B> extends ClassRegistry<B>
      * The namespace URI of the content type for which this registry is
      * intended.
      */
-    protected String namespaceURI;
+    protected String _namespaceURI;
 
     /**
      * Creates a <code>ProcessorRegistry</code> associated with the given
      * namespace URI.
      * 
-     * @param namespaceURIToUse the namespace URI for the processors
+     * @param namespaceURI the namespace URI for the processors
      * @param classnames the names of the classes to register
      * @see ClassRegistry
      */
-    protected ProcessorRegistry(String namespaceURIToUse, String[] classnames)
+    protected ProcessorRegistry(String namespaceURI, String[] classnames)
     {
         super(classnames);
-        this.namespaceURI = namespaceURIToUse;
+        this._namespaceURI = namespaceURI;
     }
 
     /**
@@ -46,6 +46,6 @@ public class ProcessorRegistry<B> extends ClassRegistry<B>
      */
     public String getNamespaceURI()
     {
-        return this.namespaceURI;
+        return this._namespaceURI;
     }
 }

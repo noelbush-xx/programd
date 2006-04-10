@@ -35,11 +35,11 @@ public class PersonProcessor extends SubstitutionProcessor
     /**
      * Creates a new PersonProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public PersonProcessor(Core coreToUse)
+    public PersonProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

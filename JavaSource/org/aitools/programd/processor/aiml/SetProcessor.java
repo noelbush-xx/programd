@@ -36,11 +36,11 @@ public class SetProcessor extends AIMLProcessor
     /**
      * Creates a new SetProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public SetProcessor(Core coreToUse)
+    public SetProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

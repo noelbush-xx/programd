@@ -32,11 +32,11 @@ public class LowerCaseProcessor extends AIMLProcessor
     /**
      * Creates a new LowerCaseProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public LowerCaseProcessor(Core coreToUse)
+    public LowerCaseProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

@@ -33,11 +33,11 @@ public class DateProcessor extends AIMLProcessor
     /**
      * Creates a new DateProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public DateProcessor(Core coreToUse)
+    public DateProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

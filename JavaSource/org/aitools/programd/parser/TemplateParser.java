@@ -49,10 +49,10 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
     private ArrayList<String> inputs = new ArrayList<String>();
 
     /** The userid for which this parser is used. */
-    private String userid;
+    private String _userid;
 
     /** The botid on whose behalf this parser is working. */
-    private String botid;
+    private String _botid;
 
     /**
      * Initializes an <code>TemplateParser</code>. The <code>input</code>
@@ -60,21 +60,21 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
      * 
      * @param input the input that matched the <code>pattern</code> associated
      *            with this template (helps to avoid endless loops)
-     * @param useridToUse the userid for whom the template is being parsed
-     * @param botidToUse the botid for whom the template is being parsed
-     * @param coreToUse the Core in use
+     * @param userid the userid for whom the template is being parsed
+     * @param botid the botid for whom the template is being parsed
+     * @param core the Core in use
      * @throws TemplateParserException if the <code>input</code> is null
      */
-    public TemplateParser(String input, String useridToUse, String botidToUse, Core coreToUse) throws TemplateParserException
+    public TemplateParser(String input, String userid, String botid, Core core) throws TemplateParserException
     {
-        super(coreToUse.getAIMLProcessorRegistry(), coreToUse);
+        super(core.getAIMLProcessorRegistry(), core);
         if (input == null)
         {
             throw new TemplateParserException("No input supplied for TemplateParser!");
         }
         this.inputs.add(input);
-        this.userid = useridToUse;
-        this.botid = botidToUse;
+        this._userid = userid;
+        this._botid = botid;
     }
 
     /**
@@ -202,7 +202,7 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
      */
     public String getUserID()
     {
-        return this.userid;
+        return this._userid;
     }
 
     /**
@@ -210,6 +210,6 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
      */
     public String getBotID()
     {
-        return this.botid;
+        return this._botid;
     }
 }

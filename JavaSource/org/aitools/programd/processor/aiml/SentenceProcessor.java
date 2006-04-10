@@ -33,11 +33,11 @@ public class SentenceProcessor extends AIMLProcessor
     /**
      * Creates a new SentenceProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public SentenceProcessor(Core coreToUse)
+    public SentenceProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

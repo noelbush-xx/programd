@@ -32,10 +32,10 @@ public class Tester
     private LinkedList<TestResult> failures = new LinkedList<TestResult>();
     
     /** The Core that this Tester will use. */
-    private Core core;
+    private Core _core;
     
     /** The Multiplexor that this Tester will use. */
-    private Multiplexor multiplexor;
+    private Multiplexor _multiplexor;
 
     /** The logger to use. */
     private Logger logger;
@@ -57,16 +57,16 @@ public class Tester
      * Creates a new Tester which will use the given Core to find out its
      * configuration and run tests.
      * 
-     * @param coreToUse the Core to use for finding plugin configuration, active
+     * @param core the Core to use for finding plugin configuration, active
      *            multiplexor, etc.
      * @param testLogger the logger to which to send output
      * @param suitePaths the test suites
      * @param testReports the directory in which to store test reports
      */
-    public Tester(Core coreToUse, Logger testLogger, List<URL> suitePaths, URL testReports)
+    public Tester(Core core, Logger testLogger, List<URL> suitePaths, URL testReports)
     {
-        this.core = coreToUse;
-        this.multiplexor = this.core.getMultiplexor();
+        this._core = core;
+        this._multiplexor = this._core.getMultiplexor();
         this.logger = testLogger;
         this.suiteURLs = suitePaths;
         try
@@ -92,7 +92,7 @@ public class Tester
     public String run(String botid, String suite, int runCount)
     {
         this.suites.clear();
-        this.suites = loadTests(this.suiteURLs, URLTools.contextualize(Filesystem.getRootPath(), TEST_CASES_SCHEMA_LOCATION), this.multiplexor, this.logger);
+        this.suites = loadTests(this.suiteURLs, URLTools.contextualize(Filesystem.getRootPath(), TEST_CASES_SCHEMA_LOCATION), this._multiplexor, this.logger);
         if (null == botid)
         {
             this.logger.warn("No botid defined for tests.");
@@ -160,18 +160,18 @@ public class Tester
      * 
      * @param suiteList the list of suites
      * @param schema the URL to the copy of the schema for test cases
-     * @param multiplexorToUse the Multiplexor to assign to the suites
+     * @param multiplexor the Multiplexor to assign to the suites
      * @param logger the logger to use for tracking progress
      * 
      * @return the map of suite names to suites
      */
-    private static HashMap<String, TestSuite> loadTests(List<URL> suiteList, URL schema, Multiplexor multiplexorToUse, Logger logger)
+    private static HashMap<String, TestSuite> loadTests(List<URL> suiteList, URL schema, Multiplexor multiplexor, Logger logger)
     {
         HashMap<String, TestSuite> suites = new HashMap<String, TestSuite>();
         for (URL path : suiteList)
         {
             logger.info("Loading tests from \"" + path + "\".");
-            TestSuite suite = TestSuite.load(path, schema, multiplexorToUse, logger);
+            TestSuite suite = TestSuite.load(path, schema, multiplexor, logger);
             suites.put(suite.getName(), suite);
         }
         return suites;

@@ -59,7 +59,7 @@ abstract public class GenericParser<P extends Processor>
     protected Stack<URL> docURL = new Stack<URL>();
 
     /** The Core in use. */
-    protected Core core;
+    protected Core _core;
     
     /** The logger to use. */
     protected Logger logger;
@@ -82,12 +82,12 @@ abstract public class GenericParser<P extends Processor>
      * Creates a new GenericParser with the given Core as its owner.
      * 
      * @param registry the registry of processors
-     * @param coreToUse the Core that owns this
+     * @param core the Core that owns this
      */
-    public GenericParser(ProcessorRegistry<P> registry, Core coreToUse)
+    public GenericParser(ProcessorRegistry<P> registry, Core core)
     {
-        this.core = coreToUse;
-        this.logger = this.core.getLogger();
+        this._core = core;
+        this.logger = this._core.getLogger();
         this.processorRegistry = registry;
         if (utilDocBuilder == null)
         {
@@ -256,7 +256,7 @@ abstract public class GenericParser<P extends Processor>
 
             // Process the element with a new instance of the processor.
             return ClassUtils.getNewInstance(processorClass, "Processor",
-                    this.core).process(element, this);
+                    this._core).process(element, this);
         }
         // otherwise (if this element is from a different namespace)
         if (element.getChildNodes().getLength() == 0)
@@ -366,7 +366,7 @@ abstract public class GenericParser<P extends Processor>
         }
         catch (UserError e)
         {
-            this.core.getLogger().error("Error in processing.", e);
+            this._core.getLogger().error("Error in processing.", e);
         }
         return response;
     }
@@ -591,8 +591,8 @@ abstract public class GenericParser<P extends Processor>
      */
     public Core getCore()
     {
-        assert this.core != null : "Tried to get the Core from a GenericParser that does not have one!";
-        return this.core;
+        assert this._core != null : "Tried to get the Core from a GenericParser that does not have one!";
+        return this._core;
     }
     
     /**

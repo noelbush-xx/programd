@@ -35,11 +35,11 @@ abstract public class BotConfigurationElementProcessor extends Processor
     /**
      * Creates a new BotConfigurationElementProcessor with the given Core.
      * 
-     * @param coreToUse the Core to use
+     * @param core the Core to use
      */
-    public BotConfigurationElementProcessor(Core coreToUse)
+    public BotConfigurationElementProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

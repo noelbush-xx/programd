@@ -69,13 +69,13 @@ import org.apache.log4j.Logger;
 public class GUIConsole extends JPanel
 {
     /** The core associated with this console. */
-    private Core core;
+    private Core _core;
 
     /** The underlying Console. */
     protected Console console;
 
     /** The Shell that will (may) be used by the underlying console. */
-    protected Shell shell;
+    protected Shell _shell;
 
     /** Where console messages will be displayed. */
     protected JTextArea display;
@@ -300,7 +300,7 @@ public class GUIConsole extends JPanel
             {
                 try
                 {
-                    GUIConsole.this.shell.processCommandLine(ListBotFilesCommand.COMMAND_STRING);
+                    GUIConsole.this._shell.processCommandLine(ListBotFilesCommand.COMMAND_STRING);
                 }
                 catch (NoSuchCommandException e)
                 {
@@ -319,7 +319,7 @@ public class GUIConsole extends JPanel
             {
                 try
                 {
-                    GUIConsole.this.shell.processCommandLine(BotListCommand.COMMAND_STRING);
+                    GUIConsole.this._shell.processCommandLine(BotListCommand.COMMAND_STRING);
                 }
                 catch (NoSuchCommandException e)
                 {
@@ -350,7 +350,7 @@ public class GUIConsole extends JPanel
             {
                 try
                 {
-                    GUIConsole.this.shell.processCommandLine(HelpCommand.COMMAND_STRING);
+                    GUIConsole.this._shell.processCommandLine(HelpCommand.COMMAND_STRING);
                 }
                 catch (NoSuchCommandException e)
                 {
@@ -392,16 +392,16 @@ public class GUIConsole extends JPanel
     /**
      * Attaches the GUIConsole to the given Core.
      * 
-     * @param coreToUse the Core to which to attach
+     * @param core the Core to which to attach
      */
-    public void attachTo(Core coreToUse)
+    public void attachTo(Core core)
     {
-        this.core = coreToUse;
-        this.console.attachTo(this.core);
-        if (this.core.getSettings().consoleUseShell())
+        this._core = core;
+        this.console.attachTo(this._core);
+        if (this._core.getSettings().consoleUseShell())
         {
-            this.shell = new Shell(this.inStream, this.outStream, this.errStream, this.promptStream);
-            this.console.addShell(this.shell, coreToUse);
+            this._shell = new Shell(this.inStream, this.outStream, this.errStream, this.promptStream);
+            this.console.addShell(this._shell, core);
         }
         else
         {
@@ -419,9 +419,9 @@ public class GUIConsole extends JPanel
 
     protected void shutdown()
     {
-        if (this.core != null)
+        if (this._core != null)
         {
-            this.core.shutdown();
+            this._core.shutdown();
         }
         // Let the user exit, in case termination was abnormal or messages are
         // otherwise interesting.
@@ -443,16 +443,16 @@ public class GUIConsole extends JPanel
         /** The enter button. */
         protected JButton enter;
 
-        protected GUIConsole parent;
+        protected GUIConsole _parent;
 
         /**
          * Creates a new InputPanel.
          * 
-         * @param parentToUse the parent GUIConsole to use
+         * @param parent the parent GUIConsole to use
          */
-        public InputPanel(GUIConsole parentToUse)
+        public InputPanel(GUIConsole parent)
         {
-            this.parent = parentToUse;
+            this._parent = parent;
 
             this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
@@ -533,17 +533,17 @@ public class GUIConsole extends JPanel
     {
         private boolean paused = false;
 
-        protected GUIConsole parent;
+        protected GUIConsole _parent;
 
         /**
          * Creates a new ConsoleDisplayStream.
          * 
-         * @param parentToUse the GUIConsole parent to use
+         * @param parent the GUIConsole parent to use
          */
-        public ConsoleDisplayStream(GUIConsole parentToUse)
+        public ConsoleDisplayStream(GUIConsole parent)
         {
             super();
-            this.parent = parentToUse;
+            this._parent = parent;
         }
 
         /**
@@ -599,15 +599,15 @@ public class GUIConsole extends JPanel
      */
     public class ConsolePromptStream extends OutputStream
     {
-        protected GUIConsole parent;
+        protected GUIConsole _parent;
 
         /**
-         * @param parentToUse
+         * @param parent
          */
-        public ConsolePromptStream(GUIConsole parentToUse)
+        public ConsolePromptStream(GUIConsole parent)
         {
             super();
-            this.parent = parentToUse;
+            this._parent = parent;
         }
 
         /**
@@ -758,9 +758,9 @@ public class GUIConsole extends JPanel
             return;
         }
 
-        Graphmaster graphmaster = this.core.getGraphmaster();
+        Graphmaster graphmaster = this._core.getGraphmaster();
         int categories = graphmaster.getCategoryCount();
-        this.core.load(URLTools.contextualize(Filesystem.getWorkingDirectory(), (String) response), this.shell.getCurrentBotID());
+        this._core.load(URLTools.contextualize(Filesystem.getWorkingDirectory(), (String) response), this._shell.getCurrentBotID());
         Logger.getLogger("programd").log(Level.INFO,
                 graphmaster.getCategoryCount() - categories + " categories loaded from \"" + (String) response + "\".");
     }
@@ -783,9 +783,9 @@ public class GUIConsole extends JPanel
             {
                 return;
             }
-            int categories = this.core.getGraphmaster().getCategoryCount();
-            Graphmaster graphmaster = this.core.getGraphmaster();
-            this.core.load(URLTools.contextualize(Filesystem.getWorkingDirectory(), newPath), this.shell.getCurrentBotID());
+            int categories = this._core.getGraphmaster().getCategoryCount();
+            Graphmaster graphmaster = this._core.getGraphmaster();
+            this._core.load(URLTools.contextualize(Filesystem.getWorkingDirectory(), newPath), this._shell.getCurrentBotID());
             Logger.getLogger("programd").log(Level.INFO,
                     graphmaster.getCategoryCount() - categories + " categories loaded from \"" + newPath + "\".");
         }
@@ -793,12 +793,12 @@ public class GUIConsole extends JPanel
 
     protected void chooseBot()
     {
-        String[] botIDs = this.core.getBots().getIDs().toArray(new String[] {});
+        String[] botIDs = this._core.getBots().getIDs().toArray(new String[] {});
         ListDialog.initialize(this.frame, botIDs, "Choose a bot", "Choose the bot with whom you want to talk.");
-        String choice = ListDialog.showDialog(null, this.shell.getCurrentBotID());
+        String choice = ListDialog.showDialog(null, this._shell.getCurrentBotID());
         if (choice != null)
         {
-            this.shell.switchToBot(choice);
+            this._shell.switchToBot(choice);
         }
     }
 

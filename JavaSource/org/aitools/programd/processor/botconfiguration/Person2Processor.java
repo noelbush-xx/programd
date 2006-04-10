@@ -28,11 +28,11 @@ public class Person2Processor extends SubstitutionElementProcessor
     /**
      * Creates a new Person2Processor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public Person2Processor(Core coreToUse)
+    public Person2Processor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

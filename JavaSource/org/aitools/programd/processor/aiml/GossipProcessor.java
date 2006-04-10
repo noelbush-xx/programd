@@ -44,11 +44,11 @@ public class GossipProcessor extends AIMLProcessor
     /**
      * Creates a new GossipProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public GossipProcessor(Core coreToUse)
+    public GossipProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

@@ -72,10 +72,10 @@ public class Core
             "of the License, or (at your option) any later version." };
 
     /** Version of this package. */
-    public static final String VERSION = "4.6.1";
+    public static final String VERSION = "4.7";
 
     /** Build identifier. */
-    public static final String BUILD = "[004]";
+    public static final String BUILD = "[000]";
     
     /** The location of the AIML schema. */
     private static final String AIML_SCHEMA_LOCATION = "resources/schema/AIML.xsd";
@@ -93,7 +93,7 @@ public class Core
     private URL baseURL;
 
     /** The Settings. */
-    protected CoreSettings settings;
+    protected CoreSettings _settings;
 
     /** The Graphmaster. */
     private Graphmaster graphmaster;
@@ -176,7 +176,7 @@ public class Core
      */
     public Core(URL base)
     {
-        this.settings = new CoreSettings();
+        this._settings = new CoreSettings();
         this.baseURL = base;
         Filesystem.setRootPath(Filesystem.getWorkingDirectory());
         start();
@@ -192,7 +192,7 @@ public class Core
     public Core(URL base, URL propertiesPath)
     {
         this.baseURL = base;
-        this.settings = new CoreSettings(propertiesPath);
+        this._settings = new CoreSettings(propertiesPath);
         Filesystem.setRootPath(URLTools.getParent(this.baseURL));
         start();
     }
@@ -202,11 +202,11 @@ public class Core
      * and the given base URL.
      * 
      * @param base the base URL to use
-     * @param settingsToUse the settings to use
+     * @param settings the settings to use
      */
-    public Core(URL base, CoreSettings settingsToUse)
+    public Core(URL base, CoreSettings settings)
     {
-        this.settings = settingsToUse;
+        this._settings = settings;
         this.baseURL = base;
         Filesystem.setRootPath(URLTools.getParent(this.baseURL));
         start();
@@ -251,7 +251,7 @@ public class Core
         this.processes = new ManagedProcesses(this);
 
         // Get an instance of the settings-specified Multiplexor.
-        this.multiplexor = ClassUtils.getSubclassInstance(Multiplexor.class, this.settings.getMultiplexorImplementation(),
+        this.multiplexor = ClassUtils.getSubclassInstance(Multiplexor.class, this._settings.getMultiplexorImplementation(),
                 "Multiplexor", this);
 
         // Initialize the PredicateMaster and attach it to the Multiplexor.
@@ -273,7 +273,7 @@ public class Core
         {
             this.pluginConfig = XML.getDocumentBuilder(URLTools.contextualize(Filesystem.getWorkingDirectory(), PLUGINS_SCHEMA_LOCATION),
                     "plugin configuration").parse(
-                    URLTools.contextualize(this.baseURL, this.settings.getConfLocationPlugins())
+                    URLTools.contextualize(this.baseURL, this._settings.getConfLocationPlugins())
                             .toString());
         }
         catch (IOException e)
@@ -290,7 +290,7 @@ public class Core
         this.logger.info(UserSystem.osDescription());
         this.logger.info(UserSystem.memoryReport());
         this.logger.info("Predicates with no values defined will return: \""
-                + this.settings.getPredicateEmptyDefault() + "\".");
+                + this._settings.getPredicateEmptyDefault() + "\".");
 
         try
         {
@@ -301,7 +301,7 @@ public class Core
             this.multiplexor.initialize();
 
             // Create the AIMLWatcher if configured to do so.
-            if (this.settings.useWatcher())
+            if (this._settings.useWatcher())
             {
                 this.aimlWatcher = new AIMLWatcher(this);
             }
@@ -315,7 +315,7 @@ public class Core
             this.logger.info("Starting up the Graphmaster.");
 
             // Start loading bots.
-            loadBots(URLTools.contextualize(this.baseURL, this.settings.getStartupFilePath()));
+            loadBots(URLTools.contextualize(this.baseURL, this._settings.getStartupFilePath()));
             
             // Request garbage collection.
             System.gc();
@@ -350,7 +350,7 @@ public class Core
         this.status = Status.READY;
         
         // Exit immediately if configured to do so (for timing purposes).
-        if (this.settings.exitImmediatelyOnStartup())
+        if (this._settings.exitImmediatelyOnStartup())
         {
             shutdown();
         }
@@ -358,7 +358,7 @@ public class Core
 
     private void startWatcher()
     {
-        if (this.settings.useWatcher())
+        if (this._settings.useWatcher())
         {
             this.aimlWatcher.start();
             this.logger.info("The AIML Watcher is active.");
@@ -371,9 +371,9 @@ public class Core
 
     private void startHeart()
     {
-        if (this.settings.heartEnabled())
+        if (this._settings.heartEnabled())
         {
-            this.heart = new Heart(this.settings.getHeartPulserate());
+            this.heart = new Heart(this._settings.getHeartPulserate());
             // Add a simple IAmAlive Pulse (this should be more
             // configurable).
             this.heart.addPulse(new org.aitools.programd.util.IAmAlivePulse());
@@ -384,15 +384,15 @@ public class Core
 
     private void setupInterpreter() throws UserError, DeveloperError
     {
-        if (this.settings.javascriptAllowed())
+        if (this._settings.javascriptAllowed())
         {
-            if (this.settings.getJavascriptInterpreterClassname() == null)
+            if (this._settings.getJavascriptInterpreterClassname() == null)
             {
                 throw new UserError(new UnspecifiedParameterError(
                         "javascript-interpreter.classname"));
             }
 
-            String javascriptInterpreterClassname = this.settings
+            String javascriptInterpreterClassname = this._settings
                     .getJavascriptInterpreterClassname();
 
             if (javascriptInterpreterClassname.equals(EMPTY_STRING))
@@ -480,13 +480,13 @@ public class Core
         }
         else
         {
-            if (this.settings.loadNotifyEachFile())
+            if (this._settings.loadNotifyEachFile())
             {
                 this.logger.info("Loading " + URLTools.unescape(path) + "....");
             }
             doLoad(path, botid);
             // Add it to the AIMLWatcher, if active.
-            if (this.settings.useWatcher())
+            if (this._settings.useWatcher())
             {
                 this.aimlWatcher.addWatchFile(path);
             }
@@ -523,7 +523,7 @@ public class Core
     	try
     	{
 	        AIMLReader reader = new AIMLReader(this.graphmaster, path, botid, this.bots
-	                .getBot(botid), this.settings.getAimlSchemaNamespaceUri().toString());
+	                .getBot(botid), this._settings.getAimlSchemaNamespaceUri().toString());
 	        try
 	        {
 	            this.parser.getXMLReader().setProperty("http://xml.org/sax/properties/lexical-handler", reader);
@@ -721,7 +721,7 @@ public class Core
         this.logger.error("Core may no longer be stable due to " + description + ":\n"
                 + throwableDescription);
 
-        if (this.settings.onUncaughtExceptionsPrintStackTrace())
+        if (this._settings.onUncaughtExceptionsPrintStackTrace())
         {
             if (e instanceof UserError || e instanceof DeveloperError)
             {
@@ -747,7 +747,7 @@ public class Core
         {
             System.err.println("Uncaught exception " + e.getClass().getSimpleName()
                     + " in thread \"" + t.getName() + "\".");
-            if (Core.this.settings.onUncaughtExceptionsPrintStackTrace())
+            if (Core.this._settings.onUncaughtExceptionsPrintStackTrace())
             {
                 e.printStackTrace(System.err);
             }
@@ -765,7 +765,7 @@ public class Core
      */
     public void loadBots(URL path)
     {
-        if (this.settings.useWatcher())
+        if (this._settings.useWatcher())
         {
             this.logger.debug("Suspending AIMLWatcher.");
             this.aimlWatcher.stop();
@@ -786,7 +786,7 @@ public class Core
         {
             Filesystem.popWorkingDirectory();
         }
-        if (this.settings.useWatcher())
+        if (this._settings.useWatcher())
         {
             this.logger.debug("Restarting AIMLWatcher.");
             this.aimlWatcher.start();
@@ -948,9 +948,9 @@ public class Core
      */
     public CoreSettings getSettings()
     {
-        if (this.settings != null)
+        if (this._settings != null)
         {
-            return this.settings;
+            return this._settings;
         }
         throw new NullPointerException(
                 "The Core's CoreSettings object has not yet been initialized!");

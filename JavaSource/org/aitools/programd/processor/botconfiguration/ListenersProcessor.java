@@ -27,11 +27,11 @@ public class ListenersProcessor extends BotConfigurationElementProcessor
     /**
      * Creates a new ListenersProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public ListenersProcessor(Core coreToUse)
+    public ListenersProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

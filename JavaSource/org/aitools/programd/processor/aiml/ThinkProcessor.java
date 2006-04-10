@@ -33,11 +33,11 @@ public class ThinkProcessor extends AIMLProcessor
     /**
      * Creates a new ThinkProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public ThinkProcessor(Core coreToUse)
+    public ThinkProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

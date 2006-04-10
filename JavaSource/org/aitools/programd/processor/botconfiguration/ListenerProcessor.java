@@ -50,11 +50,11 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
     /**
      * Creates a new ListenerProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public ListenerProcessor(Core coreToUse)
+    public ListenerProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**
@@ -96,7 +96,7 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
 
         // Instantiate a new listener for the bot.
         String classname = element.getAttribute(CLASS);
-        Listener listener = ClassUtils.getSubclassInstance(Listener.class, classname, "listener", this.core, bot, parameters);
+        Listener listener = ClassUtils.getSubclassInstance(Listener.class, classname, "listener", this._core, bot, parameters);
         
         // Check listener parameters.
         try
@@ -109,7 +109,7 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         }
 
         // Start listener
-        this.core.getManagedProcesses().start(listener, classname + SEPARATOR + bot.getID());
+        this._core.getManagedProcesses().start(listener, classname + SEPARATOR + bot.getID());
 
         logger.info("Started \"" + classname + "\" listener for bot \"" + bot.getID() + "\".");
         return EMPTY_STRING;

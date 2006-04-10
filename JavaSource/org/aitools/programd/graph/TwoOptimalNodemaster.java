@@ -37,38 +37,38 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
     /**
      * Puts the given object into the Nodemaster, associated with the given key.
      * 
-     * @param keyToUse the key to use
-     * @param valueToPut the value to put
+     * @param key the key to use
+     * @param value the value to put
      * @return the same object that was put into the Nodemaster
      */
-    public Object put(String keyToUse, Object valueToPut)
+    public Object put(String key, Object value)
     {
         if (this.size < 2)
         {
             // This is ugly, but allows our optimization.
             if (this.size == 0)
             {
-                this.key_0 = keyToUse.toUpperCase().intern();
-                if (valueToPut instanceof String)
+                this.key_0 = key.toUpperCase().intern();
+                if (value instanceof String)
                 {
-                    this.value_0 = ((String) valueToPut).intern();
+                    this.value_0 = ((String) value).intern();
                 }
                 else
                 {
-                    this.value_0 = valueToPut;
+                    this.value_0 = value;
                 }
                 this.size = 1;
                 return this.value_0;
             }
             // otherwise...
-            this.key_1 = keyToUse.toUpperCase().intern();
-            if (valueToPut instanceof String)
+            this.key_1 = key.toUpperCase().intern();
+            if (value instanceof String)
             {
-                this.value_1 = ((String) valueToPut).intern();
+                this.value_1 = ((String) value).intern();
             }
             else
             {
-                this.value_1 = valueToPut;
+                this.value_1 = value;
             }
             this.size = 2;
             return this.value_1;
@@ -83,22 +83,22 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
             this.value_0 = null;
             this.value_1 = null;
             this.size = 3;
-            if (valueToPut instanceof String)
+            if (value instanceof String)
             {
-                return this.hidden.put(keyToUse.toUpperCase().intern(), ((String) valueToPut).intern());
+                return this.hidden.put(key.toUpperCase().intern(), ((String) value).intern());
             }
             // otherwise...
-            return this.hidden.put(keyToUse.toUpperCase().intern(), valueToPut);
+            return this.hidden.put(key.toUpperCase().intern(), value);
         }
         else
         {
             this.size++;
-            if (valueToPut instanceof String)
+            if (value instanceof String)
             {
-                return this.hidden.put(keyToUse.toUpperCase().intern(), ((String) valueToPut).intern());
+                return this.hidden.put(key.toUpperCase().intern(), ((String) value).intern());
             }
             // otherwise...
-            return this.hidden.put(keyToUse.toUpperCase().intern(), valueToPut);
+            return this.hidden.put(key.toUpperCase().intern(), value);
         }
     }
 

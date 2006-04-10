@@ -18,7 +18,7 @@ package org.aitools.programd.util;
 public class NotAnAIMLPatternException extends Exception
 {
     /** The pattern which this exception concerns. */
-    private String pattern;
+    private String _pattern;
 
     /** First part of a message. */
     private static final String MSG_PART_ONE = "Not an AIML pattern: \"";
@@ -30,12 +30,12 @@ public class NotAnAIMLPatternException extends Exception
      * Records the pattern and error message for this exception.
      * 
      * @param message the explanation why this pattern is invalid
-     * @param patternToUse the pattern itself
+     * @param pattern the pattern itself
      */
-    public NotAnAIMLPatternException(String message, String patternToUse)
+    public NotAnAIMLPatternException(String message, String pattern)
     {
         super(message);
-        this.pattern = patternToUse;
+        this._pattern = pattern;
     }
 
     /**
@@ -44,6 +44,6 @@ public class NotAnAIMLPatternException extends Exception
     @Override
     public String getMessage()
     {
-        return MSG_PART_ONE + this.pattern + MSG_PART_TWO + super.getMessage();
+        return MSG_PART_ONE + this._pattern + MSG_PART_TWO + super.getMessage();
     }
 }

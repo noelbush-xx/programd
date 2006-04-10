@@ -37,11 +37,11 @@ public class SRAIProcessor extends AIMLProcessor
     /**
      * Creates a new SRAIProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public SRAIProcessor(Core coreToUse)
+    public SRAIProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**
@@ -94,9 +94,9 @@ public class SRAIProcessor extends AIMLProcessor
         String botid = parser.getBotID();
         try
         {
-            return this.core.getMultiplexor()
+            return this._core.getMultiplexor()
                     .getInternalResponse(input, userid, botid,
-                            new TemplateParser(input, userid, botid, this.core));
+                            new TemplateParser(input, userid, botid, this._core));
         }
         catch (TemplateParserException e)
         {

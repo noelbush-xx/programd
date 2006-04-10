@@ -26,11 +26,11 @@ public class BotProcessor extends AIMLProcessor
     /**
      * Creates a new BotProcessor with the given Core.
      * 
-     * @param coreToUse the Core to use in creating the BotProcessor
+     * @param core the Core to use in creating the BotProcessor
      */
-    public BotProcessor(Core coreToUse)
+    public BotProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /** The label (as required by the registration scheme). */

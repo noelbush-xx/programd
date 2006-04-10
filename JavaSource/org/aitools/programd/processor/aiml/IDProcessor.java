@@ -30,11 +30,11 @@ public class IDProcessor extends AIMLProcessor
     /**
      * Creates a new IDProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public IDProcessor(Core coreToUse)
+    public IDProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

@@ -26,10 +26,10 @@ public class BotsProcessor extends BotConfigurationElementProcessor
     /**
      * Creates a new BotsProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public BotsProcessor(Core coreToUse)
+    public BotsProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 }

@@ -26,11 +26,11 @@ public class ServletPageProcessor extends SubstitutionElementProcessor
     /**
      * Creates a new InputProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public ServletPageProcessor(Core coreToUse)
+    public ServletPageProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

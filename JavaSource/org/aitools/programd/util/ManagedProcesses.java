@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
 public class ManagedProcesses
 {
     /** The Core to which this is attached. */
-    private Core core;
+    private Core _core;
     
     /** The registry of all processes. */
     private Map<String, ManagedProcess> registry = Collections.checkedMap(new HashMap<String, ManagedProcess>(), String.class, ManagedProcess.class);
@@ -50,7 +50,7 @@ public class ManagedProcesses
         }
         catch (Throwable e)
         {
-            this.core.getLogger().error("Error starting \"" + name + "\".", e);
+            this._core.getLogger().error("Error starting \"" + name + "\".", e);
         }
     }
 
@@ -92,10 +92,10 @@ public class ManagedProcesses
 
     /**
      * Creates a ManagedProcesses object.
-     * @param coreToUse the Core to which to attach this
+     * @param core the Core to which to attach this
      */
-    public ManagedProcesses(Core coreToUse)
+    public ManagedProcesses(Core core)
     {
-        this.core = coreToUse;
+        this._core = core;
     }
 }

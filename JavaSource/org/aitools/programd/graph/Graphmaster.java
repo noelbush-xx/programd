@@ -111,7 +111,7 @@ public class Graphmaster
     // Instance variables.
     
     /** The Core with which this Graphmaster is associated. */
-    protected Core core;
+    protected Core _core;
 
     /** The logger. */
     private Logger logger = Logger.getLogger("programd");
@@ -165,12 +165,12 @@ public class Graphmaster
      * Creates a new Graphmaster, reading settings from
      * the given Core.
      * 
-     * @param coreToUse the CoreSettings object from which to read settings
+     * @param core the CoreSettings object from which to read settings
      */
-    public Graphmaster(Core coreToUse)
+    public Graphmaster(Core core)
     {
-        this.core = coreToUse;
-        CoreSettings settings = this.core.getSettings();
+        this._core = core;
+        CoreSettings settings = this._core.getSettings();
         this.nodemapperFactory = new NodemapperFactory(settings.getNodemapperImplementation());
         this.root = this.nodemapperFactory.getNodemapper();
         this.mergePolicy = settings.getMergePolicy();

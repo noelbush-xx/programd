@@ -55,11 +55,11 @@ abstract public class SubstitutionElementProcessor extends BotConfigurationEleme
     /**
      * Creates a new SubstitutionElementProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public SubstitutionElementProcessor(Core coreToUse)
+    public SubstitutionElementProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

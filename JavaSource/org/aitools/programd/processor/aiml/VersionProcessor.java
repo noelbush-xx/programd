@@ -30,11 +30,11 @@ public class VersionProcessor extends AIMLProcessor
     /**
      * Creates a new VersionProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public VersionProcessor(Core coreToUse)
+    public VersionProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

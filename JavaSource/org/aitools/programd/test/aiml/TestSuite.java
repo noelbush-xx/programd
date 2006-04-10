@@ -33,16 +33,16 @@ public class TestSuite implements Iterable<TestCase>
     ArrayList<TestCase> testCases = new ArrayList<TestCase>();
 
     /** The name of the test suite. */
-    private String name;
+    private String _name;
 
     /** The clearInput to use for this test suite. */
-    private String clearInput;
+    private String _clearInput;
 
     /** The Multiplexor to use. */
-    private Multiplexor multiplexor;
+    private Multiplexor _multiplexor;
     
     /** The Logger. */
-    private Logger logger;
+    private Logger _logger;
 
     /** The test auccesses accumulated by this suite. */
     private LinkedList<TestResult> successes = new LinkedList<TestResult>();
@@ -56,41 +56,41 @@ public class TestSuite implements Iterable<TestCase>
     /**
      * Creates a new TestSuite.
      * 
-     * @param nameToUse the name to give the test suite
-     * @param clearInputToUse the clearInput for the test suite
-     * @param multiplexorToUse the multiplexor to use
+     * @param name the name to give the test suite
+     * @param clearInput the clearInput for the test suite
+     * @param multiplexor the multiplexor to use
      */
-    public TestSuite(String nameToUse, String clearInputToUse, Multiplexor multiplexorToUse, Logger loggerToUse)
+    public TestSuite(String name, String clearInput, Multiplexor multiplexor, Logger logger)
     {
-        this.name = nameToUse;
-        this.clearInput = clearInputToUse;
-        this.multiplexor = multiplexorToUse;
-        this.logger = loggerToUse;
+        this._name = name;
+        this._clearInput = clearInput;
+        this._multiplexor = multiplexor;
+        this._logger = logger;
     }
 
     /**
      * Creates a new TestSuite (with no clearInput).
      * 
-     * @param nameToUse the name to give the test suite
-     * @param multiplexorToUse the multiplexor to use
+     * @param name the name to give the test suite
+     * @param multiplexor the multiplexor to use
      */
-    public TestSuite(String nameToUse, Multiplexor multiplexorToUse, Logger loggerToUse)
+    public TestSuite(String name, Multiplexor multiplexor, Logger logger)
     {
-        this.name = nameToUse;
-        this.multiplexor = multiplexorToUse;
-        this.logger = loggerToUse;
+        this._name = name;
+        this._multiplexor = multiplexor;
+        this._logger = logger;
     }
 
     /**
      * Creates a new TestSuite (with no clearInput or Multiplexor(!)).
      * 
-     * @param nameToUse the name to give the test suite
+     * @param name the name to give the test suite
      */
     @SuppressWarnings("unused")
-    private TestSuite(String nameToUse, Logger loggerToUse)
+    private TestSuite(String name, Logger logger)
     {
-        this.name = nameToUse;
-        this.logger = loggerToUse;
+        this._name = name;
+        this._logger = logger;
     }
 
     /**
@@ -125,7 +125,7 @@ public class TestSuite implements Iterable<TestCase>
      */
     public String getName()
     {
-        return this.name;
+        return this._name;
     }
 
     /**
@@ -136,28 +136,28 @@ public class TestSuite implements Iterable<TestCase>
      */
     public boolean run(String botid)
     {
-        if (this.clearInput != null)
+        if (this._clearInput != null)
         {
-            this.multiplexor.getResponse(this.clearInput, TESTER_ID, botid);
+            this._multiplexor.getResponse(this._clearInput, TESTER_ID, botid);
         }
 
         this.failures.clear();
         boolean suiteSuccessful = true;
         for (TestCase testCase : this.testCases)
         {
-            boolean caseSuccessful = testCase.run(this.multiplexor, TESTER_ID, botid);
+            boolean caseSuccessful = testCase.run(this._multiplexor, TESTER_ID, botid);
             String testcaseName = testCase.getName();
             if (!caseSuccessful)
             {
-                this.logger.warn("Test case \"" + testcaseName + "\" failed with response \"" +
+                this._logger.warn("Test case \"" + testcaseName + "\" failed with response \"" +
                         XML.removeMarkup(testCase.getLastResponse()) + "\".");
-                registerFailure(this.name, testCase.getName(), testCase.getInput(), testCase
+                registerFailure(this._name, testCase.getName(), testCase.getInput(), testCase
                         .getLastResponse());
             }
             else
             {
-                this.logger.info("Test case " + testcaseName + " succeeded.");
-                registerSuccess(this.name, testCase.getName(), testCase.getInput(), testCase
+                this._logger.info("Test case " + testcaseName + " succeeded.");
+                registerSuccess(this._name, testCase.getName(), testCase.getInput(), testCase
                         .getLastResponse());
             }
             suiteSuccessful &= caseSuccessful;

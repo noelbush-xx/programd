@@ -74,11 +74,11 @@ public class RandomProcessor extends AIMLProcessor
     /**
      * Creates a new RandomProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public RandomProcessor(Core coreToUse)
+    public RandomProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

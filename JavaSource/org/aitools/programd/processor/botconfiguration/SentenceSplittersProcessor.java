@@ -33,11 +33,11 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
     /**
      * Creates a new SentenceSplittersProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public SentenceSplittersProcessor(Core coreToUse)
+    public SentenceSplittersProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

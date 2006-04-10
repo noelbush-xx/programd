@@ -35,11 +35,11 @@ public class TestingProcessor extends BotConfigurationElementProcessor
     /**
      * Creates a new SentenceSplittersProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public TestingProcessor(Core coreToUse)
+    public TestingProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

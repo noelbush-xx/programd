@@ -31,11 +31,11 @@ abstract public class SubstitutionProcessor extends AIMLProcessor
     /**
      * Creates a new SubstitutionProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public SubstitutionProcessor(Core coreToUse)
+    public SubstitutionProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**
@@ -67,6 +67,6 @@ abstract public class SubstitutionProcessor extends AIMLProcessor
      */
     public String applySubstitutions(Class<? extends Processor> processor, String string, String botid)
     {
-        return Substituter.applySubstitutions(this.core.getBot(botid).getSubstitutionMap(processor), string);
+        return Substituter.applySubstitutions(this._core.getBot(botid).getSubstitutionMap(processor), string);
     }
 }

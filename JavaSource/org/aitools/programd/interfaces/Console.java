@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 public class Console
 {
     /** The Core to which this console is (may be) attached. */
-    private Core core;
+    private Core _core;
 
     /** The stdout handler. */
     private ConsoleStreamAppender stdOutAppender;
@@ -36,7 +36,7 @@ public class Console
     private ConsoleStreamAppender stdErrAppender;
 
     /** The Shell that will (may) be activated for this console. */
-    private Shell shell;
+    private Shell _shell;
 
     /**
      * Creates a <code>Console</code> with default output streams.
@@ -83,15 +83,15 @@ public class Console
     /**
      * Attaches the console to the given core.
      * 
-     * @param coreToUse the core to which to attach
+     * @param core the core to which to attach
      */
-    public void attachTo(Core coreToUse)
+    public void attachTo(Core core)
     {
-        this.core = coreToUse;
+        this._core = core;
 
-        if (this.core.getSettings().consoleUseShell())
+        if (this._core.getSettings().consoleUseShell())
         {
-            addShell(new Shell(), this.core);
+            addShell(new Shell(), this._core);
         }
         else
         {
@@ -102,20 +102,20 @@ public class Console
     /**
      * Adds the given Shell to the Console
      * 
-     * @param shellToAdd the Shell to add
-     * @param coreToUse the core to which to attach the Shell
+     * @param shell the Shell to add
+     * @param core the core to which to attach the Shell
      */
-    public void addShell(Shell shellToAdd, Core coreToUse)
+    public void addShell(Shell shell, Core core)
     {
-        this.shell = shellToAdd;
-        this.shell.attachTo(coreToUse);
+        this._shell = shell;
+        this._shell.attachTo(core);
         if (this.stdOutAppender != null)
         {
-            this.stdOutAppender.watch(this.shell);
+            this.stdOutAppender.watch(this._shell);
         }
         if (this.stdErrAppender != null)
         {
-            this.stdErrAppender.watch(this.shell);
+            this.stdErrAppender.watch(this._shell);
         }
     }
 
@@ -124,13 +124,13 @@ public class Console
      */
     public void startShell()
     {
-        if (this.core.getSettings().consoleUseShell())
+        if (this._core.getSettings().consoleUseShell())
         {
-            this.shell.start();
+            this._shell.start();
         }
 
         // Now just run as long as the core status stays at READY.
-        while (this.core.getStatus() == Status.READY)
+        while (this._core.getStatus() == Status.READY)
         {
             try
             {
@@ -138,7 +138,7 @@ public class Console
             }
             catch (InterruptedException e)
             {
-                this.core.getLogger().warn("Console was interrupted; shell will not run anymore.");
+                this._core.getLogger().warn("Console was interrupted; shell will not run anymore.");
             }
         }
     }

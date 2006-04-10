@@ -18,25 +18,25 @@ package org.aitools.programd.interfaces.shell;
 abstract public class ShellCommand
 {
     /** The command string for the shell command (so it can be returned via a get method). */
-    private String commandString;
+    private String _commandString;
     
     /** The argument template for the shell command (so it can be returned via a get method). */
-    private String argumentTemplate;
+    private String _argumentTemplate;
     
     /** The help line for the shell command (so it can be returned via a get method). */
-    private String helpLine;
+    private String _helpLine;
     
     /**
      * Creates a <code>ShellCommand</code> that handles the given command string.
-     * @param commandStringToUse the command string to handle
-     * @param argumentTemplateToUse the argument template to use
-     * @param helpLineToUse the help line to provide when asked
+     * @param commandString the command string to handle
+     * @param argumentTemplate the argument template to use
+     * @param helpLine the help line to provide when asked
      */
-    public ShellCommand(String commandStringToUse, String argumentTemplateToUse, String helpLineToUse)
+    public ShellCommand(String commandString, String argumentTemplate, String helpLine)
     {
-        this.commandString = commandStringToUse;
-        this.argumentTemplate = argumentTemplateToUse;
-        this.helpLine = helpLineToUse;
+        this._commandString = commandString;
+        this._argumentTemplate = argumentTemplate;
+        this._helpLine = helpLine;
     }
     /**
      * Indicates whether the ShellCommand handles
@@ -54,7 +54,7 @@ abstract public class ShellCommand
      */
     public String getCommandString()
     {
-        return this.commandString;
+        return this._commandString;
     }
     
     /**
@@ -64,7 +64,7 @@ abstract public class ShellCommand
      */
     public String getArgumentTemplate()
     {
-        return this.argumentTemplate;
+        return this._argumentTemplate;
     }
     
     /**
@@ -74,7 +74,7 @@ abstract public class ShellCommand
      */
     public String getHelpLine()
     {
-        return this.helpLine;
+        return this._helpLine;
     }
     
     /**

@@ -32,11 +32,11 @@ public class SRProcessor extends AIMLProcessor
     /**
      * Creates a new SRProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public SRProcessor(Core coreToUse)
+    public SRProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

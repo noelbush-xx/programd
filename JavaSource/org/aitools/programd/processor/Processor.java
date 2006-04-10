@@ -25,7 +25,7 @@ import org.aitools.programd.parser.GenericParser;
 abstract public class Processor
 {
     /** The Core to use. */
-    protected Core core;
+    protected Core _core;
 
     /*
      * Every Processor should have a String called label. But we don't specify
@@ -58,11 +58,11 @@ abstract public class Processor
     /**
      * Creates a new Processor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public Processor(Core coreToUse)
+    public Processor(Core core)
     {
-        this.core = coreToUse;
+        this._core = core;
     }
 
     /**

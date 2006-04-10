@@ -25,11 +25,11 @@ public class PropertiesProcessor extends BotConfigurationElementProcessor
     /**
      * Creates a new PropertiesProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public PropertiesProcessor(Core coreToUse)
+    public PropertiesProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

@@ -35,11 +35,11 @@ public class PredicateProcessor extends BotConfigurationElementProcessor
     /**
      * Creates a new PredicateProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public PredicateProcessor(Core coreToUse)
+    public PredicateProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

@@ -24,11 +24,11 @@ public class BotsConfigurationFileParser extends GenericParser<BotConfigurationE
     /**
      * Initializes a <code>BotsConfigurationFileParser</code>.
      * 
-     * @param coreToUse
+     * @param core
      */
-    public BotsConfigurationFileParser(Core coreToUse)
+    public BotsConfigurationFileParser(Core core)
     {
-        super(coreToUse.getBotConfigurationElementProcessorRegistry(), coreToUse);
+        super(core.getBotConfigurationElementProcessorRegistry(), core);
     }
 
     /**

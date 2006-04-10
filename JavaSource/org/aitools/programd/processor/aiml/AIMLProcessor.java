@@ -36,11 +36,11 @@ abstract public class AIMLProcessor extends Processor
     /**
      * Creates a new AIMLProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use with the new AIMLProcessor
+     * @param core the Core object to use with the new AIMLProcessor
      */
-    public AIMLProcessor(Core coreToUse)
+    public AIMLProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

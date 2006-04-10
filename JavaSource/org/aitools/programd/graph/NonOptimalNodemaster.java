@@ -27,22 +27,22 @@ public class NonOptimalNodemaster extends AbstractNodemaster
     /**
      * Puts the given object into the Nodemaster, associated with the given key.
      * 
-     * @param keyToUse the key to use
-     * @param valueToPut the value to put
+     * @param key the key to use
+     * @param value the value to put
      * @return the same object that was put into the Nodemaster
      */
-    public Object put(String keyToUse, Object valueToPut)
+    public Object put(String key, Object value)
     {
-        if (valueToPut instanceof String)
+        if (value instanceof String)
         {
             if (this.hidden == null)
             {
                 this.hidden = new LinkedHashMap<String, Object>();
             }
-            return this.hidden.put(keyToUse.toUpperCase().intern(), ((String) valueToPut).intern());
+            return this.hidden.put(key.toUpperCase().intern(), ((String) value).intern());
         }
         // otherwise...
-        return this.hidden.put(keyToUse.toUpperCase().intern(), valueToPut);
+        return this.hidden.put(key.toUpperCase().intern(), value);
     }
 
     /**

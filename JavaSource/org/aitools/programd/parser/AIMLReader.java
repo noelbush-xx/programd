@@ -33,15 +33,15 @@ import org.aitools.util.xml.XML;
  */
 public class AIMLReader extends DefaultHandler2
 {
-    private String defaultNamespaceURI;
+    private String _defaultNamespaceURI;
     
-    private Graphmaster graphmaster;
+    private Graphmaster _graphmaster;
     
-    private URL path;
+    private URL _path;
     
-    private String botid;
+    private String _botid;
     
-    private Bot bot;
+    private Bot _bot;
 
     /*
      * Constants used in parsing.
@@ -120,21 +120,21 @@ public class AIMLReader extends DefaultHandler2
     /**
      * Creates a new AIMLReader.
      * 
-     * @param graphmasterToUse the graphmaster into which new categories are to be loaded.
+     * @param graphmaster the graphmaster into which new categories are to be loaded.
      * @param url the path that is being read
-     * @param botidToUse the id of the bot into whom categories are being loaded
-     * @param botToUse the bot itself
-     * @param defaultNamespaceURIToUse the namespace URI to use when none other
+     * @param botid the id of the bot into whom categories are being loaded
+     * @param bot the bot itself
+     * @param defaultNamespaceURI the namespace URI to use when none other
      *            is specified (?)
      */
-    public AIMLReader(Graphmaster graphmasterToUse, URL url, String botidToUse, Bot botToUse, String defaultNamespaceURIToUse)
+    public AIMLReader(Graphmaster graphmaster, URL url, String botid, Bot bot, String defaultNamespaceURI)
     {
-        this.graphmaster = graphmasterToUse;
-        this.path = url;
-        this.botid = botidToUse;
-        this.bot = botToUse;
-        this.defaultNamespaceURI = defaultNamespaceURIToUse;
-        this.templateStartTag = OPEN_TEMPLATE_START_TAG + defaultNamespaceURIToUse + QUOTE_MARKER_END;
+        this._graphmaster = graphmaster;
+        this._path = url;
+        this._botid = botid;
+        this._bot = bot;
+        this._defaultNamespaceURI = defaultNamespaceURI;
+        this.templateStartTag = OPEN_TEMPLATE_START_TAG + defaultNamespaceURI + QUOTE_MARKER_END;
         this.topic = WILDCARD;
     }
 
@@ -193,7 +193,7 @@ public class AIMLReader extends DefaultHandler2
         else if (elementName.equals(BOT) && this.currentBuffer != null && this.currentBuffer == this.patternBuffer)
         {
             // Insert the value of the given bot predicate (no warning if doesn't exist!).
-            this.patternBuffer.append(this.bot.getPropertyValue(attributes.getValue(NAME)));
+            this.patternBuffer.append(this._bot.getPropertyValue(attributes.getValue(NAME)));
         }
         else if (elementName.equals(THAT) && this.currentBuffer == null || this.currentBuffer != this.templateBuffer)
         {
@@ -210,7 +210,7 @@ public class AIMLReader extends DefaultHandler2
              * we just reconstitute the XML text for later
              * processing.
              */
-            this.templateBuffer.append(XML.renderStartTag(elementName, attributes, !uri.equals(this.defaultNamespaceURI), uri));
+            this.templateBuffer.append(XML.renderStartTag(elementName, attributes, !uri.equals(this._defaultNamespaceURI), uri));
         }
         else if (elementName.equals(TOPIC))
         {
@@ -251,7 +251,7 @@ public class AIMLReader extends DefaultHandler2
             // Whitespace-normalize the template contents.
             this.template = this.templateStartTag + this.templateBuffer.toString() + TEMPLATE_END_TAG;
             // Finally, deliver the newly defined category to the Graphmaster.
-            this.graphmaster.addCategory(this.pattern, this.that, this.topic, this.template, this.botid, this.bot, this.path);
+            this._graphmaster.addCategory(this.pattern, this.that, this.topic, this.template, this._botid, this._bot, this._path);
             // Reset the pattern, that and template.
             this.pattern = this.that = this.template = null;
             this.currentBuffer = this.patternBuffer = this.thatBuffer = this.templateBuffer = null;

@@ -27,11 +27,11 @@ public class SubstitutionsProcessor extends BotConfigurationElementProcessor
     /**
      * Creates a new SubstitutionsProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public SubstitutionsProcessor(Core coreToUse)
+    public SubstitutionsProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

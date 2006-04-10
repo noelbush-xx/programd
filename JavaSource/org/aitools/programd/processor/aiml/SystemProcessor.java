@@ -79,11 +79,11 @@ public class SystemProcessor extends AIMLProcessor
     /**
      * Creates a new SystemProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public SystemProcessor(Core coreToUse)
+    public SystemProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

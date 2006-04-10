@@ -31,11 +31,11 @@ public class TemplateProcessor extends AIMLProcessor
     /**
      * Creates a new TemplateProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public TemplateProcessor(Core coreToUse)
+    public TemplateProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

@@ -32,11 +32,11 @@ public class UpperCaseProcessor extends AIMLProcessor
     /**
      * Creates a new UpperCaseProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public UpperCaseProcessor(Core coreToUse)
+    public UpperCaseProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

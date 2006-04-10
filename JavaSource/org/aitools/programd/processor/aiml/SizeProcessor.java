@@ -30,11 +30,11 @@ public class SizeProcessor extends AIMLProcessor
     /**
      * Creates a new SizeProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public SizeProcessor(Core coreToUse)
+    public SizeProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

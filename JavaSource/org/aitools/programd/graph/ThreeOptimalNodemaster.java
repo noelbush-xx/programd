@@ -39,52 +39,52 @@ public class ThreeOptimalNodemaster extends AbstractNodemaster
     /**
      * Puts the given object into the Nodemaster, associated with the given key.
      * 
-     * @param keyToUse the key to use
-     * @param valueToPut the value to put
+     * @param key the key to use
+     * @param value the value to put
      * @return the same object that was put into the Nodemaster
      */
-    public Object put(String keyToUse, Object valueToPut)
+    public Object put(String key, Object value)
     {
         if (this.size < 3)
         {
             // This is ugly, but allows our optimization.
             if (this.size == 0)
             {
-                this.key_0 = keyToUse.toUpperCase().intern();
-                if (valueToPut instanceof String)
+                this.key_0 = key.toUpperCase().intern();
+                if (value instanceof String)
                 {
-                    this.value_0 = ((String) valueToPut).intern();
+                    this.value_0 = ((String) value).intern();
                 }
                 else
                 {
-                    this.value_0 = valueToPut;
+                    this.value_0 = value;
                 }
                 this.size = 1;
                 return this.value_0;
             }
             else if (this.size == 1)
             {
-                this.key_1 = keyToUse.toUpperCase().intern();
-                if (valueToPut instanceof String)
+                this.key_1 = key.toUpperCase().intern();
+                if (value instanceof String)
                 {
-                    this.value_1 = ((String) valueToPut).intern();
+                    this.value_1 = ((String) value).intern();
                 }
                 else
                 {
-                    this.value_1 = valueToPut;
+                    this.value_1 = value;
                 }
                 this.size = 2;
                 return this.value_1;
             }
             // otherwise...
-            this.key_2 = keyToUse.toUpperCase().intern();
-            if (valueToPut instanceof String)
+            this.key_2 = key.toUpperCase().intern();
+            if (value instanceof String)
             {
-                this.value_2 = ((String) valueToPut).intern();
+                this.value_2 = ((String) value).intern();
             }
             else
             {
-                this.value_2 = valueToPut;
+                this.value_2 = value;
             }
             this.size = 3;
             return this.value_2;
@@ -102,22 +102,22 @@ public class ThreeOptimalNodemaster extends AbstractNodemaster
             this.value_1 = null;
             this.value_2 = null;
             this.size = 4;
-            if (valueToPut instanceof String)
+            if (value instanceof String)
             {
-                return this.hidden.put(keyToUse.toUpperCase().intern(), ((String) valueToPut).intern());
+                return this.hidden.put(key.toUpperCase().intern(), ((String) value).intern());
             }
             // otherwise...
-            return this.hidden.put(keyToUse.toUpperCase().intern(), valueToPut);
+            return this.hidden.put(key.toUpperCase().intern(), value);
         }
         else
         {
             this.size++;
-            if (valueToPut instanceof String)
+            if (value instanceof String)
             {
-                return this.hidden.put(keyToUse.toUpperCase().intern(), ((String) valueToPut).intern());
+                return this.hidden.put(key.toUpperCase().intern(), ((String) value).intern());
             }
             // otherwise...
-            return this.hidden.put(keyToUse.toUpperCase().intern(), valueToPut);
+            return this.hidden.put(key.toUpperCase().intern(), value);
         }
     }
 

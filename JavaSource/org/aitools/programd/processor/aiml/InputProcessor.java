@@ -19,7 +19,7 @@ import org.aitools.programd.parser.TemplateParser;
  * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-input">input</a></code>
  * element.
  * 
- * @version 4.5
+ * @version 4.7
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -32,11 +32,11 @@ public class InputProcessor extends IndexedPredicateProcessor
     /**
      * Creates a new InputProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public InputProcessor(Core coreToUse)
+    public InputProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

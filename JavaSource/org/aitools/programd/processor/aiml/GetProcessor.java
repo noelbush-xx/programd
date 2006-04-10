@@ -32,11 +32,11 @@ public class GetProcessor extends AIMLProcessor
     /**
      * Creates a new GetProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public GetProcessor(Core coreToUse)
+    public GetProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

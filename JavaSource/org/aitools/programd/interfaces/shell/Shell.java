@@ -50,7 +50,7 @@ public class Shell extends Thread
     private ShellCommandRegistry commandRegistry;
 
     /** The Core to which this Shell is attached. */
-    private Core core;
+    private Core _core;
 
     /** The PredicateMaster in use by the attached Core. */
     private PredicateMaster predicateMaster;
@@ -125,21 +125,21 @@ public class Shell extends Thread
     /**
      * Attach this shell to the given core.
      * 
-     * @param coreToUse
+     * @param core
      */
-    public void attachTo(Core coreToUse)
+    public void attachTo(Core core)
     {
-        this.core = coreToUse;
-        this.botNamePredicate = this.core.getSettings().getBotNamePredicate();
-        this.predicateMaster = this.core.getPredicateMaster();
-        this.bots = this.core.getBots();
-        this.clientNamePredicate = this.core.getSettings().getClientNamePredicate();
-        this.hostname = this.core.getHostname();
+        this._core = core;
+        this.botNamePredicate = this._core.getSettings().getBotNamePredicate();
+        this.predicateMaster = this._core.getPredicateMaster();
+        this.bots = this._core.getBots();
+        this.clientNamePredicate = this._core.getSettings().getClientNamePredicate();
+        this.hostname = this._core.getHostname();
         
         this.commandRegistry = new ShellCommandRegistry();
         
         // Look for any shell command plugins and add them to the registry.
-        Element shellCommandSet = XML.getFirstElementNamed(this.core.getPluginConfig().getDocumentElement(), "shell-commands");
+        Element shellCommandSet = XML.getFirstElementNamed(this._core.getPluginConfig().getDocumentElement(), "shell-commands");
         if (shellCommandSet != null)
         {
             List<Element> commands = XML.getAllElementsNamed(shellCommandSet, "command");
@@ -169,7 +169,7 @@ public class Shell extends Thread
     @Override
     public void run()
     {
-        if (this.core == null)
+        if (this._core == null)
         {
             throw new DeveloperError("Must attach the shell to a Core before calling run()!", new NullPointerException());
         }
@@ -208,7 +208,7 @@ public class Shell extends Thread
                 if (commandLine.toLowerCase().equals(EXIT))
                 {
                     printExitMessage();
-                    this.core.shutdown();
+                    this._core.shutdown();
                     return;
                 }
                 // otherwise...
@@ -245,7 +245,7 @@ public class Shell extends Thread
             }
             else if (commandLine.length() > 0)
             {
-                showConsole(this.botName, XML.filterViaHTMLTags(this.core.getResponse(commandLine, this.hostname, this.botid)));
+                showConsole(this.botName, XML.filterViaHTMLTags(this._core.getResponse(commandLine, this.hostname, this.botid)));
             }
             // If the command line has zero length, ignore it.
         }
@@ -256,7 +256,7 @@ public class Shell extends Thread
      */
     private void noShell()
     {
-        this.core.getLogger().warn("No input stream found; shell is disabled.");
+        this._core.getLogger().warn("No input stream found; shell is disabled.");
         while (true)
         {
             try
@@ -265,7 +265,7 @@ public class Shell extends Thread
             }
             catch (InterruptedException e)
             {
-                this.core.getLogger().warn("Shell was interrupted; shell will not run anymore.");
+                this._core.getLogger().warn("Shell was interrupted; shell will not run anymore.");
             }
         }
     }
@@ -413,7 +413,7 @@ public class Shell extends Thread
      */
     public Core getCore()
     {
-        return this.core;
+        return this._core;
     }
     
     /**
@@ -448,7 +448,7 @@ public class Shell extends Thread
         this.botName = this.bots.getBot(newBotID).getPropertyValue(this.botNamePredicate);
         showMessage("Switched to bot \"" + newBotID + "\" (name: \"" + this.botName + "\").");
         // Send the connect string and print the first response.
-        showConsole(this.botName, XML.filterViaHTMLTags(this.core.getResponse(this.core.getSettings().getConnectString(), this.hostname,
+        showConsole(this.botName, XML.filterViaHTMLTags(this._core.getResponse(this._core.getSettings().getConnectString(), this.hostname,
                 this.botid)));
     }
 
@@ -475,7 +475,7 @@ public class Shell extends Thread
         String commandableID = command.substring(1, space);
         ShellCommandable commandable = null;
 
-        for (ManagedProcess process : this.core.getManagedProcesses().values())
+        for (ManagedProcess process : this._core.getManagedProcesses().values())
         {
             if (process instanceof ShellCommandable)
             {

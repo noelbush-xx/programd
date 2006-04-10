@@ -34,11 +34,11 @@ public class GenderProcessor extends SubstitutionProcessor
     /**
      * Creates a new GenderProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public GenderProcessor(Core coreToUse)
+    public GenderProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

@@ -37,11 +37,11 @@ public class FormalProcessor extends AIMLProcessor
     /**
      * Creates a new FormalProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public FormalProcessor(Core coreToUse)
+    public FormalProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**

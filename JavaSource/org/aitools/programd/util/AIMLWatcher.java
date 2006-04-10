@@ -32,7 +32,7 @@ public class AIMLWatcher
     /** The Timer that handles watching AIML files. */
     private Timer timer;
 
-    private Core core;
+    private Core _core;
 
     /** Used for storing information about file changes. */
     protected Map<URL, Long> watchMap = new HashMap<URL, Long>();
@@ -42,12 +42,12 @@ public class AIMLWatcher
     /**
      * Creates a new AIMLWatcher using the given Graphmaster
      * 
-     * @param coreToUse the Core to use
+     * @param core the Core to use
      */
-    public AIMLWatcher(Core coreToUse)
+    public AIMLWatcher(Core core)
     {
-        this.core = coreToUse;
-        this.logger = this.core.getLogger();
+        this._core = core;
+        this.logger = this._core.getLogger();
     }
 
     /**
@@ -56,7 +56,7 @@ public class AIMLWatcher
     public void start()
     {
         this.timer = new Timer(true);
-        this.timer.schedule(new CheckAIMLTask(), 0, this.core.getSettings().getWatcherTimer());
+        this.timer.schedule(new CheckAIMLTask(), 0, this._core.getSettings().getWatcherTimer());
     }
     
     /**
@@ -78,7 +78,7 @@ public class AIMLWatcher
     protected void reload(URL path)
     {
         this.logger.info(String.format("AIMLWatcher reloading \"%s\".", URLTools.unescape(path)));
-        this.core.reload(path);
+        this._core.reload(path);
     }
 
     /**

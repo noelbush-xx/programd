@@ -54,11 +54,11 @@ public class ConditionProcessor extends AIMLProcessor
     /**
      * Creates a new ConditionProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public ConditionProcessor(Core coreToUse)
+    public ConditionProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**
@@ -150,7 +150,7 @@ public class ConditionProcessor extends AIMLProcessor
          */
         if (type == ListItemType.VALUE_ONLY)
         {
-            predicateValue = this.core.getPredicateMaster().get(name, parser.getUserID(), parser.getBotID());
+            predicateValue = this._core.getPredicateMaster().get(name, parser.getUserID(), parser.getBotID());
         }
 
         // Navigate through this entire level.
@@ -228,7 +228,7 @@ public class ConditionProcessor extends AIMLProcessor
                                      */
                                     try
                                     {
-                                        if (PatternArbiter.matches(this.core.getPredicateMaster().get(liname, parser.getUserID(), parser.getBotID()),
+                                        if (PatternArbiter.matches(this._core.getPredicateMaster().get(liname, parser.getUserID(), parser.getBotID()),
                                                 livalue, true))
                                         {
                                             return response + parser.evaluate(node.getChildNodes());

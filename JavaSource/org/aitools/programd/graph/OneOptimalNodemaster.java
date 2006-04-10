@@ -28,56 +28,56 @@ public class OneOptimalNodemaster extends AbstractNodemaster
 {
     protected int size = 0;
 
-    protected String key;
+    protected String _key;
 
-    protected Object value;
+    protected Object _value;
 
     /**
      * Puts the given object into the Nodemaster, associated with the given key.
      * 
-     * @param keyToUse the key to use
-     * @param valueToPut the value to put
+     * @param key the key to use
+     * @param value the value to put
      * @return the same object that was put into the Nodemaster
      */
-    public Object put(String keyToUse, Object valueToPut)
+    public Object put(String key, Object value)
     {
         if (this.size == 0)
         {
-            this.key = keyToUse.toUpperCase().intern();
-            if (valueToPut instanceof String)
+            this._key = key.toUpperCase().intern();
+            if (value instanceof String)
             {
-                this.value = ((String) valueToPut).intern();
+                this._value = ((String) value).intern();
             }
             else
             {
-                this.value = valueToPut;
+                this._value = value;
             }
             this.size = 1;
-            return this.value;
+            return this._value;
         }
         else if (this.size == 1)
         {
             this.hidden = new LinkedHashMap<String, Object>();
-            this.hidden.put(this.key, this.value);
-            this.key = null;
-            this.value = null;
+            this.hidden.put(this._key, this._value);
+            this._key = null;
+            this._value = null;
             this.size = 2;
-            if (valueToPut instanceof String)
+            if (value instanceof String)
             {
-                return this.hidden.put(keyToUse.toUpperCase().intern(), ((String) valueToPut).intern());
+                return this.hidden.put(key.toUpperCase().intern(), ((String) value).intern());
             }
             // otherwise...
-            return this.hidden.put(keyToUse.toUpperCase().intern(), valueToPut);
+            return this.hidden.put(key.toUpperCase().intern(), value);
         }
         else
         {
             this.size++;
-            if (valueToPut instanceof String)
+            if (value instanceof String)
             {
-                return this.hidden.put(keyToUse.toUpperCase().intern(), ((String) valueToPut).intern());
+                return this.hidden.put(key.toUpperCase().intern(), ((String) value).intern());
             }
             // otherwise...
-            return this.hidden.put(keyToUse.toUpperCase().intern(), valueToPut);
+            return this.hidden.put(key.toUpperCase().intern(), value);
         }
     }
 
@@ -90,10 +90,10 @@ public class OneOptimalNodemaster extends AbstractNodemaster
     {
         if (this.size == 1)
         {
-            if (valueToRemove.equals(this.value))
+            if (valueToRemove.equals(this._value))
             {
-                this.value = null;
-                this.key = null;
+                this._value = null;
+                this._key = null;
             }
             else
             {
@@ -136,8 +136,8 @@ public class OneOptimalNodemaster extends AbstractNodemaster
                 this.hidden.remove(keyToRemove);
                 // Set the last item in the HashMap to be the primary value/key
                 // pair for this Nodemapper.
-                this.key = this.hidden.keySet().iterator().next();
-                this.value = this.hidden.remove(this.key);
+                this._key = this.hidden.keySet().iterator().next();
+                this._value = this.hidden.remove(this._key);
                 // Remove the empty HashMap to save space.
                 this.hidden = null;
                 this.size = 1;
@@ -164,9 +164,9 @@ public class OneOptimalNodemaster extends AbstractNodemaster
         }
         else if (this.size == 1)
         {
-            if (keyToGet.equalsIgnoreCase(this.key))
+            if (keyToGet.equalsIgnoreCase(this._key))
             {
-                return this.value;
+                return this._value;
             }
             // (otherwise...)
             return null;
@@ -185,9 +185,9 @@ public class OneOptimalNodemaster extends AbstractNodemaster
         if (this.size == 1)
         {
             Set<String> result = new HashSet<String>();
-            if (this.key != null)
+            if (this._key != null)
             {
-                result.add(this.key);
+                result.add(this._key);
             }
             return result;
         }
@@ -207,7 +207,7 @@ public class OneOptimalNodemaster extends AbstractNodemaster
         }
         else if (this.size == 1)
         {
-            return (keyToCheck.equalsIgnoreCase(this.key));
+            return (keyToCheck.equalsIgnoreCase(this._key));
         }
         return this.hidden.containsKey(keyToCheck.toUpperCase());
     }
@@ -225,9 +225,9 @@ public class OneOptimalNodemaster extends AbstractNodemaster
         double total = 0d;
         if (this.size == 1)
         {
-            if (this.value != null && this.value instanceof Nodemapper)
+            if (this._value != null && this._value instanceof Nodemapper)
             {
-                total = ((Nodemapper)this.value).getAverageSize();
+                total = ((Nodemapper)this._value).getAverageSize();
             }
         }
         else

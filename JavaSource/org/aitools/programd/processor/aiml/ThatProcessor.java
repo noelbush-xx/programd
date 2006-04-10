@@ -32,11 +32,11 @@ public class ThatProcessor extends IndexedPredicateProcessor
     /**
      * Creates a new ThatProcessor using the given Core.
      * 
-     * @param coreToUse the Core object to use
+     * @param core the Core object to use
      */
-    public ThatProcessor(Core coreToUse)
+    public ThatProcessor(Core core)
     {
-        super(coreToUse);
+        super(core);
     }
 
     /**
