@@ -123,7 +123,7 @@ public class Tester
         return reportPath;
     }
 
-    private void runOneSuite(String botid, String suiteName, int runCount)
+    protected void runOneSuite(String botid, String suiteName, int runCount)
     {
         TestSuite suite = this.suites.get(suiteName);
         if (suite == null)
@@ -137,7 +137,7 @@ public class Tester
         }
     }
 
-    private void runAllSuites(String botid, int runCount)
+    protected void runAllSuites(String botid, int runCount)
     {
         while (runCount-- > 0)
         {
@@ -148,7 +148,7 @@ public class Tester
         }
     }
 
-    private void runSuite(String botId, TestSuite suite)
+    protected void runSuite(String botId, TestSuite suite)
     {
         suite.run(botId);
         this.failures.addAll(suite.getFailures());
@@ -165,7 +165,7 @@ public class Tester
      * 
      * @return the map of suite names to suites
      */
-    private static HashMap<String, TestSuite> loadTests(List<URL> suiteList, URL schema, Multiplexor multiplexor, Logger logger)
+    protected static HashMap<String, TestSuite> loadTests(List<URL> suiteList, URL schema, Multiplexor multiplexor, Logger logger)
     {
         HashMap<String, TestSuite> suites = new HashMap<String, TestSuite>();
         for (URL path : suiteList)

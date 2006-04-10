@@ -111,7 +111,7 @@ abstract public class GenericParser<P extends Processor>
      * @return the DOM produced by parsing
      * @throws ProcessorException if the content cannot be processed
      */
-    private Document parseCurrentURL() throws ProcessorException
+    protected Document parseCurrentURL() throws ProcessorException
     {
         URL url = this.docURL.peek();
         Document document;
@@ -185,7 +185,7 @@ abstract public class GenericParser<P extends Processor>
      * 
      * @param url
      */
-    private void contextualize(URL url)
+    protected void contextualize(URL url)
     {
         if (url != null)
         {

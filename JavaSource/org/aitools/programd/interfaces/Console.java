@@ -65,7 +65,7 @@ public class Console
      * @param out the stream to use for normal output messages
      * @param err the stream to use for error messages
      */
-    private void initialize(PrintStream out, PrintStream err)
+    protected void initialize(PrintStream out, PrintStream err)
     {
         this.stdOutAppender = ((ConsoleStreamAppender)Logger.getLogger("programd").getAppender("stdout"));
         if (this.stdOutAppender != null)

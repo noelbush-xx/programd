@@ -66,7 +66,7 @@ public class Heart
      * 
      * @param pulse the period in milliseconds
      */
-    private void startBeating(int pulse)
+    protected void startBeating(int pulse)
     {
         this.timer = new Timer();
         this.timer.schedule(new HeartBeat(), 0, pulse);

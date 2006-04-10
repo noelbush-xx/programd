@@ -239,7 +239,7 @@ abstract public class Multiplexor
      * @return the list of replies to the input sentences
      */
     @SuppressWarnings("boxing")
-    private List<String> getReplies(List<String> sentenceList, String userid, String botid)
+    protected List<String> getReplies(List<String> sentenceList, String userid, String botid)
     {
         if (sentenceList == null)
         {
@@ -321,7 +321,7 @@ abstract public class Multiplexor
      * @param botid
      * @return the reply to the input sentence
      */
-    private String getReply(String input, String that, String topic, String userid, String botid)
+    protected String getReply(String input, String that, String topic, String userid, String botid)
     {
         // Push the input onto the <input/> stack.
         this.predicateMaster.push(INPUT, input, userid, botid);
@@ -361,7 +361,7 @@ abstract public class Multiplexor
      * @param parser the parser to use
      * @return the match result
      */
-    private String getMatchResult(String input, String that, String topic, String userid, String botid, TemplateParser parser)
+    protected String getMatchResult(String input, String that, String topic, String userid, String botid, TemplateParser parser)
     {
         // Show the input path.
         if (matchLogger.isDebugEnabled())
@@ -465,7 +465,7 @@ abstract public class Multiplexor
      * @param userid the userid for whom the response was produced
      * @param botid the botid that produced the response
      */
-    private void logResponse(String input, String response, String userid, String botid)
+    protected void logResponse(String input, String response, String userid, String botid)
     {
         /*
          * NOTA BENE: This is a very specific workaround for a problem with the log4j

@@ -316,7 +316,7 @@ public class PredicateMaster
      * @throws NoSuchPredicateException if no values are assigned to the
      *             <code>name</code>
      */
-    private static PredicateValue getMultivaluedPredicateValue(String name, PredicateMap userPredicates) throws NoSuchPredicateException
+    protected static PredicateValue getMultivaluedPredicateValue(String name, PredicateMap userPredicates) throws NoSuchPredicateException
     {
         if (userPredicates.size() > 0 && userPredicates.containsKey(name))
         {
@@ -343,7 +343,7 @@ public class PredicateMaster
      *             <code>name</code>
      * @throws NullPointerException if <code>userPredicates</code> is null
      */
-    private PredicateValue loadMultivaluedPredicateValue(String name, PredicateMap userPredicates, String userid, String botid)
+    protected PredicateValue loadMultivaluedPredicateValue(String name, PredicateMap userPredicates, String userid, String botid)
             throws NoSuchPredicateException, NullPointerException
     {
         // Prevent this from being called with a null predicates map.
@@ -401,7 +401,7 @@ public class PredicateMaster
      * @return a multi-valued <code>PredicateValue</code> from <code>userPredicates</code> for
      *         <code>name</code> for <code>userid</code>
      */
-    private PredicateValue getLoadOrCreateMultivaluedPredicateValue(String name, PredicateMap userPredicates, String userid, String botid)
+    protected PredicateValue getLoadOrCreateMultivaluedPredicateValue(String name, PredicateMap userPredicates, String userid, String botid)
     {
         PredicateValue value;
 
@@ -434,7 +434,7 @@ public class PredicateMaster
      * @param botid
      * @return the best available default predicate
      */
-    private String bestAvailableDefault(String name, String botid)
+    protected String bestAvailableDefault(String name, String botid)
     {
         Map<String, PredicateInfo> predicatesInfo = this.bots.getBot(botid).getPredicatesInfo();
 
@@ -457,7 +457,7 @@ public class PredicateMaster
      * @return the appropriate result (name or value depending on predicate
      *         settings)
      */
-    private String nameOrValue(String name, String value, String botid)
+    protected String nameOrValue(String name, String value, String botid)
     {
         Map<String, PredicateInfo> predicatesInfo = this.bots.getBot(botid).getPredicatesInfo();
 
@@ -480,7 +480,7 @@ public class PredicateMaster
      * @param dumpCount the number of values to try to dump
      * @return the number that were actually dumped
      */
-    private int save(int dumpCount)
+    protected int save(int dumpCount)
     {
         int saveCount = 0;
 
@@ -588,7 +588,7 @@ public class PredicateMaster
     /**
      * Checks the predicate cache, and saves out predicates if necessary.
      */
-    private void checkCache()
+    protected void checkCache()
     {
         // See if we have exceeded or reached the cacheMax.
         if (cacheSize >= this.cacheMax)

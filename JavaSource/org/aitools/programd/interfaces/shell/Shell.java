@@ -254,7 +254,7 @@ public class Shell extends Thread
     /**
      * Notes that the shell will not run, and sleeps.
      */
-    private void noShell()
+    protected void noShell()
     {
         this._core.getLogger().warn("No input stream found; shell is disabled.");
         while (true)
@@ -288,7 +288,7 @@ public class Shell extends Thread
     /**
      * Displays a prompt.
      */
-    private void showPrompt()
+    protected void showPrompt()
     {
         if (this.getState() != Thread.State.NEW)
         {
@@ -297,13 +297,11 @@ public class Shell extends Thread
     }
 
     /**
-     * <p>
      * Displays a line for an interactive console, including the prompt.
-     * </p>
      * 
      * @param preprompt the text to show before the prompt
      */
-    private void promptConsole(String preprompt)
+    protected void promptConsole(String preprompt)
     {
         if (this.midLine)
         {
@@ -314,9 +312,7 @@ public class Shell extends Thread
     }
 
     /**
-     * <p>
      * Displays a regular message (no prompt) in an interactive console.
-     * </p>
      * 
      * @param message the message to display
      */
@@ -326,9 +322,7 @@ public class Shell extends Thread
     }
 
     /**
-     * <p>
      * Displays an error message (no prompt) in an interactive console.
-     * </p>
      * 
      * @param message the message to display
      */
@@ -338,14 +332,12 @@ public class Shell extends Thread
     }
 
     /**
-     * <p>
      * Displays a multi-line message (after a prompt) in an interactive console.
-     * </p>
      * 
      * @param preprompt the text to show before the prompt
      * @param message the multi-line message to display
      */
-    private void showConsole(String preprompt, String[] message)
+    protected void showConsole(String preprompt, String[] message)
     {
         for (int index = 0; index < message.length; index++)
         {
@@ -395,7 +387,7 @@ public class Shell extends Thread
     /**
      * Prints an exit message.
      */
-    private void printExitMessage()
+    protected void printExitMessage()
     {
         Logger.getLogger("programd").info("Exiting at user request.");
     }
@@ -459,7 +451,7 @@ public class Shell extends Thread
      * @throws NoCommandException if no command is given
      * @throws NoSuchCommandableException if an invalid commandable is specified
      */
-    private void commandCommandable(String command) throws NoCommandException, NoSuchCommandableException
+    protected void commandCommandable(String command) throws NoCommandException, NoSuchCommandableException
     {
         // Parse out the commandable.
         int space = command.indexOf(' ');

@@ -111,7 +111,7 @@ public class Graphmaster
     // Instance variables.
     
     /** The Core with which this Graphmaster is associated. */
-    protected Core _core;
+    private Core _core;
 
     /** The logger. */
     private Logger logger = Logger.getLogger("programd");
@@ -120,16 +120,16 @@ public class Graphmaster
     private Logger matchLogger = Logger.getLogger("programd.matching");
 
     /** The factory that will be used to create Nodemappers. */
-    protected NodemapperFactory nodemapperFactory;
+    private NodemapperFactory nodemapperFactory;
     
     /** The root {@link NodemapperFactory} . */
-    protected Nodemapper root;
+    private Nodemapper root;
     
     /** A map of loaded file URLs to botids. */
-    protected Map<URL, Set<String>> urlCatalog = new HashMap<URL, Set<String>>();
+    private Map<URL, Set<String>> urlCatalog = new HashMap<URL, Set<String>>();
     
     /** A map of KB URLs to &lt;BOTID&gt; nodes. */
-    protected Map<URL, Set<Nodemapper>> botidNodes = new HashMap<URL, Set<Nodemapper>>();
+    private Map<URL, Set<Nodemapper>> botidNodes = new HashMap<URL, Set<Nodemapper>>();
 
     /** The merge policy. */
     private CoreSettings.MergePolicy mergePolicy;
@@ -153,14 +153,11 @@ public class Graphmaster
     private int duplicateCategories = 0;
 
     /** The response timeout. */
-    protected int responseTimeout;
+    private int responseTimeout;
     
     /** A count of Nodemappers. */
-    protected int nodemapperCount = 1;
+    private int nodemapperCount = 1;
     
-    /** A running average of Nodemapper size. */
-    protected float averageNodemapperSize;
-
     /**
      * Creates a new Graphmaster, reading settings from
      * the given Core.
@@ -216,7 +213,7 @@ public class Graphmaster
      * @param source the source of the original path
      * @return <code>Nodemapper</code> which is the result of adding the node
      */
-    private Nodemapper add(ListIterator<String> pathIterator, Nodemapper parent, URL source)
+    protected Nodemapper add(ListIterator<String> pathIterator, Nodemapper parent, URL source)
     {
         // If there are no more words in the path, return the parent node
         if (!pathIterator.hasNext())
@@ -268,7 +265,7 @@ public class Graphmaster
      * 
      * @param nodemapper the mapper for the node to remove
      */
-    private void remove(Nodemapper nodemapper)
+    protected void remove(Nodemapper nodemapper)
     {
         Nodemapper parent = nodemapper.getParent();
         if (parent != null)
@@ -385,7 +382,7 @@ public class Graphmaster
      * @return the resulting <code>Match</code> object
      */
     @SuppressWarnings("boxing")
-    private Match match(Nodemapper nodemapper, Nodemapper parent, List<String> input,
+    protected Match match(Nodemapper nodemapper, Nodemapper parent, List<String> input,
             String wildcardContent, StringBuilder path, MatchState matchState, long expiration)
     {
         // Return null if expiration has been reached.

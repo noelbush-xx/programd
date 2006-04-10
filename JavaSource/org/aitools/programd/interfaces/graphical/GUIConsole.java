@@ -72,7 +72,7 @@ public class GUIConsole extends JPanel
     private Core _core;
 
     /** The underlying Console. */
-    protected Console console;
+    private Console console;
 
     /** The Shell that will (may) be used by the underlying console. */
     protected Shell _shell;

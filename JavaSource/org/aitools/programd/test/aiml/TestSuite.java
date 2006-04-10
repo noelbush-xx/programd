@@ -87,7 +87,7 @@ public class TestSuite implements Iterable<TestCase>
      * @param name the name to give the test suite
      */
     @SuppressWarnings("unused")
-    private TestSuite(String name, Logger logger)
+    protected TestSuite(String name, Logger logger)
     {
         this._name = name;
         this._logger = logger;
@@ -165,12 +165,12 @@ public class TestSuite implements Iterable<TestCase>
         return suiteSuccessful;
     }
 
-    private void registerSuccess(String suite, String tcase, String pattern, String response)
+    protected void registerSuccess(String suite, String tcase, String pattern, String response)
     {
         this.successes.add(new TestResult(suite, tcase, pattern, response));
     }
 
-    private void registerFailure(String suite, String tcase, String pattern, String response)
+    protected void registerFailure(String suite, String tcase, String pattern, String response)
     {
         this.failures.add(new TestResult(suite, tcase, pattern, response));
     }

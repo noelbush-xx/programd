@@ -71,13 +71,13 @@ public class ListDialog extends JDialog
         return value;
     }
 
-    private void setValue(String newValue)
+    protected void setValue(String newValue)
     {
         value = newValue;
         this.list.setSelectedValue(value, true);
     }
 
-    private ListDialog(Frame frame, Object[] data, String title, String labelText)
+    protected ListDialog(Frame frame, Object[] data, String title, String labelText)
     {
         super(frame, title, true);
 

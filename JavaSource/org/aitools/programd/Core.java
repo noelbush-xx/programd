@@ -141,7 +141,7 @@ public class Core
     private Document pluginConfig;
 
     /** The status of the Core. */
-    protected Status status = Status.NOT_STARTED;
+    private Status status = Status.NOT_STARTED;
 
     /** Possible values for status. */
     public static enum Status
@@ -356,7 +356,7 @@ public class Core
         }
     }
 
-    private void startWatcher()
+    protected void startWatcher()
     {
         if (this._settings.useWatcher())
         {
@@ -369,7 +369,7 @@ public class Core
         }
     }
 
-    private void startHeart()
+    protected void startHeart()
     {
         if (this._settings.heartEnabled())
         {
@@ -382,7 +382,7 @@ public class Core
         }
     }
 
-    private void setupInterpreter() throws UserError, DeveloperError
+    protected void setupInterpreter() throws UserError, DeveloperError
     {
         if (this._settings.javascriptAllowed())
         {
@@ -518,7 +518,7 @@ public class Core
      * @param path
      * @param botid
      */
-    private void doLoad(URL path, String botid)
+    protected void doLoad(URL path, String botid)
     {
     	try
     	{
@@ -563,7 +563,7 @@ public class Core
      * @param bot the bot for whom to check
      * @return whether or not the given path should be loaded
      */
-    private boolean shouldLoad(URL path, Bot bot)
+    protected boolean shouldLoad(URL path, Bot bot)
     {
         if (bot == null)
         {

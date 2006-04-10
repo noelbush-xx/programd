@@ -166,7 +166,7 @@ public class FlatFileMultiplexor extends Multiplexor
      * @param botid the botid with which to associate the userid in the search
      * @return the predicates for the userid
      */
-    private Properties loadPredicates(String userid, String botid)
+    protected Properties loadPredicates(String userid, String botid)
     {
         Properties predicates = new Properties();
 
@@ -195,7 +195,7 @@ public class FlatFileMultiplexor extends Multiplexor
      * @param userid the userid for which to save the predicates
      * @param botid the botid for which to save the predicates
      */
-    private void savePredicates(Properties predicates, String userid, String botid)
+    protected void savePredicates(Properties predicates, String userid, String botid)
     {
         String fileName = this.ffmDirName + File.separator + botid + File.separator + userid + PREDICATES_SUFFIX;
         Filesystem.checkOrCreate(fileName, FFM_FILE_LABEL);

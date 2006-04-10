@@ -298,7 +298,7 @@ public class DBMultiplexor extends Multiplexor
      * @param botid the botid for which to check this combination
      * @return whether the userid and password combination is valid
      */
-    private boolean checkUserInDB(String userid, String password, String botid)
+    protected boolean checkUserInDB(String userid, String password, String botid)
     {
         String passwordInDatabase = null;
 

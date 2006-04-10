@@ -38,7 +38,7 @@ public class SimpleConsole
     /** The console. */
     private Console console;
 
-    private SimpleConsole(String corePropertiesPath) throws FileNotFoundException
+    protected SimpleConsole(String corePropertiesPath) throws FileNotFoundException
     {
         URL baseURL = URLTools.createValidURL(System.getProperty("user.dir"));
         this.console = new Console();
@@ -56,7 +56,7 @@ public class SimpleConsole
         this.console.startShell();
     }
 
-    private static void usage()
+    protected static void usage()
     {
         System.out.println("Usage: simple-console -c <CORE_CONFIG> -n <CONSOLE_CONFIG>");
         System.out.println("Start up a simple console version of Program D using the specified config files.");
