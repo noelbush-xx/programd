@@ -16,9 +16,9 @@ import org.w3c.dom.Element;
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.util.LRUCache;
 import org.aitools.util.math.MersenneTwisterFast;
 import org.aitools.util.xml.XML;
+import org.apache.commons.collections.map.LRUMap;
 
 /**
  * <p>
@@ -61,8 +61,7 @@ public class RandomProcessor extends AIMLProcessor
      * The map in which MersenneTwisterFast random number generators will be stored for each unique botid + userid +
      * random element.
      */
-    private static final LRUCache<String, MersenneTwisterFast> generators = new LRUCache<String, MersenneTwisterFast>(
-            100);
+    private static final LRUMap generators = new LRUMap(100);
 
     /**
      * Creates a new RandomProcessor using the given Core.
@@ -85,7 +84,7 @@ public class RandomProcessor extends AIMLProcessor
         String identifier = parser.getBotID() + parser.getUserID() + element.toString();
 
         // Does the generators map already contain this one?
-        MersenneTwisterFast generator = generators.get(identifier);
+        MersenneTwisterFast generator = (MersenneTwisterFast)generators.get(identifier);
         if (generator == null)
         {
             generator = new MersenneTwisterFast(System.currentTimeMillis());
