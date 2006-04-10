@@ -38,14 +38,6 @@ import org.w3c.dom.Element;
  */
 public class Shell extends Thread
 {
-    /** The string to use for an interactive console. */
-    public static final String PROMPT = "> ";
-
-    /** Shell exit command. */
-    private static final String EXIT = "/exit";
-
-    // Instance variables.
-
     /** The command registry. */
     private ShellCommandRegistry commandRegistry;
 
@@ -175,8 +167,7 @@ public class Shell extends Thread
                     new NullPointerException());
         }
 
-        showMessage("Interactive shell: type \"" + EXIT + "\" to shut down; \"" + HelpCommand.COMMAND_STRING
-                + "\" for help.");
+        showMessage(String.format("Interactive shell: type \"/exit\" to shut down; \"%s\" for help.", HelpCommand.COMMAND_STRING));
         Bot bot = this.bots.getABot();
         if (bot == null)
         {
@@ -207,7 +198,7 @@ public class Shell extends Thread
             else if (commandLine.indexOf('/') == 0)
             {
                 // Exit command
-                if (commandLine.toLowerCase().equals(EXIT))
+                if ("/exit".toLowerCase().equals(commandLine))
                 {
                     printExitMessage();
                     this._core.shutdown();
@@ -283,7 +274,7 @@ public class Shell extends Thread
      */
     public void processCommandLine(String commandLine) throws NoSuchCommandException
     {
-        this.consolePrompt.println(this.hostname + PROMPT + commandLine);
+        this.consolePrompt.println(String.format("%s> %s", this.hostname, commandLine));
         this.commandRegistry.getHandlerFor(commandLine).handle(commandLine, this);
     }
 
@@ -310,7 +301,7 @@ public class Shell extends Thread
         {
             this.consolePrompt.println();
         }
-        this.consolePrompt.print(preprompt + PROMPT);
+        this.consolePrompt.print(String.format("%s> ", preprompt));
         this.midLine = true;
     }
 
@@ -344,7 +335,7 @@ public class Shell extends Thread
     {
         for (int index = 0; index < message.length; index++)
         {
-            printlnOut(preprompt + PROMPT + message[index]);
+            printlnOut(String.format("%s> %s", preprompt, message[index]));
         }
     }
 

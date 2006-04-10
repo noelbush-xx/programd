@@ -47,14 +47,6 @@ public class Match
     /** The nodemapper that resulted from this match. */
     private Nodemapper nodemapper;
 
-    // Convenience constants.
-
-    /** A space. */
-    public static final String SPACE = " ";
-
-    /** The string used to separate path components. */
-    private static final String SPACED_PATH_SEPARATOR = SPACE + Graphmaster.PATH_SEPARATOR + SPACE;
-
     /**
      * Pushes a new input star onto the input stack.
      * 
@@ -181,8 +173,11 @@ public class Match
      */
     public String getPath()
     {
-        return InputNormalizer.patternFit(this.pattern) + SPACED_PATH_SEPARATOR + InputNormalizer.patternFit(this.that)
-                + SPACED_PATH_SEPARATOR + InputNormalizer.patternFit(this.topic) + SPACED_PATH_SEPARATOR + this.botid;
+        return String.format("%s:%s:%s:%s",
+                InputNormalizer.patternFit(this.pattern),
+                InputNormalizer.patternFit(this.that),
+                InputNormalizer.patternFit(this.topic),
+                this.botid);
     }
 
     /**

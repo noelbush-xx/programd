@@ -35,10 +35,6 @@ public class GossipProcessor extends AIMLProcessor
 
     private static FileWriter gossipFile;
 
-    private static final String LI_START = "<li>";
-
-    private static final String LI_END_LINE_SEPARATOR = "</li>" + System.getProperty("line.separator", "\n");
-
     /**
      * Creates a new GossipProcessor using the given Core.
      * 
@@ -75,13 +71,13 @@ public class GossipProcessor extends AIMLProcessor
         // Put the gossip in the log.
         try
         {
-            gossipFile.append(LI_START + response + LI_END_LINE_SEPARATOR);
+            gossipFile.append(String.format("<li>%s</li>%n", response));
             gossipFile.flush();
         }
         catch (IOException e)
         {
             throw new DeveloperError("Error trying to write gossip.", e);
         }
-        return EMPTY_STRING;
+        return "";
     }
 }

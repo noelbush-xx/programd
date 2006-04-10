@@ -32,20 +32,12 @@ abstract public class Processor
      */
 
     // Convenience constants.
-    /** An empty string, for convenience. */
-    protected static final String EMPTY_STRING = "";
 
     /** The string &quot;{@value}&quot;, for convenience. */
     protected static final String NAME = "name";
 
     /** The string &quot;{@value}&quot;, for convenience. */
     protected static final String VALUE = "value";
-
-    /** The string &quot;{@value}&quot;, for convenience. */
-    protected static final String NAME_EQUALS = "name=";
-
-    /** The string &quot;{@value}&quot;, for convenience. */
-    protected static final String VALUE_EQUALS = "value=";
 
     /** The string &quot;{@value}&quot;, for convenience. */
     protected static final String ID = "id";

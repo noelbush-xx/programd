@@ -48,7 +48,7 @@ public class PredicateProcessor extends BotConfigurationElementProcessor
     {
         String name = element.getAttribute(NAME);
         String defaultValue = element.getAttribute(DEFAULT);
-        if (defaultValue.equals(EMPTY_STRING))
+        if ("".equals(defaultValue))
         {
             defaultValue = null;
         }
@@ -59,6 +59,6 @@ public class PredicateProcessor extends BotConfigurationElementProcessor
             returnNameWhenSet = true;
         }
         parser.getCurrentBot().addPredicateInfo(name, defaultValue, returnNameWhenSet);
-        return EMPTY_STRING;
+        return "";
     }
 }

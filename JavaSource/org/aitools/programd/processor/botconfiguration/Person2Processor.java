@@ -42,6 +42,6 @@ public class Person2Processor extends SubstitutionElementProcessor
     public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         addSubstitutions(SubstitutionType.PERSON2, element, parser);
-        return EMPTY_STRING;
+        return "";
     }
 }

@@ -44,6 +44,6 @@ public class GenderProcessor extends SubstitutionElementProcessor
     public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         addSubstitutions(SubstitutionType.GENDER, element, parser);
-        return EMPTY_STRING;
+        return "";
     }
 }

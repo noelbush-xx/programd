@@ -55,14 +55,8 @@ abstract public class Multiplexor
     /** The name of the <code>star</code> special predicate. */
     protected static final String STAR = "star";
 
-    /** An empty string. */
-    protected static final String EMPTY_STRING = "";
-
     /** The word &quot;value&quot;. */
     protected static final String VALUE = "value";
-
-    /** An asterisk (used in String production) */
-    protected static final String ASTERISK = "*";
 
     /** The predicate empty default. */
     protected String predicateEmptyDefault;
@@ -158,7 +152,7 @@ abstract public class Multiplexor
         }
 
         // Start by assuming an empty response.
-        StringBuilder responseBuffer = new StringBuilder(EMPTY_STRING);
+        StringBuilder responseBuffer = new StringBuilder("");
 
         // Append each reply to the response.
         for (String reply : replies)
@@ -171,7 +165,7 @@ abstract public class Multiplexor
         // Log the response.
         logResponse(input, response, userid, botid);
 
-        // Return the response (may be just EMPTY_STRING!)
+        // Return the response (may be just ""!)
         return response;
     }
 
@@ -202,15 +196,15 @@ abstract public class Multiplexor
         List<String> thatSentences = bot.sentenceSplit(this.predicateMaster.get(THAT, 1, userid, botid));
         String that = InputNormalizer.patternFitIgnoreCase(thatSentences.get(thatSentences.size() - 1));
 
-        if (that.equals(EMPTY_STRING) || that.equals(this.predicateEmptyDefault))
+        if ("".equals(that) || that.equals(this.predicateEmptyDefault))
         {
-            that = ASTERISK;
+            that = "*";
         }
 
         String topic = InputNormalizer.patternFitIgnoreCase(this.predicateMaster.get(TOPIC, userid, botid));
-        if (topic.equals(EMPTY_STRING) || topic.equals(this.predicateEmptyDefault))
+        if ("".equals(topic) || topic.equals(this.predicateEmptyDefault))
         {
-            topic = ASTERISK;
+            topic = "*";
         }
 
         return getMatchResult(input, that, topic, userid, botid, parser);
@@ -244,15 +238,15 @@ abstract public class Multiplexor
         List<String> thatSentences = bot.sentenceSplit(this.predicateMaster.get(THAT, 1, userid, botid));
         String that = InputNormalizer.patternFitIgnoreCase(thatSentences.get(thatSentences.size() - 1));
 
-        if (that.equals(EMPTY_STRING) || that.equals(this.predicateEmptyDefault))
+        if ("".equals(that) || that.equals(this.predicateEmptyDefault))
         {
-            that = ASTERISK;
+            that = "*";
         }
 
         String topic = InputNormalizer.patternFitIgnoreCase(this.predicateMaster.get(TOPIC, userid, botid));
-        if (topic.equals(EMPTY_STRING) || topic.equals(this.predicateEmptyDefault))
+        if ("".equals(topic) || topic.equals(this.predicateEmptyDefault))
         {
-            topic = ASTERISK;
+            topic = "*";
         }
 
         // We might use this to track matching statistics.
@@ -292,7 +286,7 @@ abstract public class Multiplexor
         // If no replies, return an empty string.
         if (replies.size() == 0)
         {
-            replies.add(EMPTY_STRING);
+            replies.add("");
         }
         return replies;
     }
@@ -329,7 +323,7 @@ abstract public class Multiplexor
         if (reply == null)
         {
             logger.error("getMatchReply generated a null reply!", new NullPointerException());
-            return EMPTY_STRING;
+            return "";
         }
 
         // Push the reply onto the <that/> stack.
@@ -367,13 +361,13 @@ abstract public class Multiplexor
         catch (NoMatchException e)
         {
             logger.warn(e.getMessage());
-            return EMPTY_STRING;
+            return "";
         }
 
         if (match == null)
         {
             logger.warn(String.format("No match found for input \"%s\".", input));
-            return EMPTY_STRING;
+            return "";
         }
 
         if (matchLogger.isDebugEnabled())
@@ -412,7 +406,7 @@ abstract public class Multiplexor
             Logger.getLogger("programd").error("Error while processing response: " + e.getExplanatoryMessage(), e);
 
             // Set response to empty string.
-            return EMPTY_STRING;
+            return "";
         }
         catch (DeveloperError e)
         {
@@ -420,7 +414,7 @@ abstract public class Multiplexor
             Logger.getLogger("programd").error("Error while processing response: " + e.getCause().getMessage(), e);
 
             // Set response to empty string.
-            return EMPTY_STRING;
+            return "";
         }
 
         // Record activation, if targeting is in use.

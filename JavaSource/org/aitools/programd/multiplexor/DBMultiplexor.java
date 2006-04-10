@@ -22,7 +22,6 @@ import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
 import org.aitools.util.sql.DbAccess;
 import org.aitools.util.sql.DbAccessRefsPoolMgr;
-import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.runtime.UserError;
 import org.apache.log4j.Logger;
 
@@ -50,11 +49,6 @@ public class DBMultiplexor extends Multiplexor
     private Logger dbLogger;
 
     private Map<String, Map<String, String>> userCacheForBots = new HashMap<String, Map<String, String>>();
-
-    // Convenience constants.
-
-    /** The string &quot;{@value}&quot; (for character encoding conversion). */
-    private static final String ENC_UTF8 = "UTF-8";
 
     /**
      * Creates a new DBMultiplexor with the given Core as owner.
@@ -99,14 +93,14 @@ public class DBMultiplexor extends Multiplexor
         /*
          * URLEncoder conveniently escapes things that would otherwise be problematic.
          */
-        String encodedValue;
+        String encodedValue = null;
         try
         {
-            encodedValue = URLEncoder.encode(value.trim(), ENC_UTF8);
+            encodedValue = URLEncoder.encode(value.trim(), "utf-8");
         }
         catch (UnsupportedEncodingException e)
         {
-            throw new DeveloperError("This platform does not support UTF-8!", e);
+            assert false : "This platform does not support UTF-8!";
         }
 
         DbAccess dbaRef = null;
@@ -195,11 +189,12 @@ public class DBMultiplexor extends Multiplexor
         // If found, return it (don't forget to decode!).
         try
         {
-            return URLDecoder.decode(result, ENC_UTF8);
+            return URLDecoder.decode(result, "utf-8");
         }
         catch (UnsupportedEncodingException e)
         {
-            throw new DeveloperError("This platform does not support UTF-8!", e);
+            assert false : "This platform does not support UTF-8!";
+            return result;
         }
     }
 

@@ -44,9 +44,6 @@ public class SystemProcessor extends AIMLProcessor
     private static final String[] arrayFormOSnames = { "mac os x", "linux", "solaris", "sunos", "mpe", "hp-ux",
             "pa_risc", "aix", "freebsd", "irix", "unix", "windows xp" };
 
-    /** For convenience, the system line separator. */
-    protected static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
-
     /** Whether to use the array form of Runtime.exec(). */
     private static boolean useArrayExecForm;
 
@@ -64,9 +61,6 @@ public class SystemProcessor extends AIMLProcessor
             }
         }
     }
-
-    /** A regex matching any amount of whitespace (for splitting strings into words). */
-    private static final String STRING_SPLIT_REGEX = "\\s";
 
     /**
      * Creates a new SystemProcessor using the given Core.
@@ -90,7 +84,7 @@ public class SystemProcessor extends AIMLProcessor
         if (!coreSettings.osAccessAllowed())
         {
             logger.warn("Use of <system> prohibited!");
-            return EMPTY_STRING;
+            return "";
         }
 
         String directoryPath = coreSettings.getSystemInterpreterDirectory().getPath();
@@ -101,20 +95,20 @@ public class SystemProcessor extends AIMLProcessor
         {
             commandLine = prefix + commandLine;
         }
-        String output = EMPTY_STRING;
+        String output = "";
         commandLine = commandLine.trim();
         logger.debug("<system> call: " + commandLine);
-        if (directoryPath == null || EMPTY_STRING.equals(directoryPath))
+        if (directoryPath == null || "".equals(directoryPath))
         {
             logger.error("No programd.interpreter.system.directory defined!");
-            return EMPTY_STRING;
+            return "";
         }
         File directory = Filesystem.getExistingDirectory(directoryPath);
         logger.debug("Executing <system> call in \"" + directory.getPath() + "\"");
         ProcessBuilder processBuilder = null;
         if (useArrayExecForm)
         {
-            processBuilder = new ProcessBuilder(commandLine.split(STRING_SPLIT_REGEX));
+            processBuilder = new ProcessBuilder(commandLine.split("\\s"));
         }
         else
         {
@@ -129,12 +123,12 @@ public class SystemProcessor extends AIMLProcessor
         catch (IOException e)
         {
             logger.warn(String.format("Error executing <system> command \"%s\"", commandLine), e);
-            return EMPTY_STRING;
+            return "";
         }
         if (child == null)
         {
             logger.error("Could not get separate process for <system> command.");
-            return EMPTY_STRING;
+            return "";
         }
 
         try
@@ -144,7 +138,7 @@ public class SystemProcessor extends AIMLProcessor
         catch (InterruptedException e)
         {
             logger.error("System process interruped; could not complete.");
-            return EMPTY_STRING;
+            return "";
         }
 
         try

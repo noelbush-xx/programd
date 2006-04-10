@@ -47,33 +47,8 @@ public class AIMLReader extends DefaultHandler2
      * Constants used in parsing.
      */
 
-    /** The start of a tag marker. */
-    private static final String MARKER_START = "<";
-
-    /** The end of a tag marker. */
-    private static final String MARKER_END = ">";
-
-    /** An empty string. */
-    private static final String EMPTY_STRING = "";
-
-    private static final String OPEN_TEMPLATE_START_TAG = "<template xmlns=\"";
-
-    private static final String QUOTE_MARKER_END = "\">";
-
-    /** A slash. */
-    private static final String SLASH = "/";
-
-    /** End of a template element. */
-    private static final String TEMPLATE_END_TAG = "</template>";
-
-    /** The system line separator. */
-    protected static final String LINE_SEPARATOR = System.getProperty("line.separator");
-
     /** The string &quot;{@value}&quot;. */
     private static final String PATTERN = "pattern";
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String BOT = "bot";
 
     /** The string &quot;{@value}&quot;. */
     private static final String THAT = "that";
@@ -84,8 +59,8 @@ public class AIMLReader extends DefaultHandler2
     /** The string &quot;{@value}&quot;. */
     private static final String TEMPLATE = "template";
 
-    /** The wildcard (&quot;*&quot;). */
-    private static final String WILDCARD = "*";
+    /** The string &quot;{@value}&quot;. */
+    private static final String BOT = "bot";
 
     /** The string &quot;{@value}&quot;. */
     private static final String NAME = "name";
@@ -133,8 +108,8 @@ public class AIMLReader extends DefaultHandler2
         this._botid = botid;
         this._bot = bot;
         this._defaultNamespaceURI = defaultNamespaceURI;
-        this.templateStartTag = OPEN_TEMPLATE_START_TAG + defaultNamespaceURI + QUOTE_MARKER_END;
-        this.topic = WILDCARD;
+        this.templateStartTag = String.format("<template xmlns=\"%s\">", defaultNamespaceURI);
+        this.topic = "*";
     }
 
     /**
@@ -177,7 +152,7 @@ public class AIMLReader extends DefaultHandler2
     public void startElement(String uri, String localName, String qName, Attributes attributes)
     {
         String elementName;
-        if (localName.equals(EMPTY_STRING))
+        if ("".equals(localName))
         {
             elementName = qName;
         }
@@ -222,11 +197,11 @@ public class AIMLReader extends DefaultHandler2
      * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused","boxing"})
     public void endElement(String uri, String localName, String qName)
     {
         String elementName;
-        if (localName.equals(EMPTY_STRING))
+        if ("".equals(localName))
         {
             elementName = qName;
         }
@@ -248,7 +223,7 @@ public class AIMLReader extends DefaultHandler2
         else if (elementName.equals(TEMPLATE))
         {
             // Whitespace-normalize the template contents.
-            this.template = this.templateStartTag + this.templateBuffer.toString() + TEMPLATE_END_TAG;
+            this.template = String.format("%s%s</template>", this.templateStartTag, this.templateBuffer.toString());
             // Finally, deliver the newly defined category to the Graphmaster.
             this._graphmaster.addCategory(this.pattern, this.that, this.topic, this.template, this._botid, this._bot,
                     this._path);
@@ -264,14 +239,14 @@ public class AIMLReader extends DefaultHandler2
             // Get the template length (just once).
             int templateLength = this.templateBuffer.length();
             // If the last char of the template string is a '>',
-            if (this.templateBuffer.substring(templateLength - 1).equals(MARKER_END))
+            if (this.templateBuffer.substring(templateLength - 1).equals('>'))
             {
                 // and if the next to last char is *not* a '/',
-                if (!this.templateBuffer.substring(templateLength - 2, templateLength - 1).equals(SLASH))
+                if (!this.templateBuffer.substring(templateLength - 2, templateLength - 1).equals('/'))
                 {
                     // then if the name of the last tag is the same as this one,
                     // this is an empty element.
-                    int lastMarkerStart = this.templateBuffer.lastIndexOf(MARKER_START);
+                    int lastMarkerStart = this.templateBuffer.lastIndexOf("<");
                     if (this.templateBuffer.indexOf(elementName, lastMarkerStart) == lastMarkerStart + 1)
                     {
                         // So just insert a '/' before the '>'.
@@ -283,14 +258,12 @@ public class AIMLReader extends DefaultHandler2
             // Otherwise, make a closing tag.
             if (makeClosingTag)
             {
-                this.templateBuffer.append(MARKER_START);
-                this.templateBuffer.append('/' + elementName);
-                this.templateBuffer.append(MARKER_END);
+                this.templateBuffer.append(String.format("</%s>", elementName));
             }
         }
         else if (elementName.equals(TOPIC))
         {
-            this.topic = WILDCARD;
+            this.topic = "*";
         }
     }
 

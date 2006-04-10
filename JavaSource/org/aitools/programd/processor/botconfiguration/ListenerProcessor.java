@@ -68,7 +68,7 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         if (element.hasAttribute(HREF))
         {
             parser.verifyAndProcess(element.getAttribute(HREF));
-            return EMPTY_STRING;
+            return "";
         }
         // otherwise...
 
@@ -78,7 +78,7 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         // Is the enabled attribute true?
         if (!enabled.equals(TRUE))
         {
-            return EMPTY_STRING;
+            return "";
         }
 
         // Get the current bot.
@@ -113,6 +113,6 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
         this._core.getManagedProcesses().start(listener, classname + SEPARATOR + bot.getID());
 
         logger.info("Started \"" + classname + "\" listener for bot \"" + bot.getID() + "\".");
-        return EMPTY_STRING;
+        return "";
     }
 }

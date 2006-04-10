@@ -53,7 +53,7 @@ public class TestingProcessor extends BotConfigurationElementProcessor
         if (element.hasAttribute(HREF))
         {
             parser.verifyAndProcess(element.getAttribute(HREF));
-            return EMPTY_STRING;
+            return "";
         }
         // (otherwise...)
         Bot bot = parser.getCurrentBot();
@@ -63,6 +63,6 @@ public class TestingProcessor extends BotConfigurationElementProcessor
         bot.setTestReportDirectory(URLTools.contextualize(docURL, XML.getChildText(element, "report-directory")));
 
         logger.info("Configured testing.");
-        return EMPTY_STRING;
+        return "";
     }
 }

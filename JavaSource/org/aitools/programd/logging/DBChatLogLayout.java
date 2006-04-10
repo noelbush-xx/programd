@@ -21,9 +21,6 @@ import org.apache.log4j.spi.LoggingEvent;
  */
 public class DBChatLogLayout extends SimpleLayout
 {
-    /** The string &quot;{@value}&quot; (for character encoding conversion). */
-    private static final String ENC_UTF8 = "utf-8";
-
     /**
      * Creates a new SimpleFormatter with the given Core settings.
      */
@@ -62,8 +59,8 @@ public class DBChatLogLayout extends SimpleLayout
         {
             return String.format(
                     "insert into chatlog (userid, botid, input, response) values ('%s', '%s', '%s', '%s')", URLEncoder
-                            .encode(event.getUserID(), ENC_UTF8), URLEncoder.encode(event.getBotID(), ENC_UTF8),
-                    URLEncoder.encode(event.getInput(), ENC_UTF8), URLEncoder.encode(event.getReply(), ENC_UTF8));
+                            .encode(event.getUserID(), "utf-8"), URLEncoder.encode(event.getBotID(), "utf-8"),
+                    URLEncoder.encode(event.getInput(), "utf-8"), URLEncoder.encode(event.getReply(), "utf-8"));
         }
         catch (UnsupportedEncodingException e)
         {

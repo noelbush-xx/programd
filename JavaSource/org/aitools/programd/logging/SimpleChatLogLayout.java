@@ -28,12 +28,6 @@ public class SimpleChatLogLayout extends SimpleLayout
 
     private boolean showTimestamp;
 
-    private static final String RBRACKET_SPACE = "] ";
-
-    private static final String RANGLE_BRACKET_SPACE = "> ";
-
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
-
     /**
      * Creates a new SimpleFormatter with the given Core settings.
      */
@@ -93,23 +87,21 @@ public class SimpleChatLogLayout extends SimpleLayout
         if (this.showTimestamp)
         {
             datetime = this.timestampFormat.format(new Date(event.timeStamp));
-            result.append('[' + datetime + RBRACKET_SPACE + event.getUserID() + RANGLE_BRACKET_SPACE + event.getInput()
-                    + LINE_SEPARATOR);
+            result.append(String.format("[%s] %s> %s%n", datetime, event.getUserID(), event.getInput()));
         }
         else
         {
-            result.append(event.getUserID() + RANGLE_BRACKET_SPACE + event.getInput() + LINE_SEPARATOR);
+            result.append(String.format("%s> %s%n", event.getUserID(), event.getInput()));
         }
         for (int index = 0; index < responseLineCount; index++)
         {
             if (this.showTimestamp)
             {
-                result.append('[' + datetime + RBRACKET_SPACE + event.getBotID() + RANGLE_BRACKET_SPACE
-                        + responseLines[index] + LINE_SEPARATOR);
+                result.append(String.format("[%s] %s> %s%n", datetime, event.getBotID(), responseLines[index]));
             }
             else
             {
-                result.append(event.getBotID() + RANGLE_BRACKET_SPACE + responseLines[index] + LINE_SEPARATOR);
+                result.append(String.format("%s> %s%n", event.getBotID(), responseLines[index]));
             }
         }
         return result.toString();

@@ -48,6 +48,6 @@ public class ListenersProcessor extends BotConfigurationElementProcessor
         {
             parser.evaluate(element.getChildNodes());
         }
-        return EMPTY_STRING;
+        return "";
     }
 }

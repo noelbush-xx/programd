@@ -78,7 +78,7 @@ public class SRAIProcessor extends AIMLProcessor
                         else
                         {
                             aimlLogger.error("Unrecoverable infinite loop.");
-                            return EMPTY_STRING;
+                            return "";
                         }
                     }
                 }

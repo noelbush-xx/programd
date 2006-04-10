@@ -162,12 +162,6 @@ public class Core
         CRASHED
     }
 
-    // Convenience constants.
-    private static final String EMPTY_STRING = "";
-
-    /** The <code>*</code> wildcard. */
-    public static final String ASTERISK = "*";
-
     /**
      * Initializes a new Core object with default property values and the given base URL.
      * 
@@ -392,7 +386,7 @@ public class Core
 
             String javascriptInterpreterClassname = this._settings.getJavascriptInterpreterClassname();
 
-            if (javascriptInterpreterClassname.equals(EMPTY_STRING))
+            if ("".equals(javascriptInterpreterClassname))
             {
                 throw new UserError(new UnspecifiedParameterError("javascript-interpreter.classname"));
             }
@@ -426,7 +420,7 @@ public class Core
         if (path.getProtocol().equals(Filesystem.FILE))
         {
             String spec = path.getFile();
-            if (spec.indexOf(ASTERISK) != -1)
+            if (spec.indexOf('*') != -1)
             {
                 List<File> files = null;
 

@@ -66,7 +66,7 @@ public class Bot
     private Map<String, PredicateMap> predicateCache = Collections.synchronizedMap(new HashMap<String, PredicateMap>());
 
     /** The page to use for this bot when communicating via the servlet interface. */
-    private String servletPage = EMPTY_STRING;
+    private String servletPage = "";
 
     /** The files containing test suites. */
     private List<URL> testSuites;
@@ -76,9 +76,6 @@ public class Bot
 
     /** The predicate empty default. */
     protected String predicateEmptyDefault;
-
-    /** An empty string. */
-    private static final String EMPTY_STRING = "";
 
     /**
      * Creates a new Bot with the given id. The bot's chat log is also set up. A default servlet page is set.
@@ -149,7 +146,7 @@ public class Bot
     public String getPropertyValue(String name)
     {
         // Don't bother with empty property names.
-        if (name.equals(EMPTY_STRING))
+        if (name == null || "".equals(name))
         {
             return this.predicateEmptyDefault;
         }
@@ -173,7 +170,7 @@ public class Bot
     public void setPropertyValue(String name, String value)
     {
         // Property name must not be empty.
-        if (name.equals(EMPTY_STRING))
+        if (name == null || "".equals(name))
         {
             return;
         }

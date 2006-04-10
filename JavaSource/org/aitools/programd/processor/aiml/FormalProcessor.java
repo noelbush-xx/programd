@@ -29,9 +29,6 @@ public class FormalProcessor extends AIMLProcessor
     /** The label (as required by the registration scheme). */
     public static final String label = "formal";
 
-    // Convenience constants.
-    private static final String SPACE = " ";
-
     /**
      * Creates a new FormalProcessor using the given Core.
      * 
@@ -49,18 +46,18 @@ public class FormalProcessor extends AIMLProcessor
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         String response = parser.evaluate(element.getChildNodes());
-        if (response.equals(EMPTY_STRING))
+        if ("".equals(response))
         {
             return response;
         }
-        StringTokenizer tokenizer = new StringTokenizer(response, SPACE);
+        StringTokenizer tokenizer = new StringTokenizer(response, " ");
         StringBuilder result = new StringBuilder(response.length());
         while (tokenizer.hasMoreTokens())
         {
             String word = tokenizer.nextToken();
             if (result.length() > 0)
             {
-                result.append(SPACE);
+                result.append(" ");
             }
             result.append(word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase());
         }

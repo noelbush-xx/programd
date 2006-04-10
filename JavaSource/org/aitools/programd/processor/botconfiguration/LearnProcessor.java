@@ -50,6 +50,6 @@ public class LearnProcessor extends BotConfigurationElementProcessor
         // Filesystem.pushWorkingDirectory(URLTools.getParent(URLTools.getParent(path)));
         parser.getCore().load(path, parser.getCurrentBot().getID());
         // Filesystem.popWorkingDirectory();
-        return EMPTY_STRING;
+        return "";
     }
 }

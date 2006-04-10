@@ -51,7 +51,7 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
         if (element.hasAttribute(HREF))
         {
             parser.verifyAndProcess(element.getAttribute(HREF));
-            return EMPTY_STRING;
+            return "";
         }
         // (otherwise...)
         Bot bot = parser.getCurrentBot();
@@ -64,6 +64,6 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
         }
 
         logger.info(String.format("Loaded %,d sentence-splitters.", splitters.size()));
-        return EMPTY_STRING;
+        return "";
     }
 }

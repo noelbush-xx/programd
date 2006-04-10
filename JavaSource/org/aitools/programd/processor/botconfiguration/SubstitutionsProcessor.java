@@ -49,6 +49,6 @@ public class SubstitutionsProcessor extends BotConfigurationElementProcessor
         {
             parser.evaluate(element.getChildNodes());
         }
-        return EMPTY_STRING;
+        return "";
     }
 }

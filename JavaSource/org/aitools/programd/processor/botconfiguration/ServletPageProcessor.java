@@ -40,6 +40,6 @@ public class ServletPageProcessor extends SubstitutionElementProcessor
     public String process(Element element, BotsConfigurationFileParser parser)
     {
         parser.getCurrentBot().setServletPage(element.getTextContent());
-        return EMPTY_STRING;
+        return "";
     }
 }

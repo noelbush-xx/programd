@@ -87,7 +87,7 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
         catch (StackOverflowError e)
         {
             Logger.getLogger("programd").error("Stack overflow error processing " + element.getLocalName() + " tag.");
-            return EMPTY_STRING;
+            return "";
         }
     }
 

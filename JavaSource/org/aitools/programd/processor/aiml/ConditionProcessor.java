@@ -70,7 +70,7 @@ public class ConditionProcessor extends AIMLProcessor
          * Process a multiPredicateCondition: <condition> <li name="xxx" value="xxx"> ... </li><li> ... </li>
          * </condition>
          */
-        if (name.equals(EMPTY_STRING) && value.equals(EMPTY_STRING))
+        if ("".equals(name) && "".equals(value))
         {
             if (aimlLogger.isDebugEnabled())
             {
@@ -82,7 +82,7 @@ public class ConditionProcessor extends AIMLProcessor
         /*
          * Process a blockCondition: <condition name="xxx" value="yyy"> ... </condition>
          */
-        if (!name.equals(EMPTY_STRING) && !value.equals(EMPTY_STRING))
+        if (!"".equals(name) && !"".equals(value))
         {
             if (aimlLogger.isDebugEnabled())
             {
@@ -93,22 +93,22 @@ public class ConditionProcessor extends AIMLProcessor
                 if (PatternArbiter.matches(parser.getCore().getPredicateMaster().get(name, parser.getUserID(),
                         parser.getBotID()), value, true))
                 {
-                    return processListItem(parser, element.getChildNodes(), ListItemType.DEFAULT, EMPTY_STRING);
+                    return processListItem(parser, element.getChildNodes(), ListItemType.DEFAULT, "");
                 }
             }
             catch (NotAnAIMLPatternException e)
             {
                 logger.warn("ConditionProcessor got a non-AIML pattern in a value attribute.", e);
-                return EMPTY_STRING;
+                return "";
             }
-            return EMPTY_STRING;
+            return "";
         }
 
         /*
          * Process a singlePredicateCondition: <condition name="xxx"> <li value="yyy"> ... </li><li> ... </li>
          * </condition>
          */
-        if (!name.equals(EMPTY_STRING) && value.equals(EMPTY_STRING))
+        if (!"".equals(name) && "".equals(value))
         {
             if (aimlLogger.isDebugEnabled())
             {
@@ -118,7 +118,7 @@ public class ConditionProcessor extends AIMLProcessor
         }
 
         // In other cases, return an empty string.
-        return EMPTY_STRING;
+        return "";
     }
 
     /**
@@ -134,12 +134,12 @@ public class ConditionProcessor extends AIMLProcessor
     public String processListItem(TemplateParser parser, NodeList list, ListItemType type, String name)
             throws ProcessorException
     {
-        String response = EMPTY_STRING;
+        String response = "";
         Node node;
 
-        String predicateValue = EMPTY_STRING;
-        String livalue = EMPTY_STRING;
-        String liname = EMPTY_STRING;
+        String predicateValue = "";
+        String livalue = "";
+        String liname = "";
 
         /*
          * For <code> valueOnlyListItem </code> s, look at the parent &lt;condition/&gt; to get the predicate <code>

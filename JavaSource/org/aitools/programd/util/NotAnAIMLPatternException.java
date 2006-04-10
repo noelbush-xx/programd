@@ -20,12 +20,6 @@ public class NotAnAIMLPatternException extends Exception
     /** The pattern which this exception concerns. */
     private String _pattern;
 
-    /** First part of a message. */
-    private static final String MSG_PART_ONE = "Not an AIML pattern: \"";
-
-    /** Second part of a message. */
-    private static final String MSG_PART_TWO = "\" - ";
-
     /**
      * Records the pattern and error message for this exception.
      * 
@@ -44,6 +38,6 @@ public class NotAnAIMLPatternException extends Exception
     @Override
     public String getMessage()
     {
-        return MSG_PART_ONE + this._pattern + MSG_PART_TWO + super.getMessage();
+        return String.format("Not an AIML pattern: \"%s\" - %s", this._pattern, super.getMessage());
     }
 }

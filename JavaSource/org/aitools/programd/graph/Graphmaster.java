@@ -76,20 +76,6 @@ public class Graphmaster
     /** The <code>_</code> wildcard. */
     public static final String UNDERSCORE = "_";
 
-    /** A path separator. */
-    public static final String PATH_SEPARATOR = ":";
-
-    // Private convenience constants.
-
-    /** An empty string. */
-    private static final String EMPTY_STRING = "";
-
-    /** The start of a marker. */
-    private static final String MARKER_START = "<";
-
-    /** A space. */
-    private static final String SPACE = " ";
-
     /** Match states. */
     private static enum MatchState
     {
@@ -355,7 +341,7 @@ public class Graphmaster
 
         // Get the match, starting at the root, with an empty star and path,
         // starting in "in input" mode.
-        Match match = match(this.root, this.root, inputPath, EMPTY_STRING, new StringBuilder(), MatchState.IN_INPUT,
+        Match match = match(this.root, this.root, inputPath, "", new StringBuilder(), MatchState.IN_INPUT,
                 System.currentTimeMillis() + this.responseTimeout);
 
         // Return it if not null; throw an exception if null.
@@ -509,7 +495,7 @@ public class Graphmaster
              * Check now whether this head is a marker for the <that>, <topic> or <botid> segments of the path. If it
              * is, set the match state variable accordingly.
              */
-            if (head.startsWith(MARKER_START))
+            if (head.startsWith("<"))
             {
                 if (head.equals(THAT))
                 {
@@ -526,7 +512,7 @@ public class Graphmaster
 
                 // Now try to get a match using the tail and an empty star and
                 // empty path.
-                match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, EMPTY_STRING, new StringBuilder(),
+                match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, "", new StringBuilder(),
                         matchState, expiration);
 
                 // If that did result in a match,
@@ -670,7 +656,7 @@ public class Graphmaster
          */
         if (nodemapper.equals(parent.get(ASTERISK)) || nodemapper.equals(parent.get(UNDERSCORE)))
         {
-            return match(nodemapper, parent, tail, wildcardContent + SPACE + head, path, matchState, expiration);
+            return match(nodemapper, parent, tail, String.format("%s %s", wildcardContent, head), path, matchState, expiration);
         }
 
         /*

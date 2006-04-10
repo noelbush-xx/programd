@@ -45,7 +45,7 @@ public class SentenceProcessor extends AIMLProcessor
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         String response = parser.evaluate(element.getChildNodes());
-        if (response.equals(EMPTY_STRING))
+        if ("".equals(response))
         {
             return response;
         }

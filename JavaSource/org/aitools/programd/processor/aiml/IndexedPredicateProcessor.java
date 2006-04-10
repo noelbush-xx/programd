@@ -58,7 +58,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         // Only 1 or 2 dimensions allowed.
         if (!((dimensions == 1) || (dimensions == 2)))
         {
-            return EMPTY_STRING;
+            return "";
         }
 
         // Get a valid 2-dimensional index.
@@ -66,7 +66,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
 
         if (indexes[0] <= 0)
         {
-            return EMPTY_STRING;
+            return "";
         }
 
         // Get entire predicate value at this index (may contain multiple
@@ -89,7 +89,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         // Return "" for a sentence whose index is greater than sentence count.
         if (indexes[1] > sentenceCount)
         {
-            return EMPTY_STRING;
+            return "";
         }
         // Get the nth "sentence" (1 is most recent, 2 just before that, etc.)
         return XML.removeMarkup(sentenceList.get(sentenceCount - indexes[1])).trim();
@@ -121,7 +121,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         // No need to go further if no predicate values are available.
         if (predicates.isEmpty())
         {
-            return EMPTY_STRING;
+            return "";
         }
 
         // Get a valid 1-dimensional index.
@@ -133,7 +133,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
         // Return "" if index exceeds the number of predicates.
         if (index >= predicates.size())
         {
-            return EMPTY_STRING;
+            return "";
         }
 
         // Retrieve and prettify the result.

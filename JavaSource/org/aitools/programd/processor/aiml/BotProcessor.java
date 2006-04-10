@@ -44,6 +44,6 @@ public class BotProcessor extends AIMLProcessor
     @Override
     public String process(Element element, TemplateParser parser)
     {
-        return parser.getCore().getBot(parser.getBotID()).getPropertyValue(element.getAttribute(NAME));
+        return parser.getCore().getBot(parser.getBotID()).getPropertyValue(element.getAttribute("name"));
     }
 }

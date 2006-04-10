@@ -58,6 +58,6 @@ public class LearnProcessor extends AIMLProcessor
         // Filesystem.pushWorkingDirectory(URLTools.getParent(path));
         parser.getCore().load(path, parser.getBotID());
         // Filesystem.popWorkingDirectory();
-        return EMPTY_STRING;
+        return "";
     }
 }

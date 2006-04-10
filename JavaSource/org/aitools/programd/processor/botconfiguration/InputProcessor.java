@@ -45,6 +45,6 @@ public class InputProcessor extends SubstitutionElementProcessor
     public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException
     {
         addSubstitutions(SubstitutionType.INPUT, element, parser);
-        return EMPTY_STRING;
+        return "";
     }
 }

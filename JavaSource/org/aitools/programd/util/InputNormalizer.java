@@ -29,11 +29,6 @@ import org.aitools.util.xml.XML;
  */
 public class InputNormalizer
 {
-    // Convenience constants.
-
-    /** An empty string. */
-    private static final String EMPTY_STRING = "";
-
     /**
      * Splits an input into sentences, as defined by the
      * <code>sentenceSplitters</code>.
@@ -55,7 +50,7 @@ public class InputNormalizer
         int inputLength = input.length();
         if (inputLength == 0)
         {
-            result.add(EMPTY_STRING);
+            result.add("");
             return result;
         }
 

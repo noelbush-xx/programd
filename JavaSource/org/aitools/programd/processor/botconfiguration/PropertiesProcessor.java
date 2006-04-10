@@ -47,6 +47,6 @@ public class PropertiesProcessor extends BotConfigurationElementProcessor
         {
             parser.evaluate(element.getChildNodes());
         }
-        return EMPTY_STRING;
+        return "";
     }
 }

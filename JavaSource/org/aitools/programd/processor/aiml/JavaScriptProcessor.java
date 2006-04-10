@@ -54,7 +54,7 @@ public class JavaScriptProcessor extends AIMLProcessor
         if (!parser.getCore().getSettings().javascriptAllowed())
         {
             logger.warn("Use of <javascript> prohibited!");
-            return EMPTY_STRING;
+            return "";
         }
         logger.debug("Calling JavaScript interpreter.");
         return parser.getCore().getInterpreter().evaluate(parser.evaluate(element.getChildNodes()));

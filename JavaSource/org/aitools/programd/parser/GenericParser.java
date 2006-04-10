@@ -64,14 +64,8 @@ abstract public class GenericParser<P extends Processor>
 
     // Convenience constants.
 
-    /** An empty string, for convenience. */
-    protected static final String EMPTY_STRING = "";
-
     /** The word &quot;index&quot;, for convenience. */
     protected static final String INDEX = "index";
-
-    /** A comma, for convenience. */
-    protected static final String COMMA = ",";
 
     /** A DocumentBuilder for producing new Documents. */
     protected static DocumentBuilder utilDocBuilder;
@@ -223,7 +217,7 @@ abstract public class GenericParser<P extends Processor>
         // Is it a valid element?
         if (element == null)
         {
-            return EMPTY_STRING;
+            return "";
         }
 
         // Search for the tag in the processor registry.
@@ -310,7 +304,7 @@ abstract public class GenericParser<P extends Processor>
      */
     public String evaluate(Node node) throws ProcessorException
     {
-        String response = EMPTY_STRING;
+        String response = "";
 
         // Verify there is something to work with.
         if (node == null)
@@ -366,18 +360,18 @@ abstract public class GenericParser<P extends Processor>
     public String shortcutTag(Element element, String newElementName, String childContent, short childType)
             throws ProcessorException
     {
-        String response = EMPTY_STRING;
+        String response = "";
 
         // If the node is empty, we need not continue.
         if (element == null)
         {
-            return EMPTY_STRING;
+            return "";
         }
 
         /*
          * Process children (if any). Clearly, the root tag cannot have an empty type, and the children must exist.
          */
-        if ((!childContent.equals(EMPTY_STRING)) && ((childType == Node.ELEMENT_NODE) || (childType == Node.TEXT_NODE)))
+        if ((!"".equals(childContent)) && ((childType == Node.ELEMENT_NODE) || (childType == Node.TEXT_NODE)))
         {
             Document ownerDoc = element.getOwnerDocument();
             Element newElement = ownerDoc.createElementNS(element.getNamespaceURI(), newElementName);
@@ -487,13 +481,13 @@ abstract public class GenericParser<P extends Processor>
         int[] result = { 1, 1 };
 
         // Assign the default if the index attribute is empty.
-        if (indexValue.equals(EMPTY_STRING))
+        if ("".equals(indexValue))
         {
             return result;
         }
 
         // If only one dimension is specified, fill in the other as 1.
-        int comma = indexValue.indexOf(COMMA);
+        int comma = indexValue.indexOf(',');
         if (comma < 0)
         {
             try
