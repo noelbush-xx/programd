@@ -49,8 +49,8 @@ public class MemoryCommand extends ShellCommand
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
      */
     @Override
-    public void handle(@SuppressWarnings("unused")
-    String commandLine, Shell shell)
+    @SuppressWarnings("unused")
+    public void handle(String commandLine, Shell shell)
     {
         shell.showMessage(UserSystem.memoryReport());
     }

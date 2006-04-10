@@ -11,7 +11,7 @@ package org.aitools.programd.interfaces.shell;
 
 /**
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- *
+ * 
  */
 public class CategoriesCommand extends ShellCommand
 {
@@ -44,12 +44,12 @@ public class CategoriesCommand extends ShellCommand
     /**
      * Attempts to load a specified file into the Graphmaster.
      * 
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
+     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
+     *      org.aitools.programd.interfaces.shell.Shell)
      */
-    @SuppressWarnings("boxing")
     @Override
-    public void handle(@SuppressWarnings("unused")
-    String commandLine, Shell shell)
+    @SuppressWarnings( { "boxing", "unused" })
+    public void handle(String commandLine, Shell shell)
     {
         shell.showMessage(shell.getCore().getGraphmaster().getCategoryReport());
     }

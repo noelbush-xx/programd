@@ -22,12 +22,8 @@ import org.aitools.util.resource.Filesystem;
 import org.aitools.util.runtime.UserError;
 
 /**
- * <p>
- * Presently more a proof-of-concept than anything else, for checking the new {@link Multiplexor} architecture.
- * </p>
- * <p>
- * Uses &quot;flat-file&quot; Java properties files, as in Program B, to store predicate data.
- * </p>
+ * <p>Presently more a proof-of-concept than anything else, for checking the new {@link Multiplexor} architecture.</p>
+ * <p>Uses &quot;flat-file&quot; Java properties files, as in Program B, to store predicate data.</p>
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @version 4.5
@@ -46,12 +42,12 @@ public class FlatFileMultiplexor extends Multiplexor
     /**
      * Creates a new FlatFileMultiplexor with the given Core as owner.
      * 
-     * @param coreOwner the Core that owns this FlatFileMultiplexor
+     * @param core the Core that owns this FlatFileMultiplexor
      */
-    public FlatFileMultiplexor(Core coreOwner)
+    public FlatFileMultiplexor(Core core)
     {
-        super(coreOwner);
-        this.ffmDirName = this.core.getSettings().getMultiplexorFfmDir().getPath();
+        super(core);
+        this.ffmDirName = this._core.getSettings().getMultiplexorFfmDir().getPath();
     }
 
     /**
@@ -72,10 +68,8 @@ public class FlatFileMultiplexor extends Multiplexor
      * @return true always
      */
     @Override
-    public boolean checkUser(@SuppressWarnings("unused")
-    String userid, @SuppressWarnings("unused")
-    String password, @SuppressWarnings("unused")
-    String botid)
+    @SuppressWarnings("unused")
+    public boolean checkUser(String userid, String password, String botid)
     {
         return true;
     }
@@ -88,10 +82,8 @@ public class FlatFileMultiplexor extends Multiplexor
      * @param botid the id of the bot for whom to create the given userid/password combination
      */
     @Override
-    public void createUser(@SuppressWarnings("unused")
-    String userid, @SuppressWarnings("unused")
-    String password, @SuppressWarnings("unused")
-    String botid)
+    @SuppressWarnings("unused")
+    public void createUser(String userid, String password, String botid)
     {
         // Do nothing.
     }
@@ -105,10 +97,8 @@ public class FlatFileMultiplexor extends Multiplexor
      * @return true always
      */
     @Override
-    public boolean changePassword(@SuppressWarnings("unused")
-    String userid, @SuppressWarnings("unused")
-    String password, @SuppressWarnings("unused")
-    String botid)
+    @SuppressWarnings("unused")
+    public boolean changePassword(String userid, String password, String botid)
     {
         return true;
     }
@@ -220,8 +210,8 @@ public class FlatFileMultiplexor extends Multiplexor
      * @see org.aitools.programd.multiplexor.Multiplexor#useridCount(java.lang.String)
      */
     @Override
-    public int useridCount(@SuppressWarnings("unused")
-    String botid)
+    @SuppressWarnings("unused")
+    public int useridCount(String botid)
     {
         return 0;
     }

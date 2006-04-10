@@ -59,11 +59,11 @@ public class DBMultiplexor extends Multiplexor
     /**
      * Creates a new DBMultiplexor with the given Core as owner.
      * 
-     * @param coreOwner the Core that owns this DBMultiplexor
+     * @param core the Core that owns this DBMultiplexor
      */
-    public DBMultiplexor(Core coreOwner)
+    public DBMultiplexor(Core core)
     {
-        super(coreOwner);
+        super(core);
         this.dbLogger = Logger.getLogger("programd");
     }
 
@@ -73,7 +73,7 @@ public class DBMultiplexor extends Multiplexor
     @Override
     public void initialize()
     {
-        CoreSettings coreSettings = this.core.getSettings();
+        CoreSettings coreSettings = this._core.getSettings();
 
         this.dbLogger.debug("Opening database pool.");
 

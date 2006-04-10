@@ -70,7 +70,7 @@ abstract public class Multiplexor
     // Class variables.
 
     /** The Core that owns this Multiplexor. */
-    protected Core core;
+    protected Core _core;
 
     /** The Graphmaster in use by the Core. */
     protected Graphmaster graphmaster;
@@ -108,10 +108,10 @@ abstract public class Multiplexor
      */
     public Multiplexor(Core owner)
     {
-        this.core = owner;
-        this.graphmaster = this.core.getGraphmaster();
-        this.bots = this.core.getBots();
-        CoreSettings coreSettings = this.core.getSettings();
+        this._core = owner;
+        this.graphmaster = this._core.getGraphmaster();
+        this.bots = this._core.getBots();
+        CoreSettings coreSettings = this._core.getSettings();
         this.predicateEmptyDefault = coreSettings.getPredicateEmptyDefault();
     }
 
@@ -318,7 +318,7 @@ abstract public class Multiplexor
         TemplateParser parser;
         try
         {
-            parser = new TemplateParser(input, userid, botid, this.core);
+            parser = new TemplateParser(input, userid, botid, this._core);
         }
         catch (TemplateParserException e)
         {

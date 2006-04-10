@@ -222,8 +222,8 @@ public class AIMLReader extends DefaultHandler2
      * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
-    public void endElement(@SuppressWarnings("unused")
-    String uri, String localName, String qName)
+    @SuppressWarnings("unused")
+    public void endElement(String uri, String localName, String qName)
     {
         String elementName;
         if (localName.equals(EMPTY_STRING))
