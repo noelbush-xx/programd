@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="JavaSource"/>
 	<classpathentry kind="lib" path="lib/gnu.getopt-1.0.10.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
-	<classpathentry kind="lib" path="lib/aitools-utils.jar"/>
+	<classpathentry sourcepath="/aitools-utils/src" kind="lib" path="lib/aitools-utils.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v5.5"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container/ProgramD"/>
@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="/IRCListener/lib/pircbot.jar"/>
 	<classpathentry kind="lib" path="/AIMListener/distrib/aim-listener.jar"/>
 	<classpathentry sourcepath="/usr/local/src/jaimbot-1.4/src" kind="lib" path="/AIMListener/lib/jaimbot-lib-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
