@@ -38,8 +38,7 @@ public class TestReport
      * @param reportedSuccesses the successes
      * @param reportedFailures the failures
      */
-    public TestReport(LinkedList<TestResult> reportedSuccesses,
-            LinkedList<TestResult> reportedFailures)
+    public TestReport(LinkedList<TestResult> reportedSuccesses, LinkedList<TestResult> reportedFailures)
     {
         this.successes = reportedSuccesses;
         this.failures = reportedFailures;
@@ -52,8 +51,7 @@ public class TestReport
      */
     public void logSummary(Logger logger)
     {
-        logger.info(this.successes.size() + "/" + (this.successes.size() + this.failures.size())
-                + " tests succeeded.");
+        logger.info(this.successes.size() + "/" + (this.successes.size() + this.failures.size()) + " tests succeeded.");
     }
 
     /**

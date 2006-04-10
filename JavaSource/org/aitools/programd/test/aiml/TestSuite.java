@@ -40,7 +40,7 @@ public class TestSuite implements Iterable<TestCase>
 
     /** The Multiplexor to use. */
     private Multiplexor _multiplexor;
-    
+
     /** The Logger. */
     private Logger _logger;
 
@@ -149,16 +149,14 @@ public class TestSuite implements Iterable<TestCase>
             String testcaseName = testCase.getName();
             if (!caseSuccessful)
             {
-                this._logger.warn("Test case \"" + testcaseName + "\" failed with response \"" +
-                        XML.removeMarkup(testCase.getLastResponse()) + "\".");
-                registerFailure(this._name, testCase.getName(), testCase.getInput(), testCase
-                        .getLastResponse());
+                this._logger.warn("Test case \"" + testcaseName + "\" failed with response \""
+                        + XML.removeMarkup(testCase.getLastResponse()) + "\".");
+                registerFailure(this._name, testCase.getName(), testCase.getInput(), testCase.getLastResponse());
             }
             else
             {
                 this._logger.info("Test case " + testcaseName + " succeeded.");
-                registerSuccess(this._name, testCase.getName(), testCase.getInput(), testCase
-                        .getLastResponse());
+                registerSuccess(this._name, testCase.getName(), testCase.getInput(), testCase.getLastResponse());
             }
             suiteSuccessful &= caseSuccessful;
         }
@@ -225,16 +223,14 @@ public class TestSuite implements Iterable<TestCase>
         }
         catch (SAXException e)
         {
-            throw new UserError("SAX exception trying to parse test suite file: "
-                    + e.getMessage(), e);
+            throw new UserError("SAX exception trying to parse test suite file: " + e.getMessage(), e);
         }
         String encoding = doc.getXmlEncoding();
         Element testSuiteElement = doc.getDocumentElement();
         TestSuite suite = new TestSuite(testSuiteElement.getAttribute("name"), testSuiteElement
                 .getAttribute("clearInput"), multiplexor, logger);
-    
-        NodeList testCases = doc.getElementsByTagNameNS(TESTCASE_NAMESPACE_URI,
-                TestCase.TAG_TESTCASE);
+
+        NodeList testCases = doc.getElementsByTagNameNS(TESTCASE_NAMESPACE_URI, TestCase.TAG_TESTCASE);
         int testCaseCount = testCases.getLength();
         for (int index = 0; index < testCaseCount; index++)
         {

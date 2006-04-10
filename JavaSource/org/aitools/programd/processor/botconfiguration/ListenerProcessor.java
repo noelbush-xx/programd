@@ -86,9 +86,9 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
 
         // Set up the parameters for the listener.
         List<Element> parameterElements = XML.getElementChildrenOf(element);
-        
+
         Map<String, String> parameters = new HashMap<String, String>(parameterElements.size());
-        
+
         for (Element parameter : parameterElements)
         {
             parameters.put(parameter.getAttribute(NAME), parameter.getAttribute(VALUE));
@@ -96,8 +96,9 @@ public class ListenerProcessor extends BotConfigurationElementProcessor
 
         // Instantiate a new listener for the bot.
         String classname = element.getAttribute(CLASS);
-        Listener listener = ClassUtils.getSubclassInstance(Listener.class, classname, "listener", this._core, bot, parameters);
-        
+        Listener listener = ClassUtils.getSubclassInstance(Listener.class, classname, "listener", this._core, bot,
+                parameters);
+
         // Check listener parameters.
         try
         {

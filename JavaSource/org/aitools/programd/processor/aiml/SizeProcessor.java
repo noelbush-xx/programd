@@ -15,9 +15,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 
 /**
- * Handles a
- * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-size">size</a></code>
- * element.
+ * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-size">size</a></code> element.
  * 
  * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -41,7 +39,8 @@ public class SizeProcessor extends AIMLProcessor
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
     @Override
-    public String process(@SuppressWarnings("unused") Element element, TemplateParser parser)
+    public String process(@SuppressWarnings("unused")
+    Element element, TemplateParser parser)
     {
         return String.valueOf(parser.getCore().getGraphmaster().getCategoryCount());
     }

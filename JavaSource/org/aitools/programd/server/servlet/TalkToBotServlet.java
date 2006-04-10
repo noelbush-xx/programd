@@ -24,10 +24,10 @@ public class TalkToBotServlet extends HttpServlet
 {
     /** The Core object that will be used throughout. */
     protected Core core;
-    
+
     /** A default bot page if none other is provided. */
     protected String defaultBotServletPage = "/pages/TalkToBot.jspx";
-    
+
     /** A page to use for displaying errors. */
     protected String errorPage = "/pages/Error.jspx";
 
@@ -40,7 +40,7 @@ public class TalkToBotServlet extends HttpServlet
     @Override
     public void init()
     {
-        this.core = (Core)getServletContext().getAttribute("core");
+        this.core = (Core) getServletContext().getAttribute("core");
         String botPage = getInitParameter("default-bot-page");
         if (botPage != null)
         {
@@ -52,7 +52,7 @@ public class TalkToBotServlet extends HttpServlet
             this.errorPage = otherErrorPage;
         }
     }
-    
+
     /**
      * Removes the reference to the Core, and removes it from the context
      * attributes.
@@ -103,7 +103,7 @@ public class TalkToBotServlet extends HttpServlet
     {
         // Get/create the session.
         HttpSession session = req.getSession(true);
-        
+
         // Look for a userid.
         String userid = null;
         Principal principal = req.getUserPrincipal();
@@ -122,29 +122,29 @@ public class TalkToBotServlet extends HttpServlet
             forward(this.errorPage, req, resp);
             return;
         }
-        
+
         // Put the userid into a session attribute (so it can be accessed by other things; but we always recompute it!)
         session.setAttribute("userid", userid);
-        
+
         // Get the bot parameter, if there is one.
         String botid = req.getParameter("botid");
-        
+
         // It might be in a request attribute.
         if (botid == null)
         {
-            botid = (String)req.getAttribute("botid");
+            botid = (String) req.getAttribute("botid");
         }
-        
+
         // We intend to wind up with some sort of Program D Bot object, one way or another.
         Bot programDBot = null;
-        
+
         // See if there is already a bot access object in the session.
         Object botAccess = session.getAttribute("bot");
-        
+
         // If it's null, or if it is a bot but there's a bot id specified that doesn't match it, try to replace it.
-        if (botAccess == null ||
-                !(botAccess instanceof BotAccess &&
-                (botid == null || ((BotAccess)botAccess).getBotId().equals(botid))))
+        if (botAccess == null
+                || !(botAccess instanceof BotAccess && (botid == null || ((BotAccess) botAccess).getBotId().equals(
+                        botid))))
         {
             // If a bot parameter is not specified, try to get any bot.
             if (botid == null || botid.length() == 0)
@@ -188,7 +188,7 @@ public class TalkToBotServlet extends HttpServlet
         // Otherwise (should have a valid bot access object here), just get the program D bot
         else
         {
-            programDBot = ((BotAccess)botAccess).getBot();
+            programDBot = ((BotAccess) botAccess).getBot();
         }
         String botPage = programDBot.getServletPage();
         if (botPage == null || botPage.length() == 0)
@@ -197,8 +197,9 @@ public class TalkToBotServlet extends HttpServlet
         }
         forward(botPage, req, resp);
     }
-    
-    protected void forward(String page, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+
+    protected void forward(String page, HttpServletRequest req, HttpServletResponse resp) throws ServletException,
+            IOException
     {
         req.getRequestDispatcher(page).forward(req, resp);
     }

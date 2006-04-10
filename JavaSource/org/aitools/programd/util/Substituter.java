@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 public class Substituter
 {
     private static final Logger aimlLogger = Logger.getLogger("programd.aiml-processing");
-    
+
     /**
      * Performs replacements specified by the <code>substitutionMap</code>
      * in the given <code>input</code>.
@@ -43,12 +43,13 @@ public class Substituter
         {
             return input;
         }
-        
+
         if (aimlLogger.isDebugEnabled())
         {
-            aimlLogger.debug(String.format("Applying %,d-element substituion map to input \"%s\".", substitutionMap.size(), input));
+            aimlLogger.debug(String.format("Applying %,d-element substituion map to input \"%s\".", substitutionMap
+                    .size(), input));
         }
-        
+
         // This will contain all pieces of the input untouched by substitution.
         List<String> untouchedPieces = Collections.checkedList(new LinkedList<String>(), String.class);
         untouchedPieces.add(input);
@@ -82,7 +83,7 @@ public class Substituter
                     {
                         aimlLogger.debug(String.format("Matched \"%s\" in \"%s\".", find, untouchedTest));
                     }
-                    
+
                     // If there is a match, replace the current untouched input with the
                     // substring up to startIndex,
                     int startIndex = matcher.start();
@@ -91,9 +92,10 @@ public class Substituter
                     if (aimlLogger.isDebugEnabled())
                     {
 
-                        aimlLogger.debug(String.format("From \"%s\" leaving untouched \"%s\".", untouchedTest, newUntouched));
+                        aimlLogger.debug(String.format("From \"%s\" leaving untouched \"%s\".", untouchedTest,
+                                newUntouched));
                     }
-                    
+
                     // put the replacement text into the replacements list,
                     String replacement = substitutionMap.get(find);
                     replacements.add(untouchedIterator.nextIndex() - 1, replacement);
@@ -101,7 +103,7 @@ public class Substituter
                     {
                         aimlLogger.debug(String.format("Added \"%s\" to replacements list.", replacement));
                     }
-                    
+
                     // and put the remainder of the untouched input into the
                     // untouched list.
                     String remainingUntouched = untouchedTest.substring(matcher.end());

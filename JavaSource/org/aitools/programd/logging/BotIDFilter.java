@@ -12,7 +12,6 @@ package org.aitools.programd.logging;
 import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 
-
 /**
  * Accepts a ChatLogEvent if it comes from a specific bot id;
  * denies it otherwise.
@@ -23,7 +22,7 @@ import org.apache.log4j.spi.LoggingEvent;
 public class BotIDFilter extends Filter
 {
     private String botid;
-    
+
     @Override
     public int decide(LoggingEvent event)
     {

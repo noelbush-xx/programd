@@ -30,10 +30,10 @@ public class Tester
 
     /** The test failures. */
     private LinkedList<TestResult> failures = new LinkedList<TestResult>();
-    
+
     /** The Core that this Tester will use. */
     private Core _core;
-    
+
     /** The Multiplexor that this Tester will use. */
     private Multiplexor _multiplexor;
 
@@ -47,18 +47,15 @@ public class Tester
     private URL testReportDirectory;
 
     /** The timestamp format to use for reports. */
-    private static final SimpleDateFormat timestampFormat = new SimpleDateFormat(
-            "yyyy-MM-dd-H-mm-ss");
-    
+    private static final SimpleDateFormat timestampFormat = new SimpleDateFormat("yyyy-MM-dd-H-mm-ss");
+
     /** The location of the test cases schema. */
     private static final String TEST_CASES_SCHEMA_LOCATION = "resources/schema/test-cases.xsd";
 
     /**
-     * Creates a new Tester which will use the given Core to find out its
-     * configuration and run tests.
+     * Creates a new Tester which will use the given Core to find out its configuration and run tests.
      * 
-     * @param core the Core to use for finding plugin configuration, active
-     *            multiplexor, etc.
+     * @param core the Core to use for finding plugin configuration, active multiplexor, etc.
      * @param testLogger the logger to which to send output
      * @param suitePaths the test suites
      * @param testReports the directory in which to store test reports
@@ -71,8 +68,8 @@ public class Tester
         this.suiteURLs = suitePaths;
         try
         {
-            this.testReportDirectory = Filesystem.checkOrCreateDirectory(testReports.getFile(),
-                    "test report directory").getCanonicalFile().toURL();
+            this.testReportDirectory = Filesystem
+                    .checkOrCreateDirectory(testReports.getFile(), "test report directory").getCanonicalFile().toURL();
         }
         catch (IOException e)
         {
@@ -81,8 +78,7 @@ public class Tester
     }
 
     /**
-     * Runs the tests in the given suite on the given botid, a given number of
-     * times.
+     * Runs the tests in the given suite on the given botid, a given number of times.
      * 
      * @param suite the suite to run
      * @param botid the botid on whom to run the tests
@@ -92,7 +88,8 @@ public class Tester
     public String run(String botid, String suite, int runCount)
     {
         this.suites.clear();
-        this.suites = loadTests(this.suiteURLs, URLTools.contextualize(Filesystem.getRootPath(), TEST_CASES_SCHEMA_LOCATION), this._multiplexor, this.logger);
+        this.suites = loadTests(this.suiteURLs, URLTools.contextualize(Filesystem.getRootPath(),
+                TEST_CASES_SCHEMA_LOCATION), this._multiplexor, this.logger);
         if (null == botid)
         {
             this.logger.warn("No botid defined for tests.");
@@ -165,7 +162,8 @@ public class Tester
      * 
      * @return the map of suite names to suites
      */
-    protected static HashMap<String, TestSuite> loadTests(List<URL> suiteList, URL schema, Multiplexor multiplexor, Logger logger)
+    protected static HashMap<String, TestSuite> loadTests(List<URL> suiteList, URL schema, Multiplexor multiplexor,
+            Logger logger)
     {
         HashMap<String, TestSuite> suites = new HashMap<String, TestSuite>();
         for (URL path : suiteList)

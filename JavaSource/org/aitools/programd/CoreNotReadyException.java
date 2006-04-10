@@ -10,8 +10,7 @@
 package org.aitools.programd;
 
 /**
- * Thrown when the core has been sent a message and is not ready
- * for processing it yet.
+ * Thrown when the core has been sent a message and is not ready for processing it yet.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */

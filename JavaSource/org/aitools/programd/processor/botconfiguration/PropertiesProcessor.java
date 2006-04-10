@@ -33,8 +33,7 @@ public class PropertiesProcessor extends BotConfigurationElementProcessor
     }
 
     /**
-     * @see BotConfigurationElementProcessor#process(Element,
-     *      BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
      */
     @Override
     public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException

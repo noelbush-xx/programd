@@ -30,20 +30,8 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 /**
- * <p>
- * &quot;To multiplex&quot; means &quot;to select one from many inputs&quot;. A
- * <code>Multiplexor</code> multiplexes the clients of a bot and keeps track
+ * A <code>Multiplexor</code> multiplexes the clients of a bot and keeps track
  * of all their predicate values.
- * </p>
- * <p>
- * The following metaphor was supplied by Richard Wallace: The
- * <code>Multiplexor</code> controls a short &quot;carnival ride&quot; for
- * each user. The Multiplexor puts the client in his/her seat, hands him/her an
- * id card, and closes the door. The client gets one &quot;turn of the
- * crank&quot;. He/she enters his/her id, multiline query, and then receives the
- * reply. The door opens, the Multiplexor ushers him/her out, and seats the next
- * client.
- * </p>
  * 
  * @since 4.1.3
  * @version 4.5
@@ -95,7 +83,7 @@ abstract public class Multiplexor
 
     /** The general log where we will record some events. */
     protected static final Logger logger = Logger.getLogger("programd");
-    
+
     /** The log where match info will be recorded. */
     protected static final Logger matchLogger = Logger.getLogger("programd.matching");
 
@@ -163,7 +151,7 @@ abstract public class Multiplexor
 
         // Get the replies.
         List<String> replies = getReplies(sentenceList, userid, botid);
-        
+
         if (replies == null)
         {
             return null;
@@ -177,9 +165,9 @@ abstract public class Multiplexor
         {
             responseBuffer.append(reply);
         }
-        
+
         String response = responseBuffer.toString();
-        
+
         // Log the response.
         logResponse(input, response, userid, botid);
 
@@ -245,7 +233,7 @@ abstract public class Multiplexor
         {
             return null;
         }
-        
+
         // All replies will be assembled in this ArrayList.
         List<String> replies = Collections.checkedList(new ArrayList<String>(sentenceList.size()), String.class);
 
@@ -291,8 +279,8 @@ abstract public class Multiplexor
         this.avgResponseTime = (float) this.totalTime / (float) this.responseCount;
         if (matchLogger.isDebugEnabled())
         {
-            matchLogger.debug(String.format("Response %d in %dms. (Average: %.2fms)",
-                    this.responseCount, time, this.avgResponseTime));
+            matchLogger.debug(String.format("Response %d in %dms. (Average: %.2fms)", this.responseCount, time,
+                    this.avgResponseTime));
         }
 
         // Invoke targeting if appropriate.
@@ -361,13 +349,13 @@ abstract public class Multiplexor
      * @param parser the parser to use
      * @return the match result
      */
-    protected String getMatchResult(String input, String that, String topic, String userid, String botid, TemplateParser parser)
+    protected String getMatchResult(String input, String that, String topic, String userid, String botid,
+            TemplateParser parser)
     {
         // Show the input path.
         if (matchLogger.isDebugEnabled())
         {
-            matchLogger.debug(String.format("[INPUT (%s)] %s : %s : %s : %s",
-                    userid, input, that, topic, botid));
+            matchLogger.debug(String.format("[INPUT (%s)] %s : %s : %s : %s", userid, input, that, topic, botid));
         }
 
         Match match = null;
@@ -390,8 +378,7 @@ abstract public class Multiplexor
 
         if (matchLogger.isDebugEnabled())
         {
-            matchLogger.debug(String.format("[MATCHED] %s (\"%s\")",
-                    match.getPath(), match.getFileName()));
+            matchLogger.debug(String.format("[MATCHED] %s (\"%s\")", match.getPath(), match.getFileName()));
         }
 
         ArrayList<String> stars = match.getInputStars();

@@ -16,17 +16,10 @@ import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
 
 /**
- * <p>
- * Handles a
- * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-set">set</a></code>
- * element.
- * </p>
- * <p>
- * This is currently <i>not </i> AIML 1.0.1-compliant, because it fails to
- * account for &quot; <a
- * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-aiml-predicate-behaviors">return-name-when-set
- * </a>&quot; predicates.
- * </p>
+ * <p>Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-set">set</a></code> element.</p>
+ * <p>This is currently <i>not</i> AIML 1.0.1-compliant, because it fails to account for &quot;
+ * <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-aiml-predicate-behaviors">return-name-when-set</a>&quot;
+ * predicates.</p>
  */
 public class SetProcessor extends AIMLProcessor
 {
@@ -51,7 +44,7 @@ public class SetProcessor extends AIMLProcessor
     {
         // Return the result of setting this predicate value (should check
         // its type, but not yet implemented).
-        return parser.getCore().getPredicateMaster().set(element.getAttribute(NAME), parser.evaluate(element.getChildNodes()), parser.getUserID(),
-                parser.getBotID());
+        return parser.getCore().getPredicateMaster().set(element.getAttribute(NAME),
+                parser.evaluate(element.getChildNodes()), parser.getUserID(), parser.getBotID());
     }
 }

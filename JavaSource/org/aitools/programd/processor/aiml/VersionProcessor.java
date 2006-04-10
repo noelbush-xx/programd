@@ -15,9 +15,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 
 /**
- * Handles a
- * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-version">version</a></code>
- * element.
+ * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-version">version</a></code> element.
  * 
  * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -41,7 +39,9 @@ public class VersionProcessor extends AIMLProcessor
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
     @Override
-    public String process(@SuppressWarnings("unused") Element element, @SuppressWarnings("unused") TemplateParser parser)
+    public String process(@SuppressWarnings("unused")
+    Element element, @SuppressWarnings("unused")
+    TemplateParser parser)
     {
         return Core.VERSION + Core.BUILD;
     }

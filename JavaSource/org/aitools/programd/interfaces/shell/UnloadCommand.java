@@ -49,8 +49,7 @@ public class UnloadCommand extends ShellCommand
     }
 
     /**
-     * Attempts to unload the file named on the command line from the
-     * Graphmaster.
+     * Attempts to unload the file named on the command line from the Graphmaster.
      * 
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
      *      org.aitools.programd.interfaces.shell.Shell)
@@ -74,7 +73,8 @@ public class UnloadCommand extends ShellCommand
             {
                 graphmaster.unload(URLTools.createValidURL(path), bot);
                 bot.getLoadedFilesMap().remove(path);
-                Logger.getLogger("programd").info(categories - graphmaster.getCategoryCount() + " categories unloaded.");
+                Logger.getLogger("programd")
+                        .info(categories - graphmaster.getCategoryCount() + " categories unloaded.");
             }
             catch (FileNotFoundException e)
             {

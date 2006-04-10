@@ -15,9 +15,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 
 /**
- * Handles an
- * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-id">id</a></code>
- * element.
+ * Handles an <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-id">id</a></code> element.
  * 
  * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -41,7 +39,8 @@ public class IDProcessor extends AIMLProcessor
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
     @Override
-    public String process(@SuppressWarnings("unused") Element element, TemplateParser parser)
+    public String process(@SuppressWarnings("unused")
+    Element element, TemplateParser parser)
     {
         return parser.getUserID();
     }

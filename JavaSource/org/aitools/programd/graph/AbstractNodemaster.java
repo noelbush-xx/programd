@@ -12,8 +12,7 @@ package org.aitools.programd.graph;
 import java.util.LinkedHashMap;
 
 /**
- * This is an abstract Nodemaster containing all the things that are common
- * to the various optimization strategies.
+ * This is an abstract Nodemaster containing all the things that are common to the various optimization strategies.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @version 4.6
@@ -21,14 +20,12 @@ import java.util.LinkedHashMap;
 abstract public class AbstractNodemaster implements Nodemapper
 {
     /**
-     * The hidden hashmap where some (or all) mappings may be stored,
-     * depending upon optimization strategies.
+     * The hidden hashmap where some (or all) mappings may be stored, depending upon optimization strategies.
      */
     protected LinkedHashMap<String, Object> hidden;
 
     /**
-     * The minimum number of words needed to reach a leaf node from here.
-     * Defaults to zero.
+     * The minimum number of words needed to reach a leaf node from here. Defaults to zero.
      */
     protected int height = 0;
 
@@ -38,7 +35,8 @@ abstract public class AbstractNodemaster implements Nodemapper
     /**
      * Sets the parent of the Nodemaster.
      * 
-     * @param parentToSet the parent to set
+     * @param parentToSet
+     *            the parent to set
      */
     public void setParent(Nodemapper parentToSet)
     {
@@ -70,11 +68,11 @@ abstract public class AbstractNodemaster implements Nodemapper
     }
 
     /**
-     * Sets the <code>height</code> of this <code>Nodemaster</code> to
-     * <code>height</code>, and calls <code>fillInHeight()</code> on its
-     * parent (if not null) with a height <code>height + 1</code>.
+     * Sets the <code>height</code> of this <code>Nodemaster</code> to <code>height</code>, and calls
+     * <code>fillInHeight()</code> on its parent (if not null) with a height <code>height + 1</code>.
      * 
-     * @param heightToFillIn the height for this node
+     * @param heightToFillIn
+     *            the height for this node
      */
     protected void fillInHeight(int heightToFillIn)
     {

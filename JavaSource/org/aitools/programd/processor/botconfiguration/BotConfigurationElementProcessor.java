@@ -19,8 +19,8 @@ import org.aitools.programd.processor.ProcessorException;
 import org.apache.log4j.Logger;
 
 /**
- * A <code>BotConfigurationElementProcessor</code> is responsible for
- * processing an element in a Program D startup file.
+ * A <code>BotConfigurationElementProcessor</code> is responsible for processing an element in a Program D startup
+ * file.
  * 
  * @since 4.2
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -43,8 +43,7 @@ abstract public class BotConfigurationElementProcessor extends Processor
     }
 
     /**
-     * @see org.aitools.programd.processor.Processor#process(Element,
-     *      GenericParser)
+     * @see org.aitools.programd.processor.Processor#process(Element, GenericParser)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -56,7 +55,8 @@ abstract public class BotConfigurationElementProcessor extends Processor
         }
         catch (ClassCastException e)
         {
-            throw new ProcessorException("Tried to pass a non-BotsConfigurationFileParser to a BotConfigurationElementProcessor.", e);
+            throw new ProcessorException(
+                    "Tried to pass a non-BotsConfigurationFileParser to a BotConfigurationElementProcessor.", e);
         }
     }
 

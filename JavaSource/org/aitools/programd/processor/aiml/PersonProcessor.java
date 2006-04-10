@@ -16,11 +16,7 @@ import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
 
 /**
- * <p>
- * Handles a
- * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-person">person</a></code>
- * element.
- * </p>
+ * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-person">person</a></code> element.
  * 
  * @version 4.5
  * @author Jon Baer

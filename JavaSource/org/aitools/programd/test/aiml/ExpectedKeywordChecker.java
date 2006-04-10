@@ -14,8 +14,7 @@ public class ExpectedKeywordChecker extends Checker
     private List<String> keywords;
 
     /**
-     * Creates a new ExpectedKeyWordChecker with a given list of expected
-     * keywords.
+     * Creates a new ExpectedKeyWordChecker with a given list of expected keywords.
      * 
      * @param list the comma-separated list of keywords
      */
@@ -25,8 +24,7 @@ public class ExpectedKeywordChecker extends Checker
     }
 
     /**
-     * Checks that the given <code>input</code> contains all of this checker's
-     * configured list of expected keywords.
+     * Checks that the given <code>input</code> contains all of this checker's configured list of expected keywords.
      * 
      * @see org.aitools.programd.test.aiml.Checker#test(java.lang.String)
      */

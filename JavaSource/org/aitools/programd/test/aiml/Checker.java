@@ -43,7 +43,7 @@ abstract public class Checker
     {
         // Do nothing.
     }
-    
+
     /**
      * Creates a new Checker of the correct type based on the contents of the
      * given XML element.
@@ -107,16 +107,16 @@ abstract public class Checker
         }
         else
         {
-            throw new DeveloperError("Some invalid element (\"" + tagName
-                    + "\") slipped past the schema!", new IllegalArgumentException());
+            throw new DeveloperError("Some invalid element (\"" + tagName + "\") slipped past the schema!",
+                    new IllegalArgumentException());
         }
     }
-    
+
     /**
      * @return the textual content of the checker
      */
     abstract public String getContent();
-    
+
     /**
      * @return the tag name that the checker uses
      */

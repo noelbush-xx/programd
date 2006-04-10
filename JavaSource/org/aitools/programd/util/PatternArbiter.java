@@ -26,14 +26,15 @@ import java.util.regex.Pattern;
 public class PatternArbiter
 {
     /** The regular expression that defines AIML pattern syntax. */
-    private static final Pattern AIML_PATTERN = Pattern.compile("(\\*|_|[\\p{javaUpperCase}\\p{Digit}]+)( (\\*|_|[\\p{javaUpperCase}\\p{Digit}]+))*");
-    
+    private static final Pattern AIML_PATTERN = Pattern
+            .compile("(\\*|_|[\\p{javaUpperCase}\\p{Digit}]+)( (\\*|_|[\\p{javaUpperCase}\\p{Digit}]+))*");
+
     /** The generic normalization regex that matches any nonalphanumeric. */
-    private static final Pattern NON_ALPHANUMERIC = Pattern.compile("[^\\p{javaUpperCase}\\p{javaLowerCase}\\p{javaWhitespace}\\p{Digit} ]+");
-    
+    private static final Pattern NON_ALPHANUMERIC = Pattern
+            .compile("[^\\p{javaUpperCase}\\p{javaLowerCase}\\p{javaWhitespace}\\p{Digit} ]+");
+
     /**
-     * Applies a generic set of normalizations to an input, to prepare it
-     * for pattern matching.
+     * Applies a generic set of normalizations to an input, to prepare it for pattern matching.
      * 
      * @param string the input to normalize
      * @return the normalized input
@@ -42,70 +43,65 @@ public class PatternArbiter
     {
         return NON_ALPHANUMERIC.matcher(string).replaceAll(" ");
     }
-    
+
     /**
-     * Translates the given AIML pattern to a regular expression and
-     * compiles it into a Pattern object.  Useful if you need to do a
-     * ton of tests with a pattern.
+     * Translates the given AIML pattern to a regular expression and compiles it into a Pattern object. Useful if you
+     * need to do a ton of tests with a pattern.
      * 
      * @param pattern the pattern to compile
      * @param ignoreCase whether to ignore case in matching
      * @return the compiled pattern (translated to regex)
-     *
-     * @throws NotAnAIMLPatternException if the pattern is not a valid AIML
-     *             pattern (conditioned by <code>ignoreCase</code>
+     * 
+     * @throws NotAnAIMLPatternException if the pattern is not a valid AIML pattern (conditioned by
+     *             <code>ignoreCase</code>
      */
     public static Pattern compile(String pattern, boolean ignoreCase) throws NotAnAIMLPatternException
     {
         /*
-         * Check the pattern for validity. If it is invalid, an exception with a
-         * helpful message will be thrown.
+         * Check the pattern for validity. If it is invalid, an exception with a helpful message will be thrown.
          */
         checkAIMLPattern(pattern);
 
-        return Pattern.compile(pattern.replaceAll("(\\*|_)", "[^ ]+( [^ ]+)*"),
-                (ignoreCase ? Pattern.UNICODE_CASE : 0));
+        return Pattern
+                .compile(pattern.replaceAll("(\\*|_)", "[^ ]+( [^ ]+)*"), (ignoreCase ? Pattern.UNICODE_CASE : 0));
     }
-    
+
     /**
-     * Decides whether a given pattern matches a given literal, in an isolated
-     * context, according to the AIML pattern-matching specification.
+     * Decides whether a given pattern matches a given literal, in an isolated context, according to the AIML
+     * pattern-matching specification.
      * 
-     * Indicates whether the given literal is matched by the given pattern.
-     * Note that the mechanism here is very simple: the AIML pattern is
-     * converted into an equivalent regular expression, and a match test
-     * is performed.  This appears to be much more reliable than an old
-     * method that "manually" checked the match.
+     * Indicates whether the given literal is matched by the given pattern. Note that the mechanism here is very simple:
+     * the AIML pattern is converted into an equivalent regular expression, and a match test is performed. This appears
+     * to be much more reliable than an old method that "manually" checked the match.
      * 
-     * This method uses a generic normalization that removes all punctuation
-     * from the input.
+     * This method uses a generic normalization that removes all punctuation from the input.
      * 
      * @param literal the literal string to check
      * @param pattern the pattern to try to match against it
      * @param ignoreCase whether or not to ignore case
-     * @return <code>true</code> if <code>pattern</code> matches
-     *         <code>literal</code>,<code>false</code> if not
-     * @throws NotAnAIMLPatternException if the pattern is not a valid AIML
-     *             pattern (conditioned by <code>ignoreCase</code>
+     * @return <code>true</code> if <code>pattern</code> matches <code>literal</code>,<code>false</code> if
+     *         not
+     * @throws NotAnAIMLPatternException if the pattern is not a valid AIML pattern (conditioned by
+     *             <code>ignoreCase</code>
      */
     public static boolean matches(String literal, String pattern, boolean ignoreCase) throws NotAnAIMLPatternException
     {
         Pattern regex = compile(pattern, ignoreCase);
         return regex.matcher(genericallyNormalize(literal)).matches();
     }
-    
+
     /**
      * Determines whether a given string is a valid AIML pattern.
      * 
      * @param pattern the string to check
-     * @throws NotAnAIMLPatternException with a helpful message if the pattern
-     *             is not valid
+     * @throws NotAnAIMLPatternException with a helpful message if the pattern is not valid
      */
     public static void checkAIMLPattern(String pattern) throws NotAnAIMLPatternException
     {
         if (!AIML_PATTERN.matcher(pattern).matches())
         {
-            throw new NotAnAIMLPatternException("\"" + pattern + "\" does not match the definition of AIML pattern.", pattern);
+            throw new NotAnAIMLPatternException("\"" + pattern + "\" does not match the definition of AIML pattern.",
+                    pattern);
         }
     }
 

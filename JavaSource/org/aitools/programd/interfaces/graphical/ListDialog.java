@@ -31,8 +31,8 @@ public class ListDialog extends JDialog
     protected JList list;
 
     /**
-     * Sets up the dialog. The first argument can be null, but it really should
-     * be a component in the dialog's controlling frame.
+     * Sets up the dialog. The first argument can be null, but it really should be a component in the dialog's
+     * controlling frame.
      * 
      * @param comp the component to which to attach the dialog
      * @param possibleValues the possible values to show in the dialog
@@ -46,13 +46,10 @@ public class ListDialog extends JDialog
     }
 
     /**
-     * Show the initialized dialog. The first argument should be null if you
-     * want the dialog to come up in the center of the screen. Otherwise, the
-     * argument should be the component on top of which the dialog should
-     * appear.
+     * Show the initialized dialog. The first argument should be null if you want the dialog to come up in the center of
+     * the screen. Otherwise, the argument should be the component on top of which the dialog should appear.
      * 
-     * @param comp the component to which to set the relative location of the
-     *            dialog
+     * @param comp the component to which to set the relative location of the dialog
      * @param initialValue the initial value of the dialog
      * @return the value of the dialog
      */

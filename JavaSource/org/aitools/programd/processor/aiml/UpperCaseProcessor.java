@@ -16,8 +16,7 @@ import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
 
 /**
- * Handles an
- * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-uppercase">uppercase</a></code>
+ * Handles an <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-uppercase">uppercase</a></code>
  * element.
  * 
  * @version 4.5

@@ -10,8 +10,7 @@
 package org.aitools.programd.util;
 
 /**
- * Indicates that no match was found in the
- * {@link org.aitools.programd.graph.Graphmaster} .
+ * Indicates that no match was found in the {@link org.aitools.programd.graph.Graphmaster} .
  */
 public class NoMatchException extends Exception
 {

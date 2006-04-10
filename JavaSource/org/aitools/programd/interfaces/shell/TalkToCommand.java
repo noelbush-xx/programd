@@ -22,10 +22,10 @@ public class TalkToCommand extends ShellCommand
 
     /** Argument template. */
     public static final String ARGUMENT_TEMPLATE = "botid";
-    
+
     /** Shell help line. */
     private static final String HELP_LINE = "switches conversation to given bot";
-    
+
     /**
      * Creates a new TalkToCommand.
      */
@@ -33,7 +33,7 @@ public class TalkToCommand extends ShellCommand
     {
         super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
     }
-    
+
     /**
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
      */

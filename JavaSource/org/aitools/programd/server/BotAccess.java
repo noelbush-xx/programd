@@ -11,11 +11,11 @@ import org.aitools.programd.Core;
 public class BotAccess
 {
     protected Core _core;
-    
+
     protected String botid;
-    
+
     protected String userid;
-    
+
     /**
      * Creates a new <code>Bot</code> with the given
      * core, bot id and user id.
@@ -30,7 +30,7 @@ public class BotAccess
         this.botid = bot;
         this.userid = user;
     }
-    
+
     /**
      * Returns a response to the given input, for the assigned
      * botid and userid.
@@ -42,7 +42,7 @@ public class BotAccess
     {
         return this._core.getResponse(input, this.userid, this.botid);
     }
-    
+
     /**
      * @return the botid
      */
@@ -50,7 +50,7 @@ public class BotAccess
     {
         return this.botid;
     }
-    
+
     /**
      * @return the underlying bot object
      */

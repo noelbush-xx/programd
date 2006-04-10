@@ -27,7 +27,7 @@ public class PredicateMap extends HashMap<String, PredicateValue>
     {
         super();
     }
-    
+
     /**
      * Puts a single-valued predicate into the map.
      * 
@@ -38,7 +38,7 @@ public class PredicateMap extends HashMap<String, PredicateValue>
     {
         put(name, new PredicateValue(value));
     }
-    
+
     /**
      * Puts a multi-valued predicate into the map.
      * 
@@ -49,7 +49,7 @@ public class PredicateMap extends HashMap<String, PredicateValue>
     {
         put(name, new PredicateValue(values));
     }
-    
+
     /**
      * Returns the value associated with the given name.
      * 

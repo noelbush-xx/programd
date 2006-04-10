@@ -35,16 +35,14 @@ import org.w3c.dom.NodeList;
 
 /**
  * <p>
- * The <code>Graphmaster</code> is the &quot;brain&quot; of a Program D bot.
- * It consists of a collection of nodes called <code>Nodemapper</code>s.
- * These <code>Nodemapper</code> s map the branches from each node. The
- * branches are either single words or wildcards.
+ * The <code>Graphmaster</code> is the &quot;brain&quot; of a Program D bot. It consists of a collection of nodes
+ * called <code>Nodemapper</code>s. These <code>Nodemapper</code> s map the branches from each node. The branches
+ * are either single words or wildcards.
  * </p>
  * <p>
- * The root of the <code>Graphmaster</code> is a <code>Nodemapper</code>
- * with many branches, one for each of the first words of all the patterns. The
- * number of leaf nodes in the graph is equal to the number of categories, and
- * each leaf node contains the &lt;template&gt; tag.
+ * The root of the <code>Graphmaster</code> is a <code>Nodemapper</code> with many branches, one for each of the
+ * first words of all the patterns. The number of leaf nodes in the graph is equal to the number of categories, and each
+ * leaf node contains the &lt;template&gt; tag.
  * </p>
  * 
  * @author Richard Wallace, Jon Baer
@@ -109,7 +107,7 @@ public class Graphmaster
     }
 
     // Instance variables.
-    
+
     /** The Core with which this Graphmaster is associated. */
     private Core _core;
 
@@ -121,13 +119,13 @@ public class Graphmaster
 
     /** The factory that will be used to create Nodemappers. */
     private NodemapperFactory nodemapperFactory;
-    
+
     /** The root {@link NodemapperFactory} . */
     private Nodemapper root;
-    
+
     /** A map of loaded file URLs to botids. */
     private Map<URL, Set<String>> urlCatalog = new HashMap<URL, Set<String>>();
-    
+
     /** A map of KB URLs to &lt;BOTID&gt; nodes. */
     private Map<URL, Set<Nodemapper>> botidNodes = new HashMap<URL, Set<Nodemapper>>();
 
@@ -145,7 +143,7 @@ public class Graphmaster
 
     /** How frequently to provide a category load count. */
     private int categoryLoadNotifyInterval;
-    
+
     /** The total number of categories read. */
     private int totalCategories = 0;
 
@@ -154,15 +152,15 @@ public class Graphmaster
 
     /** The response timeout. */
     private int responseTimeout;
-    
+
     /** A count of Nodemappers. */
     private int nodemapperCount = 1;
-    
+
     /**
-     * Creates a new Graphmaster, reading settings from
-     * the given Core.
+     * Creates a new Graphmaster, reading settings from the given Core.
      * 
-     * @param core the CoreSettings object from which to read settings
+     * @param core
+     *            the CoreSettings object from which to read settings
      */
     public Graphmaster(Core core)
     {
@@ -179,14 +177,17 @@ public class Graphmaster
     }
 
     /**
-     * Adds a new pattern-that-topic path to the <code>Graphmaster</code>
-     * root.
+     * Adds a new pattern-that-topic path to the <code>Graphmaster</code> root.
      * 
-     * @param pattern &lt;pattern/&gt; path component
-     * @param that &lt;that/&gt; path component
-     * @param topic &lt;topic/&gt; path component
+     * @param pattern
+     *            &lt;pattern/&gt; path component
+     * @param that
+     *            &lt;that/&gt; path component
+     * @param topic
+     *            &lt;topic/&gt; path component
      * @param botid
-     * @param source the source of this path
+     * @param source
+     *            the source of this path
      * @return <code>Nodemapper</code> which is the result of adding the path.
      */
     public Nodemapper add(String pattern, String that, String topic, String botid, URL source)
@@ -206,11 +207,12 @@ public class Graphmaster
      * Adds a new path to the <code>Graphmaster</code> at a given node.
      * 
      * @since 4.1.3
-     * @param pathIterator an iterator over the List containing the elements of
-     *            the path
-     * @param parent the <code>Nodemapper</code> parent to which the child
-     *            should be appended
-     * @param source the source of the original path
+     * @param pathIterator
+     *            an iterator over the List containing the elements of the path
+     * @param parent
+     *            the <code>Nodemapper</code> parent to which the child should be appended
+     * @param source
+     *            the source of the original path
      * @return <code>Nodemapper</code> which is the result of adding the node
      */
     protected Nodemapper add(ListIterator<String> pathIterator, Nodemapper parent, URL source)
@@ -223,20 +225,20 @@ public class Graphmaster
         }
         // Otherwise, get the next word.
         String word = pathIterator.next();
-        
+
         Nodemapper node;
 
         // If the parent contains this word, get the node with the word.
         if (parent.containsKey(word))
         {
-            node = (Nodemapper)parent.get(word);
+            node = (Nodemapper) parent.get(word);
         }
         else
         {
             // Otherwise create a new node with this word.
             node = this.nodemapperFactory.getNodemapper();
             this.nodemapperCount++;
-        	
+
             parent.put(word, node);
             node.setParent(parent);
         }
@@ -256,14 +258,14 @@ public class Graphmaster
             nodes.add(node);
         }
         // Return the result of adding the new node to the parent.
-    	return add(pathIterator, node, source);
+        return add(pathIterator, node, source);
     }
 
     /**
-     * Removes a node, as well as many of its ancestors as have no descendants
-     * other than this node or its ancestors.
+     * Removes a node, as well as many of its ancestors as have no descendants other than this node or its ancestors.
      * 
-     * @param nodemapper the mapper for the node to remove
+     * @param nodemapper
+     *            the mapper for the node to remove
      */
     protected void remove(Nodemapper nodemapper)
     {
@@ -287,21 +289,23 @@ public class Graphmaster
      * Searches for a match in the <code>Graphmaster</code> to a given path.
      * </p>
      * <p>
-     * This is a high-level prototype, used for external access. It is not
-     * synchronized!
+     * This is a high-level prototype, used for external access. It is not synchronized!
      * </p>
      * 
-     * @see #match(Nodemapper, Nodemapper, List, String, StringBuilder,
-     *      MatchState, long)
-     * @param input &lt;input/&gt; path component
-     * @param that &lt;that/&gt; path component
-     * @param topic &lt;topic/&gt; path component
-     * @param botid &lt;botid/&gt; path component
+     * @see #match(Nodemapper, Nodemapper, List, String, StringBuilder, MatchState, long)
+     * @param input
+     *            &lt;input/&gt; path component
+     * @param that
+     *            &lt;that/&gt; path component
+     * @param topic
+     *            &lt;topic/&gt; path component
+     * @param botid
+     *            &lt;botid/&gt; path component
      * @return the resulting <code>Match</code> object
-     * @throws NoMatchException if no match was found
+     * @throws NoMatchException
+     *             if no match was found
      */
-    public Match match(String input, String that, String topic, String botid)
-            throws NoMatchException
+    public Match match(String input, String that, String topic, String botid) throws NoMatchException
     {
         // Compose the input path. Fill in asterisks for empty values.
         ArrayList<String> inputPath;
@@ -351,8 +355,8 @@ public class Graphmaster
 
         // Get the match, starting at the root, with an empty star and path,
         // starting in "in input" mode.
-        Match match = match(this.root, this.root, inputPath, EMPTY_STRING, new StringBuilder(),
-                MatchState.IN_INPUT, System.currentTimeMillis() + this.responseTimeout);
+        Match match = match(this.root, this.root, inputPath, EMPTY_STRING, new StringBuilder(), MatchState.IN_INPUT,
+                System.currentTimeMillis() + this.responseTimeout);
 
         // Return it if not null; throw an exception if null.
         if (match != null)
@@ -372,18 +376,25 @@ public class Graphmaster
      * </p>
      * 
      * @see #match(String, String, String, String)
-     * @param nodemapper the nodemapper where we start matching
-     * @param parent the parent of the nodemapper where we start matching
-     * @param input the input path (possibly a sublist of the original)
-     * @param wildcardContent contents absorbed by a wildcard
-     * @param path the path matched so far
-     * @param matchState state variable tracking which part of the path we're in
-     * @param expiration when this response process expires
+     * @param nodemapper
+     *            the nodemapper where we start matching
+     * @param parent
+     *            the parent of the nodemapper where we start matching
+     * @param input
+     *            the input path (possibly a sublist of the original)
+     * @param wildcardContent
+     *            contents absorbed by a wildcard
+     * @param path
+     *            the path matched so far
+     * @param matchState
+     *            state variable tracking which part of the path we're in
+     * @param expiration
+     *            when this response process expires
      * @return the resulting <code>Match</code> object
      */
     @SuppressWarnings("boxing")
-    protected Match match(Nodemapper nodemapper, Nodemapper parent, List<String> input,
-            String wildcardContent, StringBuilder path, MatchState matchState, long expiration)
+    protected Match match(Nodemapper nodemapper, Nodemapper parent, List<String> input, String wildcardContent,
+            StringBuilder path, MatchState matchState, long expiration)
     {
         // Return null if expiration has been reached.
         if (System.currentTimeMillis() >= expiration)
@@ -396,8 +407,9 @@ public class Graphmaster
         {
             if (this.matchLogger.isDebugEnabled())
             {
-                this.matchLogger.debug(String.format("Halting match because input size %d < nodemapper height %d.%ninput: %s%nnodemapper: %s",
-                        input.size(), nodemapper.getHeight(), input.toString(), nodemapper.toString()));
+                this.matchLogger.debug(String.format(
+                        "Halting match because input size %d < nodemapper height %d.%ninput: %s%nnodemapper: %s", input
+                                .size(), nodemapper.getHeight(), input.toString(), nodemapper.toString()));
             }
             return null;
         }
@@ -428,8 +440,7 @@ public class Graphmaster
         List<String> tail = input.subList(1, input.size());
 
         /*
-         * See if this nodemapper has a _ wildcard. _ comes first in the AIML
-         * "alphabet".
+         * See if this nodemapper has a _ wildcard. _ comes first in the AIML "alphabet".
          */
         if (nodemapper.containsKey(UNDERSCORE))
         {
@@ -448,8 +459,8 @@ public class Graphmaster
 
             // Try to get a match with the tail and this new path, using the
             // head as the wildcard content.
-            match = match((Nodemapper) nodemapper.get(UNDERSCORE), nodemapper, tail, head, newPath,
-                    matchState, expiration);
+            match = match((Nodemapper) nodemapper.get(UNDERSCORE), nodemapper, tail, head, newPath, matchState,
+                    expiration);
 
             // If that did result in a match,
             if (match != null)
@@ -479,7 +490,7 @@ public class Graphmaster
                             match.pushTopicWildcardContent(wildcardContent);
                         }
                         break;
-                        
+
                     case IN_BOTID:
                         assert false;
                         break;
@@ -490,15 +501,13 @@ public class Graphmaster
         }
 
         /*
-         * The nodemapper may have contained a _, but this led to no match. Or
-         * it didn't contain a _ at all.
+         * The nodemapper may have contained a _, but this led to no match. Or it didn't contain a _ at all.
          */
         if (nodemapper.containsKey(head))
         {
             /*
-             * Check now whether this head is a marker for the <that>, <topic>
-             * or <botid> segments of the path. If it is, set the match state
-             * variable accordingly.
+             * Check now whether this head is a marker for the <that>, <topic> or <botid> segments of the path. If it
+             * is, set the match state variable accordingly.
              */
             if (head.startsWith(MARKER_START))
             {
@@ -517,8 +526,8 @@ public class Graphmaster
 
                 // Now try to get a match using the tail and an empty star and
                 // empty path.
-                match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, EMPTY_STRING,
-                        new StringBuilder(), matchState, expiration);
+                match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, EMPTY_STRING, new StringBuilder(),
+                        matchState, expiration);
 
                 // If that did result in a match,
                 if (match != null)
@@ -563,9 +572,8 @@ public class Graphmaster
                 }
             }
             /*
-             * In the case that the nodemapper contained the head, but the head
-             * was not a marker, it must be that the head is a regular word. So
-             * try to match the rest of the path.
+             * In the case that the nodemapper contained the head, but the head was not a marker, it must be that the
+             * head is a regular word. So try to match the rest of the path.
              */
             else
             {
@@ -583,8 +591,8 @@ public class Graphmaster
 
                 // Try to get a match with the tail and this path, using the
                 // current star.
-                match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, wildcardContent,
-                        newPath, matchState, expiration);
+                match = match((Nodemapper) nodemapper.get(head), nodemapper, tail, wildcardContent, newPath,
+                        matchState, expiration);
 
                 // If that did result in a match, just return it.
                 if (match != null)
@@ -595,9 +603,8 @@ public class Graphmaster
         }
 
         /*
-         * The nodemapper may have contained the head, but this led to no match.
-         * Or it didn't contain the head at all. In any case, check to see if it
-         * contains a * wildcard. * comes last in the AIML "alphabet".
+         * The nodemapper may have contained the head, but this led to no match. Or it didn't contain the head at all.
+         * In any case, check to see if it contains a * wildcard. * comes last in the AIML "alphabet".
          */
         if (nodemapper.containsKey(ASTERISK))
         {
@@ -616,8 +623,8 @@ public class Graphmaster
 
             // Try to get a match with the tail and this new path, using the
             // head as the star.
-            match = match((Nodemapper) nodemapper.get(ASTERISK), nodemapper, tail, head, newPath,
-                    matchState, expiration);
+            match = match((Nodemapper) nodemapper.get(ASTERISK), nodemapper, tail, head, newPath, matchState,
+                    expiration);
 
             // If that did result in a match,
             if (match != null)
@@ -646,7 +653,7 @@ public class Graphmaster
                             match.pushTopicWildcardContent(wildcardContent);
                         }
                         break;
-                        
+
                     case IN_BOTID:
                         assert false;
                         break;
@@ -657,22 +664,19 @@ public class Graphmaster
         }
 
         /*
-         * The nodemapper has failed to match at all: it contains neither _, nor
-         * the head, nor *. However, if it itself is a wildcard, then the match
-         * continues to be valid and can proceed with the tail, the current
-         * path, and the star content plus the head as the new star.
+         * The nodemapper has failed to match at all: it contains neither _, nor the head, nor *. However, if it itself
+         * is a wildcard, then the match continues to be valid and can proceed with the tail, the current path, and the
+         * star content plus the head as the new star.
          */
         if (nodemapper.equals(parent.get(ASTERISK)) || nodemapper.equals(parent.get(UNDERSCORE)))
         {
-            return match(nodemapper, parent, tail, wildcardContent + SPACE + head, path,
-                    matchState, expiration);
+            return match(nodemapper, parent, tail, wildcardContent + SPACE + head, path, matchState, expiration);
         }
 
         /*
-         * If we get here, we've hit a dead end; this null match will be passed
-         * back up the recursive chain of matches, perhaps even hitting the
-         * high-level match method (which will react by throwing a
-         * NoMatchException), though this is assumed to be the rarest occurence.
+         * If we get here, we've hit a dead end; this null match will be passed back up the recursive chain of matches,
+         * perhaps even hitting the high-level match method (which will react by throwing a NoMatchException), though
+         * this is assumed to be the rarest occurence.
          */
         return null;
     }
@@ -680,17 +684,24 @@ public class Graphmaster
     /**
      * Adds a new category to the Graphmaster.
      * 
-     * @param pattern the category's pattern
-     * @param that the category's that
-     * @param topic the category's topic
-     * @param template the category's template
-     * @param botid the bot id for whom to add the category
-     * @param bot the bot for whom the category is being added
-     * @param source the path from which the category comes
+     * @param pattern
+     *            the category's pattern
+     * @param that
+     *            the category's that
+     * @param topic
+     *            the category's topic
+     * @param template
+     *            the category's template
+     * @param botid
+     *            the bot id for whom to add the category
+     * @param bot
+     *            the bot for whom the category is being added
+     * @param source
+     *            the path from which the category comes
      */
     @SuppressWarnings("boxing")
-    public void addCategory(String pattern, String that, String topic, String template,
-            String botid, Bot bot, URL source)
+    public void addCategory(String pattern, String that, String topic, String template, String botid, Bot bot,
+            URL source)
     {
         // Make sure the path components are right.
         if (pattern == null)
@@ -728,16 +739,22 @@ public class Graphmaster
                 case SKIP:
                     if (this.noteEachMerge)
                     {
-                        this.logger.warn(String.format("Skipping path-identical category from \"%s\" which duplicates path of category from \"%s\": %s:%s:%s",
-                                source, node.get(FILENAME), pattern, that, topic));
+                        this.logger
+                                .warn(String
+                                        .format(
+                                                "Skipping path-identical category from \"%s\" which duplicates path of category from \"%s\": %s:%s:%s",
+                                                source, node.get(FILENAME), pattern, that, topic));
                     }
                     break;
 
                 case OVERWRITE:
                     if (this.noteEachMerge)
                     {
-                        this.logger.warn(String.format("Overwriting path-identical category from \"%s\" with new category from \"%s\".  Path: %s:%s:%s",
-                                node.get(Graphmaster.FILENAME), source, pattern, that, topic));
+                        this.logger
+                                .warn(String
+                                        .format(
+                                                "Overwriting path-identical category from \"%s\" with new category from \"%s\".  Path: %s:%s:%s",
+                                                node.get(Graphmaster.FILENAME), source, pattern, that, topic));
                     }
                     node.put(Graphmaster.FILENAME, source);
                     node.put(Graphmaster.TEMPLATE, template);
@@ -746,24 +763,26 @@ public class Graphmaster
                 case APPEND:
                     if (this.noteEachMerge)
                     {
-                        this.logger.warn(String.format("Appending template of category from \"%s\" to template of path-identical category from \"%s\": %s:%s:%s",
-                                source, node.get(Graphmaster.FILENAME), pattern, that, topic));
+                        this.logger
+                                .warn(String
+                                        .format(
+                                                "Appending template of category from \"%s\" to template of path-identical category from \"%s\": %s:%s:%s",
+                                                source, node.get(Graphmaster.FILENAME), pattern, that, topic));
                     }
-                    node
-                            .put(Graphmaster.FILENAME, node.get(Graphmaster.FILENAME) + ", "
-                                    + source);
+                    node.put(Graphmaster.FILENAME, node.get(Graphmaster.FILENAME) + ", " + source);
                     node.put(Graphmaster.TEMPLATE, appendTemplate(storedTemplate, template));
                     break;
 
                 case COMBINE:
                     if (this.noteEachMerge)
                     {
-                        this.logger.warn(String.format("Combining template of category from \"%s\" with template of path-identical category from \"%s\": %s:%s:%s",
-                                source, node.get(Graphmaster.FILENAME), pattern, that, topic));
+                        this.logger
+                                .warn(String
+                                        .format(
+                                                "Combining template of category from \"%s\" with template of path-identical category from \"%s\": %s:%s:%s",
+                                                source, node.get(Graphmaster.FILENAME), pattern, that, topic));
                     }
-                    node
-                            .put(Graphmaster.FILENAME, node.get(Graphmaster.FILENAME) + ", "
-                                    + source);
+                    node.put(Graphmaster.FILENAME, node.get(Graphmaster.FILENAME) + ", " + source);
                     String combined = combineTemplates(storedTemplate, template);
                     node.put(Graphmaster.TEMPLATE, combined);
                     break;
@@ -772,11 +791,12 @@ public class Graphmaster
     }
 
     /**
-     * Removes all nodes associated with a given filename, and removes the file
-     * from the list of loaded files.
+     * Removes all nodes associated with a given filename, and removes the file from the list of loaded files.
      * 
-     * @param path the filename
-     * @param bot the bot for whom to remove the given path
+     * @param path
+     *            the filename
+     * @param bot
+     *            the bot for whom to remove the given path
      */
     public void unload(URL path, Bot bot)
     {
@@ -796,20 +816,17 @@ public class Graphmaster
     }
 
     /**
-     * Combines two template content strings into a single template, using a
-     * random element so that either original template content string has an
-     * equal chance of being processed. The order in which the templates are
-     * supplied is important: the first one (<code>existingTemplate</code>)
-     * is processed as though it has already been stored in the Graphmaster, and
-     * hence might itself be the result of a previous <code>combine()</code>
-     * operation. If this is the case, the in-memory representation of the
-     * template will have a special attribute indicating this fact, which will
-     * be used to &quot;balance&quot; the combine operation.
+     * Combines two template content strings into a single template, using a random element so that either original
+     * template content string has an equal chance of being processed. The order in which the templates are supplied is
+     * important: the first one (<code>existingTemplate</code>) is processed as though it has already been stored in
+     * the Graphmaster, and hence might itself be the result of a previous <code>combine()</code> operation. If this
+     * is the case, the in-memory representation of the template will have a special attribute indicating this fact,
+     * which will be used to &quot;balance&quot; the combine operation.
      * 
-     * @param existingTemplate the template with which the new template should
-     *            be combined
-     * @param newTemplate the template which should be combined with the
-     *            existing template
+     * @param existingTemplate
+     *            the template with which the new template should be combined
+     * @param newTemplate
+     *            the template which should be combined with the existing template
      * @return the combined result
      */
     public String combineTemplates(String existingTemplate, String newTemplate)
@@ -826,7 +843,7 @@ public class Graphmaster
             existingDoc = XML.parseAsDocumentFragment(existingTemplate);
             existingRoot = existingDoc.getDocumentElement();
             existingContent = existingRoot.getChildNodes();
-    
+
             newDoc = XML.parseAsDocumentFragment(newTemplate);
             newContent = newDoc.getDocumentElement().getChildNodes();
         }
@@ -841,20 +858,18 @@ public class Graphmaster
             }
             return existingTemplate;
         }
-            
+
         /*
-         * If the existing template has a random element as its root, we need to
-         * check whether this was the result of a previous combine.
+         * If the existing template has a random element as its root, we need to check whether this was the result of a
+         * previous combine.
          */
         Node firstNode = existingContent.item(0);
         if (firstNode instanceof Element)
         {
             Element firstElement = (Element) firstNode;
-            if (firstElement.getNodeName().equals(RandomProcessor.label)
-                    && firstElement.hasAttribute("synthetic"))
+            if (firstElement.getNodeName().equals(RandomProcessor.label) && firstElement.hasAttribute("synthetic"))
             {
-                Element newListItem = existingDoc.createElementNS(this.aimlNamespaceURI,
-                        RandomProcessor.LI);
+                Element newListItem = existingDoc.createElementNS(this.aimlNamespaceURI, RandomProcessor.LI);
                 int newContentSize = newContent.getLength();
                 for (int index = 0; index < newContentSize; index++)
                 {
@@ -864,8 +879,7 @@ public class Graphmaster
             }
             return XML.renderXML(existingDoc.getChildNodes(), false);
         }
-        Element listItemForExisting = existingDoc.createElementNS(this.aimlNamespaceURI,
-                RandomProcessor.LI);
+        Element listItemForExisting = existingDoc.createElementNS(this.aimlNamespaceURI, RandomProcessor.LI);
         int existingContentSize = existingContent.getLength();
         for (int index = 0; index < existingContentSize; index++)
         {
@@ -884,8 +898,7 @@ public class Graphmaster
             listItemForNew.appendChild(newContent.item(index).cloneNode(true));
         }
 
-        Element newRandom = existingDoc.createElementNS(this.aimlNamespaceURI,
-                RandomProcessor.label);
+        Element newRandom = existingDoc.createElementNS(this.aimlNamespaceURI, RandomProcessor.label);
         newRandom.setAttribute("synthetic", "yes");
         newRandom.appendChild(listItemForExisting);
         newRandom.appendChild(existingDoc.importNode(listItemForNew, true));
@@ -898,8 +911,10 @@ public class Graphmaster
     /**
      * Appends the contents of one template to another.
      * 
-     * @param existingTemplate the template to which to append
-     * @param newTemplate the template whose content should be appended
+     * @param existingTemplate
+     *            the template to which to append
+     * @param newTemplate
+     *            the template whose content should be appended
      * @return the combined result
      */
     public String appendTemplate(String existingTemplate, String newTemplate)
@@ -955,7 +970,7 @@ public class Graphmaster
     {
         return this.totalCategories;
     }
-    
+
     /**
      * Returns a string reporting the current number of total categories
      * 
@@ -976,7 +991,7 @@ public class Graphmaster
     {
         return this.duplicateCategories;
     }
-    
+
     /**
      * Returns the number of Nodemappers in the Graphmaster.
      * 
@@ -986,27 +1001,21 @@ public class Graphmaster
     {
         return this.nodemapperCount;
     }
-    
+
     /**
-     * Returns the average Nodemapper size.  Note that this method
-     * actually performs the count when called.
+     * Returns the average Nodemapper size. Note that this method actually performs the count when called.
      * 
      * @return the average Nodemapper size
      */
     public double getAverageNodemapperSize()
     {
         /*
-        List<Integer> sizes = this.root.getSizes();
-        int sum = 0;
-        for (int value : sizes)
-        {
-            sum += value;
-        }
-        return (float)sum / (float)sizes.size();
-        */
+         * List<Integer> sizes = this.root.getSizes(); int sum = 0; for (int value : sizes) { sum += value; } return
+         * (float)sum / (float)sizes.size();
+         */
         return this.root.getAverageSize();
     }
-    
+
     /**
      * Returns whether or not the Graphmaster has already loaded the given URL.
      * 
@@ -1017,30 +1026,28 @@ public class Graphmaster
     {
         return this.urlCatalog.containsKey(path);
     }
-    
+
     /**
-     * Returns whether or not the Graphmaster has already loaded the given URL
-     * for the given botid.
+     * Returns whether or not the Graphmaster has already loaded the given URL for the given botid.
      */
     public boolean hasAlreadyLoadedForBot(URL path, String botid)
     {
-    	Set<String> botids = this.urlCatalog.get(path);
-    	if (botids == null)
-    	{
-    		return false;
-    	}
-    	return botids.contains(botid);
+        Set<String> botids = this.urlCatalog.get(path);
+        if (botids == null)
+        {
+            return false;
+        }
+        return botids.contains(botid);
     }
-    
+
     /**
-     * Adds the given URL to the catalog of URLs loaded
-     * for the given botid.  This should only be called
-     * using a URL that has <i>not</i> previously been loaded
-     * for another bot.
+     * Adds the given URL to the catalog of URLs loaded for the given botid. This should only be called using a URL that
+     * has <i>not</i> previously been loaded for another bot.
      * 
      * @param path
      * @param botid
-     * @throws IllegalArgumentException if the given path has already been loaded
+     * @throws IllegalArgumentException
+     *             if the given path has already been loaded
      */
     public void addURL(URL path, String botid)
     {
@@ -1052,26 +1059,27 @@ public class Graphmaster
         botids.add(botid);
         this.urlCatalog.put(path, botids);
     }
-    
+
     /**
-     * Adds the given botid to the &lt;botid&gt; node
-     * for all branches associated with the given URL.
-     * This should only be called using a URL that <i>has</i>
-     * previously been loaded for <i>another</i> bot.
+     * Adds the given botid to the &lt;botid&gt; node for all branches associated with the given URL. This should only
+     * be called using a URL that <i>has</i> previously been loaded for <i>another</i> bot.
      * 
      * @param path
      * @param botid
-     * @throws IllegalArgumentException if the given path has not already been loaded, or if it has been loaded for the same botid
+     * @throws IllegalArgumentException
+     *             if the given path has not already been loaded, or if it has been loaded for the same botid
      */
     public void addForBot(URL path, String botid)
     {
         if (!this.urlCatalog.containsKey(path))
         {
-            throw new IllegalArgumentException("Must not call addForBot() using a URL that has not already been loaded.");
+            throw new IllegalArgumentException(
+                    "Must not call addForBot() using a URL that has not already been loaded.");
         }
         if (this.urlCatalog.get(path).contains(botid))
         {
-            throw new IllegalArgumentException("Must not call addForBot() using a URL and botid that have already been associated.");
+            throw new IllegalArgumentException(
+                    "Must not call addForBot() using a URL and botid that have already been associated.");
         }
         if (this.logger.isDebugEnabled())
         {
@@ -1086,7 +1094,7 @@ public class Graphmaster
         }
         this.urlCatalog.get(path).add(botid);
     }
-    
+
     /**
      * Returns an unmodifiable view of the url-to-botid catalog.
      * 

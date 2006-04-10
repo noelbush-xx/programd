@@ -10,7 +10,7 @@
 package org.aitools.programd.interfaces.shell;
 
 import java.io.BufferedReader;
-//import java.io.IOException;
+// import java.io.IOException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -57,7 +57,7 @@ public class Shell extends Thread
 
     /** The Bots object in use by the attached Core. */
     private Bots bots;
-    
+
     /** A BufferedReader for user input to the shell. */
     private BufferedReader inReader;
 
@@ -86,14 +86,13 @@ public class Shell extends Thread
     private String hostname;
 
     /**
-     * An indicator used to keep track of whether we're midline in a console
-     * output (i.e., showing a prompt).
+     * An indicator used to keep track of whether we're midline in a console output (i.e., showing a prompt).
      */
     private boolean midLine = false;
-    
+
     /**
-     * A <code>Shell</code> with default input and output streams (
-     * <code>System.in</code> and <code>System.out</code>).
+     * A <code>Shell</code> with default input and output streams ( <code>System.in</code> and
+     * <code>System.out</code>).
      * 
      */
     public Shell()
@@ -135,11 +134,12 @@ public class Shell extends Thread
         this.bots = this._core.getBots();
         this.clientNamePredicate = this._core.getSettings().getClientNamePredicate();
         this.hostname = this._core.getHostname();
-        
+
         this.commandRegistry = new ShellCommandRegistry();
-        
+
         // Look for any shell command plugins and add them to the registry.
-        Element shellCommandSet = XML.getFirstElementNamed(this._core.getPluginConfig().getDocumentElement(), "shell-commands");
+        Element shellCommandSet = XML.getFirstElementNamed(this._core.getPluginConfig().getDocumentElement(),
+                "shell-commands");
         if (shellCommandSet != null)
         {
             List<Element> commands = XML.getAllElementsNamed(shellCommandSet, "command");
@@ -171,10 +171,12 @@ public class Shell extends Thread
     {
         if (this._core == null)
         {
-            throw new DeveloperError("Must attach the shell to a Core before calling run()!", new NullPointerException());
+            throw new DeveloperError("Must attach the shell to a Core before calling run()!",
+                    new NullPointerException());
         }
-        
-        showMessage("Interactive shell: type \"" + EXIT + "\" to shut down; \"" + HelpCommand.COMMAND_STRING + "\" for help.");
+
+        showMessage("Interactive shell: type \"" + EXIT + "\" to shut down; \"" + HelpCommand.COMMAND_STRING
+                + "\" for help.");
         Bot bot = this.bots.getABot();
         if (bot == null)
         {
@@ -183,7 +185,7 @@ public class Shell extends Thread
         this.botid = bot.getID();
         this.botName = bot.getPropertyValue(this.botNamePredicate);
 
-        while (true /*&& this.core.getStatus() == Core.Status.READY*/)
+        while (true /* && this.core.getStatus() == Core.Status.READY */)
         {
             showPrompt();
             String commandLine = null;
@@ -235,7 +237,8 @@ public class Shell extends Thread
                     }
                     catch (NoCommandException ee)
                     {
-                        showError("Please specify a command following the commandable.  For a list of commandables, type \"" + ListCommandablesCommand.COMMAND_STRING + "\".");
+                        showError("Please specify a command following the commandable.  For a list of commandables, type \""
+                                + ListCommandablesCommand.COMMAND_STRING + "\".");
                     }
                     catch (NoSuchCommandableException ee)
                     {
@@ -245,12 +248,13 @@ public class Shell extends Thread
             }
             else if (commandLine.length() > 0)
             {
-                showConsole(this.botName, XML.filterViaHTMLTags(this._core.getResponse(commandLine, this.hostname, this.botid)));
+                showConsole(this.botName, XML.filterViaHTMLTags(this._core.getResponse(commandLine, this.hostname,
+                        this.botid)));
             }
             // If the command line has zero length, ignore it.
         }
     }
-    
+
     /**
      * Notes that the shell will not run, and sleeps.
      */
@@ -269,12 +273,10 @@ public class Shell extends Thread
             }
         }
     }
-    
+
     /**
-     * Allows an external class to call a command 
-     * by sending a command line.  Prints the command
-     * line to the console so it's possible to see
-     * what was attempted.
+     * Allows an external class to call a command by sending a command line. Prints the command line to the console so
+     * it's possible to see what was attempted.
      * 
      * @param commandLine the command line to process
      * @throws NoSuchCommandException if the command line did not contain a command that could be processed
@@ -292,7 +294,8 @@ public class Shell extends Thread
     {
         if (this.getState() != Thread.State.NEW)
         {
-            promptConsole('[' + this.botName + "] " + this.predicateMaster.get(this.clientNamePredicate, this.hostname, this.botid).trim());
+            promptConsole('[' + this.botName + "] "
+                    + this.predicateMaster.get(this.clientNamePredicate, this.hostname, this.botid).trim());
         }
     }
 
@@ -376,8 +379,7 @@ public class Shell extends Thread
     }
 
     /**
-     * Tells the Shell that something else was printed to the console; not
-     * midLine anymore.
+     * Tells the Shell that something else was printed to the console; not midLine anymore.
      */
     public void gotLine()
     {
@@ -399,7 +401,7 @@ public class Shell extends Thread
     {
         return this.botid;
     }
-    
+
     /**
      * @return the Core in use
      */
@@ -407,7 +409,7 @@ public class Shell extends Thread
     {
         return this._core;
     }
-    
+
     /**
      * @return the command registry
      */
@@ -415,7 +417,7 @@ public class Shell extends Thread
     {
         return this.commandRegistry.getValues();
     }
-    
+
     /**
      * @return the Bots object used by this shell
      */
@@ -440,8 +442,8 @@ public class Shell extends Thread
         this.botName = this.bots.getBot(newBotID).getPropertyValue(this.botNamePredicate);
         showMessage("Switched to bot \"" + newBotID + "\" (name: \"" + this.botName + "\").");
         // Send the connect string and print the first response.
-        showConsole(this.botName, XML.filterViaHTMLTags(this._core.getResponse(this._core.getSettings().getConnectString(), this.hostname,
-                this.botid)));
+        showConsole(this.botName, XML.filterViaHTMLTags(this._core.getResponse(this._core.getSettings()
+                .getConnectString(), this.hostname, this.botid)));
     }
 
     /**

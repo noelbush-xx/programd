@@ -21,11 +21,9 @@ import org.aitools.programd.interfaces.graphical.GUIConsole;
 import org.aitools.util.resource.URLTools;
 
 /**
- * A <code>SimpleGUIConsole</code> gives you running
- * {@link org.aitools.programd.Core Core} attached to a GUI-based
+ * A <code>SimpleGUIConsole</code> gives you running {@link org.aitools.programd.Core Core} attached to a GUI-based
  * {@link org.aitools.programd.interfaces.Console Console}, including a basic
- * {@link org.aitools.programd.interfaces.shell.Shell Shell} attached (if you enable
- * it).
+ * {@link org.aitools.programd.interfaces.shell.Shell Shell} attached (if you enable it).
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.2

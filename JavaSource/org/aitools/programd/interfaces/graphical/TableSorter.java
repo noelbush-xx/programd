@@ -15,17 +15,14 @@ import javax.swing.table.TableModel;
 import org.aitools.util.runtime.DeveloperError;
 
 /**
- * A sorter for TableModels. The sorter has a model (conforming to TableModel)
- * and itself implements TableModel. TableSorter does not store or copy the data
- * in the TableModel, instead it maintains an array of integers which it keeps
- * the same size as the number of rows in its model. When the model changes it
- * notifies the sorter that something has changed eg. "rowsAdded" so that its
- * internal array of integers can be reallocated. As requests are made of the
- * sorter (like getValueAt(row, col) it redirects them to its model via the
- * mapping array. That way the TableSorter appears to hold another copy of the
- * table with the rows in a different order. The sorting algorthm used is stable
- * which means that it does not move around rows when its comparison function
- * returns 0 to denote that they are equivalent.
+ * A sorter for TableModels. The sorter has a model (conforming to TableModel) and itself implements TableModel.
+ * TableSorter does not store or copy the data in the TableModel, instead it maintains an array of integers which it
+ * keeps the same size as the number of rows in its model. When the model changes it notifies the sorter that something
+ * has changed eg. "rowsAdded" so that its internal array of integers can be reallocated. As requests are made of the
+ * sorter (like getValueAt(row, col) it redirects them to its model via the mapping array. That way the TableSorter
+ * appears to hold another copy of the table with the rows in a different order. The sorting algorthm used is stable
+ * which means that it does not move around rows when its comparison function returns 0 to denote that they are
+ * equivalent.
  * 
  * @version 1.5 12/17/97
  * @author Philip Milne
@@ -100,11 +97,9 @@ public class TableSorter extends TableMap
         }
 
         /*
-         * We copy all returned values from the getValue call in case an
-         * optimised model is reusing one object to return many values. The
-         * Number subclasses in the JDK are immutable and so will not be used in
-         * this way but other subclasses of Number might want to do this to save
-         * space and avoid unnecessary heap allocation.
+         * We copy all returned values from the getValue call in case an optimised model is reusing one object to return
+         * many values. The Number subclasses in the JDK are immutable and so will not be used in this way but other
+         * subclasses of Number might want to do this to save space and avoid unnecessary heap allocation.
          */
 
         if (type.getSuperclass() == java.lang.Number.class)
@@ -233,16 +228,15 @@ public class TableSorter extends TableMap
     }
 
     /**
-     * Sets up a new array of indices with the correct number of elements for
-     * the new data model, and initializes with the identity mapping.
+     * Sets up a new array of indices with the correct number of elements for the new data model, and initializes with
+     * the identity mapping.
      */
     public void reallocateIndexes()
     {
         int rowCount = this.model.getRowCount();
 
         /*
-         * Set up a new array of indexes with the right number of elements for
-         * the new data model.
+         * Set up a new array of indexes with the right number of elements for the new data model.
          */
         this.indexes = new int[rowCount];
 
@@ -264,14 +258,14 @@ public class TableSorter extends TableMap
     }
 
     /**
-     * Checks that the model is valid (has not been changed without informing
-     * the sorter).
+     * Checks that the model is valid (has not been changed without informing the sorter).
      */
     public void checkModel()
     {
         if (this.indexes.length != this.model.getRowCount())
         {
-            throw new DeveloperError("TableSorter model is not valid.", new IllegalStateException("Sorter not informed of a change in model."));
+            throw new DeveloperError("TableSorter model is not valid.", new IllegalStateException(
+                    "Sorter not informed of a change in model."));
         }
     }
 
@@ -304,12 +298,10 @@ public class TableSorter extends TableMap
     }
 
     /**
-     * This is a home-grown implementation which we have not had time to
-     * research - it may perform poorly in some circumstances. It requires twice
-     * the space of an in-place algorithm and makes NlogN assigments shuttling
-     * the values between the two arrays. The number of compares appears to vary
-     * between N-1 and NlogN depending on the initial order but the main reason
-     * for using it here is that, unlike qsort, it is stable.
+     * This is a home-grown implementation which we have not had time to research - it may perform poorly in some
+     * circumstances. It requires twice the space of an in-place algorithm and makes NlogN assigments shuttling the
+     * values between the two arrays. The number of compares appears to vary between N-1 and NlogN depending on the
+     * initial order but the main reason for using it here is that, unlike qsort, it is stable.
      * 
      * @param from ?
      * @param to ?
@@ -330,19 +322,14 @@ public class TableSorter extends TableMap
         int q = middle;
 
         /*
-         * This is an optional short-cut; at each recursive call, check to see
-         * if the elements in this subset are already ordered. If so, no further
-         * comparisons are needed; the sub-array can just be copied. The array
-         * must be copied rather than assigned otherwise sister calls in the
-         * recursion might get out of sinc. When the number of elements is three
-         * they are partitioned so that the first set, [low, mid), has one
-         * element and and the second, [mid, high), has two. We skip the
-         * optimisation when the number of elements is three or less as the
-         * first compare in the normal merge will produce the same sequence of
-         * steps. This optimisation seems to be worthwhile for partially ordered
-         * lists but some analysis is needed to find out how the performance
-         * drops to Nlog(N) as the initial order diminishes - it may drop very
-         * quickly.
+         * This is an optional short-cut; at each recursive call, check to see if the elements in this subset are
+         * already ordered. If so, no further comparisons are needed; the sub-array can just be copied. The array must
+         * be copied rather than assigned otherwise sister calls in the recursion might get out of sinc. When the number
+         * of elements is three they are partitioned so that the first set, [low, mid), has one element and and the
+         * second, [mid, high), has two. We skip the optimisation when the number of elements is three or less as the
+         * first compare in the normal merge will produce the same sequence of steps. This optimisation seems to be
+         * worthwhile for partially ordered lists but some analysis is needed to find out how the performance drops to
+         * Nlog(N) as the initial order diminishes - it may drop very quickly.
          */
 
         if (high - low >= 4 && compare(from[middle - 1], from[middle]) <= 0)
@@ -385,8 +372,7 @@ public class TableSorter extends TableMap
     // Pass all requests to these rows through the mapping array: "indexes".
 
     /**
-     * @see org.aitools.programd.interfaces.graphical.TableMap#getValueAt(int,
-     *      int)
+     * @see org.aitools.programd.interfaces.graphical.TableMap#getValueAt(int, int)
      */
     @Override
     public Object getValueAt(int aRow, int aColumn)
@@ -396,8 +382,7 @@ public class TableSorter extends TableMap
     }
 
     /**
-     * @see org.aitools.programd.interfaces.graphical.TableMap#setValueAt(java.lang.Object,
-     *      int, int)
+     * @see org.aitools.programd.interfaces.graphical.TableMap#setValueAt(java.lang.Object, int, int)
      */
     @Override
     public void setValueAt(Object aValue, int aRow, int aColumn)
@@ -432,8 +417,8 @@ public class TableSorter extends TableMap
     }
 
     /**
-     * Adds a mouse listener to the header of the given table to trigger a table
-     * sort when a column heading is clicked in the JTable.
+     * Adds a mouse listener to the header of the given table to trigger a table sort when a column heading is clicked
+     * in the JTable.
      * 
      * @param table the table to whose header to add a mouse listener.
      */

@@ -23,13 +23,13 @@ public class PredicateValue
 {
     /** The single value (if assigned). */
     private String singleValue;
-    
+
     /** The list of values (if assigned). */
     private ArrayList<String> valueList;
-    
+
     /** Whether this PredicateValue has multiple values. */
     private boolean multiValued;
-    
+
     /**
      * Creates a new <code>PredicateValue</code> with the
      * given single value.
@@ -53,7 +53,7 @@ public class PredicateValue
         this.valueList = values;
         this.multiValued = true;
     }
-    
+
     /**
      * @return whether this <code>PredicateValue</code> is multi-valued
      */
@@ -61,7 +61,7 @@ public class PredicateValue
     {
         return this.multiValued;
     }
-    
+
     /**
      * If this <code>PredicateValue</code> is single-valued,
      * simply returns the value.  If it is multi-valued,
@@ -78,7 +78,7 @@ public class PredicateValue
         // otherwise...
         return this.singleValue;
     }
-    
+
     /**
      * If this <code>PredicateValue</code> is multi-valued,
      * returns itself.  If it is single-valued,
@@ -99,7 +99,7 @@ public class PredicateValue
         this.singleValue = null;
         return this;
     }
-    
+
     /**
      * Adds the given value.  In all cases,
      * this means the <code>PredicateValue</code>
@@ -117,7 +117,7 @@ public class PredicateValue
             this.valueList.add(value);
         }
     }
-    
+
     /**
      * Adds the given value into the value list
      * at the given index.
@@ -140,7 +140,7 @@ public class PredicateValue
             this.valueList.add(0, value);
         }
     }
-    
+
     /**
      * Pushes a value onto the front of a list, and pops off any values at the
      * end of the list so that the list size is no more than {@link PredicateMaster#MAX_INDEX}.
@@ -159,7 +159,7 @@ public class PredicateValue
             this.valueList.remove(this.valueList.size() - 1);
         }
     }
-    
+
     /**
      * @param index the index whose value is wanted
      * @return the value at the given index
@@ -172,7 +172,7 @@ public class PredicateValue
         }
         return this.valueList.get(index - 1);
     }
-    
+
     /**
      * @return the number of values stored
      */

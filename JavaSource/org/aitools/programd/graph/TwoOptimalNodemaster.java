@@ -17,9 +17,8 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 /**
- * This is an optimization of {@link NodemapperFactory} that avoids creating
- * the internal {@link java.util.LinkedHashMap LinkedMap} until the
- * number of mappings exceeds two (2).
+ * This is an optimization of {@link NodemapperFactory} that avoids creating the internal
+ * {@link java.util.LinkedHashMap LinkedMap} until the number of mappings exceeds two (2).
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @version 4.6
@@ -29,9 +28,11 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
     protected int size = 0;
 
     protected String key_0;
+
     protected String key_1;
 
     protected Object value_0;
+
     protected Object value_1;
 
     /**
@@ -125,7 +126,8 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
             else
             {
                 // We didn't find a key.
-                Logger.getLogger("programd.graphmaster").error(String.format("Key was not found for value when trying to remove \"%s\".", valueToRemove));
+                Logger.getLogger("programd.graphmaster").error(
+                        String.format("Key was not found for value when trying to remove \"%s\".", valueToRemove));
                 return;
             }
             this.size--;
@@ -146,7 +148,8 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
             if (keyToRemove == null)
             {
                 // We didn't find a key.
-                Logger.getLogger("programd.graphmaster").error(String.format("Key was not found for value when trying to remove \"%s\".", valueToRemove));
+                Logger.getLogger("programd.graphmaster").error(
+                        String.format("Key was not found for value when trying to remove \"%s\".", valueToRemove));
                 return;
             }
             if (this.size > 3)
@@ -175,7 +178,8 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
         else if (this.size == 0)
         {
             // We didn't find a key.
-            Logger.getLogger("programd.graphmaster").error(String.format("No keys in Nodemapper when trying to remove \"%s\".", valueToRemove));
+            Logger.getLogger("programd.graphmaster").error(
+                    String.format("No keys in Nodemapper when trying to remove \"%s\".", valueToRemove));
         }
     }
 
@@ -244,8 +248,7 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
         }
         else if (this.size == 2 || this.size == 1)
         {
-            return (keyToCheck.equalsIgnoreCase(this.key_0) ||
-                    keyToCheck.equalsIgnoreCase(this.key_1));
+            return (keyToCheck.equalsIgnoreCase(this.key_0) || keyToCheck.equalsIgnoreCase(this.key_1));
         }
         return this.hidden.containsKey(keyToCheck.toUpperCase());
     }
@@ -265,11 +268,11 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
         {
             if (this.value_0 != null && this.value_0 instanceof Nodemapper)
             {
-                total += ((Nodemapper)this.value_0).getAverageSize();
+                total += ((Nodemapper) this.value_0).getAverageSize();
             }
             if (this.value_1 != null && this.value_1 instanceof Nodemapper)
             {
-                total += ((Nodemapper)this.value_1).getAverageSize();
+                total += ((Nodemapper) this.value_1).getAverageSize();
             }
         }
         else
@@ -278,7 +281,7 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
             {
                 if (object instanceof Nodemapper)
                 {
-                    total += ((Nodemapper)object).getAverageSize();
+                    total += ((Nodemapper) object).getAverageSize();
                 }
             }
         }

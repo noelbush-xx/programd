@@ -20,9 +20,7 @@ import org.aitools.util.resource.Filesystem;
 import org.aitools.util.resource.URLTools;
 
 /**
- * Handles a
- * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-learn">learn</a></code>
- * element.
+ * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-learn">learn</a></code> element.
  * 
  * @version 4.5
  * @author Jon Baer
@@ -45,8 +43,8 @@ public class LearnProcessor extends AIMLProcessor
     }
 
     /**
-     * Attempts to load an AIML file whose location is described by the results
-     * of processing the content of the element.
+     * Attempts to load an AIML file whose location is described by the results of processing the content of the
+     * element.
      * 
      * @param element the <code>learn</code> element
      * @param parser the parser that is at work
@@ -57,9 +55,9 @@ public class LearnProcessor extends AIMLProcessor
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         URL path = URLTools.contextualize(Filesystem.getWorkingDirectory(), parser.evaluate(element.getChildNodes()));
-        //Filesystem.pushWorkingDirectory(URLTools.getParent(path));
+        // Filesystem.pushWorkingDirectory(URLTools.getParent(path));
         parser.getCore().load(path, parser.getBotID());
-        //Filesystem.popWorkingDirectory();
+        // Filesystem.popWorkingDirectory();
         return EMPTY_STRING;
     }
 }

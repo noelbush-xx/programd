@@ -9,7 +9,6 @@
 
 package org.aitools.programd.processor.aiml;
 
-
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -23,9 +22,7 @@ import org.aitools.util.runtime.UserError;
 import org.apache.log4j.Logger;
 
 /**
- * Handles a
- * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-condition">condition</a></code>
- * element.
+ * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-condition">condition</a></code> element.
  * 
  * @version 4.5
  * @author Jon Baer
@@ -46,7 +43,6 @@ public class ConditionProcessor extends AIMLProcessor
         /** A valueOnlyListItem in a &lt;condition/&gt;. */
         VALUE_ONLY
     }
-
 
     /** The label (as required by the registration scheme). */
     public static final String label = "condition";
@@ -71,8 +67,8 @@ public class ConditionProcessor extends AIMLProcessor
         String value = element.getAttribute(VALUE);
 
         /*
-         * Process a multiPredicateCondition: <condition>
-         * <li name="xxx" value="xxx"> ... </li><li> ... </li> </condition>
+         * Process a multiPredicateCondition: <condition> <li name="xxx" value="xxx"> ... </li><li> ... </li>
+         * </condition>
          */
         if (name.equals(EMPTY_STRING) && value.equals(EMPTY_STRING))
         {
@@ -84,8 +80,7 @@ public class ConditionProcessor extends AIMLProcessor
         }
 
         /*
-         * Process a blockCondition: <condition name="xxx" value="yyy"> ...
-         * </condition>
+         * Process a blockCondition: <condition name="xxx" value="yyy"> ... </condition>
          */
         if (!name.equals(EMPTY_STRING) && !value.equals(EMPTY_STRING))
         {
@@ -95,7 +90,8 @@ public class ConditionProcessor extends AIMLProcessor
             }
             try
             {
-                if (PatternArbiter.matches(parser.getCore().getPredicateMaster().get(name, parser.getUserID(), parser.getBotID()), value, true))
+                if (PatternArbiter.matches(parser.getCore().getPredicateMaster().get(name, parser.getUserID(),
+                        parser.getBotID()), value, true))
                 {
                     return processListItem(parser, element.getChildNodes(), ListItemType.DEFAULT, EMPTY_STRING);
                 }
@@ -109,8 +105,8 @@ public class ConditionProcessor extends AIMLProcessor
         }
 
         /*
-         * Process a singlePredicateCondition: <condition name="xxx">
-         * <li value="yyy"> ... </li><li> ... </li> </condition>
+         * Process a singlePredicateCondition: <condition name="xxx"> <li value="yyy"> ... </li><li> ... </li>
+         * </condition>
          */
         if (!name.equals(EMPTY_STRING) && value.equals(EMPTY_STRING))
         {
@@ -135,7 +131,8 @@ public class ConditionProcessor extends AIMLProcessor
      * @return the result of processing this &lt;li/&gt;
      * @throws ProcessorException if there is an error in processing
      */
-    public String processListItem(TemplateParser parser, NodeList list, ListItemType type, String name) throws ProcessorException
+    public String processListItem(TemplateParser parser, NodeList list, ListItemType type, String name)
+            throws ProcessorException
     {
         String response = EMPTY_STRING;
         Node node;
@@ -145,8 +142,8 @@ public class ConditionProcessor extends AIMLProcessor
         String liname = EMPTY_STRING;
 
         /*
-         * For <code> valueOnlyListItem </code> s, look at the parent
-         * &lt;condition/&gt; to get the predicate <code> name </code> .
+         * For <code> valueOnlyListItem </code> s, look at the parent &lt;condition/&gt; to get the predicate <code>
+         * name </code> .
          */
         if (type == ListItemType.VALUE_ONLY)
         {
@@ -183,9 +180,8 @@ public class ConditionProcessor extends AIMLProcessor
                         else
                         {
                             /*
-                             * Now decide what to do based on the listItemType,
-                             * which indicates what to expect from the parent
-                             * &lt;condition/&gt;.
+                             * Now decide what to do based on the listItemType, which indicates what to expect from the
+                             * parent &lt;condition/&gt;.
                              */
                             switch (type)
                             {
@@ -193,17 +189,14 @@ public class ConditionProcessor extends AIMLProcessor
                                 // attributes.
                                 case NAME_VALUE:
                                     /*
-                                     * Look for tokens in the XML attributes for
-                                     * name and value. If none are present, this
-                                     * is an unqualified &lt;li/&gt;
-                                     * (defaultListItem) and gets evaluated.
-                                     * (Strange.) Processing will continue even
-                                     * after this case, so the defaultListItem
-                                     * may be anywhere under &lt;condition/&gt;,
-                                     * not necessarily at the end. This is a
+                                     * Look for tokens in the XML attributes for name and value. If none are present,
+                                     * this is an unqualified &lt;li/&gt; (defaultListItem) and gets evaluated.
+                                     * (Strange.) Processing will continue even after this case, so the defaultListItem
+                                     * may be anywhere under &lt;condition/&gt;, not necessarily at the end. This is a
                                      * violation of strict AIML 1.0.1.
                                      */
-                                    if ((node.getAttributes().getNamedItem(NAME) == null) && (node.getAttributes().getNamedItem(VALUE) == null))
+                                    if ((node.getAttributes().getNamedItem(NAME) == null)
+                                            && (node.getAttributes().getNamedItem(VALUE) == null))
                                     {
                                         response = response + parser.evaluate(node.getChildNodes());
                                         break;
@@ -211,7 +204,8 @@ public class ConditionProcessor extends AIMLProcessor
 
                                     // Ignore if there is not a name and a
                                     // value.
-                                    if ((node.getAttributes().getNamedItem(NAME) == null) || (node.getAttributes().getNamedItem(VALUE) == null))
+                                    if ((node.getAttributes().getNamedItem(NAME) == null)
+                                            || (node.getAttributes().getNamedItem(VALUE) == null))
                                     {
                                         break;
                                     }
@@ -222,14 +216,13 @@ public class ConditionProcessor extends AIMLProcessor
                                     livalue = node.getAttributes().getNamedItem(VALUE).getNodeValue();
 
                                     /*
-                                     * If the value of the predicate matches the
-                                     * value in the value attribute, process the
-                                     * response, otherwise skip.
+                                     * If the value of the predicate matches the value in the value attribute, process
+                                     * the response, otherwise skip.
                                      */
                                     try
                                     {
-                                        if (PatternArbiter.matches(this._core.getPredicateMaster().get(liname, parser.getUserID(), parser.getBotID()),
-                                                livalue, true))
+                                        if (PatternArbiter.matches(this._core.getPredicateMaster().get(liname,
+                                                parser.getUserID(), parser.getBotID()), livalue, true))
                                         {
                                             return response + parser.evaluate(node.getChildNodes());
                                         }
@@ -254,8 +247,7 @@ public class ConditionProcessor extends AIMLProcessor
                                     {
                                         livalue = node.getAttributes().getNamedItem(VALUE).getNodeValue();
                                         /*
-                                         * If the value of the predicate matches
-                                         * the value in the value attribute,
+                                         * If the value of the predicate matches the value in the value attribute,
                                          * process the response, otherwise skip.
                                          */
                                         try
@@ -269,14 +261,13 @@ public class ConditionProcessor extends AIMLProcessor
                                         catch (NotAnAIMLPatternException e)
                                         {
                                             Logger.getLogger("programd").warn(
-                                                    "ConditionProcessor got a non-AIML pattern in a value attribute.", e);
+                                                    "ConditionProcessor got a non-AIML pattern in a value attribute.",
+                                                    e);
                                         }
                                     }
                                     /*
-                                     * When there is no value attribute, we
-                                     * actually got the wrong li type, but
-                                     * process as a defaultListItem anyway
-                                     * (probably a bad idea).
+                                     * When there is no value attribute, we actually got the wrong li type, but process
+                                     * as a defaultListItem anyway (probably a bad idea).
                                      */
                                     else
                                     {

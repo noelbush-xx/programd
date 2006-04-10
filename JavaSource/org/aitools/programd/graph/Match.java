@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import org.aitools.programd.util.InputNormalizer;
 
 /**
- * <code>Match</code> implements an object to store the results of matching,
- * most notably the stacks resulting from multiple input/that/topic wildcards.
+ * <code>Match</code> implements an object to store the results of matching, most notably the stacks resulting from
+ * multiple input/that/topic wildcards.
  */
 public class Match
 {
@@ -28,8 +28,7 @@ public class Match
     private ArrayList<String> thatStars = new ArrayList<String>();
 
     /**
-     * The portions of the &lt;topic/&gt; <code>name</code> captured by
-     * wildcards.
+     * The portions of the &lt;topic/&gt; <code>name</code> captured by wildcards.
      */
     private ArrayList<String> topicStars = new ArrayList<String>();
 
@@ -59,7 +58,8 @@ public class Match
     /**
      * Pushes a new input star onto the input stack.
      * 
-     * @param string the string to push onto the input stack
+     * @param string
+     *            the string to push onto the input stack
      */
     public void pushInputWildcardContent(String string)
     {
@@ -69,7 +69,8 @@ public class Match
     /**
      * Pushes a new that star onto the thatstar stack.
      * 
-     * @param string the string to push onto the thatstar stack
+     * @param string
+     *            the string to push onto the thatstar stack
      */
     public void pushThatWildcardContent(String string)
     {
@@ -79,7 +80,8 @@ public class Match
     /**
      * Pushes a new topic star onto the topicstar stack.
      * 
-     * @param string the string to push onto the topicstar stack
+     * @param string
+     *            the string to push onto the topicstar stack
      */
     public void pushTopicWildcardContent(String string)
     {
@@ -89,7 +91,8 @@ public class Match
     /**
      * Sets the <code>pattern</code> part of the matched path.
      * 
-     * @param string the <code>pattern</code> part of the matched path
+     * @param string
+     *            the <code>pattern</code> part of the matched path
      */
     public void setPattern(String string)
     {
@@ -99,7 +102,8 @@ public class Match
     /**
      * Sets the <code>that</code> part of the matched path.
      * 
-     * @param string the <code>that</code> part of the matched path
+     * @param string
+     *            the <code>that</code> part of the matched path
      */
     public void setThat(String string)
     {
@@ -109,7 +113,8 @@ public class Match
     /**
      * Sets the <code>topic</code> part of the matched path.
      * 
-     * @param string the <code>topic</code> part of the matched path
+     * @param string
+     *            the <code>topic</code> part of the matched path
      */
     public void setTopic(String string)
     {
@@ -119,7 +124,8 @@ public class Match
     /**
      * Sets the <code>botid</code> part of the matched path.
      * 
-     * @param string the <code>botid</code> part of the matched path
+     * @param string
+     *            the <code>botid</code> part of the matched path
      */
     public void setBotID(String string)
     {
@@ -129,7 +135,8 @@ public class Match
     /**
      * Set the match-resulting nodemapper.
      * 
-     * @param nodemapperToSet the match-resulting nodemapper
+     * @param nodemapperToSet
+     *            the match-resulting nodemapper
      */
 
     public void setNodemapper(Nodemapper nodemapperToSet)
@@ -174,8 +181,8 @@ public class Match
      */
     public String getPath()
     {
-        return InputNormalizer.patternFit(this.pattern) + SPACED_PATH_SEPARATOR + InputNormalizer.patternFit(this.that) + SPACED_PATH_SEPARATOR
-                + InputNormalizer.patternFit(this.topic) + SPACED_PATH_SEPARATOR + this.botid;
+        return InputNormalizer.patternFit(this.pattern) + SPACED_PATH_SEPARATOR + InputNormalizer.patternFit(this.that)
+                + SPACED_PATH_SEPARATOR + InputNormalizer.patternFit(this.topic) + SPACED_PATH_SEPARATOR + this.botid;
     }
 
     /**

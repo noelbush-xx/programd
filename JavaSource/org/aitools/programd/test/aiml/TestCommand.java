@@ -91,11 +91,8 @@ public class TestCommand extends ShellCommand
         URL testReportDirectory = bot.getTestReportDirectory();
         if (testSuites != null && testReportDirectory != null)
         {
-            new Tester(shell.getCore(),
-                    LogManager.getLogger("programd.testing"),
-                    testSuites,
-                    testReportDirectory).run(shell
-                    .getCurrentBotID(), suite, runCount);
+            new Tester(shell.getCore(), LogManager.getLogger("programd.testing"), testSuites, testReportDirectory).run(
+                    shell.getCurrentBotID(), suite, runCount);
         }
         else
         {

@@ -17,9 +17,8 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 /**
- * This is an optimization of {@link NodemapperFactory} that avoids creating
- * the internal {@link java.util.LinkedHashMap LinkedMap} until the
- * number of mappings exceeds one (1).
+ * This is an optimization of {@link NodemapperFactory} that avoids creating the internal
+ * {@link java.util.LinkedHashMap LinkedMap} until the number of mappings exceeds one (1).
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @version 4.6
@@ -98,7 +97,8 @@ public class OneOptimalNodemaster extends AbstractNodemaster
             else
             {
                 // We didn't find a key.
-                Logger.getLogger("programd.graphmaster").error(String.format("Key was not found for value when trying to remove \"%s\".", valueToRemove));
+                Logger.getLogger("programd.graphmaster").error(
+                        String.format("Key was not found for value when trying to remove \"%s\".", valueToRemove));
                 return;
             }
             this.size = 0;
@@ -119,7 +119,8 @@ public class OneOptimalNodemaster extends AbstractNodemaster
             if (keyToRemove == null)
             {
                 // We didn't find a key.
-                Logger.getLogger("programd.graphmaster").error(String.format("Key was not found for value when trying to remove \"%s\".", valueToRemove));
+                Logger.getLogger("programd.graphmaster").error(
+                        String.format("Key was not found for value when trying to remove \"%s\".", valueToRemove));
                 return;
             }
             if (this.size > 2)
@@ -143,10 +144,12 @@ public class OneOptimalNodemaster extends AbstractNodemaster
                 this.size = 1;
             }
         }
-        else // if (this.size == 0)
+        else
+        // if (this.size == 0)
         {
             // We didn't find a key.
-            Logger.getLogger("programd.graphmaster").error(String.format("No keys in Nodemapper when trying to remove \"%s\".", valueToRemove));
+            Logger.getLogger("programd.graphmaster").error(
+                    String.format("No keys in Nodemapper when trying to remove \"%s\".", valueToRemove));
         }
     }
 
@@ -227,7 +230,7 @@ public class OneOptimalNodemaster extends AbstractNodemaster
         {
             if (this._value != null && this._value instanceof Nodemapper)
             {
-                total = ((Nodemapper)this._value).getAverageSize();
+                total = ((Nodemapper) this._value).getAverageSize();
             }
         }
         else
@@ -236,7 +239,7 @@ public class OneOptimalNodemaster extends AbstractNodemaster
             {
                 if (object instanceof Nodemapper)
                 {
-                    total += ((Nodemapper)object).getAverageSize();
+                    total += ((Nodemapper) object).getAverageSize();
                 }
             }
         }

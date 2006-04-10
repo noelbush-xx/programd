@@ -21,14 +21,12 @@ import org.aitools.util.ClassRegistry;
 public class ProcessorRegistry<B> extends ClassRegistry<B>
 {
     /**
-     * The namespace URI of the content type for which this registry is
-     * intended.
+     * The namespace URI of the content type for which this registry is intended.
      */
     protected String _namespaceURI;
 
     /**
-     * Creates a <code>ProcessorRegistry</code> associated with the given
-     * namespace URI.
+     * Creates a <code>ProcessorRegistry</code> associated with the given namespace URI.
      * 
      * @param namespaceURI the namespace URI for the processors
      * @param classnames the names of the classes to register
@@ -41,8 +39,7 @@ public class ProcessorRegistry<B> extends ClassRegistry<B>
     }
 
     /**
-     * @return the namespace URI of the content type for which this registry
-     *         manages processors
+     * @return the namespace URI of the content type for which this registry manages processors
      */
     public String getNamespaceURI()
     {

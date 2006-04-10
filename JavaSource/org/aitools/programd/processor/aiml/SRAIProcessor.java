@@ -12,7 +12,6 @@ package org.aitools.programd.processor.aiml;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.parser.TemplateParserException;
@@ -20,7 +19,7 @@ import org.aitools.programd.processor.ProcessorException;
 import org.apache.log4j.Logger;
 
 /**
- * Implements the &lt;srai/&gt; element.
+ * Implements the <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-srai">srai</a></code> element.
  * 
  * @version 4.5
  * @author Jon Baer
@@ -94,9 +93,8 @@ public class SRAIProcessor extends AIMLProcessor
         String botid = parser.getBotID();
         try
         {
-            return this._core.getMultiplexor()
-                    .getInternalResponse(input, userid, botid,
-                            new TemplateParser(input, userid, botid, this._core));
+            return this._core.getMultiplexor().getInternalResponse(input, userid, botid,
+                    new TemplateParser(input, userid, botid, this._core));
         }
         catch (TemplateParserException e)
         {

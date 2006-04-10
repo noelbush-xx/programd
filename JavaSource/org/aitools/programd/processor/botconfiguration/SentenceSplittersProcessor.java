@@ -19,8 +19,8 @@ import org.aitools.programd.processor.ProcessorException;
 import org.aitools.util.xml.XML;
 
 /**
- * The <code>sentence-splitters</code> element is a container for defining
- * strings that should cause the input to be split into sentences.
+ * The <code>sentence-splitters</code> element is a container for defining strings that should cause the input to be
+ * split into sentences.
  * 
  * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -41,8 +41,7 @@ public class SentenceSplittersProcessor extends BotConfigurationElementProcessor
     }
 
     /**
-     * @see BotConfigurationElementProcessor#process(Element,
-     *      BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
      */
     @SuppressWarnings("boxing")
     @Override

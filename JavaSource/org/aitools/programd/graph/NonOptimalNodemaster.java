@@ -16,8 +16,8 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 /**
- * This is the most trivial, and likely the most wasteful, implementation of
- * {@link Nodemapper Nodemapper}.  It does not attempt to do any optimizations.
+ * This is the most trivial, and likely the most wasteful, implementation of {@link Nodemapper Nodemapper}. It does not
+ * attempt to do any optimizations.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @version 4.6
@@ -69,7 +69,8 @@ public class NonOptimalNodemaster extends AbstractNodemaster
         if (keyToRemove == null)
         {
             // We didn't find a key.
-            Logger.getLogger("programd.graphmaster").error(String.format("Key was not found for value when trying to remove \"%s\".", valueToRemove));
+            Logger.getLogger("programd.graphmaster").error(
+                    String.format("Key was not found for value when trying to remove \"%s\".", valueToRemove));
             return;
         }
         // Remove the value from the HashMap (ignore the primary
@@ -168,9 +169,8 @@ public class NonOptimalNodemaster extends AbstractNodemaster
     }
 
     /**
-     * Sets the <code>height</code> of this <code>Nodemaster</code> to
-     * <code>height</code>, and calls <code>fillInHeight()</code> on its
-     * parent (if not null) with a height <code>height + 1</code>.
+     * Sets the <code>height</code> of this <code>Nodemaster</code> to <code>height</code>, and calls
+     * <code>fillInHeight()</code> on its parent (if not null) with a height <code>height + 1</code>.
      * 
      * @param heightToFillIn the height for this node
      */
@@ -186,7 +186,7 @@ public class NonOptimalNodemaster extends AbstractNodemaster
             ((NonOptimalNodemaster) this.parent).fillInHeight(heightToFillIn + 1);
         }
     }
-    
+
     public double getAverageSize()
     {
         double total = 0d;
@@ -196,7 +196,7 @@ public class NonOptimalNodemaster extends AbstractNodemaster
             {
                 if (object instanceof Nodemapper)
                 {
-                    total += ((Nodemapper)object).getAverageSize();
+                    total += ((Nodemapper) object).getAverageSize();
                 }
             }
         }

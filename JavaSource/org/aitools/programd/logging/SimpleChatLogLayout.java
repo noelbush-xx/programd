@@ -25,9 +25,9 @@ import org.apache.log4j.spi.LoggingEvent;
 public class SimpleChatLogLayout extends SimpleLayout
 {
     private SimpleDateFormat timestampFormat;
-    
+
     private boolean showTimestamp;
-    
+
     private static final String RBRACKET_SPACE = "] ";
 
     private static final String RANGLE_BRACKET_SPACE = "> ";
@@ -41,12 +41,12 @@ public class SimpleChatLogLayout extends SimpleLayout
     {
         super();
     }
-    
-   /**
-    * Sets the timestamp format to the given format.
-    * 
-    * @param format the timestamp format to use
-    */
+
+    /**
+     * Sets the timestamp format to the given format.
+     * 
+     * @param format the timestamp format to use
+     */
     public void setTimestampFormat(String format)
     {
         if (format.length() > 0)
@@ -74,8 +74,7 @@ public class SimpleChatLogLayout extends SimpleLayout
     {
         if (!(event instanceof ChatLogEvent))
         {
-            throw new IllegalArgumentException(
-                    "XMLChatLogLayout is intended to handle ChatLogEvents only.");
+            throw new IllegalArgumentException("XMLChatLogLayout is intended to handle ChatLogEvents only.");
         }
         return format((ChatLogEvent) event);
     }
@@ -94,25 +93,23 @@ public class SimpleChatLogLayout extends SimpleLayout
         if (this.showTimestamp)
         {
             datetime = this.timestampFormat.format(new Date(event.timeStamp));
-            result.append('[' + datetime + RBRACKET_SPACE + event.getUserID()
-                    + RANGLE_BRACKET_SPACE + event.getInput() + LINE_SEPARATOR);
+            result.append('[' + datetime + RBRACKET_SPACE + event.getUserID() + RANGLE_BRACKET_SPACE + event.getInput()
+                    + LINE_SEPARATOR);
         }
         else
         {
-            result.append(event.getUserID() + RANGLE_BRACKET_SPACE + event.getInput()
-                    + LINE_SEPARATOR);
+            result.append(event.getUserID() + RANGLE_BRACKET_SPACE + event.getInput() + LINE_SEPARATOR);
         }
         for (int index = 0; index < responseLineCount; index++)
         {
             if (this.showTimestamp)
             {
-                result.append('[' + datetime + RBRACKET_SPACE + event.getBotID()
-                        + RANGLE_BRACKET_SPACE + responseLines[index] + LINE_SEPARATOR);
+                result.append('[' + datetime + RBRACKET_SPACE + event.getBotID() + RANGLE_BRACKET_SPACE
+                        + responseLines[index] + LINE_SEPARATOR);
             }
             else
             {
-                result.append(event.getBotID() + RANGLE_BRACKET_SPACE + responseLines[index]
-                        + LINE_SEPARATOR);
+                result.append(event.getBotID() + RANGLE_BRACKET_SPACE + responseLines[index] + LINE_SEPARATOR);
             }
         }
         return result.toString();

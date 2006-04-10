@@ -15,11 +15,7 @@ import org.aitools.programd.processor.ProcessorException;
 import org.w3c.dom.Element;
 
 /**
- * <p>
- * Handles a
- * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-gender">gender</a></code>
- * element.
- * </p>
+ * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-gender">gender</a></code> element.
  * 
  * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>

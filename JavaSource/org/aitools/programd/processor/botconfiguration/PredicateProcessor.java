@@ -15,10 +15,8 @@ import org.aitools.programd.Core;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 
 /**
- * The <code>predicate</code> element specifies for specifying characteristics
- * of a <a
- * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-aiml-predicates">predicate
- * </a>.
+ * The <code>predicate</code> element specifies for specifying characteristics of a <a
+ * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-aiml-predicates">predicate</a>.
  * 
  * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -43,8 +41,7 @@ public class PredicateProcessor extends BotConfigurationElementProcessor
     }
 
     /**
-     * @see BotConfigurationElementProcessor#process(Element,
-     *      BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
      */
     @Override
     public String process(Element element, BotsConfigurationFileParser parser)

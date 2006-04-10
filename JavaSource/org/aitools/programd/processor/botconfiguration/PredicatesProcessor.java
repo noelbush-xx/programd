@@ -16,10 +16,8 @@ import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
 
 /**
- * The <code>predicates</code> element is a container for specifying
- * characteristics of some <a
- * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-aiml-predicates">predicates
- * </a>.
+ * The <code>predicates</code> element is a container for specifying characteristics of some <a
+ * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-aiml-predicates">predicates</a>.
  */
 public class PredicatesProcessor extends BotConfigurationElementProcessor
 {
@@ -37,8 +35,7 @@ public class PredicatesProcessor extends BotConfigurationElementProcessor
     }
 
     /**
-     * @see BotConfigurationElementProcessor#process(Element,
-     *      BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
      */
     @Override
     public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException

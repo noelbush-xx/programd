@@ -37,10 +37,10 @@ public class ChatLogEvent extends LoggingEvent
 
     /** The id of the bot. */
     private String botid;
-    
+
     /** The fully qualified class name of the Logger class. */
     private static final String LOGGER_FQCN = Logger.class.getName();
-    
+
     /**
      * Creates a new ChatLogEvent.
      * 
@@ -51,12 +51,9 @@ public class ChatLogEvent extends LoggingEvent
      */
     public ChatLogEvent(String bot, String user, String in, String out)
     {
-        super(LOGGER_FQCN,
-                Logger.getLogger("programd." + bot),
-                Level.INFO,
-                String.format("%s -> %s: \"%s\"; %s -> %s: \"%s\"",
-                        user, bot, in, bot, user, XML.filterWhitespace(XML.removeMarkup(out))),
-                null);
+        super(LOGGER_FQCN, Logger.getLogger("programd." + bot), Level.INFO, String.format(
+                "%s -> %s: \"%s\"; %s -> %s: \"%s\"", user, bot, in, bot, user, XML.filterWhitespace(XML
+                        .removeMarkup(out))), null);
         this.botid = bot;
         this.userid = user;
         this.input = in;

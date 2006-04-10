@@ -16,8 +16,8 @@ import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
 
 /**
- * The <code>substitutions</code> element is a container for definitions of
- * various substitutions performed by the engine.
+ * The <code>substitutions</code> element is a container for definitions of various substitutions performed by the
+ * engine.
  */
 public class SubstitutionsProcessor extends BotConfigurationElementProcessor
 {
@@ -35,8 +35,7 @@ public class SubstitutionsProcessor extends BotConfigurationElementProcessor
     }
 
     /**
-     * @see BotConfigurationElementProcessor#process(Element,
-     *      BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
      */
     @Override
     public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException

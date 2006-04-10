@@ -1,13 +1,12 @@
 package org.aitools.programd.interpreter;
 
-
 import org.apache.log4j.Logger;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
 /**
- * An implementation of {@link org.aitools.programd.interpreter.Interpreter}
- * that handles server-side JavaScript using the Rhino package.
+ * An implementation of {@link org.aitools.programd.interpreter.Interpreter} that handles server-side JavaScript using
+ * the Rhino package.
  * 
  * @author Jon Baer
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -36,13 +35,13 @@ public class RhinoInterpreter implements Interpreter
         Context context;
         try
         {
-        	context = Context.enter();
+            context = Context.enter();
         }
         // If the Rhino js library is somehow missing....
         catch (NoClassDefFoundError e)
         {
-        	logger.error("Rhino JavaScript library is missing!", e);
-        	return EMPTY_STRING;
+            logger.error("Rhino JavaScript library is missing!", e);
+            return EMPTY_STRING;
         }
         Scriptable scope = context.initStandardObjects(null);
 
@@ -54,7 +53,8 @@ public class RhinoInterpreter implements Interpreter
         catch (Exception e)
         {
             logger.warn("JavaScript exception (see interpreter log).");
-            logger.warn("Got exception:" + LINE_SEPARATOR + e + LINE_SEPARATOR + "when processing:" + LINE_SEPARATOR + expression);
+            logger.warn("Got exception:" + LINE_SEPARATOR + e + LINE_SEPARATOR + "when processing:" + LINE_SEPARATOR
+                    + expression);
         }
         Context.exit();
         if (result != null)

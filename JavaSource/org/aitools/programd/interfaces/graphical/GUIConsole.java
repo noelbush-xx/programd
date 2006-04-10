@@ -414,7 +414,7 @@ public class GUIConsole extends JPanel
      */
     public void start()
     {
-        //this.core.start();
+        // this.core.start();
     }
 
     protected void shutdown()
@@ -474,7 +474,7 @@ public class GUIConsole extends JPanel
             this.input.addActionListener(new InputSender());
 
             this.enter = new JButton("Enter");
-            //this.enter.setFont(new Font("Sans-serif", Font.PLAIN, 10));
+            // this.enter.setFont(new Font("Sans-serif", Font.PLAIN, 10));
             this.enter.setForeground(Color.black);
             this.enter.setMinimumSize(new Dimension(70, 20));
             this.enter.setPreferredSize(new Dimension(70, 20));
@@ -630,8 +630,7 @@ public class GUIConsole extends JPanel
     }
 
     /**
-     * Extends InputStream to suit our purposes in handling user input for the
-     * GUIConsole.
+     * Extends InputStream to suit our purposes in handling user input for the GUIConsole.
      * 
      * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
      */
@@ -751,8 +750,8 @@ public class GUIConsole extends JPanel
 
     protected void loadAIMLURLBox()
     {
-        Object response = JOptionPane.showInputDialog(null, "Enter the URL from which to load.", "Load AIML from URL", JOptionPane.PLAIN_MESSAGE,
-                null, null, null);
+        Object response = JOptionPane.showInputDialog(null, "Enter the URL from which to load.", "Load AIML from URL",
+                JOptionPane.PLAIN_MESSAGE, null, null, null);
         if (response == null)
         {
             return;
@@ -760,7 +759,8 @@ public class GUIConsole extends JPanel
 
         Graphmaster graphmaster = this._core.getGraphmaster();
         int categories = graphmaster.getCategoryCount();
-        this._core.load(URLTools.contextualize(Filesystem.getWorkingDirectory(), (String) response), this._shell.getCurrentBotID());
+        this._core.load(URLTools.contextualize(Filesystem.getWorkingDirectory(), (String) response), this._shell
+                .getCurrentBotID());
         Logger.getLogger("programd").log(Level.INFO,
                 graphmaster.getCategoryCount() - categories + " categories loaded from \"" + (String) response + "\".");
     }
@@ -785,7 +785,8 @@ public class GUIConsole extends JPanel
             }
             int categories = this._core.getGraphmaster().getCategoryCount();
             Graphmaster graphmaster = this._core.getGraphmaster();
-            this._core.load(URLTools.contextualize(Filesystem.getWorkingDirectory(), newPath), this._shell.getCurrentBotID());
+            this._core.load(URLTools.contextualize(Filesystem.getWorkingDirectory(), newPath), this._shell
+                    .getCurrentBotID());
             Logger.getLogger("programd").log(Level.INFO,
                     graphmaster.getCategoryCount() - categories + " categories loaded from \"" + newPath + "\".");
         }

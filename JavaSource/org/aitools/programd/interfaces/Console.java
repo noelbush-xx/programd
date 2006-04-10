@@ -67,19 +67,19 @@ public class Console
      */
     protected void initialize(PrintStream out, PrintStream err)
     {
-        this.stdOutAppender = ((ConsoleStreamAppender)Logger.getLogger("programd").getAppender("stdout"));
+        this.stdOutAppender = ((ConsoleStreamAppender) Logger.getLogger("programd").getAppender("stdout"));
         if (this.stdOutAppender != null)
         {
             this.stdOutAppender.setWriter(new OutputStreamWriter(out));
         }
-        
-        this.stdErrAppender = ((ConsoleStreamAppender)Logger.getLogger("programd").getAppender("stderr"));
+
+        this.stdErrAppender = ((ConsoleStreamAppender) Logger.getLogger("programd").getAppender("stderr"));
         if (this.stdErrAppender != null)
         {
             this.stdErrAppender.setWriter(new OutputStreamWriter(err));
         }
     }
-    
+
     /**
      * Attaches the console to the given core.
      * 

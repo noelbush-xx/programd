@@ -14,8 +14,7 @@ import org.aitools.programd.bot.Bot;
 import org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessor;
 
 /**
- * <code>BotsConfigurationFileParser</code> processes a bots configuration
- * file.
+ * <code>BotsConfigurationFileParser</code> processes a bots configuration file.
  */
 public class BotsConfigurationFileParser extends GenericParser<BotConfigurationElementProcessor>
 {

@@ -76,24 +76,24 @@ public class Core
 
     /** Build identifier. */
     public static final String BUILD = "[000]";
-    
-    /** The location of the AIML schema. */
-    private static final String AIML_SCHEMA_LOCATION = "resources/schema/AIML.xsd";
 
     /** The namespace URI of the bot configuration. */
     public static final String BOT_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.6/bot-configuration";
-    
+
     /** The namespace URI of the plugin configuration. */
     public static final String PLUGIN_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.6/plugins";
-    
+
+    /** The location of the AIML schema. */
+    private static final String AIML_SCHEMA_LOCATION = "resources/schema/AIML.xsd";
+
     /** The location of the plugins schema. */
     private static final String PLUGINS_SCHEMA_LOCATION = "resources/schema/plugins.xsd";
-        
-    /** The base URL. */
-    private URL baseURL;
 
     /** The Settings. */
     protected CoreSettings _settings;
+
+    /** The base URL. */
+    private URL baseURL;
 
     /** The Graphmaster. */
     private Graphmaster graphmaster;
@@ -169,8 +169,7 @@ public class Core
     public static final String ASTERISK = "*";
 
     /**
-     * Initializes a new Core object with default property values
-     * and the given base URL.
+     * Initializes a new Core object with default property values and the given base URL.
      * 
      * @param base the base URL to use
      */
@@ -183,8 +182,7 @@ public class Core
     }
 
     /**
-     * Initializes a new Core object with the properties from the given file
-     * and the given base URL.
+     * Initializes a new Core object with the properties from the given file and the given base URL.
      * 
      * @param base the base URL to use
      * @param propertiesPath
@@ -198,8 +196,7 @@ public class Core
     }
 
     /**
-     * Initializes a new Core object with the given CoreSettings object
-     * and the given base URL.
+     * Initializes a new Core object with the given CoreSettings object and the given base URL.
      * 
      * @param base the base URL to use
      * @param settings the settings to use
@@ -218,9 +215,10 @@ public class Core
     protected void start()
     {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
-        
+
         // Use the stdout and stderr appenders in a special way, if they are defined.
-        ConsoleStreamAppender stdOutAppender = ((ConsoleStreamAppender)Logger.getLogger("programd").getAppender("stdout"));
+        ConsoleStreamAppender stdOutAppender = ((ConsoleStreamAppender) Logger.getLogger("programd").getAppender(
+                "stdout"));
         if (stdOutAppender != null)
         {
             if (!stdOutAppender.isWriterSet())
@@ -228,8 +226,9 @@ public class Core
                 stdOutAppender.setWriter(new OutputStreamWriter(System.out));
             }
         }
-        
-        ConsoleStreamAppender stdErrAppender = ((ConsoleStreamAppender)Logger.getLogger("programd").getAppender("stderr"));
+
+        ConsoleStreamAppender stdErrAppender = ((ConsoleStreamAppender) Logger.getLogger("programd").getAppender(
+                "stderr"));
         if (stdErrAppender != null)
         {
             if (!stdErrAppender.isWriterSet())
@@ -237,22 +236,23 @@ public class Core
                 stdErrAppender.setWriter(new OutputStreamWriter(System.err));
             }
         }
-        
+
         // Set up an interception of calls to the JDK logging system and re-route to log4j.
         JDKLogHandler.setupInterception();
-        
+
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
-        
-        this.parser = XML.getSAXParser(URLTools.contextualize(Filesystem.getWorkingDirectory(), AIML_SCHEMA_LOCATION), "AIML");
-        
+
+        this.parser = XML.getSAXParser(URLTools.contextualize(Filesystem.getWorkingDirectory(), AIML_SCHEMA_LOCATION),
+                "AIML");
+
         this.graphmaster = new Graphmaster(this);
         this.bots = new Bots();
         this.processes = new ManagedProcesses(this);
 
         // Get an instance of the settings-specified Multiplexor.
-        this.multiplexor = ClassUtils.getSubclassInstance(Multiplexor.class, this._settings.getMultiplexorImplementation(),
-                "Multiplexor", this);
+        this.multiplexor = ClassUtils.getSubclassInstance(Multiplexor.class, this._settings
+                .getMultiplexorImplementation(), "Multiplexor", this);
 
         // Initialize the PredicateMaster and attach it to the Multiplexor.
         this.predicateMaster = new PredicateMaster(this);
@@ -271,10 +271,10 @@ public class Core
         // Load the plugin config.
         try
         {
-            this.pluginConfig = XML.getDocumentBuilder(URLTools.contextualize(Filesystem.getWorkingDirectory(), PLUGINS_SCHEMA_LOCATION),
+            this.pluginConfig = XML.getDocumentBuilder(
+                    URLTools.contextualize(Filesystem.getWorkingDirectory(), PLUGINS_SCHEMA_LOCATION),
                     "plugin configuration").parse(
-                    URLTools.contextualize(this.baseURL, this._settings.getConfLocationPlugins())
-                            .toString());
+                    URLTools.contextualize(this.baseURL, this._settings.getConfLocationPlugins()).toString());
         }
         catch (IOException e)
         {
@@ -294,8 +294,7 @@ public class Core
 
         try
         {
-            this.logger.info("Initializing "
-                    + this.multiplexor.getClass().getSimpleName() + ".");
+            this.logger.info("Initializing " + this.multiplexor.getClass().getSimpleName() + ".");
 
             // Initialize the Multiplexor.
             this.multiplexor.initialize();
@@ -316,7 +315,7 @@ public class Core
 
             // Start loading bots.
             loadBots(URLTools.contextualize(this.baseURL, this._settings.getStartupFilePath()));
-            
+
             // Request garbage collection.
             System.gc();
 
@@ -328,27 +327,27 @@ public class Core
         catch (DeveloperError e)
         {
             alert("developer error", e);
-            //return;
+            // return;
         }
         catch (UserError e)
         {
             alert("user error", e);
-            //return;
+            // return;
         }
         catch (RuntimeException e)
         {
             alert("unforeseen runtime exception", e);
-            //return;
+            // return;
         }
         catch (Throwable e)
         {
             alert("unforeseen problem", e);
-            //return;
+            // return;
         }
 
         // Set the status indicator.
         this.status = Status.READY;
-        
+
         // Exit immediately if configured to do so (for timing purposes).
         if (this._settings.exitImmediatelyOnStartup())
         {
@@ -388,30 +387,25 @@ public class Core
         {
             if (this._settings.getJavascriptInterpreterClassname() == null)
             {
-                throw new UserError(new UnspecifiedParameterError(
-                        "javascript-interpreter.classname"));
+                throw new UserError(new UnspecifiedParameterError("javascript-interpreter.classname"));
             }
 
-            String javascriptInterpreterClassname = this._settings
-                    .getJavascriptInterpreterClassname();
+            String javascriptInterpreterClassname = this._settings.getJavascriptInterpreterClassname();
 
             if (javascriptInterpreterClassname.equals(EMPTY_STRING))
             {
-                throw new UserError(new UnspecifiedParameterError(
-                        "javascript-interpreter.classname"));
+                throw new UserError(new UnspecifiedParameterError("javascript-interpreter.classname"));
             }
 
             this.logger.info("Initializing " + javascriptInterpreterClassname + ".");
 
             try
             {
-                this.interpreter = (Interpreter) Class.forName(javascriptInterpreterClassname)
-                        .newInstance();
+                this.interpreter = (Interpreter) Class.forName(javascriptInterpreterClassname).newInstance();
             }
             catch (Exception e)
             {
-                throw new DeveloperError(
-                        "Error while creating new instance of JavaScript interpreter.", e);
+                throw new DeveloperError("Error while creating new instance of JavaScript interpreter.", e);
             }
         }
         else
@@ -435,7 +429,7 @@ public class Core
             if (spec.indexOf(ASTERISK) != -1)
             {
                 List<File> files = null;
-    
+
                 try
                 {
                     files = Filesystem.glob(spec);
@@ -462,16 +456,16 @@ public class Core
             return;
         }
 
-        //Filesystem.pushWorkingDirectory(URLTools.getParent(path));
-        
+        // Filesystem.pushWorkingDirectory(URLTools.getParent(path));
+
         // Let the Graphmaster use a shortcut if possible.
         if (this.graphmaster.hasAlreadyLoaded(path))
         {
-        	if (this.graphmaster.hasAlreadyLoadedForBot(path, botid))
-        	{
-        		this.graphmaster.unload(path, bot);
-        		doLoad(path, botid);
-        	}
+            if (this.graphmaster.hasAlreadyLoadedForBot(path, botid))
+            {
+                this.graphmaster.unload(path, bot);
+                doLoad(path, botid);
+            }
             if (this.logger.isDebugEnabled())
             {
                 this.logger.debug(String.format("Graphaster has already loaded \"%s\" for some other bot.", path));
@@ -491,13 +485,12 @@ public class Core
                 this.aimlWatcher.addWatchFile(path);
             }
         }
-        //Filesystem.popWorkingDirectory();
+        // Filesystem.popWorkingDirectory();
     }
-    
+
     /**
-     * Reloads a file&mdash;it is not necessary to specify a particular
-     * botid here, because a reload of a file for one botid suffices
-     * for all bots associated with that file.
+     * Reloads a file&mdash;it is not necessary to specify a particular botid here, because a reload of a file for one
+     * botid suffices for all bots associated with that file.
      * 
      * @param path
      * @throws IllegalArgumentException if the given path is not actually loaded for <em>any</em> bot
@@ -512,37 +505,45 @@ public class Core
         // Get any botid -- we don't care.
         doLoad(path, botids.iterator().next());
     }
-    
+
     /**
      * An internal method used by {@link #load(URL, String)}.
+     * 
      * @param path
      * @param botid
      */
     protected void doLoad(URL path, String botid)
     {
-    	try
-    	{
-	        AIMLReader reader = new AIMLReader(this.graphmaster, path, botid, this.bots
-	                .getBot(botid), this._settings.getAimlSchemaNamespaceUri().toString());
-	        try
-	        {
-	            this.parser.getXMLReader().setProperty("http://xml.org/sax/properties/lexical-handler", reader);
-	        }
-	        catch (SAXNotRecognizedException e)
-	        {
-	            this.logger.warn("The XML reader in use does not support lexical handlers -- CDATA will not be handled.", e);
-	        }
-	        catch (SAXNotSupportedException e)
-	        {
-	            this.logger.warn("The XML reader in use cannot enable the lexical handler feature -- CDATA will not be handled.", e);
-	        }
-	        catch (SAXException e)
-	        {
-	            this.logger.warn("An exception occurred when trying to enable the lexical handler feature on the XML reader -- CDATA will not be handled.", e);
-	        }
-	        this.parser.parse(path.toString(), reader);
-	        //System.gc();
-	        this.graphmaster.addURL(path, botid);
+        try
+        {
+            AIMLReader reader = new AIMLReader(this.graphmaster, path, botid, this.bots.getBot(botid), this._settings
+                    .getAimlSchemaNamespaceUri().toString());
+            try
+            {
+                this.parser.getXMLReader().setProperty("http://xml.org/sax/properties/lexical-handler", reader);
+            }
+            catch (SAXNotRecognizedException e)
+            {
+                this.logger.warn(
+                        "The XML reader in use does not support lexical handlers -- CDATA will not be handled.", e);
+            }
+            catch (SAXNotSupportedException e)
+            {
+                this.logger
+                        .warn(
+                                "The XML reader in use cannot enable the lexical handler feature -- CDATA will not be handled.",
+                                e);
+            }
+            catch (SAXException e)
+            {
+                this.logger
+                        .warn(
+                                "An exception occurred when trying to enable the lexical handler feature on the XML reader -- CDATA will not be handled.",
+                                e);
+            }
+            this.parser.parse(path.toString(), reader);
+            // System.gc();
+            this.graphmaster.addURL(path, botid);
         }
         catch (IOException e)
         {
@@ -555,9 +556,8 @@ public class Core
     }
 
     /**
-     * Tracks/checks whether a given path should be loaded, depending on whether
-     * or not it's currently &quot;loadtime&quot;; if the file has already been
-     * loaded and is allowed to be reloaded, unloads the file first.
+     * Tracks/checks whether a given path should be loaded, depending on whether or not it's currently
+     * &quot;loadtime&quot;; if the file has already been loaded and is allowed to be reloaded, unloads the file first.
      * 
      * @param path the path to check
      * @param bot the bot for whom to check
@@ -588,11 +588,9 @@ public class Core
         }
         return true;
     }
-    
+
     /**
-     * Sets "loadtime" mode
-     * (so accidentally duplicated paths in a load config
-     * won't be loaded multiple times).
+     * Sets "loadtime" mode (so accidentally duplicated paths in a load config won't be loaded multiple times).
      */
     public void setLoadtime()
     {
@@ -608,9 +606,8 @@ public class Core
     }
 
     /**
-     * Processes the given input using default values for userid (the hostname),
-     * botid (the first available bot), and no responder. The result is not
-     * returned. This method is mostly useful for a simple test of the Core.
+     * Processes the given input using default values for userid (the hostname), botid (the first available bot), and no
+     * responder. The result is not returned. This method is mostly useful for a simple test of the Core.
      * 
      * @param input the input to send
      */
@@ -627,14 +624,14 @@ public class Core
             this.logger.warn("No bot available to process response!");
             return;
         }
-        //throw new DeveloperError("Check that the Core is ready before sending it messages.", new CoreNotReadyException());
+        // throw new DeveloperError("Check that the Core is ready before sending it messages.", new
+        // CoreNotReadyException());
     }
 
     /**
      * Returns the response to an input, using a default TextResponder.
      * 
-     * @param input the &quot;non-internal&quot; (possibly multi-sentence,
-     *            non-substituted) input
+     * @param input the &quot;non-internal&quot; (possibly multi-sentence, non-substituted) input
      * @param userid the userid for whom the response will be generated
      * @param botid the botid from which to get the response
      * @return the response
@@ -646,13 +643,13 @@ public class Core
             return this.multiplexor.getResponse(input, userid, botid);
         }
         // otherwise...
-        //throw new DeveloperError("Check that the Core is running before sending it messages.", new CoreNotReadyException());
+        // throw new DeveloperError("Check that the Core is running before sending it messages.", new
+        // CoreNotReadyException());
         return null;
     }
 
     /**
-     * Performs all necessary shutdown tasks. Shuts down the Graphmaster and all
-     * ManagedProcesses.
+     * Performs all necessary shutdown tasks. Shuts down the Graphmaster and all ManagedProcesses.
      */
     public void shutdown()
     {
@@ -664,8 +661,7 @@ public class Core
     }
 
     /**
-     * Notes the given Throwable and advises that the Core
-     * may no longer be stable.
+     * Notes the given Throwable and advises that the Core may no longer be stable.
      * 
      * @param e the Throwable to log
      */
@@ -675,8 +671,7 @@ public class Core
     }
 
     /**
-     * Notes the given Throwable and advises that the Core
-     * may no longer be stable.
+     * Notes the given Throwable and advises that the Core may no longer be stable.
      * 
      * @param t the thread in which the Throwable was thrown
      * @param e the Throwable to log
@@ -687,8 +682,7 @@ public class Core
     }
 
     /**
-     * Notes the given Throwable and advises that the Core
-     * may no longer be stable.
+     * Notes the given Throwable and advises that the Core may no longer be stable.
      * 
      * @param description the description of the Throwable
      * @param e the Throwable to log
@@ -699,8 +693,7 @@ public class Core
     }
 
     /**
-     * Notes the given Throwable and advises that the Core
-     * may no longer be stable.
+     * Notes the given Throwable and advises that the Core may no longer be stable.
      * 
      * @param description the description of the Throwable
      * @param t the thread in which the Throwable was thrown
@@ -708,8 +701,7 @@ public class Core
      */
     public void alert(String description, Thread t, Throwable e)
     {
-        String throwableDescription = e.getClass().getSimpleName() + " in thread \"" + t.getName()
-                + "\"";
+        String throwableDescription = e.getClass().getSimpleName() + " in thread \"" + t.getName() + "\"";
         if (e.getMessage() != null)
         {
             throwableDescription += ": " + e.getMessage();
@@ -718,8 +710,7 @@ public class Core
         {
             throwableDescription += ".";
         }
-        this.logger.error("Core may no longer be stable due to " + description + ":\n"
-                + throwableDescription);
+        this.logger.error("Core may no longer be stable due to " + description + ":\n" + throwableDescription);
 
         if (this._settings.onUncaughtExceptionsPrintStackTrace())
         {
@@ -732,7 +723,7 @@ public class Core
                 e.printStackTrace(System.err);
             }
         }
-        //shutdown();
+        // shutdown();
     }
 
     class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
@@ -740,24 +731,23 @@ public class Core
         /**
          * Causes the Core to fail, with information about the exception.
          * 
-         * @see java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang.Thread,
-         *      java.lang.Throwable)
+         * @see java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang.Thread, java.lang.Throwable)
          */
         public void uncaughtException(Thread t, Throwable e)
         {
-            System.err.println("Uncaught exception " + e.getClass().getSimpleName()
-                    + " in thread \"" + t.getName() + "\".");
+            System.err.println("Uncaught exception " + e.getClass().getSimpleName() + " in thread \"" + t.getName()
+                    + "\".");
             if (Core.this._settings.onUncaughtExceptionsPrintStackTrace())
             {
                 e.printStackTrace(System.err);
             }
             /*
-            Core.this.status = Core.Status.CRASHED;
-            System.err.println("Core has crashed.  Shutdown may not have completed properly.");
-            */
+             * Core.this.status = Core.Status.CRASHED; System.err.println("Core has crashed. Shutdown may not have
+             * completed properly.");
+             */
         }
     }
-    
+
     /**
      * Loads bots from the indicated config file path.
      * 
@@ -792,11 +782,10 @@ public class Core
             this.aimlWatcher.start();
         }
     }
-    
+
     /**
-     * Loads a bot from the given path.  Will only
-     * work right if the file at the path actually
-     * has a &gt;bot&lt; element as its root.
+     * Loads a bot from the given path. Will only work right if the file at the path actually has a &gt;bot&lt; element
+     * as its root.
      * 
      * @param path the bot config file
      * @return the id of the bot loaded
@@ -804,10 +793,9 @@ public class Core
     public String loadBot(URL path)
     {
         this.logger.info("Loading bot from \"" + path + "\".");
-        /*if (path.getProtocol().equals(Filesystem.FILE))
-        {
-            Filesystem.pushWorkingDirectory(URLTools.getParent(path));
-        }*/
+        /*
+         * if (path.getProtocol().equals(Filesystem.FILE)) { Filesystem.pushWorkingDirectory(URLTools.getParent(path)); }
+         */
 
         String id = null;
 
@@ -820,14 +808,13 @@ public class Core
             this.logger.error(e.getExplanatoryMessage());
         }
         this.logger.info(String.format("Bot \"%s\" has been loaded.", id));
-        /*if (path.getProtocol().equals(Filesystem.FILE))
-        {
-            Filesystem.popWorkingDirectory();
-        }*/
+        /*
+         * if (path.getProtocol().equals(Filesystem.FILE)) { Filesystem.popWorkingDirectory(); }
+         */
 
         return id;
     }
-    
+
     /**
      * Unloads a bot with the given id.
      * 
@@ -850,8 +837,8 @@ public class Core
     }
 
     /*
-     * All of these "get" methods throw a NullPointerException if the item has
-     * not yet been initialized, to avoid accidents.
+     * All of these "get" methods throw a NullPointerException if the item has not yet been initialized, to avoid
+     * accidents.
      */
 
     /**
@@ -865,7 +852,7 @@ public class Core
         }
         throw new NullPointerException("The Core's Bots object has not yet been initialized!");
     }
-    
+
     /**
      * @param id the id of the bot desired
      * @return the requested bot
@@ -884,8 +871,7 @@ public class Core
         {
             return this.graphmaster;
         }
-        throw new NullPointerException(
-                "The Core's Graphmaster object has not yet been initialized!");
+        throw new NullPointerException("The Core's Graphmaster object has not yet been initialized!");
     }
 
     /**
@@ -897,8 +883,7 @@ public class Core
         {
             return this.multiplexor;
         }
-        throw new NullPointerException(
-                "The Core's Multiplexor object has not yet been initialized!");
+        throw new NullPointerException("The Core's Multiplexor object has not yet been initialized!");
     }
 
     /**
@@ -910,8 +895,7 @@ public class Core
         {
             return this.predicateMaster;
         }
-        throw new NullPointerException(
-                "The Core's PredicateMaster object has not yet been initialized!");
+        throw new NullPointerException("The Core's PredicateMaster object has not yet been initialized!");
     }
 
     /**
@@ -939,8 +923,7 @@ public class Core
         {
             return this.aimlWatcher;
         }
-        throw new NullPointerException(
-                "The Core's AIMLWatcher object has not yet been initialized!");
+        throw new NullPointerException("The Core's AIMLWatcher object has not yet been initialized!");
     }
 
     /**
@@ -952,8 +935,7 @@ public class Core
         {
             return this._settings;
         }
-        throw new NullPointerException(
-                "The Core's CoreSettings object has not yet been initialized!");
+        throw new NullPointerException("The Core's CoreSettings object has not yet been initialized!");
     }
 
     /**
@@ -965,8 +947,7 @@ public class Core
         {
             return this.interpreter;
         }
-        throw new NullPointerException(
-                "The Core's Interpreter object has not yet been initialized!");
+        throw new NullPointerException("The Core's Interpreter object has not yet been initialized!");
     }
 
     /**
@@ -1000,7 +981,7 @@ public class Core
     {
         return this.pluginConfig;
     }
-    
+
     /**
      * @return the base URL
      */
@@ -1008,7 +989,7 @@ public class Core
     {
         return this.baseURL;
     }
-    
+
     /**
      * @return the logger
      */

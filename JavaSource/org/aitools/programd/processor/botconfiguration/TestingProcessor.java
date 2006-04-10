@@ -58,7 +58,7 @@ public class TestingProcessor extends BotConfigurationElementProcessor
         // (otherwise...)
         Bot bot = parser.getCurrentBot();
         URL docURL = parser.getCurrentDocURL();
-        
+
         bot.setTestSuitePathspec(URLTools.getURLs(XML.getChildText(element, "test-suite-path"), docURL));
         bot.setTestReportDirectory(URLTools.contextualize(docURL, XML.getChildText(element, "report-directory")));
 

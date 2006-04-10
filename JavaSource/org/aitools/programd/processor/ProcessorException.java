@@ -10,8 +10,7 @@
 package org.aitools.programd.processor;
 
 /**
- * Should be thrown by processors when they find content that they cannot
- * handle.
+ * Should be thrown by processors when they find content that they cannot handle.
  * 
  * @since 4.1.3
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -58,9 +57,8 @@ public class ProcessorException extends Exception
     }
 
     /**
-     * If an {@link #offendingInput} has been specified, this message will be
-     * the <code>ProcessorException</code>'s regular message, plus the string
-     * &quot; due to: &quot; followed by the offending input.
+     * If an {@link #offendingInput} has been specified, this message will be the <code>ProcessorException</code>'s
+     * regular message, plus the string &quot; due to: &quot; followed by the offending input.
      * 
      * @return a message including the offending input, if available
      */

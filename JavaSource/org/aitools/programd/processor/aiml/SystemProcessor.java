@@ -24,15 +24,8 @@ import org.aitools.programd.processor.ProcessorException;
 import org.aitools.util.resource.Filesystem;
 
 /**
- * <p>
- * Handles a
- * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-system">system</a></code>
- * element.
- * </p>
- * <p>
- * No attempt is made to check whether the command passed to the OS interpreter
- * is harmful.
- * </p>
+ * <p>Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-system">system</a></code> element.</p>
+ * <p>No attempt is made to check whether the command passed to the OS interpreter is harmful.</p>
  * 
  * @version 4.5
  * @author Jon Baer
@@ -46,11 +39,10 @@ public class SystemProcessor extends AIMLProcessor
     public static final String label = "system";
 
     /**
-     * Known names of operating systems which tend to require the
-     * array form of ProcessBuilder().
+     * Known names of operating systems which tend to require the array form of ProcessBuilder().
      */
-    private static final String[] arrayFormOSnames = { "mac os x", "linux", "solaris", "sunos", "mpe", "hp-ux", "pa_risc", "aix", "freebsd", "irix",
-            "unix", "windows xp" };
+    private static final String[] arrayFormOSnames = { "mac os x", "linux", "solaris", "sunos", "mpe", "hp-ux",
+            "pa_risc", "aix", "freebsd", "irix", "unix", "windows xp" };
 
     /** For convenience, the system line separator. */
     protected static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
@@ -122,17 +114,17 @@ public class SystemProcessor extends AIMLProcessor
         ProcessBuilder processBuilder = null;
         if (useArrayExecForm)
         {
-        	processBuilder = new ProcessBuilder(commandLine.split(STRING_SPLIT_REGEX));
+            processBuilder = new ProcessBuilder(commandLine.split(STRING_SPLIT_REGEX));
         }
         else
         {
-        	processBuilder = new ProcessBuilder(commandLine);
+            processBuilder = new ProcessBuilder(commandLine);
         }
         processBuilder.directory(directory);
         Process child = null;
         try
         {
-        	child = processBuilder.start();
+            child = processBuilder.start();
         }
         catch (IOException e)
         {

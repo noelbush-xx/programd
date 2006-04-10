@@ -23,12 +23,10 @@ import org.aitools.util.runtime.UserError;
 
 /**
  * <p>
- * Presently more a proof-of-concept than anything else, for checking the new
- * {@link Multiplexor} architecture.
+ * Presently more a proof-of-concept than anything else, for checking the new {@link Multiplexor} architecture.
  * </p>
  * <p>
- * Uses &quot;flat-file&quot; Java properties files, as in Program B, to store
- * predicate data.
+ * Uses &quot;flat-file&quot; Java properties files, as in Program B, to store predicate data.
  * </p>
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -66,48 +64,51 @@ public class FlatFileMultiplexor extends Multiplexor
     }
 
     /**
-     * Always returns true (FlatFileMultiplexor currently does not support
-     * authentication).
+     * Always returns true (FlatFileMultiplexor currently does not support authentication).
      * 
      * @param userid the userid to check
      * @param password the password to try
-     * @param botid the id of the bot for whom to check the given
-     *            userid/password combination
+     * @param botid the id of the bot for whom to check the given userid/password combination
      * @return true always
      */
     @Override
-    public boolean checkUser(@SuppressWarnings("unused") String userid, @SuppressWarnings("unused") String password, @SuppressWarnings("unused") String botid)
+    public boolean checkUser(@SuppressWarnings("unused")
+    String userid, @SuppressWarnings("unused")
+    String password, @SuppressWarnings("unused")
+    String botid)
     {
         return true;
     }
 
     /**
-     * Does nothing (FlatFileMultiplexor currently does not support
-     * authentication).
+     * Does nothing (FlatFileMultiplexor currently does not support authentication).
      * 
      * @param userid the userid to create
      * @param password the password to add
-     * @param botid the id of the bot for whom to create the given
-     *            userid/password combination
+     * @param botid the id of the bot for whom to create the given userid/password combination
      */
     @Override
-    public void createUser(@SuppressWarnings("unused") String userid, @SuppressWarnings("unused") String password, @SuppressWarnings("unused") String botid)
+    public void createUser(@SuppressWarnings("unused")
+    String userid, @SuppressWarnings("unused")
+    String password, @SuppressWarnings("unused")
+    String botid)
     {
         // Do nothing.
     }
 
     /**
-     * Always returns true (FlatFileMultiplexor currently does not support
-     * authentication).
+     * Always returns true (FlatFileMultiplexor currently does not support authentication).
      * 
      * @param userid the userid for whom to change the passwod
      * @param password the password to change
-     * @param botid the id of the bot for whom to change the given
-     *            userid/password combination
+     * @param botid the id of the bot for whom to change the given userid/password combination
      * @return true always
      */
     @Override
-    public boolean changePassword(@SuppressWarnings("unused") String userid, @SuppressWarnings("unused") String password, @SuppressWarnings("unused") String botid)
+    public boolean changePassword(@SuppressWarnings("unused")
+    String userid, @SuppressWarnings("unused")
+    String password, @SuppressWarnings("unused")
+    String botid)
     {
         return true;
     }
@@ -137,11 +138,9 @@ public class FlatFileMultiplexor extends Multiplexor
      * 
      * @param name the name of the predicate to locate
      * @param userid the userid whose value of the given predicate is desired
-     * @param botid the botid whose userid-associated value of the given
-     *            predicate is desired
+     * @param botid the botid whose userid-associated value of the given predicate is desired
      * @return the value of the predicate
-     * @throws NoSuchPredicateException if no such predicate has been defined
-     *             for the given userid and botid pair
+     * @throws NoSuchPredicateException if no such predicate has been defined for the given userid and botid pair
      */
     @Override
     public String loadPredicate(String name, String userid, String botid) throws NoSuchPredicateException
@@ -159,8 +158,7 @@ public class FlatFileMultiplexor extends Multiplexor
     }
 
     /**
-     * Loads the predicates file for a given userid. Ensures that the directory
-     * exists.
+     * Loads the predicates file for a given userid. Ensures that the directory exists.
      * 
      * @param userid the userid to look for
      * @param botid the botid with which to associate the userid in the search
@@ -188,8 +186,7 @@ public class FlatFileMultiplexor extends Multiplexor
     }
 
     /**
-     * Saves the predicates file for a given userid. Ensures that the directory
-     * exists.
+     * Saves the predicates file for a given userid. Ensures that the directory exists.
      * 
      * @param predicates
      * @param userid the userid for which to save the predicates
@@ -223,7 +220,8 @@ public class FlatFileMultiplexor extends Multiplexor
      * @see org.aitools.programd.multiplexor.Multiplexor#useridCount(java.lang.String)
      */
     @Override
-    public int useridCount(@SuppressWarnings("unused") String botid)
+    public int useridCount(@SuppressWarnings("unused")
+    String botid)
     {
         return 0;
     }

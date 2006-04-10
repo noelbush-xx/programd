@@ -15,9 +15,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 
 /**
- * <p>
  * Sets bot predicate values at load-time.
- * </p>
  * 
  * @version 4.5
  * @since 4.1.2
@@ -40,8 +38,7 @@ public class PropertyProcessor extends BotConfigurationElementProcessor
     }
 
     /**
-     * @see BotConfigurationElementProcessor#process(Element,
-     *      BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
      */
     @Override
     public String process(Element element, BotsConfigurationFileParser parser)

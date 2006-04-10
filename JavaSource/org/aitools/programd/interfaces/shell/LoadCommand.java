@@ -9,7 +9,6 @@
 
 package org.aitools.programd.interfaces.shell;
 
-
 import org.aitools.programd.Core;
 import org.aitools.programd.graph.Graphmaster;
 import org.aitools.util.resource.Filesystem;
@@ -24,13 +23,13 @@ public class LoadCommand extends ShellCommand
 {
     /** Shell command string. */
     public static final String COMMAND_STRING = "/load";
-    
+
     /** Argument template. */
     public static final String ARGUMENT_TEMPLATE = "filename";
-    
+
     /** Shell help line. */
     private static final String HELP_LINE = "loads/reloads given filename for active bot";
-    
+
     /**
      * Creates a new LoadCommand.
      */

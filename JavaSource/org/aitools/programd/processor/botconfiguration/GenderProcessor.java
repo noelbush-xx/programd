@@ -17,8 +17,7 @@ import org.aitools.programd.processor.ProcessorException;
 
 /**
  * The <code>gender</code> element is a container for definitions of <a
- * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-gender">gender </a>
- * substitutions to be performed on a string.
+ * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-gender">gender </a> substitutions to be performed on a string.
  * 
  * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -39,8 +38,7 @@ public class GenderProcessor extends SubstitutionElementProcessor
     }
 
     /**
-     * @see BotConfigurationElementProcessor#process(Element,
-     *      BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
      */
     @Override
     public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException

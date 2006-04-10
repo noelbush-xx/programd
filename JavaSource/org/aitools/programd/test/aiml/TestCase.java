@@ -12,8 +12,8 @@ import org.aitools.util.StringKit;
 import org.aitools.util.xml.XML;
 
 /**
- * A TestCase contains an inputs and a set of checkers that test the response to
- * that inputs.
+ * A TestCase contains an input and a set of checkers that test the response to
+ * that input.
  * 
  * @author Albertas Mickensas
  * @author <a href="noel@aitools.org">Noel Bush</a>
@@ -94,7 +94,7 @@ public class TestCase
         }
 
     }
-    
+
     /**
      * Constructs a basic TestCase with an input and an expected answer
      * (utility constructor).
@@ -108,7 +108,7 @@ public class TestCase
         this.input = testInput;
         this.addChecker(new AnswerChecker(expectedAnswer));
     }
-    
+
     /**
      * Constructs a basic TestCase with just an input.
      * 
@@ -127,7 +127,7 @@ public class TestCase
     {
         // Do nothing.
     }
-    
+
     /**
      * @return the name of this test case
      */
@@ -182,7 +182,7 @@ public class TestCase
         }
         return result;
     }
-    
+
     /**
      * Produces a map of checker names to contents that can
      * be used to describe the test case textually.
@@ -194,11 +194,11 @@ public class TestCase
         List<String[]> result = new ArrayList<String[]>();
         for (Checker checker : this.checkers)
         {
-            result.add(new String[] {checker.getTagName(), checker.getContent()});
+            result.add(new String[] { checker.getTagName(), checker.getContent() });
         }
         return result;
     }
-    
+
     /**
      * Removes all checkers.
      */
@@ -206,7 +206,7 @@ public class TestCase
     {
         this.checkers = new ArrayList<Checker>();
     }
-    
+
     /**
      * Adds a given checker.
      * 
@@ -227,11 +227,9 @@ public class TestCase
         {
             return false;
         }
-        TestCase other = (TestCase)obj;
-        return (other.name.equals(this.name) &&
-                other.input.equals(this.input) &&
-                other.checkers.equals(this.checkers) &&
-                other.lastResponse.equals(this.lastResponse));
+        TestCase other = (TestCase) obj;
+        return (other.name.equals(this.name) && other.input.equals(this.input) && other.checkers.equals(this.checkers) && other.lastResponse
+                .equals(this.lastResponse));
     }
 
     /**

@@ -50,7 +50,7 @@ public class XMLChatLogLayout extends Layout
     private static final String REPLY_START = "  <reply>";
 
     private static final String REPLY_END = "</reply>\n";
-    
+
     /**
      * We insist that the record be a ChatLogEvent.
      * 
@@ -106,7 +106,7 @@ public class XMLChatLogLayout extends Layout
     {
         return "<?xml version=\"1.0\"?>\n<log xmlns=\"http://aitools.org/programd/4.6/chatlog\">\n";
     }
-    
+
     @Override
     public String getFooter()
     {

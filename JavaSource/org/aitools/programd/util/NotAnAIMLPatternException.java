@@ -10,8 +10,8 @@
 package org.aitools.programd.util;
 
 /**
- * Thrown by {@link PatternArbiter} when it gets a pattern candidate that does
- * not meet the definition of an AIML pattern.
+ * Thrown by {@link PatternArbiter} when it gets a pattern candidate that does not meet the definition of an AIML
+ * pattern.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */

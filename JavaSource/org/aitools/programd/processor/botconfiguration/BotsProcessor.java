@@ -12,8 +12,7 @@ package org.aitools.programd.processor.botconfiguration;
 import org.aitools.programd.Core;
 
 /**
- * The <code>bots</code> element is a container for bot configuration
- * definitions.
+ * The <code>bots</code> element is a container for bot configuration definitions.
  * 
  * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>

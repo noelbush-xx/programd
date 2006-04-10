@@ -19,13 +19,13 @@ abstract public class ShellCommand
 {
     /** The command string for the shell command (so it can be returned via a get method). */
     private String _commandString;
-    
+
     /** The argument template for the shell command (so it can be returned via a get method). */
     private String _argumentTemplate;
-    
+
     /** The help line for the shell command (so it can be returned via a get method). */
     private String _helpLine;
-    
+
     /**
      * Creates a <code>ShellCommand</code> that handles the given command string.
      * @param commandString the command string to handle
@@ -38,6 +38,7 @@ abstract public class ShellCommand
         this._argumentTemplate = argumentTemplate;
         this._helpLine = helpLine;
     }
+
     /**
      * Indicates whether the ShellCommand handles
      * a command contained in the given line.
@@ -46,7 +47,7 @@ abstract public class ShellCommand
      * @return whether the ShellCommand handles this
      */
     abstract public boolean handles(String commandLine);
-    
+
     /**
      * Returns the command to which this responds.
      * 
@@ -56,7 +57,7 @@ abstract public class ShellCommand
     {
         return this._commandString;
     }
-    
+
     /**
      * Returns the argument template for this command.
      * 
@@ -66,7 +67,7 @@ abstract public class ShellCommand
     {
         return this._argumentTemplate;
     }
-    
+
     /**
      * Returns a line of help for this command.
      * 
@@ -76,7 +77,7 @@ abstract public class ShellCommand
     {
         return this._helpLine;
     }
-    
+
     /**
      * Handles the given command line.
      * 

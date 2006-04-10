@@ -23,13 +23,13 @@ public class NodemapperFactory
 {
     /** The classname of the implementation of Nodemapper that will be produced. */
     private String nodemapperClassname;
-    
+
     /** The actual implementation of Nodemapper to create. */
     private Class<? extends Nodemapper> nodemapperClass;
-    
+
     /** An empty argument set to be passed when constructing a Nodemapper. */
-    private static final Object[] args = new Object[]{};
-    
+    private static final Object[] args = new Object[] {};
+
     /**
      * Creates a new <code>NodemapperFactory</code>
      * that is configured to create instances of the {@link Nodemapper}
@@ -54,7 +54,7 @@ public class NodemapperFactory
             throw new UserError(String.format("\"%s\" is not an implementation of Nodemapper.", classname), e);
         }
     }
-    
+
     /**
      * Returns a new Nodemapper.
      * 

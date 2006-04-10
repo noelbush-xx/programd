@@ -19,10 +19,10 @@ public class BotListCommand extends ShellCommand
 {
     /** Shell command. */
     public static final String COMMAND_STRING = "/bots";
-    
+
     /** Argument template. */
     public static final String ARGUMENT_TEMPLATE = "";
-    
+
     /** Shell help line. */
     private static final String HELP_LINE = "lists loaded bots";
 
@@ -48,7 +48,8 @@ public class BotListCommand extends ShellCommand
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
      */
     @Override
-    public void handle(@SuppressWarnings("unused") String commandLine, Shell shell)
+    public void handle(@SuppressWarnings("unused")
+    String commandLine, Shell shell)
     {
         shell.showMessage("Active bots: " + shell.getBots().getNiceList());
     }

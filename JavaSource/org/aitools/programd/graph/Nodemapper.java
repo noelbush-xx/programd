@@ -12,8 +12,7 @@ package org.aitools.programd.graph;
 import java.util.Set;
 
 /**
- * A <code>Nodemapper</code> maps the branches in a
- * {@link Graphmaster Graphmaster} structure.
+ * A <code>Nodemapper</code> maps the branches in a {@link Graphmaster Graphmaster} structure.
  * 
  * @author Richard Wallace
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -23,8 +22,7 @@ public interface Nodemapper
     /**
      * Puts an object into the <code>Nodemapper</code>.
      * 
-     * @param key the key with which the object should be stored / will be
-     *            retrieved
+     * @param key the key with which the object should be stored / will be retrieved
      * @param value the object to be stored
      * @return the same object that is stored
      */
@@ -56,8 +54,7 @@ public interface Nodemapper
      * Tells whether the <code>Nodemapper</code> contains the given key.
      * 
      * @param key the key to look for
-     * @return boolean indicating whether the <code>Nodemapper</code> contains
-     *         the key
+     * @return boolean indicating whether the <code>Nodemapper</code> contains the key
      */
     public boolean containsKey(String key);
 
@@ -83,28 +80,24 @@ public interface Nodemapper
     public Nodemapper getParent();
 
     /**
-     * Returns the height of the <code>Nodemapper</code>. The height is the
-     * minimum number of words needed to reach a leaf node from here.
+     * Returns the height of the <code>Nodemapper</code>. The height is the minimum number of words needed to reach a
+     * leaf node from here.
      * 
      * @return the height of the <code>Nodemapper</code>
      */
     public int getHeight();
 
     /**
-     * Sets the height of this <code>Nodemapper</code> to &quot;top&quot;,
-     * i.e. <code>0</code> (zero), causing each ancestor <code>n</code> to
-     * have a minimum height of <code>n</code>, unless the ancestor is the
-     * root node. Not sure if this is correct.
+     * Sets the height of this <code>Nodemapper</code> to &quot;top&quot;, i.e. <code>0</code> (zero), causing each
+     * ancestor <code>n</code> to have a minimum height of <code>n</code>, unless the ancestor is the root node.
+     * Not sure if this is correct.
      */
     public void setTop();
 
-    
     /**
-     * Returns a weighted average of the sizes of this Nodemapper and its
-     * children.  The average is &quot;weighted&quot; by giving this
-     * Nodemapper's size and the average size of its children equal weight.
-     * If this Nodemapper does not have a parent (i.e., is the root), then
-     * its size is excluded from the calculation.
+     * Returns a weighted average of the sizes of this Nodemapper and its children. The average is &quot;weighted&quot;
+     * by giving this Nodemapper's size and the average size of its children equal weight. If this Nodemapper does not
+     * have a parent (i.e., is the root), then its size is excluded from the calculation.
      * 
      * @return the sizes of this Nodemapper and all its children.
      */

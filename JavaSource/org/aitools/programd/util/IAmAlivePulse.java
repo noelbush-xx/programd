@@ -11,7 +11,6 @@ package org.aitools.programd.util;
 
 import org.apache.log4j.Logger;
 
-
 /**
  * Prints the message &quot;I am alive!&quot; to the console/log.
  * 

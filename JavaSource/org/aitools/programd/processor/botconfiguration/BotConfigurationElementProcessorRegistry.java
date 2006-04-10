@@ -25,22 +25,22 @@ public class BotConfigurationElementProcessorRegistry extends ProcessorRegistry<
 
     /** The list of processors (fully-qualified class names). */
     private static final String[] PROCESSOR_LIST = { "org.aitools.programd.processor.botconfiguration.BotProcessor",
-                                                     "org.aitools.programd.processor.botconfiguration.BotsProcessor",
-                                                     "org.aitools.programd.processor.botconfiguration.GenderProcessor",
-                                                     "org.aitools.programd.processor.botconfiguration.InputProcessor",
-                                                     "org.aitools.programd.processor.botconfiguration.LearnProcessor",
-                                                     "org.aitools.programd.processor.botconfiguration.ListenerProcessor",
-                                                     "org.aitools.programd.processor.botconfiguration.ListenersProcessor",
-                                                     "org.aitools.programd.processor.botconfiguration.PersonProcessor",
-                                                     "org.aitools.programd.processor.botconfiguration.Person2Processor",
-                                                     "org.aitools.programd.processor.botconfiguration.PredicateProcessor",
-                                                     "org.aitools.programd.processor.botconfiguration.PredicatesProcessor",
-                                                     "org.aitools.programd.processor.botconfiguration.PropertiesProcessor",
-                                                     "org.aitools.programd.processor.botconfiguration.PropertyProcessor",
-                                                     "org.aitools.programd.processor.botconfiguration.SentenceSplittersProcessor",
-                                                     "org.aitools.programd.processor.botconfiguration.ServletPageProcessor",
-                                                     "org.aitools.programd.processor.botconfiguration.SubstitutionsProcessor",
-                                                     "org.aitools.programd.processor.botconfiguration.TestingProcessor"};
+            "org.aitools.programd.processor.botconfiguration.BotsProcessor",
+            "org.aitools.programd.processor.botconfiguration.GenderProcessor",
+            "org.aitools.programd.processor.botconfiguration.InputProcessor",
+            "org.aitools.programd.processor.botconfiguration.LearnProcessor",
+            "org.aitools.programd.processor.botconfiguration.ListenerProcessor",
+            "org.aitools.programd.processor.botconfiguration.ListenersProcessor",
+            "org.aitools.programd.processor.botconfiguration.PersonProcessor",
+            "org.aitools.programd.processor.botconfiguration.Person2Processor",
+            "org.aitools.programd.processor.botconfiguration.PredicateProcessor",
+            "org.aitools.programd.processor.botconfiguration.PredicatesProcessor",
+            "org.aitools.programd.processor.botconfiguration.PropertiesProcessor",
+            "org.aitools.programd.processor.botconfiguration.PropertyProcessor",
+            "org.aitools.programd.processor.botconfiguration.SentenceSplittersProcessor",
+            "org.aitools.programd.processor.botconfiguration.ServletPageProcessor",
+            "org.aitools.programd.processor.botconfiguration.SubstitutionsProcessor",
+            "org.aitools.programd.processor.botconfiguration.TestingProcessor" };
 
     /**
      * Creates a new <code>BotConfigurationElementProcessorRegistry</code>.

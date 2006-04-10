@@ -17,13 +17,13 @@ public class CategoriesCommand extends ShellCommand
 {
     /** Shell command string. */
     public static final String COMMAND_STRING = "/categories";
-    
+
     /** Argument template. */
     public static final String ARGUMENT_TEMPLATE = "";
-    
+
     /** Shell help line. */
     private static final String HELP_LINE = "lists the number of categories currently loaded";
-    
+
     /**
      * Creates a new LoadCommand.
      */
@@ -48,7 +48,8 @@ public class CategoriesCommand extends ShellCommand
      */
     @SuppressWarnings("boxing")
     @Override
-    public void handle(@SuppressWarnings("unused") String commandLine, Shell shell)
+    public void handle(@SuppressWarnings("unused")
+    String commandLine, Shell shell)
     {
         shell.showMessage(shell.getCore().getGraphmaster().getCategoryReport());
     }

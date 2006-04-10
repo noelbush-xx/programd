@@ -33,8 +33,7 @@ public class NoSuchPredicateException extends Exception
     /**
      * Constructs a new NoSuchPredicateException for the given name and index.
      * 
-     * @param predicateName the name for which there was no predicate with a
-     *            value at the given index
+     * @param predicateName the name for which there was no predicate with a value at the given index
      * @param predicateIndex the index at which there was no value
      */
     public NoSuchPredicateException(String predicateName, int predicateIndex)

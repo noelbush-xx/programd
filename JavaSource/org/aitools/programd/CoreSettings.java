@@ -6,13 +6,12 @@
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 package org.aitools.programd;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-
 
 import org.aitools.util.Settings;
 import org.aitools.util.resource.URLTools;
@@ -27,218 +26,220 @@ public class CoreSettings extends Settings
      * The namespace URI of AIML to use.
      */
     private URI aimlSchemaNamespaceUri;
-        
+
     /**
      * The bot configuration startup file.
      */
     private URL startupFilePath;
-        
+
     /**
-     * What to do when a category is loaded whose pattern:that:topic path is identical to one already loaded (for the same bot).
+     * What to do when a category is loaded whose pattern:that:topic path is identical to one already loaded (for the
+     * same bot).
      */
     private MergePolicy mergePolicy;
-    
+
     /** The possible values for MergePolicy. */
     public static enum MergePolicy
     {
         /** Leave the currently loaded template in place and ignore the new one. */
         SKIP,
-        
+
         /** Overwrite the loaded template with the new one. */
         OVERWRITE,
-        
+
         /** Append the content of the new template to the currently loaded one. */
         APPEND,
-        
+
         /** Store the new template as well, so it will have an equal chance of being used as the currently loaded one. */
         COMBINE
     }
 
-            /**
-     * If the append merge policy is used, what text content (if any) should be inserted between the contents of the two templates?
+    /**
+     * If the append merge policy is used, what text content (if any) should be inserted between the contents of the two
+     * templates?
      */
     private String mergeAppendSeparatorString;
-        
+
     /**
      * Produce a note in the console/log for each merge?
      */
     private boolean mergeNoteEach;
-        
+
     /**
      * The default value for undefined predicates.
      */
     private String predicateEmptyDefault;
-        
+
     /**
      * The maximum allowable time (in milliseconds) to get a response.
      */
     private int responseTimeout;
-        
+
     /**
      * How many categories will be loaded before a message is displayed?
      */
     private int categoryLoadNotifyInterval;
-        
+
     /**
      * Whether or not to print a message as each file is loaded.
      */
     private boolean loadNotifyEachFile;
-        
+
     /**
      * The input to match if an infinite loop is found.
      */
     private String infiniteLoopInput;
-        
+
     /**
      * Which bot predicate contains the client's name?
      */
     private String clientNamePredicate;
-        
+
     /**
      * Which bot predicate contains the bot's name?
      */
     private String botNamePredicate;
-        
+
     /**
      * Print stack trace on uncaught exceptions?
      */
     private boolean onUncaughtExceptionsPrintStackTrace;
-        
+
     /**
      * Execute contents of <system> elements?
      */
     private boolean osAccessAllowed;
-        
+
     /**
      * Execute contents of <javascript> elements?
      */
     private boolean javascriptAllowed;
-        
+
     /**
      * Where to write gossip entries.
      */
     private URL gossipPath;
-        
+
     /**
      * The string to send when first connecting to the bot.
      */
     private String connectString;
-        
+
     /**
      * The string to send after an inactivity timeout.
      */
     private String inactivityString;
-        
+
     /**
      * The Nodemapper implementation to use.
      */
     private String nodemapperImplementation;
-        
+
     /**
      * The Multiplexor implementation to use.
      */
     private String multiplexorImplementation;
-        
+
     /**
      * The directory in which to save flat-file predicates (FFM only).
      */
     private URL multiplexorFfmDir;
-        
+
     /**
      * Enable the heart?
      */
     private boolean heartEnabled;
-        
+
     /**
      * The pulse rate for the heart (beats per minute).
      */
     private int heartPulserate;
-        
+
     /**
      * The maximum size of the cache before writing to disk/database.
      */
     private int predicateCacheMax;
-        
+
     /**
      * Use interactive command-line shell?
      */
     private boolean consoleUseShell;
-        
+
     /**
      * Exit immediately upon startup?
      */
     private boolean exitImmediatelyOnStartup;
-        
+
     /**
      * The location of the AIML schema (or a copy of it).
      */
     private URL schemaLocationAIML;
-        
+
     /**
      * The location of the plugin schema (or a copy of it).
      */
     private URL schemaLocationPlugins;
-        
+
     /**
      * The location of the test cases schema (or a copy of it).
      */
     private URL schemaLocationTestCases;
-        
+
     /**
      * The directory in which to execute <system> commands.
      */
     private URL systemInterpreterDirectory;
-        
+
     /**
      * The string to prepend to all <system> calls (platform-specific).
      */
     private String systemInterpreterPrefix;
-        
+
     /**
      * The JavaScript interpreter (fully-qualified class name).
      */
     private String javascriptInterpreterClassname;
-        
+
     /**
      * Enable the AIML Watcher?
      */
     private boolean useWatcher;
-        
+
     /**
      * The delay period when checking changed AIML (milliseconds).
      */
     private int watcherTimer;
-        
+
     /**
      * The URL of the database to use.
      */
     private String databaseUrl;
-        
+
     /**
      * The database driver to use.
      */
     private String databaseDriver;
-        
+
     /**
      * The maximum number of simultaneous connections to the database.
      */
     private int databaseConnections;
-        
+
     /**
      * The username which with to access the database.
      */
     private String databaseUser;
-        
+
     /**
      * The password for the database.
      */
     private String databasePassword;
-        
+
     /**
      * Configuration file for plugins.
      */
     private URL confLocationPlugins;
-        
+
     /**
      * Creates a <code>CoreSettings</code> using default property values.
      */
@@ -246,11 +247,10 @@ public class CoreSettings extends Settings
     {
         super();
     }
-    
+
     /**
-     * Creates a <code>CoreSettings</code> with the (XML-formatted) properties
-     * located at the given path.
-     *
+     * Creates a <code>CoreSettings</code> with the (XML-formatted) properties located at the given path.
+     * 
      * @param propertiesPath the path to the configuration file
      */
     public CoreSettings(URL propertiesPath)
@@ -259,45 +259,47 @@ public class CoreSettings extends Settings
     }
 
     /**
-    * Initializes the Settings with values from properties, or defaults.
-    */
+     * Initializes the Settings with values from properties, or defaults.
+     */
     @Override
     protected void initialize()
     {
         try
         {
-            setAimlSchemaNamespaceUri(new URI(this.properties.getProperty("programd.aiml-schema.namespace-uri", "http://alicebot.org/2001/AIML-1.0.1")));
+            setAimlSchemaNamespaceUri(new URI(this.properties.getProperty("programd.aiml-schema.namespace-uri",
+                    "http://alicebot.org/2001/AIML-1.0.1")));
         }
         catch (URISyntaxException e)
         {
             throw new UserError(e);
         }
 
-        setStartupFilePath(URLTools.contextualize(this.path, this.properties.getProperty("programd.startup-file-path", "bots.xml")));
+        setStartupFilePath(URLTools.contextualize(this.path, this.properties.getProperty("programd.startup-file-path",
+                "bots.xml")));
 
         String mergePolicyValue = this.properties.getProperty("programd.merge.policy", "combine");
-         
-         if (mergePolicyValue.equals("skip"))
-         {
-             this.mergePolicy = MergePolicy.SKIP;
-         }
-             else if (mergePolicyValue.equals("overwrite"))
-         {
-             this.mergePolicy = MergePolicy.OVERWRITE;
-         }
-             else if (mergePolicyValue.equals("append"))
-         {
-             this.mergePolicy = MergePolicy.APPEND;
-         }
-             else if (mergePolicyValue.equals("combine"))
-         {
-             this.mergePolicy = MergePolicy.COMBINE;
-         }
-             
+
+        if (mergePolicyValue.equals("skip"))
+        {
+            this.mergePolicy = MergePolicy.SKIP;
+        }
+        else if (mergePolicyValue.equals("overwrite"))
+        {
+            this.mergePolicy = MergePolicy.OVERWRITE;
+        }
+        else if (mergePolicyValue.equals("append"))
+        {
+            this.mergePolicy = MergePolicy.APPEND;
+        }
+        else if (mergePolicyValue.equals("combine"))
+        {
+            this.mergePolicy = MergePolicy.COMBINE;
+        }
 
         setMergeAppendSeparatorString(this.properties.getProperty("programd.merge.append.separator-string", "&#x10;"));
 
-        setMergeNoteEach(Boolean.valueOf(this.properties.getProperty("programd.merge.note-each", "true")).booleanValue());
+        setMergeNoteEach(Boolean.valueOf(this.properties.getProperty("programd.merge.note-each", "true"))
+                .booleanValue());
 
         setPredicateEmptyDefault(this.properties.getProperty("programd.predicate-empty-default", "undefined"));
 
@@ -312,14 +314,16 @@ public class CoreSettings extends Settings
 
         try
         {
-            setCategoryLoadNotifyInterval(Integer.parseInt(this.properties.getProperty("programd.category-load-notify-interval", "5000")));
+            setCategoryLoadNotifyInterval(Integer.parseInt(this.properties.getProperty(
+                    "programd.category-load-notify-interval", "5000")));
         }
         catch (NumberFormatException e)
         {
             setCategoryLoadNotifyInterval(5000);
         }
 
-        setLoadNotifyEachFile(Boolean.valueOf(this.properties.getProperty("programd.load.notify-each-file", "true")).booleanValue());
+        setLoadNotifyEachFile(Boolean.valueOf(this.properties.getProperty("programd.load.notify-each-file", "true"))
+                .booleanValue());
 
         setInfiniteLoopInput(this.properties.getProperty("programd.infinite-loop-input", "INFINITE LOOP"));
 
@@ -327,23 +331,31 @@ public class CoreSettings extends Settings
 
         setBotNamePredicate(this.properties.getProperty("programd.bot-name-predicate", "name"));
 
-        setOnUncaughtExceptionsPrintStackTrace(Boolean.valueOf(this.properties.getProperty("programd.on-uncaught-exceptions.print-stack-trace", "false")).booleanValue());
+        setOnUncaughtExceptionsPrintStackTrace(Boolean.valueOf(
+                this.properties.getProperty("programd.on-uncaught-exceptions.print-stack-trace", "false"))
+                .booleanValue());
 
-        setOsAccessAllowed(Boolean.valueOf(this.properties.getProperty("programd.os-access-allowed", "false")).booleanValue());
+        setOsAccessAllowed(Boolean.valueOf(this.properties.getProperty("programd.os-access-allowed", "false"))
+                .booleanValue());
 
-        setJavascriptAllowed(Boolean.valueOf(this.properties.getProperty("programd.javascript-allowed", "false")).booleanValue());
+        setJavascriptAllowed(Boolean.valueOf(this.properties.getProperty("programd.javascript-allowed", "false"))
+                .booleanValue());
 
-        setGossipPath(URLTools.contextualize(this.path, this.properties.getProperty("programd.gossip.path", "/var/log/programd/gossip.txt")));
+        setGossipPath(URLTools.contextualize(this.path, this.properties.getProperty("programd.gossip.path",
+                "/var/log/programd/gossip.txt")));
 
         setConnectString(this.properties.getProperty("programd.connect-string", "CONNECT"));
 
         setInactivityString(this.properties.getProperty("programd.inactivity-string", "INACTIVITY"));
 
-        setNodemapperImplementation(this.properties.getProperty("programd.nodemapper-implementation", "org.aitools.programd.graph.TwoOptimalNodemaster"));
+        setNodemapperImplementation(this.properties.getProperty("programd.nodemapper-implementation",
+                "org.aitools.programd.graph.TwoOptimalNodemaster"));
 
-        setMultiplexorImplementation(this.properties.getProperty("programd.multiplexor-implementation", "org.aitools.programd.multiplexor.FlatFileMultiplexor"));
+        setMultiplexorImplementation(this.properties.getProperty("programd.multiplexor-implementation",
+                "org.aitools.programd.multiplexor.FlatFileMultiplexor"));
 
-        setMultiplexorFfmDir(URLTools.contextualize(this.path, this.properties.getProperty("programd.multiplexor.ffm-dir", "/var/programd/ffm")));
+        setMultiplexorFfmDir(URLTools.contextualize(this.path, this.properties.getProperty(
+                "programd.multiplexor.ffm-dir", "/var/programd/ffm")));
 
         setHeartEnabled(Boolean.valueOf(this.properties.getProperty("programd.heart.enabled", "false")).booleanValue());
 
@@ -365,21 +377,28 @@ public class CoreSettings extends Settings
             setPredicateCacheMax(500);
         }
 
-        setConsoleUseShell(Boolean.valueOf(this.properties.getProperty("programd.console.use-shell", "true")).booleanValue());
+        setConsoleUseShell(Boolean.valueOf(this.properties.getProperty("programd.console.use-shell", "true"))
+                .booleanValue());
 
-        setExitImmediatelyOnStartup(Boolean.valueOf(this.properties.getProperty("programd.exit-immediately-on-startup", "false")).booleanValue());
+        setExitImmediatelyOnStartup(Boolean.valueOf(
+                this.properties.getProperty("programd.exit-immediately-on-startup", "false")).booleanValue());
 
-        setSchemaLocationAIML(URLTools.contextualize(this.path, this.properties.getProperty("programd.schema-location.AIML", "../resources/schema/AIML.xsd")));
+        setSchemaLocationAIML(URLTools.contextualize(this.path, this.properties.getProperty(
+                "programd.schema-location.AIML", "../resources/schema/AIML.xsd")));
 
-        setSchemaLocationPlugins(URLTools.contextualize(this.path, this.properties.getProperty("programd.schema-location.plugins", "../resources/schema/plugins.xsd")));
+        setSchemaLocationPlugins(URLTools.contextualize(this.path, this.properties.getProperty(
+                "programd.schema-location.plugins", "../resources/schema/plugins.xsd")));
 
-        setSchemaLocationTestCases(URLTools.contextualize(this.path, this.properties.getProperty("programd.schema-location.test-cases", "../resources/schema/test-cases.xsd")));
+        setSchemaLocationTestCases(URLTools.contextualize(this.path, this.properties.getProperty(
+                "programd.schema-location.test-cases", "../resources/schema/test-cases.xsd")));
 
-        setSystemInterpreterDirectory(URLTools.contextualize(this.path, this.properties.getProperty("programd.system-interpreter.directory", "..")));
+        setSystemInterpreterDirectory(URLTools.contextualize(this.path, this.properties.getProperty(
+                "programd.system-interpreter.directory", "..")));
 
         setSystemInterpreterPrefix(this.properties.getProperty("programd.system-interpreter.prefix", ""));
 
-        setJavascriptInterpreterClassname(this.properties.getProperty("programd.javascript-interpreter.classname", "org.aitools.programd.interpreter.RhinoInterpreter"));
+        setJavascriptInterpreterClassname(this.properties.getProperty("programd.javascript-interpreter.classname",
+                "org.aitools.programd.interpreter.RhinoInterpreter"));
 
         setUseWatcher(Boolean.valueOf(this.properties.getProperty("programd.use-watcher", "true")).booleanValue());
 
@@ -409,7 +428,8 @@ public class CoreSettings extends Settings
 
         setDatabasePassword(this.properties.getProperty("programd.database.password", "yourpassword"));
 
-        setConfLocationPlugins(URLTools.contextualize(this.path, this.properties.getProperty("programd.conf-location.plugins", "plugins.xml")));
+        setConfLocationPlugins(URLTools.contextualize(this.path, this.properties.getProperty(
+                "programd.conf-location.plugins", "plugins.xml")));
 
     }
 
@@ -734,7 +754,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param aimlSchemaNamespaceUriToSet   the value to which to set aimlSchemaNamespaceUri
+     * @param aimlSchemaNamespaceUriToSet the value to which to set aimlSchemaNamespaceUri
      */
     public void setAimlSchemaNamespaceUri(URI aimlSchemaNamespaceUriToSet)
     {
@@ -742,7 +762,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param startupFilePathToSet   the value to which to set startupFilePath
+     * @param startupFilePathToSet the value to which to set startupFilePath
      */
     public void setStartupFilePath(URL startupFilePathToSet)
     {
@@ -750,7 +770,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param mergePolicyToSet   the value to which to set mergePolicy
+     * @param mergePolicyToSet the value to which to set mergePolicy
      */
     public void setMergePolicy(MergePolicy mergePolicyToSet)
     {
@@ -758,7 +778,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param mergeAppendSeparatorStringToSet   the value to which to set mergeAppendSeparatorString
+     * @param mergeAppendSeparatorStringToSet the value to which to set mergeAppendSeparatorString
      */
     public void setMergeAppendSeparatorString(String mergeAppendSeparatorStringToSet)
     {
@@ -766,7 +786,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param mergeNoteEachToSet   the value to which to set mergeNoteEach
+     * @param mergeNoteEachToSet the value to which to set mergeNoteEach
      */
     public void setMergeNoteEach(boolean mergeNoteEachToSet)
     {
@@ -774,7 +794,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param predicateEmptyDefaultToSet   the value to which to set predicateEmptyDefault
+     * @param predicateEmptyDefaultToSet the value to which to set predicateEmptyDefault
      */
     public void setPredicateEmptyDefault(String predicateEmptyDefaultToSet)
     {
@@ -782,7 +802,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param responseTimeoutToSet   the value to which to set responseTimeout
+     * @param responseTimeoutToSet the value to which to set responseTimeout
      */
     public void setResponseTimeout(int responseTimeoutToSet)
     {
@@ -790,7 +810,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param categoryLoadNotifyIntervalToSet   the value to which to set categoryLoadNotifyInterval
+     * @param categoryLoadNotifyIntervalToSet the value to which to set categoryLoadNotifyInterval
      */
     public void setCategoryLoadNotifyInterval(int categoryLoadNotifyIntervalToSet)
     {
@@ -798,7 +818,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param loadNotifyEachFileToSet   the value to which to set loadNotifyEachFile
+     * @param loadNotifyEachFileToSet the value to which to set loadNotifyEachFile
      */
     public void setLoadNotifyEachFile(boolean loadNotifyEachFileToSet)
     {
@@ -806,7 +826,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param infiniteLoopInputToSet   the value to which to set infiniteLoopInput
+     * @param infiniteLoopInputToSet the value to which to set infiniteLoopInput
      */
     public void setInfiniteLoopInput(String infiniteLoopInputToSet)
     {
@@ -814,7 +834,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param clientNamePredicateToSet   the value to which to set clientNamePredicate
+     * @param clientNamePredicateToSet the value to which to set clientNamePredicate
      */
     public void setClientNamePredicate(String clientNamePredicateToSet)
     {
@@ -822,7 +842,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param botNamePredicateToSet   the value to which to set botNamePredicate
+     * @param botNamePredicateToSet the value to which to set botNamePredicate
      */
     public void setBotNamePredicate(String botNamePredicateToSet)
     {
@@ -830,7 +850,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param onUncaughtExceptionsPrintStackTraceToSet   the value to which to set onUncaughtExceptionsPrintStackTrace
+     * @param onUncaughtExceptionsPrintStackTraceToSet the value to which to set onUncaughtExceptionsPrintStackTrace
      */
     public void setOnUncaughtExceptionsPrintStackTrace(boolean onUncaughtExceptionsPrintStackTraceToSet)
     {
@@ -838,7 +858,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param osAccessAllowedToSet   the value to which to set osAccessAllowed
+     * @param osAccessAllowedToSet the value to which to set osAccessAllowed
      */
     public void setOsAccessAllowed(boolean osAccessAllowedToSet)
     {
@@ -846,7 +866,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param javascriptAllowedToSet   the value to which to set javascriptAllowed
+     * @param javascriptAllowedToSet the value to which to set javascriptAllowed
      */
     public void setJavascriptAllowed(boolean javascriptAllowedToSet)
     {
@@ -854,7 +874,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param gossipPathToSet   the value to which to set gossipPath
+     * @param gossipPathToSet the value to which to set gossipPath
      */
     public void setGossipPath(URL gossipPathToSet)
     {
@@ -862,7 +882,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param connectStringToSet   the value to which to set connectString
+     * @param connectStringToSet the value to which to set connectString
      */
     public void setConnectString(String connectStringToSet)
     {
@@ -870,7 +890,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param inactivityStringToSet   the value to which to set inactivityString
+     * @param inactivityStringToSet the value to which to set inactivityString
      */
     public void setInactivityString(String inactivityStringToSet)
     {
@@ -878,7 +898,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param nodemapperImplementationToSet   the value to which to set nodemapperImplementation
+     * @param nodemapperImplementationToSet the value to which to set nodemapperImplementation
      */
     public void setNodemapperImplementation(String nodemapperImplementationToSet)
     {
@@ -886,7 +906,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param multiplexorImplementationToSet   the value to which to set multiplexorImplementation
+     * @param multiplexorImplementationToSet the value to which to set multiplexorImplementation
      */
     public void setMultiplexorImplementation(String multiplexorImplementationToSet)
     {
@@ -894,7 +914,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param multiplexorFfmDirToSet   the value to which to set multiplexorFfmDir
+     * @param multiplexorFfmDirToSet the value to which to set multiplexorFfmDir
      */
     public void setMultiplexorFfmDir(URL multiplexorFfmDirToSet)
     {
@@ -902,7 +922,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param heartEnabledToSet   the value to which to set heartEnabled
+     * @param heartEnabledToSet the value to which to set heartEnabled
      */
     public void setHeartEnabled(boolean heartEnabledToSet)
     {
@@ -910,7 +930,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param heartPulserateToSet   the value to which to set heartPulserate
+     * @param heartPulserateToSet the value to which to set heartPulserate
      */
     public void setHeartPulserate(int heartPulserateToSet)
     {
@@ -918,7 +938,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param predicateCacheMaxToSet   the value to which to set predicateCacheMax
+     * @param predicateCacheMaxToSet the value to which to set predicateCacheMax
      */
     public void setPredicateCacheMax(int predicateCacheMaxToSet)
     {
@@ -926,7 +946,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param consoleUseShellToSet   the value to which to set consoleUseShell
+     * @param consoleUseShellToSet the value to which to set consoleUseShell
      */
     public void setConsoleUseShell(boolean consoleUseShellToSet)
     {
@@ -934,7 +954,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param exitImmediatelyOnStartupToSet   the value to which to set exitImmediatelyOnStartup
+     * @param exitImmediatelyOnStartupToSet the value to which to set exitImmediatelyOnStartup
      */
     public void setExitImmediatelyOnStartup(boolean exitImmediatelyOnStartupToSet)
     {
@@ -942,7 +962,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param schemaLocationAIMLToSet   the value to which to set schemaLocationAIML
+     * @param schemaLocationAIMLToSet the value to which to set schemaLocationAIML
      */
     public void setSchemaLocationAIML(URL schemaLocationAIMLToSet)
     {
@@ -950,7 +970,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param schemaLocationPluginsToSet   the value to which to set schemaLocationPlugins
+     * @param schemaLocationPluginsToSet the value to which to set schemaLocationPlugins
      */
     public void setSchemaLocationPlugins(URL schemaLocationPluginsToSet)
     {
@@ -958,7 +978,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param schemaLocationTestCasesToSet   the value to which to set schemaLocationTestCases
+     * @param schemaLocationTestCasesToSet the value to which to set schemaLocationTestCases
      */
     public void setSchemaLocationTestCases(URL schemaLocationTestCasesToSet)
     {
@@ -966,7 +986,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param systemInterpreterDirectoryToSet   the value to which to set systemInterpreterDirectory
+     * @param systemInterpreterDirectoryToSet the value to which to set systemInterpreterDirectory
      */
     public void setSystemInterpreterDirectory(URL systemInterpreterDirectoryToSet)
     {
@@ -974,7 +994,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param systemInterpreterPrefixToSet   the value to which to set systemInterpreterPrefix
+     * @param systemInterpreterPrefixToSet the value to which to set systemInterpreterPrefix
      */
     public void setSystemInterpreterPrefix(String systemInterpreterPrefixToSet)
     {
@@ -982,7 +1002,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param javascriptInterpreterClassnameToSet   the value to which to set javascriptInterpreterClassname
+     * @param javascriptInterpreterClassnameToSet the value to which to set javascriptInterpreterClassname
      */
     public void setJavascriptInterpreterClassname(String javascriptInterpreterClassnameToSet)
     {
@@ -990,7 +1010,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param useWatcherToSet   the value to which to set useWatcher
+     * @param useWatcherToSet the value to which to set useWatcher
      */
     public void setUseWatcher(boolean useWatcherToSet)
     {
@@ -998,7 +1018,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param watcherTimerToSet   the value to which to set watcherTimer
+     * @param watcherTimerToSet the value to which to set watcherTimer
      */
     public void setWatcherTimer(int watcherTimerToSet)
     {
@@ -1006,7 +1026,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param databaseUrlToSet   the value to which to set databaseUrl
+     * @param databaseUrlToSet the value to which to set databaseUrl
      */
     public void setDatabaseUrl(String databaseUrlToSet)
     {
@@ -1014,7 +1034,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param databaseDriverToSet   the value to which to set databaseDriver
+     * @param databaseDriverToSet the value to which to set databaseDriver
      */
     public void setDatabaseDriver(String databaseDriverToSet)
     {
@@ -1022,7 +1042,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param databaseConnectionsToSet   the value to which to set databaseConnections
+     * @param databaseConnectionsToSet the value to which to set databaseConnections
      */
     public void setDatabaseConnections(int databaseConnectionsToSet)
     {
@@ -1030,7 +1050,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param databaseUserToSet   the value to which to set databaseUser
+     * @param databaseUserToSet the value to which to set databaseUser
      */
     public void setDatabaseUser(String databaseUserToSet)
     {
@@ -1038,7 +1058,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param databasePasswordToSet   the value to which to set databasePassword
+     * @param databasePasswordToSet the value to which to set databasePassword
      */
     public void setDatabasePassword(String databasePasswordToSet)
     {
@@ -1046,7 +1066,7 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @param confLocationPluginsToSet   the value to which to set confLocationPlugins
+     * @param confLocationPluginsToSet the value to which to set confLocationPlugins
      */
     public void setConfLocationPlugins(URL confLocationPluginsToSet)
     {

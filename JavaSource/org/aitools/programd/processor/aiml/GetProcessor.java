@@ -15,9 +15,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 
 /**
- * Handles a
- * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-get">get</a></code>
- * element.
+ * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-get">get</a></code> element.
  * 
  * @version 4.5
  * @author Jon Baer
@@ -45,6 +43,7 @@ public class GetProcessor extends AIMLProcessor
     @Override
     public String process(Element element, TemplateParser parser)
     {
-        return parser.getCore().getPredicateMaster().get(element.getAttribute(NAME), parser.getUserID(), parser.getBotID());
+        return parser.getCore().getPredicateMaster().get(element.getAttribute(NAME), parser.getUserID(),
+                parser.getBotID());
     }
 }

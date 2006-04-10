@@ -22,9 +22,7 @@ import org.aitools.util.resource.Filesystem;
 import org.aitools.util.runtime.UserError;
 
 /**
- * Handles a
- * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-gossip">gossip</a></code>
- * element.
+ * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-gossip">gossip</a></code> element.
  * 
  * @version 4.5
  * @author Jon Baer
@@ -36,7 +34,7 @@ public class GossipProcessor extends AIMLProcessor
     public static final String label = "gossip";
 
     private static FileWriter gossipFile;
-    
+
     private static final String LI_START = "<li>";
 
     private static final String LI_END_LINE_SEPARATOR = "</li>" + System.getProperty("line.separator", "\n");
@@ -59,13 +57,14 @@ public class GossipProcessor extends AIMLProcessor
     {
         // Get the gossip.
         String response = parser.evaluate(element.getChildNodes());
-        
+
         // Initialize the FileWriter if necessary.
         if (gossipFile == null)
         {
             try
             {
-                gossipFile = new FileWriter(Filesystem.checkOrCreate(parser.getCore().getSettings().getGossipPath().getPath(), "gossip file"));
+                gossipFile = new FileWriter(Filesystem.checkOrCreate(parser.getCore().getSettings().getGossipPath()
+                        .getPath(), "gossip file"));
             }
             catch (IOException e)
             {

@@ -20,10 +20,10 @@ public class ListBotFilesCommand extends ShellCommand
 {
     /** Shell command. */
     public static final String COMMAND_STRING = "/files";
-    
+
     /** Argument template. */
     public static final String ARGUMENT_TEMPLATE = "";
-    
+
     /** Shell help line. */
     private static final String HELP_LINE = "lists the files loaded by the current bot";
 
@@ -50,7 +50,8 @@ public class ListBotFilesCommand extends ShellCommand
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
      */
     @Override
-    public void handle(@SuppressWarnings("unused") String commandLine, Shell shell)
+    public void handle(@SuppressWarnings("unused")
+    String commandLine, Shell shell)
     {
         String botID = shell.getCurrentBotID();
         Set<URL> keys = shell.getBots().getBot(botID).getLoadedFilesMap().keySet();

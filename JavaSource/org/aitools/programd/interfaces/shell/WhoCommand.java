@@ -19,10 +19,10 @@ public class WhoCommand extends ShellCommand
 {
     /** Shell command. */
     private static final String SHELL_COMMAND = "/who";
-    
+
     /** Argument template. */
     public static final String ARGUMENT_TEMPLATE = "";
-    
+
     /** Shell help line. */
     private static final String HELP_LINE = "prints the id of the current bot";
 
@@ -33,7 +33,7 @@ public class WhoCommand extends ShellCommand
     {
         super(SHELL_COMMAND, ARGUMENT_TEMPLATE, HELP_LINE);
     }
-    
+
     /**
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
      */
@@ -49,7 +49,8 @@ public class WhoCommand extends ShellCommand
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
      */
     @Override
-    public void handle(@SuppressWarnings("unused") String commandLine, Shell shell)
+    public void handle(@SuppressWarnings("unused")
+    String commandLine, Shell shell)
     {
         shell.showMessage("You are talking to \"" + shell.getCurrentBotID() + "\".");
     }

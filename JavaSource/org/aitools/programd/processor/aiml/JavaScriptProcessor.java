@@ -9,7 +9,6 @@
 
 package org.aitools.programd.processor.aiml;
 
-
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
@@ -17,8 +16,7 @@ import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
 
 /**
- * Handles a
- * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-javascript">javascript</a></code>
+ * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-javascript">javascript</a></code>
  * element.
  * 
  * @version 4.5
@@ -41,8 +39,8 @@ public class JavaScriptProcessor extends AIMLProcessor
     }
 
     /**
-     * Returns the result of processing the contents of the
-     * <code>javascript</code> element by the JavaScript interpreter.
+     * Returns the result of processing the contents of the <code>javascript</code> element by the JavaScript
+     * interpreter.
      * 
      * @param element the <code>javascript</code> element
      * @param parser the parser that is at work

@@ -15,9 +15,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 
 /**
- * Processes an
- * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-input">input</a></code>
- * element.
+ * Processes an <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-input">input</a></code> element.
  * 
  * @version 4.7
  * @author Jon Baer
@@ -40,8 +38,7 @@ public class InputProcessor extends IndexedPredicateProcessor
     }
 
     /**
-     * Generalizes the processing of an <code>input</code> element to a job
-     * for {@link IndexedPredicateProcessor}.
+     * Generalizes the processing of an <code>input</code> element to a job for {@link IndexedPredicateProcessor}.
      * 
      * @param element the <code>input</code> element
      * @param parser the parser that is at work

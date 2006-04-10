@@ -25,13 +25,13 @@ public class AIMLCommand extends ShellCommand
 {
     /** Shell command. */
     public static final String COMMAND_STRING = "/aiml";
-    
+
     /** Argument template. */
     public static final String ARGUMENT_TEMPLATE = "aiml-fragment";
-    
+
     /** Shell help line. */
     private static final String HELP_LINE = "tries to process a fragment of template-side AIML";
-    
+
     /** Template start tag. */
     private static final String TEMPLATE_START = "<template>";
 
@@ -57,7 +57,9 @@ public class AIMLCommand extends ShellCommand
 
     /**
      * Tries to process a given fragment of template-side AIML.
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
+     * 
+     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
+     *      org.aitools.programd.interfaces.shell.Shell)
      */
     @Override
     public void handle(String commandLine, Shell shell)
@@ -82,7 +84,8 @@ public class AIMLCommand extends ShellCommand
             }
             try
             {
-                shell.showMessage(parser.processResponse(TEMPLATE_START + commandLine.substring(space + 1) + TEMPLATE_END));
+                shell.showMessage(parser.processResponse(TEMPLATE_START + commandLine.substring(space + 1)
+                        + TEMPLATE_END));
             }
             catch (ProcessorException e)
             {

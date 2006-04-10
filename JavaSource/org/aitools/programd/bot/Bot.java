@@ -45,37 +45,35 @@ public class Bot
     private Map<URL, Set<Nodemapper>> loadedFiles = new HashMap<URL, Set<Nodemapper>>();
 
     /** The bot's properties. */
-    private Map<String, String> properties = Collections.checkedMap(new HashMap<String, String>(),
-            String.class, String.class);
+    private Map<String, String> properties = Collections.checkedMap(new HashMap<String, String>(), String.class,
+            String.class);
 
     /** The bot's predicate infos. */
-    private Map<String, PredicateInfo> predicatesInfo = Collections.checkedMap(
-            new HashMap<String, PredicateInfo>(), String.class, PredicateInfo.class);
+    private Map<String, PredicateInfo> predicatesInfo = Collections.checkedMap(new HashMap<String, PredicateInfo>(),
+            String.class, PredicateInfo.class);
 
     /** The bot's processor-specific substitution maps. */
     private Map<Class<? extends Processor>, LinkedHashMap<Pattern, String>> substitutionMaps = new HashMap<Class<? extends Processor>, LinkedHashMap<Pattern, String>>();
 
     /** The bot's input substitution map. */
-    private Map<Pattern, String> inputSubstitutions = Collections.checkedMap(
-            new LinkedHashMap<Pattern, String>(), Pattern.class, String.class);
+    private Map<Pattern, String> inputSubstitutions = Collections.checkedMap(new LinkedHashMap<Pattern, String>(),
+            Pattern.class, String.class);
 
     /** The bot's sentence splitter map. */
-    private List<String> sentenceSplitters = Collections.checkedList(new ArrayList<String>(),
-            String.class);
+    private List<String> sentenceSplitters = Collections.checkedList(new ArrayList<String>(), String.class);
 
     /** Holds cached predicates, keyed by userid. */
-    private Map<String, PredicateMap> predicateCache = Collections
-            .synchronizedMap(new HashMap<String, PredicateMap>());
-    
+    private Map<String, PredicateMap> predicateCache = Collections.synchronizedMap(new HashMap<String, PredicateMap>());
+
     /** The page to use for this bot when communicating via the servlet interface. */
     private String servletPage = EMPTY_STRING;
-    
+
     /** The files containing test suites. */
     private List<URL> testSuites;
-    
+
     /** The directory where test reports are to be written. */
     private URL testReportDirectory;
-    
+
     /** The predicate empty default. */
     protected String predicateEmptyDefault;
 
@@ -83,8 +81,7 @@ public class Bot
     private static final String EMPTY_STRING = "";
 
     /**
-     * Creates a new Bot with the given id. The bot's chat log is also set up.
-     * A default servlet page is set.
+     * Creates a new Bot with the given id. The bot's chat log is also set up. A default servlet page is set.
      * 
      * @param botID the id to use for the new bot
      * @param coreSettings the core settings to use
@@ -204,14 +201,12 @@ public class Bot
     }
 
     /**
-     * Registers some information about a predicate in advance. Not required;
-     * just used when it is necessary to specify a default value for a predicate
-     * and/or specify its type as return-name-when-set.
+     * Registers some information about a predicate in advance. Not required; just used when it is necessary to specify
+     * a default value for a predicate and/or specify its type as return-name-when-set.
      * 
      * @param name the name of the predicate
      * @param defaultValue the default value (if any) for the predicate
-     * @param returnNameWhenSet whether the predicate should return its name
-     *            when set
+     * @param returnNameWhenSet whether the predicate should return its name when set
      */
     public void addPredicateInfo(String name, String defaultValue, boolean returnNameWhenSet)
     {
@@ -240,8 +235,7 @@ public class Bot
     }
 
     /**
-     * Returns the map of predicates for a userid if it is cached, or a new map
-     * if it is not cached.
+     * Returns the map of predicates for a userid if it is cached, or a new map if it is not cached.
      * 
      * @param userid
      * @return the map of predicates for the given userid
@@ -266,10 +260,9 @@ public class Bot
     }
 
     /**
-     * Adds a substitution to the indicated map. If the map does not yet exist,
-     * it is created. The <code>find</code> parameter is stored in uppercase,
-     * to do case-insensitive comparisons. The <code>replace</code> parameter
-     * is stored as is.
+     * Adds a substitution to the indicated map. If the map does not yet exist, it is created. The <code>find</code>
+     * parameter is stored in uppercase, to do case-insensitive comparisons. The <code>replace</code> parameter is
+     * stored as is.
      * 
      * @param processor the processor with which the map is associated
      * @param find the find-string part of the substitution
@@ -285,9 +278,8 @@ public class Bot
     }
 
     /**
-     * Adds an input substitution. The <code>find</code> parameter is stored
-     * in uppercase, to do case-insensitive comparisons. The
-     * <code>replace</code> parameter is stored as is.
+     * Adds an input substitution. The <code>find</code> parameter is stored in uppercase, to do case-insensitive
+     * comparisons. The <code>replace</code> parameter is stored as is.
      * 
      * @param find the find-string part of the substitution
      * @param replace the replace-string part of the substitution
@@ -380,7 +372,7 @@ public class Bot
     {
         this.testSuites = files;
     }
-    
+
     /**
      * @param page the servlet servletPage to user
      */
@@ -388,7 +380,7 @@ public class Bot
     {
         this.servletPage = page;
     }
-    
+
     /**
      * @return the servlet servletPage
      */

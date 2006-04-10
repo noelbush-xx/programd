@@ -43,7 +43,7 @@ public class BotProcessor extends BotConfigurationElementProcessor
     {
         super(core);
     }
-    
+
     /**
      * @see org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessor#process(org.w3c.dom.Element, org.aitools.programd.parser.BotsConfigurationFileParser)
      */
@@ -87,27 +87,27 @@ public class BotProcessor extends BotConfigurationElementProcessor
             if (!bots.include(botID))
             {
                 Bot bot = new Bot(botID, parser.getCore().getSettings());
-                
+
                 logger.info(String.format("Configuring bot \"%s\".", botID));
                 parser.setCurrentBot(bot);
                 bots.addBot(botID, bot);
-                
+
                 Graphmaster graphmaster = this._core.getGraphmaster();
-                
+
                 int previousCategoryCount = graphmaster.getCategoryCount();
                 int previousDuplicateCount = graphmaster.getDuplicateCategoryCount();
 
                 this._core.setLoadtime();
-                
+
                 // Stop the AIMLWatcher while loading.
                 if (this._core.getSettings().useWatcher())
                 {
                     this._core.getAIMLWatcher().stop();
                 }
-                
+
                 // Index the start time before loading.
                 long time = new Date().getTime();
-                
+
                 // Load the bot.
                 parser.evaluate(element.getChildNodes());
 
@@ -121,23 +121,25 @@ public class BotProcessor extends BotConfigurationElementProcessor
                 {
                     this._core.getAIMLWatcher().start();
                 }
-                
-                logger.info(String.format("%,d categories loaded in %.4f seconds.",
-                        graphmaster.getCategoryCount() - previousCategoryCount,
-                        time / 1000.00));
+
+                logger.info(String.format("%,d categories loaded in %.4f seconds.", graphmaster.getCategoryCount()
+                        - previousCategoryCount, time / 1000.00));
                 logger.info(graphmaster.getCategoryReport());
                 if (logger.isDebugEnabled())
                 {
                     logger.debug(String.format("%,d Nodemappers in Graphmaster.", graphmaster.getNodemapperCount()));
-                    logger.debug(String.format("Average Nodemapper size: %,.4f.", graphmaster.getAverageNodemapperSize()));
+                    logger.debug(String.format("Average Nodemapper size: %,.4f.", graphmaster
+                            .getAverageNodemapperSize()));
                 }
-                
+
                 int dupes = graphmaster.getDuplicateCategoryCount() - previousDuplicateCount;
                 if (dupes > 0)
                 {
-                    logger.warn(String.format("%,d path-identical categories were encountered, and handled according to the %s merge policy.",
-                            dupes,
-                            this._core.getSettings().getMergePolicy()));
+                    logger
+                            .warn(String
+                                    .format(
+                                            "%,d path-identical categories were encountered, and handled according to the %s merge policy.",
+                                            dupes, this._core.getSettings().getMergePolicy()));
                 }
             }
             else

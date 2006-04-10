@@ -46,8 +46,7 @@ public class DBChatLogLayout extends SimpleLayout
     {
         if (!(event instanceof ChatLogEvent))
         {
-            throw new IllegalArgumentException(
-                    "DBChatLogLayout is intended to handle ChatLogEvents only.");
+            throw new IllegalArgumentException("DBChatLogLayout is intended to handle ChatLogEvents only.");
         }
         return format((ChatLogEvent) event);
     }
@@ -62,11 +61,9 @@ public class DBChatLogLayout extends SimpleLayout
         try
         {
             return String.format(
-                    "insert into chatlog (userid, botid, input, response) values ('%s', '%s', '%s', '%s')",
-                    URLEncoder.encode(event.getUserID(), ENC_UTF8),
-                    URLEncoder.encode(event.getBotID(), ENC_UTF8),
-                    URLEncoder.encode(event.getInput(), ENC_UTF8),
-                    URLEncoder.encode(event.getReply(), ENC_UTF8));
+                    "insert into chatlog (userid, botid, input, response) values ('%s', '%s', '%s', '%s')", URLEncoder
+                            .encode(event.getUserID(), ENC_UTF8), URLEncoder.encode(event.getBotID(), ENC_UTF8),
+                    URLEncoder.encode(event.getInput(), ENC_UTF8), URLEncoder.encode(event.getReply(), ENC_UTF8));
         }
         catch (UnsupportedEncodingException e)
         {

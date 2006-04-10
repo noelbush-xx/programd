@@ -19,9 +19,7 @@ import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.Substituter;
 
 /**
- * <p>
  * Handles a substitution element.
- * </p>
  * 
  * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -43,10 +41,11 @@ abstract public class SubstitutionProcessor extends AIMLProcessor
      * @param element the element to process
      * @param parser the parser in use
      * @return the result of processing the substitution element
-     * @throws ProcessorException 
+     * @throws ProcessorException
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
-    protected String process(Class<? extends Processor> processor, Element element, TemplateParser parser) throws ProcessorException
+    protected String process(Class<? extends Processor> processor, Element element, TemplateParser parser)
+            throws ProcessorException
     {
         if (element.getChildNodes().getLength() > 0)
         {
@@ -59,7 +58,7 @@ abstract public class SubstitutionProcessor extends AIMLProcessor
 
     /**
      * Applies each substitution in the given map to the input.
-     *
+     * 
      * @param processor the processor whose substitutions should be applied
      * @param string the string on which to perform the replacement
      * @param botid the bot whose substitutions should be applied

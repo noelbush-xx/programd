@@ -23,19 +23,17 @@ import org.apache.log4j.Logger;
 
 /**
  * <p>
- * Maintains in-memory predicate values for userids. Every public set and get
- * method checks the size of the cache, and saves out part of it if it has
- * exceeded a configurable limit.
+ * Maintains in-memory predicate values for userids. Every public set and get method checks the size of the cache, and
+ * saves out part of it if it has exceeded a configurable limit.
  * </p>
  * <p>
- * This currently has the defect that it doesn't choose intelligently which
- * userids' predicates to cache (it should do this for the ones who have not
- * been heard from the longest). The HashMap that contains the predicates (keyed
- * by userid) makes no guarantees about order. :-(
+ * This currently has the defect that it doesn't choose intelligently which userids' predicates to cache (it should do
+ * this for the ones who have not been heard from the longest). The HashMap that contains the predicates (keyed by
+ * userid) makes no guarantees about order. :-(
  * </p>
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.1.4'
+ * @since 4.1.4
  */
 public class PredicateMaster
 {
@@ -46,8 +44,7 @@ public class PredicateMaster
     private int cacheMax;
 
     /**
-     * The preferred minimum value for the cache (starts at half of
-     * {@link #cacheMax}, may be adjusted).
+     * The preferred minimum value for the cache (starts at half of {@link #cacheMax}, may be adjusted).
      */
     private int cacheMin;
 
@@ -87,17 +84,14 @@ public class PredicateMaster
     }
 
     /**
-     * Sets a predicate <code>value</code> against a predicate
-     * <code>name</code> for a given userid, and returns either the
-     * <code>name</code> or the <code>value</code>, depending on the
-     * predicate type.
+     * Sets a predicate <code>value</code> against a predicate <code>name</code> for a given userid, and returns
+     * either the <code>name</code> or the <code>value</code>, depending on the predicate type.
      * 
      * @param name the predicate name
      * @param value the predicate value
      * @param userid the userid
      * @param botid
-     * @return the <code>name</code> or the <code>value</code>, depending
-     *         on the predicate type
+     * @return the <code>name</code> or the <code>value</code>, depending on the predicate type
      */
     public String set(String name, String value, String userid, String botid)
     {
@@ -118,18 +112,15 @@ public class PredicateMaster
     }
 
     /**
-     * Sets a <code>value</code> of an indexed predicate
-     * <code>name</code> for a given <code>userid</code>, and returns
-     * either the <code>name</code> or the <code>value</code>, depending on
-     * the predicate type.
+     * Sets a <code>value</code> of an indexed predicate <code>name</code> for a given <code>userid</code>, and
+     * returns either the <code>name</code> or the <code>value</code>, depending on the predicate type.
      * 
      * @param name the predicate name
      * @param index the index at which to set the value
      * @param valueToSet the predicate value to set
      * @param userid the userid
      * @param botid
-     * @return the <code>name</code> or the <code>value</code>, depending
-     *         on the predicate type
+     * @return the <code>name</code> or the <code>value</code>, depending on the predicate type
      */
     public synchronized String set(String name, int index, String valueToSet, String userid, String botid)
     {
@@ -153,17 +144,14 @@ public class PredicateMaster
     }
 
     /**
-     * Pushes a new <code>value</code> onto an indexed predicate <code>name</code>
-     * for a given <code>userid</code>, and returns either the
-     * <code>name</code> or the <code>value</code>, depending on the
-     * predicate type.
+     * Pushes a new <code>value</code> onto an indexed predicate <code>name</code> for a given <code>userid</code>,
+     * and returns either the <code>name</code> or the <code>value</code>, depending on the predicate type.
      * 
      * @param name the predicate name
      * @param newValue the new predicate value
      * @param userid the userid
      * @param botid
-     * @return the <code>name</code> or the <code>value</code>, depending
-     *         on the predicate type
+     * @return the <code>name</code> or the <code>value</code>, depending on the predicate type
      */
     public synchronized String push(String name, String newValue, String userid, String botid)
     {
@@ -187,14 +175,13 @@ public class PredicateMaster
     }
 
     /**
-     * Gets the predicate <code>value</code> associated with a
-     * <code>name</code> for a given <code>userid</code>.
+     * Gets the predicate <code>value</code> associated with a <code>name</code> for a given <code>userid</code>.
      * 
      * @param name the predicate name
      * @param userid the userid
      * @param botid
-     * @return the <code>value</code> associated with the given
-     *         <code>name</code>, for the given <code>userid</code>
+     * @return the <code>value</code> associated with the given <code>name</code>, for the given
+     *         <code>userid</code>
      */
     public synchronized String get(String name, String userid, String botid)
     {
@@ -203,7 +190,7 @@ public class PredicateMaster
 
         // Try to get the predicate value from the cache.
         PredicateValue value;
-        
+
         try
         {
             value = userPredicates.get(name);
@@ -223,10 +210,10 @@ public class PredicateMaster
 
             // Cache it.
             userPredicates.put(name, new PredicateValue(loadedValue));
-            
+
             // Check the cache.
             checkCache();
-            
+
             // Return the loaded value.
             return loadedValue;
         }
@@ -239,17 +226,15 @@ public class PredicateMaster
     }
 
     /**
-     * Gets the predicate <code>value</code> associated with a
-     * <code>name</code> at a given <code>index</code> for a given
-     * <code>userid</code>.
+     * Gets the predicate <code>value</code> associated with a <code>name</code> at a given <code>index</code> for
+     * a given <code>userid</code>.
      * 
      * @param name the predicate name
      * @param index the index
      * @param userid the userid
      * @param botid
-     * @return the <code>value</code> associated with the given
-     *         <code>name</code> at the given <code>index</code>, for the
-     *         given <code>userid</code>
+     * @return the <code>value</code> associated with the given <code>name</code> at the given <code>index</code>,
+     *         for the given <code>userid</code>
      */
     public synchronized String get(String name, int index, String userid, String botid)
     {
@@ -303,20 +288,18 @@ public class PredicateMaster
     }
 
     /**
-     * Returns, from the cache, an ArrayList of values assigned to a
-     * <code>name</code> for a predicate for a <code>userid</code>. If the
-     * <code>name</code> exists in a predicate for the <code>userid</code>
-     * but it is not indexed, it is converted into an indexed value. If it does
-     * not exist at all, a <code>NoSuchPredicateException</code> is thrown.
+     * Returns, from the cache, an ArrayList of values assigned to a <code>name</code> for a predicate for a
+     * <code>userid</code>. If the <code>name</code> exists in a predicate for the <code>userid</code> but it is
+     * not indexed, it is converted into an indexed value. If it does not exist at all, a
+     * <code>NoSuchPredicateException</code> is thrown.
      * 
      * @param name the name of the predicate
      * @param userPredicates the existing map of predicates
-     * @return a list of values assigned to a <code>name</code> for a
-     *         predicate for a <code>userid</code>
-     * @throws NoSuchPredicateException if no values are assigned to the
-     *             <code>name</code>
+     * @return a list of values assigned to a <code>name</code> for a predicate for a <code>userid</code>
+     * @throws NoSuchPredicateException if no values are assigned to the <code>name</code>
      */
-    protected static PredicateValue getMultivaluedPredicateValue(String name, PredicateMap userPredicates) throws NoSuchPredicateException
+    protected static PredicateValue getMultivaluedPredicateValue(String name, PredicateMap userPredicates)
+            throws NoSuchPredicateException
     {
         if (userPredicates.size() > 0 && userPredicates.containsKey(name))
         {
@@ -328,23 +311,20 @@ public class PredicateMaster
     }
 
     /**
-     * Tries to load a predicate with <code>name</code> for
-     * <code>userid</code> from the ActiveMultiplexor into the
-     * <code>userPredicates</code>. If successful, tries to get the value
-     * list for name. If unsuccessful, throws a NoSuchPredicateException.
+     * Tries to load a predicate with <code>name</code> for <code>userid</code> from the ActiveMultiplexor into the
+     * <code>userPredicates</code>. If successful, tries to get the value list for name. If unsuccessful, throws a
+     * NoSuchPredicateException.
      * 
      * @param name the predicate <code>name</code>
      * @param userPredicates the user predicates (must not be null!)
      * @param userid the userid
      * @param botid
-     * @return an ArrayList of values assigned to a <code>name</code> for a
-     *         predicate for a <code>userid</code>
-     * @throws NoSuchPredicateException if no values are assigned to the
-     *             <code>name</code>
+     * @return an ArrayList of values assigned to a <code>name</code> for a predicate for a <code>userid</code>
+     * @throws NoSuchPredicateException if no values are assigned to the <code>name</code>
      * @throws NullPointerException if <code>userPredicates</code> is null
      */
-    protected PredicateValue loadMultivaluedPredicateValue(String name, PredicateMap userPredicates, String userid, String botid)
-            throws NoSuchPredicateException, NullPointerException
+    protected PredicateValue loadMultivaluedPredicateValue(String name, PredicateMap userPredicates, String userid,
+            String botid) throws NoSuchPredicateException, NullPointerException
     {
         // Prevent this from being called with a null predicates map.
         if (userPredicates == null)
@@ -390,18 +370,18 @@ public class PredicateMaster
     }
 
     /**
-     * Returns a value list one way or another: first tries to get it from the
-     * cache, then tries to load it from the ActiveMultiplexor; finally creates
-     * a new one if the preceding failed.
+     * Returns a value list one way or another: first tries to get it from the cache, then tries to load it from the
+     * ActiveMultiplexor; finally creates a new one if the preceding failed.
      * 
      * @param name the predicate <code>name</code>
      * @param userPredicates the user predicates map
      * @param userid the userid for which to return the value list
      * @param botid the botid for which to return the value list
-     * @return a multi-valued <code>PredicateValue</code> from <code>userPredicates</code> for
-     *         <code>name</code> for <code>userid</code>
+     * @return a multi-valued <code>PredicateValue</code> from <code>userPredicates</code> for <code>name</code>
+     *         for <code>userid</code>
      */
-    protected PredicateValue getLoadOrCreateMultivaluedPredicateValue(String name, PredicateMap userPredicates, String userid, String botid)
+    protected PredicateValue getLoadOrCreateMultivaluedPredicateValue(String name, PredicateMap userPredicates,
+            String userid, String botid)
     {
         PredicateValue value;
 
@@ -427,8 +407,7 @@ public class PredicateMaster
     }
 
     /**
-     * Returns the best available default predicate <code>value</code> for a
-     * predicate <code>name</code>
+     * Returns the best available default predicate <code>value</code> for a predicate <code>name</code>
      * 
      * @param name the predicate name
      * @param botid
@@ -448,14 +427,12 @@ public class PredicateMaster
     }
 
     /**
-     * Returns the name or value of a predicate, depending on whether or not it
-     * is &quot;return-name-when-set&quot;.
+     * Returns the name or value of a predicate, depending on whether or not it is &quot;return-name-when-set&quot;.
      * 
      * @param name the predicate name
      * @param value the predicate value
      * @param botid
-     * @return the appropriate result (name or value depending on predicate
-     *         settings)
+     * @return the appropriate result (name or value depending on predicate settings)
      */
     protected String nameOrValue(String name, String value, String botid)
     {
@@ -474,8 +451,7 @@ public class PredicateMaster
     }
 
     /**
-     * Attempts to dump a given number of predicate values from the cache,
-     * starting with the oldest userid first.
+     * Attempts to dump a given number of predicate values from the cache, starting with the oldest userid first.
      * 
      * @param dumpCount the number of values to try to dump
      * @return the number that were actually dumped
@@ -505,7 +481,9 @@ public class PredicateMaster
                     }
                     catch (ConcurrentModificationException e)
                     {
-                        throw new DeveloperError("Some problem with PredicateMaster design: ConcurrentModificationException in save() [1].", e);
+                        throw new DeveloperError(
+                                "Some problem with PredicateMaster design: ConcurrentModificationException in save() [1].",
+                                e);
                     }
 
                     // Get the cached predicates for this user.
@@ -517,12 +495,12 @@ public class PredicateMaster
                         try
                         {
                             PredicateValue value = userPredicates.get(name);
-    
+
                             // Save single-valued predicates.
                             if (!value.isMultiValued())
                             {
                                 String singleValue = value.getFirstValue();
-    
+
                                 // Do not save default values.
                                 if (!singleValue.equals(bestAvailableDefault(name, botid)))
                                 {
@@ -535,7 +513,7 @@ public class PredicateMaster
                             {
                                 // Try to get this as an indexed predicate.
                                 int valueCount = value.size();
-    
+
                                 for (int index = valueCount; --index > 0;)
                                 {
                                     // Do not save default values.
@@ -544,8 +522,9 @@ public class PredicateMaster
                                     {
                                         this.multiplexor.savePredicate(name + '.' + index, aValue, userid, botid);
                                     }
-                                    /* Increment the saveCount regardless of whether the value is the default,
-                                     * to avoid the reported bug http://bugs.aitools.org/view.php?id=9
+                                    /*
+                                     * Increment the saveCount regardless of whether the value is the default, to avoid
+                                     * the reported bug http://bugs.aitools.org/view.php?id=9
                                      */
                                     saveCount++;
                                 }
@@ -553,7 +532,8 @@ public class PredicateMaster
                         }
                         catch (NoSuchPredicateException e)
                         {
-                            throw new DeveloperError("Asked to store a predicate with no value!", new NullPointerException());
+                            throw new DeveloperError("Asked to store a predicate with no value!",
+                                    new NullPointerException());
                         }
                     }
 
@@ -564,7 +544,9 @@ public class PredicateMaster
                     }
                     catch (ConcurrentModificationException e)
                     {
-                        throw new DeveloperError("Some problem with PredicateMaster design: ConcurrentModificationException in save() [2].", e);
+                        throw new DeveloperError(
+                                "Some problem with PredicateMaster design: ConcurrentModificationException in save() [2].",
+                                e);
                     }
                 }
             }

@@ -14,9 +14,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * A Heart beats. At a configurable interval, it calls pulse() methods on some
- * objects (currently only the parent static Multiplexor) in order to provide
- * assurance that the bot server is alive.
+ * A Heart beats. At a configurable interval, it calls pulse() methods on some objects (currently only the parent static
+ * Multiplexor) in order to provide assurance that the bot server is alive.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */

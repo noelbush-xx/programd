@@ -23,16 +23,14 @@ import org.apache.log4j.Logger;
  * AIML element.
  * 
  * @version 4.5
- * @author Jon Baer
- * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 abstract public class AIMLProcessor extends Processor
 {
     protected static final Logger logger = Logger.getLogger("programd");
-    
+
     protected static final Logger aimlLogger = Logger.getLogger("programd.aiml-processing");
-    
+
     /**
      * Creates a new AIMLProcessor using the given Core.
      * 

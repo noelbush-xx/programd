@@ -15,8 +15,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 
 /**
- * Processes a <a
- * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-template-side-that">template-side
+ * Processes a <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-template-side-that">template-side
  * <code>that</code> </a> element.
  * 
  * @version 4.5
@@ -40,8 +39,7 @@ public class ThatProcessor extends IndexedPredicateProcessor
     }
 
     /**
-     * Generalizes the processing of a <code>that</code> element to a job for
-     * {@link IndexedPredicateProcessor}.
+     * Generalizes the processing of a <code>that</code> element to a job for {@link IndexedPredicateProcessor}.
      * 
      * @param element the <code>bot</code> element
      * @param parser the parser that is at work

@@ -34,13 +34,13 @@ import org.aitools.util.xml.XML;
 public class AIMLReader extends DefaultHandler2
 {
     private String _defaultNamespaceURI;
-    
+
     private Graphmaster _graphmaster;
-    
+
     private URL _path;
-    
+
     private String _botid;
-    
+
     private Bot _bot;
 
     /*
@@ -83,7 +83,7 @@ public class AIMLReader extends DefaultHandler2
 
     /** The string &quot;{@value}&quot;. */
     private static final String TEMPLATE = "template";
-    
+
     /** The wildcard (&quot;*&quot;). */
     private static final String WILDCARD = "*";
 
@@ -98,7 +98,7 @@ public class AIMLReader extends DefaultHandler2
 
     /** The most recently collected &lt;template&gt;&lt;/template&gt; contents. */
     private StringBuilder templateBuffer;
-    
+
     /** A pointer to the current buffer. */
     private StringBuilder currentBuffer;
 
@@ -124,8 +124,7 @@ public class AIMLReader extends DefaultHandler2
      * @param url the path that is being read
      * @param botid the id of the bot into whom categories are being loaded
      * @param bot the bot itself
-     * @param defaultNamespaceURI the namespace URI to use when none other
-     *            is specified (?)
+     * @param defaultNamespaceURI the namespace URI to use when none other is specified (?)
      */
     public AIMLReader(Graphmaster graphmaster, URL url, String botid, Bot bot, String defaultNamespaceURI)
     {
@@ -171,8 +170,8 @@ public class AIMLReader extends DefaultHandler2
     }
 
     /**
-     * @see org.xml.sax.ContentHandler#startElement(java.lang.String,
-     *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
+     * @see org.xml.sax.ContentHandler#startElement(java.lang.String, java.lang.String, java.lang.String,
+     *      org.xml.sax.Attributes)
      */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes)
@@ -205,12 +204,12 @@ public class AIMLReader extends DefaultHandler2
         }
         else if (this.currentBuffer != null && this.currentBuffer == this.templateBuffer)
         {
-            /* We don't want to parse the template into
-             * some big memory structure, since it may never be used. So
-             * we just reconstitute the XML text for later
-             * processing.
+            /*
+             * We don't want to parse the template into some big memory structure, since it may never be used. So we
+             * just reconstitute the XML text for later processing.
              */
-            this.templateBuffer.append(XML.renderStartTag(elementName, attributes, !uri.equals(this._defaultNamespaceURI), uri));
+            this.templateBuffer.append(XML.renderStartTag(elementName, attributes, !uri
+                    .equals(this._defaultNamespaceURI), uri));
         }
         else if (elementName.equals(TOPIC))
         {
@@ -220,11 +219,11 @@ public class AIMLReader extends DefaultHandler2
     }
 
     /**
-     * @see org.xml.sax.ContentHandler#endElement(java.lang.String,
-     *      java.lang.String, java.lang.String)
+     * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
-    public void endElement(@SuppressWarnings("unused") String uri, String localName, String qName)
+    public void endElement(@SuppressWarnings("unused")
+    String uri, String localName, String qName)
     {
         String elementName;
         if (localName.equals(EMPTY_STRING))
@@ -251,7 +250,8 @@ public class AIMLReader extends DefaultHandler2
             // Whitespace-normalize the template contents.
             this.template = this.templateStartTag + this.templateBuffer.toString() + TEMPLATE_END_TAG;
             // Finally, deliver the newly defined category to the Graphmaster.
-            this._graphmaster.addCategory(this.pattern, this.that, this.topic, this.template, this._botid, this._bot, this._path);
+            this._graphmaster.addCategory(this.pattern, this.that, this.topic, this.template, this._botid, this._bot,
+                    this._path);
             // Reset the pattern, that and template.
             this.pattern = this.that = this.template = null;
             this.currentBuffer = this.patternBuffer = this.thatBuffer = this.templateBuffer = null;

@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class MatchChecker extends Checker
 {
     private Matcher matcher = null;
-    
+
     private static final String EMPTY_STRING = "";
 
     /**

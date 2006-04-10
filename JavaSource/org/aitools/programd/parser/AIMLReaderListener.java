@@ -10,8 +10,7 @@
 package org.aitools.programd.parser;
 
 /**
- * <code>AIMLReaderListener</code> is the interface specification for
- * listeners that can add AIML to the Graphmaster.
+ * <code>AIMLReaderListener</code> is the interface specification for listeners that can add AIML to the Graphmaster.
  * 
  * @author Kris Drent
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -19,9 +18,8 @@ package org.aitools.programd.parser;
 public interface AIMLReaderListener
 {
     /**
-     * Adds a new category to the {@link org.aitools.programd.graph.Graphmaster} .
-     * Usually called by an AIML parser such as
-     * {@link org.aitools.programd.parser.TemplateParser TemplateParser} .
+     * Adds a new category to the {@link org.aitools.programd.graph.Graphmaster} . Usually called by an AIML parser such
+     * as {@link org.aitools.programd.parser.TemplateParser TemplateParser} .
      * 
      * @param pattern the <code>pattern</code> portion of a Graphmaster path
      * @param that the <code>that</code> portion of a Graphmaster path

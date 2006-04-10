@@ -58,7 +58,7 @@ public class AIMLWatcher
         this.timer = new Timer(true);
         this.timer.schedule(new CheckAIMLTask(), 0, this._core.getSettings().getWatcherTimer());
     }
-    
+
     /**
      * Stops the AIMLWatcher.
      */
@@ -90,12 +90,9 @@ public class AIMLWatcher
     public void addWatchFile(URL path)
     {
         /*
-        if (this.logger.isDebugEnabled())
-        {
-            this.logger.debug(String.format("Adding watch file \"%s\".", path));
-        }
-        */
-        synchronized(this)
+         * if (this.logger.isDebugEnabled()) { this.logger.debug(String.format("Adding watch file \"%s\".", path)); }
+         */
+        synchronized (this)
         {
             if (URLTools.seemsToExist(path))
             {
@@ -106,7 +103,8 @@ public class AIMLWatcher
             }
             else
             {
-                this.logger.warn(String.format("AIMLWatcher cannot read path \"%s\"", URLTools.unescape(path)), new IOException());
+                this.logger.warn(String.format("AIMLWatcher cannot read path \"%s\"", URLTools.unescape(path)),
+                        new IOException());
             }
         }
     }

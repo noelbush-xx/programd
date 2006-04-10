@@ -17,9 +17,7 @@ import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
 
 /**
- * Handles an
- * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-sr">sr</a></code>
- * element.
+ * Handles an <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-sr">sr</a></code> element.
  * 
  * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>

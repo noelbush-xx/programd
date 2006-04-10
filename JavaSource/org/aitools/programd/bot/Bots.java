@@ -49,8 +49,7 @@ public class Bots
     }
 
     /**
-     * Adds the given bot with the given id. No check is made to see whether a
-     * bot is already loaded with the given id!
+     * Adds the given bot with the given id. No check is made to see whether a bot is already loaded with the given id!
      * 
      * @param botid the id to use for the bot
      * @param bot the bot to add
@@ -168,7 +167,7 @@ public class Bots
         }
         return false;
     }
-    
+
     /**
      * Removes the indicated bot.
      * 

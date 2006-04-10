@@ -42,16 +42,15 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
     }
 
     /**
-     * Processes an indexed predicate with <code>dimensions</code> dimensions
-     * (must be either <code>1</code> or <code>2</code>)
+     * Processes an indexed predicate with <code>dimensions</code> dimensions (must be either <code>1</code> or
+     * <code>2</code>)
      * 
      * @param element
      * @param parser
      * @see AIMLProcessor#process(Element, TemplateParser)
      * @since 4.1.3
      * @param name predicate name
-     * @param dimensions the number of dimensions (<code>1</code> or
-     *            <code>2</code>)
+     * @param dimensions the number of dimensions (<code>1</code> or <code>2</code>)
      * @return the result of processing the element
      */
     public String process(Element element, TemplateParser parser, String name, int dimensions)
@@ -72,7 +71,8 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
 
         // Get entire predicate value at this index (may contain multiple
         // "sentences").
-        String value = parser.getCore().getPredicateMaster().get(name, indexes[0], parser.getUserID(), parser.getBotID());
+        String value = parser.getCore().getPredicateMaster().get(name, indexes[0], parser.getUserID(),
+                parser.getBotID());
 
         // Split predicate into sentences.
         Bot bot = parser.getCore().getBot(parser.getBotID());
@@ -96,14 +96,11 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
     }
 
     /**
-     * Processes an indexed predicate whose values are stored in the supplied
-     * <code>predicates</code> ArrayList. Currently supports <i>only </i> a
-     * 1-dimensional index (for handling
+     * Processes an indexed predicate whose values are stored in the supplied <code>predicates</code> ArrayList.
+     * Currently supports <i>only </i> a 1-dimensional index (for handling
      * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-star">star</a></code>,
-     * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-thatstar">thatstar</a></code>,
-     * and
-     * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-topicstar">topicstar</a></code>
-     * elements).
+     * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-thatstar">thatstar</a></code>, and
+     * <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-topicstar">topicstar</a></code> elements).
      * 
      * @param element
      * @param parser
@@ -111,12 +108,14 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
      * @param dimensions the number of dimensions (<code>1</code> only)
      * @return the result of processing the element
      */
-    public String process(Element element, @SuppressWarnings("unused") TemplateParser parser, ArrayList<String> predicates, int dimensions)
+    public String process(Element element, @SuppressWarnings("unused")
+    TemplateParser parser, ArrayList<String> predicates, int dimensions)
     {
         // Only 1 dimension is supported.
         if (dimensions != 1)
         {
-            throw new DeveloperError("Wrong number of dimensions: " + dimensions + " != 1", new IllegalArgumentException());
+            throw new DeveloperError("Wrong number of dimensions: " + dimensions + " != 1",
+                    new IllegalArgumentException());
         }
 
         // No need to go further if no predicate values are available.

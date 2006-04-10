@@ -19,13 +19,13 @@ public class MemoryCommand extends ShellCommand
 {
     /** Shell command string. */
     public static final String COMMAND_STRING = "/memory";
-    
+
     /** Argument template. */
     public static final String ARGUMENT_TEMPLATE = "";
-    
+
     /** Shell help line. */
     private static final String HELP_LINE = "shows statistics on free/available memory";
-    
+
     /**
      * Creates a new LoadCommand.
      */
@@ -49,7 +49,8 @@ public class MemoryCommand extends ShellCommand
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
      */
     @Override
-    public void handle(@SuppressWarnings("unused") String commandLine, Shell shell)
+    public void handle(@SuppressWarnings("unused")
+    String commandLine, Shell shell)
     {
         shell.showMessage(UserSystem.memoryReport());
     }

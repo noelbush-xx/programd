@@ -17,8 +17,7 @@ import org.aitools.programd.processor.ProcessorException;
 
 /**
  * The <code>person</code> element is a container for definitions of <a
- * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-person">person </a>
- * substitutions to be performed on a string.
+ * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-person">person</a> substitutions to be performed on a string.
  */
 public class PersonProcessor extends SubstitutionElementProcessor
 {
@@ -36,8 +35,7 @@ public class PersonProcessor extends SubstitutionElementProcessor
     }
 
     /**
-     * @see BotConfigurationElementProcessor#process(Element,
-     *      BotsConfigurationFileParser)
+     * @see BotConfigurationElementProcessor#process(Element, BotsConfigurationFileParser)
      */
     @Override
     public String process(Element element, BotsConfigurationFileParser parser) throws ProcessorException

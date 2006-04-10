@@ -49,7 +49,7 @@ public class InputNormalizer
         {
             return null;
         }
-        
+
         List<String> result = Collections.checkedList(new ArrayList<String>(), String.class);
 
         int inputLength = input.length();

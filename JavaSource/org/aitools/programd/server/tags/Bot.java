@@ -16,10 +16,10 @@ public class Bot extends SimpleTagSupport
 {
     /** The name of the desired predicate. */
     protected String name;
-    
+
     /** The Bot from which values will be gotten. */
     protected org.aitools.programd.bot.Bot bot;
-    
+
     /**
      * Sets the name attribute.
      * 
@@ -28,13 +28,13 @@ public class Bot extends SimpleTagSupport
     public void setName(String value)
     {
         this.name = value;
-        BotAccess botAccess = ((BotAccess)getJspContext().getAttribute("bot", PageContext.SESSION_SCOPE));
+        BotAccess botAccess = ((BotAccess) getJspContext().getAttribute("bot", PageContext.SESSION_SCOPE));
         if (botAccess != null)
         {
             this.bot = botAccess.getBot();
         }
     }
-    
+
     /**
      * @see javax.servlet.jsp.tagext.SimpleTagSupport#doTag()
      */

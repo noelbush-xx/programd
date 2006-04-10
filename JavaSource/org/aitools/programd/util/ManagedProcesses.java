@@ -18,16 +18,16 @@ import org.aitools.programd.Core;
 import org.apache.log4j.Logger;
 
 /**
- * Controls processes that run in separate threads and need to be shut down
- * before the bot exits.
+ * Controls processes that run in separate threads and need to be shut down before the bot exits.
  */
 public class ManagedProcesses
 {
     /** The Core to which this is attached. */
     private Core _core;
-    
+
     /** The registry of all processes. */
-    private Map<String, ManagedProcess> registry = Collections.checkedMap(new HashMap<String, ManagedProcess>(), String.class, ManagedProcess.class);
+    private Map<String, ManagedProcess> registry = Collections.checkedMap(new HashMap<String, ManagedProcess>(),
+            String.class, ManagedProcess.class);
 
     /**
      * Adds a process to the registry and starts it.
@@ -92,6 +92,7 @@ public class ManagedProcesses
 
     /**
      * Creates a ManagedProcesses object.
+     * 
      * @param core the Core to which to attach this
      */
     public ManagedProcesses(Core core)

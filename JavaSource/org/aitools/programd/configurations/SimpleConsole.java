@@ -21,11 +21,10 @@ import org.aitools.programd.interfaces.Console;
 import org.aitools.util.resource.URLTools;
 
 /**
- * A <code>SimpleConsole</code> gives you a running
- * {@link org.aitools.programd.Core Core} with a regular
+ * A <code>SimpleConsole</code> gives you a running {@link org.aitools.programd.Core Core} with a regular
  * {@link org.aitools.programd.interfaces.Console Console} and just a basic
- * {@link org.aitools.programd.interfaces.shell.Shell Shell} attached (if you enable
- * it). Input, output and error are routed via standard system objects.
+ * {@link org.aitools.programd.interfaces.shell.Shell Shell} attached (if you enable it). Input, output and error are
+ * routed via standard system objects.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.5

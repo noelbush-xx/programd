@@ -22,9 +22,9 @@ import org.aitools.util.resource.URLTools;
 public class ProgramDContextListener implements ServletContextListener
 {
     public static final String KEY_CORE = "core";
-    
+
     public static final String PARAM_CORE_CONFIG = "programd-core-config";
-    
+
     private ServletContext context = null;
 
     /**
@@ -35,7 +35,7 @@ public class ProgramDContextListener implements ServletContextListener
         this.context = sce.getServletContext();
 
         this.context.log("Configuring Program D Core from servlet context listener.");
-        
+
         // Check for the config parameter.
         String config = this.context.getInitParameter(PARAM_CORE_CONFIG);
         if (config == null || config.length() == 0)
@@ -43,7 +43,7 @@ public class ProgramDContextListener implements ServletContextListener
             this.context.log("No \"" + PARAM_CORE_CONFIG + "\" init-param specified for Program D.  Cannot continue.");
             return;
         }
-        
+
         // Create the base URL.
         URL baseURL;
         try

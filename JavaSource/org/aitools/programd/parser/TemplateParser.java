@@ -18,33 +18,28 @@ import org.aitools.programd.processor.aiml.AIMLProcessor;
 import org.apache.log4j.Logger;
 
 /**
- * <code>TemplateParser</code> has been rewritten (starting in 4.5) to use DOM
- * for parsing. It also eliminates handling of "deprecated AIML" (this will be
- * possible to handle again later with an extensible version of D).
+ * <code>TemplateParser</code> has been rewritten (starting in 4.5) to use DOM for parsing. It also eliminates
+ * handling of "deprecated AIML" (this will be possible to handle again later with an extensible version of D).
  */
 public class TemplateParser extends GenericParser<AIMLProcessor>
 {
     /**
-     * The values captured from the input by wildcards in the
-     * <code>pattern</code>.
+     * The values captured from the input by wildcards in the <code>pattern</code>.
      */
     private ArrayList<String> inputStars = new ArrayList<String>();
 
     /**
-     * The values captured from the input path by wildcards in the
-     * <code>that</code>.
+     * The values captured from the input path by wildcards in the <code>that</code>.
      */
     private ArrayList<String> thatStars = new ArrayList<String>();
 
     /**
-     * The values captured from the input path by wildcards in the
-     * <code>topic</code>.
+     * The values captured from the input path by wildcards in the <code>topic</code>.
      */
     private ArrayList<String> topicStars = new ArrayList<String>();
 
     /**
-     * The input that matched the <code>pattern</code> associated with this
-     * template (helps to avoid endless loops).
+     * The input that matched the <code>pattern</code> associated with this template (helps to avoid endless loops).
      */
     private ArrayList<String> inputs = new ArrayList<String>();
 
@@ -55,11 +50,10 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
     private String _botid;
 
     /**
-     * Initializes an <code>TemplateParser</code>. The <code>input</code>
-     * is a required parameter!
+     * Initializes an <code>TemplateParser</code>. The <code>input</code> is a required parameter!
      * 
-     * @param input the input that matched the <code>pattern</code> associated
-     *            with this template (helps to avoid endless loops)
+     * @param input the input that matched the <code>pattern</code> associated with this template (helps to avoid
+     *            endless loops)
      * @param userid the userid for whom the template is being parsed
      * @param botid the botid for whom the template is being parsed
      * @param core the Core in use
@@ -117,11 +111,9 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
     }
 
     /**
-     * Returns the input that matched the <code>pattern</code> associated with
-     * this template.
+     * Returns the input that matched the <code>pattern</code> associated with this template.
      * 
-     * @return the input that matched the <code>pattern</code> associated with
-     *         this template
+     * @return the input that matched the <code>pattern</code> associated with this template
      */
     public ArrayList<String> getInputs()
     {
@@ -129,11 +121,9 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
     }
 
     /**
-     * Returns the values captured from the input path by wildcards in the
-     * <code>pattern</code>.
+     * Returns the values captured from the input path by wildcards in the <code>pattern</code>.
      * 
-     * @return the values captured from the input path by wildcards in the
-     *         <code>pattern</code>
+     * @return the values captured from the input path by wildcards in the <code>pattern</code>
      */
     public ArrayList<String> getInputStars()
     {
@@ -141,11 +131,9 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
     }
 
     /**
-     * Returns the the values captured from the input path by wildcards in the
-     * <code>that</code>.
+     * Returns the the values captured from the input path by wildcards in the <code>that</code>.
      * 
-     * @return the values captured from the input path by wildcards in the
-     *         <code>that</code>
+     * @return the values captured from the input path by wildcards in the <code>that</code>
      */
     public ArrayList<String> getThatStars()
     {
@@ -153,11 +141,9 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
     }
 
     /**
-     * Returns the values captured from the input path by wildcards in the
-     * <code>topic name</code>.
+     * Returns the values captured from the input path by wildcards in the <code>topic name</code>.
      * 
-     * @return the values captured from the input path by wildcards in the
-     *         <code>topic name</code>
+     * @return the values captured from the input path by wildcards in the <code>topic name</code>
      */
     public ArrayList<String> getTopicStars()
     {
@@ -167,8 +153,7 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
     /**
      * Sets the <code>inputStars</code> list.
      * 
-     * @param stars values captured from the input path by wildcards in the
-     *            <code>pattern</code>
+     * @param stars values captured from the input path by wildcards in the <code>pattern</code>
      */
     public void setInputStars(ArrayList<String> stars)
     {
@@ -178,8 +163,7 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
     /**
      * Sets the <code>thatStars</code> list.
      * 
-     * @param stars values captured from the input path by wildcards in the
-     *            <code>that</code>
+     * @param stars values captured from the input path by wildcards in the <code>that</code>
      */
     public void setThatStars(ArrayList<String> stars)
     {
@@ -189,8 +173,7 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
     /**
      * Sets the <code>topicStars</code> Vector.
      * 
-     * @param stars captured from the input path by wildcards in the
-     *            <code>topic name</code>
+     * @param stars captured from the input path by wildcards in the <code>topic name</code>
      */
     public void setTopicStars(ArrayList<String> stars)
     {

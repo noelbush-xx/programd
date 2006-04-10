@@ -15,9 +15,8 @@ import org.aitools.programd.Core;
 import org.aitools.programd.parser.GenericParser;
 
 /**
- * A <code>Processor</code> is responsible for processing an element.
- * Subclasses of this base class need only implement the {@link #process} method
- * and set <code>label</code> to the appropriate string.
+ * A <code>Processor</code> is responsible for processing an element. Subclasses of this base class need only
+ * implement the {@link #process} method and set <code>label</code> to the appropriate string.
  * 
  * @since 4.1.3
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -28,9 +27,8 @@ abstract public class Processor
     protected Core _core;
 
     /*
-     * Every Processor should have a String called label. But we don't specify
-     * this here, to avoid a situation in which implementors are accused of
-     * "hiding" the member in the parent.
+     * Every Processor should have a String called label. But we don't specify this here, to avoid a situation in which
+     * implementors are accused of "hiding" the member in the parent.
      */
 
     // Convenience constants.
@@ -71,8 +69,8 @@ abstract public class Processor
      * @param element the element to process
      * @param parser the parser calling the processor
      * @return the result of processing the given element
-     * @throws ProcessorException if the <code>tag</code> or its contents are
-     *             invalid
+     * @throws ProcessorException if the <code>tag</code> or its contents are invalid
      */
-    abstract public <P extends Processor> String process(Element element, GenericParser<P> parser) throws ProcessorException;
+    abstract public <P extends Processor> String process(Element element, GenericParser<P> parser)
+            throws ProcessorException;
 }

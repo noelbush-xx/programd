@@ -33,13 +33,13 @@ abstract public class SubstitutionElementProcessor extends BotConfigurationEleme
     {
         /** an input substitution */
         INPUT,
-        
+
         /** a gender substitution */
         GENDER,
-        
+
         /** a person substitution */
         PERSON,
-        
+
         /** a person2 substitution */
         PERSON2
     }
@@ -70,7 +70,8 @@ abstract public class SubstitutionElementProcessor extends BotConfigurationEleme
      * @param parser the parser handling this
      * @throws ProcessorException if there is some problem processing
      */
-    protected void addSubstitutions(SubstitutionType type, Element element, BotsConfigurationFileParser parser) throws ProcessorException
+    protected void addSubstitutions(SubstitutionType type, Element element, BotsConfigurationFileParser parser)
+            throws ProcessorException
     {
         // Does it have an href attribute?
         if (element.hasAttribute(HREF))
@@ -78,14 +79,14 @@ abstract public class SubstitutionElementProcessor extends BotConfigurationEleme
             parser.verifyAndProcess(element.getAttribute(HREF));
             return;
         }
-        
+
         Bot bot = parser.getCurrentBot();
         List<Element> substitutions = XML.getElementChildrenOf(element);
 
         for (Element substitution : substitutions)
         {
             String find = substitution.getAttribute(FIND);
-            
+
             // Compile the find pattern.
             Pattern pattern;
             try
