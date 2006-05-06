@@ -68,7 +68,7 @@ GENERAL NOTES
     <entry key="programd.merge.append.separator-string"> </entry>
     
     <!--Produce a note in the console/log for each merge? [boolean: true]-->
-    <entry key="programd.merge.note-each">false</entry>
+    <entry key="programd.merge.note-each">true</entry>
     
     <!--The default value for undefined predicates. [String: undefined]-->
     <entry key="programd.predicate-empty-default">undefined</entry>
@@ -85,6 +85,12 @@ GENERAL NOTES
     
     <!--The input to match if an infinite loop is found. [String: INFINITE LOOP]-->
     <entry key="programd.infinite-loop-input">INFINITE LOOP</entry>
+    
+    <!--How to interpret random elements
+        * pure-random: Each choice is made from the full set, randomly.
+        * non-repeating: A choice is not repeated until all others have been used.
+                                         [enum(pure-random, non-repeating): non-repeating]-->
+    <entry key="programd.random.strategy">non-repeating</entry>
     
     <!-- Which bot predicate contains the client's name? [String: name]-->
     <entry key="programd.client-name-predicate">name</entry>

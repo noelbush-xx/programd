@@ -91,6 +91,21 @@ public class CoreSettings extends Settings
     private String infiniteLoopInput;
 
     /**
+     * How to interpret random elements
+     */
+    private RandomStrategy randomStrategy;
+    
+    /** The possible values for RandomStrategy. */
+    public static enum RandomStrategy
+    {
+        /** Each choice is made from the full set, randomly. */
+        PURE_RANDOM,
+        
+        /** A choice is not repeated until all others have been used. */
+        NON_REPEATING
+    }
+    
+    /**
      * Which bot predicate contains the client's name?
      */
     private String clientNamePredicate;
@@ -327,6 +342,17 @@ public class CoreSettings extends Settings
 
         setInfiniteLoopInput(this.properties.getProperty("programd.infinite-loop-input", "INFINITE LOOP"));
 
+        String randomStrategyValue = this.properties.getProperty("programd.strategy.value", "non-repeating");
+
+        if (randomStrategyValue.equals("pure-random"))
+        {
+            this.randomStrategy = RandomStrategy.PURE_RANDOM;
+        }
+        else if (randomStrategyValue.equals("non-repeating"))
+        {
+            this.randomStrategy = RandomStrategy.NON_REPEATING;
+        }
+
         setClientNamePredicate(this.properties.getProperty("programd.client-name-predicate", "name"));
 
         setBotNamePredicate(this.properties.getProperty("programd.bot-name-predicate", "name"));
@@ -511,6 +537,14 @@ public class CoreSettings extends Settings
     public String getInfiniteLoopInput()
     {
         return this.infiniteLoopInput;
+    }
+
+    /**
+     * @return the value of randomStrategy
+     */
+    public RandomStrategy getRandomStrategy()
+    {
+        return this.randomStrategy;
     }
 
     /**
@@ -831,6 +865,14 @@ public class CoreSettings extends Settings
     public void setInfiniteLoopInput(String infiniteLoopInputToSet)
     {
         this.infiniteLoopInput = infiniteLoopInputToSet;
+    }
+
+    /**
+     * @param randomStrategyToSet the value to which to set randomStrategy
+     */
+    public void setRandomStrategy(RandomStrategy randomStrategyToSet)
+    {
+        this.randomStrategy = randomStrategyToSet;
     }
 
     /**
