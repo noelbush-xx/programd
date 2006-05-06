@@ -1,43 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:transform xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0"
-    xmlns:d="http://aitools.org/programd">
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:d="http://aitools.org/programd/4.6">
     <xsl:output method="text"/>
-    <!--The root template:
-        Get a few values from the specially-formatted
-        "config-comment" at the top of the file.
-        I know it's bad to use comments to get information,
-        but without making a new doctype for Java properties,
-        this is the simplest way to go about it.  I prefer this
-        to passing in parameters externally.-->
     <xsl:template match="/">
-        <xsl:variable name="config-comment" select="string(properties/comment()[1])"/>
-        <xsl:variable name="full-classname"
-            select="substring-before(substring-after($config-comment, 'generate: '), ']')"/>
-        <xsl:variable name="strip-prefix"
-            select="d:escape-metacharacters(substring-before(substring-after($config-comment, 'strip-prefix: '), ']'))"/>
-        <!--
-        <xsl:variable name="source-directory"
-            select="substring-before(substring-after($config-comment, 'source: '), ']')"/>
-        -->
-        <xsl:apply-templates select="properties">
-            <!--
-            <xsl:with-param name="output-file"
-                select="resolve-uri(concat($source-directory, replace($full-classname, '\.', '/'), '.java'))"/>
-            -->
-            <xsl:with-param name="package" select="replace($full-classname, '\.[^.]+$', '')"/>
-            <xsl:with-param name="classname"
-                select="replace($full-classname, '^.+\.([^.]+)$', '$1')"/>
-            <xsl:with-param name="strip-prefix" select="$strip-prefix"/>
-        </xsl:apply-templates>
+        <xsl:apply-templates select="xs:schema"/>
     </xsl:template>
-    <!--Create the whole content of the class.-->
-    <xsl:template match="properties">
-        <!--
-        <xsl:param name="output-file"/>
-        -->
-        <xsl:param name="package"/>
-        <xsl:param name="classname"/>
-        <xsl:param name="strip-prefix"/>
+    <xsl:template match="xs:schema">
+        <xsl:variable name="classname" select="string(xs:annotation/xs:appinfo/d:class-name)"/>
+        <xsl:variable name="simple-classname" select="replace($classname, '^.+\.([^\.]+)$', '$1')"/>
+        <xsl:variable name="package" select="replace($classname, '^(.+)\.[^\.]+$', '$1')"/>
         <!--Copyleft notice.-->
         <xsl:text>/*
  * This program is free software; you can redistribute it and/or modify it under
@@ -71,22 +43,21 @@ import org.aitools.programd.util.UserError;
         <xsl:text>
  */
 public class </xsl:text>
-        <xsl:value-of select="$classname"/>
+        <xsl:value-of select="$simple-classname"/>
         <xsl:text> extends Settings
 {
 </xsl:text>
-        <xsl:apply-templates select="entry" mode="variable-declarations">
+        <xsl:apply-templates select="//d:property-name" mode="variable-declarations">
             <xsl:with-param name="package" select="$package"/>
             <xsl:with-param name="classname" select="$classname"/>
-            <xsl:with-param name="strip-prefix" select="$strip-prefix"/>
         </xsl:apply-templates>
         <xsl:text>    /**
      * Creates a &lt;code&gt;</xsl:text>
-        <xsl:value-of select="$classname"/>
+        <xsl:value-of select="$simple-classname"/>
         <xsl:text>&lt;/code&gt; using default property values.
      */
     public </xsl:text>
-        <xsl:value-of select="$classname"/>
+        <xsl:value-of select="$simple-classname"/>
         <xsl:text>()
     {
         super();
@@ -94,14 +65,14 @@ public class </xsl:text>
     
     /**
      * Creates a &lt;code&gt;</xsl:text>
-        <xsl:value-of select="$classname"/>
+        <xsl:value-of select="$simple-classname"/>
         <xsl:text>&lt;/code&gt; with the (XML-formatted) properties
      * located at the given path.
      *
      * @param propertiesPath the path to the configuration file
      */
     public </xsl:text>
-        <xsl:value-of select="$classname"/>
+        <xsl:value-of select="$simple-classname"/>
         <xsl:text>(URL propertiesPath)
     {
         super(propertiesPath);
@@ -111,25 +82,21 @@ public class </xsl:text>
         <xsl:apply-templates select="." mode="initialize-method">
             <xsl:with-param name="package" select="$package"/>
             <xsl:with-param name="classname" select="$classname"/>
-            <xsl:with-param name="strip-prefix" select="$strip-prefix"/>
         </xsl:apply-templates>
-        <xsl:apply-templates select="entry" mode="getters">
+        <xsl:apply-templates select="//d:property-name" mode="getters">
             <xsl:with-param name="package" select="$package"/>
             <xsl:with-param name="classname" select="$classname"/>
-            <xsl:with-param name="strip-prefix" select="$strip-prefix"/>
         </xsl:apply-templates>
-        <xsl:apply-templates select="entry" mode="setters">
+        <xsl:apply-templates select="//d:property-name" mode="setters">
             <xsl:with-param name="package" select="$package"/>
             <xsl:with-param name="classname" select="$classname"/>
-            <xsl:with-param name="strip-prefix" select="$strip-prefix"/>
         </xsl:apply-templates>
         <xsl:text>}</xsl:text>
     </xsl:template>
     <!--Create the initialize() method.-->
-    <xsl:template match="properties" mode="initialize-method">
+    <xsl:template match="xs:schema" mode="initialize-method">
         <xsl:param name="package"/>
         <xsl:param name="classname"/>
-        <xsl:param name="strip-prefix"/>
         <xsl:text>    /**
     * Initializes the Settings with values from properties, or defaults.
     */
@@ -137,33 +104,30 @@ public class </xsl:text>
     protected void initialize()
     {
 </xsl:text>
-        <xsl:apply-templates select="entry" mode="initialize">
+        <xsl:apply-templates select="//d:property-name" mode="initialize">
             <xsl:with-param name="package" select="$package"/>
             <xsl:with-param name="classname" select="$classname"/>
-            <xsl:with-param name="strip-prefix" select="$strip-prefix"/>
         </xsl:apply-templates>
         <xsl:text>    }
 
 </xsl:text>
     </xsl:template>
     <!--Initialize a property.-->
-    <xsl:template match="entry" mode="initialize">
+    <xsl:template match="d:property-name" mode="initialize">
         <xsl:param name="package"/>
         <xsl:param name="classname"/>
-        <xsl:param name="strip-prefix"/>
-        <xsl:variable name="propertyName" select="d:make-property-name(@key, $strip-prefix)"/>
-        <xsl:variable name="description"
-            select="replace(preceding-sibling::comment()[1], '    \*', '*')"/>
         <!--Discover type.-->
-        <xsl:variable name="type" select="d:get-type($description)"/>
+        <xsl:variable name="type" select="d:get-type(ancestor::xs:element/@type)"/>
         <!--Discover default.-->
-        <xsl:variable name="default" select="d:get-default($description)"/>
+        <xsl:variable name="default" select="d:get-default(.)"/>
+        <!--Get the description.-->
+        <xsl:variable name="description" select="d:get-description(.)"/>
         <xsl:choose>
             <xsl:when test="$type = 'int'">
                 <xsl:text>        try
         {
             set</xsl:text>
-                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:value-of select="d:title-case(.)"/>
                 <xsl:text>(Integer.parseInt(this.properties.getProperty("</xsl:text>
                 <xsl:value-of select="@key"/>
                 <xsl:text>", "</xsl:text>
@@ -173,7 +137,7 @@ public class </xsl:text>
         catch (NumberFormatException e)
         {
             set</xsl:text>
-                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:value-of select="d:title-case(.)"/>
                 <xsl:text>(</xsl:text>
                 <xsl:value-of select="$default"/>
                 <xsl:text>);
@@ -181,7 +145,7 @@ public class </xsl:text>
             </xsl:when>
             <xsl:when test="$type = 'boolean'">
                 <xsl:text>        set</xsl:text>
-                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:value-of select="d:title-case(.)"/>
                 <xsl:text>(Boolean.valueOf(this.properties.getProperty("</xsl:text>
                 <xsl:value-of select="@key"/>
                 <xsl:text>", "</xsl:text>
@@ -190,7 +154,7 @@ public class </xsl:text>
             </xsl:when>
             <xsl:when test="$type = 'enum'">
                 <xsl:text>        String </xsl:text>
-                <xsl:value-of select="$propertyName"/>
+                <xsl:value-of select="."/>
                 <xsl:text>Value = this.properties.getProperty("</xsl:text>
                 <xsl:value-of select="@key"/>
                 <xsl:text>", "</xsl:text>
@@ -203,15 +167,15 @@ public class </xsl:text>
                         <xsl:text>else </xsl:text>
                     </xsl:if>
                     <xsl:text>if (</xsl:text>
-                    <xsl:value-of select="$propertyName"/>
+                    <xsl:value-of select="."/>
                     <xsl:text>Value.equals("</xsl:text>
                     <xsl:value-of select="."/>
                     <xsl:text>"))
          {
              this.</xsl:text>
-                    <xsl:value-of select="$propertyName"/>
+                    <xsl:value-of select="."/>
                     <xsl:text> = </xsl:text>
-                    <xsl:value-of select="d:title-case($propertyName)"/>
+                    <xsl:value-of select="d:title-case(.)"/>
                     <xsl:text>.</xsl:text>
                     <xsl:value-of select="upper-case(.)"/>
                     <xsl:text>;
@@ -223,7 +187,7 @@ public class </xsl:text>
                 <xsl:text>        try
         {
             set</xsl:text>
-                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:value-of select="d:title-case(.)"/>
                 <xsl:text>(new URI(this.properties.getProperty("</xsl:text>
                 <xsl:value-of select="@key"/>
                 <xsl:text>", "</xsl:text>
@@ -237,7 +201,7 @@ public class </xsl:text>
             </xsl:when>
             <xsl:when test="$type = 'URL'">
                 <xsl:text>        set</xsl:text>
-                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:value-of select="d:title-case(.)"/>
                 <xsl:text>(URLTools.contextualize(this.path, this.properties.getProperty("</xsl:text>
                 <xsl:value-of select="@key"/>
                 <xsl:text>", "</xsl:text>
@@ -246,7 +210,7 @@ public class </xsl:text>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:text>        set</xsl:text>
-                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:value-of select="d:title-case(.)"/>
                 <xsl:text>(this.properties.getProperty("</xsl:text>
                 <xsl:value-of select="@key"/>
                 <xsl:text>", "</xsl:text>
@@ -259,15 +223,12 @@ public class </xsl:text>
 </xsl:text>
     </xsl:template>
     <!--Build the property variable declaration.-->
-    <xsl:template match="entry" mode="variable-declarations">
+    <xsl:template match="d:property-name" mode="variable-declarations">
         <xsl:param name="package"/>
         <xsl:param name="classname"/>
-        <xsl:param name="strip-prefix"/>
-        <xsl:variable name="propertyName" select="d:make-property-name(@key, $strip-prefix)"/>
         <xsl:text>    /**
 </xsl:text>
-        <xsl:variable name="description"
-            select="replace(preceding-sibling::comment()[1], '    \*', '*')"/>
+        <xsl:variable name="description" select="string(ancestor::xs:annotation/xs:documentation)"/>
         <xsl:if test="$description">
             <xsl:text>     * </xsl:text>
             <xsl:value-of select="normalize-space(replace(replace($description, '\*.*', '', 's'), '\[.+\]', ''))"/>
@@ -277,20 +238,20 @@ public class </xsl:text>
         <xsl:text>     */
     private </xsl:text>
         <!--Discover type.-->
-        <xsl:variable name="type" select="d:get-type($description)"/>
+        <xsl:variable name="type" select="d:get-type(.)"/>
         <xsl:choose>
             <xsl:when test="$type = 'enum'">
                 <xsl:text></xsl:text>
-                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:value-of select="d:title-case(.)"/>
                 <xsl:text> </xsl:text>
-                <xsl:value-of select="$propertyName"/>
+                <xsl:value-of select="."/>
                 <xsl:text>;
     
     /** The possible values for </xsl:text>
-                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:value-of select="d:title-case(.)"/>
                 <xsl:text>. */
     public static enum </xsl:text>
-                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:value-of select="d:title-case(.)"/>
                 <xsl:text>
     {
         </xsl:text>
@@ -318,7 +279,7 @@ public class </xsl:text>
             <xsl:otherwise>
                 <xsl:value-of select="$type"/>
                 <xsl:text> </xsl:text>
-                <xsl:value-of select="$propertyName"/>
+                <xsl:value-of select="."/>
                 <xsl:text>;
         
 </xsl:text>
@@ -326,99 +287,107 @@ public class </xsl:text>
         </xsl:choose>
     </xsl:template>
     <!--Build the getters.-->
-    <xsl:template match="entry" mode="getters">
+    <xsl:template match="d:property-name" mode="getters">
         <xsl:param name="package"/>
         <xsl:param name="classname"/>
-        <xsl:param name="strip-prefix"/>
-        <xsl:variable name="propertyName" select="d:make-property-name(@key, $strip-prefix)"/>
         <xsl:text>    /**
+     * Returns the value of </xsl:text>
+        <xsl:value-of select="."/>.
+        <xsl:text>
+     * 
      * @return the value of </xsl:text>
-        <xsl:value-of select="$propertyName"/>
+        <xsl:value-of select="."/>
         <xsl:text>
      */
     public </xsl:text>
-        <xsl:variable name="description"
-            select="replace(preceding-sibling::comment()[1], '    \*', '*')"/>
+        <xsl:variable name="description" select="d:get-description(.)"/>
         <!--Discover type.-->
-        <xsl:variable name="type" select="d:get-type($description)"/>
+        <xsl:variable name="type" select="d:get-type(.)"/>
         <xsl:choose>
             <xsl:when test="$type = 'boolean'">
                 <xsl:text>boolean </xsl:text>
-                <xsl:value-of select="$propertyName"/>
+                <xsl:value-of select="."/>
             </xsl:when>
             <xsl:when test="$type = 'enum'">
-                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:value-of select="d:title-case(.)"/>
                 <xsl:text> get</xsl:text>
-                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:value-of select="d:title-case(.)"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="$type"/>
                 <xsl:text> </xsl:text>
                 <xsl:text>get</xsl:text>
-                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:value-of select="d:title-case(.)"/>
             </xsl:otherwise>
         </xsl:choose>
         <xsl:text>()
     {
         return this.</xsl:text>
-        <xsl:value-of select="$propertyName"/>
+        <xsl:value-of select="."/>
         <xsl:text>;
     }
 
 </xsl:text>
     </xsl:template>
     <!--Build the setters.-->
-    <xsl:template match="entry" mode="setters">
+    <xsl:template match="d:property-name" mode="setters">
         <xsl:param name="package"/>
         <xsl:param name="classname"/>
-        <xsl:param name="strip-prefix"/>
-        <xsl:variable name="propertyName" select="d:make-property-name(@key, $strip-prefix)"/>
         <xsl:text>    /**
-     * @param </xsl:text>
-        <xsl:value-of select="$propertyName"/>
-        <xsl:text>ToSet   the value to which to set </xsl:text>
-        <xsl:value-of select="$propertyName"/>
+     * Sets </xsl:text>
+        <xsl:value-of select="."/>.
+        <xsl:text>
+     * 
+     * @param value the value for </xsl:text>
+        <xsl:value-of select="."/>
         <xsl:text>
      */
     public void set</xsl:text>
-        <xsl:value-of select="d:title-case($propertyName)"/>
+        <xsl:value-of select="d:title-case(.)"/>
         <xsl:text>(</xsl:text>
-        <xsl:variable name="description"
-            select="replace(preceding-sibling::comment()[1], '    \*', '*')"/>
+        <xsl:variable name="description" select="d:get-description(.)"/>
         <!--Discover type.-->
-        <xsl:variable name="type" select="d:get-type($description)"/>
+        <xsl:variable name="type" select="d:get-type(.)"/>
         <xsl:choose>
             <xsl:when test="$type = 'enum'">
-                <xsl:value-of select="d:title-case($propertyName)"/>
+                <xsl:value-of select="d:title-case(.)"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="$type"/>
             </xsl:otherwise>
         </xsl:choose>
-        <xsl:text> </xsl:text>
-        <xsl:value-of select="$propertyName"/>
-        <xsl:text>ToSet)
+        <xsl:text> value)
     {
         this.</xsl:text>
-        <xsl:value-of select="$propertyName"/>
-        <xsl:text> = </xsl:text>
-        <xsl:value-of select="$propertyName"/>
-        <xsl:text>ToSet;
+        <xsl:value-of select="."/>
+        <xsl:text> = value;
     }
 
 </xsl:text>
     </xsl:template>
+    <xsl:function name="d:get-description">
+        <xsl:param name="property-name-node"/>
+        <xsl:value-of select="$property-name-node/ancestor::xs:annotation/xs:documentation"/>
+    </xsl:function>
     <!--Determine the type of a property.-->
     <xsl:function name="d:get-type">
-        <xsl:param name="description"/>
-        <xsl:variable name="typespec" select="substring-before(substring-after($description, '['), ':')"/>
+        <xsl:param name="property-name-node"/>
+        <xsl:variable name="xs-type">
+            <xsl:choose>
+                <xsl:when test="$property-name-node/ancestor::xs:attribute">
+                    <xsl:value-of select="$property-name-node/ancestor::xs:attribute/@type"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="$property-name-node/ancestor::xs:element/@type"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:choose>
-            <xsl:when test="contains($typespec, '(')">
-                <xsl:sequence select="substring-before($typespec, '(')"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:sequence select="$typespec"/>
-            </xsl:otherwise>
+            <xsl:when test="$xs-type = 'xs:anyURI'">URI</xsl:when>
+            <xsl:when test="$xs-type = 'xs:string'">String</xsl:when>
+            <xsl:when test="$xs-type = 'xs:int'">int</xsl:when>
+            <xsl:when test="$xs-type = 'xs:boolean'">boolean</xsl:when>
+            <xsl:otherwise><xsl:value-of select="$xs-type"/></xsl:otherwise>
         </xsl:choose>
     </xsl:function>
     <!--Determine the values for an enum.-->
@@ -429,10 +398,8 @@ public class </xsl:text>
     </xsl:function>
     <!--Determine the default value for a property.-->
     <xsl:function name="d:get-default">
-        <xsl:param name="description"/>
-        <xsl:sequence
-            select="substring-before(substring-after(substring-after($description, '['), ': '), ']')"
-        />
+        <xsl:param name="property-name-node"/>
+        <xsl:value-of select="$property-name-node/ancestor::xs:element/@default"/>
     </xsl:function>
     <!--Get the description for an enum value.-->
     <xsl:function name="d:get-enum-value-description">
