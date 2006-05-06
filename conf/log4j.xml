@@ -110,12 +110,19 @@
     </appender>
 
     <!--Database logging for all bots (no botid filter applied)-->
-    <appender name="DBChatlog" class="org.apache.log4j.jdbc.JDBCAppender">
+    <!--<appender name="DBChatlog" class="org.apache.log4j.jdbc.JDBCAppender">
         <param name="URL" value="jdbc:mysql:///programdbot" />
         <param name="Driver" value="com.mysql.jdbc.Driver" />
         <param name="User" value="user" />
         <param name="Password" value="password" />
         <layout class="org.aitools.programd.logging.DBChatLogLayout"/>
+        <filter class="org.aitools.programd.logging.ChatLogEventFilter" />
+    </appender>-->
+    <appender name="DBChatlog" class="org.apache.log4j.jdbcplus.JDBCAppender">
+        <param name="url" value="jdbc:mysql:///programdbot" />
+        <param name="username" value="user" />
+        <param name="password" value="password" />
+        <param name="sqlhandler" value="org.aitools.programd.logging.ChatLogSqlHandler" />
         <filter class="org.aitools.programd.logging.ChatLogEventFilter" />
     </appender>
 
