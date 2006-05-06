@@ -1024,4 +1024,14 @@ DDDDDDDDDD</html:pre>
             <template>Test failed.</template>
         </category>
     </topic>
+    <category>
+        <pattern>TESTSETVARIABLEFROMJAVASCRIPT</pattern>
+        <template>
+            Test case #47.
+            <html:br/>
+            <think><javascript>var failed = 'passed'</javascript></think>
+            <set name="result"><javascript>failed</javascript></set>
+            Test case <get name="result"/>.
+        </template>
+    </category>
 </aiml>
