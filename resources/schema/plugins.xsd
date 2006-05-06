@@ -20,7 +20,7 @@
                                         <xs:element name="parameter" minOccurs="0"
                                             maxOccurs="unbounded" type="d:Parameter"/>
                                     </xs:sequence>
-                                    <xs:attribute name="class" type="d:JavaClassname" use="required"/>
+                                    <xs:attribute name="class" type="d:class-name" use="required"/>
                                     <xs:attribute name="enabled" type="xs:boolean" use="required"/>
                                 </xs:complexType>
                             </xs:element>
