@@ -9,11 +9,15 @@
 
 package org.aitools.programd.processor.aiml;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.w3c.dom.Element;
 
 import org.aitools.programd.Core;
+import org.aitools.programd.CoreSettings;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.util.math.MersenneTwisterFast;
@@ -25,7 +29,7 @@ import org.apache.commons.collections.map.LRUMap;
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-random">random</a></code> element.
  * </p>
  * <p>
- * This improved version (since 4.1.5) employs the notion that to achieve the kind of randomness expected by
+ * To achieve the kind of randomness expected by
  * users and AIML authors, the following requirements exist:
  * </p> 
  * <ul>
@@ -42,8 +46,13 @@ import org.apache.commons.collections.map.LRUMap;
  *     are <code>m</code> bots, <code>n</code> users, and <code>p</code> random elements, there are (potentially)
  *     <code>m * n * n</code> independent random number series.</li>
  * </ul>
+ * <p>
+ * As an alternative to the first point, it is possible (since 4.7) to set Program D to process <code>random</code>
+ * elements in a kind of stack-based fashion, so no list item will be repeated (within the same per-user, per-bot
+ * space) until all others have been chosen.
+ * </p>
  * 
- * @version 4.5
+ * @version 4.7
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
@@ -62,6 +71,15 @@ public class RandomProcessor extends AIMLProcessor
      * random element.
      */
     private static final LRUMap generators = new LRUMap(100);
+    
+    /**
+     * The map in which indices not-yet-used listitems will be stored if
+     * non-repeating random choosing is enabled.  (We store indices rather
+     * than references to the listitems themselves, because the DOM Element doesn't
+     * appear to implement equals() in a way that makes List operations like remove()
+     * work.
+     */
+    private static final Map<String, List<Integer>> AVAILABLE_INDICES = new HashMap<String, List<Integer>>();
 
     /**
      * Creates a new RandomProcessor using the given Core.
@@ -76,12 +94,14 @@ public class RandomProcessor extends AIMLProcessor
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
+    @SuppressWarnings("boxing")
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         // Construct the identifying string (botid + userid + element
         // contents).
-        String identifier = parser.getBotID() + parser.getUserID() + element.toString();
+        String userid = parser.getUserID();
+        String identifier = parser.getBotID() + userid + element.toString();
 
         // Does the generators map already contain this one?
         MersenneTwisterFast generator = (MersenneTwisterFast)generators.get(identifier);
@@ -100,7 +120,78 @@ public class RandomProcessor extends AIMLProcessor
             return parser.evaluate(listitems.get(0).getChildNodes());
         }
 
-        // Otherwise, select a random element of the listitem.
-        return parser.evaluate(listitems.get(generator.nextInt(nodeCount)).getChildNodes());
+        // Otherwise, select a random element of the listitem (if strategy is pure-random).
+        if (this._core.getSettings().getRandomStrategy() == CoreSettings.RandomStrategy.PURE_RANDOM)
+        {
+            return parser.evaluate(listitems.get(generator.nextInt(nodeCount)).getChildNodes());
+        }
+        
+        // If we get here, then the no-repeat strategy is wanted.
+        List<Integer> indices;
+        Integer choice = null;
+        
+        // Check whether this random + userid + botid has been selected before.
+        if (AVAILABLE_INDICES.containsKey(identifier))
+        {
+            // If it has, get the remaining available sets.
+            indices = AVAILABLE_INDICES.get(identifier);
+            
+            // Note that, because of the logic below, this set will never get to size 0.
+            assert indices.size() > 0 : "Random strategy logic failed.";
+
+            /*
+             * If it is complete, then we've been through all before, and
+             * the last index in the list was the last one chosen (see below),
+             * so make sure this first choice does not repeat the last one.
+             */
+            if (indices.size() == nodeCount)
+            {
+                choice = indices.get(generator.nextInt(indices.size() - 1));
+            }
+            else
+            {
+                // Otherwise just make a random choice from the indices.
+                choice = indices.get(generator.nextInt(indices.size()));
+            }
+        }
+        else
+        {
+            // If it has not (been selected before), create a new set containing an index for each listitem.
+            indices = makeIncrementingList(nodeCount);
+            AVAILABLE_INDICES.put(identifier, indices);
+
+            // Make a random choice from the indices.
+            choice = indices.get(generator.nextInt(indices.size()));
+        }
+        
+        // Remove the chosen index.
+        indices.remove(choice);
+        
+        // If this has reduced the size to zero,
+        if (indices.size() == 0)
+        {
+            // Reconstitute the list,
+            indices.addAll(makeIncrementingList(nodeCount));
+            
+            // but remove the last choice,
+            indices.remove(choice);
+            
+            // and place it last, so we can avoid repeating it next go-round (see above).
+            indices.add(choice);
+        }
+        
+        // Evaluate the node corresponding to the chosen index.
+        return parser.evaluate(listitems.get(choice).getChildNodes());
+    }
+    
+    @SuppressWarnings("boxing")
+    private static List<Integer> makeIncrementingList(int size)
+    {
+        List<Integer> result = new ArrayList<Integer>();
+        for (int index = 0; index < size; index++)
+        {
+            result.add(index);
+        }
+        return result;
     }
 }
