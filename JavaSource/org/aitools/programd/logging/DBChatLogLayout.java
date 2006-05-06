@@ -53,7 +53,7 @@ public class DBChatLogLayout extends SimpleLayout
      *            the ChatLogEvent to format
      * @return the result of formatting the given ChatLogEvent
      */
-    public String format(ChatLogEvent event)
+    public static String format(ChatLogEvent event)
     {
         try
         {
