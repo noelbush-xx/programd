@@ -1,7 +1,7 @@
 <dwr>
     <allow>
         <create creator="new" javascript="bot" scope="session">
-            <param name="class" value="com.botmachine.webapp.beans.BotAccessBean" />
+            <param name="class" value="org.aitools.programd.server.BotAccess" />
         </create>
     </allow>
 </dwr>
