@@ -14,6 +14,9 @@ package org.aitools.programd.multiplexor;
  */
 public class PredicateInfo
 {
+    /** The name of the predicate. */
+    private String name;
+    
     /** The default value of the predicate. */
     private String defaultValue;
 
@@ -32,8 +35,17 @@ public class PredicateInfo
     @SuppressWarnings("unused")
     public PredicateInfo(String predicateName, String defaultPredicateValue, boolean returnNameSetting)
     {
+        this.name = predicateName;
         this.defaultValue = defaultPredicateValue;
         this.returnNameWhenSet = returnNameSetting;
+    }
+    
+    /**
+     * @return the predicate name
+     */
+    public String getName()
+    {
+        return this.name;
     }
 
     /**
