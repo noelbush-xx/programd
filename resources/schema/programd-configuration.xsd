@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://aitools.org/programd/4.6/programd-configuration"
+    xmlns:d="http://aitools.org/programd/4.6" xmlns:sch="http://www.ascc.net/xml/schematron"
+    targetNamespace="http://aitools.org/programd/4.6/programd-configuration"
+    elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xml:lang="EN">
+    <xs:annotation>
+        <xs:documentation>
+            This is the schema for the Program D configuration file (often named core.xml).
+        </xs:documentation>
+        <xs:appinfo>
+            <d:class-name>org.aitools.programd.CoreSettings</d:class-name>
+        </xs:appinfo>
+    </xs:annotation>
+    <xs:import namespace="http://aitools.org/programd/4.6"
+        schemaLocation="http://aitools.org/programd/4.6/common-types.xsd" />
+    <xs:element name="programd">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="aiml.namespace-uri" type="xs:anyURI"
+                    default="http://alicebot.org/2001/AIML-1.0.1">
+                    <xs:annotation>
+                        <xs:documentation>The namespace URI of AIML to use.</xs:documentation>
+                        <xs:appinfo>
+                            <d:property-name>aimlNamespaceURI</d:property-name>
+                        </xs:appinfo>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="paths">
+                    <xs:annotation>
+                        <xs:documentation>Paths to other files used in configuring/running Program D.</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="bot-config" type="URL" default="bots.xml">
+                                <xs:annotation>
+                                    <xs:documentation>The bot configuration file.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>botConfigURL</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="plugin-config" type="URL" default="plugins.xml">
+                                <xs:annotation>
+                                    <xs:documentation>Configuration file for plugins.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>pluginConfigURL</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="gossip" type="URL" default="/var/log/programd/gossip.txt">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        Where to write gossip entries. Gossip entries will be written like this:
+                                        &lt;li&gt;the gossip&lt;/li&gt;
+                                    </xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>gossipURL</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="predicates">
+                    <xs:annotation>
+                        <xs:documentation>Configuration of predicates.</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="empty-default" type="xs:string" default="undefined">
+                                <xs:annotation>
+                                    <xs:documentation>The default value for undefined predicates.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>predicateEmptyDefault</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="client-name-predicate" type="xs:string" default="name">
+                                <xs:annotation>
+                                    <xs:documentation>Which predicate contains the client's name.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>clientNamePredicate</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="bot-name-property" type="xs:string" default="name">
+                                <xs:annotation>
+                                    <xs:documentation>Which bot property contains the bot's name.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>botNameProperty</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="cache-maximum-size" type="xs:int" default="500">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        The maximum size of the predicate cache before it is written to disk/database.
+                                    </xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>predicateCacheMaximumSize</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="multiplexor">
+                    <xs:annotation>
+                        <xs:documentation>Configuration of the Multiplexor.</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="implementation" type="MultiplexorImplementation"
+                                default="org.aitools.programd.multiplexor.FlatFileMultiplexor">
+                                <xs:annotation>
+                                    <xs:documentation>The Multiplexor implementation to use.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>multiplexorImplementation</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="ffm-dir" type="URL" default="/var/programd/ffm">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        The directory in which to save flat-file predicates (if the FlatFileMultiplexor is used).
+                                    </xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>ffmDirectory</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="database">
+                    <xs:annotation>
+                        <xs:documentation>Configuration of the database (if used).</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="url" type="xs:string" default="jdbc:mysql:///programdbot">
+                                <xs:annotation>
+                                    <xs:documentation>The URL of the database to use.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>databaseURL</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="driver" type="xs:string" default="com.mysql.jdbc.Driver">
+                                <xs:annotation>
+                                    <xs:documentation>The database driver to use.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>databaseDriver</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="maximum-connections" type="xs:int" default="25">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        The maximum number of simultaneous connections to the database.
+                                        <xs:appinfo>
+                                            <d:property-name>databaseMaximumConnections</d:property-name>
+                                        </xs:appinfo>
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="username" type="xs:string" default="programd">
+                                <xs:annotation>
+                                    <xs:documentation>The username which with to access the database.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>databaseUsername</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="password" type="xs:string" default="yourpassword">
+                                <xs:annotation>
+                                    <xs:documentation>The password for the database.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>databasePassword</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="merge">
+                    <xs:annotation>
+                        <xs:documentation>Configuration of the merge behavior of Program D (handling duplicate category paths).</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="policy" type="MergePolicy" default="combine">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        What to do when a category is loaded whose pattern:that:topic path is identical to one
+                                        already loaded (for the same bot).
+                                    </xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>mergePolicy</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="note-each" type="xs:boolean" default="true">
+                                <xs:annotation>
+                                    <xs:documentation>Produce a note in the console/log for each merge?</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>noteEachMerge</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="append-policy.separator-string" type="xs:string" default=" ">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        If the append merge policy is used, what text content (if any) should be inserted between
+                                        the contents of the two templates? (The default value is a space.)
+                                    </xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>appendMergeSeparatorString</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="exceptions">
+                    <xs:annotation>
+                        <xs:documentation>Handling of unusual situations, errors or exceptions.</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="response-timeout" type="xs:int" default="1000">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        The maximum allowable time (in milliseconds) to get a response.
+                                    </xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>responseTimeout</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="infinite-loop-input" type="xs:string" default="INFINITE LOOP">
+                                <xs:annotation>
+                                    <xs:documentation>The input to match if an infinite loop is found.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>infiniteLoopInput</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="on-uncaught-exceptions.print-stack-trace" type="xs:boolean" default="false">
+                                <xs:annotation>
+                                    <xs:documentation>Whether to print a stack trace on uncaught exceptions.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>printStackTraceOnUncaughtExceptions</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="heart">
+                    <xs:annotation>
+                        <xs:documentation>
+                            The heart can beat and let you know the bot is alive. Right now the
+                            only kind of pulse is a message "I'm alive!" printed to the console. You can write a
+                            "Pulse" that can do something more useful, like ping a server.
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="pulserate" type="xs:int" default="5">
+                                <xs:annotation>
+                                    <xs:documentation>The pulse rate for the heart (beats per minute).</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>heartPulseRate</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="enabled" type="xs:boolean">
+                            <xs:annotation>
+                                <xs:documentation>Enable the heart?</xs:documentation>
+                                <xs:appinfo>
+                                    <d:property-name>heartEnabled</d:property-name>
+                                </xs:appinfo>
+                            </xs:annotation>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="schema-locations">
+                    <xs:annotation>
+                        <xs:documentation>Locations of schemas used by Program D.  Optimally, these are local copies.</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="AIML" type="URL" default="../resources/schema/AIML.xsd">
+                                <xs:annotation>
+                                    <xs:documentation>The location of the AIML schema.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>aimlSchemaLocation</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="plugins" type="URL" default="../resources/schema/plugins.xsd">
+                                <xs:annotation>
+                                    <xs:documentation>The location of the plugin schema.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>pluginSchemaLocation</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="test-cases" type="URL" default="../resources/schema/test-cases.xsd">
+                                <xs:annotation>
+                                    <xs:documentation>The location of the test cases schema.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>testCaseSchemaLocation</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="connect-string" type="xs:string" default="CONNECT">
+                    <xs:annotation>
+                        <xs:documentation>
+                            The string to send when first connecting to the bot. If this value is empty, no value will be sent.
+                        </xs:documentation>
+                        <xs:appinfo>
+                            <d:property-name>connectString</d:property-name>
+                        </xs:appinfo>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="nodemapper.implementation" type="NodemapperImplementation"
+                    default="org.aitools.programd.graph.TwoOptimalNodemaster">
+                    <xs:annotation>
+                        <xs:documentation>The Nodemapper implementation to use.</xs:documentation>
+                        <xs:appinfo>
+                            <d:property-name>nodemapperImplementation</d:property-name>
+                        </xs:appinfo>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="use-shell" type="xs:boolean" default="true">
+                    <xs:annotation>
+                        <xs:documentation>Use interactive command-line shell?</xs:documentation>
+                        <xs:appinfo>
+                            <d:property-name>useShell</d:property-name>
+                        </xs:appinfo>
+                    </xs:annotation>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="URL">
+        <xs:annotation>
+            <xs:documentation>
+                This might (or might not) be usefully restricted further than what xs:anyURI already does.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:anyURI" />
+    </xs:simpleType>
+    <xs:simpleType name="MergePolicy">
+        <xs:annotation>
+            <xs:documentation>
+                A strategy for handling situations when a category whose path matches that of an already-loaded category
+                is encountered during loading.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="skip">
+                <xs:annotation>
+                    <xs:documentation>
+                        Leave the currently loaded template in place and ignore the new one.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="overwrite">
+                <xs:annotation>
+                    <xs:documentation>Overwrite the loaded template with the new one.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="append">
+                <xs:annotation>
+                    <xs:documentation>
+                        Append the content of the new template to the currently loaded one.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="combine">
+                <xs:annotation>
+                    <xs:documentation>
+                        Store the new template as well, so it will have an equal chance of being used as the currently
+                        loaded one.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="NodemapperImplementation">
+        <xs:annotation>
+            <xs:documentation>An implementation of Nodemapper available in Program D.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="org.aitools.programd.graph.NonOptimalNodemaster" />
+            <xs:enumeration value="org.aitools.programd.graph.OneOptimalNodemaster" />
+            <xs:enumeration value="org.aitools.programd.graph.TwoOptimalNodemaster" />
+            <xs:enumeration value="org.aitools.programd.graph.ThreeOptimalNodemaster" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="MultiplexorImplementation">
+        <xs:annotation>
+            <xs:documentation>An implementation of Multiplexor available in Program D.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="org.aitools.programd.multiplexor.FlatFileMultiplexor" />
+            <xs:enumeration value="org.aitools.programd.multiplexor.DBMultiplexor" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="JavascriptInterpreterImplementation">
+        <xs:annotation>
+            <xs:documentation>An implementation of JavascriptInterpreter available in Program D.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="org.aitools.programd.interpreter.RhinoInterpreter" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
