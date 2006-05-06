@@ -49,9 +49,6 @@ public class Tester
     /** The timestamp format to use for reports. */
     private static final SimpleDateFormat timestampFormat = new SimpleDateFormat("yyyy-MM-dd-H-mm-ss");
 
-    /** The location of the test cases schema. */
-    private static final String TEST_CASES_SCHEMA_LOCATION = "resources/schema/test-cases.xsd";
-
     /**
      * Creates a new Tester which will use the given Core to find out its configuration and run tests.
      * 
@@ -89,7 +86,7 @@ public class Tester
     {
         this.suites.clear();
         this.suites = loadTests(this.suiteURLs, URLTools.contextualize(Filesystem.getRootPath(),
-                TEST_CASES_SCHEMA_LOCATION), this._multiplexor, this.logger);
+                this._core.getSettings().getSchemaLocationTestCases()), this._multiplexor, this.logger);
         if (null == botid)
         {
             this.logger.warn("No botid defined for tests.");
