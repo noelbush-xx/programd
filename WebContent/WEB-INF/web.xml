@@ -33,16 +33,20 @@
     </listener>
     <!--Servlet Descriptors-->
     <servlet>
-        <servlet-name>TalkToBotServlet</servlet-name>
-        <servlet-class>org.aitools.programd.server.servlet.TalkToBotServlet</servlet-class>
+        <servlet-name>AjaxEnablingBotServlet</servlet-name>
+        <servlet-class>org.aitools.programd.server.servlet.AjaxEnablingBotServlet</servlet-class>
         <init-param>
-        	<param-name>default-bot-page</param-name>
-        	<param-value>/pages/TalkToBot.jspx</param-value>
+            <param-name>default-bot-page</param-name>
+            <param-value>/pages/TalkToBot.jspx</param-value>
         </init-param>
         <init-param>
-        	<param-name>default-error-page</param-name>
-        	<param-value>/pages/Error.jspx</param-value>
+            <param-name>default-error-page</param-name>
+            <param-value>/pages/Error.jspx</param-value>
         </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>GetBotResponseServlet</servlet-name>
+        <servlet-class>org.aitools.programd.server.servlet.GetBotResponseServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>dwr-invoker</servlet-name>
@@ -54,8 +58,12 @@
     </servlet>
     <!--Servlet Mappings-->
     <servlet-mapping>
-        <servlet-name>TalkToBotServlet</servlet-name>
+        <servlet-name>AjaxEnablingBotServlet</servlet-name>
         <url-pattern>/TalkToBot</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetBotResponseServlet</servlet-name>
+        <url-pattern>/GetBotResponse</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>dwr-invoker</servlet-name>
@@ -84,7 +92,7 @@
     </security-constraint>
     <login-config>
         <auth-method>BASIC</auth-method>
-        <realm-name>botmachine</realm-name>
+        <realm-name>ProgramD</realm-name>
     </login-config>
     -->
 </web-app>
