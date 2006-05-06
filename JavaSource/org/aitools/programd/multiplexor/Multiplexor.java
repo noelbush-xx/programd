@@ -462,6 +462,7 @@ abstract public class Multiplexor
         }
         catch (Exception e)
         {
+            logger.error("A known bug with log4j has been encountered.  Attempting to reset logging configuration. This may or may not work.", e);
             LogManager.resetConfiguration();
         }
     }
