@@ -23,7 +23,9 @@
         <property name="build.dir" value="${basedir}/build.tmp" />
         <path id="build.classpath">
             <pathelement location="${compile.lib.dir}/aitools-utils.jar" />
+            <pathelement location="${compile.lib.dir}/commons-collections.jar" />
             <pathelement location="${compile.lib.dir}/gnu.getopt-1.0.10.jar" />
+            <pathelement location="${compile.lib.dir}/jdbcappender.jar" />
             <pathelement location="${compile.lib.dir}/jsp-api.jar" />
             <pathelement location="${webapp.lib.dir}/js.jar" />
             <pathelement location="${compile.lib.dir}/servlet-api.jar" />
@@ -87,6 +89,7 @@
     <!--Create the jars.-->
     <target name="jars" depends="init, compile">
         <mkdir dir="${distrib.dir}" />
+        <!--<manifest file=""/>-->
         <jar jarfile="${main.jar}" compress="false">
             <fileset dir="${build.dir}/" includes="org/**" excludes="org/aitools/programd/interpreter/RhinoInterpreter.class" />
             <fileset dir="${src.dir}/" includes="org/aitools/programd/gui/icons/**" />
