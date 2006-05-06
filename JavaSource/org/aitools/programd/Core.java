@@ -75,19 +75,13 @@ public class Core
     public static final String VERSION = "4.7";
 
     /** Build identifier. */
-    public static final String BUILD = "[000]";
+    public static final String BUILD = "[018]";
 
     /** The namespace URI of the bot configuration. */
     public static final String BOT_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.6/bot-configuration";
 
     /** The namespace URI of the plugin configuration. */
     public static final String PLUGIN_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.6/plugins";
-
-    /** The location of the AIML schema. */
-    private static final String AIML_SCHEMA_LOCATION = "resources/schema/AIML.xsd";
-
-    /** The location of the plugins schema. */
-    private static final String PLUGINS_SCHEMA_LOCATION = "resources/schema/plugins.xsd";
 
     /** The Settings. */
     protected CoreSettings _settings;
@@ -233,11 +227,13 @@ public class Core
 
         // Set up an interception of calls to the JDK logging system and re-route to log4j.
         JDKLogHandler.setupInterception();
+        
+        this.logger.info(String.format("Base URL for Program D Core: \"%s\".", this.baseURL));
 
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
 
-        this.parser = XML.getSAXParser(URLTools.contextualize(Filesystem.getWorkingDirectory(), AIML_SCHEMA_LOCATION),
+        this.parser = XML.getSAXParser(URLTools.contextualize(this.baseURL, this._settings.getSchemaLocationAIML()),
                 "AIML");
 
         this.graphmaster = new Graphmaster(this);
@@ -266,7 +262,7 @@ public class Core
         try
         {
             this.pluginConfig = XML.getDocumentBuilder(
-                    URLTools.contextualize(Filesystem.getWorkingDirectory(), PLUGINS_SCHEMA_LOCATION),
+                    URLTools.contextualize(Filesystem.getWorkingDirectory(), this._settings.getSchemaLocationPlugins()),
                     "plugin configuration").parse(
                     URLTools.contextualize(this.baseURL, this._settings.getConfLocationPlugins()).toString());
         }
@@ -462,7 +458,7 @@ public class Core
             }
             if (this.logger.isDebugEnabled())
             {
-                this.logger.debug(String.format("Graphaster has already loaded \"%s\" for some other bot.", path));
+                this.logger.debug(String.format("Graphmaster has already loaded \"%s\" for some other bot.", path));
             }
             this.graphmaster.addForBot(path, botid);
         }
