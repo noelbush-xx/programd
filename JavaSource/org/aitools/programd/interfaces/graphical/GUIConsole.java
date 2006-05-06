@@ -471,7 +471,7 @@ public class GUIConsole extends JPanel
             this.input.setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
             this.input.setHorizontalAlignment(SwingConstants.LEFT);
             this.input.setAlignmentY(Component.CENTER_ALIGNMENT);
-            this.input.addActionListener(new InputSender());
+            this.input.addActionListener(new InputPanel.InputSender());
 
             this.enter = new JButton("Enter");
             // this.enter.setFont(new Font("Sans-serif", Font.PLAIN, 10));
@@ -511,7 +511,7 @@ public class GUIConsole extends JPanel
             this.enter.setEnabled(enabled);
         }
 
-        private class InputSender implements ActionListener
+        public class InputSender implements ActionListener
         {
             /**
              * @see ActionListener#actionPerformed(java.awt.event.ActionEvent)

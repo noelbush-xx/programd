@@ -450,11 +450,11 @@ public class Shell extends Thread
         int space = command.indexOf(' ');
         if (space == -1)
         {
-            throw new NoCommandException();
+            throw new Shell.NoCommandException();
         }
         if (space == command.length())
         {
-            throw new NoCommandException();
+            throw new Shell.NoCommandException();
         }
 
         String commandableID = command.substring(1, space);
@@ -473,7 +473,7 @@ public class Shell extends Thread
         }
         if (commandable == null)
         {
-            throw new NoSuchCommandableException();
+            throw new Shell.NoSuchCommandableException();
         }
         commandable.processShellCommand(command.substring(space + 1));
     }
@@ -481,7 +481,7 @@ public class Shell extends Thread
     /**
      * An exception thrown if no command is specified.
      */
-    private class NoCommandException extends Exception
+    public class NoCommandException extends Exception
     {
         // No body.
     }
@@ -489,7 +489,7 @@ public class Shell extends Thread
     /**
      * An exception thrown if an invalid commandable is specified.
      */
-    private class NoSuchCommandableException extends Exception
+    public class NoSuchCommandableException extends Exception
     {
         // No body.
     }
