@@ -21,10 +21,10 @@ BASE=`cd \`dirname $0\`/.. && echo \`pwd\``
 source $BASE/bin/common_functions.sh
 
 # Configuration
-MAIN_CLASS=org.aitools.programd.configurations.SimpleConsole
+JARFILE=$BASE/distrib/programd-simple-console.jar
 START_MEM=128m
 MAX_MEM=256m
 CORE_CONF=$BASE/conf/core.xml
 
-# Start Program D using the SimpleConsole main class.
-start_programd $MAIN_CLASS $START_MEM $MAX_MEM $CORE_CONF
+# Start Program D using the Simple Console.
+start_programd $JARFILE $START_MEM $MAX_MEM $CORE_CONF
