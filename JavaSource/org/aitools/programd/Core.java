@@ -62,21 +62,6 @@ import org.w3c.dom.Document;
  */
 public class Core
 {
-    // Public access informational constants.
-
-    /** Copyright notice. */
-    public static final String[] COPYLEFT = { "Program D",
-            "This program is free software; you can redistribute it and/or",
-            "modify it under the terms of the GNU General Public License",
-            "as published by the Free Software Foundation; either version 2",
-            "of the License, or (at your option) any later version." };
-
-    /** Version of this package. */
-    public static final String VERSION = "4.7";
-
-    /** Build identifier. */
-    public static final String BUILD = "[018]";
-
     /** The namespace URI of the bot configuration. */
     public static final String BOT_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.6/bot-configuration";
 
@@ -275,7 +260,8 @@ public class Core
             this.logger.error("Error trying to parse plugin configuration.", e);
         }
 
-        this.logger.info("Starting Program D version " + VERSION + BUILD + '.');
+        Package pkg = Package.getPackage("org.aitools.programd");
+        this.logger.info(String.format("Starting %s version %s [%s].", pkg.getSpecificationTitle(), pkg.getSpecificationVersion(), pkg.getImplementationVersion()));
         this.logger.info(UserSystem.jvmDescription());
         this.logger.info(UserSystem.osDescription());
         this.logger.info(UserSystem.memoryReport());
@@ -371,20 +357,20 @@ public class Core
         }
     }
 
-    protected void setupInterpreter() throws UserError, DeveloperError
+    protected void setupInterpreter()
     {
         if (this._settings.javascriptAllowed())
         {
             if (this._settings.getJavascriptInterpreterClassname() == null)
             {
-                throw new UserError(new UnspecifiedParameterError("javascript-interpreter.classname"));
+                this.logger.error(new UnspecifiedParameterError("javascript-interpreter.classname"));
             }
 
             String javascriptInterpreterClassname = this._settings.getJavascriptInterpreterClassname();
 
             if ("".equals(javascriptInterpreterClassname))
             {
-                throw new UserError(new UnspecifiedParameterError("javascript-interpreter.classname"));
+                this.logger.error(new UnspecifiedParameterError("javascript-interpreter.classname"));
             }
 
             this.logger.info("Initializing " + javascriptInterpreterClassname + ".");
@@ -395,7 +381,7 @@ public class Core
             }
             catch (Exception e)
             {
-                throw new DeveloperError("Error while creating new instance of JavaScript interpreter.", e);
+                this.logger.error("Error while creating new instance of JavaScript interpreter.", e);
             }
         }
         else
