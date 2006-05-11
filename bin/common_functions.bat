@@ -100,6 +100,14 @@ goto end
 
 :setup_other_libs
   
+  set AITOOLS_UTILS_LIB=%LIBS%\aitools-utils.jar
+  if exist "%AITOOLS_UTILS_LIB%" goto set_getopt_lib
+  echo.
+  echo I can't find the aitools-utils.jar that ships with Program D.
+  set quit=yes
+  goto end
+  
+  :set_getopt_lib
   set GETOPT_LIB=%LIBS%\gnu.getopt-1.0.10.jar
   if exist "%GETOPT_LIB%" goto set_log4j_lib
   echo.
