@@ -1,3 +1,17 @@
 Manifest-Version: 1.0
-Class-Path: 
+Ant-Version: Apache Ant 1.6.5
+Created-By: 1.5.0_06-b05 (Sun Microsystems Inc.)
+Class-Path: programd-core.jar ../lib/aitools-utils.jar ../lib/commons-
+ collections.jar ../lib/gnu.getopt-1.0.10.jar ../WebContent/WEB-INF/li
+ b/jdbcappender.jar ../WebContent/WEB-INF/lib/log4j-1.2.13.jar ../lib/
+ mysql-connector-java-3.1.12-bin.jar ../WebContent/WEB-INF/lib/js.jar 
+ programd-rhino.jar
+
+Name: org/aitools/programd/
+Specification-Title: Program D
+Specification-Version: 4.7
+Specification-Vendor: aitools.org
+Implementation-Title: org.aitools.programd
+Implementation-Version: 45
+Implementation-Vendor: aitools.org
 
