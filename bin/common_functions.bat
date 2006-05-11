@@ -109,9 +109,17 @@ goto end
   
   :set_getopt_lib
   set GETOPT_LIB=%LIBS%\gnu.getopt-1.0.10.jar
-  if exist "%GETOPT_LIB%" goto set_log4j_lib
+  if exist "%GETOPT_LIB%" goto set_commons_collections_lib
   echo.
   echo I can't find the gnu.getopt-1.0.10.jar that ships with Program D.
+  set quit=yes
+  goto end
+  
+  :set_commons_collections_lib
+  set COMMONS_COLLETIONS_LIB=%LIBS%\commons-collections.jar
+  if exist "%COMMONS_COLLECTIONS_LIB%" goto set_log4j_lib
+  echo.
+  echo I can't find the commons-collections.jar that ships with Program D.
   set quit=yes
   goto end
   
@@ -141,7 +149,7 @@ goto end
   @rem No warning is provided if it cannot be found (since it is optional).
   set JS_LIB=%WEBLIBS%\js.jar
   
-  set OTHER_LIBS=%GETOPT_LIB%;%LOG4J_LIB%;%LISTENER_LIBS%;%SQL_LIB%;%JS_LIB%
+  set OTHER_LIBS=%AITOOLS_UTILS_LIB%;%GETOPT_LIB%;%COMMONS_COLLECTIONS_LIB%;%LOG4J_LIB%;%LISTENER_LIBS%;%SQL_LIB%;%JS_LIB%
 goto end
 
 
