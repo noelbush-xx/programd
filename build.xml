@@ -4,7 +4,7 @@
     <target name="init">
         <tstamp />
         <property name="Name" value="Program D" />
-        <property name="version" value="4.6" />
+        <property name="version" value="4.7" />
         <property name="year" value="2006" />
 
         <property name="javac.compiler" value="modern" />
@@ -19,21 +19,37 @@
         <property name="webapp.lib.dir" value="${webapp.dir}/WEB-INF/lib" />
         <property name="compile.lib.dir" value="${basedir}/lib" />
         <property name="distrib.dir" value="${basedir}/distrib" />
+    	<property name="manifests.dir" value="${basedir}/resources/manifests" />
 
         <property name="build.dir" value="${basedir}/build.tmp" />
         <path id="build.classpath">
             <pathelement location="${compile.lib.dir}/aitools-utils.jar" />
             <pathelement location="${compile.lib.dir}/commons-collections.jar" />
             <pathelement location="${compile.lib.dir}/gnu.getopt-1.0.10.jar" />
-            <pathelement location="${compile.lib.dir}/jdbcappender.jar" />
+            <pathelement location="${webapp.lib.dir}/jdbcappender.jar" />
             <pathelement location="${compile.lib.dir}/jsp-api.jar" />
             <pathelement location="${webapp.lib.dir}/js.jar" />
             <pathelement location="${compile.lib.dir}/servlet-api.jar" />
             <pathelement location="${webapp.lib.dir}/log4j-1.2.13.jar" />
         </path>
+    	
+    	<!--The classpath needed to run Program D, for the core.-->
+        <property name="essentials-mf-classpath" value="programd-core.jar ../lib/aitools-utils.jar ../lib/commons-collections.jar ../lib/gnu.getopt-1.0.10.jar ../WebContent/WEB-INF/lib/jdbcappender.jar ../WebContent/WEB-INF/lib/log4j-1.2.13.jar"/>
+    	
+    	<!--The path to the core jar, to be included in app-jar manifests.-->
+    	<property name="core-mf-classpath" value="programd-core.jar"/>
+    	
+    	<!--Optional, path to mysql jar (for manifest).-->
+    	<property name="mysql-mf-path" value="../lib/mysql-connector-java-3.1.12-bin.jar"/>
+    	
+    	<!--Optional, path to rhino jar and Program D interface to it (for manifest).-->
+    	<property name="js-mf-path" value="../WebContent/WEB-INF/lib/js.jar programd-rhino.jar"/>
+    	
         <property name="javadoc.dir" value="${basedir}/docs/api" />
 
-        <property name="main.jar" value="${distrib.dir}/programd-main.jar" />
+        <property name="core.jar" value="${distrib.dir}/programd-core.jar" />
+        <property name="simple-console.jar" value="${distrib.dir}/programd-simple-console.jar" />
+        <property name="simple-gui-console.jar" value="${distrib.dir}/programd-simple-gui-console.jar" />
         <property name="rhino.jar" value="${distrib.dir}/programd-rhino.jar" />
 
         <property name="war" value="${distrib.dir}/programd.war" />
@@ -85,17 +101,98 @@
             <compilerarg value="-Xlint:-serial" />
         </javac>
     </target>
-
+	
     <!--Create the jars.-->
-    <target name="jars" depends="init, compile">
+    <target name="jars" depends="init, compile, core-jar, simple-console-jar, simple-gui-console-jar, rhino-jar"/>
+	<target name="jars-setup">
         <mkdir dir="${distrib.dir}" />
-        <!--<manifest file=""/>-->
-        <jar jarfile="${main.jar}" compress="false">
-            <fileset dir="${build.dir}/" includes="org/**" excludes="org/aitools/programd/interpreter/RhinoInterpreter.class" />
+		<propertyfile file="version.properties">
+			<entry key="build.number" default="0" type="int" operation="+" value="1"/>
+		</propertyfile>
+    	<property file="version.properties"/>
+    	<!--Write the manifest file for the web app now.-->
+	    <manifest file="${webapp.dir}/META-INF/MANIFEST.MF">
+	        <attribute name="Class-Path" value="${essentials-mf-classpath} ${mysql-mf-path} ${js-mf-path}"/>
+	        <section name="org/aitools/programd/">
+	            <attribute name="Specification-Title" value="Program D"/>
+	            <attribute name="Specification-Version" value="${version}"/>
+	            <attribute name="Specification-Vendor" value="aitools.org"/>
+	            <attribute name="Implementation-Title" value="org.aitools.programd"/>
+	            <attribute name="Implementation-Version" value="${build.number}"/>
+	            <attribute name="Implementation-Vendor" value="aitools.org"/>
+	        </section>
+	    </manifest>
+	</target>
+	<!--Core jar file (no main class)-->
+	<target name="core-jar" depends="init, compile, jars-setup">
+        <manifest file="${manifests.dir}/programd-core.mf">
+        	<attribute name="Class-Path" value="${essentials-mf-classpath} ${mysql-mf-path} ${js-mf-path}"/>
+        	<section name="org/aitools/programd/">
+        		<attribute name="Specification-Title" value="Program D"/>
+        		<attribute name="Specification-Version" value="${version}"/>
+        		<attribute name="Specification-Vendor" value="aitools.org"/>
+        		<attribute name="Implementation-Title" value="org.aitools.programd"/>
+        		<attribute name="Implementation-Version" value="${build.number}"/>
+				<attribute name="Implementation-Vendor" value="aitools.org"/>
+        	</section>
+        </manifest>
+        <jar jarfile="${core.jar}" compress="false" manifest="${manifests.dir}/programd-core.mf">
+            <fileset dir="${build.dir}/" includes="org/**">
+            	<exclude name="org/aitools/programd/configurations/**"/>
+            	<exclude name="org/aitools/programd/interpreter/RhinoInterpreter.class"/>
+            </fileset>
             <fileset dir="${src.dir}/" includes="org/aitools/programd/gui/icons/**" />
             <fileset dir="${build.dir}/" includes="resources/schema/**" />
         </jar>
-        <jar jarfile="${rhino.jar}" compress="false">
+	</target>
+	<!--Simple Console jar file-->
+	<target name="simple-console-jar" depends="init, compile, jars-setup">
+        <manifest file="${manifests.dir}/programd-simple-console.mf">
+        	<attribute name="Main-Class" value="org.aitools.programd.configurations.SimpleConsole"/>
+        	<attribute name="Class-Path" value="${core-mf-classpath}"/>
+    		<attribute name="Specification-Title" value="Program D Simple Console"/>
+    		<attribute name="Specification-Version" value="${version}"/>
+    		<attribute name="Specification-Vendor" value="aitools.org"/>
+    		<attribute name="Implementation-Version" value="${build.number}"/>
+			<attribute name="Implementation-Vendor" value="aitools.org"/>
+        </manifest>
+        <jar jarfile="${simple-console.jar}" compress="false" manifest="${manifests.dir}/programd-simple-console.mf">
+            <fileset dir="${build.dir}/">
+            	<include name="org/aitools/programd/configurations/SimpleConsole.class"/>
+            </fileset>
+            <fileset dir="${src.dir}/" includes="org/aitools/programd/gui/icons/**" />
+            <fileset dir="${build.dir}/" includes="resources/schema/**" />
+        </jar>
+	</target>
+	<!--Simple GUI Console jar file-->
+	<target name="simple-gui-console-jar" depends="init, compile, jars-setup">
+        <manifest file="${manifests.dir}/programd-simple-gui-console.mf">
+        	<attribute name="Main-Class" value="org.aitools.programd.configurations.SimpleGUIConsole"/>
+        	<attribute name="Class-Path" value="${core-mf-classpath}"/>
+    		<attribute name="Specification-Title" value="Program D Simple GUI Console"/>
+    		<attribute name="Specification-Version" value="${version}"/>
+    		<attribute name="Specification-Vendor" value="aitools.org"/>
+    		<attribute name="Implementation-Version" value="${build.number}"/>
+			<attribute name="Implementation-Vendor" value="aitools.org"/>
+        </manifest>
+        <jar jarfile="${simple-gui-console.jar}" compress="false" manifest="${manifests.dir}/programd-simple-gui-console.mf">
+            <fileset dir="${build.dir}/">
+            	<include name="org/aitools/programd/configurations/SimpleGUIConsole.class"/>
+            </fileset>
+            <fileset dir="${src.dir}/" includes="org/aitools/programd/gui/icons/**" />
+            <fileset dir="${build.dir}/" includes="resources/schema/**" />
+        </jar>
+	</target>
+	<!--Rhino interface jar file.-->
+	<target name="rhino-jar" depends="init, compile, jars-setup">
+        <manifest file="${manifests.dir}/programd-rhino.mf">
+    		<attribute name="Specification-Title" value="Program D Rhino interface"/>
+    		<attribute name="Specification-Version" value="${version}"/>
+    		<attribute name="Specification-Vendor" value="aitools.org"/>
+    		<attribute name="Implementation-Version" value="${build.number}"/>
+			<attribute name="Implementation-Vendor" value="aitools.org"/>
+        </manifest>
+        <jar jarfile="${rhino.jar}" compress="false" manifest="${manifests.dir}/programd-rhino.mf">
             <fileset dir="${build.dir}/" includes="org/aitools/programd/interpreter/RhinoInterpreter.class" />
         </jar>
     </target>
@@ -284,7 +381,7 @@
     <!--Clean the build stuff.-->
     <target name="buildclean" depends="init">
         <delete dir="${build.dir}"/>
-        <delete file="${main.jar}"/>
+        <delete file="${core.jar}"/>
         <delete file="${rhino.jar}"/>
     </target>
 
@@ -301,7 +398,7 @@
     <!--Clean up the binary distribs.-->
     <target name="binary-distclean" depends="init">
         <delete dir="${build.dir}"/>
-        <delete file="${main.jar}"/>
+        <delete file="${core.jar}"/>
         <delete file="${rhino.jar}"/>
         <delete dir="${distrib.bin.dir}"/>
         <delete file="${distrib.bin.zip}"/>
