@@ -17,7 +17,6 @@ import org.aitools.programd.parser.TemplateParser;
 /**
  * Processes an <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-input">input</a></code> element.
  * 
- * @version 4.7
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>

@@ -58,4 +58,12 @@ public class BotAccess
     {
         return this._core.getBot(this.botid);
     }
+    
+    /**
+     * Sets a predicate value.
+     */
+    public String set(String name, String value)
+    {
+        return this._core.getPredicateMaster().set(name, value, this.userid, this.botid);
+    }
 }

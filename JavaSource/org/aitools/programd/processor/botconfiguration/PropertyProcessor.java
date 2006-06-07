@@ -17,8 +17,6 @@ import org.aitools.programd.parser.BotsConfigurationFileParser;
 /**
  * Sets bot predicate values at load-time.
  * 
- * @version 4.5
- * @since 4.1.2
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */

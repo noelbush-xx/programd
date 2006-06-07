@@ -19,7 +19,6 @@ import org.aitools.programd.processor.ProcessorException;
  * Handles an <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-uppercase">uppercase</a></code>
  * element.
  * 
- * @version 4.5
  * @author Jon Baer
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */

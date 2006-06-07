@@ -22,7 +22,6 @@ import org.apache.log4j.Logger;
  * An <code>AIMLProcessor</code> is responsible for processing a particular
  * AIML element.
  * 
- * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 abstract public class AIMLProcessor extends Processor

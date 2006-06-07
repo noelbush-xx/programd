@@ -27,7 +27,6 @@ import org.aitools.util.resource.Filesystem;
  * <p>Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-system">system</a></code> element.</p>
  * <p>No attempt is made to check whether the command passed to the OS interpreter is harmful.</p>
  * 
- * @version 4.5
  * @author Jon Baer
  * @author Mark Anacker
  * @author Thomas Ringate, Pedro Colla

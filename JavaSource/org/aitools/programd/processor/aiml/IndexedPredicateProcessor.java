@@ -24,7 +24,6 @@ import org.aitools.util.xml.XML;
 /**
  * Processes an indexed predicate.
  * 
- * @version 4.5
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>

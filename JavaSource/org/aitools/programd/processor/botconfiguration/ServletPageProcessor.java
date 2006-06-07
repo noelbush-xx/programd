@@ -15,7 +15,6 @@ import org.aitools.programd.Core;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 
 /**
- * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class ServletPageProcessor extends SubstitutionElementProcessor

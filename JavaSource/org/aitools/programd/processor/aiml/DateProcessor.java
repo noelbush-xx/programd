@@ -19,7 +19,6 @@ import org.aitools.programd.parser.TemplateParser;
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-date">date</a></code> element.
  * 
- * @version 4.5
  * @author Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */

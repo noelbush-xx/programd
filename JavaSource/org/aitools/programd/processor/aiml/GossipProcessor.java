@@ -24,7 +24,6 @@ import org.aitools.util.runtime.UserError;
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-gossip">gossip</a></code> element.
  * 
- * @version 4.5
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  */

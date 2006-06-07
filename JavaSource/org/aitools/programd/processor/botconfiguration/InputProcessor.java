@@ -20,7 +20,6 @@ import org.aitools.programd.processor.ProcessorException;
  * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-substitution-normalizations">substitution normalizations </a>
  * to be performed on an input.
  * 
- * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class InputProcessor extends SubstitutionElementProcessor

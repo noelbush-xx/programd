@@ -25,7 +25,6 @@ import org.apache.log4j.Logger;
  * 
  * @author Jon Baer
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @version 4.6
  */
 public class AIMLWatcher
 {

@@ -21,7 +21,6 @@ import org.aitools.programd.util.Substituter;
 /**
  * Handles a substitution element.
  * 
- * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 abstract public class SubstitutionProcessor extends AIMLProcessor

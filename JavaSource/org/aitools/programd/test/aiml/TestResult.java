@@ -5,7 +5,6 @@ package org.aitools.programd.test.aiml;
  * 
  * @author Albertas Mickensas
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.5
  */
 public class TestResult
 {

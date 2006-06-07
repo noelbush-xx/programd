@@ -52,7 +52,6 @@ import org.apache.commons.collections.map.LRUMap;
  * space) until all others have been chosen.
  * </p>
  * 
- * @version 4.7
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla

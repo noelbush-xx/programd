@@ -18,7 +18,6 @@ import org.aitools.programd.parser.TemplateParser;
  * Processes a <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-template-side-that">template-side
  * <code>that</code> </a> element.
  * 
- * @version 4.5
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>

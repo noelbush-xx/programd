@@ -17,7 +17,6 @@ import org.aitools.programd.parser.TemplateParser;
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-version">version</a></code> element.
  * 
- * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class VersionProcessor extends AIMLProcessor
@@ -42,6 +41,7 @@ public class VersionProcessor extends AIMLProcessor
     @SuppressWarnings("unused")
     public String process(Element element, TemplateParser parser)
     {
-        return Core.VERSION + Core.BUILD;
+        Package pkg = Package.getPackage("org.aitools.programd");
+        return String.format("%s version %s [%s].", pkg.getSpecificationTitle(), pkg.getSpecificationVersion(), pkg.getImplementationVersion());
     }
 }

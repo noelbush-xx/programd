@@ -17,7 +17,6 @@ import org.w3c.dom.Element;
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-gender">gender</a></code> element.
  * 
- * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla

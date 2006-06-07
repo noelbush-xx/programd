@@ -21,8 +21,6 @@ import org.aitools.util.resource.URLTools;
 /**
  * Loads AIML at load-time.
  * 
- * @since 4.1.2
- * @version 4.6
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class LearnProcessor extends BotConfigurationElementProcessor

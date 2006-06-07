@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
-import org.aitools.programd.Core;
-
 /**
  * Provides the version of the engine via JSP.
  * 
@@ -19,6 +17,7 @@ public class Version extends SimpleTagSupport
     @Override
     public void doTag() throws IOException
     {
-        getJspContext().getOut().write(Core.VERSION + Core.BUILD);
+        Package pkg = Package.getPackage("org.aitools.programd");
+        getJspContext().getOut().write(String.format("%s [%s]", pkg.getSpecificationVersion(), pkg.getImplementationVersion()));
     }
 }

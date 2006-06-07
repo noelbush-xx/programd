@@ -14,7 +14,6 @@ import org.aitools.programd.processor.ProcessorRegistry;
 /**
  * Registers {@link AIMLProcessor}s for a given version of AIML.
  * 
- * @since 4.1.3
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class AIMLProcessorRegistry extends ProcessorRegistry<AIMLProcessor>

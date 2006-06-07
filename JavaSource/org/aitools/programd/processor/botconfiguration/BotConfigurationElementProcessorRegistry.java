@@ -14,8 +14,6 @@ import org.aitools.programd.processor.ProcessorRegistry;
 /**
  * Registers {@link BotConfigurationElementProcessor} s for Program D.
  * 
- * @version 4.5
- * @since 4.1.3
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class BotConfigurationElementProcessorRegistry extends ProcessorRegistry<BotConfigurationElementProcessor>

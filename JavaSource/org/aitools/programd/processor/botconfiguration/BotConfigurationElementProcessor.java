@@ -22,7 +22,6 @@ import org.apache.log4j.Logger;
  * A <code>BotConfigurationElementProcessor</code> is responsible for processing an element in a Program D startup
  * file.
  * 
- * @since 4.2
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 abstract public class BotConfigurationElementProcessor extends Processor

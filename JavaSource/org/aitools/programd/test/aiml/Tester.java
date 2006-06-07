@@ -112,8 +112,6 @@ public class Tester
         String reportPath = URLTools.contextualize(this.testReportDirectory,
                 "test-report-" + timestampFormat.format(new Date()) + ".xml").getFile();
         report.write(reportPath);
-        // Good time to request garbage collection.
-        System.gc();
         return reportPath;
     }
 

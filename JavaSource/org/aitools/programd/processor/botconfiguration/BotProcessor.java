@@ -26,7 +26,6 @@ import org.aitools.util.runtime.UserError;
 /**
  * Supports configuration of a bot from the startup file.
  * 
- * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class BotProcessor extends BotConfigurationElementProcessor

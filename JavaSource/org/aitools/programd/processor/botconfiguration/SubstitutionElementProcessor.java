@@ -23,7 +23,6 @@ import org.aitools.util.runtime.UserError;
 import org.aitools.util.xml.XML;
 
 /**
- * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 abstract public class SubstitutionElementProcessor extends BotConfigurationElementProcessor

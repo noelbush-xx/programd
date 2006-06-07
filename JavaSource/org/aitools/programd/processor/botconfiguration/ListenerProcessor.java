@@ -28,7 +28,6 @@ import org.aitools.util.xml.XML;
  * The <code>listener</code> element is a container for defining parameters of
  * a listener.
  * 
- * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class ListenerProcessor extends BotConfigurationElementProcessor

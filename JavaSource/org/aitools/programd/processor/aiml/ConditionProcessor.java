@@ -24,7 +24,6 @@ import org.apache.log4j.Logger;
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-condition">condition</a></code> element.
  * 
- * @version 4.5
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>

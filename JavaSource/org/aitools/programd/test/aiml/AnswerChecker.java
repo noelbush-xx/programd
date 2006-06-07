@@ -29,7 +29,7 @@ public class AnswerChecker extends Checker
         try
         {
             this.expectedAnswer = new String(StringKit.renderAsLines(
-                    XML.filterViaHTMLTags(XML.renderXML(element.getChildNodes(), false))).getBytes(encoding)).intern();
+                    XML.filterViaHTMLTags(XML.unescapeXMLChars(XML.renderXML(element.getChildNodes(), false)))).getBytes(encoding)).intern();
         }
         catch (UnsupportedEncodingException e)
         {

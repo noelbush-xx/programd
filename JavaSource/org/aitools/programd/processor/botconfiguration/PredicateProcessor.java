@@ -18,7 +18,6 @@ import org.aitools.programd.parser.BotsConfigurationFileParser;
  * The <code>predicate</code> element specifies for specifying characteristics of a <a
  * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-aiml-predicates">predicate</a>.
  * 
- * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class PredicateProcessor extends BotConfigurationElementProcessor

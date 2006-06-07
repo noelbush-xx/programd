@@ -22,12 +22,11 @@ import org.xml.sax.SAXException;
  * A TestSuite comprises a set of TestCases.
  * 
  * @author Albertas Mickensas
- * @since 4.5
  */
 public class TestSuite implements Iterable<TestCase>
 {
-    /** The test cases namespace URI. */
-    public static final String TESTCASE_NAMESPACE_URI = "http://aitools.org/programd/4.6/test-cases";
+    /** The test suite namespace URI. */
+    public static final String TESTSUITE_NAMESPACE_URI = "http://aitools.org/xaiml/test-suite";
 
     /** The test cases in this suite. */
     ArrayList<TestCase> testCases = new ArrayList<TestCase>();
@@ -230,7 +229,7 @@ public class TestSuite implements Iterable<TestCase>
         TestSuite suite = new TestSuite(testSuiteElement.getAttribute("name"), testSuiteElement
                 .getAttribute("clearInput"), multiplexor, logger);
 
-        NodeList testCases = doc.getElementsByTagNameNS(TESTCASE_NAMESPACE_URI, TestCase.TAG_TESTCASE);
+        NodeList testCases = doc.getElementsByTagNameNS(TESTSUITE_NAMESPACE_URI, TestCase.TAG_TESTCASE);
         int testCaseCount = testCases.getLength();
         for (int index = 0; index < testCaseCount; index++)
         {

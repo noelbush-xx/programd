@@ -25,7 +25,6 @@ import org.aitools.util.xml.XML;
  * normalization </a>. Substitutions of other types are now handled
  * independently by their respective processors.
  * 
- * @since 4.1.3
  */
 public class InputNormalizer
 {
