@@ -211,6 +211,10 @@
                 <exclude name="resources/testing/**" />
                 <exclude name="resources/xslt/**" />
             </fileset>
+            <lib dir="${compile.lib.dir}">
+                <exclude name="jsp-api.jar"/>
+                <exclude name="servlet-api.jar"/>
+            </lib>
             <lib dir="${webapp.lib.dir}" />
             <classes dir="${build.dir}" />
             <classes dir="${basedir}/conf">
