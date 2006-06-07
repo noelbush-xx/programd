@@ -1034,4 +1034,24 @@ DDDDDDDDDD</html:pre>
             Test case <get name="result"/>.
         </template>
     </category>
+    <category>
+        <pattern>TESTWHITESPACENORMALIZATION</pattern>
+        <template>
+            Test case #48.
+            <html:br/>
+            <srai>test whitespace  normalization</srai>
+        </template>
+    </category>
+    <category>
+        <pattern>TEST WHITESPACE NORMALIZATION</pattern>
+        <template>
+            Test passed.
+        </template>
+    </category>
+    <category>
+        <pattern>TEST WHITESPACE *</pattern>
+        <template>
+            Test failed.
+        </template>
+    </category>
 </aiml>
