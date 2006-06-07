@@ -11,6 +11,6 @@ Specification-Title: Program D
 Specification-Version: 4.7
 Specification-Vendor: aitools.org
 Implementation-Title: org.aitools.programd
-Implementation-Version: 46
+Implementation-Version: 50
 Implementation-Vendor: aitools.org
 
