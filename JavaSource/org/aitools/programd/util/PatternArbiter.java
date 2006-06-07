@@ -21,17 +21,16 @@ import java.util.regex.Pattern;
  * Provides utility methods for pattern-oriented tasks.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.1.3
  */
 public class PatternArbiter
 {
     /** The regular expression that defines AIML pattern syntax. */
     private static final Pattern AIML_PATTERN = Pattern
-            .compile("(\\*|_|[\\p{javaUpperCase}\\p{Digit}]+)( (\\*|_|[\\p{javaUpperCase}\\p{Digit}]+))*");
+            .compile("(\\*|_|[\\p{javaUpperCase}\\p{javaDigit}]+)( (\\*|_|[\\p{javaUpperCase}\\p{javaDigit}]+))*");
 
     /** The generic normalization regex that matches any nonalphanumeric. */
     private static final Pattern NON_ALPHANUMERIC = Pattern
-            .compile("[^\\p{javaUpperCase}\\p{javaLowerCase}\\p{javaWhitespace}\\p{Digit} ]+");
+            .compile("[^\\p{javaUpperCase}\\p{javaLowerCase}\\p{javaWhitespace}\\p{javaDigit} ]+");
 
     /**
      * Applies a generic set of normalizations to an input, to prepare it for pattern matching.
