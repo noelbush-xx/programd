@@ -13,7 +13,6 @@ package org.aitools.programd.interfaces.shell;
  * Prints a list of active bots to the shell console.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.5
  */
 public class BotListCommand extends ShellCommand
 {

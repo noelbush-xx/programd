@@ -15,7 +15,6 @@ import org.aitools.util.ClassRegistry;
  * Registers {@link Processor}s associated with a given namespace URI.
  * 
  * @param <B> the base class for the processors
- * @since 4.1.3
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class ProcessorRegistry<B> extends ClassRegistry<B>

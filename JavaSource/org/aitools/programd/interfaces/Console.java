@@ -22,7 +22,6 @@ import org.apache.log4j.Logger;
  * also print output to the console.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.2
  */
 public class Console
 {

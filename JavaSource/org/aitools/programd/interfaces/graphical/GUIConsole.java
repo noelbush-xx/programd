@@ -63,8 +63,6 @@ import org.apache.log4j.Logger;
  * Provides a very simple GUI console for the bot.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.1.5
- * @version 4.5
  */
 public class GUIConsole extends JPanel
 {
@@ -104,7 +102,7 @@ public class GUIConsole extends JPanel
     /** For convenience, the system line separator. */
     protected static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
 
-    private static final Object[] HELP_MESSAGE = { "Simple Console for", "Program D version " + Core.VERSION };
+    private static final Object[] HELP_MESSAGE = { "Simple Console for Program D" };
 
     private static JMenuBar menuBar;
 

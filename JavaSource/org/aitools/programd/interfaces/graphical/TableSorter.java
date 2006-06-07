@@ -24,7 +24,6 @@ import org.aitools.util.runtime.DeveloperError;
  * which means that it does not move around rows when its comparison function returns 0 to denote that they are
  * equivalent.
  * 
- * @version 1.5 12/17/97
  * @author Philip Milne
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */

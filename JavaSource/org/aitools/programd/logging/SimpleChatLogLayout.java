@@ -20,7 +20,6 @@ import org.apache.log4j.spi.LoggingEvent;
  * Formats a ChatLogEvent by printing a number of extra fields as we like them.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.6
  */
 public class SimpleChatLogLayout extends SimpleLayout
 {

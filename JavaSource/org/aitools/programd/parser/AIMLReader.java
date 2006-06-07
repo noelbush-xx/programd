@@ -29,7 +29,6 @@ import org.aitools.util.xml.XML;
  * </p>
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @version 4.5
  */
 public class AIMLReader extends DefaultHandler2
 {

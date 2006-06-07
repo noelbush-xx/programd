@@ -13,7 +13,6 @@ package org.aitools.programd.interfaces.shell;
  * Tries to switch conversation to a bot identified on the command line.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.5
  */
 public class TalkToCommand extends ShellCommand
 {

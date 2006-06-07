@@ -17,7 +17,6 @@ import java.util.ArrayList;
  * or a list of values.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.5
  */
 public class PredicateValue
 {

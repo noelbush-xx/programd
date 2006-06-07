@@ -10,7 +10,6 @@ import org.mozilla.javascript.Scriptable;
  * 
  * @author Jon Baer
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @version 4.5
  */
 public class RhinoInterpreter implements Interpreter
 {

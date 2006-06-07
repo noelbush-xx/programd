@@ -45,8 +45,6 @@ import org.apache.log4j.Logger;
  * 
  * @param <P> the base class of Processor to be used
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.1.3
- * @version 4.5
  */
 abstract public class GenericParser<P extends Processor>
 {

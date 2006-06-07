@@ -16,7 +16,6 @@ import org.aitools.util.ObjectExemplarRegistry;
 /**
  * Maps ShellCommands to their command strings.
  * 
- * @since 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class ShellCommandRegistry extends ObjectExemplarRegistry<ShellCommand>

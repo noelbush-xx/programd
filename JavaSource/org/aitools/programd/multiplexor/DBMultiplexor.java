@@ -38,7 +38,6 @@ import org.apache.log4j.Logger;
  * @author Richard Wallace, Jon Baer
  * @author Thomas Ringate/Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @version 4.5
  */
 public class DBMultiplexor extends Multiplexor
 {

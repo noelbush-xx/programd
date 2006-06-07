@@ -12,9 +12,7 @@ package org.aitools.programd.processor;
 /**
  * Should be thrown by processors when they find content that they cannot handle.
  * 
- * @since 4.1.3
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @version 4.5
  */
 public class ProcessorException extends Exception
 {

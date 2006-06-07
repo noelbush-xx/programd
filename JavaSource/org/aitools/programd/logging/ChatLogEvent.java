@@ -22,7 +22,6 @@ import org.apache.log4j.spi.LoggingEvent;
  * and it won't be recognized by the chatlog-specific filters and layouts).
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.6
  */
 public class ChatLogEvent extends LoggingEvent
 {

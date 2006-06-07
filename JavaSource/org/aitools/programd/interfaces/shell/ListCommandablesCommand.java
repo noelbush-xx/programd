@@ -15,7 +15,6 @@ import org.aitools.programd.util.ManagedProcess;
  * Prints a list of the available ShellCommandables to the shell console.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.5
  */
 public class ListCommandablesCommand extends ShellCommand
 {

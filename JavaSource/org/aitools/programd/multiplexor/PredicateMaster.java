@@ -33,7 +33,6 @@ import org.apache.log4j.Logger;
  * </p>
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.1.4
  */
 public class PredicateMaster
 {

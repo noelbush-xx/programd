@@ -33,8 +33,6 @@ import org.apache.log4j.Logger;
  * A <code>Multiplexor</code> multiplexes the clients of a bot and keeps track
  * of all their predicate values.
  * 
- * @since 4.1.3
- * @version 4.5
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @author Richard Wallace, Jon Baer
  * @author Thomas Ringate/Pedro Colla

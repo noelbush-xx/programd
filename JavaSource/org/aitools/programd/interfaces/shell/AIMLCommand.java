@@ -19,7 +19,6 @@ import org.aitools.util.runtime.UserError;
  * Tries to process a given fragment of template-side AIML.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.5
  */
 public class AIMLCommand extends ShellCommand
 {

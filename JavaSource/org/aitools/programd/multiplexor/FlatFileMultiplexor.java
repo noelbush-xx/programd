@@ -26,7 +26,6 @@ import org.aitools.util.runtime.UserError;
  * <p>Uses &quot;flat-file&quot; Java properties files, as in Program B, to store predicate data.</p>
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @version 4.5
  */
 public class FlatFileMultiplexor extends Multiplexor
 {

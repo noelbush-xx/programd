@@ -13,7 +13,6 @@ package org.aitools.programd.multiplexor;
  * Thrown when a duplicate userid has somehow been entered in user info storage.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.2
  */
 public class DuplicateUserIDError extends Exception
 {

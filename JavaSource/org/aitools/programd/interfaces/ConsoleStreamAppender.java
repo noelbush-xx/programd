@@ -22,7 +22,6 @@ import org.apache.log4j.spi.ThrowableInformation;
  * A <code>ConsoleStreamAppender</code> publishes any record it's passed to the given <code>stream</code>.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.6
  */
 public class ConsoleStreamAppender extends WriterAppender
 {

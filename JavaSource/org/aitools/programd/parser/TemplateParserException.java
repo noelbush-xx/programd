@@ -12,7 +12,6 @@ package org.aitools.programd.parser;
 /**
  * Thrown by {@link TemplateParser} when it is given invalid input.
  * 
- * @since 4.1.4
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class TemplateParserException extends Exception

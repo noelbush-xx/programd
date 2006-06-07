@@ -17,7 +17,6 @@ import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.6
  */
 public class DBChatLogLayout extends SimpleLayout
 {

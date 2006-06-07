@@ -11,7 +11,6 @@ import javax.swing.table.TableModel;
  * routing all requests to its model, and TableModelListener by routing all events to its listeners. Inserting a
  * TableMap which has not been subclassed into a chain of table filters should have no effect.
  * 
- * @version 1.4 12/17/97
  * @author Philip Milne
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
