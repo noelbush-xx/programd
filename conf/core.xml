@@ -164,8 +164,8 @@ GENERAL NOTES
     <!--The location of the plugin schema (or a copy of it). [URL: ../resources/schema/plugins.xsd]-->
     <entry key="programd.schema-location.plugins">../resources/schema/plugins.xsd</entry>
 
-    <!--The location of the test cases schema (or a copy of it). [URL: ../resources/schema/test-cases.xsd]-->
-    <entry key="programd.schema-location.test-cases">../resources/schema/test-cases.xsd</entry>
+    <!--The location of the test suite schema (or a copy of it). [URL: ../resources/schema/test-suite.xsd]-->
+    <entry key="programd.schema-location.test-cases">../resources/schema/test-suite.xsd</entry>
     
             
     <!--
