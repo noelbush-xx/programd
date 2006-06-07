@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<TestSuite xmlns="http://aitools.org/programd/4.6/test-cases"
+<TestSuite xmlns="http://aitools.org/xaiml/test-suite"
     xmlns:html="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://aitools.org/programd/4.6/test-cases http://aitools.org/programd/4.6/test-cases.xsd"
+    xsi:schemaLocation="http://aitools.org/xaiml/test-suite http://aitools.org/xaiml/test-suite.xsd"
     name="AIML 1.0.1">
     <TestCase name="connect">
         <Input>CONNECT</Input>
@@ -488,7 +488,7 @@
     <TestCase name="thatstar (32)">
         <Description/>
         <Input>testthatstar1</Input>
-        <ExpectedAnswer> Test case #32.<html:br/>
+        <ExpectedAnswer>Test case #32.<html:br/>
             THATSTAR: Test passed<html:br/>
             THATSTAR INDEX="1": Test passed</ExpectedAnswer>
     </TestCase>
@@ -501,7 +501,7 @@
     <TestCase name="indexed star (33)">
         <Description/>
         <Input>testmultithatstar1</Input>
-        <ExpectedAnswer> Test case #33.<html:br/>
+        <ExpectedAnswer>Test case #33.<html:br/>
             THATSTAR: thatstar test passed<html:br/>
             THATSTAR
             INDEX="1": thatstar test passed<html:br/>
@@ -524,15 +524,14 @@
     <TestCase name="indexed topicstar (35) setup">
         <Description>Tests the indexed topicstar element.</Description>
         <Input>testmultitopicstar</Input>
-        <ExpectedAnswer> Test case #35 setup okay.</ExpectedAnswer>
+        <ExpectedAnswer>Test case #35 setup okay.</ExpectedAnswer>
     </TestCase>
     <TestCase name="indexed topicstar">
         <Description/>
         <Input>test35</Input>
         <ExpectedAnswer>Test case #35.<html:br/>
             TOPICSTAR: Test passed 1<html:br/>
-            TOPICSTAR
-            INDEX="1": Test passed 1<html:br/>
+            TOPICSTAR INDEX="1": Test passed 1<html:br/>
             TOPICSTAR INDEX="2": Test passed 2<html:br/>
             TOPICSTAR INDEX="3": Test passed 3</ExpectedAnswer>
     </TestCase>
