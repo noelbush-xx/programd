@@ -534,7 +534,7 @@
 	</xs:complexType>
 	<xs:simpleType name="PredicateName">
 		<xs:restriction base="xs:string">
-			<xs:pattern value="\p{L}+"/>
+			<xs:pattern value="[\p{L}\d]+"/>
 		</xs:restriction>
 	</xs:simpleType>
 </xs:schema>
