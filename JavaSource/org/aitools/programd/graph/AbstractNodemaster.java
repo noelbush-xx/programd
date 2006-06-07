@@ -15,7 +15,6 @@ import java.util.LinkedHashMap;
  * This is an abstract Nodemaster containing all the things that are common to the various optimization strategies.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @version 4.6
  */
 abstract public class AbstractNodemaster implements Nodemapper
 {

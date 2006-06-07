@@ -27,7 +27,6 @@ import org.aitools.util.resource.URLTools;
  * routed via standard system objects.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.5
  */
 public class SimpleConsole
 {

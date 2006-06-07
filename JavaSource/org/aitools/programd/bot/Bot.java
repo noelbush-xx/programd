@@ -33,8 +33,6 @@ import org.aitools.programd.util.Substituter;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @author Eion Robb
- * @since 4.1.5
- * @version 4.5
  */
 public class Bot
 {

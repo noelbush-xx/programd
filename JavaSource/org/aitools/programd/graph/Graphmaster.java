@@ -178,7 +178,7 @@ public class Graphmaster
      */
     public Nodemapper add(String pattern, String that, String topic, String botid, URL source)
     {
-        ArrayList<String> path = StringKit.wordSplit(pattern);
+        List<String> path = StringKit.wordSplit(pattern);
         path.add(THAT);
         path.addAll(StringKit.wordSplit(that));
         path.add(TOPIC);
@@ -294,7 +294,7 @@ public class Graphmaster
     public Match match(String input, String that, String topic, String botid) throws NoMatchException
     {
         // Compose the input path. Fill in asterisks for empty values.
-        ArrayList<String> inputPath;
+        List<String> inputPath;
 
         // Input text part.
         if (input.length() > 0)

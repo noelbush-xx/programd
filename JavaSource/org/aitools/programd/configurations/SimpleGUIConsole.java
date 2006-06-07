@@ -26,7 +26,6 @@ import org.aitools.util.resource.URLTools;
  * {@link org.aitools.programd.interfaces.shell.Shell Shell} attached (if you enable it).
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @since 4.2
  */
 public class SimpleGUIConsole
 {

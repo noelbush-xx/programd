@@ -20,7 +20,6 @@ import org.apache.log4j.Logger;
  * attempt to do any optimizations.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @version 4.6
  */
 public class NonOptimalNodemaster extends AbstractNodemaster
 {

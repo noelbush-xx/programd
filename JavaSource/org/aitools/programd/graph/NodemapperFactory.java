@@ -17,7 +17,6 @@ import org.aitools.util.runtime.UserError;
  * is configured in the CoreSettings.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @version 4.6
  */
 public class NodemapperFactory
 {

@@ -21,7 +21,6 @@ import org.apache.log4j.Logger;
  * {@link java.util.LinkedHashMap LinkedMap} until the number of mappings exceeds three (3).
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- * @version 4.6
  */
 public class ThreeOptimalNodemaster extends AbstractNodemaster
 {
