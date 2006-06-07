@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://aitools.org/xaiml/test-suite"
+    targetNamespace="http://aitools.org/xaiml/test-suite" elementFormDefault="qualified"
+    attributeFormDefault="unqualified" version="1.0" xml:lang="EN">
+    <xs:element name="TestSuite">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Description" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Provides a place to describe the purpose of the test
+                            suite.</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element ref="TestCase" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation>The name of the test suite is a convenient way to refer to
+                    it.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="clearInput" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>The clearInput is sent to the engine at the beginning of a
+                        test suite run.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="TestCase">
+        <xs:annotation>
+            <xs:documentation>A TestCase has a single input string that it sends to the
+                engine, and one or more Checkers that are used to validate the response
+                to that input.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Description" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Provides a place to describe the purpose of
+                            the test case.</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="Input" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>An Input is a string that will be sent to the
+                            engine when this test case is run.</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="AlertKeywords" type="KeywordList">
+                        <xs:annotation>
+                            <xs:documentation>An AlertKeywords checker alerts us if a
+                                response does *not* contain any of the comma-separated
+                                keywords.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="ExpectedAnswer">
+                        <xs:annotation>
+                            <xs:documentation>An ExpectedAnswer checker tells us if a
+                                response matches an expected answer.</xs:documentation>
+                        </xs:annotation>
+                        <xs:complexType mixed="true">
+                            <xs:sequence>
+                                <xs:any minOccurs="0" maxOccurs="unbounded"
+                                    namespace="##any" processContents="lax"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="ExpectedKeywords" type="KeywordList">
+                        <xs:annotation>
+                            <xs:documentation>An ExpectedKeywords checker tells us if a
+                                response *does* contain one or more of the
+                                comma-separated keywords.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="ExpectedMatch" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>An ExpectedMatch checker tells us if a
+                                response matches a given regular
+                                expression.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="Length" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>A Length checker tells us if a response is
+                                exactly the specified length.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>The name of the test case is a convenient way to
+                        refer to it.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="KeywordList">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[^,]+(,[^,]+)*"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
