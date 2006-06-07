@@ -5,7 +5,8 @@
     <system systemId="http://java.sun.com/dtd/properties.dtd" uri="platform:/resource/ProgramD/resources/DTD/java-properties.dtd" />
     <system systemId="http://aitools.org/programd/4.6/bot-configuration.xsd"
         uri="platform:/resource/ProgramD/resources/schema/bot-configuration.xsd" />
-    <system systemId="http://aitools.org/programd/4.6/test-cases.xsd" uri="platform:/resource/ProgramD/resources/schema/test-cases.xsd" />
+    <system systemId="http://aitools.org/xaiml/test-suite.xsd" uri="platform:/resource/ProgramD/resources/schema/test-suite.xsd" />
     <system systemId="http://aitools.org/programd/4.6/common-types.xsd" uri="platform:/resource/ProgramD/resources/schema/common-types.xsd" />
     <system systemId="http://aitools.org/programd/4.6/plugins.xsd" uri="platform:/resource/ProgramD/resources/schema/plugins.xsd" />
+    <uri name="http://aitools.org/xaiml/xaiml-spec" uri="platform:/resource/xAIML/xaiml-spec.xsd"/>
 </catalog>
