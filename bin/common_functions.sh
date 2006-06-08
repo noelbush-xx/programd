@@ -13,7 +13,7 @@
 # This contains functions used by shell scripts.
 # This file itself is not executable.
 
-# Starts Program D using a given main class.
+# Starts Program D using several parameters.
 # Parameters:
 # $1: jar file (with a main class specified internally by manifest)
 # $2: starting memory allocation
@@ -27,7 +27,7 @@ function start_programd()
   # Set up the Java environment.
   setup_java
 
-  # Change to the Program D directory and launch the given jar file..
+  # Change to the Program D directory and launch the given jar file.
   cd $BASE
   $JVM_COMMAND -Xms$2 -Xmx$3 -jar $1 -c $4
 }
@@ -49,7 +49,6 @@ function setup_java()
   set_jvm_command
   check_jvm_version
 }
-
 
 # Tries to find/set JAVA_HOME.
 function set_java_vars()
