@@ -21,7 +21,7 @@ set quit=
 pushd "%~p0"
 
 @rem Check for needed environment space.
-call common_functions.bat check_env %1 %2 %3 %4
+call common_functions.bat check_env
 
 @rem Get "base" directory (root of Program D installation)
 if "%quit%"=="" call common_functions.bat set_base
