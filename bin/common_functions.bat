@@ -52,10 +52,10 @@ goto end
 
 @rem Starts Program D using several parameters.
 @rem Parameters:
-@rem %1: jar file (with a main class specified internally by manifest)
-@rem %2: starting memory allocation
-@rem %3: maximum memory allocation
-@rem %4: configuration file
+@rem %2: jar file (with a main class specified internally by manifest)
+@rem %3: starting memory allocation
+@rem %4: maximum memory allocation
+@rem %5: configuration file
 :start_programd
 
   @rem Set up the Program D variables.
@@ -69,7 +69,7 @@ goto end
 
   @rem Change to the Program D directory and launch the given jar file.
   pushd "%BASE%"
-  %JVM_COMMAND% -Xms%2 -Xmx%3 -jar %1 -c %4
+  %JVM_COMMAND% -Xms%3 -Xmx%4 -jar %2 -c %5
 
   @rem On exit, leave the base directory.
   :finished
