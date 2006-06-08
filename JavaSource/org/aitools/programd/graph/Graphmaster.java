@@ -49,7 +49,6 @@ import org.w3c.dom.NodeList;
  * @author Thomas Ringate/Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @author Eion Robb
- * @version 4.6
  */
 public class Graphmaster
 {
