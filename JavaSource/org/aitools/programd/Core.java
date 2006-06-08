@@ -56,7 +56,7 @@ import org.xml.sax.SAXNotSupportedException;
 import org.w3c.dom.Document;
 
 /**
- * The "core" of Program D, independent of any interfaces.
+ * The "core" of Program D, independent of any user interfaces.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
@@ -178,7 +178,7 @@ public class Core
     {
         this._settings = settings;
         this.baseURL = base;
-        Filesystem.setRootPath(URLTools.getParent(this.baseURL));
+        Filesystem.setRootPath(this.baseURL);
         start();
     }
 
