@@ -27,13 +27,13 @@ call common_functions.bat check_env %1 %2 %3 %4
 if "%quit%"=="" call common_functions.bat set_base
 
 @rem Configuration
-set MAIN_CLASS=org.aitools.programd.configurations.SimpleConsole
+set JARFILE=%BASE%\distrib\programd-simple-console.jar
 set START_MEM=128m
 set MAX_MEM=256m
 set CORE_CONF=%BASE%\conf\core.xml
 
-@rem Start Program D using the SimpleConsole main class.
-if "%quit%"=="" call common_functions.bat start_programd %MAIN_CLASS% %START_MEM% %MAX_MEM% "%CORE_CONF%"
+@rem Start Program D using the Simple Console.
+if "%quit%"=="" call common_functions.bat start_programd "%JARFILE%" %START_MEM% %MAX_MEM% "%CORE_CONF%"
 
 :end
 @rem On exit, go back to the original directory.

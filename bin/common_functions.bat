@@ -50,7 +50,12 @@ goto end
   popd
 goto end
 
-@rem Starts Program D using a given main class.
+@rem Starts Program D using several parameters.
+@rem Parameters:
+@rem %1: jar file (with a main class specified internally by manifest)
+@rem %2: starting memory allocation
+@rem %3: maximum memory allocation
+@rem %4: configuration file
 :start_programd
 
   @rem Set up the Program D variables.
@@ -62,9 +67,9 @@ goto end
   @rem Concatenate all paths into the classpath to be used.
   set PROGRAMD_CLASSPATH=%PROGRAMD_LIBS%;%JS_LIB%;%SQL_LIB%
 
-  @rem Change to the Program D directory and start the main class.
+  @rem Change to the Program D directory and launch the given jar file.
   pushd "%BASE%"
-  %JVM_COMMAND% -classpath "%PROGRAMD_CLASSPATH%" -Xms%3 -Xmx%4 %2 -c %5
+  %JVM_COMMAND% -Xms%2 -Xmx%3 -jar %1 -c %4
 
   @rem On exit, leave the base directory.
   :finished
@@ -74,87 +79,6 @@ goto end
 @rem Sets up some variables used to run/build Program D.
 :setup_programd
 
-  @rem Set lib directories
-  call "%0" setup_lib_dirs
-  
-  set PROGRAMD_MAIN_LIB=%DISTRIB%\programd-main.jar
-  if exist "%PROGRAMD_MAIN_LIB%" goto check_other_programd_jars
-  
-  echo.
-  echo I can't find your programd-main.jar file.  Have you compiled it?
-  echo If you downloaded the source-only version but don't have
-  echo a Java compiler, you can download a pre-compiled version from
-  echo http://aitools.org/downloads/
-  set quit=yes
-  goto end
-  
-  :check_other_programd_jars
-  @rem Define the other programd jars, but don't worry if they don't exist.
-  set PROGRAMD_JS_LIB=%DISTRIB%\programd-rhino.jar
-  
-  @rem Set up external jars.
-  call "%0" setup_other_libs
-  
-  set PROGRAMD_LIBS=%PROGRAMD_MAIN_LIB%;%PROGRAMD_JS_LIB%;%OTHER_LIBS%
-goto end
-
-:setup_other_libs
-  
-  set AITOOLS_UTILS_LIB=%LIBS%\aitools-utils.jar
-  if exist "%AITOOLS_UTILS_LIB%" goto set_getopt_lib
-  echo.
-  echo I can't find the aitools-utils.jar that ships with Program D.
-  set quit=yes
-  goto end
-  
-  :set_getopt_lib
-  set GETOPT_LIB=%LIBS%\gnu.getopt-1.0.10.jar
-  if exist "%GETOPT_LIB%" goto set_commons_collections_lib
-  echo.
-  echo I can't find the gnu.getopt-1.0.10.jar that ships with Program D.
-  set quit=yes
-  goto end
-  
-  :set_commons_collections_lib
-  set COMMONS_COLLETIONS_LIB=%LIBS%\commons-collections.jar
-  if exist "%COMMONS_COLLECTIONS_LIB%" goto set_log4j_lib
-  echo.
-  echo I can't find the commons-collections.jar that ships with Program D.
-  set quit=yes
-  goto end
-  
-  :set_log4j_lib
-  set LOG4J_LIB=%WEBLIBS%\log4j-1.2.13.jar
-  if exist "%LOG4J_LIB%" goto check_optional_components
-  echo.
-  echo I can't find the log4j-1.2.13.jar that ships with Program D.
-  set quit=yes
-  goto end
-
-  :check_optional_components
-  @rem Optional components:
-  
-  @rem Set LISTENER_LIBS to the location of your listener jars.
-  @rem No warning is provided if they cannot be found (since they are optional).
-  set AIM_LISTENER_LIBS=%LIBS%\aim-listener\aim-listener.jar;%LIBS%\aim-listener\jaimbot-lib-1.4.jar
-  set IRC_LISTENER_LIBS=%LIBS%\irc-listener\irc-listener.jar;%LIBS%\irc-listener\pircbot.jar
-  set YAHOO_LISTENER_LIBS=%LIBS%\yahoo-listener\yahoo-listener.jar;%LIBS%\yahoo-listener\ymsg_network_v0_61.jar
-  set LISTENER_LIBS=%AIM_LISTENER_LIBS%;%IRC_LISTENER_LIBS%;%YAHOO_LISTENER_LIBS%
-
-  @rem Set SQL_LIB to the location of your database driver.
-  @rem No warning is provided if it cannot be found (since it is optional).
-  set SQL_LIB=%LIBS%\mysql-connector-java-3.1.12-bin.jar
-
-  @rem Set JS_LIB to the location of the Rhino JavaScript interpreter.
-  @rem No warning is provided if it cannot be found (since it is optional).
-  set JS_LIB=%WEBLIBS%\js.jar
-  
-  set OTHER_LIBS=%AITOOLS_UTILS_LIB%;%GETOPT_LIB%;%COMMONS_COLLECTIONS_LIB%;%LOG4J_LIB%;%LISTENER_LIBS%;%SQL_LIB%;%JS_LIB%
-goto end
-
-
-@rem Sets up the lib directories.
-:setup_lib_dirs
   set LIBS=%BASE%\lib
   set DISTRIB=%BASE%\distrib
   set WEBLIBS=%BASE%\WebContent\WEB-INF\lib
@@ -172,7 +96,6 @@ goto end
   @rem tools in DOS for parsing java -version output.
 goto end
 
-
 @rem Tries to find/set JAVA_HOME.
 :set_java_vars
   @rem Try to find JAVA_HOME if it isn't already set.
@@ -189,6 +112,8 @@ goto end
 
   :seek_known_javas
   @rem Common paths for compatible Java SDKs (or JREs) should go here.
+  if exist d:Progra~1\Java\\jdk1.5.0_07\bin\java.exe set JAVA_HOME=d:\jdk1.5.0_07
+  if exist d:Progra~1\Java\\jdk1.5.0_06\bin\java.exe set JAVA_HOME=d:\jdk1.5.0_06
   if exist d:Progra~1\Java\\jdk1.5.0_05\bin\java.exe set JAVA_HOME=d:\jdk1.5.0_05
   if exist d:Progra~1\Java\\jdk1.5.0_04\bin\java.exe set JAVA_HOME=d:\jdk1.5.0_04
   if exist d:Progra~1\Java\\jdk1.5.0_03\bin\java.exe set JAVA_HOME=d:\jdk1.5.0_03
@@ -206,7 +131,6 @@ goto end
   echo Please check that you hava a JDK 5.0 compatible SDK installed.
   set quit=yes
 goto end
-
 
 @rem Checks that JAVA_HOME points to a real directory.
 :check_java_home

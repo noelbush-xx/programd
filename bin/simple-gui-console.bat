@@ -29,13 +29,13 @@ rem Get "base" directory (root of Program D installation)
 if "%quit%"=="" call common_functions.bat set_base
 
 rem Configuration
-set MAIN_CLASS=org.aitools.programd.configurations.SimpleGUIConsole
+set JARFILE=%BASE%\distrib\programd-simple-gui-console.jar
 set START_MEM=128m
 set MAX_MEM=256m
 set CORE_CONF=%BASE%\conf\core.xml
 
-rem Start Program D using the SimpleGUIConsole main class.
-if "%quit%"=="" call common_functions.bat start_programd %MAIN_CLASS% %START_MEM% %MAX_MEM% "%CORE_CONF%"
+rem Start Program D using the Simple GUI Console.
+if "%quit%"=="" call common_functions.bat start_programd "%JARFILE%" %START_MEM% %MAX_MEM% "%CORE_CONF%"
 
 :end
 rem On exit, go back to the original directory.
