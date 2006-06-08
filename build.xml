@@ -43,7 +43,7 @@
     	<property name="mysql-mf-path" value="../lib/mysql-connector-java-3.1.12-bin.jar"/>
     	
     	<!--Optional, path to rhino jar and Program D interface to it (for manifest).-->
-    	<property name="js-mf-path" value="../WebContent/WEB-INF/lib/js.jar programd-rhino.jar"/>
+    	<property name="js-mf-path" value="../lib/js.jar programd-rhino.jar"/>
     	
         <property name="javadoc.dir" value="${basedir}/docs/api" />
 
