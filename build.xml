@@ -79,9 +79,11 @@
         </xslt>
     </target>
 
-    <!--Prepare the build directory.-->
+    <!--Prepare directories.-->
     <target name="prepare" depends="init">
         <mkdir dir="${build.dir}" />
+        <mkdir dir="${distrib.dir}" />
+        <mkdir dir="${manifests.dir}" />
     </target>
 
     <!--Prepare the source code.-->
@@ -105,7 +107,6 @@
     <!--Create the jars.-->
     <target name="jars" depends="init, compile, core-jar, simple-console-jar, simple-gui-console-jar, rhino-jar"/>
 	<target name="jars-setup">
-        <mkdir dir="${distrib.dir}" />
 		<propertyfile file="version.properties">
 			<entry key="build.number" default="0" type="int" operation="+" value="1"/>
 		</propertyfile>
