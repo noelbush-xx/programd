@@ -90,14 +90,16 @@ public class SRAIProcessor extends AIMLProcessor
         String input = parser.evaluate(element.getChildNodes());
         String userid = parser.getUserID();
         String botid = parser.getBotID();
+        TemplateParser recursiveParser;
         try
         {
-            return this._core.getMultiplexor().getInternalResponse(input, userid, botid,
-                    new TemplateParser(input, userid, botid, this._core));
+            recursiveParser = new TemplateParser(input, userid, botid, this._core);
         }
         catch (TemplateParserException e)
         {
             throw new ProcessorException("Could not create new TemplateParser for <srai/>.", e);
         }
+        recursiveParser.pushContext(parser.getCurrentDocURL());
+        return this._core.getMultiplexor().getInternalResponse(input, userid, botid, recursiveParser);
     }
 }
