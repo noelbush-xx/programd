@@ -509,6 +509,9 @@ public class GUIConsole extends JPanel
             this.enter.setEnabled(enabled);
         }
 
+        /**
+         * Displays a new user input and clears the input box.
+         */
         public class InputSender implements ActionListener
         {
             /**
@@ -792,7 +795,7 @@ public class GUIConsole extends JPanel
 
     protected void chooseBot()
     {
-        String[] botIDs = this._core.getBots().getIDs().toArray(new String[] {});
+        String[] botIDs = this._core.getBots().keySet().toArray(new String[] {});
         ListDialog.initialize(this.frame, botIDs, "Choose a bot", "Choose the bot with whom you want to talk.");
         String choice = ListDialog.showDialog(null, this._shell.getCurrentBotID());
         if (choice != null)

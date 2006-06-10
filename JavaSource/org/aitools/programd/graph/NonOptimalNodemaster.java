@@ -186,6 +186,9 @@ public class NonOptimalNodemaster extends AbstractNodemaster
         }
     }
 
+    /**
+     * @see org.aitools.programd.graph.Nodemapper#getAverageSize()
+     */
     public double getAverageSize()
     {
         double total = 0d;

@@ -260,6 +260,9 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
         return this.size;
     }
 
+    /**
+     * @see org.aitools.programd.graph.Nodemapper#getAverageSize()
+     */
     public double getAverageSize()
     {
         double total = 0d;

@@ -53,6 +53,8 @@ public class ConsoleStreamAppender extends WriterAppender
 
     /**
      * Publishes the given record, also to the shell if one is attached.
+     * 
+     * @param event 
      */
     @Override
     public void doAppend(LoggingEvent event)
@@ -126,6 +128,9 @@ public class ConsoleStreamAppender extends WriterAppender
         }
     }
 
+    /**
+     * @param stream
+     */
     public synchronized void setWriter(OutputStream stream)
     {
         super.setWriter(createWriter(stream));
