@@ -6,7 +6,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class JSPOrientedBotServlet extends BotServlet
+/**
+ * A base class for bot interaction scenarios that use JSP.
+ * 
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
+ */
+abstract public class JSPOrientedBotServlet extends BotServlet
 {
     /** A default bot page if none other is provided. */
     protected String defaultBotServletPage = "/pages/TalkToBot.jspx";
@@ -14,6 +19,9 @@ public class JSPOrientedBotServlet extends BotServlet
     /** A page to use for displaying errors. */
     protected String errorPage = "/pages/Error.jspx";
 
+    /**
+     * @see org.aitools.programd.server.servlet.BotServlet#init()
+     */
     @Override
     public void init()
     {

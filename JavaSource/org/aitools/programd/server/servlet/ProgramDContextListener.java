@@ -21,8 +21,10 @@ import org.aitools.util.resource.URLTools;
  */
 public class ProgramDContextListener implements ServletContextListener
 {
+    /** The key for saving the Core object in the servlet context. */
     public static final String KEY_CORE = "core";
 
+    /** The name of the servlet parameter that indicates the location of the core config file. */
     public static final String PARAM_CORE_CONFIG = "programd-core-config";
 
     private ServletContext context = null;

@@ -61,6 +61,9 @@ public class BotAccess
     
     /**
      * Sets a predicate value.
+     * @param name 
+     * @param value 
+     * @return the result of the set operation (the predicate name or the value, depending on predicate type)
      */
     public String set(String name, String value)
     {

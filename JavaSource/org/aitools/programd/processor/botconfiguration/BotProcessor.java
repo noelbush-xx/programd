@@ -83,13 +83,13 @@ public class BotProcessor extends BotConfigurationElementProcessor
         if (Boolean.valueOf(element.getAttribute(ENABLED)).booleanValue())
         {
             Bots bots = this._core.getBots();
-            if (!bots.include(botID))
+            if (!bots.containsKey(botID))
             {
                 Bot bot = new Bot(botID, parser.getCore().getSettings());
 
                 logger.info(String.format("Configuring bot \"%s\".", botID));
                 parser.setCurrentBot(bot);
-                bots.addBot(botID, bot);
+                bots.put(botID, bot);
 
                 Graphmaster graphmaster = this._core.getGraphmaster();
 

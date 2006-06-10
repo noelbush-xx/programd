@@ -9,6 +9,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.aitools.util.xml.XML;
 
+/**
+ * A simple HTTP GET based servlet which accepts a user input and botid as
+ * request parameters and returns the reply as a single string (not an HTML page!).
+ * 
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
+ */
 public class GetBotResponseServlet extends BotServlet
 {
     @Override
