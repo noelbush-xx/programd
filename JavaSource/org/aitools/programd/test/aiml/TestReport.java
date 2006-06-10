@@ -49,9 +49,18 @@ public class TestReport
      * 
      * @param logger the logger to which to print the summary
      */
+    @SuppressWarnings("boxing")
     public void logSummary(Logger logger)
     {
-        logger.info(this.successes.size() + "/" + (this.successes.size() + this.failures.size()) + " tests succeeded.");
+        int failureCount = this.failures.size();
+        if (failureCount == 0)
+        {
+            logger.info(String.format("All %d tests succeeded.", this.successes.size()));
+        }
+        else
+        {
+            logger.warn(String.format("%d out of %d tests failed.", failureCount, (this.successes.size() + failureCount)));
+        }
     }
 
     /**
