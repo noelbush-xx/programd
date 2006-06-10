@@ -67,7 +67,7 @@ public class UnloadCommand extends ShellCommand
         {
             Graphmaster graphmaster = shell.getCore().getGraphmaster();
             int categories = graphmaster.getCategoryCount();
-            Bot bot = shell.getBots().getBot(shell.getCurrentBotID());
+            Bot bot = shell.getBots().get(shell.getCurrentBotID());
             String path = commandLine.substring(space + 1);
             try
             {

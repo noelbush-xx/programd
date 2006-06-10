@@ -50,6 +50,6 @@ public class BotListCommand extends ShellCommand
     @SuppressWarnings("unused")
     public void handle(String commandLine, Shell shell)
     {
-        shell.showMessage("Active bots: " + shell.getBots().getNiceList());
+        shell.showMessage("Active bots: " + shell.getBots().toString());
     }
 }

@@ -424,13 +424,13 @@ public class Shell extends Thread
      */
     public void switchToBot(String newBotID)
     {
-        if (!this.bots.include(newBotID))
+        if (!this.bots.containsKey(newBotID))
         {
             showError("That bot id is not known. Check your startup files.");
             return;
         }
         this.botid = newBotID;
-        this.botName = this.bots.getBot(newBotID).getPropertyValue(this.botNamePredicate);
+        this.botName = this.bots.get(newBotID).getPropertyValue(this.botNamePredicate);
         showMessage("Switched to bot \"" + newBotID + "\" (name: \"" + this.botName + "\").");
         // Send the connect string and print the first response.
         showConsole(this.botName, XML.filterViaHTMLTags(this._core.getResponse(this._core.getSettings()

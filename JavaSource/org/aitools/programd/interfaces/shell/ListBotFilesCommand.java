@@ -54,7 +54,7 @@ public class ListBotFilesCommand extends ShellCommand
     public void handle(String commandLine, Shell shell)
     {
         String botID = shell.getCurrentBotID();
-        Set<URL> keys = shell.getBots().getBot(botID).getLoadedFilesMap().keySet();
+        Set<URL> keys = shell.getBots().get(botID).getLoadedFilesMap().keySet();
         int fileCount = keys.size();
         if (fileCount == 0)
         {
