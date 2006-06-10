@@ -725,4 +725,17 @@
         <ExpectedAnswer>Test case #46.<html:br/>
         Test passed.</ExpectedAnswer>
     </TestCase>
+    <TestCase name="whitespace normalization (48)">
+        <Description>Verifies that whitespace normalization is working.</Description>
+        <Input>testwhitespacenormalization</Input>
+        <ExpectedAnswer>Test case #48.<html:br/>
+        Test passed.</ExpectedAnswer>
+    </TestCase>
+    <TestCase name="load already-loaded AIML file (49)">
+        <Description>Verifies that loading, via a runtime learn element, an AIML file that has
+        already been loaded, does not produce an error.</Description>
+        <Input>testloadalreadyloaded</Input>
+        <ExpectedAnswer>Test case #49.<html:br/>
+        Test passed if no error message.</ExpectedAnswer>
+    </TestCase>
 </TestSuite>
