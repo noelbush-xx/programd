@@ -143,7 +143,7 @@ abstract public class GenericParser<P extends Processor>
      */
     public String processResponse(URL url) throws ProcessorException
     {
-        contextualize(url);
+        pushContext(url);
         Document document = parseCurrentURL();
         String response = evaluate(document);
         this.docURL.pop();
@@ -158,7 +158,7 @@ abstract public class GenericParser<P extends Processor>
      */
     public void process(URL url) throws ProcessorException
     {
-        contextualize(url);
+        pushContext(url);
         this.logger.info(String.format("Loading \"%s\".", URLTools.unescape(url)));
         Document document = parseCurrentURL();
         evaluate(document);
@@ -171,7 +171,7 @@ abstract public class GenericParser<P extends Processor>
      * 
      * @param url
      */
-    protected void contextualize(URL url)
+    public void pushContext(URL url)
     {
         if (url != null)
         {
