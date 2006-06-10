@@ -247,7 +247,7 @@ public class Graphmaster
     }
 
     /**
-     * Removes a node, as well as many of its ancestors as have no descendants other than this node or its ancestors.
+     * Removes a node, as well as as many of its ancestors as have no descendants other than this node or its ancestors.
      * 
      * @param nodemapper
      *            the mapper for the node to remove
@@ -792,6 +792,7 @@ public class Graphmaster
             remove(nodemapper);
             this.totalCategories--;
         }
+        nodemappers.clear();
         Set<String> botids = this.urlCatalog.get(path);
         botids.remove(bot.getID());
         if (botids.size() == 0)
@@ -1014,6 +1015,10 @@ public class Graphmaster
 
     /**
      * Returns whether or not the Graphmaster has already loaded the given URL for the given botid.
+     * 
+     * @param path 
+     * @param botid 
+     * @return whether or not the URL has been loaded
      */
     public boolean hasAlreadyLoadedForBot(URL path, String botid)
     {
