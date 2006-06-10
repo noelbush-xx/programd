@@ -57,6 +57,7 @@ abstract public class Processor
     /**
      * Processes an element.
      * 
+     * @param <P> the type of processor
      * @param element the element to process
      * @param parser the parser calling the processor
      * @return the result of processing the given element
