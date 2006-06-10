@@ -1054,4 +1054,12 @@ DDDDDDDDDD</html:pre>
             Test failed.
         </template>
     </category>
+    <category>
+        <pattern>TESTLOADALREADYLOADED</pattern>
+        <template>
+            Test case #49.<html:br/>
+            <learn>./AIML.aiml</learn>
+            Test passed if no error message.
+        </template>
+    </category>
 </aiml>
