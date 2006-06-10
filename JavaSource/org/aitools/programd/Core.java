@@ -78,7 +78,7 @@ public class Core
     private Graphmaster graphmaster;
 
     /** The Multiplexor. */
-    private Multiplexor multiplexor;
+    private Multiplexor<?> multiplexor;
 
     /** The PredicateMaster. */
     private PredicateMaster predicateMaster;
@@ -425,7 +425,7 @@ public class Core
             }
         }
 
-        Bot bot = this.bots.getBot(botid);
+        Bot bot = this.bots.get(botid);
 
         if (!shouldLoad(path, bot))
         {
@@ -492,7 +492,7 @@ public class Core
     {
         try
         {
-            AIMLReader reader = new AIMLReader(this.graphmaster, path, botid, this.bots.getBot(botid), this._settings
+            AIMLReader reader = new AIMLReader(this.graphmaster, path, botid, this.bots.get(botid), this._settings
                     .getAimlSchemaNamespaceUri().toString());
             try
             {
@@ -798,17 +798,17 @@ public class Core
      */
     public void unloadBot(String id)
     {
-        if (!this.bots.include(id))
+        if (!this.bots.containsKey(id))
         {
             this.logger.warn("Bot \"" + id + "\" is not loaded; cannot unload.");
             return;
         }
-        Bot bot = this.bots.getBot(id);
+        Bot bot = this.bots.get(id);
         for (URL path : bot.getLoadedFilesMap().keySet())
         {
             this.graphmaster.unload(path, bot);
         }
-        this.bots.removeBot(id);
+        this.bots.remove(id);
         this.logger.info("Bot \"" + id + "\" has been unloaded.");
     }
 
@@ -835,7 +835,7 @@ public class Core
      */
     public Bot getBot(String id)
     {
-        return this.bots.getBot(id);
+        return this.bots.get(id);
     }
 
     /**
@@ -853,7 +853,7 @@ public class Core
     /**
      * @return the Multiplexor
      */
-    public Multiplexor getMultiplexor()
+    public Multiplexor<?> getMultiplexor()
     {
         if (this.multiplexor != null)
         {
