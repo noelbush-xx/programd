@@ -12,6 +12,7 @@ package org.aitools.programd.interfaces.shell;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.parser.TemplateParserException;
 import org.aitools.programd.processor.ProcessorException;
+import org.aitools.util.resource.Filesystem;
 import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.runtime.UserError;
 
@@ -81,6 +82,7 @@ public class AIMLCommand extends ShellCommand
             {
                 throw new DeveloperError("Error occurred while creating new TemplateParser.", e);
             }
+            parser.pushContext(Filesystem.getWorkingDirectory());
             try
             {
                 shell.showMessage(parser.processResponse(TEMPLATE_START + commandLine.substring(space + 1)
