@@ -24,6 +24,7 @@ public class ShellCommandRegistry extends ObjectExemplarRegistry<ShellCommand>
     private static final String[] COMMAND_LIST = { "org.aitools.programd.interfaces.shell.AIMLCommand",
             "org.aitools.programd.interfaces.shell.BotListCommand",
             "org.aitools.programd.interfaces.shell.CategoriesCommand",
+            "org.aitools.programd.interfaces.shell.FlushPredicatesCommand",
             "org.aitools.programd.interfaces.shell.HelpCommand",
             "org.aitools.programd.interfaces.shell.ListBotFilesCommand",
             "org.aitools.programd.interfaces.shell.ListCommandablesCommand",
