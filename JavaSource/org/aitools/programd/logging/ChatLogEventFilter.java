@@ -12,8 +12,15 @@ package org.aitools.programd.logging;
 import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 
+/**
+ * Filters out chatlog events.
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
+ */
 public class ChatLogEventFilter extends Filter
 {
+    /**
+     * @see org.apache.log4j.spi.Filter#decide(org.apache.log4j.spi.LoggingEvent)
+     */
     @Override
     public int decide(LoggingEvent event)
     {

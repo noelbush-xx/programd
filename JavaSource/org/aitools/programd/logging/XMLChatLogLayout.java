@@ -60,12 +60,18 @@ public class XMLChatLogLayout extends Layout
         return result.toString();
     }
 
+    /**
+     * @see org.apache.log4j.Layout#getHeader()
+     */
     @Override
     public String getHeader()
     {
         return String.format("<?xml version=\"1.0\"?>%n<log xmlns=\"http://aitools.org/programd/4.6/chatlog\">%n");
     }
 
+    /**
+     * @see org.apache.log4j.Layout#getFooter()
+     */
     @Override
     public String getFooter()
     {
