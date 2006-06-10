@@ -38,7 +38,7 @@ public class TestSuite implements Iterable<TestCase>
     private String _clearInput;
 
     /** The Multiplexor to use. */
-    private Multiplexor _multiplexor;
+    private Multiplexor<?> _multiplexor;
 
     /** The Logger. */
     private Logger _logger;
@@ -58,8 +58,9 @@ public class TestSuite implements Iterable<TestCase>
      * @param name the name to give the test suite
      * @param clearInput the clearInput for the test suite
      * @param multiplexor the multiplexor to use
+     * @param logger 
      */
-    public TestSuite(String name, String clearInput, Multiplexor multiplexor, Logger logger)
+    public TestSuite(String name, String clearInput, Multiplexor<?> multiplexor, Logger logger)
     {
         this._name = name;
         this._clearInput = clearInput;
@@ -72,8 +73,9 @@ public class TestSuite implements Iterable<TestCase>
      * 
      * @param name the name to give the test suite
      * @param multiplexor the multiplexor to use
+     * @param logger 
      */
-    public TestSuite(String name, Multiplexor multiplexor, Logger logger)
+    public TestSuite(String name, Multiplexor<?> multiplexor, Logger logger)
     {
         this._name = name;
         this._multiplexor = multiplexor;
@@ -84,6 +86,7 @@ public class TestSuite implements Iterable<TestCase>
      * Creates a new TestSuite (with no clearInput or Multiplexor(!)).
      * 
      * @param name the name to give the test suite
+     * @param logger 
      */
     @SuppressWarnings("unused")
     protected TestSuite(String name, Logger logger)
@@ -135,7 +138,7 @@ public class TestSuite implements Iterable<TestCase>
      */
     public boolean run(String botid)
     {
-        if (this._clearInput != null)
+        if (this._clearInput != null && this._clearInput.length() > 0)
         {
             this._multiplexor.getResponse(this._clearInput, TESTER_ID, botid);
         }
@@ -193,6 +196,7 @@ public class TestSuite implements Iterable<TestCase>
      * 
      * @param path the path from which to load the test suite
      * @param schema the URL to the copy of the schema for test cases
+     * @param logger 
      * @return the loaded test suite
      */
     public static TestSuite load(URL path, URL schema, Logger logger)
@@ -206,9 +210,10 @@ public class TestSuite implements Iterable<TestCase>
      * @param path the path from which to load the test suite
      * @param schema the URL to the copy of the schema for test cases
      * @param multiplexor the multiplexor to use
+     * @param logger 
      * @return the loaded test suite
      */
-    public static TestSuite load(URL path, URL schema, Multiplexor multiplexor, Logger logger)
+    public static TestSuite load(URL path, URL schema, Multiplexor<?> multiplexor, Logger logger)
     {
         DocumentBuilder builder = XML.getDocumentBuilder(schema, "test cases");
         Document doc;
