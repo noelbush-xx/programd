@@ -16,7 +16,6 @@ import org.w3c.dom.Element;
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.util.resource.Filesystem;
 import org.aitools.util.resource.URLTools;
 
 /**
@@ -53,10 +52,8 @@ public class LearnProcessor extends AIMLProcessor
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        URL path = URLTools.contextualize(Filesystem.getWorkingDirectory(), parser.evaluate(element.getChildNodes()));
-        // Filesystem.pushWorkingDirectory(URLTools.getParent(path));
+        URL path = URLTools.contextualize(parser.getCurrentDocURL(), parser.evaluate(element.getChildNodes()));
         parser.getCore().load(path, parser.getBotID());
-        // Filesystem.popWorkingDirectory();
         return "";
     }
 }
