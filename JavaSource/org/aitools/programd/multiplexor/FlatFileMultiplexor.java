@@ -27,7 +27,7 @@ import org.aitools.util.runtime.UserError;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class FlatFileMultiplexor extends Multiplexor
+public class FlatFileMultiplexor extends Multiplexor<Properties>
 {
     /** The name of the subdirectory for the predicate files. */
     private String ffmDirName;
@@ -102,24 +102,27 @@ public class FlatFileMultiplexor extends Multiplexor
         return true;
     }
 
-    /**
-     * Saves a predicate to disk.
-     * 
-     * @param name the name of the predicate to save
-     * @param value the value to save for the predicate
-     * @param userid the userid with which to associate this predicate
-     * @param botid the botid with which to associate this predicate
-     */
     @Override
-    public void savePredicate(String name, String value, String userid, String botid)
+    protected Properties getStorageMechanism(String userid, String botid)
     {
-        Properties predicates = loadPredicates(userid, botid);
+        return loadPredicates(userid, botid);
+    }
 
-        // Store the predicate value.
-        predicates.setProperty(name, value);
-
-        // Write predicates to disk immediately.
-        savePredicates(predicates, userid, botid);
+    @Override
+    @SuppressWarnings("unused")
+    protected void preparePredicateForStorage(Properties mechanism, String userid, String botid, String name, PredicateValue value)
+    {
+        if (value.size() == 1)
+        {
+            mechanism.setProperty(name, value.getFirstValue());
+        }
+        else
+        {
+            for (int index = 1; index <= value.size(); index++)
+            {
+                mechanism.setProperty(name + '.' + (index), value.get(index));
+            }
+        }
     }
 
     /**
@@ -181,6 +184,7 @@ public class FlatFileMultiplexor extends Multiplexor
      * @param userid the userid for which to save the predicates
      * @param botid the botid for which to save the predicates
      */
+    @Override
     protected void savePredicates(Properties predicates, String userid, String botid)
     {
         String fileName = this.ffmDirName + File.separator + botid + File.separator + userid + PREDICATES_SUFFIX;
@@ -192,7 +196,7 @@ public class FlatFileMultiplexor extends Multiplexor
         }
         catch (FileNotFoundException e)
         {
-            throw new DeveloperError("Could not locate just-created file: \"" + fileName + "\".", e);
+            throw new DeveloperError(String.format("Could not locate just-created file: \"%s\".", fileName), e);
         }
 
         try

@@ -9,9 +9,11 @@
 
 package org.aitools.programd.multiplexor;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
@@ -25,6 +27,7 @@ import org.aitools.programd.parser.TemplateParserException;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.InputNormalizer;
 import org.aitools.programd.util.NoMatchException;
+import org.aitools.util.resource.URLTools;
 import org.aitools.util.runtime.DeveloperError;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -36,8 +39,9 @@ import org.apache.log4j.Logger;
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @author Richard Wallace, Jon Baer
  * @author Thomas Ringate/Pedro Colla
+ * @param <M> some type of "storage mechanism", loosely defined, that will be used when preparing to save predicates
  */
-abstract public class Multiplexor
+abstract public class Multiplexor<M>
 {
     // Convenience constants.
 
@@ -136,7 +140,7 @@ abstract public class Multiplexor
     public synchronized String getResponse(String input, String userid, String botid)
     {
         // Get the specified bot object.
-        Bot bot = this.bots.getBot(botid);
+        Bot bot = this.bots.get(botid);
 
         // Split sentences (after performing substitutions).
         List<String> sentenceList = bot.sentenceSplit(bot.applyInputSubstitutions(input));
@@ -188,7 +192,7 @@ abstract public class Multiplexor
     public String getInternalResponse(String input, String userid, String botid, TemplateParser parser)
     {
         // Get the requested bot.
-        Bot bot = this.bots.getBot(botid);
+        Bot bot = this.bots.get(botid);
 
         // Ready the that and topic predicates for constructing the match path.
         List<String> thatSentences = bot.sentenceSplit(this.predicateMaster.get(THAT, 1, userid, botid));
@@ -230,7 +234,7 @@ abstract public class Multiplexor
         List<String> replies = Collections.checkedList(new ArrayList<String>(sentenceList.size()), String.class);
 
         // Get the requested bot.
-        Bot bot = this.bots.getBot(botid);
+        Bot bot = this.bots.get(botid);
 
         // Ready the that and topic predicates for constructing the match path.
         List<String> thatSentences = bot.sentenceSplit(this.predicateMaster.get(THAT, 1, userid, botid));
@@ -368,9 +372,10 @@ abstract public class Multiplexor
             return "";
         }
 
+        String matchFilename = match.getFileName();
         if (matchLogger.isDebugEnabled())
         {
-            matchLogger.debug(String.format("[MATCHED] %s (\"%s\")", match.getPath(), match.getFileName()));
+            matchLogger.debug(String.format("[MATCHED] %s (\"%s\")", match.getPath(), matchFilename));
         }
 
         ArrayList<String> stars = match.getInputStars();
@@ -396,6 +401,14 @@ abstract public class Multiplexor
 
         try
         {
+            parser.pushContext(URLTools.createValidURL(matchFilename));
+        }
+        catch (FileNotFoundException e)
+        {
+            logger.error(String.format("AIML file that was loaded cannot be found: \"%s\"", matchFilename), e);
+        }
+        try
+        {
             reply = parser.processResponse(template);
         }
         catch (ProcessorException e)
@@ -409,7 +422,7 @@ abstract public class Multiplexor
         catch (DeveloperError e)
         {
             // Log the error message.
-            Logger.getLogger("programd").error("Error while processing response: " + e.getCause().getMessage(), e);
+            logger.error(String.format("Error while processing response: \"%s\"", e.getCause().getMessage()), e);
 
             // Set response to empty string.
             return "";
@@ -486,18 +499,64 @@ abstract public class Multiplexor
     }
 
     /**
-     * Saves a predicate for a given <code>userid</code>. This only applies
-     * to Multiplexors that provide long-term storage (others may just do
-     * nothing).
+     * Saves all predicates and removes them from memory.
      * 
-     * @since 4.1.4
-     * @param name predicate name
-     * @param value predicate value
-     * @param userid user identifier
-     * @param botid
+     * @since 4.7
      */
-    abstract public void savePredicate(String name, String value, String userid, String botid);
+    public void dumpPredicates()
+    {
+        for (String botid : this.bots.keySet())
+        {
+            Bot bot = this.bots.get(botid);
+            Map<String, PredicateMap> predicateCache = bot.getPredicateCache();
+            for (String userid : predicateCache.keySet())
+            {
+                M storageMechanism = getStorageMechanism(userid, botid);
+                PredicateMap predicateMap = predicateCache.get(userid);
+                for (String name : predicateMap.keySet())
+                {
+                    preparePredicateForStorage(storageMechanism, userid, botid, name, predicateMap.get(name));
+                }
+                predicateMap.clear();
+                savePredicates(storageMechanism, userid, botid);
+            }
+        }
+    }
+    
+    /**
+     * Invoked by {@link #dumpPredicates}; returns whatever storage
+     * mechanism is used for preparing saves.
+     * 
+     * @param userid
+     * @param botid
+     * @return the storage mechanism
+     */
+    abstract protected M getStorageMechanism(String userid, String botid);
 
+    /**
+     * Invoked by {@link #dumpPredicates}; puts a predicate into
+     * whatever storage mechanism (a string, a Properties object, etc.)
+     * is going to be used in the actual save operation.
+     * 
+     * @param mechanism the storage mechanism
+     * @param userid
+     * @param botid
+     * @param name the predicate name
+     * @param value the predicate value
+     */
+    abstract protected void preparePredicateForStorage(M mechanism, String userid, String botid, String name, PredicateValue value);
+    
+
+    /**
+     * Invoked by {@link #dumpPredicates}; saves the predicates from the given
+     * storage mechanism.
+     * 
+     * @param userid
+     * @param botid
+     * @param mechanism
+     */
+    abstract protected void savePredicates(M mechanism, String userid, String botid);
+    
     /**
      * Loads a predicate into memory for a given <code>userid</code>. This
      * only applies to Multiplexors that provide long-term storage (others may

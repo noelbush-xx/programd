@@ -11,6 +11,8 @@ package org.aitools.programd.multiplexor;
 
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 /**
  * A <code>PredicateValue</code> is, naturally, the value of
  * a predicate.  It can either have a single String value,
@@ -28,6 +30,8 @@ public class PredicateValue
 
     /** Whether this PredicateValue has multiple values. */
     private boolean multiValued;
+    
+    private static Logger LOGGER = Logger.getLogger("programd");
 
     /**
      * Creates a new <code>PredicateValue</code> with the
@@ -92,6 +96,10 @@ public class PredicateValue
             return this;
         }
         // otherwise...
+        if (LOGGER.isDebugEnabled())
+        {
+            LOGGER.debug("Converting predicate value to multi-valued.");
+        }
         this.multiValued = true;
         this.valueList = new ArrayList<String>(1);
         this.valueList.add(this.singleValue);
@@ -112,9 +120,9 @@ public class PredicateValue
         this.singleValue = null;
         if (this.valueList == null)
         {
-            this.valueList = new ArrayList<String>(5);
-            this.valueList.add(value);
+            this.valueList = new ArrayList<String>(PredicateMaster.MAX_INDEX);
         }
+        this.valueList.add(value);
     }
 
     /**
@@ -167,6 +175,10 @@ public class PredicateValue
     {
         if (!this.multiValued)
         {
+            if (index == 1)
+            {
+                return this.singleValue;
+            }
             throw new IndexOutOfBoundsException();
         }
         return this.valueList.get(index - 1);

@@ -9,15 +9,11 @@
 
 package org.aitools.programd.multiplexor;
 
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
-import org.aitools.programd.bot.Bot;
 import org.aitools.programd.bot.Bots;
-import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.xml.XML;
 import org.apache.log4j.Logger;
 
@@ -39,16 +35,11 @@ public class PredicateMaster
     /** Maximum index of indexed predicates. */
     public static final int MAX_INDEX = 5;
 
-    /** The maximum size of the cache. */
-    private int cacheMax;
+    /** The number of predicate set operations to allow before saving predicates. */
+    private int flushSize;
 
-    /**
-     * The preferred minimum value for the cache (starts at half of {@link #cacheMax}, may be adjusted).
-     */
-    private int cacheMin;
-
-    /** A counter for tracking the number of predicate value cache operations. */
-    protected static int cacheSize = 0;
+    /** A counter for tracking the number of predicate set operations. */
+    protected int setCount = 0;
 
     /** The predicate empty default. */
     protected String predicateEmptyDefault;
@@ -57,7 +48,7 @@ public class PredicateMaster
     protected Core core;
 
     /** The Multiplexor in use. */
-    protected Multiplexor multiplexor;
+    protected Multiplexor<?> multiplexor;
 
     /** The Bots object in use. */
     protected Bots bots;
@@ -70,6 +61,7 @@ public class PredicateMaster
      * 
      * @param coreOwner the Core that owns this PredicateMaster
      */
+    @SuppressWarnings("boxing")
     public PredicateMaster(Core coreOwner)
     {
         this.core = coreOwner;
@@ -78,8 +70,7 @@ public class PredicateMaster
         this.multiplexor = this.core.getMultiplexor();
         this.predicateEmptyDefault = coreSettings.getPredicateEmptyDefault();
         this.logger = Logger.getLogger("programd");
-        this.cacheMax = coreSettings.getPredicateCacheMax();
-        this.cacheMin = Math.max(this.cacheMax / 2, 1);
+        this.flushSize = coreSettings.getPredicateCacheMax();
     }
 
     /**
@@ -95,16 +86,16 @@ public class PredicateMaster
     public String set(String name, String value, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        PredicateMap userPredicates = this.bots.getBot(botid).predicatesFor(userid);
+        PredicateMap predicates = this.bots.get(botid).predicatesFor(userid);
 
         // Put the new value into the predicate.
-        userPredicates.put(name, new PredicateValue(value));
+        predicates.put(name, new PredicateValue(value));
 
-        // Increment the cache count.
-        cacheSize++;
+        // Increment the set count.
+        this.setCount++;
 
-        // Check the cache.
-        checkCache();
+        // Flush if necessary.
+        flushIfNecessary();
 
         // Return the name or value.
         return nameOrValue(name, value, botid);
@@ -124,19 +115,19 @@ public class PredicateMaster
     public synchronized String set(String name, int index, String valueToSet, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        PredicateMap userPredicates = this.bots.getBot(botid).predicatesFor(userid);
+        PredicateMap predicates = this.bots.get(botid).predicatesFor(userid);
 
         // Get, load or create the list of values.
-        PredicateValue value = getLoadOrCreateMultivaluedPredicateValue(name, userPredicates, userid, botid);
+        PredicateValue value = getLoadOrCreateMultivaluedPredicate(name, predicates, userid, botid);
 
         // Try to set the predicate value at the index.
         value.add(index, valueToSet);
 
-        // Increment the cache count.
-        cacheSize++;
+        // Increment the set count.
+        this.setCount++;
 
-        // Check the cache.
-        checkCache();
+        // Flush if necessary.
+        flushIfNecessary();
 
         // Return the name or value.
         return nameOrValue(name, valueToSet, botid);
@@ -155,19 +146,19 @@ public class PredicateMaster
     public synchronized String push(String name, String newValue, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        PredicateMap userPredicates = this.bots.getBot(botid).predicatesFor(userid);
+        PredicateMap userPredicates = this.bots.get(botid).predicatesFor(userid);
 
         // Get, load or create the list of values.
-        PredicateValue value = getLoadOrCreateMultivaluedPredicateValue(name, userPredicates, userid, botid);
+        PredicateValue value = getLoadOrCreateMultivaluedPredicate(name, userPredicates, userid, botid);
 
         // Push the new value onto the indexed predicate list.
         value.push(XML.removeMarkup(newValue));
 
-        // Increment the cache count.
-        cacheSize++;
+        // Increment the set count.
+        this.setCount++;
 
-        // Check the cache.
-        checkCache();
+        // Flush if necessary.
+        flushIfNecessary();
 
         // Return the name or value.
         return nameOrValue(name, newValue, botid);
@@ -185,43 +176,42 @@ public class PredicateMaster
     public synchronized String get(String name, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        PredicateMap userPredicates = this.bots.getBot(botid).predicatesFor(userid);
+        PredicateMap predicates = this.bots.get(botid).predicatesFor(userid);
 
         // Try to get the predicate value from the cache.
-        PredicateValue value;
-
+        if (predicates.containsKey(name))
+        {
+            return predicates.get(name).getFirstValue();
+        }
+        // otherwise...
+        if (this.logger.isDebugEnabled())
+        {
+            this.logger.debug(String.format("Predicate \"%s\" is not cached.", name));
+        }
+        String loadedValue;
         try
         {
-            value = userPredicates.get(name);
+            loadedValue = this.multiplexor.loadPredicate(name, userid, botid);
+            if (this.logger.isDebugEnabled())
+            {
+                this.logger.debug(String.format("Successfully loaded predicate \"%s\".", name));
+            }
         }
         catch (NoSuchPredicateException e)
         {
-            String loadedValue;
-            try
+            // If not found, set and cache the best available default.
+            if (this.logger.isDebugEnabled())
             {
-                loadedValue = this.multiplexor.loadPredicate(name, userid, botid);
+                this.logger.debug(String.format("Could not load predicate \"%s\"; setting to best available default.", name));
             }
-            catch (NoSuchPredicateException ee)
-            {
-                // If not found, set and cache the best available default.
-                loadedValue = bestAvailableDefault(name, botid);
-            }
-
-            // Cache it.
-            userPredicates.put(name, new PredicateValue(loadedValue));
-
-            // Check the cache.
-            checkCache();
-
-            // Return the loaded value.
-            return loadedValue;
+            loadedValue = bestAvailableDefault(name, botid);
         }
 
-        // Check the cache.
-        checkCache();
+        // Cache it.
+        predicates.put(name, new PredicateValue(loadedValue));
 
-        // Return the cached value.
-        return value.getFirstValue();
+        // Return the loaded value.
+        return loadedValue;
     }
 
     /**
@@ -235,32 +225,56 @@ public class PredicateMaster
      * @return the <code>value</code> associated with the given <code>name</code> at the given <code>index</code>,
      *         for the given <code>userid</code>
      */
+    @SuppressWarnings("boxing")
     public synchronized String get(String name, int index, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
-        PredicateMap userPredicates = this.bots.getBot(botid).predicatesFor(userid);
+        PredicateMap predicates = this.bots.get(botid).predicatesFor(userid);
 
         String result = null;
 
         // Get the list of values.
         PredicateValue value = null;
-
-        try
-        {
-            value = getMultivaluedPredicateValue(name, userPredicates);
-        }
-        catch (NoSuchPredicateException e)
+        if (!predicates.containsKey(name))
         {
             // No values cached; try loading.
+            if (this.logger.isDebugEnabled())
+            {
+                this.logger.debug(String.format("Predicate \"%s\" is not cached; attempting to load.", name));
+            }
             try
             {
-                value = loadMultivaluedPredicateValue(name, userPredicates, userid, botid);
+                value = loadMultivaluedPredicate(name, predicates, userid, botid);
+                if (this.logger.isDebugEnabled())
+                {
+                    this.logger.debug(String.format("Successfully loaded predicate \"%s\".", name));
+                }
+                predicates.put(name, value);
             }
-            catch (NoSuchPredicateException ee)
+            catch (NoSuchPredicateException e)
             {
                 // Still no list, so set and cache default.
+                if (this.logger.isDebugEnabled())
+                {
+                    this.logger.debug(String.format("Could not load predicate \"%s\"; setting to best available default.", name));
+                }
                 result = bestAvailableDefault(name, botid);
-                userPredicates.put(name, result);
+                predicates.put(name, result);
+            }
+        }
+        else
+        {
+            try
+            {
+                value = getMultivaluedPredicateValue(name, predicates);
+                if (this.logger.isDebugEnabled())
+                {
+                    this.logger.debug(String.format("Successfully retrieved multi-valued predicate \"%s\" from cache.", name));
+                }
+            }
+            catch (NoSuchPredicateException e)
+            {
+                assert false : "predicates.containsKey(name) but getMultivaluedPredicateValue(name, predicates) throws NoSuchPredicateException!";
             }
         }
 
@@ -274,13 +288,32 @@ public class PredicateMaster
             }
             catch (IndexOutOfBoundsException e)
             {
-                // Return the best available default.
-                result = bestAvailableDefault(name, botid);
+                try
+                {
+                    value = loadMultivaluedPredicate(name, predicates, userid, botid);
+                    if (this.logger.isDebugEnabled())
+                    {
+                        this.logger.debug(String.format("Successfully loaded predicate \"%s\".", name));
+                    }
+                    predicates.put(name, value);
+                }
+                catch (NoSuchPredicateException ee)
+                {
+                    assert false;
+                }
+                try
+                {
+                    // Get the value at index.
+                    result = value.get(index);
+                }
+                catch (IndexOutOfBoundsException ee)
+                {
+                    // Return the best available default.
+                    result = bestAvailableDefault(name, botid);
+                    this.logger.warn(String.format("Index %d not available for predicate \"%s\" (user \"%s\", bot \"%s\").  Returning best available default.", index, name, userid, botid));
+                }
             }
         }
-
-        // Check the cache.
-        checkCache();
 
         // Return the value.
         return result;
@@ -293,16 +326,16 @@ public class PredicateMaster
      * <code>NoSuchPredicateException</code> is thrown.
      * 
      * @param name the name of the predicate
-     * @param userPredicates the existing map of predicates
+     * @param predicates the existing map of predicates
      * @return a list of values assigned to a <code>name</code> for a predicate for a <code>userid</code>
      * @throws NoSuchPredicateException if no values are assigned to the <code>name</code>
      */
-    protected static PredicateValue getMultivaluedPredicateValue(String name, PredicateMap userPredicates)
+    protected static PredicateValue getMultivaluedPredicateValue(String name, PredicateMap predicates)
             throws NoSuchPredicateException
     {
-        if (userPredicates.size() > 0 && userPredicates.containsKey(name))
+        if (predicates.size() > 0 && predicates.containsKey(name))
         {
-            return userPredicates.get(name).becomeMultiValued();
+            return predicates.get(name).becomeMultiValued();
         }
         // If the predicate is not found, throw an exception.
         throw new NoSuchPredicateException(name);
@@ -310,25 +343,26 @@ public class PredicateMaster
     }
 
     /**
-     * Tries to load a predicate with <code>name</code> for <code>userid</code> from the ActiveMultiplexor into the
-     * <code>userPredicates</code>. If successful, tries to get the value list for name. If unsuccessful, throws a
+     * Tries to load a predicate with <code>name</code> for <code>userid</code> from the Multiplexor into the
+     * <code>predicates</code>. If successful, tries to get the value list for name. If unsuccessful, throws a
      * NoSuchPredicateException.
      * 
      * @param name the predicate <code>name</code>
-     * @param userPredicates the user predicates (must not be null!)
+     * @param predicates the user predicates (must not be null!)
      * @param userid the userid
      * @param botid
      * @return an ArrayList of values assigned to a <code>name</code> for a predicate for a <code>userid</code>
      * @throws NoSuchPredicateException if no values are assigned to the <code>name</code>
      * @throws NullPointerException if <code>userPredicates</code> is null
      */
-    protected PredicateValue loadMultivaluedPredicateValue(String name, PredicateMap userPredicates, String userid,
+    @SuppressWarnings("boxing")
+    protected PredicateValue loadMultivaluedPredicate(String name, PredicateMap predicates, String userid,
             String botid) throws NoSuchPredicateException, NullPointerException
     {
         // Prevent this from being called with a null predicates map.
-        if (userPredicates == null)
+        if (predicates == null)
         {
-            throw new NullPointerException("Cannot call loadValueList with null userPredicates!");
+            throw new NullPointerException("Cannot call loadMultivaluedPredicate with null predicates!");
         }
 
         // Try to load the predicate as an indexed predicate.
@@ -344,25 +378,32 @@ public class PredicateMaster
         }
 
         // If this succeeded, get/create the new values list in the predicates.
-        PredicateValue value = userPredicates.get(name);
-
-        // Add the first value that was found.
-        value.add(loadedValue);
+        PredicateValue value = predicates.get(name);
+        if (value == null)
+        {
+            value = new PredicateValue(loadedValue);
+            predicates.put(name, value);
+        }
+        else
+        {
+            value.add(1, loadedValue);
+        }
 
         // Now load as many more as possible up to MAX_INDEX.
-        try
+        for (index = 2; index <= MAX_INDEX; index++)
         {
-            // This will either hit the limit, or throw an exception.
-            while (index <= MAX_INDEX)
+            try
             {
-                index++;
-                value.add(this.multiplexor.loadPredicate(name + '.' + index, userid, botid));
+                value.add(index, this.multiplexor.loadPredicate(name + '.' + index, userid, botid));
             }
-        }
-        catch (NoSuchPredicateException e)
-        {
-            // Do nothing if the exception is thrown; that's fine (there is at
-            // least one).
+            catch (NoSuchPredicateException e)
+            {
+                if (this.logger.isDebugEnabled())
+                {
+                    this.logger.debug(String.format("Exceeded maximum index for \"%s\" with %d.", name, index));
+                }
+                break;
+            }
         }
 
         return value;
@@ -373,33 +414,52 @@ public class PredicateMaster
      * ActiveMultiplexor; finally creates a new one if the preceding failed.
      * 
      * @param name the predicate <code>name</code>
-     * @param userPredicates the user predicates map
+     * @param predicates the user predicates map
      * @param userid the userid for which to return the value list
      * @param botid the botid for which to return the value list
      * @return a multi-valued <code>PredicateValue</code> from <code>userPredicates</code> for <code>name</code>
      *         for <code>userid</code>
      */
-    protected PredicateValue getLoadOrCreateMultivaluedPredicateValue(String name, PredicateMap userPredicates,
+    protected PredicateValue getLoadOrCreateMultivaluedPredicate(String name, PredicateMap predicates,
             String userid, String botid)
     {
-        PredicateValue value;
-
-        try
-        {
-            value = getMultivaluedPredicateValue(name, userPredicates);
-        }
-        catch (NoSuchPredicateException e)
+        PredicateValue value = null;
+        if (!predicates.containsKey(name))
         {
             // No list found in cache; try load.
+            if (this.logger.isDebugEnabled())
+            {
+                this.logger.debug(String.format("Predicate \"%s\" not cached; attempting to load.", name));
+            }
             try
             {
-                value = loadMultivaluedPredicateValue(name, userPredicates, userid, botid);
+                value = loadMultivaluedPredicate(name, predicates, userid, botid);
+                if (this.logger.isDebugEnabled())
+                {
+                    this.logger.debug(String.format("Successfully loaded predicate \"%s\".", name));
+                }
+                predicates.put(name, value);
             }
             catch (NoSuchPredicateException ee)
             {
                 // Still no list, so create new one.
+                if (this.logger.isDebugEnabled())
+                {
+                    this.logger.debug(String.format("Could not load predicate \"%s\"; setting to best available default.", name));
+                }
                 value = new PredicateValue(this.predicateEmptyDefault).becomeMultiValued();
-                userPredicates.put(name, value);
+                predicates.put(name, value);
+            }
+        }
+        else
+        {
+            try
+            {
+                value = getMultivaluedPredicateValue(name, predicates);
+            }
+            catch (NoSuchPredicateException e)
+            {
+                assert false : "predicates.containsKey(name) but getMultivaluedPredicateValue(name, predicates) throws NoSuchPredicateException!";
             }
         }
         return value;
@@ -414,7 +474,7 @@ public class PredicateMaster
      */
     protected String bestAvailableDefault(String name, String botid)
     {
-        Map<String, PredicateInfo> predicatesInfo = this.bots.getBot(botid).getPredicatesInfo();
+        Map<String, PredicateInfo> predicatesInfo = this.bots.get(botid).getPredicatesInfo();
 
         // There may be an individual default defined.
         if (predicatesInfo.containsKey(name))
@@ -422,6 +482,10 @@ public class PredicateMaster
             return predicatesInfo.get(name).getDefaultValue();
         }
         // If not, return the global empty default.
+        if (this.logger.isDebugEnabled())
+        {
+            this.logger.debug(String.format("No default value available for \"%s\"; returning predicate empty default.", name));
+        }
         return this.predicateEmptyDefault;
     }
 
@@ -435,7 +499,7 @@ public class PredicateMaster
      */
     protected String nameOrValue(String name, String value, String botid)
     {
-        Map<String, PredicateInfo> predicatesInfo = this.bots.getBot(botid).getPredicatesInfo();
+        Map<String, PredicateInfo> predicatesInfo = this.bots.get(botid).getPredicatesInfo();
 
         // Check if any info is known about this predicate.
         if (predicatesInfo.containsKey(name))
@@ -450,138 +514,32 @@ public class PredicateMaster
     }
 
     /**
-     * Attempts to dump a given number of predicate values from the cache, starting with the oldest userid first.
-     * 
-     * @param dumpCount the number of values to try to dump
-     * @return the number that were actually dumped
+     * Checks the predicate cache, and saves out predicates if necessary.
      */
-    protected int save(int dumpCount)
+    @SuppressWarnings("boxing")
+    protected void flushIfNecessary()
     {
-        int saveCount = 0;
-
-        Iterator<String> botsIterator = this.bots.keysIterator();
-
-        while (botsIterator.hasNext() && saveCount < dumpCount)
+        // See if we have exceeded the cacheMax.
+        if (this.setCount > this.flushSize)
         {
-            String botid = botsIterator.next();
-            Bot bot = this.bots.getBot(botid);
-            Map<String, PredicateMap> cache = bot.getPredicateCache();
-
-            if (!cache.isEmpty())
+            if (this.logger.isDebugEnabled())
             {
-                Iterator<String> userids = cache.keySet().iterator();
-                while (userids.hasNext() && saveCount < dumpCount)
-                {
-                    // Get a userid.
-                    String userid = null;
-                    try
-                    {
-                        userid = userids.next();
-                    }
-                    catch (ConcurrentModificationException e)
-                    {
-                        throw new DeveloperError(
-                                "Some problem with PredicateMaster design: ConcurrentModificationException in save() [1].",
-                                e);
-                    }
-
-                    // Get the cached predicates for this user.
-                    PredicateMap userPredicates = cache.get(userid);
-
-                    // Iterate over all cached predicates and save them.
-                    for (String name : userPredicates.keySet())
-                    {
-                        try
-                        {
-                            PredicateValue value = userPredicates.get(name);
-
-                            // Save single-valued predicates.
-                            if (!value.isMultiValued())
-                            {
-                                String singleValue = value.getFirstValue();
-
-                                // Do not save default values.
-                                if (!singleValue.equals(bestAvailableDefault(name, botid)))
-                                {
-                                    this.multiplexor.savePredicate(name, singleValue, userid, botid);
-                                    saveCount++;
-                                }
-                            }
-                            // Save indexed predicates.
-                            else
-                            {
-                                // Try to get this as an indexed predicate.
-                                int valueCount = value.size();
-
-                                for (int index = valueCount; --index > 0;)
-                                {
-                                    // Do not save default values.
-                                    String aValue = value.get(index);
-                                    if (!aValue.equals(bestAvailableDefault(name, botid)))
-                                    {
-                                        this.multiplexor.savePredicate(name + '.' + index, aValue, userid, botid);
-                                    }
-                                    /*
-                                     * Increment the saveCount regardless of whether the value is the default, to avoid
-                                     * the reported bug http://bugs.aitools.org/view.php?id=9
-                                     */
-                                    saveCount++;
-                                }
-                            }
-                        }
-                        catch (NoSuchPredicateException e)
-                        {
-                            throw new DeveloperError("Asked to store a predicate with no value!",
-                                    new NullPointerException());
-                        }
-                    }
-
-                    // Remove the userid from the cache.
-                    try
-                    {
-                        userids.remove();
-                    }
-                    catch (ConcurrentModificationException e)
-                    {
-                        throw new DeveloperError(
-                                "Some problem with PredicateMaster design: ConcurrentModificationException in save() [2].",
-                                e);
-                    }
-                }
+                this.logger.debug(String.format("Set count %d exceeds flush size %d.", this.setCount, this.flushSize));
             }
+            saveAll();
         }
-
-        cacheSize -= saveCount;
-
-        // Return the cacheSize now.
-        return cacheSize;
     }
-
+    
     /**
-     * Dumps the entire cache.
+     * Saves all predicates and empties the caches.
      */
     public void saveAll()
     {
-        this.logger.info("PredicateMaster saving all cached predicates (" + cacheSize + ")");
-        save(cacheSize);
-    }
-
-    /**
-     * Checks the predicate cache, and saves out predicates if necessary.
-     */
-    protected void checkCache()
-    {
-        // See if we have exceeded or reached the cacheMax.
-        if (cacheSize >= this.cacheMax)
+        if (this.logger.isDebugEnabled())
         {
-            // Remove at least enough so that cacheMin is reached.
-            int resultSize = save((cacheSize - this.cacheMin));
-
-            // Adjust cacheMin upward if this removed too many.
-            if (resultSize < this.cacheMin)
-            {
-                this.cacheMin = (resultSize + this.cacheMin) / 2;
-            }
+            this.logger.debug("Saving all predicates.");
         }
+        this.multiplexor.dumpPredicates();
+        this.setCount = 0;
     }
 }

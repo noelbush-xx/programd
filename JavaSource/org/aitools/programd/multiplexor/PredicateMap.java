@@ -48,21 +48,4 @@ public class PredicateMap extends HashMap<String, PredicateValue>
     {
         put(name, new PredicateValue(values));
     }
-
-    /**
-     * Returns the value associated with the given name.
-     * 
-     * @param name the name of the predicate whose value is wanted
-     * @return the value of the named predicate
-     * @throws NoSuchPredicateException if no such predicate exists
-     */
-    public PredicateValue get(String name) throws NoSuchPredicateException
-    {
-        PredicateValue value = super.get(name);
-        if (value == null)
-        {
-            throw new NoSuchPredicateException(name);
-        }
-        return value;
-    }
 }

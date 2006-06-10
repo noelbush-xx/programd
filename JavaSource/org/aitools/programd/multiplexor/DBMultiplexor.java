@@ -9,11 +9,9 @@
 
 package org.aitools.programd.multiplexor;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,24 +20,19 @@ import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
 import org.aitools.util.sql.DbAccess;
 import org.aitools.util.sql.DbAccessRefsPoolMgr;
+import org.aitools.util.resource.URLTools;
+import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.runtime.UserError;
 import org.apache.log4j.Logger;
 
 /**
- * <p>
  * A database-oriented {@link Multiplexor} . Uses a database for storage and retrieval of predicates.
- * </p>
- * <p>
- * This is adapted from <a
- * href="http://cvs.aitools.org/cgi-bin/viewcvs.cgi/ProgramD/src/org/alicebot/server/core/Attic/Classifier.java?rev=1.1&only_with_tag=v4_1_0&content-type=text/vnd.viewcvs-markup">Classifier
- * </a>, to use a better database structure and to support user authentication.
- * </p>
  * 
+ * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @author Richard Wallace, Jon Baer
  * @author Thomas Ringate/Pedro Colla
- * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class DBMultiplexor extends Multiplexor
+public class DBMultiplexor extends Multiplexor<Statement>
 {
     /** A manager for database access. */
     private DbAccessRefsPoolMgr dbManager;
@@ -78,30 +71,10 @@ public class DBMultiplexor extends Multiplexor
         this.dbManager.populate(coreSettings.getDatabaseConnections());
     }
 
-    /**
-     * Saves a predicate in a database.
-     * 
-     * @param name the name of the predicate to save
-     * @param value the value to save for the predicate
-     * @param userid the userid with which to associate this predicate
-     * @param botid the botid with which to associate this predicate
-     */
     @Override
-    public void savePredicate(String name, String value, String userid, String botid)
+    @SuppressWarnings("unused")
+    protected Statement getStorageMechanism(String userid, String botid)
     {
-        /*
-         * URLEncoder conveniently escapes things that would otherwise be problematic.
-         */
-        String encodedValue = null;
-        try
-        {
-            encodedValue = URLEncoder.encode(value.trim(), "utf-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            assert false : "This platform does not support UTF-8!";
-        }
-
         DbAccess dbaRef = null;
         try
         {
@@ -109,34 +82,86 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (Exception e)
         {
-            throw new UserError("Could not get database reference when setting predicate name \"" + name
-                    + "\" to value \"" + value + "\" for \"" + userid + "\" as known to \"" + botid + "\".", e);
+            throw new UserError("Could not get database reference.", e);
         }
+        Statement statement = dbaRef.getStatement();
         try
         {
-            ResultSet records = dbaRef.executeQuery("select value from predicates where botid = '" + botid
-                    + "' and userid = '" + userid + "' and name = '" + name + "'");
-            int count = 0;
-            while (records.next())
-            {
-                count++;
-            }
-            if (count > 0)
-            {
-                dbaRef.executeUpdate("update predicates set value = '" + encodedValue + "' where botid = '" + botid
-                        + "' and userid= '" + userid + "' and name = '" + name + "'");
-            }
-            else
-            {
-                dbaRef.executeUpdate("insert into predicates (userid, botid, name, value) values ('" + userid + "', '"
-                        + botid + "' , '" + name + "','" + encodedValue + "')");
-            }
-            records.close();
-            this.dbManager.returnDbaRef(dbaRef);
+            statement.addBatch(String.format("START TRANSACTION"));
         }
         catch (SQLException e)
         {
-            this.dbLogger.error("Database error: " + e);
+            throw new DeveloperError("Error adding to statement batch.", e);
+        }
+        this.dbManager.returnDbaRef(dbaRef);
+        return statement;
+    }
+
+    @Override
+    protected void preparePredicateForStorage(Statement mechanism, String userid, String botid, String name, PredicateValue value)
+    {
+        name = URLTools.encodeUTF8(name);
+        if (value.size() == 1)
+        {
+            try
+            {
+                mechanism.addBatch(createSetQuery(userid, botid, name, URLTools.encodeUTF8(value.getFirstValue())));
+            }
+            catch (SQLException e)
+            {
+                throw new DeveloperError("Error adding to statement batch.", e);
+            }
+        }
+        else
+        {
+            for (int index = 1; index <= value.size(); index++)
+            {
+                try
+                {
+                    mechanism.addBatch(createSetQuery(userid, botid, name + '.' + (index), URLTools.encodeUTF8(value.get(index))));
+                }
+                catch (SQLException e)
+                {
+                    throw new DeveloperError("Error adding to statement batch.", e);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Constructs a query that will insert/update a row for a given predicate.
+     * 
+     * @param userid
+     * @param botid
+     * @param name
+     * @param value
+     * @return the query
+     */
+    private String createSetQuery(String userid, String botid, String name, String value)
+    {
+        return String.format("INSERT INTO `predicates` (`userid`, `botid`, `name`, `value`) VALUES ('%s', '%s', '%s', '%s') ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)",
+                userid, botid, name, value);
+    }
+
+    @Override
+    @SuppressWarnings("unused")
+    protected void savePredicates(Statement mechanism, String userid, String botid)
+    {
+        try
+        {
+            mechanism.addBatch(String.format("COMMIT;%n"));
+        }
+        catch (SQLException e)
+        {
+            throw new DeveloperError("Error adding to statement batch.", e);
+        }
+        try
+        {
+            mechanism.executeBatch();
+        }
+        catch (SQLException e)
+        {
+            throw new DeveloperError("Error executing statement batch.", e);
         }
     }
 
@@ -160,13 +185,13 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (Exception e)
         {
-            throw new UserError("Could not get database reference when getting value for predicate name \"" + name
-                    + "\" for \"" + userid + "\" as known to \"" + botid + "\".", e);
+            throw new UserError("Could not get database reference.", e);
         }
         try
         {
-            ResultSet records = dbaRef.executeQuery("select value from predicates where botid = '" + botid
-                    + "' and userid = '" + userid + "' and name = '" + name + "'");
+            ResultSet records =
+                dbaRef.executeQuery(
+                        String.format("SELECT `value` FROM `predicates` WHERE `botid` = '%s' AND `userid` = '%s' AND `name` = '%s'", botid, userid, name));
             int returnCount = 0;
             while (records.next())
             {
@@ -178,7 +203,7 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (SQLException e)
         {
-            this.dbLogger.error("Database error: " + e);
+            this.dbLogger.error("Database error.", e);
             throw new NoSuchPredicateException(name);
         }
         if (result == null)
@@ -186,15 +211,7 @@ public class DBMultiplexor extends Multiplexor
             throw new NoSuchPredicateException(name);
         }
         // If found, return it (don't forget to decode!).
-        try
-        {
-            return URLDecoder.decode(result, "utf-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            assert false : "This platform does not support UTF-8!";
-            return result;
-        }
+        return URLTools.decodeUTF8(result);
     }
 
     /**
@@ -217,13 +234,13 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (Exception e)
         {
-            throw new UserError("Could not get database reference when creating user \"" + userid
-                    + "\" with password \"" + password + "\".", e);
+            throw new UserError("Could not get database reference.", e);
         }
         try
         {
-            ResultSet rs = dba.executeQuery("select * from users where userid = '" + userid + "' and botid = '" + botid
-                    + "'");
+            ResultSet rs =
+                dba.executeQuery(
+                        String.format("SELECT * FROM `users` WHERE `userid` = '%s' AND `botid` = '%s'", userid, botid));
             int returnCount = 0;
             while (rs.next())
             {
@@ -235,8 +252,8 @@ public class DBMultiplexor extends Multiplexor
                     throw new DuplicateUserIDError(userid);
                 }
             }
-            dba.executeUpdate("insert into users (userid, password, botid) values ('" + userid + "' , '" + password
-                    + "' , '" + botid + "')");
+            dba.executeUpdate(
+                    String.format("INSERT INTO `users` (`userid`, `password`, `botid`) VALUES ('%s', '%s', '%s')", userid, password, botid));
             rs.close();
         }
         catch (SQLException e)
@@ -300,13 +317,13 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (Exception e)
         {
-            throw new UserError("Could not get database reference when checking user \"" + userid
-                    + "\" with password \"" + password + "\".", e);
+            throw new UserError("Could not get database reference.", e);
         }
         try
         {
-            ResultSet rs = dbaRef.executeQuery("select * from users where userid = '" + userid + "' and botid = '"
-                    + botid + "'");
+            ResultSet rs =
+                dbaRef.executeQuery(
+                        String.format("SELECT * FROM `users` WHERE `userid` = '%s' AND `botid` = '%s'", userid, botid));
             int returnCount = 0;
             while (rs.next())
             {
@@ -360,13 +377,13 @@ public class DBMultiplexor extends Multiplexor
         }
         catch (Exception e)
         {
-            throw new UserError("Could not get database reference when changing password to \"" + password
-                    + "\" for \"" + userid + "\" as known to \"" + botid + "\".", e);
+            throw new UserError("Could not get database reference.", e);
         }
         try
         {
-            ResultSet rs = dbaRef.executeQuery("select * from users where userid = '" + userid + "' and botid = '"
-                    + botid + "'");
+            ResultSet rs =
+                dbaRef.executeQuery(
+                        String.format("SELECT * FROM `users` WHERE `userid = '%s' AND `botid` = '%s'", userid, botid));
             int returnCount = 0;
             while (rs.next())
             {
@@ -378,8 +395,8 @@ public class DBMultiplexor extends Multiplexor
                 this.dbManager.returnDbaRef(dbaRef);
                 return (false);
             }
-            dbaRef.executeUpdate("update users set password = '" + password + "' where userid = '" + userid
-                    + "' and botid = '" + botid + "'");
+            dbaRef.executeUpdate(
+                    String.format("UPDATE `users` SET `password` = '%s' WHERE `userid` = '%s' AND `botid` = '%s'", password, userid, botid));
             rs.close();
             this.dbManager.returnDbaRef(dbaRef);
         }
