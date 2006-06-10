@@ -1,2 +1,13 @@
-create table users (userid varchar(128), index userid (userid), password varchar(128), botid varchar(128));
-create table predicates (userid varchar(128), index userid (userid), botid varchar(128), name varchar(128), value blob);
+CREATE TABLE `users` (
+  `userid` varchar(128) default NULL,
+  `password` varchar(128) default NULL,
+  `botid` varchar(128) default NULL,
+  KEY `userid` (`userid`)
+);
+CREATE TABLE `predicates` (
+  `userid` varchar(128) default NULL,
+  `botid` varchar(128) default NULL,
+  `name` varchar(128) default NULL,
+  `value` blob,
+  UNIQUE KEY `unique_predicates` (`userid`,`botid`,`name`)
+);
