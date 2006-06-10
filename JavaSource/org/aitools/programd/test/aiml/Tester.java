@@ -35,7 +35,7 @@ public class Tester
     private Core _core;
 
     /** The Multiplexor that this Tester will use. */
-    private Multiplexor _multiplexor;
+    private Multiplexor<?> _multiplexor;
 
     /** The logger to use. */
     private Logger logger;
@@ -120,7 +120,7 @@ public class Tester
         TestSuite suite = this.suites.get(suiteName);
         if (suite == null)
         {
-            this.logger.warn("No suite \"" + suiteName + "\" could be found.");
+            this.logger.warn(String.format("No suite \"%s\" could be found.", suiteName));
             return;
         }
         while (runCount-- > 0)
@@ -157,7 +157,7 @@ public class Tester
      * 
      * @return the map of suite names to suites
      */
-    protected static HashMap<String, TestSuite> loadTests(List<URL> suiteList, URL schema, Multiplexor multiplexor,
+    protected static HashMap<String, TestSuite> loadTests(List<URL> suiteList, URL schema, Multiplexor<?> multiplexor,
             Logger logger)
     {
         HashMap<String, TestSuite> suites = new HashMap<String, TestSuite>();
