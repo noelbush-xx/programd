@@ -160,7 +160,7 @@ public class TestCase
      * @param botid the bot for whom to run this test case
      * @return whether the test passed
      */
-    public boolean run(Multiplexor multiplexor, String userid, String botid)
+    public boolean run(Multiplexor<?> multiplexor, String userid, String botid)
     {
         this.lastResponse = XML.filterWhitespace(multiplexor.getResponse(this.input, userid, botid));
         return responseIsValid(StringKit.renderAsLines(XML.filterViaHTMLTags(this.lastResponse)));
