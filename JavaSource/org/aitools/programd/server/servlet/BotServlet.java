@@ -126,7 +126,7 @@ public class BotServlet extends HttpServlet
         {
             boolean noBot = true;
             Bots bots = this.core.getBots();
-            if (bots != null && bots.getCount() > 0)
+            if (bots != null && bots.size() > 0)
             {
                 this.bot = this.core.getBots().getABot();
                 if (this.bot != null)
@@ -140,7 +140,7 @@ public class BotServlet extends HttpServlet
                 throw new ServletException("No bots are available from the Core.  Cannot continue.");
             }
         }
-        else if (!this.core.getBots().include(this.botid))
+        else if (!this.core.getBots().containsKey(this.botid))
         {
             throw new ServletException("Requested botid not found.");
         }
