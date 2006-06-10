@@ -86,7 +86,7 @@ public class TestCommand extends ShellCommand
             }
         }
         String botid = shell.getCurrentBotID();
-        Bot bot = shell.getBots().getBot(botid);
+        Bot bot = shell.getBots().get(botid);
         List<URL> testSuites = bot.getTestSuites();
         URL testReportDirectory = bot.getTestReportDirectory();
         if (testSuites != null && testReportDirectory != null)
@@ -96,7 +96,7 @@ public class TestCommand extends ShellCommand
         }
         else
         {
-            shell.showError("Bot " + botid + " is not configured for testing.");
+            shell.showError(String.format("Bot %s is not configured for testing.", botid));
         }
     }
 
