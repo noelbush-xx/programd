@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://aitools.org/programd/4.6"
-    targetNamespace="http://aitools.org/programd/4.6" elementFormDefault="qualified" attributeFormDefault="unqualified"
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://aitools.org/programd/4.7"
+    targetNamespace="http://aitools.org/programd/4.7" elementFormDefault="qualified" attributeFormDefault="unqualified"
     version="1.0" xml:lang="EN">
     <xs:annotation>
         <xs:documentation>This contains common types used by several different schemas.</xs:documentation>
@@ -12,12 +12,28 @@
         <xs:attribute name="name" type="xs:string" />
         <xs:attribute name="value" type="xs:string" />
     </xs:complexType>
-    <xs:simpleType name="class-name">
+    <xs:element name="settings-classes">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="base-class" type="ClassSpec"/>
+                <xs:element name="programmatic-class" type="ClassSpec"/>
+                <xs:element name="xml-class" type="ClassSpec"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ClassSpec">
+        <xs:sequence>
+            <xs:element name="classname" type="ClassName"/>
+            <xs:element name="filename"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="ClassName">
         <xs:restriction base="xs:string">
             <xs:pattern value="(\p{L}+\.)*\p{L}+" />
         </xs:restriction>
     </xs:simpleType>
-    <xs:simpleType name="property-name">
+    <xs:element name="property-name" type="PropertyName"/>
+    <xs:simpleType name="PropertyName">
         <xs:annotation>
             <xs:documentation>
                 An identifier that can be used to construct a property for getting and setting, JavaBean-style.
