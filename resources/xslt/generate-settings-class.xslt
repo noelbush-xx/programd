@@ -1,16 +1,211 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:transform xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:d="http://aitools.org/programd/4.6">
+    xmlns:d="http://aitools.org/programd/4.7">
     <xsl:output method="text"/>
     <xsl:template match="/">
         <xsl:apply-templates select="xs:schema"/>
     </xsl:template>
+    
+    <!-- Match schema element and create three files: base class, programmatically-configured class, and XML-configured class.-->
     <xsl:template match="xs:schema">
-        <xsl:variable name="classname" select="string(xs:annotation/xs:appinfo/d:class-name)"/>
-        <xsl:variable name="simple-classname" select="replace($classname, '^.+\.([^\.]+)$', '$1')"/>
-        <xsl:variable name="package" select="replace($classname, '^(.+)\.[^\.]+$', '$1')"/>
-        <!--Copyleft notice.-->
+        <xsl:apply-templates select="." mode="base-class">
+            <xsl:with-param name="classname" select="string(xs:annotation/xs:appinfo/d:settings-classes/d:base-class/d:classname)"/>
+            <xsl:with-param name="file" select="string(xs:annotation/xs:appinfo/d:settings-classes/d:base-class/d:filename)"/>
+        </xsl:apply-templates>
+        <xsl:apply-templates select="." mode="programmatic-class">
+            <xsl:with-param name="classname" select="string(xs:annotation/xs:appinfo/d:settings-classes/d:programmatic-class/d:classname)"/>
+            <xsl:with-param name="file" select="string(xs:annotation/xs:appinfo/d:settings-classes/d:programmatic-class/d:filename)"/>
+        </xsl:apply-templates>
+        <xsl:apply-templates select="." mode="xml-class">
+            <xsl:with-param name="classname" select="string(xs:annotation/xs:appinfo/d:settings-classes/d:xml-class/d:classname)"/>
+            <xsl:with-param name="file" select="string(xs:annotation/xs:appinfo/d:settings-classes/d:xml-class/d:filename)"/>
+        </xsl:apply-templates>
+    </xsl:template>
+    
+    <!--Create the base class.-->
+    <xsl:template match="xs:schema" mode="base-class">
+        <xsl:param name="classname"/>
+        <xsl:param name="file"/>
+        <xsl:variable name="package" select="d:package($classname)"/>
+        <xsl:result-document href="{$file}">
+            <xsl:call-template name="class">
+                <xsl:with-param name="classname" select="$classname"/>
+                <xsl:with-param name="imports">
+                    <import>java.net.URI</import>
+                    <import>java.net.URL</import>
+                    <import>org.aitools.util.Settings</import>
+                </xsl:with-param>
+                <xsl:with-param name="superclass">Settings</xsl:with-param>
+                <xsl:with-param name="abstract" select="true()"/>
+                <xsl:with-param name="content">
+                    <xsl:apply-templates select="//d:property-name" mode="variable-declarations">
+                        <xsl:with-param name="package" select="$package"/>
+                        <xsl:with-param name="classname" select="$classname"/>
+                    </xsl:apply-templates>
+                    <xsl:apply-templates select="//d:property-name" mode="getters">
+                        <xsl:with-param name="package" select="$package"/>
+                        <xsl:with-param name="classname" select="$classname"/>
+                    </xsl:apply-templates>
+                    <xsl:apply-templates select="//d:property-name" mode="setters">
+                        <xsl:with-param name="package" select="$package"/>
+                        <xsl:with-param name="classname" select="$classname"/>
+                    </xsl:apply-templates>        
+                </xsl:with-param>
+            </xsl:call-template>
+        </xsl:result-document>
+    </xsl:template>
+    
+    <!--Create the XML configured class.-->
+    <xsl:template match="xs:schema" mode="xml-class">
+        <xsl:param name="classname"/>
+        <xsl:param name="file"/>
+        <xsl:variable name="simple-classname" select="d:simple-classname($classname)"/>
+        <xsl:variable name="package" select="d:package($classname)"/>
+        <xsl:result-document href="{$file}">
+            <xsl:call-template name="class">
+                <xsl:with-param name="classname" select="$classname"/>
+                <xsl:with-param name="imports">
+                    <import>java.io.FileNotFoundException</import>
+                    <import>java.net.URL</import>
+                    <import>javax.xml.xpath.XPath</import>
+                    <import>javax.xml.xpath.XPathExpressionException</import>
+                    <import>javax.xml.xpath.XPathFactory</import>
+                    <import>org.w3c.dom.Document</import>
+                    <import>org.aitools.util.resource.Filesystem</import>
+                    <import>org.aitools.util.resource.URITools</import>
+                    <import>org.aitools.util.resource.URLTools</import>
+                    <import>org.aitools.util.runtime.DeveloperError</import>
+                    <import>org.aitools.util.runtime.UserError</import>
+                    <import>org.aitools.util.xml.Loader</import>
+                    <import>org.aitools.util.xml.NamespaceContextImpl</import>
+                </xsl:with-param>
+                <xsl:with-param name="superclass">CoreSettings</xsl:with-param>
+                <xsl:with-param name="content">
+                    <xsl:text>    /** The path to the settings file. */
+    private URL _path;
+    
+    /**
+     * Creates a &lt;code&gt;</xsl:text>
+                    <xsl:value-of select="$simple-classname"/>
+                    <xsl:text>&lt;/code&gt; with the XML-formatted settings file
+     * located at the given path.
+     *
+     * @param path the path to the settings file
+     */
+    public </xsl:text>
+                    <xsl:value-of select="$simple-classname"/>
+                    <xsl:text>(URL path)
+    {
+        this._path = path;
+        initialize();
+    }
+    
+    </xsl:text>
+                    <xsl:apply-templates select="." mode="xml-initialize-method">
+                        <xsl:with-param name="package" select="$package"/>
+                        <xsl:with-param name="classname" select="$classname"/>
+                    </xsl:apply-templates>
+                </xsl:with-param>
+            </xsl:call-template>
+        </xsl:result-document>
+    </xsl:template>
+    
+    <!--Create the programmatically configured class.-->
+    <xsl:template match="xs:schema" mode="programmatic-class">
+        <xsl:param name="classname"/>
+        <xsl:param name="file"/>
+        <xsl:variable name="simple-classname" select="d:simple-classname($classname)"/>
+        <xsl:variable name="package" select="d:package($classname)"/>
+        <xsl:result-document href="{$file}">
+            <xsl:call-template name="class">
+                <xsl:with-param name="classname" select="$classname"/>
+                <xsl:with-param name="imports">
+                    <import>java.io.FileNotFoundException</import>
+                    <import>org.aitools.util.resource.URITools</import>
+                    <import>org.aitools.util.resource.URLTools</import>
+                    <import>org.aitools.util.runtime.UserError</import>
+                </xsl:with-param>
+                <xsl:with-param name="superclass">CoreSettings</xsl:with-param>
+                <xsl:with-param name="content">
+                    <xsl:text>    
+    /**
+     * Creates a &lt;code&gt;</xsl:text>
+                    <xsl:value-of select="$simple-classname"/>
+                    <xsl:text>&lt;/code&gt; with default settings values.
+     * These are read from the schema when this Java source file is automatically generated.
+     */
+    public </xsl:text>
+                    <xsl:value-of select="$simple-classname"/>
+                    <xsl:text>()
+    {
+        initialize();
+    }
+    
+    </xsl:text>
+                    <xsl:apply-templates select="." mode="default-initialize-method">
+                        <xsl:with-param name="package" select="$package"/>
+                        <xsl:with-param name="classname" select="$classname"/>
+                    </xsl:apply-templates>
+                </xsl:with-param>
+            </xsl:call-template>
+        </xsl:result-document>
+    </xsl:template>
+    
+    <!--Basic content for any class.-->
+    <xsl:template name="class">
+        <xsl:param name="classname"/>
+        <xsl:param name="imports"/>
+        <xsl:param name="superclass"/>
+        <xsl:param name="interfaces"/>
+        <xsl:param name="abstract"/>
+        <xsl:param name="content"/>
+        
+        <xsl:variable name="simple-classname" select="d:simple-classname($classname)"/>
+        <xsl:variable name="package" select="d:package($classname)"/>
+        
+        <!--Copyleft and package header-->
+        <xsl:call-template name="copyleft"/>
+        <xsl:call-template name="package-declaration">
+            <xsl:with-param name="package" select="$package"/>
+        </xsl:call-template>
+        
+        <!--Imports-->
+        <xsl:call-template name="imports">
+            <xsl:with-param name="imports" select="$imports"/>
+        </xsl:call-template>
+        
+        <!--Class block-->
+        <xsl:text>
+/**
+ * Automatically generated at </xsl:text>
+        <xsl:value-of select="current-dateTime()"/>
+        <xsl:text>.
+ */
+</xsl:text>
+        <xsl:if test="$abstract">
+            <xsl:text>abstract </xsl:text>
+        </xsl:if>
+        <xsl:text>public class </xsl:text>
+        <xsl:value-of select="$simple-classname"/>
+        <xsl:if test="$superclass">
+            <xsl:text> extends </xsl:text>
+            <xsl:value-of select="$superclass"/>
+        </xsl:if>
+        <xsl:if test="$interfaces">
+            <xsl:text> implements </xsl:text>
+            <xsl:value-of select="$interfaces"/>
+        </xsl:if>
+        <xsl:text>
+{
+</xsl:text>        
+        <xsl:value-of select="$content"/>
+        <xsl:text>}
+</xsl:text>
+    </xsl:template>
+    
+    <!--Produce a copyleft notice.-->
+    <xsl:template name="copyleft">
         <xsl:text>/*
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -19,228 +214,326 @@
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
-package </xsl:text>
+</xsl:text>
+    </xsl:template>
+    
+    <!--Produce a package declaration.-->
+    <xsl:template name="package-declaration">
+        <xsl:param name="package"/>
+        <xsl:text>package </xsl:text>
         <xsl:value-of select="$package"/>
         <xsl:text>;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-
-import org.aitools.programd.util.URLTools;
-import org.aitools.programd.util.UserError;
-
 </xsl:text>
-        <xsl:if test="$package != 'org.aitools.programd.util'">
-            <xsl:text>import org.aitools.programd.util.Settings;
-
-</xsl:text>
-        </xsl:if>
-        <xsl:text>/**
- * Automatically generated from properties file, </xsl:text>
-        <xsl:value-of select="current-dateTime()"/>
-        <xsl:text>
- */
-public class </xsl:text>
-        <xsl:value-of select="$simple-classname"/>
-        <xsl:text> extends Settings
-{
-</xsl:text>
-        <xsl:apply-templates select="//d:property-name" mode="variable-declarations">
-            <xsl:with-param name="package" select="$package"/>
-            <xsl:with-param name="classname" select="$classname"/>
-        </xsl:apply-templates>
-        <xsl:text>    /**
-     * Creates a &lt;code&gt;</xsl:text>
-        <xsl:value-of select="$simple-classname"/>
-        <xsl:text>&lt;/code&gt; using default property values.
-     */
-    public </xsl:text>
-        <xsl:value-of select="$simple-classname"/>
-        <xsl:text>()
-    {
-        super();
-    }
-    
-    /**
-     * Creates a &lt;code&gt;</xsl:text>
-        <xsl:value-of select="$simple-classname"/>
-        <xsl:text>&lt;/code&gt; with the (XML-formatted) properties
-     * located at the given path.
-     *
-     * @param propertiesPath the path to the configuration file
-     */
-    public </xsl:text>
-        <xsl:value-of select="$simple-classname"/>
-        <xsl:text>(URL propertiesPath)
-    {
-        super(propertiesPath);
-    }
-
-</xsl:text>
-        <xsl:apply-templates select="." mode="initialize-method">
-            <xsl:with-param name="package" select="$package"/>
-            <xsl:with-param name="classname" select="$classname"/>
-        </xsl:apply-templates>
-        <xsl:apply-templates select="//d:property-name" mode="getters">
-            <xsl:with-param name="package" select="$package"/>
-            <xsl:with-param name="classname" select="$classname"/>
-        </xsl:apply-templates>
-        <xsl:apply-templates select="//d:property-name" mode="setters">
-            <xsl:with-param name="package" select="$package"/>
-            <xsl:with-param name="classname" select="$classname"/>
-        </xsl:apply-templates>
-        <xsl:text>}</xsl:text>
     </xsl:template>
-    <!--Create the initialize() method.-->
-    <xsl:template match="xs:schema" mode="initialize-method">
+    
+    <!--List imports.-->
+    <xsl:template name="imports">
+        <xsl:param name="imports"/>
+        <xsl:for-each select="$imports/import">
+            <xsl:text>import </xsl:text>
+            <xsl:value-of select="."/>
+            <xsl:text>;
+</xsl:text>
+        </xsl:for-each>
+    </xsl:template>
+    
+    <!--Create the initialize() method for XML settings.-->
+    <xsl:template match="xs:schema" mode="xml-initialize-method">
         <xsl:param name="package"/>
         <xsl:param name="classname"/>
-        <xsl:text>    /**
-    * Initializes the Settings with values from properties, or defaults.
-    */
+        <xsl:text>/**
+     * Initializes the Settings with values from the XML settings file.
+     */
+    @SuppressWarnings("boxing")
     @Override
     protected void initialize()
     {
+        Loader loader = new Loader(Filesystem.getWorkingDirectory(), "resources/schema/programd-configuration.xsd", "XML Core Settings");
+        Document document = loader.parse(this._path);
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        NamespaceContextImpl ns = new NamespaceContextImpl();
+        ns.add("http://aitools.org/programd/4.7/programd-configuration", "d");
+        xpath.setNamespaceContext(ns);
+
+        try
+        {
 </xsl:text>
-        <xsl:apply-templates select="//d:property-name" mode="initialize">
+        <xsl:apply-templates select="//d:property-name" mode="xml-initialize">
             <xsl:with-param name="package" select="$package"/>
             <xsl:with-param name="classname" select="$classname"/>
         </xsl:apply-templates>
-        <xsl:text>    }
-
+        <xsl:text>        }
+        catch (XPathExpressionException e)
+        {
+            throw new DeveloperError("Error in generated XPath expression for retrieving setting.", e);
+        }
+    }
 </xsl:text>
     </xsl:template>
-    <!--Initialize a property.-->
-    <xsl:template match="d:property-name" mode="initialize">
+    
+    <!--Initialize a setting from XML.-->
+    <xsl:template match="d:property-name" mode="xml-initialize">
         <xsl:param name="package"/>
         <xsl:param name="classname"/>
         <!--Discover type.-->
-        <xsl:variable name="type" select="d:get-type(ancestor::xs:element/@type)"/>
-        <!--Discover default.-->
-        <xsl:variable name="default" select="d:get-default(.)"/>
-        <!--Get the description.-->
-        <xsl:variable name="description" select="d:get-description(.)"/>
+        <xsl:variable name="type" select="d:get-type(.)"/>
         <xsl:choose>
-            <xsl:when test="$type = 'int'">
-                <xsl:text>        try
-        {
-            set</xsl:text>
-                <xsl:value-of select="d:title-case(.)"/>
-                <xsl:text>(Integer.parseInt(this.properties.getProperty("</xsl:text>
-                <xsl:value-of select="@key"/>
-                <xsl:text>", "</xsl:text>
-                <xsl:value-of select="$default"/>
-                <xsl:text>")));
-        }
-        catch (NumberFormatException e)
-        {
-            set</xsl:text>
-                <xsl:value-of select="d:title-case(.)"/>
-                <xsl:text>(</xsl:text>
-                <xsl:value-of select="$default"/>
-                <xsl:text>);
-        }</xsl:text>
-            </xsl:when>
             <xsl:when test="$type = 'boolean'">
-                <xsl:text>        set</xsl:text>
-                <xsl:value-of select="d:title-case(.)"/>
-                <xsl:text>(Boolean.valueOf(this.properties.getProperty("</xsl:text>
-                <xsl:value-of select="@key"/>
-                <xsl:text>", "</xsl:text>
-                <xsl:value-of select="$default"/>
-                <xsl:text>")).booleanValue());</xsl:text>
+                <xsl:apply-templates select="." mode="xml-initializer">
+                    <xsl:with-param name="conversion">Boolean.parseBoolean</xsl:with-param>
+                </xsl:apply-templates>
             </xsl:when>
-            <xsl:when test="$type = 'enum'">
-                <xsl:text>        String </xsl:text>
-                <xsl:value-of select="."/>
-                <xsl:text>Value = this.properties.getProperty("</xsl:text>
-                <xsl:value-of select="@key"/>
-                <xsl:text>", "</xsl:text>
-                <xsl:value-of select="$default"/>
-                <xsl:text>");
-         
-         </xsl:text>
-                <xsl:for-each select="d:get-enum-values($description)">
+            <xsl:when test="$type = 'int'">
+                <xsl:apply-templates select="." mode="xml-initializer">
+                    <xsl:with-param name="conversion">Integer.parseInt</xsl:with-param>
+                    <xsl:with-param name="qname">XPathConstants.NUMBER</xsl:with-param>
+                </xsl:apply-templates>
+            </xsl:when>
+            <xsl:when test="$type = 'String'">
+                <xsl:apply-templates select="." mode="xml-initializer">
+                </xsl:apply-templates>
+            </xsl:when>
+            <xsl:when test="$type = 'URI'">
+                <xsl:apply-templates select="." mode="xml-initializer">
+                    <xsl:with-param name="conversion">URITools.createValidURI</xsl:with-param>
+                    <xsl:with-param name="conversion-arguments">, false</xsl:with-param>
+                    <xsl:with-param name="exception">FileNotFoundException</xsl:with-param>
+                </xsl:apply-templates>
+            </xsl:when>
+            <xsl:when test="$type = 'URL'">
+                <xsl:apply-templates select="." mode="xml-initializer">
+                    <xsl:with-param name="conversion">URLTools.createValidURL</xsl:with-param>
+                    <xsl:with-param name="conversion-arguments">, this._path, true</xsl:with-param>
+                    <xsl:with-param name="exception">FileNotFoundException</xsl:with-param>
+                </xsl:apply-templates>
+            </xsl:when>
+            <xsl:when test="starts-with($type, 'enum ')">
+                <xsl:variable name="enumType" select="substring-after($type, 'enum ')"/>
+                <xsl:variable name="propertyName" select="."/>
+                <xsl:text>
+            String </xsl:text>
+                <xsl:value-of select="$propertyName"/>
+                <xsl:text>Value = xpath.evaluate("</xsl:text>
+                <xsl:value-of select="d:path-to(., 'd')"/>
+                <xsl:text>", document);
+</xsl:text>
+                <xsl:for-each select="d:get-enum-values(ancestor::xs:schema, $enumType)">
+                    <xsl:text>            </xsl:text>
                     <xsl:if test="position() != 1">
                         <xsl:text>else </xsl:text>
                     </xsl:if>
                     <xsl:text>if (</xsl:text>
-                    <xsl:value-of select="."/>
+                    <xsl:value-of select="$propertyName"/>
                     <xsl:text>Value.equals("</xsl:text>
                     <xsl:value-of select="."/>
                     <xsl:text>"))
-         {
-             this.</xsl:text>
-                    <xsl:value-of select="."/>
-                    <xsl:text> = </xsl:text>
-                    <xsl:value-of select="d:title-case(.)"/>
+            {
+                set</xsl:text>
+                    <xsl:value-of select="d:title-case($propertyName)"/>
+                    <xsl:text>(</xsl:text>
+                    <xsl:value-of select="$enumType"/>
                     <xsl:text>.</xsl:text>
-                    <xsl:value-of select="upper-case(.)"/>
-                    <xsl:text>;
-         }
-             </xsl:text>
+                    <xsl:value-of select="d:enum-name(.)"/>
+                    <xsl:text>);
+            }
+</xsl:text>
                 </xsl:for-each>
+                <xsl:text>
+</xsl:text>
             </xsl:when>
-            <xsl:when test="$type = 'URI'">
-                <xsl:text>        try
-        {
-            set</xsl:text>
-                <xsl:value-of select="d:title-case(.)"/>
-                <xsl:text>(new URI(this.properties.getProperty("</xsl:text>
-                <xsl:value-of select="@key"/>
-                <xsl:text>", "</xsl:text>
-                <xsl:value-of select="$default"/>
-                <xsl:text>")));
-        }
-        catch (URISyntaxException e)
-        {
-            throw new UserError(e);
-        }</xsl:text>
-            </xsl:when>
-            <xsl:when test="$type = 'URL'">
-                <xsl:text>        set</xsl:text>
-                <xsl:value-of select="d:title-case(.)"/>
-                <xsl:text>(URLTools.contextualize(this.path, this.properties.getProperty("</xsl:text>
-                <xsl:value-of select="@key"/>
-                <xsl:text>", "</xsl:text>
-                <xsl:value-of select="$default"/>
-                <xsl:text>")));</xsl:text>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:text>        set</xsl:text>
-                <xsl:value-of select="d:title-case(.)"/>
-                <xsl:text>(this.properties.getProperty("</xsl:text>
-                <xsl:value-of select="@key"/>
-                <xsl:text>", "</xsl:text>
-                <xsl:value-of select="$default"/>
-                <xsl:text>"));</xsl:text>
-            </xsl:otherwise>
         </xsl:choose>
-        <xsl:text>
+    </xsl:template>
+    
+    <!--Make an initializer that reads from XML.-->
+    <xsl:template match="d:property-name" mode="xml-initializer">
+        <xsl:param name="cast"/>
+        <xsl:param name="conversion"/>
+        <xsl:param name="conversion-arguments"/>
+        <xsl:param name="method-conversion"/>
+        <xsl:param name="exception"/>
+        <xsl:if test="$exception">
+            <xsl:text>            try
+            {
+    </xsl:text>
+        </xsl:if>
+        <xsl:text>            set</xsl:text>
+        <xsl:value-of select="d:title-case(.)"/>
+        <xsl:text>(</xsl:text>
+        <xsl:if test="$conversion">
+            <xsl:value-of select="$conversion"/>
+            <xsl:text>(</xsl:text>
+        </xsl:if>
+        <xsl:if test="$method-conversion">
+            <xsl:text>(</xsl:text>
+        </xsl:if>
+        <xsl:if test="$cast">
+            <xsl:text>(</xsl:text>
+            <xsl:value-of select="$cast"/>
+            <xsl:text>)</xsl:text>
+        </xsl:if>
+        <xsl:text>xpath.evaluate("</xsl:text>
+        <xsl:value-of select="d:path-to(., 'd')"/>
+        <xsl:text>", document)</xsl:text>
+        <xsl:if test="$conversion-arguments">
+            <xsl:value-of select="$conversion-arguments"/>
+        </xsl:if>
+        <xsl:if test="$conversion">
+            <xsl:text>)</xsl:text>
+        </xsl:if>
+        <xsl:if test="$method-conversion">
+            <xsl:text>)</xsl:text>
+            <xsl:value-of select="$method-conversion"/>
+        </xsl:if>
+        <xsl:text>);
+</xsl:text>
+        <xsl:if test="$exception">
+            <xsl:text>            }
+            catch (</xsl:text>
+            <xsl:value-of select="$exception"/>
+            <xsl:text> e)
+            {
+                throw new UserError("Error in settings.", e);
+            }
+</xsl:text>
+        </xsl:if>
 
+    </xsl:template>
+    
+    <!--Create an initialize() method that initializes to defaults.-->
+    <xsl:template match="xs:schema" mode="default-initialize-method">
+        <xsl:param name="package"/>
+        <xsl:param name="classname"/>
+        <xsl:text>/**
+     * Initializes the Settings with default values (from the schema).
+     */
+    @SuppressWarnings("boxing")
+    @Override
+    protected void initialize()
+    {
+</xsl:text>
+        <xsl:apply-templates select="//d:property-name" mode="default-initialize">
+            <xsl:with-param name="package" select="$package"/>
+            <xsl:with-param name="classname" select="$classname"/>
+        </xsl:apply-templates>
+        <xsl:text>    }
 </xsl:text>
     </xsl:template>
+
+    
+    <!--Initialize a setting with the default value.-->
+    <xsl:template match="d:property-name" mode="default-initialize">
+        <xsl:param name="package"/>
+        <xsl:param name="classname"/>
+        <!--Discover type.-->
+        <xsl:variable name="type" select="d:get-type(.)"/>
+        <!--Discover default.-->
+        <xsl:variable name="default" select="d:get-default(.)"/>
+        <xsl:choose>
+            <xsl:when test="$type = 'boolean'">
+                <xsl:apply-templates select="." mode="default-initializer">
+                    <xsl:with-param name="conversion">Boolean.parseBoolean</xsl:with-param>
+                    <xsl:with-param name="default" select="$default"/>
+                </xsl:apply-templates>
+            </xsl:when>
+            <xsl:when test="$type = 'int'">
+                <xsl:apply-templates select="." mode="default-initializer">
+                    <xsl:with-param name="conversion">Integer.parseInt</xsl:with-param>
+                    <xsl:with-param name="default" select="$default"/>
+                </xsl:apply-templates>
+            </xsl:when>
+            <xsl:when test="$type = 'String'">
+                <xsl:apply-templates select="." mode="default-initializer">
+                    <xsl:with-param name="default" select="$default"/>
+                </xsl:apply-templates>
+            </xsl:when>
+            <xsl:when test="$type = 'URI'">
+                <xsl:apply-templates select="." mode="default-initializer">
+                    <xsl:with-param name="conversion">URITools.createValidURI</xsl:with-param>
+                    <xsl:with-param name="conversion-arguments">, false</xsl:with-param>
+                    <xsl:with-param name="default" select="$default"/>
+                    <xsl:with-param name="exception">FileNotFoundException</xsl:with-param>
+                </xsl:apply-templates>
+            </xsl:when>
+            <xsl:when test="$type = 'URL'">
+                <xsl:apply-templates select="." mode="default-initializer">
+                    <xsl:with-param name="conversion">URLTools.createValidURL</xsl:with-param>
+                    <xsl:with-param name="conversion-arguments">, false</xsl:with-param>
+                    <xsl:with-param name="default" select="$default"/>
+                    <xsl:with-param name="exception">FileNotFoundException</xsl:with-param>
+                </xsl:apply-templates>
+            </xsl:when>
+            <xsl:when test="starts-with($type, 'enum ')">
+                <xsl:apply-templates select="." mode="default-initializer">
+                    <xsl:with-param name="default" select="concat(substring-after($type, 'enum '), '.', d:enum-name($default))"/>
+                    <xsl:with-param name="quote" select="false()"/>
+                </xsl:apply-templates>
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
+    
+    <!--Make an initializer that assigns a default value.-->
+    <xsl:template match="d:property-name" mode="default-initializer">
+        <xsl:param name="conversion"/>
+        <xsl:param name="conversion-arguments"/>
+        <xsl:param name="default"/>
+        <xsl:param name="exception"/>
+        <xsl:param name="quote" select="true()"/>
+        <xsl:if test="$exception">
+            <xsl:text>        try
+        {
+</xsl:text>
+        </xsl:if>
+        <xsl:text>            set</xsl:text>
+        <xsl:value-of select="d:title-case(.)"/>
+        <xsl:text>(</xsl:text>
+        <xsl:if test="$conversion">
+            <xsl:value-of select="$conversion"/>
+            <xsl:text>(</xsl:text>
+        </xsl:if>
+        <xsl:if test="$quote">
+            <xsl:text>"</xsl:text>
+        </xsl:if>
+        <xsl:value-of select="$default"/>
+        <xsl:if test="$quote">
+            <xsl:text>"</xsl:text>
+        </xsl:if>
+        <xsl:if test="$conversion-arguments">
+            <xsl:value-of select="$conversion-arguments"/>
+        </xsl:if>
+        <xsl:if test="$conversion">
+            <xsl:text>)</xsl:text>
+        </xsl:if>
+        <xsl:text>);
+</xsl:text>
+        <xsl:if test="$exception">
+            <xsl:text>        }
+        catch (</xsl:text>
+            <xsl:value-of select="$exception"/>
+            <xsl:text> e)
+        {
+            throw new UserError("Error in settings.", e);
+        }
+</xsl:text>
+        </xsl:if>
+    </xsl:template>
+    
     <!--Build the property variable declaration.-->
     <xsl:template match="d:property-name" mode="variable-declarations">
         <xsl:param name="package"/>
         <xsl:param name="classname"/>
-        <xsl:text>    /**
-</xsl:text>
+        <xsl:text>    /** </xsl:text>
         <xsl:variable name="description" select="string(ancestor::xs:annotation/xs:documentation)"/>
         <xsl:if test="$description">
-            <xsl:text>     * </xsl:text>
             <xsl:value-of select="normalize-space(replace(replace($description, '\*.*', '', 's'), '\[.+\]', ''))"/>
-            <xsl:text>
-</xsl:text>
         </xsl:if>
-        <xsl:text>     */
+        <xsl:text> */
     private </xsl:text>
         <!--Discover type.-->
         <xsl:variable name="type" select="d:get-type(.)"/>
         <xsl:choose>
-            <xsl:when test="$type = 'enum'">
+            <xsl:when test="starts-with($type, 'enum ')">
+                <xsl:variable name="enumType" select="substring-after($type, 'enum ')"/>
                 <xsl:text></xsl:text>
                 <xsl:value-of select="d:title-case(.)"/>
                 <xsl:text> </xsl:text>
@@ -251,29 +544,29 @@ public class </xsl:text>
                 <xsl:value-of select="d:title-case(.)"/>
                 <xsl:text>. */
     public static enum </xsl:text>
-                <xsl:value-of select="d:title-case(.)"/>
+                <xsl:value-of select="$enumType"/>
                 <xsl:text>
     {
         </xsl:text>
-                <xsl:for-each select="d:get-enum-values($description)">
+                <xsl:for-each select="d:get-enum-values(ancestor::xs:schema, $enumType)">
                     <xsl:text>/** </xsl:text>
-                    <xsl:value-of select="d:get-enum-value-description(., $description)"/>
-                    <xsl:text>. */
+                    <xsl:value-of select="d:get-enum-value-description(ancestor::xs:schema, $enumType, .)"/>
+                    <xsl:text> */
         </xsl:text>
-                <xsl:value-of select="upper-case(.)"/>
+                <xsl:value-of select="d:enum-name(.)"/>
                 <xsl:choose>
                     <xsl:when test="position() &lt; last()">
                         <xsl:text>,
+
         </xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:text>
     }
+
 </xsl:text>
                     </xsl:otherwise>
                 </xsl:choose>
-                <xsl:text>
-        </xsl:text>
                 </xsl:for-each>
             </xsl:when>
             <xsl:otherwise>
@@ -286,15 +579,12 @@ public class </xsl:text>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+    
     <!--Build the getters.-->
     <xsl:template match="d:property-name" mode="getters">
         <xsl:param name="package"/>
         <xsl:param name="classname"/>
         <xsl:text>    /**
-     * Returns the value of </xsl:text>
-        <xsl:value-of select="."/>.
-        <xsl:text>
-     * 
      * @return the value of </xsl:text>
         <xsl:value-of select="."/>
         <xsl:text>
@@ -308,8 +598,8 @@ public class </xsl:text>
                 <xsl:text>boolean </xsl:text>
                 <xsl:value-of select="."/>
             </xsl:when>
-            <xsl:when test="$type = 'enum'">
-                <xsl:value-of select="d:title-case(.)"/>
+            <xsl:when test="starts-with($type, 'enum ')">
+                <xsl:value-of select="substring-after($type, 'enum ')"/>
                 <xsl:text> get</xsl:text>
                 <xsl:value-of select="d:title-case(.)"/>
             </xsl:when>
@@ -329,15 +619,12 @@ public class </xsl:text>
 
 </xsl:text>
     </xsl:template>
+    
     <!--Build the setters.-->
     <xsl:template match="d:property-name" mode="setters">
         <xsl:param name="package"/>
         <xsl:param name="classname"/>
         <xsl:text>    /**
-     * Sets </xsl:text>
-        <xsl:value-of select="."/>.
-        <xsl:text>
-     * 
      * @param value the value for </xsl:text>
         <xsl:value-of select="."/>
         <xsl:text>
@@ -349,8 +636,8 @@ public class </xsl:text>
         <!--Discover type.-->
         <xsl:variable name="type" select="d:get-type(.)"/>
         <xsl:choose>
-            <xsl:when test="$type = 'enum'">
-                <xsl:value-of select="d:title-case(.)"/>
+            <xsl:when test="starts-with($type, 'enum ')">
+                <xsl:value-of select="substring-after($type, 'enum ')"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="$type"/>
@@ -365,10 +652,27 @@ public class </xsl:text>
 
 </xsl:text>
     </xsl:template>
+    
+    <!--FUNCTIONS-->
+    
+    <!--Get the description of a setting.-->
     <xsl:function name="d:get-description">
         <xsl:param name="property-name-node"/>
         <xsl:value-of select="$property-name-node/ancestor::xs:annotation/xs:documentation"/>
     </xsl:function>
+    
+    <!--Return the simple name of a class.-->
+    <xsl:function name="d:simple-classname">
+        <xsl:param name="classname"/>
+        <xsl:value-of select="replace($classname, '^.+\.([^\.]+)$', '$1')"/>
+    </xsl:function>
+    
+    <!--Return the package name of a class.-->
+    <xsl:function name="d:package">
+        <xsl:param name="classname"/>
+        <xsl:value-of select="replace($classname, '^(.+)\.[^\.]+$', '$1')"/>
+    </xsl:function>
+    
     <!--Determine the type of a property.-->
     <xsl:function name="d:get-type">
         <xsl:param name="property-name-node"/>
@@ -384,33 +688,102 @@ public class </xsl:text>
         </xsl:variable>
         <xsl:choose>
             <xsl:when test="$xs-type = 'xs:anyURI'">URI</xsl:when>
+            <xsl:when test="$xs-type = 'URL'">URL</xsl:when>
             <xsl:when test="$xs-type = 'xs:string'">String</xsl:when>
             <xsl:when test="$xs-type = 'xs:int'">int</xsl:when>
             <xsl:when test="$xs-type = 'xs:boolean'">boolean</xsl:when>
-            <xsl:otherwise><xsl:value-of select="$xs-type"/></xsl:otherwise>
+            <xsl:otherwise><xsl:value-of select="concat('enum ', $xs-type)"/></xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+    
     <!--Determine the values for an enum.-->
     <xsl:function name="d:get-enum-values">
-        <xsl:param name="description"/>
-        <xsl:variable name="valuespec" select="substring-after(substring-before(substring-after($description, '['), '):'), '(')"/>
-        <xsl:sequence select="tokenize($valuespec, ', *')"/>
+        <xsl:param name="schemaRoot"/>
+        <xsl:param name="enumType"/>
+        <xsl:sequence select="$schemaRoot/xs:simpleType[@name = $enumType]/xs:restriction/xs:enumeration/@value"/>
     </xsl:function>
+    
+    <!--Get the description for an enum value.-->
+    <xsl:function name="d:get-enum-value-description">
+        <xsl:param name="schemaRoot"/>
+        <xsl:param name="enumType"/>
+        <xsl:param name="value"/>
+        <xsl:value-of select="normalize-space($schemaRoot/xs:simpleType[@name = $enumType]/xs:restriction/xs:enumeration[@value = $value]/xs:annotation/xs:documentation)"/>
+    </xsl:function>
+    
+    <!--Determine the XPath required to reach, in an instance document, the node of whose definition this property name is a child in an XML Schema.-->
+    <xsl:function name="d:path-to">
+        <xsl:param name="property-name-node"/>
+        <xsl:param name="prefix"/>
+        <xsl:variable name="target" select="$property-name-node/parent::xs:appinfo/parent::xs:annotation/parent::*"/>
+        <xsl:choose>
+            <xsl:when test="local-name($target) = 'attribute'">
+                <xsl:value-of select="d:path-to-attribute($target, $prefix)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="d:path-to-element($target, $prefix)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+    <xsl:function name="d:path-to-element">
+        <xsl:param name="target"/>
+        <xsl:param name="prefix"/>
+        <xsl:call-template name="ascend">
+            <xsl:with-param name="current-location" select="$target/parent::*"/>
+            <xsl:with-param name="current-path" select="concat('/', $prefix, ':', $target/@name)"/>
+            <xsl:with-param name="prefix" select="$prefix"/>
+        </xsl:call-template>
+    </xsl:function>
+    <xsl:function name="d:path-to-attribute">
+        <xsl:param name="target"/>
+        <xsl:param name="prefix"/>
+        <xsl:call-template name="ascend">
+            <xsl:with-param name="current-location" select="$target/parent::*"/>
+            <xsl:with-param name="current-path" select="concat('/@', $target/@name)"/>
+            <xsl:with-param name="prefix" select="$prefix"/>
+        </xsl:call-template>
+    </xsl:function>
+    <xsl:template name="ascend">
+        <xsl:param name="current-location"/>
+        <xsl:param name="current-path"/>
+        <xsl:param name="prefix"/>
+        <xsl:choose>
+            <xsl:when test="$current-location/parent::*">
+                <xsl:call-template name="ascend">
+                    <xsl:with-param name="current-location" select="$current-location/parent::*"/>
+                    <xsl:with-param name="current-path">
+                        <xsl:choose>
+                            <xsl:when test="local-name($current-location) = 'element'">
+                                <xsl:value-of select="concat('/', $prefix, ':', $current-location/@name, $current-path)"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="$current-path"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:with-param>
+                    <xsl:with-param name="prefix" select="$prefix"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$current-path"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
     <!--Determine the default value for a property.-->
     <xsl:function name="d:get-default">
         <xsl:param name="property-name-node"/>
         <xsl:value-of select="$property-name-node/ancestor::xs:element/@default"/>
     </xsl:function>
-    <!--Get the description for an enum value.-->
-    <xsl:function name="d:get-enum-value-description">
-        <xsl:param name="value"/>
-        <xsl:param name="description"/>
-        <xsl:sequence select="normalize-space(substring-before(substring-after($description, concat('* ', $value, ': ')), '.'))"/>
-    </xsl:function>
+    
     <!--A few simple functions used in formatting.-->
     <xsl:function name="d:title-case">
         <xsl:param name="string"/>
         <xsl:sequence select="concat(upper-case(substring($string, 1, 1)), substring($string, 2))"/>
+    </xsl:function>
+    <xsl:function name="d:enum-name">
+        <xsl:param name="string"/>
+        <xsl:value-of select="replace(upper-case($string), '\-', '_')"/>
     </xsl:function>
     <xsl:function name="d:variable-case-tokens">
         <xsl:param name="tokens"/>
