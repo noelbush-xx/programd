@@ -1,18 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://aitools.org/programd/4.6/programd-configuration"
-    xmlns:d="http://aitools.org/programd/4.6" xmlns:sch="http://www.ascc.net/xml/schematron"
-    targetNamespace="http://aitools.org/programd/4.6/programd-configuration"
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://aitools.org/programd/4.7/programd-configuration"
+    xmlns:d="http://aitools.org/programd/4.7" xmlns:sch="http://www.ascc.net/xml/schematron"
+    targetNamespace="http://aitools.org/programd/4.7/programd-configuration"
     elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xml:lang="EN">
     <xs:annotation>
         <xs:documentation>
             This is the schema for the Program D configuration file (often named core.xml).
         </xs:documentation>
         <xs:appinfo>
-            <d:class-name>org.aitools.programd.CoreSettings</d:class-name>
+            <d:settings-classes>
+                <d:base-class>
+                    <d:classname>org.aitools.programd.CoreSettings</d:classname>
+                    <d:filename>../../JavaSource/org/aitools/programd/CoreSettings.java</d:filename>
+                </d:base-class>
+                <d:programmatic-class>
+                    <d:classname>org.aitools.programd.ProgrammaticCoreSettings</d:classname>
+                    <d:filename>../../JavaSource/org/aitools/programd/ProgrammaticCoreSettings.java</d:filename>
+                </d:programmatic-class>
+                <d:xml-class>
+                    <d:classname>org.aitools.programd.XMLCoreSettings</d:classname>
+                    <d:filename>../../JavaSource/org/aitools/programd/XMLCoreSettings.java</d:filename>
+                </d:xml-class>
+            </d:settings-classes>
         </xs:appinfo>
     </xs:annotation>
-    <xs:import namespace="http://aitools.org/programd/4.6"
-        schemaLocation="http://aitools.org/programd/4.6/common-types.xsd" />
     <xs:element name="programd">
         <xs:complexType>
             <xs:sequence>
@@ -21,7 +32,7 @@
                     <xs:annotation>
                         <xs:documentation>The namespace URI of AIML to use.</xs:documentation>
                         <xs:appinfo>
-                            <d:property-name>aimlNamespaceURI</d:property-name>
+                            <d:property-name>AIMLNamespaceURI</d:property-name>
                         </xs:appinfo>
                     </xs:annotation>
                 </xs:element>
@@ -91,13 +102,13 @@
                                     </xs:appinfo>
                                 </xs:annotation>
                             </xs:element>
-                            <xs:element name="cache-maximum-size" type="xs:int" default="500">
+                            <xs:element name="predicate-flush-period" type="xs:int" default="500">
                                 <xs:annotation>
                                     <xs:documentation>
-                                        The maximum size of the predicate cache before it is written to disk/database.
+                                        The number of predicate set operations before flushing predicates to storage.
                                     </xs:documentation>
                                     <xs:appinfo>
-                                        <d:property-name>predicateCacheMaximumSize</d:property-name>
+                                        <d:property-name>predicateFlushPeriod</d:property-name>
                                     </xs:appinfo>
                                 </xs:annotation>
                             </xs:element>
@@ -110,7 +121,7 @@
                     </xs:annotation>
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="implementation" type="MultiplexorImplementation"
+                            <xs:element name="implementation" type="xs:string"
                                 default="org.aitools.programd.multiplexor.FlatFileMultiplexor">
                                 <xs:annotation>
                                     <xs:documentation>The Multiplexor implementation to use.</xs:documentation>
@@ -158,10 +169,10 @@
                                 <xs:annotation>
                                     <xs:documentation>
                                         The maximum number of simultaneous connections to the database.
-                                        <xs:appinfo>
-                                            <d:property-name>databaseMaximumConnections</d:property-name>
-                                        </xs:appinfo>
                                     </xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>databaseMaximumConnections</d:property-name>
+                                    </xs:appinfo>
                                 </xs:annotation>
                             </xs:element>
                             <xs:element name="username" type="xs:string" default="programd">
@@ -276,7 +287,7 @@
                                 </xs:annotation>
                             </xs:element>
                         </xs:sequence>
-                        <xs:attribute name="enabled" type="xs:boolean">
+                        <xs:attribute name="enabled" type="xs:boolean" use="required">
                             <xs:annotation>
                                 <xs:documentation>Enable the heart?</xs:documentation>
                                 <xs:appinfo>
@@ -284,6 +295,34 @@
                                 </xs:appinfo>
                             </xs:annotation>
                         </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="watchers">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="AIML">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="timer" type="xs:int" default="2000">
+                                            <xs:annotation>
+                                                <xs:documentation>The delay period when checking changed AIML (milliseconds).</xs:documentation>
+                                                <xs:appinfo>
+                                                    <d:property-name>AIMLWatcherTimer</d:property-name>
+                                                </xs:appinfo>
+                                            </xs:annotation>
+                                        </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="enabled" type="xs:boolean" use="required">
+                                        <xs:annotation>
+                                            <xs:documentation>Use the AIML watcher?</xs:documentation>
+                                            <xs:appinfo>
+                                                <d:property-name>useAIMLWatcher</d:property-name>
+                                            </xs:appinfo>
+                                        </xs:annotation>
+                                    </xs:attribute>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="schema-locations">
@@ -296,7 +335,7 @@
                                 <xs:annotation>
                                     <xs:documentation>The location of the AIML schema.</xs:documentation>
                                     <xs:appinfo>
-                                        <d:property-name>aimlSchemaLocation</d:property-name>
+                                        <d:property-name>AIMLSchemaLocation</d:property-name>
                                     </xs:appinfo>
                                 </xs:annotation>
                             </xs:element>
@@ -319,7 +358,95 @@
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
-                <xs:element name="connect-string" type="xs:string" default="CONNECT">
+                <xs:element name="interpreters">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="javascript">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="interpreter-classname" type="xs:string" default="org.aitools.programd.interpreter.RhinoInterpreter">
+                                            <xs:annotation>
+                                                <xs:documentation>The JavaScript interpreter.</xs:documentation>
+                                                <xs:appinfo>
+                                                    <d:property-name>javascriptInterpreterClassname</d:property-name>
+                                                </xs:appinfo>
+                                            </xs:annotation>
+                                        </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="allowed" type="xs:boolean" use="required">
+                                        <xs:annotation>
+                                            <xs:documentation>Allow the use of JavaScript?</xs:documentation>
+                                            <xs:appinfo>
+                                                <d:property-name>allowJavaScript</d:property-name>
+                                            </xs:appinfo>
+                                        </xs:annotation>
+                                    </xs:attribute>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="system">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="directory" type="URL" default="..">
+                                            <xs:annotation>
+                                                <xs:documentation>The directory in which to execute &lt;system/&gt; element contents.</xs:documentation>
+                                                <xs:appinfo>
+                                                    <d:property-name>systemInterpreterDirectory</d:property-name>
+                                                </xs:appinfo>
+                                            </xs:annotation>
+                                        </xs:element>
+                                        <xs:element name="prefix" type="xs:string" default="">
+                                            <xs:annotation>
+                                                <xs:documentation>The string to prepend to all &lt;system/&gt; calls (platform-specific). Windows requires something like "cmd /c "; Linux doesn't (just leave empty).</xs:documentation>
+                                                <xs:appinfo>
+                                                    <d:property-name>systemInterpreterPrefix</d:property-name>
+                                                </xs:appinfo>
+                                            </xs:annotation>
+                                        </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="allowed" type="xs:boolean" use="required">
+                                        <xs:annotation>
+                                            <xs:documentation>Allow access to the OS via the system element?</xs:documentation>
+                                            <xs:appinfo>
+                                                <d:property-name>allowOSAccess</d:property-name>
+                                            </xs:appinfo>
+                                        </xs:annotation>
+                                    </xs:attribute>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="loading">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="category-load-notification-interval" type="xs:int" default="1000">
+                                <xs:annotation>
+                                    <xs:documentation>How frequently (in categories) to notify as categories are being loaded.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>categoryLoadNotificationInterval</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="note-each-loaded-file" type="xs:boolean" default="false">
+                                <xs:annotation>
+                                    <xs:documentation>Produce a notification message for each file that is loaded.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>noteEachLoadedFile</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="exit-immediately-on-startup" type="xs:boolean" default="false">
+                                <xs:annotation>
+                                    <xs:documentation>After all bots have been loaded, exit immediately (useful for timing).</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>exitImmediatelyOnStartup</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="connect-string" type="xs:string" default="connect">
                     <xs:annotation>
                         <xs:documentation>
                             The string to send when first connecting to the bot. If this value is empty, no value will be sent.
@@ -329,7 +456,17 @@
                         </xs:appinfo>
                     </xs:annotation>
                 </xs:element>
-                <xs:element name="nodemapper.implementation" type="NodemapperImplementation"
+                <xs:element name="random-strategy" type="RandomStrategy" default="non-repeating">
+                    <xs:annotation>
+                        <xs:documentation>
+                            How to interpret random elements.
+                        </xs:documentation>
+                        <xs:appinfo>
+                            <d:property-name>randomStrategy</d:property-name>
+                        </xs:appinfo>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="nodemapper.implementation" type="xs:string"
                     default="org.aitools.programd.graph.TwoOptimalNodemaster">
                     <xs:annotation>
                         <xs:documentation>The Nodemapper implementation to use.</xs:documentation>
@@ -357,6 +494,27 @@
         </xs:annotation>
         <xs:restriction base="xs:anyURI" />
     </xs:simpleType>
+    <xs:simpleType name="RandomStrategy">
+        <xs:annotation>
+            <xs:documentation>
+                A strategy for randomly selecting elements.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="pure-random">
+                <xs:annotation>
+                    <xs:documentation>
+                        Each choice is made from the full set, randomly.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="non-repeating">
+                <xs:annotation>
+                    <xs:documentation>A choice is not repeated until all others have been used.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>            
     <xs:simpleType name="MergePolicy">
         <xs:annotation>
             <xs:documentation>
@@ -392,26 +550,6 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>
-        </xs:restriction>
-    </xs:simpleType>
-    <xs:simpleType name="NodemapperImplementation">
-        <xs:annotation>
-            <xs:documentation>An implementation of Nodemapper available in Program D.</xs:documentation>
-        </xs:annotation>
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="org.aitools.programd.graph.NonOptimalNodemaster" />
-            <xs:enumeration value="org.aitools.programd.graph.OneOptimalNodemaster" />
-            <xs:enumeration value="org.aitools.programd.graph.TwoOptimalNodemaster" />
-            <xs:enumeration value="org.aitools.programd.graph.ThreeOptimalNodemaster" />
-        </xs:restriction>
-    </xs:simpleType>
-    <xs:simpleType name="MultiplexorImplementation">
-        <xs:annotation>
-            <xs:documentation>An implementation of Multiplexor available in Program D.</xs:documentation>
-        </xs:annotation>
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="org.aitools.programd.multiplexor.FlatFileMultiplexor" />
-            <xs:enumeration value="org.aitools.programd.multiplexor.DBMultiplexor" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="JavascriptInterpreterImplementation">
