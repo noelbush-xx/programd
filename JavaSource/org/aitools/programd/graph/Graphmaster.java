@@ -154,11 +154,11 @@ public class Graphmaster
         this.nodemapperFactory = new NodemapperFactory(settings.getNodemapperImplementation());
         this.root = this.nodemapperFactory.getNodemapper();
         this.mergePolicy = settings.getMergePolicy();
-        this.mergeAppendSeparator = settings.getMergeAppendSeparatorString();
-        this.noteEachMerge = settings.mergeNoteEach();
+        this.mergeAppendSeparator = settings.getAppendMergeSeparatorString();
+        this.noteEachMerge = settings.noteEachMerge();
         this.responseTimeout = settings.getResponseTimeout();
-        this.categoryLoadNotifyInterval = settings.getCategoryLoadNotifyInterval();
-        this.aimlNamespaceURI = settings.getAimlSchemaNamespaceUri().toString();
+        this.categoryLoadNotifyInterval = settings.getCategoryLoadNotificationInterval();
+        this.aimlNamespaceURI = settings.getAIMLNamespaceURI().toString();
     }
 
     /**

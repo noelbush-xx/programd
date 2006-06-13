@@ -121,7 +121,7 @@ public class Shell extends Thread
     public void attachTo(Core core)
     {
         this._core = core;
-        this.botNamePredicate = this._core.getSettings().getBotNamePredicate();
+        this.botNamePredicate = this._core.getSettings().getBotNameProperty();
         this.predicateMaster = this._core.getPredicateMaster();
         this.bots = this._core.getBots();
         this.clientNamePredicate = this._core.getSettings().getClientNamePredicate();

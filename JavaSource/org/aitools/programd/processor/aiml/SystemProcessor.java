@@ -80,7 +80,7 @@ public class SystemProcessor extends AIMLProcessor
         CoreSettings coreSettings = parser.getCore().getSettings();
 
         // Don't use the system tag if not permitted.
-        if (!coreSettings.osAccessAllowed())
+        if (!coreSettings.allowOSAccess())
         {
             logger.warn("Use of <system> prohibited!");
             return "";

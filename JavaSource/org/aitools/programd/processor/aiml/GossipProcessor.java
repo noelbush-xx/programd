@@ -58,7 +58,7 @@ public class GossipProcessor extends AIMLProcessor
         {
             try
             {
-                gossipFile = new FileWriter(Filesystem.checkOrCreate(parser.getCore().getSettings().getGossipPath()
+                gossipFile = new FileWriter(Filesystem.checkOrCreate(parser.getCore().getSettings().getGossipURL()
                         .getPath(), "gossip file"));
             }
             catch (IOException e)

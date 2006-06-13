@@ -70,7 +70,7 @@ public class PredicateMaster
         this.multiplexor = this.core.getMultiplexor();
         this.predicateEmptyDefault = coreSettings.getPredicateEmptyDefault();
         this.logger = Logger.getLogger("programd");
-        this.flushSize = coreSettings.getPredicateCacheMax();
+        this.flushSize = coreSettings.getPredicateFlushPeriod();
     }
 
     /**

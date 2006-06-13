@@ -63,12 +63,12 @@ public class DBMultiplexor extends Multiplexor<Statement>
 
         this.dbLogger.debug("Opening database pool.");
 
-        this.dbManager = new DbAccessRefsPoolMgr(coreSettings.getDatabaseDriver(), coreSettings.getDatabaseUrl(),
-                coreSettings.getDatabaseUser(), coreSettings.getDatabasePassword());
+        this.dbManager = new DbAccessRefsPoolMgr(coreSettings.getDatabaseDriver(), coreSettings.getDatabaseURL(),
+                coreSettings.getDatabaseUsername(), coreSettings.getDatabasePassword());
 
         this.dbLogger.debug("Populating database pool.");
 
-        this.dbManager.populate(coreSettings.getDatabaseConnections());
+        this.dbManager.populate(coreSettings.getDatabaseMaximumConnections());
     }
 
     @Override

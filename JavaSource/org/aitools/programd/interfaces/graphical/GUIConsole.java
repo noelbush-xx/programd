@@ -396,7 +396,7 @@ public class GUIConsole extends JPanel
     {
         this._core = core;
         this.console.attachTo(this._core);
-        if (this._core.getSettings().consoleUseShell())
+        if (this._core.getSettings().useShell())
         {
             this._shell = new Shell(this.inStream, this.outStream, this.errStream, this.promptStream);
             this.console.addShell(this._shell, core);

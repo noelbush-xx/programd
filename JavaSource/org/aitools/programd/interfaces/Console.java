@@ -88,7 +88,7 @@ public class Console
     {
         this._core = core;
 
-        if (this._core.getSettings().consoleUseShell())
+        if (this._core.getSettings().useShell())
         {
             addShell(new Shell(), this._core);
         }
@@ -123,7 +123,7 @@ public class Console
      */
     public void startShell()
     {
-        if (this._core.getSettings().consoleUseShell())
+        if (this._core.getSettings().useShell())
         {
             this._shell.start();
         }

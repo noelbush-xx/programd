@@ -50,7 +50,7 @@ public class JavaScriptProcessor extends AIMLProcessor
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         // Don't use the system tag if not permitted.
-        if (!parser.getCore().getSettings().javascriptAllowed())
+        if (!parser.getCore().getSettings().allowJavaScript())
         {
             logger.warn("Use of <javascript> prohibited!");
             return "";
