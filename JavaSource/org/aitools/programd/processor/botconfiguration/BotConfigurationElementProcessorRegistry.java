@@ -19,7 +19,7 @@ import org.aitools.programd.processor.ProcessorRegistry;
 public class BotConfigurationElementProcessorRegistry extends ProcessorRegistry<BotConfigurationElementProcessor>
 {
     /** The XML namespace URI for the Program D bot configuration file. */
-    private static final String XMLNS = "http://aitools.org/programd/4.6/bot-configuration";
+    private static final String XMLNS = "http://aitools.org/programd/4.7/bot-configuration";
 
     /** The list of processors (fully-qualified class names). */
     private static final String[] PROCESSOR_LIST = { "org.aitools.programd.processor.botconfiguration.BotProcessor",
