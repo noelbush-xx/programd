@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<listeners xmlns="http://aitools.org/programd/4.6/bot-configuration"
-    xmlns:d="http://aitools.org/programd/4.6"
+<listeners xmlns="http://aitools.org/programd/4.7/bot-configuration"
+    xmlns:d="http://aitools.org/programd/4.7"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://aitools.org/programd/4.6/bot-configuration http://aitools.org/programd/4.6/bot-configuration.xsd">
+    xsi:schemaLocation="http://aitools.org/programd/4.7/bot-configuration http://aitools.org/programd/4.7/bot-configuration.xsd">
     <listener class="org.aitools.programd.listener.AIMListener" enabled="false">
         <parameter name="userid" value="your-userid"/>
         <parameter name="password" value="your-password"/>
