@@ -6,38 +6,65 @@
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-
 package org.aitools.programd;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-
 import org.aitools.util.Settings;
-import org.aitools.util.resource.URLTools;
-import org.aitools.util.runtime.UserError;
 
 /**
- * Automatically generated from properties file, 2006-03-08T14:08:00.612-05:00
+ * Automatically generated at 2006-06-12T03:34:00.162-04:00.
  */
-public class CoreSettings extends Settings
+abstract public class CoreSettings extends Settings
 {
-    /**
-     * The namespace URI of AIML to use.
-     */
-    private URI aimlSchemaNamespaceUri;
-
-    /**
-     * The bot configuration startup file.
-     */
-    private URL startupFilePath;
-
-    /**
-     * What to do when a category is loaded whose pattern:that:topic path is identical to one already loaded (for the
-     * same bot).
-     */
+    /** The namespace URI of AIML to use. */
+    private URI AIMLNamespaceURI;
+        
+    /** The bot configuration file. */
+    private URL botConfigURL;
+        
+    /** Configuration file for plugins. */
+    private URL pluginConfigURL;
+        
+    /** Where to write gossip entries. Gossip entries will be written like this: <li>the gossip</li> */
+    private URL gossipURL;
+        
+    /** The default value for undefined predicates. */
+    private String predicateEmptyDefault;
+        
+    /** Which predicate contains the client's name. */
+    private String clientNamePredicate;
+        
+    /** Which bot property contains the bot's name. */
+    private String botNameProperty;
+        
+    /** The number of predicate set operations before flushing predicates to storage. */
+    private int predicateFlushPeriod;
+        
+    /** The Multiplexor implementation to use. */
+    private String multiplexorImplementation;
+        
+    /** The directory in which to save flat-file predicates (if the FlatFileMultiplexor is used). */
+    private URL ffmDirectory;
+        
+    /** The URL of the database to use. */
+    private String databaseURL;
+        
+    /** The database driver to use. */
+    private String databaseDriver;
+        
+    /** The maximum number of simultaneous connections to the database. */
+    private int databaseMaximumConnections;
+        
+    /** The username which with to access the database. */
+    private String databaseUsername;
+        
+    /** The password for the database. */
+    private String databasePassword;
+        
+    /** What to do when a category is loaded whose pattern:that:topic path is identical to one already loaded (for the same bot). */
     private MergePolicy mergePolicy;
-
+    
     /** The possible values for MergePolicy. */
     public static enum MergePolicy
     {
@@ -54,45 +81,70 @@ public class CoreSettings extends Settings
         COMBINE
     }
 
-    /**
-     * If the append merge policy is used, what text content (if any) should be inserted between the contents of the two
-     * templates?
-     */
-    private String mergeAppendSeparatorString;
-
-    /**
-     * Produce a note in the console/log for each merge?
-     */
-    private boolean mergeNoteEach;
-
-    /**
-     * The default value for undefined predicates.
-     */
-    private String predicateEmptyDefault;
-
-    /**
-     * The maximum allowable time (in milliseconds) to get a response.
-     */
+    /** Produce a note in the console/log for each merge? */
+    private boolean noteEachMerge;
+        
+    /** If the append merge policy is used, what text content (if any) should be inserted between the contents of the two templates? (The default value is a space.) */
+    private String appendMergeSeparatorString;
+        
+    /** The maximum allowable time (in milliseconds) to get a response. */
     private int responseTimeout;
-
-    /**
-     * How many categories will be loaded before a message is displayed?
-     */
-    private int categoryLoadNotifyInterval;
-
-    /**
-     * Whether or not to print a message as each file is loaded.
-     */
-    private boolean loadNotifyEachFile;
-
-    /**
-     * The input to match if an infinite loop is found.
-     */
+        
+    /** The input to match if an infinite loop is found. */
     private String infiniteLoopInput;
-
-    /**
-     * How to interpret random elements
-     */
+        
+    /** Whether to print a stack trace on uncaught exceptions. */
+    private boolean printStackTraceOnUncaughtExceptions;
+        
+    /** The pulse rate for the heart (beats per minute). */
+    private int heartPulseRate;
+        
+    /** Enable the heart? */
+    private boolean heartEnabled;
+        
+    /** The delay period when checking changed AIML (milliseconds). */
+    private int AIMLWatcherTimer;
+        
+    /** Use the AIML watcher? */
+    private boolean useAIMLWatcher;
+        
+    /** The location of the AIML schema. */
+    private URL AIMLSchemaLocation;
+        
+    /** The location of the plugin schema. */
+    private URL pluginSchemaLocation;
+        
+    /** The location of the test cases schema. */
+    private URL testCaseSchemaLocation;
+        
+    /** The JavaScript interpreter. */
+    private String javascriptInterpreterClassname;
+        
+    /** Allow the use of JavaScript? */
+    private boolean allowJavaScript;
+        
+    /** The directory in which to execute <system/> element contents. */
+    private URL systemInterpreterDirectory;
+        
+    /** The string to prepend to all <system/> calls (platform-specific). Windows requires something like "cmd /c "; Linux doesn't (just leave empty). */
+    private String systemInterpreterPrefix;
+        
+    /** Allow access to the OS via the system element? */
+    private boolean allowOSAccess;
+        
+    /** How frequently (in categories) to notify as categories are being loaded. */
+    private int categoryLoadNotificationInterval;
+        
+    /** Produce a notification message for each file that is loaded. */
+    private boolean noteEachLoadedFile;
+        
+    /** After all bots have been loaded, exit immediately (useful for timing). */
+    private boolean exitImmediatelyOnStartup;
+        
+    /** The string to send when first connecting to the bot. If this value is empty, no value will be sent. */
+    private String connectString;
+        
+    /** How to interpret random elements. */
     private RandomStrategy randomStrategy;
     
     /** The possible values for RandomStrategy. */
@@ -100,403 +152,47 @@ public class CoreSettings extends Settings
     {
         /** Each choice is made from the full set, randomly. */
         PURE_RANDOM,
-        
+
         /** A choice is not repeated until all others have been used. */
         NON_REPEATING
     }
-    
-    /**
-     * Which bot predicate contains the client's name?
-     */
-    private String clientNamePredicate;
 
-    /**
-     * Which bot predicate contains the bot's name?
-     */
-    private String botNamePredicate;
-
-    /**
-     * Print stack trace on uncaught exceptions?
-     */
-    private boolean onUncaughtExceptionsPrintStackTrace;
-
-    /**
-     * Execute contents of <system> elements?
-     */
-    private boolean osAccessAllowed;
-
-    /**
-     * Execute contents of <javascript> elements?
-     */
-    private boolean javascriptAllowed;
-
-    /**
-     * Where to write gossip entries.
-     */
-    private URL gossipPath;
-
-    /**
-     * The string to send when first connecting to the bot.
-     */
-    private String connectString;
-
-    /**
-     * The string to send after an inactivity timeout.
-     */
-    private String inactivityString;
-
-    /**
-     * The Nodemapper implementation to use.
-     */
+    /** The Nodemapper implementation to use. */
     private String nodemapperImplementation;
-
+        
+    /** Use interactive command-line shell? */
+    private boolean useShell;
+        
     /**
-     * The Multiplexor implementation to use.
+     * @return the value of AIMLNamespaceURI
      */
-    private String multiplexorImplementation;
-
-    /**
-     * The directory in which to save flat-file predicates (FFM only).
-     */
-    private URL multiplexorFfmDir;
-
-    /**
-     * Enable the heart?
-     */
-    private boolean heartEnabled;
-
-    /**
-     * The pulse rate for the heart (beats per minute).
-     */
-    private int heartPulserate;
-
-    /**
-     * The maximum size of the cache before writing to disk/database.
-     */
-    private int predicateCacheMax;
-
-    /**
-     * Use interactive command-line shell?
-     */
-    private boolean consoleUseShell;
-
-    /**
-     * Exit immediately upon startup?
-     */
-    private boolean exitImmediatelyOnStartup;
-
-    /**
-     * The location of the AIML schema (or a copy of it).
-     */
-    private URL schemaLocationAIML;
-
-    /**
-     * The location of the plugin schema (or a copy of it).
-     */
-    private URL schemaLocationPlugins;
-
-    /**
-     * The location of the test cases schema (or a copy of it).
-     */
-    private URL schemaLocationTestCases;
-
-    /**
-     * The directory in which to execute <system> commands.
-     */
-    private URL systemInterpreterDirectory;
-
-    /**
-     * The string to prepend to all <system> calls (platform-specific).
-     */
-    private String systemInterpreterPrefix;
-
-    /**
-     * The JavaScript interpreter (fully-qualified class name).
-     */
-    private String javascriptInterpreterClassname;
-
-    /**
-     * Enable the AIML Watcher?
-     */
-    private boolean useWatcher;
-
-    /**
-     * The delay period when checking changed AIML (milliseconds).
-     */
-    private int watcherTimer;
-
-    /**
-     * The URL of the database to use.
-     */
-    private String databaseUrl;
-
-    /**
-     * The database driver to use.
-     */
-    private String databaseDriver;
-
-    /**
-     * The maximum number of simultaneous connections to the database.
-     */
-    private int databaseConnections;
-
-    /**
-     * The username which with to access the database.
-     */
-    private String databaseUser;
-
-    /**
-     * The password for the database.
-     */
-    private String databasePassword;
-
-    /**
-     * Configuration file for plugins.
-     */
-    private URL confLocationPlugins;
-
-    /**
-     * Creates a <code>CoreSettings</code> using default property values.
-     */
-    public CoreSettings()
+    public URI getAIMLNamespaceURI()
     {
-        super();
+        return this.AIMLNamespaceURI;
     }
 
     /**
-     * Creates a <code>CoreSettings</code> with the (XML-formatted) properties located at the given path.
-     * 
-     * @param propertiesPath the path to the configuration file
+     * @return the value of botConfigURL
      */
-    public CoreSettings(URL propertiesPath)
+    public URL getBotConfigURL()
     {
-        super(propertiesPath);
+        return this.botConfigURL;
     }
 
     /**
-     * Initializes the Settings with values from properties, or defaults.
+     * @return the value of pluginConfigURL
      */
-    @Override
-    protected void initialize()
+    public URL getPluginConfigURL()
     {
-        try
-        {
-            setAimlSchemaNamespaceUri(new URI(this.properties.getProperty("programd.aiml-schema.namespace-uri",
-                    "http://alicebot.org/2001/AIML-1.0.1")));
-        }
-        catch (URISyntaxException e)
-        {
-            throw new UserError(e);
-        }
-
-        setStartupFilePath(URLTools.contextualize(this.path, this.properties.getProperty("programd.startup-file-path",
-                "bots.xml")));
-
-        String mergePolicyValue = this.properties.getProperty("programd.merge.policy", "combine");
-
-        if (mergePolicyValue.equals("skip"))
-        {
-            this.mergePolicy = MergePolicy.SKIP;
-        }
-        else if (mergePolicyValue.equals("overwrite"))
-        {
-            this.mergePolicy = MergePolicy.OVERWRITE;
-        }
-        else if (mergePolicyValue.equals("append"))
-        {
-            this.mergePolicy = MergePolicy.APPEND;
-        }
-        else if (mergePolicyValue.equals("combine"))
-        {
-            this.mergePolicy = MergePolicy.COMBINE;
-        }
-
-        setMergeAppendSeparatorString(this.properties.getProperty("programd.merge.append.separator-string", "&#x10;"));
-
-        setMergeNoteEach(Boolean.valueOf(this.properties.getProperty("programd.merge.note-each", "true"))
-                .booleanValue());
-
-        setPredicateEmptyDefault(this.properties.getProperty("programd.predicate-empty-default", "undefined"));
-
-        try
-        {
-            setResponseTimeout(Integer.parseInt(this.properties.getProperty("programd.response-timeout", "1000")));
-        }
-        catch (NumberFormatException e)
-        {
-            setResponseTimeout(1000);
-        }
-
-        try
-        {
-            setCategoryLoadNotifyInterval(Integer.parseInt(this.properties.getProperty(
-                    "programd.category-load-notify-interval", "5000")));
-        }
-        catch (NumberFormatException e)
-        {
-            setCategoryLoadNotifyInterval(5000);
-        }
-
-        setLoadNotifyEachFile(Boolean.valueOf(this.properties.getProperty("programd.load.notify-each-file", "true"))
-                .booleanValue());
-
-        setInfiniteLoopInput(this.properties.getProperty("programd.infinite-loop-input", "INFINITE LOOP"));
-
-        String randomStrategyValue = this.properties.getProperty("programd.strategy.value", "non-repeating");
-
-        if (randomStrategyValue.equals("pure-random"))
-        {
-            this.randomStrategy = RandomStrategy.PURE_RANDOM;
-        }
-        else if (randomStrategyValue.equals("non-repeating"))
-        {
-            this.randomStrategy = RandomStrategy.NON_REPEATING;
-        }
-
-        setClientNamePredicate(this.properties.getProperty("programd.client-name-predicate", "name"));
-
-        setBotNamePredicate(this.properties.getProperty("programd.bot-name-predicate", "name"));
-
-        setOnUncaughtExceptionsPrintStackTrace(Boolean.valueOf(
-                this.properties.getProperty("programd.on-uncaught-exceptions.print-stack-trace", "false"))
-                .booleanValue());
-
-        setOsAccessAllowed(Boolean.valueOf(this.properties.getProperty("programd.os-access-allowed", "false"))
-                .booleanValue());
-
-        setJavascriptAllowed(Boolean.valueOf(this.properties.getProperty("programd.javascript-allowed", "false"))
-                .booleanValue());
-
-        setGossipPath(URLTools.contextualize(this.path, this.properties.getProperty("programd.gossip.path",
-                "/var/log/programd/gossip.txt")));
-
-        setConnectString(this.properties.getProperty("programd.connect-string", "CONNECT"));
-
-        setInactivityString(this.properties.getProperty("programd.inactivity-string", "INACTIVITY"));
-
-        setNodemapperImplementation(this.properties.getProperty("programd.nodemapper-implementation",
-                "org.aitools.programd.graph.TwoOptimalNodemaster"));
-
-        setMultiplexorImplementation(this.properties.getProperty("programd.multiplexor-implementation",
-                "org.aitools.programd.multiplexor.FlatFileMultiplexor"));
-
-        setMultiplexorFfmDir(URLTools.contextualize(this.path, this.properties.getProperty(
-                "programd.multiplexor.ffm-dir", "/var/programd/ffm")));
-
-        setHeartEnabled(Boolean.valueOf(this.properties.getProperty("programd.heart.enabled", "false")).booleanValue());
-
-        try
-        {
-            setHeartPulserate(Integer.parseInt(this.properties.getProperty("programd.heart.pulserate", "5")));
-        }
-        catch (NumberFormatException e)
-        {
-            setHeartPulserate(5);
-        }
-
-        try
-        {
-            setPredicateCacheMax(Integer.parseInt(this.properties.getProperty("programd.predicate-cache.max", "500")));
-        }
-        catch (NumberFormatException e)
-        {
-            setPredicateCacheMax(500);
-        }
-
-        setConsoleUseShell(Boolean.valueOf(this.properties.getProperty("programd.console.use-shell", "true"))
-                .booleanValue());
-
-        setExitImmediatelyOnStartup(Boolean.valueOf(
-                this.properties.getProperty("programd.exit-immediately-on-startup", "false")).booleanValue());
-
-        setSchemaLocationAIML(URLTools.contextualize(this.path, this.properties.getProperty(
-                "programd.schema-location.AIML", "../resources/schema/AIML.xsd")));
-
-        setSchemaLocationPlugins(URLTools.contextualize(this.path, this.properties.getProperty(
-                "programd.schema-location.plugins", "../resources/schema/plugins.xsd")));
-
-        setSchemaLocationTestCases(URLTools.contextualize(this.path, this.properties.getProperty(
-                "programd.schema-location.test-cases", "../resources/schema/test-cases.xsd")));
-
-        setSystemInterpreterDirectory(URLTools.contextualize(this.path, this.properties.getProperty(
-                "programd.system-interpreter.directory", "..")));
-
-        setSystemInterpreterPrefix(this.properties.getProperty("programd.system-interpreter.prefix", ""));
-
-        setJavascriptInterpreterClassname(this.properties.getProperty("programd.javascript-interpreter.classname",
-                "org.aitools.programd.interpreter.RhinoInterpreter"));
-
-        setUseWatcher(Boolean.valueOf(this.properties.getProperty("programd.use-watcher", "true")).booleanValue());
-
-        try
-        {
-            setWatcherTimer(Integer.parseInt(this.properties.getProperty("programd.watcher.timer", "2000")));
-        }
-        catch (NumberFormatException e)
-        {
-            setWatcherTimer(2000);
-        }
-
-        setDatabaseUrl(this.properties.getProperty("programd.database.url", "jdbc:mysql:///programdbot"));
-
-        setDatabaseDriver(this.properties.getProperty("programd.database.driver", "com.mysql.jdbc.Driver"));
-
-        try
-        {
-            setDatabaseConnections(Integer.parseInt(this.properties.getProperty("programd.database.connections", "25")));
-        }
-        catch (NumberFormatException e)
-        {
-            setDatabaseConnections(25);
-        }
-
-        setDatabaseUser(this.properties.getProperty("programd.database.user", "programd"));
-
-        setDatabasePassword(this.properties.getProperty("programd.database.password", "yourpassword"));
-
-        setConfLocationPlugins(URLTools.contextualize(this.path, this.properties.getProperty(
-                "programd.conf-location.plugins", "plugins.xml")));
-
+        return this.pluginConfigURL;
     }
 
     /**
-     * @return the value of aimlSchemaNamespaceUri
+     * @return the value of gossipURL
      */
-    public URI getAimlSchemaNamespaceUri()
+    public URL getGossipURL()
     {
-        return this.aimlSchemaNamespaceUri;
-    }
-
-    /**
-     * @return the value of startupFilePath
-     */
-    public URL getStartupFilePath()
-    {
-        return this.startupFilePath;
-    }
-
-    /**
-     * @return the value of mergePolicy
-     */
-    public MergePolicy getMergePolicy()
-    {
-        return this.mergePolicy;
-    }
-
-    /**
-     * @return the value of mergeAppendSeparatorString
-     */
-    public String getMergeAppendSeparatorString()
-    {
-        return this.mergeAppendSeparatorString;
-    }
-
-    /**
-     * @return the value of mergeNoteEach
-     */
-    public boolean mergeNoteEach()
-    {
-        return this.mergeNoteEach;
+        return this.gossipURL;
     }
 
     /**
@@ -508,46 +204,6 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @return the value of responseTimeout
-     */
-    public int getResponseTimeout()
-    {
-        return this.responseTimeout;
-    }
-
-    /**
-     * @return the value of categoryLoadNotifyInterval
-     */
-    public int getCategoryLoadNotifyInterval()
-    {
-        return this.categoryLoadNotifyInterval;
-    }
-
-    /**
-     * @return the value of loadNotifyEachFile
-     */
-    public boolean loadNotifyEachFile()
-    {
-        return this.loadNotifyEachFile;
-    }
-
-    /**
-     * @return the value of infiniteLoopInput
-     */
-    public String getInfiniteLoopInput()
-    {
-        return this.infiniteLoopInput;
-    }
-
-    /**
-     * @return the value of randomStrategy
-     */
-    public RandomStrategy getRandomStrategy()
-    {
-        return this.randomStrategy;
-    }
-
-    /**
      * @return the value of clientNamePredicate
      */
     public String getClientNamePredicate()
@@ -556,67 +212,19 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @return the value of botNamePredicate
+     * @return the value of botNameProperty
      */
-    public String getBotNamePredicate()
+    public String getBotNameProperty()
     {
-        return this.botNamePredicate;
+        return this.botNameProperty;
     }
 
     /**
-     * @return the value of onUncaughtExceptionsPrintStackTrace
+     * @return the value of predicateFlushPeriod
      */
-    public boolean onUncaughtExceptionsPrintStackTrace()
+    public int getPredicateFlushPeriod()
     {
-        return this.onUncaughtExceptionsPrintStackTrace;
-    }
-
-    /**
-     * @return the value of osAccessAllowed
-     */
-    public boolean osAccessAllowed()
-    {
-        return this.osAccessAllowed;
-    }
-
-    /**
-     * @return the value of javascriptAllowed
-     */
-    public boolean javascriptAllowed()
-    {
-        return this.javascriptAllowed;
-    }
-
-    /**
-     * @return the value of gossipPath
-     */
-    public URL getGossipPath()
-    {
-        return this.gossipPath;
-    }
-
-    /**
-     * @return the value of connectString
-     */
-    public String getConnectString()
-    {
-        return this.connectString;
-    }
-
-    /**
-     * @return the value of inactivityString
-     */
-    public String getInactivityString()
-    {
-        return this.inactivityString;
-    }
-
-    /**
-     * @return the value of nodemapperImplementation
-     */
-    public String getNodemapperImplementation()
-    {
-        return this.nodemapperImplementation;
+        return this.predicateFlushPeriod;
     }
 
     /**
@@ -628,11 +236,107 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @return the value of multiplexorFfmDir
+     * @return the value of ffmDirectory
      */
-    public URL getMultiplexorFfmDir()
+    public URL getFfmDirectory()
     {
-        return this.multiplexorFfmDir;
+        return this.ffmDirectory;
+    }
+
+    /**
+     * @return the value of databaseURL
+     */
+    public String getDatabaseURL()
+    {
+        return this.databaseURL;
+    }
+
+    /**
+     * @return the value of databaseDriver
+     */
+    public String getDatabaseDriver()
+    {
+        return this.databaseDriver;
+    }
+
+    /**
+     * @return the value of databaseMaximumConnections
+     */
+    public int getDatabaseMaximumConnections()
+    {
+        return this.databaseMaximumConnections;
+    }
+
+    /**
+     * @return the value of databaseUsername
+     */
+    public String getDatabaseUsername()
+    {
+        return this.databaseUsername;
+    }
+
+    /**
+     * @return the value of databasePassword
+     */
+    public String getDatabasePassword()
+    {
+        return this.databasePassword;
+    }
+
+    /**
+     * @return the value of mergePolicy
+     */
+    public MergePolicy getMergePolicy()
+    {
+        return this.mergePolicy;
+    }
+
+    /**
+     * @return the value of noteEachMerge
+     */
+    public boolean noteEachMerge()
+    {
+        return this.noteEachMerge;
+    }
+
+    /**
+     * @return the value of appendMergeSeparatorString
+     */
+    public String getAppendMergeSeparatorString()
+    {
+        return this.appendMergeSeparatorString;
+    }
+
+    /**
+     * @return the value of responseTimeout
+     */
+    public int getResponseTimeout()
+    {
+        return this.responseTimeout;
+    }
+
+    /**
+     * @return the value of infiniteLoopInput
+     */
+    public String getInfiniteLoopInput()
+    {
+        return this.infiniteLoopInput;
+    }
+
+    /**
+     * @return the value of printStackTraceOnUncaughtExceptions
+     */
+    public boolean printStackTraceOnUncaughtExceptions()
+    {
+        return this.printStackTraceOnUncaughtExceptions;
+    }
+
+    /**
+     * @return the value of heartPulseRate
+     */
+    public int getHeartPulseRate()
+    {
+        return this.heartPulseRate;
     }
 
     /**
@@ -644,59 +348,59 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @return the value of heartPulserate
+     * @return the value of AIMLWatcherTimer
      */
-    public int getHeartPulserate()
+    public int getAIMLWatcherTimer()
     {
-        return this.heartPulserate;
+        return this.AIMLWatcherTimer;
     }
 
     /**
-     * @return the value of predicateCacheMax
+     * @return the value of useAIMLWatcher
      */
-    public int getPredicateCacheMax()
+    public boolean useAIMLWatcher()
     {
-        return this.predicateCacheMax;
+        return this.useAIMLWatcher;
     }
 
     /**
-     * @return the value of consoleUseShell
+     * @return the value of AIMLSchemaLocation
      */
-    public boolean consoleUseShell()
+    public URL getAIMLSchemaLocation()
     {
-        return this.consoleUseShell;
+        return this.AIMLSchemaLocation;
     }
 
     /**
-     * @return the value of exitImmediatelyOnStartup
+     * @return the value of pluginSchemaLocation
      */
-    public boolean exitImmediatelyOnStartup()
+    public URL getPluginSchemaLocation()
     {
-        return this.exitImmediatelyOnStartup;
+        return this.pluginSchemaLocation;
     }
 
     /**
-     * @return the value of schemaLocationAIML
+     * @return the value of testCaseSchemaLocation
      */
-    public URL getSchemaLocationAIML()
+    public URL getTestCaseSchemaLocation()
     {
-        return this.schemaLocationAIML;
+        return this.testCaseSchemaLocation;
     }
 
     /**
-     * @return the value of schemaLocationPlugins
+     * @return the value of javascriptInterpreterClassname
      */
-    public URL getSchemaLocationPlugins()
+    public String getJavascriptInterpreterClassname()
     {
-        return this.schemaLocationPlugins;
+        return this.javascriptInterpreterClassname;
     }
 
     /**
-     * @return the value of schemaLocationTestCases
+     * @return the value of allowJavaScript
      */
-    public URL getSchemaLocationTestCases()
+    public boolean allowJavaScript()
     {
-        return this.schemaLocationTestCases;
+        return this.allowJavaScript;
     }
 
     /**
@@ -716,403 +420,387 @@ public class CoreSettings extends Settings
     }
 
     /**
-     * @return the value of javascriptInterpreterClassname
+     * @return the value of allowOSAccess
      */
-    public String getJavascriptInterpreterClassname()
+    public boolean allowOSAccess()
     {
-        return this.javascriptInterpreterClassname;
+        return this.allowOSAccess;
     }
 
     /**
-     * @return the value of useWatcher
+     * @return the value of categoryLoadNotificationInterval
      */
-    public boolean useWatcher()
+    public int getCategoryLoadNotificationInterval()
     {
-        return this.useWatcher;
+        return this.categoryLoadNotificationInterval;
     }
 
     /**
-     * @return the value of watcherTimer
+     * @return the value of noteEachLoadedFile
      */
-    public int getWatcherTimer()
+    public boolean noteEachLoadedFile()
     {
-        return this.watcherTimer;
+        return this.noteEachLoadedFile;
     }
 
     /**
-     * @return the value of databaseUrl
+     * @return the value of exitImmediatelyOnStartup
      */
-    public String getDatabaseUrl()
+    public boolean exitImmediatelyOnStartup()
     {
-        return this.databaseUrl;
+        return this.exitImmediatelyOnStartup;
     }
 
     /**
-     * @return the value of databaseDriver
+     * @return the value of connectString
      */
-    public String getDatabaseDriver()
+    public String getConnectString()
     {
-        return this.databaseDriver;
+        return this.connectString;
     }
 
     /**
-     * @return the value of databaseConnections
+     * @return the value of randomStrategy
      */
-    public int getDatabaseConnections()
+    public RandomStrategy getRandomStrategy()
     {
-        return this.databaseConnections;
+        return this.randomStrategy;
     }
 
     /**
-     * @return the value of databaseUser
+     * @return the value of nodemapperImplementation
      */
-    public String getDatabaseUser()
+    public String getNodemapperImplementation()
     {
-        return this.databaseUser;
+        return this.nodemapperImplementation;
     }
 
     /**
-     * @return the value of databasePassword
+     * @return the value of useShell
      */
-    public String getDatabasePassword()
+    public boolean useShell()
     {
-        return this.databasePassword;
+        return this.useShell;
     }
 
     /**
-     * @return the value of confLocationPlugins
+     * @param value the value for AIMLNamespaceURI
      */
-    public URL getConfLocationPlugins()
+    public void setAIMLNamespaceURI(URI value)
     {
-        return this.confLocationPlugins;
+        this.AIMLNamespaceURI = value;
     }
 
     /**
-     * @param aimlSchemaNamespaceUriToSet the value to which to set aimlSchemaNamespaceUri
+     * @param value the value for botConfigURL
      */
-    public void setAimlSchemaNamespaceUri(URI aimlSchemaNamespaceUriToSet)
+    public void setBotConfigURL(URL value)
     {
-        this.aimlSchemaNamespaceUri = aimlSchemaNamespaceUriToSet;
+        this.botConfigURL = value;
     }
 
     /**
-     * @param startupFilePathToSet the value to which to set startupFilePath
+     * @param value the value for pluginConfigURL
      */
-    public void setStartupFilePath(URL startupFilePathToSet)
+    public void setPluginConfigURL(URL value)
     {
-        this.startupFilePath = startupFilePathToSet;
+        this.pluginConfigURL = value;
     }
 
     /**
-     * @param mergePolicyToSet the value to which to set mergePolicy
+     * @param value the value for gossipURL
      */
-    public void setMergePolicy(MergePolicy mergePolicyToSet)
+    public void setGossipURL(URL value)
     {
-        this.mergePolicy = mergePolicyToSet;
+        this.gossipURL = value;
     }
 
     /**
-     * @param mergeAppendSeparatorStringToSet the value to which to set mergeAppendSeparatorString
+     * @param value the value for predicateEmptyDefault
      */
-    public void setMergeAppendSeparatorString(String mergeAppendSeparatorStringToSet)
+    public void setPredicateEmptyDefault(String value)
     {
-        this.mergeAppendSeparatorString = mergeAppendSeparatorStringToSet;
+        this.predicateEmptyDefault = value;
     }
 
     /**
-     * @param mergeNoteEachToSet the value to which to set mergeNoteEach
+     * @param value the value for clientNamePredicate
      */
-    public void setMergeNoteEach(boolean mergeNoteEachToSet)
+    public void setClientNamePredicate(String value)
     {
-        this.mergeNoteEach = mergeNoteEachToSet;
+        this.clientNamePredicate = value;
     }
 
     /**
-     * @param predicateEmptyDefaultToSet the value to which to set predicateEmptyDefault
+     * @param value the value for botNameProperty
      */
-    public void setPredicateEmptyDefault(String predicateEmptyDefaultToSet)
+    public void setBotNameProperty(String value)
     {
-        this.predicateEmptyDefault = predicateEmptyDefaultToSet;
+        this.botNameProperty = value;
     }
 
     /**
-     * @param responseTimeoutToSet the value to which to set responseTimeout
+     * @param value the value for predicateFlushPeriod
      */
-    public void setResponseTimeout(int responseTimeoutToSet)
+    public void setPredicateFlushPeriod(int value)
     {
-        this.responseTimeout = responseTimeoutToSet;
+        this.predicateFlushPeriod = value;
     }
 
     /**
-     * @param categoryLoadNotifyIntervalToSet the value to which to set categoryLoadNotifyInterval
+     * @param value the value for multiplexorImplementation
      */
-    public void setCategoryLoadNotifyInterval(int categoryLoadNotifyIntervalToSet)
+    public void setMultiplexorImplementation(String value)
     {
-        this.categoryLoadNotifyInterval = categoryLoadNotifyIntervalToSet;
+        this.multiplexorImplementation = value;
     }
 
     /**
-     * @param loadNotifyEachFileToSet the value to which to set loadNotifyEachFile
+     * @param value the value for ffmDirectory
      */
-    public void setLoadNotifyEachFile(boolean loadNotifyEachFileToSet)
+    public void setFfmDirectory(URL value)
     {
-        this.loadNotifyEachFile = loadNotifyEachFileToSet;
+        this.ffmDirectory = value;
     }
 
     /**
-     * @param infiniteLoopInputToSet the value to which to set infiniteLoopInput
+     * @param value the value for databaseURL
      */
-    public void setInfiniteLoopInput(String infiniteLoopInputToSet)
+    public void setDatabaseURL(String value)
     {
-        this.infiniteLoopInput = infiniteLoopInputToSet;
+        this.databaseURL = value;
     }
 
     /**
-     * @param randomStrategyToSet the value to which to set randomStrategy
+     * @param value the value for databaseDriver
      */
-    public void setRandomStrategy(RandomStrategy randomStrategyToSet)
+    public void setDatabaseDriver(String value)
     {
-        this.randomStrategy = randomStrategyToSet;
+        this.databaseDriver = value;
     }
 
     /**
-     * @param clientNamePredicateToSet the value to which to set clientNamePredicate
+     * @param value the value for databaseMaximumConnections
      */
-    public void setClientNamePredicate(String clientNamePredicateToSet)
+    public void setDatabaseMaximumConnections(int value)
     {
-        this.clientNamePredicate = clientNamePredicateToSet;
+        this.databaseMaximumConnections = value;
     }
 
     /**
-     * @param botNamePredicateToSet the value to which to set botNamePredicate
+     * @param value the value for databaseUsername
      */
-    public void setBotNamePredicate(String botNamePredicateToSet)
+    public void setDatabaseUsername(String value)
     {
-        this.botNamePredicate = botNamePredicateToSet;
+        this.databaseUsername = value;
     }
 
     /**
-     * @param onUncaughtExceptionsPrintStackTraceToSet the value to which to set onUncaughtExceptionsPrintStackTrace
+     * @param value the value for databasePassword
      */
-    public void setOnUncaughtExceptionsPrintStackTrace(boolean onUncaughtExceptionsPrintStackTraceToSet)
+    public void setDatabasePassword(String value)
     {
-        this.onUncaughtExceptionsPrintStackTrace = onUncaughtExceptionsPrintStackTraceToSet;
+        this.databasePassword = value;
     }
 
     /**
-     * @param osAccessAllowedToSet the value to which to set osAccessAllowed
+     * @param value the value for mergePolicy
      */
-    public void setOsAccessAllowed(boolean osAccessAllowedToSet)
+    public void setMergePolicy(MergePolicy value)
     {
-        this.osAccessAllowed = osAccessAllowedToSet;
+        this.mergePolicy = value;
     }
 
     /**
-     * @param javascriptAllowedToSet the value to which to set javascriptAllowed
+     * @param value the value for noteEachMerge
      */
-    public void setJavascriptAllowed(boolean javascriptAllowedToSet)
+    public void setNoteEachMerge(boolean value)
     {
-        this.javascriptAllowed = javascriptAllowedToSet;
+        this.noteEachMerge = value;
     }
 
     /**
-     * @param gossipPathToSet the value to which to set gossipPath
+     * @param value the value for appendMergeSeparatorString
      */
-    public void setGossipPath(URL gossipPathToSet)
+    public void setAppendMergeSeparatorString(String value)
     {
-        this.gossipPath = gossipPathToSet;
+        this.appendMergeSeparatorString = value;
     }
 
     /**
-     * @param connectStringToSet the value to which to set connectString
+     * @param value the value for responseTimeout
      */
-    public void setConnectString(String connectStringToSet)
+    public void setResponseTimeout(int value)
     {
-        this.connectString = connectStringToSet;
+        this.responseTimeout = value;
     }
 
     /**
-     * @param inactivityStringToSet the value to which to set inactivityString
+     * @param value the value for infiniteLoopInput
      */
-    public void setInactivityString(String inactivityStringToSet)
+    public void setInfiniteLoopInput(String value)
     {
-        this.inactivityString = inactivityStringToSet;
+        this.infiniteLoopInput = value;
     }
 
     /**
-     * @param nodemapperImplementationToSet the value to which to set nodemapperImplementation
+     * @param value the value for printStackTraceOnUncaughtExceptions
      */
-    public void setNodemapperImplementation(String nodemapperImplementationToSet)
+    public void setPrintStackTraceOnUncaughtExceptions(boolean value)
     {
-        this.nodemapperImplementation = nodemapperImplementationToSet;
+        this.printStackTraceOnUncaughtExceptions = value;
     }
 
     /**
-     * @param multiplexorImplementationToSet the value to which to set multiplexorImplementation
+     * @param value the value for heartPulseRate
      */
-    public void setMultiplexorImplementation(String multiplexorImplementationToSet)
+    public void setHeartPulseRate(int value)
     {
-        this.multiplexorImplementation = multiplexorImplementationToSet;
+        this.heartPulseRate = value;
     }
 
     /**
-     * @param multiplexorFfmDirToSet the value to which to set multiplexorFfmDir
+     * @param value the value for heartEnabled
      */
-    public void setMultiplexorFfmDir(URL multiplexorFfmDirToSet)
+    public void setHeartEnabled(boolean value)
     {
-        this.multiplexorFfmDir = multiplexorFfmDirToSet;
+        this.heartEnabled = value;
     }
 
     /**
-     * @param heartEnabledToSet the value to which to set heartEnabled
+     * @param value the value for AIMLWatcherTimer
      */
-    public void setHeartEnabled(boolean heartEnabledToSet)
+    public void setAIMLWatcherTimer(int value)
     {
-        this.heartEnabled = heartEnabledToSet;
+        this.AIMLWatcherTimer = value;
     }
 
     /**
-     * @param heartPulserateToSet the value to which to set heartPulserate
+     * @param value the value for useAIMLWatcher
      */
-    public void setHeartPulserate(int heartPulserateToSet)
+    public void setUseAIMLWatcher(boolean value)
     {
-        this.heartPulserate = heartPulserateToSet;
+        this.useAIMLWatcher = value;
     }
 
     /**
-     * @param predicateCacheMaxToSet the value to which to set predicateCacheMax
+     * @param value the value for AIMLSchemaLocation
      */
-    public void setPredicateCacheMax(int predicateCacheMaxToSet)
+    public void setAIMLSchemaLocation(URL value)
     {
-        this.predicateCacheMax = predicateCacheMaxToSet;
+        this.AIMLSchemaLocation = value;
     }
 
     /**
-     * @param consoleUseShellToSet the value to which to set consoleUseShell
+     * @param value the value for pluginSchemaLocation
      */
-    public void setConsoleUseShell(boolean consoleUseShellToSet)
+    public void setPluginSchemaLocation(URL value)
     {
-        this.consoleUseShell = consoleUseShellToSet;
+        this.pluginSchemaLocation = value;
     }
 
     /**
-     * @param exitImmediatelyOnStartupToSet the value to which to set exitImmediatelyOnStartup
+     * @param value the value for testCaseSchemaLocation
      */
-    public void setExitImmediatelyOnStartup(boolean exitImmediatelyOnStartupToSet)
+    public void setTestCaseSchemaLocation(URL value)
     {
-        this.exitImmediatelyOnStartup = exitImmediatelyOnStartupToSet;
+        this.testCaseSchemaLocation = value;
     }
 
     /**
-     * @param schemaLocationAIMLToSet the value to which to set schemaLocationAIML
+     * @param value the value for javascriptInterpreterClassname
      */
-    public void setSchemaLocationAIML(URL schemaLocationAIMLToSet)
+    public void setJavascriptInterpreterClassname(String value)
     {
-        this.schemaLocationAIML = schemaLocationAIMLToSet;
+        this.javascriptInterpreterClassname = value;
     }
 
     /**
-     * @param schemaLocationPluginsToSet the value to which to set schemaLocationPlugins
+     * @param value the value for allowJavaScript
      */
-    public void setSchemaLocationPlugins(URL schemaLocationPluginsToSet)
+    public void setAllowJavaScript(boolean value)
     {
-        this.schemaLocationPlugins = schemaLocationPluginsToSet;
+        this.allowJavaScript = value;
     }
 
     /**
-     * @param schemaLocationTestCasesToSet the value to which to set schemaLocationTestCases
+     * @param value the value for systemInterpreterDirectory
      */
-    public void setSchemaLocationTestCases(URL schemaLocationTestCasesToSet)
+    public void setSystemInterpreterDirectory(URL value)
     {
-        this.schemaLocationTestCases = schemaLocationTestCasesToSet;
+        this.systemInterpreterDirectory = value;
     }
 
     /**
-     * @param systemInterpreterDirectoryToSet the value to which to set systemInterpreterDirectory
+     * @param value the value for systemInterpreterPrefix
      */
-    public void setSystemInterpreterDirectory(URL systemInterpreterDirectoryToSet)
+    public void setSystemInterpreterPrefix(String value)
     {
-        this.systemInterpreterDirectory = systemInterpreterDirectoryToSet;
+        this.systemInterpreterPrefix = value;
     }
 
     /**
-     * @param systemInterpreterPrefixToSet the value to which to set systemInterpreterPrefix
+     * @param value the value for allowOSAccess
      */
-    public void setSystemInterpreterPrefix(String systemInterpreterPrefixToSet)
+    public void setAllowOSAccess(boolean value)
     {
-        this.systemInterpreterPrefix = systemInterpreterPrefixToSet;
+        this.allowOSAccess = value;
     }
 
     /**
-     * @param javascriptInterpreterClassnameToSet the value to which to set javascriptInterpreterClassname
+     * @param value the value for categoryLoadNotificationInterval
      */
-    public void setJavascriptInterpreterClassname(String javascriptInterpreterClassnameToSet)
+    public void setCategoryLoadNotificationInterval(int value)
     {
-        this.javascriptInterpreterClassname = javascriptInterpreterClassnameToSet;
+        this.categoryLoadNotificationInterval = value;
     }
 
     /**
-     * @param useWatcherToSet the value to which to set useWatcher
+     * @param value the value for noteEachLoadedFile
      */
-    public void setUseWatcher(boolean useWatcherToSet)
+    public void setNoteEachLoadedFile(boolean value)
     {
-        this.useWatcher = useWatcherToSet;
+        this.noteEachLoadedFile = value;
     }
 
     /**
-     * @param watcherTimerToSet the value to which to set watcherTimer
+     * @param value the value for exitImmediatelyOnStartup
      */
-    public void setWatcherTimer(int watcherTimerToSet)
+    public void setExitImmediatelyOnStartup(boolean value)
     {
-        this.watcherTimer = watcherTimerToSet;
+        this.exitImmediatelyOnStartup = value;
     }
 
     /**
-     * @param databaseUrlToSet the value to which to set databaseUrl
+     * @param value the value for connectString
      */
-    public void setDatabaseUrl(String databaseUrlToSet)
+    public void setConnectString(String value)
     {
-        this.databaseUrl = databaseUrlToSet;
+        this.connectString = value;
     }
 
     /**
-     * @param databaseDriverToSet the value to which to set databaseDriver
+     * @param value the value for randomStrategy
      */
-    public void setDatabaseDriver(String databaseDriverToSet)
+    public void setRandomStrategy(RandomStrategy value)
     {
-        this.databaseDriver = databaseDriverToSet;
+        this.randomStrategy = value;
     }
 
     /**
-     * @param databaseConnectionsToSet the value to which to set databaseConnections
+     * @param value the value for nodemapperImplementation
      */
-    public void setDatabaseConnections(int databaseConnectionsToSet)
+    public void setNodemapperImplementation(String value)
     {
-        this.databaseConnections = databaseConnectionsToSet;
+        this.nodemapperImplementation = value;
     }
 
     /**
-     * @param databaseUserToSet the value to which to set databaseUser
+     * @param value the value for useShell
      */
-    public void setDatabaseUser(String databaseUserToSet)
+    public void setUseShell(boolean value)
     {
-        this.databaseUser = databaseUserToSet;
-    }
-
-    /**
-     * @param databasePasswordToSet the value to which to set databasePassword
-     */
-    public void setDatabasePassword(String databasePasswordToSet)
-    {
-        this.databasePassword = databasePasswordToSet;
-    }
-
-    /**
-     * @param confLocationPluginsToSet the value to which to set confLocationPlugins
-     */
-    public void setConfLocationPlugins(URL confLocationPluginsToSet)
-    {
-        this.confLocationPlugins = confLocationPluginsToSet;
+        this.useShell = value;
     }
 
 }
