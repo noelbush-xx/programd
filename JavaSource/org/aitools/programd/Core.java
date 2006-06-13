@@ -142,28 +142,28 @@ public class Core
     }
 
     /**
-     * Initializes a new Core object with default property values and the given base URL.
+     * Initializes a new Core object with default settings and the given base URL.
      * 
      * @param base the base URL to use
      */
     public Core(URL base)
     {
-        this._settings = new CoreSettings();
+        this._settings = new ProgrammaticCoreSettings();
         this.baseURL = base;
         Filesystem.setRootPath(Filesystem.getWorkingDirectory());
         start();
     }
 
     /**
-     * Initializes a new Core object with the properties from the given file and the given base URL.
+     * Initializes a new Core object with the settings from the given file and the given base URL.
      * 
      * @param base the base URL to use
-     * @param propertiesPath
+     * @param settings the path to the file with settings
      */
-    public Core(URL base, URL propertiesPath)
+    public Core(URL base, URL settings)
     {
         this.baseURL = base;
-        this._settings = new CoreSettings(propertiesPath);
+        this._settings = new XMLCoreSettings(settings);
         Filesystem.setRootPath(URLTools.getParent(this.baseURL));
         start();
     }
@@ -218,7 +218,7 @@ public class Core
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
 
-        this.parser = XML.getSAXParser(URLTools.contextualize(this.baseURL, this._settings.getSchemaLocationAIML()),
+        this.parser = XML.getSAXParser(URLTools.contextualize(this.baseURL, this._settings.getAIMLSchemaLocation()),
                 "AIML");
 
         this.graphmaster = new Graphmaster(this);
@@ -247,9 +247,9 @@ public class Core
         try
         {
             this.pluginConfig = XML.getDocumentBuilder(
-                    URLTools.contextualize(Filesystem.getWorkingDirectory(), this._settings.getSchemaLocationPlugins()),
+                    URLTools.contextualize(Filesystem.getWorkingDirectory(), this._settings.getPluginSchemaLocation()),
                     "plugin configuration").parse(
-                    URLTools.contextualize(this.baseURL, this._settings.getConfLocationPlugins()).toString());
+                    URLTools.contextualize(this.baseURL, this._settings.getPluginConfigURL()).toString());
         }
         catch (IOException e)
         {
@@ -276,7 +276,7 @@ public class Core
             this.multiplexor.initialize();
 
             // Create the AIMLWatcher if configured to do so.
-            if (this._settings.useWatcher())
+            if (this._settings.useAIMLWatcher())
             {
                 this.aimlWatcher = new AIMLWatcher(this);
             }
@@ -290,7 +290,7 @@ public class Core
             this.logger.info("Starting up the Graphmaster.");
 
             // Start loading bots.
-            loadBots(URLTools.contextualize(this.baseURL, this._settings.getStartupFilePath()));
+            loadBots(URLTools.contextualize(this.baseURL, this._settings.getBotConfigURL()));
 
             // Request garbage collection.
             System.gc();
@@ -333,7 +333,7 @@ public class Core
 
     protected void startWatcher()
     {
-        if (this._settings.useWatcher())
+        if (this._settings.useAIMLWatcher())
         {
             this.aimlWatcher.start();
             this.logger.info("The AIML Watcher is active.");
@@ -348,7 +348,7 @@ public class Core
     {
         if (this._settings.heartEnabled())
         {
-            this.heart = new Heart(this._settings.getHeartPulserate());
+            this.heart = new Heart(this._settings.getHeartPulseRate());
             // Add a simple IAmAlive Pulse (this should be more
             // configurable).
             this.heart.addPulse(new org.aitools.programd.util.IAmAlivePulse());
@@ -359,7 +359,7 @@ public class Core
 
     protected void setupInterpreter()
     {
-        if (this._settings.javascriptAllowed())
+        if (this._settings.allowJavaScript())
         {
             if (this._settings.getJavascriptInterpreterClassname() == null)
             {
@@ -450,13 +450,13 @@ public class Core
         }
         else
         {
-            if (this._settings.loadNotifyEachFile())
+            if (this._settings.noteEachLoadedFile())
             {
                 this.logger.info("Loading " + URLTools.unescape(path) + "....");
             }
             doLoad(path, botid);
             // Add it to the AIMLWatcher, if active.
-            if (this._settings.useWatcher())
+            if (this._settings.useAIMLWatcher())
             {
                 this.aimlWatcher.addWatchFile(path);
             }
@@ -493,7 +493,7 @@ public class Core
         try
         {
             AIMLReader reader = new AIMLReader(this.graphmaster, path, botid, this.bots.get(botid), this._settings
-                    .getAimlSchemaNamespaceUri().toString());
+                    .getAIMLNamespaceURI().toString());
             try
             {
                 this.parser.getXMLReader().setProperty("http://xml.org/sax/properties/lexical-handler", reader);
@@ -688,7 +688,7 @@ public class Core
         }
         this.logger.error("Core may no longer be stable due to " + description + ":\n" + throwableDescription);
 
-        if (this._settings.onUncaughtExceptionsPrintStackTrace())
+        if (this._settings.printStackTraceOnUncaughtExceptions())
         {
             if (e instanceof UserError || e instanceof DeveloperError)
             {
@@ -713,7 +713,7 @@ public class Core
         {
             System.err.println("Uncaught exception " + e.getClass().getSimpleName() + " in thread \"" + t.getName()
                     + "\".");
-            if (Core.this._settings.onUncaughtExceptionsPrintStackTrace())
+            if (Core.this._settings.printStackTraceOnUncaughtExceptions())
             {
                 e.printStackTrace(System.err);
             }
@@ -731,7 +731,7 @@ public class Core
      */
     public void loadBots(URL path)
     {
-        if (this._settings.useWatcher())
+        if (this._settings.useAIMLWatcher())
         {
             this.logger.debug("Suspending AIMLWatcher.");
             this.aimlWatcher.stop();
@@ -752,7 +752,7 @@ public class Core
         {
             Filesystem.popWorkingDirectory();
         }
-        if (this._settings.useWatcher())
+        if (this._settings.useAIMLWatcher())
         {
             this.logger.debug("Restarting AIMLWatcher.");
             this.aimlWatcher.start();
