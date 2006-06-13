@@ -86,7 +86,7 @@ public class Tester
     {
         this.suites.clear();
         this.suites = loadTests(this.suiteURLs, URLTools.contextualize(Filesystem.getRootPath(),
-                this._core.getSettings().getSchemaLocationTestCases()), this._multiplexor, this.logger);
+                this._core.getSettings().getTestCaseSchemaLocation()), this._multiplexor, this.logger);
         if (null == botid)
         {
             this.logger.warn("No botid defined for tests.");

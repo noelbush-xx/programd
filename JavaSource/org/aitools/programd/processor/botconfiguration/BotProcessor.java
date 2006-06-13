@@ -99,7 +99,7 @@ public class BotProcessor extends BotConfigurationElementProcessor
                 this._core.setLoadtime();
 
                 // Stop the AIMLWatcher while loading.
-                if (this._core.getSettings().useWatcher())
+                if (this._core.getSettings().useAIMLWatcher())
                 {
                     this._core.getAIMLWatcher().stop();
                 }
@@ -116,7 +116,7 @@ public class BotProcessor extends BotConfigurationElementProcessor
                 this._core.unsetLoadtime();
 
                 // Restart the AIMLWatcher.
-                if (this._core.getSettings().useWatcher())
+                if (this._core.getSettings().useAIMLWatcher())
                 {
                     this._core.getAIMLWatcher().start();
                 }

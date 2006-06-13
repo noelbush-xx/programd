@@ -55,7 +55,7 @@ public class AIMLWatcher
     public void start()
     {
         this.timer = new Timer(true);
-        this.timer.schedule(new CheckAIMLTask(), 0, this._core.getSettings().getWatcherTimer());
+        this.timer.schedule(new CheckAIMLTask(), 0, this._core.getSettings().getAIMLWatcherTimer());
     }
 
     /**
