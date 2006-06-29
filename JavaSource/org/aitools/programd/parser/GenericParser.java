@@ -10,17 +10,8 @@
 package org.aitools.programd.parser;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Stack;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -36,6 +27,7 @@ import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.NotARegisteredClassException;
 import org.aitools.util.resource.URLTools;
 import org.aitools.util.runtime.UserError;
+import org.aitools.util.xml.Loader;
 import org.aitools.util.xml.XML;
 import org.apache.log4j.Logger;
 
@@ -51,11 +43,14 @@ abstract public class GenericParser<P extends Processor>
     /** Set by subclasses. */
     private ProcessorRegistry<P> processorRegistry;
 
-    /** The URL of this document. */
+    /** The URL of the parsed document. */
     protected Stack<URL> docURL = new Stack<URL>();
 
     /** The Core in use. */
     protected Core _core;
+    
+    /** The Loader for parsing and validating new instance documents. */
+    protected Loader _loader;
 
     /** The logger to use. */
     protected Logger logger;
@@ -65,73 +60,28 @@ abstract public class GenericParser<P extends Processor>
     /** The word &quot;index&quot;, for convenience. */
     protected static final String INDEX = "index";
 
-    /** A DocumentBuilder for producing new Documents. */
-    protected static DocumentBuilder utilDocBuilder;
-
     /**
      * Creates a new GenericParser with the given Core as its owner.
      * 
      * @param registry the registry of processors
      * @param core the Core that owns this
      */
-    public GenericParser(ProcessorRegistry<P> registry, Core core)
+    public GenericParser(ProcessorRegistry<P> registry,  Core core)
     {
         this._core = core;
         this.logger = this._core.getLogger();
         this.processorRegistry = registry;
-        if (utilDocBuilder == null)
-        {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            try
-            {
-                utilDocBuilder = factory.newDocumentBuilder();
-            }
-            catch (ParserConfigurationException e)
-            {
-                throw new DeveloperError("Error creating utilDocBuilder for GenericParser.", e);
-            }
-        }
+        this._loader = new Loader(this._core.getBaseURL(), registry.getNamespaceURI());
     }
 
     /**
      * Processes the current document URL. This is an internal method.
      * 
      * @return the DOM produced by parsing
-     * @throws ProcessorException if the content cannot be processed
      */
-    protected Document parseCurrentURL() throws ProcessorException
+    protected Document parseCurrentURL()
     {
-        URL url = this.docURL.peek();
-        Document document;
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        try
-        {
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            InputStream stream = url.openStream();
-            InputSource inputSource = new InputSource(stream);
-            inputSource.setSystemId(url.toString());
-            document = builder.parse(inputSource);
-            stream.close();
-        }
-        catch (IOException e)
-        {
-            throw new ProcessorException("I/O error while parsing \"" + url + "\".", e);
-        }
-        catch (ParserConfigurationException e)
-        {
-            throw new ProcessorException("Parser configuration error while parsing \"" + url + "\".", e);
-        }
-        catch (SAXParseException e)
-        {
-            throw new ProcessorException("SAX parsing error while parsing \"" + url + "\".", e);
-        }
-        catch (SAXException e)
-        {
-            throw new ProcessorException("SAX exception while parsing \"" + url + "\".", e);
-        }
-        return document;
+        return this._loader.parse(this.docURL.peek());
     }
 
     /**
