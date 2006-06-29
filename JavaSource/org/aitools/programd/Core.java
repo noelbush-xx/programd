@@ -16,6 +16,7 @@ import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ import org.aitools.util.resource.URLTools;
 import org.aitools.util.UnspecifiedParameterError;
 import org.aitools.util.runtime.UserError;
 import org.aitools.util.runtime.UserSystem;
+import org.aitools.util.xml.Loader;
 import org.aitools.util.xml.XML;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -62,11 +64,8 @@ import org.w3c.dom.Document;
  */
 public class Core
 {
-    /** The namespace URI of the bot configuration. */
-    public static final String BOT_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.6/bot-configuration";
-
     /** The namespace URI of the plugin configuration. */
-    public static final String PLUGIN_CONFIG_SCHEMA_URI = "http://aitools.org/programd/4.6/plugins";
+    public static final String PLUGIN_CONFIG_NS_URI = "http://aitools.org/programd/4.7/plugins";
 
     /** The Settings. */
     protected CoreSettings _settings;
@@ -140,6 +139,9 @@ public class Core
         /** The Core has crashed. */
         CRASHED
     }
+    
+    /** A general-purpose map for storing all manner of objects (by AIML processors and the like). */
+    private Map<String, Map<String, Object>> classStorage = new HashMap<String, Map<String, Object>>();
 
     /**
      * Initializes a new Core object with default settings and the given base URL.
@@ -148,9 +150,9 @@ public class Core
      */
     public Core(URL base)
     {
-        this._settings = new ProgrammaticCoreSettings();
         this.baseURL = base;
         Filesystem.setRootPath(Filesystem.getWorkingDirectory());
+        this._settings = new ProgrammaticCoreSettings();
         start();
     }
 
@@ -163,8 +165,8 @@ public class Core
     public Core(URL base, URL settings)
     {
         this.baseURL = base;
-        this._settings = new XMLCoreSettings(settings);
         Filesystem.setRootPath(URLTools.getParent(this.baseURL));
+        this._settings = new XMLCoreSettings(settings, base);
         start();
     }
 
@@ -218,8 +220,7 @@ public class Core
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
 
-        this.parser = XML.getSAXParser(URLTools.contextualize(this.baseURL, this._settings.getAIMLSchemaLocation()),
-                "AIML");
+        this.parser = XML.getSAXParser();
 
         this.graphmaster = new Graphmaster(this);
         this.bots = new Bots();
@@ -244,21 +245,8 @@ public class Core
         }
 
         // Load the plugin config.
-        try
-        {
-            this.pluginConfig = XML.getDocumentBuilder(
-                    URLTools.contextualize(Filesystem.getWorkingDirectory(), this._settings.getPluginSchemaLocation()),
-                    "plugin configuration").parse(
-                    URLTools.contextualize(this.baseURL, this._settings.getPluginConfigURL()).toString());
-        }
-        catch (IOException e)
-        {
-            this.logger.error("IO error trying to read plugin configuration.", e);
-        }
-        catch (SAXException e)
-        {
-            this.logger.error("Error trying to parse plugin configuration.", e);
-        }
+        Loader pluginConfigLoader = new Loader(this.baseURL, PLUGIN_CONFIG_NS_URI);
+        this.pluginConfig = pluginConfigLoader.parse(URLTools.contextualize(this.baseURL, this._settings.getPluginConfigURL()));
 
         Package pkg = Package.getPackage("org.aitools.programd");
         this.logger.info(String.format("Starting %s version %s [%s].", pkg.getSpecificationTitle(), pkg.getSpecificationVersion(), pkg.getImplementationVersion()));
@@ -972,5 +960,35 @@ public class Core
     public Logger getLogger()
     {
         return this.logger;
+    }
+    
+    /**
+     * Gets an object from the class storage, using the given classname
+     * to look up the map for the class, then the given key to retrieve
+     * the object.  If the object is not found, then the given defaultObject
+     * is stored with the appropriate key, so it will be there next time.
+     * 
+     * @param <T> the type of object to retrieve
+     * @param classname the classname from whose map to retrieve
+     * @param key the key to retrieve
+     * @param defaultObject default object to use if none is found
+     * @return the object associated with this key
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getStoredObject(String classname, String key, T defaultObject)
+    {
+        Map<String, Object> storageMap = this.classStorage.get(classname);
+        if (storageMap == null)
+        {
+            storageMap = new HashMap<String, Object>();
+            this.classStorage.put(classname, storageMap);
+        }
+        Object object = storageMap.get(key);
+        if (object != null)
+        {
+            return (T)object;
+        }
+        storageMap.put(key, defaultObject);
+        return defaultObject;
     }
 }
