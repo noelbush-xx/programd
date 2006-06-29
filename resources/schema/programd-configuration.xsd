@@ -339,6 +339,14 @@
                                     </xs:appinfo>
                                 </xs:annotation>
                             </xs:element>
+                            <xs:element name="bot-configuration" type="URL" default="../resources/schema/bot-configuration.xsd">
+                                <xs:annotation>
+                                    <xs:documentation>The location of the bot configuration schema.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>botConfigSchemaLocation</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
                             <xs:element name="plugins" type="URL" default="../resources/schema/plugins.xsd">
                                 <xs:annotation>
                                     <xs:documentation>The location of the plugin schema.</xs:documentation>
