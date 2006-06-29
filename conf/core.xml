@@ -45,6 +45,7 @@
     </watchers>
     <schema-locations>
         <AIML>../resources/schema/AIML.xsd</AIML>
+        <bot-configuration>../resources/schema/bot-configuration.xsd</bot-configuration>
         <plugins>../resources/schema/plugins.xsd</plugins>
         <test-cases>../resources/schema/test-suite.xsd</test-cases>
     </schema-locations>
