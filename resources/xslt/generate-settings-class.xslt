@@ -72,7 +72,6 @@
                     <import>javax.xml.xpath.XPathExpressionException</import>
                     <import>javax.xml.xpath.XPathFactory</import>
                     <import>org.w3c.dom.Document</import>
-                    <import>org.aitools.util.resource.Filesystem</import>
                     <import>org.aitools.util.resource.URITools</import>
                     <import>org.aitools.util.resource.URLTools</import>
                     <import>org.aitools.util.runtime.DeveloperError</import>
@@ -84,6 +83,9 @@
                 <xsl:with-param name="content">
                     <xsl:text>    /** The path to the settings file. */
     private URL _path;
+
+    /** A base URL for resolving relative URLs. */
+    private URL _base;
     
     /**
      * Creates a &lt;code&gt;</xsl:text>
@@ -92,12 +94,14 @@
      * located at the given path.
      *
      * @param path the path to the settings file
+     * @param base the URL against which to resolve relative URLs
      */
     public </xsl:text>
                     <xsl:value-of select="$simple-classname"/>
-                    <xsl:text>(URL path)
+                    <xsl:text>(URL path, URL base)
     {
         this._path = path;
+        this._base = base;
         initialize();
     }
     
@@ -249,11 +253,12 @@
     @Override
     protected void initialize()
     {
-        Loader loader = new Loader(Filesystem.getWorkingDirectory(), "resources/schema/programd-configuration.xsd", "XML Core Settings");
+        final String CONFIG_NS_URI = "http://aitools.org/programd/4.7/programd-configuration";
+        Loader loader = new Loader(this._base, CONFIG_NS_URI);
         Document document = loader.parse(this._path);
         XPath xpath = XPathFactory.newInstance().newXPath();
         NamespaceContextImpl ns = new NamespaceContextImpl();
-        ns.add("http://aitools.org/programd/4.7/programd-configuration", "d");
+        ns.add(CONFIG_NS_URI, "d");
         xpath.setNamespaceContext(ns);
 
         try
