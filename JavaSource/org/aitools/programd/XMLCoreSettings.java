@@ -14,7 +14,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
-import org.aitools.util.resource.Filesystem;
 import org.aitools.util.resource.URITools;
 import org.aitools.util.resource.URLTools;
 import org.aitools.util.runtime.DeveloperError;
@@ -23,22 +22,27 @@ import org.aitools.util.xml.Loader;
 import org.aitools.util.xml.NamespaceContextImpl;
 
 /**
- * Automatically generated at 2006-06-12T03:34:00.162-04:00.
+ * Automatically generated at 2006-06-27T14:11:53.317-04:00.
  */
 public class XMLCoreSettings extends CoreSettings
 {
     /** The path to the settings file. */
     private URL _path;
+
+    /** A base URL for resolving relative URLs. */
+    private URL _base;
     
     /**
      * Creates a <code>XMLCoreSettings</code> with the XML-formatted settings file
      * located at the given path.
      *
      * @param path the path to the settings file
+     * @param base the URL against which to resolve relative URLs
      */
-    public XMLCoreSettings(URL path)
+    public XMLCoreSettings(URL path, URL base)
     {
         this._path = path;
+        this._base = base;
         initialize();
     }
     
@@ -49,11 +53,12 @@ public class XMLCoreSettings extends CoreSettings
     @Override
     protected void initialize()
     {
-        Loader loader = new Loader(Filesystem.getWorkingDirectory(), "resources/schema/programd-configuration.xsd", "XML Core Settings");
+        final String CONFIG_NS_URI = "http://aitools.org/programd/4.7/programd-configuration";
+        Loader loader = new Loader(this._base, CONFIG_NS_URI);
         Document document = loader.parse(this._path);
         XPath xpath = XPathFactory.newInstance().newXPath();
         NamespaceContextImpl ns = new NamespaceContextImpl();
-        ns.add("http://aitools.org/programd/4.7/programd-configuration", "d");
+        ns.add(CONFIG_NS_URI, "d");
         xpath.setNamespaceContext(ns);
 
         try
@@ -139,6 +144,14 @@ public class XMLCoreSettings extends CoreSettings
             try
             {
                 setAIMLSchemaLocation(URLTools.createValidURL(xpath.evaluate("/d:programd/d:schema-locations/d:AIML", document), this._path, true));
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new UserError("Error in settings.", e);
+            }
+            try
+            {
+                setBotConfigSchemaLocation(URLTools.createValidURL(xpath.evaluate("/d:programd/d:schema-locations/d:bot-configuration", document), this._path, true));
             }
             catch (FileNotFoundException e)
             {

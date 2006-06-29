@@ -14,7 +14,7 @@ import org.aitools.util.resource.URLTools;
 import org.aitools.util.runtime.UserError;
 
 /**
- * Automatically generated at 2006-06-12T03:34:00.162-04:00.
+ * Automatically generated at 2006-06-27T14:11:53.317-04:00.
  */
 public class ProgrammaticCoreSettings extends CoreSettings
 {
@@ -98,6 +98,14 @@ public class ProgrammaticCoreSettings extends CoreSettings
         try
         {
             setAIMLSchemaLocation(URLTools.createValidURL("../resources/schema/AIML.xsd", false));
+        }
+        catch (FileNotFoundException e)
+        {
+            throw new UserError("Error in settings.", e);
+        }
+        try
+        {
+            setBotConfigSchemaLocation(URLTools.createValidURL("../resources/schema/bot-configuration.xsd", false));
         }
         catch (FileNotFoundException e)
         {

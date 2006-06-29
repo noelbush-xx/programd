@@ -13,7 +13,7 @@ import java.net.URL;
 import org.aitools.util.Settings;
 
 /**
- * Automatically generated at 2006-06-12T03:34:00.162-04:00.
+ * Automatically generated at 2006-06-27T14:11:53.317-04:00.
  */
 abstract public class CoreSettings extends Settings
 {
@@ -110,6 +110,9 @@ abstract public class CoreSettings extends Settings
         
     /** The location of the AIML schema. */
     private URL AIMLSchemaLocation;
+        
+    /** The location of the bot configuration schema. */
+    private URL botConfigSchemaLocation;
         
     /** The location of the plugin schema. */
     private URL pluginSchemaLocation;
@@ -369,6 +372,14 @@ abstract public class CoreSettings extends Settings
     public URL getAIMLSchemaLocation()
     {
         return this.AIMLSchemaLocation;
+    }
+
+    /**
+     * @return the value of botConfigSchemaLocation
+     */
+    public URL getBotConfigSchemaLocation()
+    {
+        return this.botConfigSchemaLocation;
     }
 
     /**
@@ -689,6 +700,14 @@ abstract public class CoreSettings extends Settings
     public void setAIMLSchemaLocation(URL value)
     {
         this.AIMLSchemaLocation = value;
+    }
+
+    /**
+     * @param value the value for botConfigSchemaLocation
+     */
+    public void setBotConfigSchemaLocation(URL value)
+    {
+        this.botConfigSchemaLocation = value;
     }
 
     /**
