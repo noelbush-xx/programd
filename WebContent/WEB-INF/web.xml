@@ -20,12 +20,6 @@
             <taglib-uri>http://java.sun.com/jstl/core-rt</taglib-uri>
             <taglib-location>WEB-INF/c-rt.tld</taglib-location>
         </taglib>
-        <!--
-		<taglib>
-			<taglib-uri>http://aitools.org/programd/4.6/taglib/aiml</taglib-uri>
-			<taglib-location>/WEB-INF/aiml.tld</taglib-location>
-		</taglib>
-        -->
     </jsp-config>
     <!--Listeners-->
     <listener>
