@@ -45,6 +45,6 @@ public class BotConfigurationElementProcessorRegistry extends ProcessorRegistry<
      */
     public BotConfigurationElementProcessorRegistry()
     {
-        super(XMLNS, PROCESSOR_LIST);
+        super(XMLNS, "bot configuration", PROCESSOR_LIST);
     }
 }

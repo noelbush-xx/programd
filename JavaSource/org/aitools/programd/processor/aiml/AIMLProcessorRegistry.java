@@ -51,6 +51,6 @@ public class AIMLProcessorRegistry extends ProcessorRegistry<AIMLProcessor>
      */
     public AIMLProcessorRegistry()
     {
-        super(XMLNS, PROCESSOR_LIST);
+        super(XMLNS, "AIML", PROCESSOR_LIST);
     }
 }
