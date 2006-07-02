@@ -70,7 +70,7 @@ public class BotProcessor extends BotConfigurationElementProcessor
             String href = element.getAttribute(HREF);
             try
             {
-                return this._core.loadBot(URLTools.createValidURL(href));
+                return this._core.loadBot(URLTools.createValidURL(href, parser.getCurrentDocURL()));
             }
             catch (FileNotFoundException e)
             {
