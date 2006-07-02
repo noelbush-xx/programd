@@ -69,7 +69,7 @@ public class RandomProcessor extends AIMLProcessor
      * The map in which MersenneTwisterFast random number generators will be stored for each unique botid + userid +
      * random element.
      */
-    private static final LRUMap generators = new LRUMap(100);
+    private LRUMap generators = new LRUMap(100);
     
     /**
      * The map in which indices not-yet-used listitems will be stored if
@@ -78,16 +78,19 @@ public class RandomProcessor extends AIMLProcessor
      * appear to implement equals() in a way that makes List operations like remove()
      * work.
      */
-    private static final Map<String, List<Integer>> AVAILABLE_INDICES = new HashMap<String, List<Integer>>();
+    private Map<String, List<Integer>> availableIndices = new HashMap<String, List<Integer>>();
 
     /**
      * Creates a new RandomProcessor using the given Core.
      * 
      * @param core the Core object to use
      */
+    @SuppressWarnings("unchecked")
     public RandomProcessor(Core core)
     {
         super(core);
+        this.availableIndices = core.getStoredObject(RandomProcessor.class.getName(), "availableIndices", this.availableIndices);
+        this.generators = core.getStoredObject(RandomProcessor.class.getName(), "generators", this.generators);
     }
 
     /**
@@ -103,11 +106,11 @@ public class RandomProcessor extends AIMLProcessor
         String identifier = parser.getBotID() + userid + element.toString();
 
         // Does the generators map already contain this one?
-        MersenneTwisterFast generator = (MersenneTwisterFast)generators.get(identifier);
+        MersenneTwisterFast generator = (MersenneTwisterFast)this.generators.get(identifier);
         if (generator == null)
         {
             generator = new MersenneTwisterFast(System.currentTimeMillis());
-            generators.put(identifier, generator);
+            this.generators.put(identifier, generator);
         }
 
         List<Element> listitems = XML.getElementChildrenOf(element);
@@ -130,10 +133,10 @@ public class RandomProcessor extends AIMLProcessor
         Integer choice = null;
         
         // Check whether this random + userid + botid has been selected before.
-        if (AVAILABLE_INDICES.containsKey(identifier))
+        if (this.availableIndices.containsKey(identifier))
         {
             // If it has, get the remaining available sets.
-            indices = AVAILABLE_INDICES.get(identifier);
+            indices = this.availableIndices.get(identifier);
             
             // Note that, because of the logic below, this set will never get to size 0.
             assert indices.size() > 0 : "Random strategy logic failed.";
@@ -157,7 +160,7 @@ public class RandomProcessor extends AIMLProcessor
         {
             // If it has not (been selected before), create a new set containing an index for each listitem.
             indices = makeIncrementingList(nodeCount);
-            AVAILABLE_INDICES.put(identifier, indices);
+            this.availableIndices.put(identifier, indices);
 
             // Make a random choice from the indices.
             choice = indices.get(generator.nextInt(indices.size()));
