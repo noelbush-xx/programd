@@ -85,8 +85,7 @@ public class Tester
     public String run(String botid, String suite, int runCount)
     {
         this.suites.clear();
-        this.suites = loadTests(this.suiteURLs, URLTools.contextualize(Filesystem.getRootPath(),
-                this._core.getSettings().getTestCaseSchemaLocation()), this._multiplexor, this.logger);
+        this.suites = loadTests(this.suiteURLs, this._multiplexor, this.logger);
         if (null == botid)
         {
             this.logger.warn("No botid defined for tests.");
@@ -151,20 +150,19 @@ public class Tester
      * Loads all test suites from a given pathspec (may use wildcards).
      * 
      * @param suiteList the list of suites
-     * @param schema the URL to the copy of the schema for test cases
      * @param multiplexor the Multiplexor to assign to the suites
      * @param logger the logger to use for tracking progress
      * 
      * @return the map of suite names to suites
      */
-    protected static HashMap<String, TestSuite> loadTests(List<URL> suiteList, URL schema, Multiplexor<?> multiplexor,
+    protected static HashMap<String, TestSuite> loadTests(List<URL> suiteList, Multiplexor<?> multiplexor,
             Logger logger)
     {
         HashMap<String, TestSuite> suites = new HashMap<String, TestSuite>();
         for (URL path : suiteList)
         {
             logger.info("Loading tests from \"" + path + "\".");
-            TestSuite suite = TestSuite.load(path, schema, multiplexor, logger);
+            TestSuite suite = TestSuite.load(path, multiplexor, logger);
             suites.put(suite.getName(), suite);
         }
         return suites;

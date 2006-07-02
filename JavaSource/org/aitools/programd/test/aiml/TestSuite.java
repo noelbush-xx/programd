@@ -1,22 +1,22 @@
 package org.aitools.programd.test.aiml;
 
-import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
-
-import javax.xml.parsers.DocumentBuilder;
 
 import org.aitools.programd.multiplexor.Multiplexor;
 import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.runtime.UserError;
 import org.aitools.util.xml.XML;
 import org.apache.log4j.Logger;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import org.w3c.dom.ls.LSException;
+import org.w3c.dom.ls.LSParser;
 
 /**
  * A TestSuite comprises a set of TestCases.
@@ -195,39 +195,41 @@ public class TestSuite implements Iterable<TestCase>
      * Loads a test suite from the given path.
      * 
      * @param path the path from which to load the test suite
-     * @param schema the URL to the copy of the schema for test cases
      * @param logger 
      * @return the loaded test suite
      */
-    public static TestSuite load(URL path, URL schema, Logger logger)
+    public static TestSuite load(URL path, Logger logger)
     {
-        return load(path, schema, null, logger);
+        return load(path, null, logger);
     }
 
     /**
      * Loads a test suite from the given path.
      * 
      * @param path the path from which to load the test suite
-     * @param schema the URL to the copy of the schema for test cases
      * @param multiplexor the multiplexor to use
      * @param logger 
      * @return the loaded test suite
      */
-    public static TestSuite load(URL path, URL schema, Multiplexor<?> multiplexor, Logger logger)
+    public static TestSuite load(URL path, Multiplexor<?> multiplexor, Logger logger)
     {
-        DocumentBuilder builder = XML.getDocumentBuilder(schema, "test cases");
+        LSParser builder = XML.getDOMParser();
         Document doc;
         try
         {
-            doc = builder.parse(path.toString());
+            doc = builder.parseURI(path.toURI().toString());
         }
-        catch (IOException e)
+        catch (DOMException e)
         {
-            throw new DeveloperError("IO exception trying to parse test suite file.", e);
+            throw new DeveloperError("DOM exception trying to parse test suite file.", e);
         }
-        catch (SAXException e)
+        catch (LSException e)
         {
-            throw new UserError("SAX exception trying to parse test suite file: " + e.getMessage(), e);
+            throw new DeveloperError("LS exception trying to parse test suite file.", e);
+        }
+        catch (URISyntaxException e)
+        {
+            throw new UserError(String.format("Error converting URL \"%s\" to URI.", path), e);
         }
         String encoding = doc.getXmlEncoding();
         Element testSuiteElement = doc.getDocumentElement();
