@@ -4,8 +4,9 @@
 <sentence-splitters xmlns="http://aitools.org/programd/4.7/bot-configuration"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://aitools.org/programd/4.7/bot-configuration http://aitools.org/programd/4.7/bot-configuration.xsd">
-    <splitter value="."/>
+    <!--NOTE THAT THESE WILL BE INTERPRETED AS REGULAR EXPRESSIONS!  So an unescaped "." means "any character", not "period".-->
+    <splitter value="\."/>
     <splitter value="!"/>
-    <splitter value="?"/>
+    <splitter value="\?"/>
     <splitter value=";"/>
 </sentence-splitters>
