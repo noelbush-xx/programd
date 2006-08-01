@@ -224,19 +224,25 @@ abstract public class Multiplexor<M>
         // Check for some simple kinds of infinite loops.
         if (stackSize > 1)
         {
-            String lastInput = inputs.get(stackSize - 2);
-            if (input.equalsIgnoreCase(lastInput) && that.equalsIgnoreCase(thats.get(stackSize - 2)) && topic.equalsIgnoreCase(topics.get(stackSize - 2)))
+            for (int lookback = stackSize - 2; lookback > -1; lookback--)
             {
+                String comparisonInput = inputs.get(lookback);
+                String comparisonThat = thats.get(lookback);
+                String comparisonTopic = topics.get(lookback);
                 String infiniteLoopInput = parser.getCore().getSettings().getInfiniteLoopInput();
-                if (!lastInput.equalsIgnoreCase(infiniteLoopInput))
+                if (that.equalsIgnoreCase(comparisonThat) && topic.equalsIgnoreCase(comparisonTopic))
                 {
-                    input = infiniteLoopInput;
-                    matchLogger.warn(String.format("Infinite loop detected; substituting \"%s\".", infiniteLoopInput));
-                }
-                else
-                {
-                    matchLogger.error("Unrecoverable infinite loop.");
-                    return "";
+                    if (input.equalsIgnoreCase(infiniteLoopInput))
+                    {
+                        matchLogger.error("Unrecoverable infinite loop.");
+                        return "";
+                    }
+                    if (input.equalsIgnoreCase(comparisonInput))
+                    {
+                        input = infiniteLoopInput;
+                        inputs.set(stackSize - 1, infiniteLoopInput);
+                        matchLogger.warn(String.format("Infinite loop detected; substituting \"%s\".", infiniteLoopInput));
+                    }
                 }
             }
         }                
