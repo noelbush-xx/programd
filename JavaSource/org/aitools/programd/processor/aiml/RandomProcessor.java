@@ -103,7 +103,7 @@ public class RandomProcessor extends AIMLProcessor
         // Construct the identifying string (botid + userid + element
         // contents).
         String userid = parser.getUserID();
-        String identifier = parser.getBotID() + userid + element.toString();
+        String identifier = parser.getBotID() + userid + element.hashCode();
 
         // Does the generators map already contain this one?
         MersenneTwisterFast generator = (MersenneTwisterFast)this.generators.get(identifier);
