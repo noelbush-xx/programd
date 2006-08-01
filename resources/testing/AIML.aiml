@@ -1062,4 +1062,20 @@ DDDDDDDDDD</html:pre>
             Test passed if no error message.
         </template>
     </category>
+    <category>
+        <pattern>TESTMULTIPLECONSECUTIVESRAIS</pattern>
+        <template>
+            Test case #50.<html:br/>
+            <srai>tmcs test</srai>
+            <srai>tmcs passed</srai>.
+        </template>
+    </category>
+    <category>
+        <pattern>TMCS TEST</pattern>
+        <template>Test</template>
+    </category>
+    <category>
+        <pattern>TMCS PASSED</pattern>
+        <template>passed</template>
+    </category>
 </aiml>
