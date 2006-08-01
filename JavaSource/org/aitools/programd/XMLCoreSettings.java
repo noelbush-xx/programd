@@ -8,8 +8,8 @@
  */
 package org.aitools.programd;
 
-import java.io.FileNotFoundException;
 import java.net.URL;
+import java.net.MalformedURLException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -22,7 +22,7 @@ import org.aitools.util.xml.Loader;
 import org.aitools.util.xml.NamespaceContextImpl;
 
 /**
- * Automatically generated at 2006-06-27T14:11:53.317-04:00.
+ * Automatically generated at 2006-07-09T23:31:23.554-05:00.
  */
 public class XMLCoreSettings extends CoreSettings
 {
@@ -63,35 +63,28 @@ public class XMLCoreSettings extends CoreSettings
 
         try
         {
+            setAIMLNamespaceURI(URITools.createValidURI(xpath.evaluate("/d:programd/d:aiml.namespace-uri", document), false));
             try
             {
-                setAIMLNamespaceURI(URITools.createValidURI(xpath.evaluate("/d:programd/d:aiml.namespace-uri", document), false));
+                setBotConfigURL(URLTools.createValidURL(xpath.evaluate("/d:programd/d:paths/d:bot-config", document), this._path, false));
             }
-            catch (FileNotFoundException e)
+            catch (MalformedURLException e)
             {
                 throw new UserError("Error in settings.", e);
             }
             try
             {
-                setBotConfigURL(URLTools.createValidURL(xpath.evaluate("/d:programd/d:paths/d:bot-config", document), this._path, true));
+                setPluginConfigURL(URLTools.createValidURL(xpath.evaluate("/d:programd/d:paths/d:plugin-config", document), this._path, false));
             }
-            catch (FileNotFoundException e)
+            catch (MalformedURLException e)
             {
                 throw new UserError("Error in settings.", e);
             }
             try
             {
-                setPluginConfigURL(URLTools.createValidURL(xpath.evaluate("/d:programd/d:paths/d:plugin-config", document), this._path, true));
+                setGossipURL(URLTools.createValidURL(xpath.evaluate("/d:programd/d:paths/d:gossip", document), this._path, false));
             }
-            catch (FileNotFoundException e)
-            {
-                throw new UserError("Error in settings.", e);
-            }
-            try
-            {
-                setGossipURL(URLTools.createValidURL(xpath.evaluate("/d:programd/d:paths/d:gossip", document), this._path, true));
-            }
-            catch (FileNotFoundException e)
+            catch (MalformedURLException e)
             {
                 throw new UserError("Error in settings.", e);
             }
@@ -102,9 +95,9 @@ public class XMLCoreSettings extends CoreSettings
             setMultiplexorImplementation(xpath.evaluate("/d:programd/d:multiplexor/d:implementation", document));
             try
             {
-                setFfmDirectory(URLTools.createValidURL(xpath.evaluate("/d:programd/d:multiplexor/d:ffm-dir", document), this._path, true));
+                setFfmDirectory(URLTools.createValidURL(xpath.evaluate("/d:programd/d:multiplexor/d:ffm-dir", document), this._path, false));
             }
-            catch (FileNotFoundException e)
+            catch (MalformedURLException e)
             {
                 throw new UserError("Error in settings.", e);
             }
@@ -143,33 +136,33 @@ public class XMLCoreSettings extends CoreSettings
             setUseAIMLWatcher(Boolean.parseBoolean(xpath.evaluate("/d:programd/d:watchers/d:AIML/@enabled", document)));
             try
             {
-                setAIMLSchemaLocation(URLTools.createValidURL(xpath.evaluate("/d:programd/d:schema-locations/d:AIML", document), this._path, true));
+                setAIMLSchemaLocation(URLTools.createValidURL(xpath.evaluate("/d:programd/d:schema-locations/d:AIML", document), this._path, false));
             }
-            catch (FileNotFoundException e)
+            catch (MalformedURLException e)
             {
                 throw new UserError("Error in settings.", e);
             }
             try
             {
-                setBotConfigSchemaLocation(URLTools.createValidURL(xpath.evaluate("/d:programd/d:schema-locations/d:bot-configuration", document), this._path, true));
+                setBotConfigSchemaLocation(URLTools.createValidURL(xpath.evaluate("/d:programd/d:schema-locations/d:bot-configuration", document), this._path, false));
             }
-            catch (FileNotFoundException e)
+            catch (MalformedURLException e)
             {
                 throw new UserError("Error in settings.", e);
             }
             try
             {
-                setPluginSchemaLocation(URLTools.createValidURL(xpath.evaluate("/d:programd/d:schema-locations/d:plugins", document), this._path, true));
+                setPluginSchemaLocation(URLTools.createValidURL(xpath.evaluate("/d:programd/d:schema-locations/d:plugins", document), this._path, false));
             }
-            catch (FileNotFoundException e)
+            catch (MalformedURLException e)
             {
                 throw new UserError("Error in settings.", e);
             }
             try
             {
-                setTestCaseSchemaLocation(URLTools.createValidURL(xpath.evaluate("/d:programd/d:schema-locations/d:test-cases", document), this._path, true));
+                setTestCaseSchemaLocation(URLTools.createValidURL(xpath.evaluate("/d:programd/d:schema-locations/d:test-cases", document), this._path, false));
             }
-            catch (FileNotFoundException e)
+            catch (MalformedURLException e)
             {
                 throw new UserError("Error in settings.", e);
             }
@@ -177,9 +170,9 @@ public class XMLCoreSettings extends CoreSettings
             setAllowJavaScript(Boolean.parseBoolean(xpath.evaluate("/d:programd/d:interpreters/d:javascript/@allowed", document)));
             try
             {
-                setSystemInterpreterDirectory(URLTools.createValidURL(xpath.evaluate("/d:programd/d:interpreters/d:system/d:directory", document), this._path, true));
+                setSystemInterpreterDirectory(URLTools.createValidURL(xpath.evaluate("/d:programd/d:interpreters/d:system/d:directory", document), this._path, false));
             }
-            catch (FileNotFoundException e)
+            catch (MalformedURLException e)
             {
                 throw new UserError("Error in settings.", e);
             }

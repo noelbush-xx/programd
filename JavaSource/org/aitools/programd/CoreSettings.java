@@ -13,7 +13,7 @@ import java.net.URL;
 import org.aitools.util.Settings;
 
 /**
- * Automatically generated at 2006-06-27T14:11:53.317-04:00.
+ * Automatically generated at 2006-07-09T23:31:23.554-05:00.
  */
 abstract public class CoreSettings extends Settings
 {

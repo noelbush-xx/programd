@@ -8,13 +8,13 @@
  */
 package org.aitools.programd;
 
-import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
 import org.aitools.util.resource.URITools;
 import org.aitools.util.resource.URLTools;
 import org.aitools.util.runtime.UserError;
 
 /**
- * Automatically generated at 2006-06-27T14:11:53.317-04:00.
+ * Automatically generated at 2006-07-09T23:31:23.554-05:00.
  */
 public class ProgrammaticCoreSettings extends CoreSettings
 {
@@ -35,19 +35,12 @@ public class ProgrammaticCoreSettings extends CoreSettings
     @Override
     protected void initialize()
     {
-        try
-        {
             setAIMLNamespaceURI(URITools.createValidURI("http://alicebot.org/2001/AIML-1.0.1", false));
-        }
-        catch (FileNotFoundException e)
-        {
-            throw new UserError("Error in settings.", e);
-        }
         try
         {
             setBotConfigURL(URLTools.createValidURL("bots.xml", false));
         }
-        catch (FileNotFoundException e)
+        catch (MalformedURLException e)
         {
             throw new UserError("Error in settings.", e);
         }
@@ -55,7 +48,7 @@ public class ProgrammaticCoreSettings extends CoreSettings
         {
             setPluginConfigURL(URLTools.createValidURL("plugins.xml", false));
         }
-        catch (FileNotFoundException e)
+        catch (MalformedURLException e)
         {
             throw new UserError("Error in settings.", e);
         }
@@ -63,7 +56,7 @@ public class ProgrammaticCoreSettings extends CoreSettings
         {
             setGossipURL(URLTools.createValidURL("/var/log/programd/gossip.txt", false));
         }
-        catch (FileNotFoundException e)
+        catch (MalformedURLException e)
         {
             throw new UserError("Error in settings.", e);
         }
@@ -76,7 +69,7 @@ public class ProgrammaticCoreSettings extends CoreSettings
         {
             setFfmDirectory(URLTools.createValidURL("/var/programd/ffm", false));
         }
-        catch (FileNotFoundException e)
+        catch (MalformedURLException e)
         {
             throw new UserError("Error in settings.", e);
         }
@@ -99,7 +92,7 @@ public class ProgrammaticCoreSettings extends CoreSettings
         {
             setAIMLSchemaLocation(URLTools.createValidURL("../resources/schema/AIML.xsd", false));
         }
-        catch (FileNotFoundException e)
+        catch (MalformedURLException e)
         {
             throw new UserError("Error in settings.", e);
         }
@@ -107,7 +100,7 @@ public class ProgrammaticCoreSettings extends CoreSettings
         {
             setBotConfigSchemaLocation(URLTools.createValidURL("../resources/schema/bot-configuration.xsd", false));
         }
-        catch (FileNotFoundException e)
+        catch (MalformedURLException e)
         {
             throw new UserError("Error in settings.", e);
         }
@@ -115,7 +108,7 @@ public class ProgrammaticCoreSettings extends CoreSettings
         {
             setPluginSchemaLocation(URLTools.createValidURL("../resources/schema/plugins.xsd", false));
         }
-        catch (FileNotFoundException e)
+        catch (MalformedURLException e)
         {
             throw new UserError("Error in settings.", e);
         }
@@ -123,7 +116,7 @@ public class ProgrammaticCoreSettings extends CoreSettings
         {
             setTestCaseSchemaLocation(URLTools.createValidURL("../resources/schema/test-cases.xsd", false));
         }
-        catch (FileNotFoundException e)
+        catch (MalformedURLException e)
         {
             throw new UserError("Error in settings.", e);
         }
@@ -133,7 +126,7 @@ public class ProgrammaticCoreSettings extends CoreSettings
         {
             setSystemInterpreterDirectory(URLTools.createValidURL("..", false));
         }
-        catch (FileNotFoundException e)
+        catch (MalformedURLException e)
         {
             throw new UserError("Error in settings.", e);
         }
