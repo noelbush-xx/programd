@@ -9,7 +9,7 @@
 
 package org.aitools.programd.processor.botconfiguration;
 
-import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
 import java.util.Date;
 
 import org.w3c.dom.Element;
@@ -72,9 +72,9 @@ public class BotProcessor extends BotConfigurationElementProcessor
             {
                 return this._core.loadBot(URLTools.createValidURL(href, parser.getCurrentDocURL()));
             }
-            catch (FileNotFoundException e)
+            catch (MalformedURLException e)
             {
-                throw new UserError("Could not load bot from \"" + href + "\".", e);
+                throw new UserError(String.format("Could not load bot from \"%s\".", href), e);
             }
         }
 
