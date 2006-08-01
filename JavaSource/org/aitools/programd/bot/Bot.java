@@ -27,6 +27,7 @@ import org.aitools.programd.multiplexor.PredicateMap;
 import org.aitools.programd.processor.Processor;
 import org.aitools.programd.util.InputNormalizer;
 import org.aitools.programd.util.Substituter;
+import org.aitools.util.Lists;
 
 /**
  * Handles all of the properties of a bot.
@@ -57,8 +58,11 @@ public class Bot
     private Map<Pattern, String> inputSubstitutions = Collections.checkedMap(new LinkedHashMap<Pattern, String>(),
             Pattern.class, String.class);
 
-    /** The bot's sentence splitter map. */
-    private List<String> sentenceSplitters = Collections.checkedList(new ArrayList<String>(), String.class);
+    /** The bot's sentence splitters. */
+    private List<String> sentenceSplitters = new ArrayList<String>();
+    
+    /** The bot's sentence splitters, as a compiled pattern. */
+    private Pattern sentenceSplitterPattern;
 
     /** Holds cached predicates, keyed by userid. */
     private Map<String, PredicateMap> predicateCache = Collections.synchronizedMap(new HashMap<String, PredicateMap>());
@@ -293,7 +297,8 @@ public class Bot
     {
         if (splitter != null)
         {
-            this.sentenceSplitters.add(splitter);
+            this.sentenceSplitterPattern = null;
+            this.sentenceSplitters.add(".+?" + splitter);
         }
     }
 
@@ -307,14 +312,6 @@ public class Bot
     }
 
     /**
-     * @return the sentence splitters
-     */
-    public List<String> getSentenceSplitters()
-    {
-        return this.sentenceSplitters;
-    }
-
-    /**
      * Splits the given input into sentences.
      * 
      * @param input the input to split
@@ -322,7 +319,15 @@ public class Bot
      */
     public List<String> sentenceSplit(String input)
     {
-        return InputNormalizer.sentenceSplit(this.sentenceSplitters, input);
+        if (this.sentenceSplitters.size() == 0)
+        {
+            return Lists.singleItem(input);
+        }
+        if (this.sentenceSplitterPattern == null)
+        {
+            this.sentenceSplitterPattern = Pattern.compile(Lists.asRegexAlternatives(this.sentenceSplitters, false), Pattern.DOTALL);
+        }
+        return InputNormalizer.sentenceSplit(this.sentenceSplitterPattern, input);
     }
 
     /**
