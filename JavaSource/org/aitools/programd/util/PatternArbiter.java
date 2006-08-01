@@ -31,6 +31,9 @@ public class PatternArbiter
     /** The generic normalization regex that matches any nonalphanumeric. */
     private static final Pattern NON_ALPHANUMERIC = Pattern
             .compile("[^\\p{javaUpperCase}\\p{javaLowerCase}\\p{javaWhitespace}\\p{javaDigit} ]+");
+    
+    /** A pattern that matches multiple consecutive spaces. */
+    private static final Pattern MLC_SPACES = Pattern.compile("  +");
 
     /**
      * Applies a generic set of normalizations to an input, to prepare it for pattern matching.
@@ -40,7 +43,7 @@ public class PatternArbiter
      */
     public static String genericallyNormalize(String string)
     {
-        return NON_ALPHANUMERIC.matcher(string).replaceAll(" ");
+        return MLC_SPACES.matcher(NON_ALPHANUMERIC.matcher(string).replaceAll(" ")).replaceAll(" ").trim();
     }
 
     /**
