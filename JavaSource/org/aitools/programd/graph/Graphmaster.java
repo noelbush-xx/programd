@@ -794,8 +794,12 @@ public class Graphmaster
         }
         nodemappers.clear();
         Set<String> botids = this.urlCatalog.get(path);
-        botids.remove(bot.getID());
-        if (botids.size() == 0)
+        // It can end up being null if there was an error in loading (non-existent file).
+        if (botids != null)
+        {
+            botids.remove(bot.getID());
+        }
+        if (botids == null || botids.size() == 0)
         {
             this.urlCatalog.remove(path);
         }
