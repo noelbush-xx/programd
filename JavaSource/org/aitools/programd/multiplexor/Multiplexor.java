@@ -9,7 +9,7 @@
 
 package org.aitools.programd.multiplexor;
 
-import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +23,6 @@ import org.aitools.programd.graph.Graphmaster;
 import org.aitools.programd.graph.Match;
 import org.aitools.programd.logging.ChatLogEvent;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.TemplateParserException;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.InputNormalizer;
 import org.aitools.programd.util.NoMatchException;
@@ -129,7 +128,7 @@ abstract public class Multiplexor<M>
     abstract public void initialize();
 
     /**
-     * Returns the response to a non-internal input, without using a Responder.
+     * Returns the response to a non-internal input.
      * 
      * @param input the &quot;non-internal&quot; (possibly multi-sentence,
      *            non-substituted) input
@@ -189,10 +188,13 @@ abstract public class Multiplexor<M>
      * @param parser the parser object to update when generating the response
      * @return the response
      */
+    @SuppressWarnings("boxing")
     public String getInternalResponse(String input, String userid, String botid, TemplateParser parser)
     {
         // Get the requested bot.
         Bot bot = this.bots.get(botid);
+        
+        parser.addInput(input);
 
         // Ready the that and topic predicates for constructing the match path.
         List<String> thatSentences = bot.sentenceSplit(this.predicateMaster.get(THAT, 1, userid, botid));
@@ -202,12 +204,42 @@ abstract public class Multiplexor<M>
         {
             that = "*";
         }
+        parser.addThat(that);
 
-        String topic = InputNormalizer.patternFitIgnoreCase(this.predicateMaster.get(TOPIC, userid, botid));
+        String topic = this.predicateMaster.get(TOPIC, userid, botid);
         if ("".equals(topic) || topic.equals(this.predicateEmptyDefault))
         {
             topic = "*";
         }
+        parser.addTopic(topic);
+        
+        // Verify we've been tracking thats and topics correctly.
+        List<String> inputs = parser.getInputs();
+        List<String> thats = parser.getThats();
+        List<String> topics = parser.getTopics();
+        int stackSize = inputs.size();
+        assert stackSize == thats.size() && thats.size() == topics.size() :
+            String.format("%d inputs, %d thats, %d topics", stackSize, thats.size(), topics.size());
+
+        // Check for some simple kinds of infinite loops.
+        if (stackSize > 1)
+        {
+            String lastInput = inputs.get(stackSize - 2);
+            if (input.equalsIgnoreCase(lastInput) && that.equalsIgnoreCase(thats.get(stackSize - 2)) && topic.equalsIgnoreCase(topics.get(stackSize - 2)))
+            {
+                String infiniteLoopInput = parser.getCore().getSettings().getInfiniteLoopInput();
+                if (!lastInput.equalsIgnoreCase(infiniteLoopInput))
+                {
+                    input = infiniteLoopInput;
+                    matchLogger.warn(String.format("Infinite loop detected; substituting \"%s\".", infiniteLoopInput));
+                }
+                else
+                {
+                    matchLogger.error("Unrecoverable infinite loop.");
+                    return "";
+                }
+            }
+        }                
 
         return getMatchResult(input, that, topic, userid, botid, parser);
     }
@@ -238,9 +270,13 @@ abstract public class Multiplexor<M>
 
         // Ready the that and topic predicates for constructing the match path.
         List<String> thatSentences = bot.sentenceSplit(this.predicateMaster.get(THAT, 1, userid, botid));
-        String that = InputNormalizer.patternFitIgnoreCase(thatSentences.get(thatSentences.size() - 1));
+        String that = null;
+        if (thatSentences.size() > 0)
+        {
+            that = InputNormalizer.patternFitIgnoreCase(thatSentences.get(thatSentences.size() - 1));
+        }
 
-        if ("".equals(that) || that.equals(this.predicateEmptyDefault))
+        if (that == null || "".equals(that) || that.equals(this.predicateEmptyDefault))
         {
             that = "*";
         }
@@ -311,15 +347,7 @@ abstract public class Multiplexor<M>
         this.predicateMaster.push(INPUT, input, userid, botid);
 
         // Create a new TemplateParser.
-        TemplateParser parser;
-        try
-        {
-            parser = new TemplateParser(input, userid, botid, this._core);
-        }
-        catch (TemplateParserException e)
-        {
-            throw new DeveloperError("Error occurred while creating new TemplateParser.", e);
-        }
+        TemplateParser parser = new TemplateParser(input, that, topic, userid, botid, this._core);
 
         String reply = getMatchResult(input, that, topic, userid, botid, parser);
         if (reply == null)
@@ -373,28 +401,17 @@ abstract public class Multiplexor<M>
         }
 
         String matchFilename = match.getFileName();
+        int comma = matchFilename.indexOf(",");
+        if (comma > 0)
+        {
+            matchFilename = matchFilename.substring(0, comma - 1);
+        }
         if (matchLogger.isDebugEnabled())
         {
             matchLogger.debug(String.format("[MATCHED] %s (\"%s\")", match.getPath(), matchFilename));
         }
-
-        ArrayList<String> stars = match.getInputStars();
-        if (stars.size() > 0)
-        {
-            parser.setInputStars(stars);
-        }
-
-        stars = match.getThatStars();
-        if (stars.size() > 0)
-        {
-            parser.setThatStars(stars);
-        }
-
-        stars = match.getTopicStars();
-        if (stars.size() > 0)
-        {
-            parser.setTopicStars(stars);
-        }
+        
+        parser.addMatch(match);
 
         String template = match.getTemplate();
         String reply = null;
@@ -403,7 +420,7 @@ abstract public class Multiplexor<M>
         {
             parser.pushContext(URLTools.createValidURL(matchFilename));
         }
-        catch (FileNotFoundException e)
+        catch (MalformedURLException e)
         {
             logger.error(String.format("AIML file that was loaded cannot be found: \"%s\"", matchFilename), e);
         }
@@ -427,25 +444,6 @@ abstract public class Multiplexor<M>
             // Set response to empty string.
             return "";
         }
-
-        // Record activation, if targeting is in use.
-        // Needs review in light of multi-bot update
-        /*
-         * if (USE_TARGETING) { Nodemapper matchNodemapper =
-         * match.getNodemapper(); if (matchNodemapper == null) {
-         * Trace.devinfo("Match nodemapper is null!"); } else { Set<Object>
-         * activations = (Set<Object>)
-         * matchNodemapper.get(Graphmaster.ACTIVATIONS); if (activations ==
-         * null) { activations = new HashSet<Object>(); } String path =
-         * match.getPath() + SPACE + Graphmaster.PATH_SEPARATOR + SPACE +
-         * inputIgnoreCase + SPACE + Graphmaster.PATH_SEPARATOR + SPACE + that +
-         * SPACE + Graphmaster.PATH_SEPARATOR + SPACE + topic + SPACE +
-         * Graphmaster.PATH_SEPARATOR + SPACE + botid + SPACE +
-         * Graphmaster.PATH_SEPARATOR + SPACE + reply; if
-         * (!activations.contains(path)) { activations.add(path);
-         * match.getNodemapper().put(Graphmaster.ACTIVATIONS, activations);
-         * Graphmaster.activatedNode(match.getNodemapper()); } } }
-         */
         return reply;
     }
 
