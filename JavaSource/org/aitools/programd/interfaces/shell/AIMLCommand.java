@@ -10,10 +10,8 @@
 package org.aitools.programd.interfaces.shell;
 
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.TemplateParserException;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.util.resource.Filesystem;
-import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.runtime.UserError;
 
 /**
@@ -73,15 +71,7 @@ public class AIMLCommand extends ShellCommand
         else
         {
             // Create a new TemplateParser.
-            TemplateParser parser;
-            try
-            {
-                parser = new TemplateParser("", "", shell.getCurrentBotID(), shell.getCore());
-            }
-            catch (TemplateParserException e)
-            {
-                throw new DeveloperError("Error occurred while creating new TemplateParser.", e);
-            }
+            TemplateParser parser = new TemplateParser("", "", "", shell.getName(), shell.getCurrentBotID(), shell.getCore());
             parser.pushContext(Filesystem.getWorkingDirectory());
             try
             {
