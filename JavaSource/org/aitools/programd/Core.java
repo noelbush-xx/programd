@@ -245,8 +245,19 @@ public class Core
         }
 
         // Load the plugin config.
-        Loader pluginConfigLoader = new Loader(this.baseURL, PLUGIN_CONFIG_NS_URI);
-        this.pluginConfig = pluginConfigLoader.parse(URLTools.contextualize(this.baseURL, this._settings.getPluginConfigURL()));
+        URL pluginConfigURL = URLTools.contextualize(this.baseURL, this._settings.getPluginConfigURL());
+        try
+        {
+            if (pluginConfigURL.openStream() != null)
+            {
+                Loader pluginConfigLoader = new Loader(this.baseURL, PLUGIN_CONFIG_NS_URI);
+                this.pluginConfig = pluginConfigLoader.parse(pluginConfigURL);
+            }
+        }
+        catch (IOException e)
+        {
+            // Don't load plugin config.
+        }
 
         Package pkg = Package.getPackage("org.aitools.programd");
         this.logger.info(String.format("Starting %s version %s [%s].", pkg.getSpecificationTitle(), pkg.getSpecificationVersion(), pkg.getImplementationVersion()));
@@ -278,7 +289,7 @@ public class Core
             this.logger.info("Starting up the Graphmaster.");
 
             // Start loading bots.
-            loadBots(URLTools.contextualize(this.baseURL, this._settings.getBotConfigURL()));
+            loadBots(this._settings.getBotConfigURL());
 
             // Request garbage collection.
             System.gc();
