@@ -9,13 +9,12 @@
 
 package org.aitools.programd.util;
 
-import java.text.CharacterIterator;
-import java.text.StringCharacterIterator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.aitools.util.Lists;
 import org.aitools.util.xml.XML;
 
 /**
@@ -28,6 +27,14 @@ import org.aitools.util.xml.XML;
  */
 public class InputNormalizer
 {
+    /** A regex to match characters that are not legal in AIML patterns. */
+    private static final java.util.regex.Pattern ILLEGAL_CHARACTERS = java.util.regex.Pattern
+            .compile("[^\\p{javaUpperCase}\\p{Digit} \\*_]+");
+
+    /** A regex to match characters that are not legal in AIML patterns, ignoring case. */
+    private static final java.util.regex.Pattern ILLEGAL_CHARACTERS_IGNORE_CASE = java.util.regex.Pattern
+            .compile("[^\\p{javaLetter}\\p{Digit} \\*_]+");
+
     /**
      * Splits an input into sentences, as defined by the
      * <code>sentenceSplitters</code>.
@@ -37,85 +44,24 @@ public class InputNormalizer
      * @return the input split into sentences
      */
     @SuppressWarnings("boxing")
-    public static List<String> sentenceSplit(List<String> sentenceSplitters, String input)
+    public static List<String> sentenceSplit(Pattern sentenceSplitters, String input)
     {
-        if (input == null)
+        List<String> result = new ArrayList<String>();
+        Matcher matcher = sentenceSplitters.matcher(input);
+        if (matcher.find())
         {
-            return null;
-        }
-
-        List<String> result = Collections.checkedList(new ArrayList<String>(), String.class);
-
-        int inputLength = input.length();
-        if (inputLength == 0)
-        {
-            result.add("");
+            do
+            {
+                result.add(input.substring(matcher.start(), matcher.end()));
+            } while (matcher.find());
+            if (!matcher.hitEnd())
+            {
+                result.add(input.substring(matcher.end()));
+            }
             return result;
         }
-
-        // This will hold the indices of all splitters in the input.
-        ArrayList<Integer> splitterIndices = new ArrayList<Integer>();
-
-        // Iterate over all the splitters.
-        for (String splitter : sentenceSplitters)
-        {
-            // Look for it in the input.
-            int index = input.indexOf(splitter);
-
-            // As long as it exists,
-            while (index != -1)
-            {
-                // add its index to the list of indices.
-                splitterIndices.add(new Integer(index));
-
-                // and look for it again starting just after the discovered
-                // index.
-                index = input.indexOf(splitter, index + 1);
-            }
-        }
-        if (splitterIndices.size() == 0)
-        {
-            result.add(input);
-            return result;
-        }
-
-        // Sort the list of indices.
-        Collections.sort(splitterIndices);
-
-        // Iterate through the indices and remove (all previous of) consecutive
-        // values.
-        ListIterator<Integer> indices = splitterIndices.listIterator();
-        int previousIndex = indices.next();
-        while (indices.hasNext())
-        {
-            int nextIndex = indices.next();
-            if (nextIndex == previousIndex + 1)
-            {
-                indices.previous();
-                indices.previous();
-                indices.remove();
-            }
-            previousIndex = nextIndex;
-        }
-
-        // Now iterate through the remaining indices and split sentences.
-        indices = splitterIndices.listIterator();
-        int startIndex = 0;
-        int endIndex = inputLength - 1;
-        while (indices.hasNext())
-        {
-            endIndex = indices.next();
-            result.add(input.substring(startIndex, endIndex + 1).trim());
-            startIndex = endIndex + 1;
-        }
-
-        // Add whatever remains.
-        if (startIndex < inputLength - 1)
-        {
-            result.add(input.substring(startIndex).trim());
-        }
-
-        return result;
+        // else
+        return Lists.singleItem(input);
     }
 
     /**
@@ -137,27 +83,7 @@ public class InputNormalizer
      */
     public static String patternFit(String input)
     {
-        // Remove all tags.
-        input = XML.removeMarkup(input);
-
-        StringCharacterIterator iterator = new StringCharacterIterator(input);
-        StringBuilder result = new StringBuilder(input.length());
-
-        // Iterate over the input.
-        for (char aChar = iterator.first(); aChar != CharacterIterator.DONE; aChar = iterator.next())
-        {
-            // Replace non-letters/digits with a space.
-            if (!Character.isLetterOrDigit(aChar) && aChar != '*' && aChar != '_')
-            {
-                result.append(' ');
-            }
-            else
-            {
-                result.append(Character.toUpperCase(aChar));
-            }
-        }
-        return result.toString();
-
+        return XML.filterWhitespace(ILLEGAL_CHARACTERS.matcher(XML.removeMarkup(input)).replaceAll(" ")).trim();
     }
 
     /**
@@ -178,26 +104,6 @@ public class InputNormalizer
      */
     public static String patternFitIgnoreCase(String input)
     {
-        // Remove all tags.
-        input = XML.removeMarkup(input);
-
-        StringCharacterIterator iterator = new StringCharacterIterator(input);
-        StringBuilder result = new StringBuilder(input.length());
-
-        // Iterate over the input.
-        for (char aChar = iterator.first(); aChar != CharacterIterator.DONE; aChar = iterator.next())
-        {
-            // Replace non-letters/digits with a space.
-            if (!Character.isLetterOrDigit(aChar))
-            {
-                result.append(' ');
-            }
-            else
-            {
-                result.append(aChar);
-            }
-        }
-        return result.toString();
-
+        return XML.filterWhitespace(ILLEGAL_CHARACTERS_IGNORE_CASE.matcher(XML.removeMarkup(input)).replaceAll(" ")).trim();
     }
 }
