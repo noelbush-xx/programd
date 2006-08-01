@@ -42,6 +42,6 @@ public class ThatStarProcessor extends IndexedPredicateProcessor
     @Override
     public String process(Element element, TemplateParser parser)
     {
-        return super.process(element, parser, parser.getThatStars(), 1);
+        return super.process(element, parser, parser.getMostRecentMatch().getThatStars(), 1);
     }
 }
