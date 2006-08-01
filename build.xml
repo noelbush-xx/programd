@@ -331,8 +331,10 @@
                 <exclude name="secret.key" />
             </fileset>
             <fileset dir="${basedir}">
-                <include name="distrib/programd-main.jar" />
-                <include name="distrib/programd-rhino.jar" />
+                <include name="${core.jar}" />
+                <include name="${simple-console.jar}" />
+                <include name="${simple-gui-console.jar}" />
+                <include name="${rhino.jar}" />
             </fileset>
         </copy>
         <zip destfile="${distrib.bin.zip}">
