@@ -15,7 +15,7 @@
         <predicate-flush-period>500</predicate-flush-period>
     </predicates>
     <multiplexor>
-        <implementation>org.aitools.programd.multiplexor.DBMultiplexor</implementation>
+        <implementation>org.aitools.programd.multiplexor.FlatFileMultiplexor</implementation>
         <ffm-dir>/var/programd/ffm</ffm-dir>
     </multiplexor>
     <database>
@@ -27,7 +27,7 @@
     </database>
     <merge>
         <policy>combine</policy>
-        <note-each>false</note-each>
+        <note-each>true</note-each>
         <append-policy.separator-string> </append-policy.separator-string>
     </merge>
     <exceptions>
