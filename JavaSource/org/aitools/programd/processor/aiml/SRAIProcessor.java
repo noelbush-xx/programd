@@ -10,11 +10,9 @@
 package org.aitools.programd.processor.aiml;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.parser.TemplateParserException;
 import org.aitools.programd.processor.ProcessorException;
 import org.apache.log4j.Logger;
 
@@ -56,49 +54,12 @@ public class SRAIProcessor extends AIMLProcessor
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        // Check for some simple kinds of infinite loops.
-        if (element.getChildNodes().getLength() == 1)
-        {
-            Node sraiChild = element.getChildNodes().item(0);
-
-            if (sraiChild.getNodeType() == Node.TEXT_NODE)
-            {
-                String sraiContent = sraiChild.getTextContent();
-                for (String input : parser.getInputs())
-                {
-                    if (sraiContent.equalsIgnoreCase(input))
-                    {
-                        String infiniteLoopInput = parser.getCore().getSettings().getInfiniteLoopInput();
-                        if (!input.equalsIgnoreCase(infiniteLoopInput))
-                        {
-                            sraiChild.setTextContent(infiniteLoopInput);
-                            aimlLogger.warn("Infinite loop detected; substituting \"" + infiniteLoopInput + "\".");
-                        }
-                        else
-                        {
-                            aimlLogger.error("Unrecoverable infinite loop.");
-                            return "";
-                        }
-                    }
-                }
-                parser.addInput(sraiContent);
-            }
-        }
-
-        matchLogger.debug("[SYMBOLIC REDUCTION]");
-
         String input = parser.evaluate(element.getChildNodes());
+        matchLogger.debug("[SYMBOLIC REDUCTION]");
         String userid = parser.getUserID();
         String botid = parser.getBotID();
-        TemplateParser recursiveParser;
-        try
-        {
-            recursiveParser = new TemplateParser(input, userid, botid, this._core);
-        }
-        catch (TemplateParserException e)
-        {
-            throw new ProcessorException("Could not create new TemplateParser for <srai/>.", e);
-        }
+        TemplateParser recursiveParser =
+            new TemplateParser(parser.getInputs(), parser.getThats(), parser.getTopics(), userid, botid, this._core);
         recursiveParser.pushContext(parser.getCurrentDocURL());
         return this._core.getMultiplexor().getInternalResponse(input, userid, botid, recursiveParser);
     }
