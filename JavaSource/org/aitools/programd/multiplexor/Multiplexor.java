@@ -410,7 +410,7 @@ abstract public class Multiplexor<M>
         int comma = matchFilename.indexOf(",");
         if (comma > 0)
         {
-            matchFilename = matchFilename.substring(0, comma - 1);
+            matchFilename = matchFilename.substring(0, comma);
         }
         if (matchLogger.isDebugEnabled())
         {
