@@ -72,11 +72,12 @@
 
     </target>
 
-    <!--Generate CoreSettings from core.xml.-->
+    <!--Generate CoreSettings from configuration schema.-->
     <target name="core-settings" depends="init">
-        <xslt in="conf/core.xml" out="JavaSource/org/aitools/programd/CoreSettings.java" style="resources/xslt/generate-settings-class.xslt">
+        <xslt in="resources/schema/programd-configuration.xsd" out="resources/schema/dummy" style="resources/xslt/generate-settings-class.xslt">
             <factory name="net.sf.saxon.TransformerFactoryImpl" />
         </xslt>
+        <delete file="resources/schema/dummy"/>
     </target>
 
     <!--Prepare directories.-->
