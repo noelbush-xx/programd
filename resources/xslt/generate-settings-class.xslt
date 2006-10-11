@@ -27,6 +27,7 @@
     <xsl:template match="xs:schema" mode="base-class">
         <xsl:param name="classname"/>
         <xsl:param name="file"/>
+        <xsl:message>Creating base class in <xsl:value-of select="$file"/></xsl:message>
         <xsl:variable name="package" select="d:package($classname)"/>
         <xsl:result-document href="{$file}">
             <xsl:call-template name="class">
@@ -60,14 +61,15 @@
     <xsl:template match="xs:schema" mode="xml-class">
         <xsl:param name="classname"/>
         <xsl:param name="file"/>
+        <xsl:message>Creating XML configured class in <xsl:value-of select="$file"/></xsl:message>
         <xsl:variable name="simple-classname" select="d:simple-classname($classname)"/>
         <xsl:variable name="package" select="d:package($classname)"/>
         <xsl:result-document href="{$file}">
             <xsl:call-template name="class">
                 <xsl:with-param name="classname" select="$classname"/>
                 <xsl:with-param name="imports">
+                    <import>java.io.FileNotFoundException</import>
                     <import>java.net.URL</import>
-                    <import>java.net.MalformedURLException</import>
                     <import>javax.xml.xpath.XPath</import>
                     <import>javax.xml.xpath.XPathExpressionException</import>
                     <import>javax.xml.xpath.XPathFactory</import>
@@ -119,13 +121,14 @@
     <xsl:template match="xs:schema" mode="programmatic-class">
         <xsl:param name="classname"/>
         <xsl:param name="file"/>
+        <xsl:message>Creating programmatically configured class in <xsl:value-of select="$file"/></xsl:message>
         <xsl:variable name="simple-classname" select="d:simple-classname($classname)"/>
         <xsl:variable name="package" select="d:package($classname)"/>
         <xsl:result-document href="{$file}">
             <xsl:call-template name="class">
                 <xsl:with-param name="classname" select="$classname"/>
                 <xsl:with-param name="imports">
-                    <import>java.net.MalformedURLException</import>
+                    <import>java.io.FileNotFoundException</import>
                     <import>org.aitools.util.resource.URITools</import>
                     <import>org.aitools.util.resource.URLTools</import>
                     <import>org.aitools.util.runtime.UserError</import>
@@ -303,13 +306,14 @@
                 <xsl:apply-templates select="." mode="xml-initializer">
                     <xsl:with-param name="conversion">URITools.createValidURI</xsl:with-param>
                     <xsl:with-param name="conversion-arguments">, false</xsl:with-param>
+                    <xsl:with-param name="exception">FileNotFoundException</xsl:with-param>
                 </xsl:apply-templates>
             </xsl:when>
             <xsl:when test="$type = 'URL'">
                 <xsl:apply-templates select="." mode="xml-initializer">
                     <xsl:with-param name="conversion">URLTools.createValidURL</xsl:with-param>
                     <xsl:with-param name="conversion-arguments">, this._path, false</xsl:with-param>
-                    <xsl:with-param name="exception">MalformedURLException</xsl:with-param>
+                    <xsl:with-param name="exception">FileNotFoundException</xsl:with-param>
                 </xsl:apply-templates>
             </xsl:when>
             <xsl:when test="starts-with($type, 'enum ')">
@@ -456,6 +460,7 @@
                     <xsl:with-param name="conversion">URITools.createValidURI</xsl:with-param>
                     <xsl:with-param name="conversion-arguments">, false</xsl:with-param>
                     <xsl:with-param name="default" select="$default"/>
+                    <xsl:with-param name="exception">FileNotFoundException</xsl:with-param>
                 </xsl:apply-templates>
             </xsl:when>
             <xsl:when test="$type = 'URL'">
@@ -463,7 +468,7 @@
                     <xsl:with-param name="conversion">URLTools.createValidURL</xsl:with-param>
                     <xsl:with-param name="conversion-arguments">, false</xsl:with-param>
                     <xsl:with-param name="default" select="$default"/>
-                    <xsl:with-param name="exception">MalformedURLException</xsl:with-param>
+                    <xsl:with-param name="exception">FileNotFoundException</xsl:with-param>
                 </xsl:apply-templates>
             </xsl:when>
             <xsl:when test="starts-with($type, 'enum ')">
