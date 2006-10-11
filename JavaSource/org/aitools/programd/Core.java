@@ -735,10 +735,12 @@ public class Core
             this.logger.debug("Suspending AIMLWatcher.");
             this.aimlWatcher.stop();
         }
+        /*
         if (path.getProtocol().equals(Filesystem.FILE))
         {
             Filesystem.pushWorkingDirectory(URLTools.getParent(path));
         }
+        */
         try
         {
             new BotsConfigurationFileParser(this).process(path);
@@ -747,10 +749,12 @@ public class Core
         {
             this.logger.error("Processor exception during startup: " + e.getExplanatoryMessage(), e);
         }
+        /*
         if (path.getProtocol().equals(Filesystem.FILE))
         {
             Filesystem.popWorkingDirectory();
         }
+        */
         if (this._settings.useAIMLWatcher())
         {
             this.logger.debug("Restarting AIMLWatcher.");
