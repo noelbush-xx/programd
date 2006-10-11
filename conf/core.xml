@@ -6,7 +6,7 @@
     <paths>
         <bot-config>bots.xml</bot-config>
         <plugin-config>plugins.xml</plugin-config>
-        <gossip>/var/log/programd/gossip.txt</gossip>
+        <gossip>file:/var/log/programd/gossip.txt</gossip>
     </paths>
     <predicates>
         <empty-default>undefined</empty-default>
@@ -16,7 +16,7 @@
     </predicates>
     <multiplexor>
         <implementation>org.aitools.programd.multiplexor.FlatFileMultiplexor</implementation>
-        <ffm-dir>/var/programd/ffm</ffm-dir>
+        <ffm-dir>file:/var/programd/ffm</ffm-dir>
     </multiplexor>
     <database>
         <url>jdbc:mysql:///programdbot</url>
@@ -43,12 +43,6 @@
             <timer>2000</timer>
         </AIML>
     </watchers>
-    <schema-locations>
-        <AIML>../resources/schema/AIML.xsd</AIML>
-        <bot-configuration>../resources/schema/bot-configuration.xsd</bot-configuration>
-        <plugins>../resources/schema/plugins.xsd</plugins>
-        <test-cases>../resources/schema/test-suite.xsd</test-cases>
-    </schema-locations>
     <interpreters>
         <javascript allowed="true">
             <interpreter-classname>org.aitools.programd.interpreter.RhinoInterpreter</interpreter-classname>
