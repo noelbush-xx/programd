@@ -9,7 +9,7 @@
 
 package org.aitools.programd.configurations;
 
-import java.net.MalformedURLException;
+import java.io.FileNotFoundException;
 import java.net.URL;
 
 import gnu.getopt.Getopt;
@@ -36,7 +36,7 @@ public class SimpleConsole
     /** The console. */
     private Console console;
 
-    protected SimpleConsole(String corePropertiesPath) throws MalformedURLException
+    protected SimpleConsole(String corePropertiesPath) throws FileNotFoundException
     {
         URL baseURL = URLTools.createValidURL(System.getProperty("user.dir"));
         this.console = new Console();
@@ -104,7 +104,7 @@ public class SimpleConsole
         {
             console = new SimpleConsole(corePropertiesPath);
         }
-        catch (MalformedURLException e)
+        catch (FileNotFoundException e)
         {
             System.err.println(String.format("Core properties file \"%s\" not found.", corePropertiesPath));
         }

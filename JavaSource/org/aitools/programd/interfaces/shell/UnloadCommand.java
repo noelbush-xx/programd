@@ -9,7 +9,7 @@
 
 package org.aitools.programd.interfaces.shell;
 
-import java.net.MalformedURLException;
+import java.io.FileNotFoundException;
 
 import org.aitools.programd.bot.Bot;
 import org.aitools.programd.graph.Graphmaster;
@@ -76,7 +76,7 @@ public class UnloadCommand extends ShellCommand
                 Logger.getLogger("programd")
                         .info(categories - graphmaster.getCategoryCount() + " categories unloaded.");
             }
-            catch (MalformedURLException e)
+            catch (FileNotFoundException e)
             {
                 shell.showError(String.format("Could not find \"%s\".", path));
             }

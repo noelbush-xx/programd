@@ -17,11 +17,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
@@ -145,7 +145,7 @@ public class GUIConsole extends JPanel
         {
             logoURL = URLTools.createValidURL(LOGO_PATH, Filesystem.getWorkingDirectory());
         }
-        catch (MalformedURLException e)
+        catch (FileNotFoundException e)
         {
             throw new DeveloperError(String.format("Logo is missing from \"%s\"!", LOGO_PATH), e);
         }
@@ -163,7 +163,7 @@ public class GUIConsole extends JPanel
         {
             iconURL = URLTools.createValidURL(ICON_PATH, Filesystem.getWorkingDirectory());
         }
-        catch (MalformedURLException e)
+        catch (FileNotFoundException e)
         {
             throw new DeveloperError(String.format("Icon is missing from \"%s\"!", ICON_PATH), e);
         }

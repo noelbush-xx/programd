@@ -13,7 +13,7 @@ import java.net.URL;
 import org.aitools.util.Settings;
 
 /**
- * Automatically generated at 2006-07-09T23:31:23.554-05:00.
+ * Automatically generated at 2006-10-10T09:30:52.95-04:00.
  */
 abstract public class CoreSettings extends Settings
 {
@@ -107,18 +107,6 @@ abstract public class CoreSettings extends Settings
         
     /** Use the AIML watcher? */
     private boolean useAIMLWatcher;
-        
-    /** The location of the AIML schema. */
-    private URL AIMLSchemaLocation;
-        
-    /** The location of the bot configuration schema. */
-    private URL botConfigSchemaLocation;
-        
-    /** The location of the plugin schema. */
-    private URL pluginSchemaLocation;
-        
-    /** The location of the test cases schema. */
-    private URL testCaseSchemaLocation;
         
     /** The JavaScript interpreter. */
     private String javascriptInterpreterClassname;
@@ -364,38 +352,6 @@ abstract public class CoreSettings extends Settings
     public boolean useAIMLWatcher()
     {
         return this.useAIMLWatcher;
-    }
-
-    /**
-     * @return the value of AIMLSchemaLocation
-     */
-    public URL getAIMLSchemaLocation()
-    {
-        return this.AIMLSchemaLocation;
-    }
-
-    /**
-     * @return the value of botConfigSchemaLocation
-     */
-    public URL getBotConfigSchemaLocation()
-    {
-        return this.botConfigSchemaLocation;
-    }
-
-    /**
-     * @return the value of pluginSchemaLocation
-     */
-    public URL getPluginSchemaLocation()
-    {
-        return this.pluginSchemaLocation;
-    }
-
-    /**
-     * @return the value of testCaseSchemaLocation
-     */
-    public URL getTestCaseSchemaLocation()
-    {
-        return this.testCaseSchemaLocation;
     }
 
     /**
@@ -692,38 +648,6 @@ abstract public class CoreSettings extends Settings
     public void setUseAIMLWatcher(boolean value)
     {
         this.useAIMLWatcher = value;
-    }
-
-    /**
-     * @param value the value for AIMLSchemaLocation
-     */
-    public void setAIMLSchemaLocation(URL value)
-    {
-        this.AIMLSchemaLocation = value;
-    }
-
-    /**
-     * @param value the value for botConfigSchemaLocation
-     */
-    public void setBotConfigSchemaLocation(URL value)
-    {
-        this.botConfigSchemaLocation = value;
-    }
-
-    /**
-     * @param value the value for pluginSchemaLocation
-     */
-    public void setPluginSchemaLocation(URL value)
-    {
-        this.pluginSchemaLocation = value;
-    }
-
-    /**
-     * @param value the value for testCaseSchemaLocation
-     */
-    public void setTestCaseSchemaLocation(URL value)
-    {
-        this.testCaseSchemaLocation = value;
     }
 
     /**

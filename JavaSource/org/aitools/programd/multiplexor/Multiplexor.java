@@ -9,7 +9,7 @@
 
 package org.aitools.programd.multiplexor;
 
-import java.net.MalformedURLException;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -426,7 +426,7 @@ abstract public class Multiplexor<M>
         {
             parser.pushContext(URLTools.createValidURL(matchFilename));
         }
-        catch (MalformedURLException e)
+        catch (FileNotFoundException e)
         {
             logger.error(String.format("AIML file that was loaded cannot be found: \"%s\"", matchFilename), e);
         }
