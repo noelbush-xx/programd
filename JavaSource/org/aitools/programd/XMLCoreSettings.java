@@ -22,7 +22,7 @@ import org.aitools.util.xml.Loader;
 import org.aitools.util.xml.NamespaceContextImpl;
 
 /**
- * Automatically generated at 2006-10-10T09:30:52.95-04:00.
+ * Automatically generated at 2006-10-11T14:09:27.257-04:00.
  */
 public class XMLCoreSettings extends CoreSettings
 {
@@ -32,17 +32,22 @@ public class XMLCoreSettings extends CoreSettings
     /** A base URL for resolving relative URLs. */
     private URL _base;
     
+    /** The URL of the XML catalog which will point to schemas. */
+    private URL _catalog;
+    
     /**
      * Creates a <code>XMLCoreSettings</code> with the XML-formatted settings file
      * located at the given path.
      *
      * @param path the path to the settings file
      * @param base the URL against which to resolve relative URLs
+     * @param catalog   location of the XML catalog to use
      */
-    public XMLCoreSettings(URL path, URL base)
+    public XMLCoreSettings(URL path, URL base, URL catalog)
     {
         this._path = path;
         this._base = base;
+        this._catalog = catalog;
         initialize();
     }
     
@@ -54,7 +59,7 @@ public class XMLCoreSettings extends CoreSettings
     protected void initialize()
     {
         final String CONFIG_NS_URI = "http://aitools.org/programd/4.7/programd-configuration";
-        Loader loader = new Loader(this._base, CONFIG_NS_URI);
+        Loader loader = new Loader(this._base, CONFIG_NS_URI, this._catalog);
         Document document = loader.parse(this._path);
         XPath xpath = XPathFactory.newInstance().newXPath();
         NamespaceContextImpl ns = new NamespaceContextImpl();

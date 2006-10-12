@@ -71,7 +71,7 @@ abstract public class GenericParser<P extends Processor>
         this._core = core;
         this.logger = this._core.getLogger();
         this.processorRegistry = registry;
-        this._loader = new Loader(this._core.getBaseURL(), registry.getNamespaceURI());
+        this._loader = new Loader(this._core.getBaseURL(), registry.getNamespaceURI(), this._core.getCatalog());
     }
 
     /**

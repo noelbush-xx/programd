@@ -196,11 +196,12 @@ public class TestSuite implements Iterable<TestCase>
      * 
      * @param path the path from which to load the test suite
      * @param logger 
+     * @param catalog
      * @return the loaded test suite
      */
-    public static TestSuite load(URL path, Logger logger)
+    public static TestSuite load(URL path, Logger logger, URL catalog)
     {
-        return load(path, null, logger);
+        return load(path, null, logger, catalog);
     }
 
     /**
@@ -209,11 +210,12 @@ public class TestSuite implements Iterable<TestCase>
      * @param path the path from which to load the test suite
      * @param multiplexor the multiplexor to use
      * @param logger 
+     * @param catalog
      * @return the loaded test suite
      */
-    public static TestSuite load(URL path, Multiplexor<?> multiplexor, Logger logger)
+    public static TestSuite load(URL path, Multiplexor<?> multiplexor, Logger logger, URL catalog)
     {
-        LSParser builder = XML.getDOMParser();
+        LSParser builder = XML.getDOMParser(catalog.toExternalForm());
         Document doc;
         try
         {

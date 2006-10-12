@@ -14,7 +14,7 @@ import org.aitools.util.resource.URLTools;
 import org.aitools.util.runtime.UserError;
 
 /**
- * Automatically generated at 2006-10-10T09:30:52.95-04:00.
+ * Automatically generated at 2006-10-11T14:09:27.257-04:00.
  */
 public class ProgrammaticCoreSettings extends CoreSettings
 {

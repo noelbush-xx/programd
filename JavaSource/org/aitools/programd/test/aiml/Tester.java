@@ -85,7 +85,7 @@ public class Tester
     public String run(String botid, String suite, int runCount)
     {
         this.suites.clear();
-        this.suites = loadTests(this.suiteURLs, this._multiplexor, this.logger);
+        this.suites = loadTests(this.suiteURLs, this._multiplexor, this.logger, this._core.getCatalog());
         if (null == botid)
         {
             this.logger.warn("No botid defined for tests.");
@@ -152,17 +152,18 @@ public class Tester
      * @param suiteList the list of suites
      * @param multiplexor the Multiplexor to assign to the suites
      * @param logger the logger to use for tracking progress
+     * @param catalog
      * 
      * @return the map of suite names to suites
      */
     protected static HashMap<String, TestSuite> loadTests(List<URL> suiteList, Multiplexor<?> multiplexor,
-            Logger logger)
+            Logger logger, URL catalog)
     {
         HashMap<String, TestSuite> suites = new HashMap<String, TestSuite>();
         for (URL path : suiteList)
         {
             logger.info("Loading tests from \"" + path + "\".");
-            TestSuite suite = TestSuite.load(path, multiplexor, logger);
+            TestSuite suite = TestSuite.load(path, multiplexor, logger, catalog);
             suites.put(suite.getName(), suite);
         }
         return suites;

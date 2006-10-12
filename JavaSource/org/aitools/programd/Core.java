@@ -66,6 +66,12 @@ public class Core
 {
     /** The namespace URI of the plugin configuration. */
     public static final String PLUGIN_CONFIG_NS_URI = "http://aitools.org/programd/4.7/plugins";
+    
+    /** The location of the XML catalog, as a string. */
+    private static String XML_CATALOG_URL = "resources/catalog.xml";
+    
+    /** The URL location of the XML catalog. */
+    private URL xmlCatalog;
 
     /** The Settings. */
     protected CoreSettings _settings;
@@ -150,7 +156,7 @@ public class Core
      */
     public Core(URL base)
     {
-        this.baseURL = base;
+        setup(base);
         Filesystem.setRootPath(Filesystem.getWorkingDirectory());
         this._settings = new ProgrammaticCoreSettings();
         start();
@@ -164,9 +170,9 @@ public class Core
      */
     public Core(URL base, URL settings)
     {
-        this.baseURL = base;
+        setup(base);
         Filesystem.setRootPath(URLTools.getParent(this.baseURL));
-        this._settings = new XMLCoreSettings(settings, base);
+        this._settings = new XMLCoreSettings(settings, base, this.xmlCatalog);
         start();
     }
 
@@ -178,12 +184,17 @@ public class Core
      */
     public Core(URL base, CoreSettings settings)
     {
+        setup(base);
         this._settings = settings;
-        this.baseURL = base;
         Filesystem.setRootPath(this.baseURL);
-        start();
     }
-
+    
+    private void setup(URL base)
+    {
+        this.baseURL = base;
+        this.xmlCatalog = URLTools.contextualize(this.baseURL, XML_CATALOG_URL);
+    }
+    
     /**
      * Initializes and starts up the Core.
      */
@@ -220,7 +231,7 @@ public class Core
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
 
-        this.parser = XML.getSAXParser();
+        this.parser = XML.getSAXParser(this.xmlCatalog.toExternalForm());
 
         this.graphmaster = new Graphmaster(this);
         this.bots = new Bots();
@@ -250,7 +261,7 @@ public class Core
         {
             if (pluginConfigURL.openStream() != null)
             {
-                Loader pluginConfigLoader = new Loader(this.baseURL, PLUGIN_CONFIG_NS_URI);
+                Loader pluginConfigLoader = new Loader(this.baseURL, PLUGIN_CONFIG_NS_URI, this.xmlCatalog);
                 this.pluginConfig = pluginConfigLoader.parse(pluginConfigURL);
             }
         }
@@ -1005,5 +1016,13 @@ public class Core
         }
         storageMap.put(key, defaultObject);
         return defaultObject;
+    }
+    
+    /**
+     * @return the URL of the XML catalog
+     */
+    public URL getCatalog()
+    {
+        return this.xmlCatalog;
     }
 }
