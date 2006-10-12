@@ -23,18 +23,18 @@
 
         <property name="build.dir" value="${basedir}/build.tmp" />
         <path id="build.classpath">
-            <pathelement location="${compile.lib.dir}/aitools-utils.jar" />
-            <pathelement location="${compile.lib.dir}/commons-collections.jar" />
+            <pathelement location="${webapp.lib.dir}/aitools-utils.jar" />
+            <pathelement location="${webapp.lib.dir}/commons-collections.jar" />
             <pathelement location="${compile.lib.dir}/gnu.getopt-1.0.10.jar" />
-            <pathelement location="${compile.lib.dir}/jdbcappender.jar" />
+            <pathelement location="${webapp.lib.dir}/jdbcappender.jar" />
             <pathelement location="${compile.lib.dir}/jsp-api.jar" />
             <pathelement location="${webapp.lib.dir}/js.jar" />
-            <pathelement location="${compile.lib.dir}/log4j-1.2.13.jar" />
+            <pathelement location="${webapp.lib.dir}/log4j-1.2.13.jar" />
             <pathelement location="${compile.lib.dir}/servlet-api.jar" />
         </path>
     	
     	<!--The classpath needed to run Program D, for the core.-->
-        <property name="essentials-mf-classpath" value="../lib/aitools-utils.jar ../lib/commons-collections.jar ../lib/gnu.getopt-1.0.10.jar ../lib/jdbcappender.jar ../lib/log4j-1.2.13.jar ../lib/xerces-j2.jar"/>
+        <property name="essentials-mf-classpath" value="../WebContent/WEB-INF/lib/aitools-utils.jar ../WebContent/WEB-INF/lib/commons-collections.jar ../lib/gnu.getopt-1.0.10.jar ../WebContent/WEB-INF/lib/jdbcappender.jar ../WebContent/WEB-INF/lib/log4j-1.2.13.jar ../WebContent/WEB-INF/lib/xerces-j2.jar"/>
     	
     	<!--The path to the core jar, to be included in app-jar manifests.-->
     	<property name="core-mf-classpath" value="programd-core.jar"/>
