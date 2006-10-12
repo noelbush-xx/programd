@@ -172,7 +172,7 @@ public class Core
     {
         setup(base);
         Filesystem.setRootPath(URLTools.getParent(this.baseURL));
-        this._settings = new XMLCoreSettings(settings, base, this.xmlCatalog);
+        this._settings = new XMLCoreSettings(settings, base, this.xmlCatalog, this.logger);
         start();
     }
 
@@ -231,7 +231,7 @@ public class Core
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
 
-        this.parser = XML.getSAXParser(this.xmlCatalog.toExternalForm());
+        this.parser = XML.getSAXParser(this.xmlCatalog.toExternalForm(), this.logger);
 
         this.graphmaster = new Graphmaster(this);
         this.bots = new Bots();
@@ -261,7 +261,7 @@ public class Core
         {
             if (pluginConfigURL.openStream() != null)
             {
-                Loader pluginConfigLoader = new Loader(this.baseURL, PLUGIN_CONFIG_NS_URI, this.xmlCatalog);
+                Loader pluginConfigLoader = new Loader(this.baseURL, PLUGIN_CONFIG_NS_URI, this.xmlCatalog, this.logger);
                 this.pluginConfig = pluginConfigLoader.parse(pluginConfigURL);
             }
         }

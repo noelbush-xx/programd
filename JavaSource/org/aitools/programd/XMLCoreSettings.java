@@ -20,6 +20,7 @@ import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.runtime.UserError;
 import org.aitools.util.xml.Loader;
 import org.aitools.util.xml.NamespaceContextImpl;
+import org.apache.log4j.Logger;
 
 /**
  * Automatically generated at 2006-10-11T14:09:27.257-04:00.
@@ -35,6 +36,8 @@ public class XMLCoreSettings extends CoreSettings
     /** The URL of the XML catalog which will point to schemas. */
     private URL _catalog;
     
+    private Logger _logger;
+    
     /**
      * Creates a <code>XMLCoreSettings</code> with the XML-formatted settings file
      * located at the given path.
@@ -42,12 +45,14 @@ public class XMLCoreSettings extends CoreSettings
      * @param path the path to the settings file
      * @param base the URL against which to resolve relative URLs
      * @param catalog   location of the XML catalog to use
+     * @param logger
      */
-    public XMLCoreSettings(URL path, URL base, URL catalog)
+    public XMLCoreSettings(URL path, URL base, URL catalog, Logger logger)
     {
         this._path = path;
         this._base = base;
         this._catalog = catalog;
+        this._logger = logger;
         initialize();
     }
     
@@ -59,7 +64,7 @@ public class XMLCoreSettings extends CoreSettings
     protected void initialize()
     {
         final String CONFIG_NS_URI = "http://aitools.org/programd/4.7/programd-configuration";
-        Loader loader = new Loader(this._base, CONFIG_NS_URI, this._catalog);
+        Loader loader = new Loader(this._base, CONFIG_NS_URI, this._catalog, this._logger);
         Document document = loader.parse(this._path);
         XPath xpath = XPathFactory.newInstance().newXPath();
         NamespaceContextImpl ns = new NamespaceContextImpl();

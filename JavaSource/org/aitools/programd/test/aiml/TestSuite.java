@@ -215,7 +215,7 @@ public class TestSuite implements Iterable<TestCase>
      */
     public static TestSuite load(URL path, Multiplexor<?> multiplexor, Logger logger, URL catalog)
     {
-        LSParser builder = XML.getDOMParser(catalog.toExternalForm());
+        LSParser builder = XML.getDOMParser(catalog.toExternalForm(), logger);
         Document doc;
         try
         {
