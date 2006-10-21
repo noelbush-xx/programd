@@ -46,7 +46,7 @@ import javax.swing.SwingConstants;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.aitools.programd.Core;
-import org.aitools.programd.graph.Graphmaster;
+import org.aitools.programd.graph.Graphmapper;
 import org.aitools.programd.interfaces.Console;
 import org.aitools.programd.interfaces.shell.BotListCommand;
 import org.aitools.programd.interfaces.shell.HelpCommand;
@@ -758,12 +758,12 @@ public class GUIConsole extends JPanel
             return;
         }
 
-        Graphmaster graphmaster = this._core.getGraphmaster();
-        int categories = graphmaster.getCategoryCount();
+        Graphmapper graphmapper = this._core.getGraphmapper();
+        int categories = graphmapper.getCategoryCount();
         this._core.load(URLTools.contextualize(Filesystem.getWorkingDirectory(), (String) response), this._shell
                 .getCurrentBotID());
         Logger.getLogger("programd").log(Level.INFO,
-                graphmaster.getCategoryCount() - categories + " categories loaded from \"" + (String) response + "\".");
+                graphmapper.getCategoryCount() - categories + " categories loaded from \"" + (String) response + "\".");
     }
 
     protected void loadAIMLFilePathChooser()
@@ -784,12 +784,12 @@ public class GUIConsole extends JPanel
             {
                 return;
             }
-            int categories = this._core.getGraphmaster().getCategoryCount();
-            Graphmaster graphmaster = this._core.getGraphmaster();
+            int categories = this._core.getGraphmapper().getCategoryCount();
+            Graphmapper graphmapper = this._core.getGraphmapper();
             this._core.load(URLTools.contextualize(Filesystem.getWorkingDirectory(), newPath), this._shell
                     .getCurrentBotID());
             Logger.getLogger("programd").log(Level.INFO,
-                    graphmaster.getCategoryCount() - categories + " categories loaded from \"" + newPath + "\".");
+                    graphmapper.getCategoryCount() - categories + " categories loaded from \"" + newPath + "\".");
         }
     }
 
