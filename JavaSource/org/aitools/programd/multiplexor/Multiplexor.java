@@ -15,11 +15,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.aitools.programd.Bot;
+import org.aitools.programd.Bots;
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
-import org.aitools.programd.bot.Bot;
-import org.aitools.programd.bot.Bots;
-import org.aitools.programd.graph.Graphmaster;
+import org.aitools.programd.graph.Graphmapper;
 import org.aitools.programd.graph.Match;
 import org.aitools.programd.logging.ChatLogEvent;
 import org.aitools.programd.parser.TemplateParser;
@@ -67,8 +67,8 @@ abstract public class Multiplexor<M>
     /** The Core that owns this Multiplexor. */
     protected Core _core;
 
-    /** The Graphmaster in use by the Core. */
-    protected Graphmaster graphmaster;
+    /** The Graphmapper in use by the Core. */
+    protected Graphmapper graphmapper;
 
     /** The PredicateMaster in use by the Core. */
     protected PredicateMaster predicateMaster;
@@ -77,7 +77,7 @@ abstract public class Multiplexor<M>
     protected Bots bots;
 
     /** The general log where we will record some events. */
-    protected static final Logger logger = Logger.getLogger("programd");
+    protected Logger logger = Logger.getLogger("programd");
 
     /** The log where match info will be recorded. */
     protected static final Logger matchLogger = Logger.getLogger("programd.matching");
@@ -104,7 +104,7 @@ abstract public class Multiplexor<M>
     public Multiplexor(Core owner)
     {
         this._core = owner;
-        this.graphmaster = this._core.getGraphmaster();
+        this.graphmapper = this._core.getGraphmapper();
         this.bots = this._core.getBots();
         CoreSettings coreSettings = this._core.getSettings();
         this.predicateEmptyDefault = coreSettings.getPredicateEmptyDefault();
@@ -358,7 +358,7 @@ abstract public class Multiplexor<M>
         String reply = getMatchResult(input, that, topic, userid, botid, parser);
         if (reply == null)
         {
-            logger.error("getMatchReply generated a null reply!", new NullPointerException());
+            this.logger.error("getMatchReply generated a null reply!", new NullPointerException());
             return "";
         }
 
@@ -392,17 +392,17 @@ abstract public class Multiplexor<M>
 
         try
         {
-            match = this.graphmaster.match(InputNormalizer.patternFitIgnoreCase(input), that, topic, botid);
+            match = this.graphmapper.match(InputNormalizer.patternFitIgnoreCase(input), that, topic, botid);
         }
         catch (NoMatchException e)
         {
-            logger.warn(e.getMessage());
+            this.logger.warn(e.getMessage());
             return "";
         }
 
         if (match == null)
         {
-            logger.warn(String.format("No match found for input \"%s\".", input));
+            this.logger.warn(String.format("No match found for input \"%s\".", input));
             return "";
         }
 
@@ -428,7 +428,7 @@ abstract public class Multiplexor<M>
         }
         catch (FileNotFoundException e)
         {
-            logger.error(String.format("AIML file that was loaded cannot be found: \"%s\"", matchFilename), e);
+            this. logger.error(String.format("AIML file that was loaded cannot be found: \"%s\"", matchFilename), e);
         }
         try
         {
@@ -445,7 +445,7 @@ abstract public class Multiplexor<M>
         catch (DeveloperError e)
         {
             // Log the error message.
-            logger.error(String.format("Error while processing response: \"%s\"", e.getCause().getMessage()), e);
+            this.logger.error(String.format("Error while processing response: \"%s\"", e.getCause().getMessage()), e);
 
             // Set response to empty string.
             return "";
@@ -473,11 +473,11 @@ abstract public class Multiplexor<M>
          */
         try
         {
-            logger.callAppenders(new ChatLogEvent(botid, userid, input, response));
+            this.logger.callAppenders(new ChatLogEvent(botid, userid, input, response));
         }
         catch (Exception e)
         {
-            logger.error("A known bug with log4j has been encountered.  Attempting to reset logging configuration. This may or may not work.", e);
+            this.logger.error("A known bug with log4j has been encountered.  Attempting to reset logging configuration. This may or may not work.", e);
             LogManager.resetConfiguration();
         }
     }
@@ -516,13 +516,16 @@ abstract public class Multiplexor<M>
             for (String userid : predicateCache.keySet())
             {
                 M storageMechanism = getStorageMechanism(userid, botid);
-                PredicateMap predicateMap = predicateCache.get(userid);
-                for (String name : predicateMap.keySet())
+                if (storageMechanism != null)
                 {
-                    preparePredicateForStorage(storageMechanism, userid, botid, name, predicateMap.get(name));
+                    PredicateMap predicateMap = predicateCache.get(userid);
+                    for (String name : predicateMap.keySet())
+                    {
+                        preparePredicateForStorage(storageMechanism, userid, botid, name, predicateMap.get(name));
+                    }
+                    predicateMap.clear();
+                    savePredicates(storageMechanism, userid, botid);
                 }
-                predicateMap.clear();
-                savePredicates(storageMechanism, userid, botid);
             }
         }
     }
@@ -553,7 +556,8 @@ abstract public class Multiplexor<M>
 
     /**
      * Invoked by {@link #dumpPredicates}; saves the predicates from the given
-     * storage mechanism.
+     * storage mechanism. This only applies to Multiplexors that provide long-term
+     * storage (others may just do nothing).
      * 
      * @param userid
      * @param botid
@@ -562,9 +566,7 @@ abstract public class Multiplexor<M>
     abstract protected void savePredicates(M mechanism, String userid, String botid);
     
     /**
-     * Loads a predicate into memory for a given <code>userid</code>. This
-     * only applies to Multiplexors that provide long-term storage (others may
-     * just do nothing).
+     * Loads a predicate into memory for a given <code>userid</code>.
      * 
      * @since 4.1.4
      * @param name predicate name
