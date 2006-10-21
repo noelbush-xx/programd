@@ -18,7 +18,7 @@ package org.aitools.programd.parser;
 public interface AIMLReaderListener
 {
     /**
-     * Adds a new category to the {@link org.aitools.programd.graph.Graphmaster} . Usually called by an AIML parser such
+     * Adds a new category to the {@link org.aitools.programd.graph.Graphmapper} . Usually called by an AIML parser such
      * as {@link org.aitools.programd.parser.TemplateParser TemplateParser} .
      * 
      * @param pattern the <code>pattern</code> portion of a Graphmaster path
