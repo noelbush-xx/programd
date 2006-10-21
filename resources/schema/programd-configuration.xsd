@@ -11,15 +11,15 @@
             <d:settings-classes>
                 <d:base-class>
                     <d:classname>org.aitools.programd.CoreSettings</d:classname>
-                    <d:filename>../../JavaSource/org/aitools/programd/CoreSettings.java</d:filename>
+                    <d:filename>../../src/org/aitools/programd/CoreSettings.java</d:filename>
                 </d:base-class>
                 <d:programmatic-class>
                     <d:classname>org.aitools.programd.ProgrammaticCoreSettings</d:classname>
-                    <d:filename>../../JavaSource/org/aitools/programd/ProgrammaticCoreSettings.java</d:filename>
+                    <d:filename>../../src/org/aitools/programd/ProgrammaticCoreSettings.java</d:filename>
                 </d:programmatic-class>
                 <d:xml-class>
                     <d:classname>org.aitools.programd.XMLCoreSettings</d:classname>
-                    <d:filename>../../JavaSource/org/aitools/programd/XMLCoreSettings.java</d:filename>
+                    <d:filename>../../src/org/aitools/programd/XMLCoreSettings.java</d:filename>
                 </d:xml-class>
             </d:settings-classes>
         </xs:appinfo>
@@ -42,7 +42,7 @@
                     </xs:annotation>
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="bot-config" type="URL" default="bots.xml">
+                            <xs:element name="bot-config" type="URL">
                                 <xs:annotation>
                                     <xs:documentation>The bot configuration file.</xs:documentation>
                                     <xs:appinfo>
@@ -50,7 +50,7 @@
                                     </xs:appinfo>
                                 </xs:annotation>
                             </xs:element>
-                            <xs:element name="plugin-config" type="URL" default="plugins.xml">
+                            <xs:element name="plugin-config" type="URL">
                                 <xs:annotation>
                                     <xs:documentation>Configuration file for plugins.</xs:documentation>
                                     <xs:appinfo>
@@ -58,7 +58,7 @@
                                     </xs:appinfo>
                                 </xs:annotation>
                             </xs:element>
-                            <xs:element name="gossip" type="URL" default="/var/log/programd/gossip.txt">
+                            <xs:element name="gossip" type="URL">
                                 <xs:annotation>
                                     <xs:documentation>
                                         Where to write gossip entries. Gossip entries will be written like this:
@@ -122,7 +122,7 @@
                     <xs:complexType>
                         <xs:sequence>
                             <xs:element name="implementation" type="xs:string"
-                                default="org.aitools.programd.multiplexor.FlatFileMultiplexor">
+                                default="org.aitools.programd.multiplexor.InMemoryMultiplexor">
                                 <xs:annotation>
                                     <xs:documentation>The Multiplexor implementation to use.</xs:documentation>
                                     <xs:appinfo>
@@ -130,7 +130,7 @@
                                     </xs:appinfo>
                                 </xs:annotation>
                             </xs:element>
-                            <xs:element name="ffm-dir" type="URL" default="/var/programd/ffm">
+                            <xs:element name="ffm-dir" type="URL">
                                 <xs:annotation>
                                     <xs:documentation>
                                         The directory in which to save flat-file predicates (if the FlatFileMultiplexor is used).
@@ -257,7 +257,7 @@
                                     </xs:appinfo>
                                 </xs:annotation>
                             </xs:element>
-                            <xs:element name="on-uncaught-exceptions.print-stack-trace" type="xs:boolean" default="false">
+                            <xs:element name="on-uncaught-exceptions.print-stack-trace" type="xs:boolean" default="true">
                                 <xs:annotation>
                                     <xs:documentation>Whether to print a stack trace on uncaught exceptions.</xs:documentation>
                                     <xs:appinfo>
@@ -430,6 +430,15 @@
                         </xs:documentation>
                         <xs:appinfo>
                             <d:property-name>randomStrategy</d:property-name>
+                        </xs:appinfo>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="graphmapper.implementation" type="xs:string"
+                    default="org.aitools.programd.graph.Graphmaster">
+                    <xs:annotation>
+                        <xs:documentation>The Graphmapper implementation to use.</xs:documentation>
+                        <xs:appinfo>
+                            <d:property-name>graphmapperImplementation</d:property-name>
                         </xs:appinfo>
                     </xs:annotation>
                 </xs:element>
