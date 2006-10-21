@@ -9,8 +9,6 @@
 
 package org.aitools.programd;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
@@ -18,21 +16,14 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.parsers.SAXParser;
-
-import org.aitools.programd.bot.Bot;
-import org.aitools.programd.bot.Bots;
-import org.aitools.programd.graph.Graphmaster;
-import org.aitools.programd.graph.Nodemapper;
+import org.aitools.programd.graph.Graphmapper;
 import org.aitools.programd.interfaces.ConsoleStreamAppender;
 import org.aitools.programd.interpreter.Interpreter;
 import org.aitools.programd.multiplexor.Multiplexor;
 import org.aitools.programd.multiplexor.PredicateMaster;
-import org.aitools.programd.parser.AIMLReader;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.processor.aiml.AIMLProcessorRegistry;
@@ -48,13 +39,10 @@ import org.aitools.util.resource.URLTools;
 import org.aitools.util.UnspecifiedParameterError;
 import org.aitools.util.runtime.UserError;
 import org.aitools.util.runtime.UserSystem;
+import org.aitools.util.sql.DbAccessRefsPoolMgr;
 import org.aitools.util.xml.Loader;
-import org.aitools.util.xml.XML;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
 import org.w3c.dom.Document;
 
 /**
@@ -79,8 +67,8 @@ public class Core
     /** The base URL. */
     private URL baseURL;
 
-    /** The Graphmaster. */
-    private Graphmaster graphmaster;
+    /** The Graphmapper. */
+    private Graphmapper _graphmapper;
 
     /** The Multiplexor. */
     private Multiplexor<?> multiplexor;
@@ -89,16 +77,16 @@ public class Core
     private PredicateMaster predicateMaster;
 
     /** The bots. */
-    private Bots bots;
+    private Bots _bots;
 
     /** The processes. */
     private ManagedProcesses processes;
 
     /** The bot configuration element processor registry. */
     private BotConfigurationElementProcessorRegistry botConfigurationElementProcessorRegistry;
-
-    /** The SAXParser used in loading AIML. */
-    private SAXParser parser;
+    
+    /** A manager for database access. */
+    private DbAccessRefsPoolMgr dbManager;
 
     /** The AIML processor registry. */
     private AIMLProcessorRegistry aimlProcessorRegistry;
@@ -111,9 +99,6 @@ public class Core
 
     /** The logger for the Core. */
     private Logger logger = LogManager.getLogger("programd");
-
-    /** Load time marker. */
-    private boolean loadtime;
 
     /** Name of the local host. */
     private String hostname;
@@ -231,10 +216,9 @@ public class Core
         this.aimlProcessorRegistry = new AIMLProcessorRegistry();
         this.botConfigurationElementProcessorRegistry = new BotConfigurationElementProcessorRegistry();
 
-        this.parser = XML.getSAXParser(this.xmlCatalog.toExternalForm(), this.logger);
-
-        this.graphmaster = new Graphmaster(this);
-        this.bots = new Bots();
+        this._graphmapper = ClassUtils.getSubclassInstance(Graphmapper.class, this._settings.
+                getGraphmapperImplementation(), "Graphmapper implementation", this);
+        this._bots = new Bots();
         this.processes = new ManagedProcesses(this);
 
         // Get an instance of the settings-specified Multiplexor.
@@ -256,18 +240,22 @@ public class Core
         }
 
         // Load the plugin config.
-        URL pluginConfigURL = URLTools.contextualize(this.baseURL, this._settings.getPluginConfigURL());
-        try
+        URL pluginConfigURL = this._settings.getPluginConfigURL();
+        if (pluginConfigURL != null)
         {
-            if (pluginConfigURL.openStream() != null)
+            pluginConfigURL = URLTools.contextualize(this.baseURL, pluginConfigURL);
+            try
             {
-                Loader pluginConfigLoader = new Loader(this.baseURL, PLUGIN_CONFIG_NS_URI, this.xmlCatalog, this.logger);
-                this.pluginConfig = pluginConfigLoader.parse(pluginConfigURL);
+                if (pluginConfigURL.openStream() != null)
+                {
+                    Loader pluginConfigLoader = new Loader(this.baseURL, PLUGIN_CONFIG_NS_URI, this.xmlCatalog, this.logger);
+                    this.pluginConfig = pluginConfigLoader.parse(pluginConfigURL);
+                }
             }
-        }
-        catch (IOException e)
-        {
-            // Don't load plugin config.
+            catch (IOException e)
+            {
+                // Don't load plugin config.
+            }
         }
 
         Package pkg = Package.getPackage("org.aitools.programd");
@@ -300,7 +288,15 @@ public class Core
             this.logger.info("Starting up the Graphmaster.");
 
             // Start loading bots.
-            loadBots(this._settings.getBotConfigURL());
+            URL botConfigURL = this._settings.getBotConfigURL();
+            if (botConfigURL != null)
+            {
+                loadBots(botConfigURL);
+            }
+            else
+            {
+                this.logger.warn("No bot config URL specified; no bots will be loaded.");
+            }
 
             // Request garbage collection.
             System.gc();
@@ -399,196 +395,54 @@ public class Core
             this.logger.info("JavaScript interpreter not started.");
         }
     }
-
+    
     /**
-     * Loads the <code>Graphmaster</code> with the contents of a given path.
+     * Loads the given path for the given botid.
      * 
-     * @param path path to the file(s) to load
+     * @param path
      * @param botid
      */
     public void load(URL path, String botid)
     {
-        // Handle paths with wildcards that need to be expanded.
-        if (path.getProtocol().equals(Filesystem.FILE))
-        {
-            String spec = path.getFile();
-            if (spec.indexOf('*') != -1)
-            {
-                List<File> files = null;
-
-                try
-                {
-                    files = Filesystem.glob(spec);
-                }
-                catch (FileNotFoundException e)
-                {
-                    this.logger.warn(e.getMessage());
-                }
-                if (files != null)
-                {
-                    for (File file : files)
-                    {
-                        load(URLTools.contextualize(URLTools.getParent(path), file.getAbsolutePath()), botid);
-                    }
-                }
-                return;
-            }
-        }
-
-        Bot bot = this.bots.get(botid);
-
-        if (!shouldLoad(path, bot))
-        {
-            return;
-        }
-
-        // Filesystem.pushWorkingDirectory(URLTools.getParent(path));
-
-        // Let the Graphmaster use a shortcut if possible.
-        if (this.graphmaster.hasAlreadyLoaded(path))
-        {
-            if (this.graphmaster.hasAlreadyLoadedForBot(path, botid))
-            {
-                this.graphmaster.unload(path, bot);
-                doLoad(path, botid);
-            }
-            if (this.logger.isDebugEnabled())
-            {
-                this.logger.debug(String.format("Graphmaster has already loaded \"%s\" for some other bot.", path));
-            }
-            this.graphmaster.addForBot(path, botid);
-        }
-        else
-        {
-            if (this._settings.noteEachLoadedFile())
-            {
-                this.logger.info("Loading " + URLTools.unescape(path) + "....");
-            }
-            doLoad(path, botid);
-            // Add it to the AIMLWatcher, if active.
-            if (this._settings.useAIMLWatcher())
-            {
-                this.aimlWatcher.addWatchFile(path);
-            }
-        }
-        // Filesystem.popWorkingDirectory();
+        this._graphmapper.load(path, botid);
     }
-
+    
     /**
-     * Reloads a file&mdash;it is not necessary to specify a particular botid here, because a reload of a file for one
-     * botid suffices for all bots associated with that file.
+     * Reloads the given path for the given botid.
      * 
      * @param path
-     * @throws IllegalArgumentException if the given path is not actually loaded for <em>any</em> bot
      */
     public void reload(URL path)
     {
-        Set<String> botids = this.graphmaster.getURLCatalog().get(path);
-        if (botids == null || botids.size() == 0)
+        Set<Bot> bots = new HashSet<Bot>();
+        for (Bot bot : this._bots.values())
         {
-            throw new IllegalArgumentException("Called Core.reload() with a path that is not loaded by any bot.");
+            if (bot.getLoadedFilesMap().containsKey(path))
+            {
+                bots.add(bot);
+            }
         }
-        // Get any botid -- we don't care.
-        doLoad(path, botids.iterator().next());
+        // First unload all,
+        for (Bot bot : bots)
+        {
+            this._graphmapper.unload(path, bot);
+        }
+        // then reload all.
+        for (Bot bot : bots)
+        {
+            this._graphmapper.load(path, bot.getID());
+        }
     }
-
+    
     /**
-     * An internal method used by {@link #load(URL, String)}.
+     * Unloads the given path for the given botid.
      * 
      * @param path
      * @param botid
      */
-    protected void doLoad(URL path, String botid)
+    public void unload(URL path, String botid)
     {
-        try
-        {
-            AIMLReader reader = new AIMLReader(this.graphmaster, path, botid, this.bots.get(botid), this._settings
-                    .getAIMLNamespaceURI().toString());
-            try
-            {
-                this.parser.getXMLReader().setProperty("http://xml.org/sax/properties/lexical-handler", reader);
-            }
-            catch (SAXNotRecognizedException e)
-            {
-                this.logger.warn(
-                        "The XML reader in use does not support lexical handlers -- CDATA will not be handled.", e);
-            }
-            catch (SAXNotSupportedException e)
-            {
-                this.logger
-                        .warn(
-                                "The XML reader in use cannot enable the lexical handler feature -- CDATA will not be handled.",
-                                e);
-            }
-            catch (SAXException e)
-            {
-                this.logger
-                        .warn(
-                                "An exception occurred when trying to enable the lexical handler feature on the XML reader -- CDATA will not be handled.",
-                                e);
-            }
-            this.parser.parse(path.toString(), reader);
-            // System.gc();
-            this.graphmaster.addURL(path, botid);
-        }
-        catch (IOException e)
-        {
-            this.logger.warn(String.format("Error reading \"%s\": %s", URLTools.unescape(path), e.getMessage()), e);
-        }
-        catch (SAXException e)
-        {
-            this.logger.warn(String.format("Error parsing \"%s\": %s", URLTools.unescape(path), e.getMessage()), e);
-        }
-    }
-
-    /**
-     * Tracks/checks whether a given path should be loaded, depending on whether or not it's currently
-     * &quot;loadtime&quot;; if the file has already been loaded and is allowed to be reloaded, unloads the file first.
-     * 
-     * @param path the path to check
-     * @param bot the bot for whom to check
-     * @return whether or not the given path should be loaded
-     */
-    protected boolean shouldLoad(URL path, Bot bot)
-    {
-        if (bot == null)
-        {
-            throw new NullPointerException("Null bot passed to loadCheck().");
-        }
-
-        Map<URL, Set<Nodemapper>> loadedFiles = bot.getLoadedFilesMap();
-
-        if (loadedFiles.keySet().contains(path))
-        {
-            // At load time, don't load an already-loaded file.
-            if (this.loadtime)
-            {
-                return false;
-            }
-            // At other times, unload the file before loading it again.
-            this.graphmaster.unload(path, bot);
-        }
-        else
-        {
-            loadedFiles.put(path, new HashSet<Nodemapper>());
-        }
-        return true;
-    }
-
-    /**
-     * Sets "loadtime" mode (so accidentally duplicated paths in a load config won't be loaded multiple times).
-     */
-    public void setLoadtime()
-    {
-        this.loadtime = true;
-    }
-
-    /**
-     * Unsets "loadtime" mode.
-     */
-    public void unsetLoadtime()
-    {
-        this.loadtime = false;
+        this._graphmapper.unload(path, getBot(botid));
     }
 
     /**
@@ -601,7 +455,7 @@ public class Core
     {
         if (this.status == Status.READY)
         {
-            Bot bot = this.bots.getABot();
+            Bot bot = this._bots.getABot();
             if (bot != null)
             {
                 this.multiplexor.getResponse(input, this.hostname, bot.getID());
@@ -812,17 +666,17 @@ public class Core
      */
     public void unloadBot(String id)
     {
-        if (!this.bots.containsKey(id))
+        if (!this._bots.containsKey(id))
         {
             this.logger.warn("Bot \"" + id + "\" is not loaded; cannot unload.");
             return;
         }
-        Bot bot = this.bots.get(id);
+        Bot bot = this._bots.get(id);
         for (URL path : bot.getLoadedFilesMap().keySet())
         {
-            this.graphmaster.unload(path, bot);
+            this._graphmapper.unload(path, bot);
         }
-        this.bots.remove(id);
+        this._bots.remove(id);
         this.logger.info("Bot \"" + id + "\" has been unloaded.");
     }
 
@@ -836,9 +690,9 @@ public class Core
      */
     public Bots getBots()
     {
-        if (this.bots != null)
+        if (this._bots != null)
         {
-            return this.bots;
+            return this._bots;
         }
         throw new NullPointerException("The Core's Bots object has not yet been initialized!");
     }
@@ -849,19 +703,19 @@ public class Core
      */
     public Bot getBot(String id)
     {
-        return this.bots.get(id);
+        return this._bots.get(id);
     }
 
     /**
-     * @return the Graphmaster
+     * @return the Graphmapper
      */
-    public Graphmaster getGraphmaster()
+    public Graphmapper getGraphmapper()
     {
-        if (this.graphmaster != null)
+        if (this._graphmapper != null)
         {
-            return this.graphmaster;
+            return this._graphmapper;
         }
-        throw new NullPointerException("The Core's Graphmaster object has not yet been initialized!");
+        throw new NullPointerException("The Core's Graphmapper object has not yet been initialized!");
     }
 
     /**
@@ -1024,5 +878,26 @@ public class Core
     public URL getCatalog()
     {
         return this.xmlCatalog;
+    }
+    
+    /**
+     * Returns a dbmanager object, first creating it if necessary.
+     * 
+     * @return a dbmanager
+     */
+    public DbAccessRefsPoolMgr getDBManager()
+    {
+        if (this.dbManager == null)
+        {
+            this.logger.debug("Opening database pool.");
+    
+            this.dbManager = new DbAccessRefsPoolMgr(this._settings.getDatabaseDriver(), this._settings.getDatabaseURL(),
+                    this._settings.getDatabaseUsername(), this._settings.getDatabasePassword());
+    
+            this.logger.debug("Populating database pool.");
+    
+            this.dbManager.populate(this._settings.getDatabaseMaximumConnections());
+        }
+        return this.dbManager;
     }
 }
