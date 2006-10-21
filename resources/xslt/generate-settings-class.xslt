@@ -73,6 +73,7 @@
                     <import>javax.xml.xpath.XPath</import>
                     <import>javax.xml.xpath.XPathExpressionException</import>
                     <import>javax.xml.xpath.XPathFactory</import>
+                    <import>org.apache.log4j.Logger</import>
                     <import>org.w3c.dom.Document</import>
                     <import>org.aitools.util.resource.URITools</import>
                     <import>org.aitools.util.resource.URLTools</import>
@@ -91,6 +92,9 @@
     
     /** The URL of the XML catalog which will point to schemas. */
     private URL _catalog;
+
+    /** A logger. */
+    private Logger _logger;
     
     /**
      * Creates a &lt;code&gt;</xsl:text>
@@ -101,14 +105,16 @@
      * @param path the path to the settings file
      * @param base the URL against which to resolve relative URLs
      * @param catalog   location of the XML catalog to use
+     * @param logger
      */
     public </xsl:text>
                     <xsl:value-of select="$simple-classname"/>
-                    <xsl:text>(URL path, URL base, URL catalog)
+                    <xsl:text>(URL path, URL base, URL catalog, Logger logger)
     {
         this._path = path;
         this._base = base;
         this._catalog = catalog;
+        this._logger = logger;
         initialize();
     }
     
@@ -262,7 +268,7 @@
     protected void initialize()
     {
         final String CONFIG_NS_URI = "http://aitools.org/programd/4.7/programd-configuration";
-        Loader loader = new Loader(this._base, CONFIG_NS_URI, this._catalog);
+        Loader loader = new Loader(this._base, CONFIG_NS_URI, this._catalog, this._logger);
         Document document = loader.parse(this._path);
         XPath xpath = XPathFactory.newInstance().newXPath();
         NamespaceContextImpl ns = new NamespaceContextImpl();
@@ -442,47 +448,49 @@
         <xsl:variable name="type" select="d:get-type(.)"/>
         <!--Discover default.-->
         <xsl:variable name="default" select="d:get-default(.)"/>
-        <xsl:choose>
-            <xsl:when test="$type = 'boolean'">
-                <xsl:apply-templates select="." mode="default-initializer">
-                    <xsl:with-param name="conversion">Boolean.parseBoolean</xsl:with-param>
-                    <xsl:with-param name="default" select="$default"/>
-                </xsl:apply-templates>
-            </xsl:when>
-            <xsl:when test="$type = 'int'">
-                <xsl:apply-templates select="." mode="default-initializer">
-                    <xsl:with-param name="conversion">Integer.parseInt</xsl:with-param>
-                    <xsl:with-param name="default" select="$default"/>
-                </xsl:apply-templates>
-            </xsl:when>
-            <xsl:when test="$type = 'String'">
-                <xsl:apply-templates select="." mode="default-initializer">
-                    <xsl:with-param name="default" select="$default"/>
-                </xsl:apply-templates>
-            </xsl:when>
-            <xsl:when test="$type = 'URI'">
-                <xsl:apply-templates select="." mode="default-initializer">
-                    <xsl:with-param name="conversion">URITools.createValidURI</xsl:with-param>
-                    <xsl:with-param name="conversion-arguments">, false</xsl:with-param>
-                    <xsl:with-param name="default" select="$default"/>
-                    <xsl:with-param name="exception">FileNotFoundException</xsl:with-param>
-                </xsl:apply-templates>
-            </xsl:when>
-            <xsl:when test="$type = 'URL'">
-                <xsl:apply-templates select="." mode="default-initializer">
-                    <xsl:with-param name="conversion">URLTools.createValidURL</xsl:with-param>
-                    <xsl:with-param name="conversion-arguments">, false</xsl:with-param>
-                    <xsl:with-param name="default" select="$default"/>
-                    <xsl:with-param name="exception">FileNotFoundException</xsl:with-param>
-                </xsl:apply-templates>
-            </xsl:when>
-            <xsl:when test="starts-with($type, 'enum ')">
-                <xsl:apply-templates select="." mode="default-initializer">
-                    <xsl:with-param name="default" select="concat(substring-after($type, 'enum '), '.', d:enum-name($default))"/>
-                    <xsl:with-param name="quote" select="false()"/>
-                </xsl:apply-templates>
-            </xsl:when>
-        </xsl:choose>
+        <xsl:if test="string-length($default) &gt; 0">
+            <xsl:choose>
+                <xsl:when test="$type = 'boolean'">
+                    <xsl:apply-templates select="." mode="default-initializer">
+                        <xsl:with-param name="conversion">Boolean.parseBoolean</xsl:with-param>
+                        <xsl:with-param name="default" select="$default"/>
+                    </xsl:apply-templates>
+                </xsl:when>
+                <xsl:when test="$type = 'int'">
+                    <xsl:apply-templates select="." mode="default-initializer">
+                        <xsl:with-param name="conversion">Integer.parseInt</xsl:with-param>
+                        <xsl:with-param name="default" select="$default"/>
+                    </xsl:apply-templates>
+                </xsl:when>
+                <xsl:when test="$type = 'String'">
+                    <xsl:apply-templates select="." mode="default-initializer">
+                        <xsl:with-param name="default" select="$default"/>
+                    </xsl:apply-templates>
+                </xsl:when>
+                <xsl:when test="$type = 'URI'">
+                    <xsl:apply-templates select="." mode="default-initializer">
+                        <xsl:with-param name="conversion">URITools.createValidURI</xsl:with-param>
+                        <xsl:with-param name="conversion-arguments">, false</xsl:with-param>
+                        <xsl:with-param name="default" select="$default"/>
+                        <xsl:with-param name="exception">FileNotFoundException</xsl:with-param>
+                    </xsl:apply-templates>
+                </xsl:when>
+                <xsl:when test="$type = 'URL'">
+                    <xsl:apply-templates select="." mode="default-initializer">
+                        <xsl:with-param name="conversion">URLTools.createValidURL</xsl:with-param>
+                        <xsl:with-param name="conversion-arguments">, false</xsl:with-param>
+                        <xsl:with-param name="default" select="$default"/>
+                        <xsl:with-param name="exception">FileNotFoundException</xsl:with-param>
+                    </xsl:apply-templates>
+                </xsl:when>
+                <xsl:when test="starts-with($type, 'enum ')">
+                    <xsl:apply-templates select="." mode="default-initializer">
+                        <xsl:with-param name="default" select="concat(substring-after($type, 'enum '), '.', d:enum-name($default))"/>
+                        <xsl:with-param name="quote" select="false()"/>
+                    </xsl:apply-templates>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:if>        
     </xsl:template>
     
     <!--Make an initializer that assigns a default value.-->
@@ -495,9 +503,9 @@
         <xsl:if test="$exception">
             <xsl:text>        try
         {
-</xsl:text>
+    </xsl:text>
         </xsl:if>
-        <xsl:text>            set</xsl:text>
+        <xsl:text>        set</xsl:text>
         <xsl:value-of select="d:title-case(.)"/>
         <xsl:text>(</xsl:text>
         <xsl:if test="$conversion">
