@@ -13,6 +13,7 @@ import java.net.URL;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.aitools.util.resource.URITools;
 import org.aitools.util.resource.URLTools;
@@ -20,10 +21,9 @@ import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.runtime.UserError;
 import org.aitools.util.xml.Loader;
 import org.aitools.util.xml.NamespaceContextImpl;
-import org.apache.log4j.Logger;
 
 /**
- * Automatically generated at 2006-10-11T14:09:27.257-04:00.
+ * Automatically generated at 2006-10-20T21:52:22.423-04:00.
  */
 public class XMLCoreSettings extends CoreSettings
 {
@@ -35,7 +35,8 @@ public class XMLCoreSettings extends CoreSettings
     
     /** The URL of the XML catalog which will point to schemas. */
     private URL _catalog;
-    
+
+    /** A logger. */
     private Logger _logger;
     
     /**
@@ -178,6 +179,7 @@ public class XMLCoreSettings extends CoreSettings
                 setRandomStrategy(RandomStrategy.NON_REPEATING);
             }
 
+            setGraphmapperImplementation(xpath.evaluate("/d:programd/d:graphmapper.implementation", document));
             setNodemapperImplementation(xpath.evaluate("/d:programd/d:nodemapper.implementation", document));
             setUseShell(Boolean.parseBoolean(xpath.evaluate("/d:programd/d:use-shell", document)));
         }

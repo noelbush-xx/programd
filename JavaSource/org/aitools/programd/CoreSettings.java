@@ -13,7 +13,7 @@ import java.net.URL;
 import org.aitools.util.Settings;
 
 /**
- * Automatically generated at 2006-10-11T14:09:27.257-04:00.
+ * Automatically generated at 2006-10-20T21:52:22.423-04:00.
  */
 abstract public class CoreSettings extends Settings
 {
@@ -148,6 +148,9 @@ abstract public class CoreSettings extends Settings
         NON_REPEATING
     }
 
+    /** The Graphmapper implementation to use. */
+    private String graphmapperImplementation;
+        
     /** The Nodemapper implementation to use. */
     private String nodemapperImplementation;
         
@@ -432,6 +435,14 @@ abstract public class CoreSettings extends Settings
     public RandomStrategy getRandomStrategy()
     {
         return this.randomStrategy;
+    }
+
+    /**
+     * @return the value of graphmapperImplementation
+     */
+    public String getGraphmapperImplementation()
+    {
+        return this.graphmapperImplementation;
     }
 
     /**
@@ -728,6 +739,14 @@ abstract public class CoreSettings extends Settings
     public void setRandomStrategy(RandomStrategy value)
     {
         this.randomStrategy = value;
+    }
+
+    /**
+     * @param value the value for graphmapperImplementation
+     */
+    public void setGraphmapperImplementation(String value)
+    {
+        this.graphmapperImplementation = value;
     }
 
     /**
