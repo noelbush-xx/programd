@@ -43,7 +43,7 @@ public class AjaxEnablingBotServlet extends JSPOrientedBotServlet
     }
 
     /**
-     * Creates a {@link org.aitools.programd.bot.Bot Bot} object if necessary, puts it in a session attribute, and
+     * Creates a {@link org.aitools.programd.Bot Bot} object if necessary, puts it in a session attribute, and
      * forwards to a JSP page.
      * 
      * @param req the request

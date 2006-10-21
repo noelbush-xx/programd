@@ -41,6 +41,6 @@ public class SizeProcessor extends AIMLProcessor
     @SuppressWarnings("unused")
     public String process(Element element, TemplateParser parser)
     {
-        return String.valueOf(parser.getCore().getGraphmaster().getCategoryCount());
+        return String.valueOf(parser.getCore().getGraphmapper().getCategoryCount());
     }
 }

@@ -18,7 +18,7 @@ public class Bot extends SimpleTagSupport
     protected String name;
 
     /** The Bot from which values will be gotten. */
-    protected org.aitools.programd.bot.Bot bot;
+    protected org.aitools.programd.Bot bot;
 
     /**
      * Sets the name attribute.

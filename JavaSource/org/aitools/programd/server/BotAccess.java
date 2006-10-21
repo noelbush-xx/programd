@@ -54,7 +54,7 @@ public class BotAccess
     /**
      * @return the underlying bot object
      */
-    public org.aitools.programd.bot.Bot getBot()
+    public org.aitools.programd.Bot getBot()
     {
         return this._core.getBot(this.botid);
     }

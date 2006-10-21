@@ -15,8 +15,8 @@ import java.util.regex.PatternSyntaxException;
 
 import org.w3c.dom.Element;
 
+import org.aitools.programd.Bot;
 import org.aitools.programd.Core;
-import org.aitools.programd.bot.Bot;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.util.runtime.UserError;

@@ -12,7 +12,7 @@ package org.aitools.programd.test.aiml;
 import java.net.URL;
 import java.util.List;
 
-import org.aitools.programd.bot.Bot;
+import org.aitools.programd.Bot;
 import org.aitools.programd.interfaces.shell.Shell;
 import org.aitools.programd.interfaces.shell.ShellCommand;
 import org.apache.log4j.LogManager;

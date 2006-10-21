@@ -14,8 +14,8 @@ import org.w3c.dom.Element;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aitools.programd.Bot;
 import org.aitools.programd.Core;
-import org.aitools.programd.bot.Bot;
 import org.aitools.programd.parser.GenericParser;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.util.runtime.DeveloperError;

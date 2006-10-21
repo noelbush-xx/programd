@@ -8,9 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.aitools.programd.Bot;
+import org.aitools.programd.Bots;
 import org.aitools.programd.Core;
-import org.aitools.programd.bot.Bot;
-import org.aitools.programd.bot.Bots;
 
 /**
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>

@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 import org.w3c.dom.Element;
 
+import org.aitools.programd.Bot;
 import org.aitools.programd.Core;
-import org.aitools.programd.bot.Bot;
 import org.aitools.programd.listener.Listener;
 import org.aitools.programd.listener.InvalidListenerParameterException;
 import org.aitools.programd.parser.BotsConfigurationFileParser;

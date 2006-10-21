@@ -9,8 +9,8 @@
 
 package org.aitools.programd.parser;
 
+import org.aitools.programd.Bot;
 import org.aitools.programd.Core;
-import org.aitools.programd.bot.Bot;
 import org.aitools.programd.processor.botconfiguration.BotConfigurationElementProcessor;
 
 /**

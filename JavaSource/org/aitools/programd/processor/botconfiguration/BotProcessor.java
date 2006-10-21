@@ -14,10 +14,10 @@ import java.util.Date;
 
 import org.w3c.dom.Element;
 
+import org.aitools.programd.Bot;
+import org.aitools.programd.Bots;
 import org.aitools.programd.Core;
-import org.aitools.programd.bot.Bot;
-import org.aitools.programd.bot.Bots;
-import org.aitools.programd.graph.Graphmaster;
+import org.aitools.programd.graph.Graphmapper;
 import org.aitools.programd.parser.BotsConfigurationFileParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.util.resource.URLTools;
@@ -91,12 +91,10 @@ public class BotProcessor extends BotConfigurationElementProcessor
                 parser.setCurrentBot(bot);
                 bots.put(botID, bot);
 
-                Graphmaster graphmaster = this._core.getGraphmaster();
+                Graphmapper graphmapper = this._core.getGraphmapper();
 
-                int previousCategoryCount = graphmaster.getCategoryCount();
-                int previousDuplicateCount = graphmaster.getDuplicateCategoryCount();
-
-                this._core.setLoadtime();
+                int previousCategoryCount = graphmapper.getCategoryCount();
+                int previousDuplicateCount = graphmapper.getDuplicateCategoryCount();
 
                 // Stop the AIMLWatcher while loading.
                 if (this._core.getSettings().useAIMLWatcher())
@@ -113,25 +111,17 @@ public class BotProcessor extends BotConfigurationElementProcessor
                 // Calculate the time used to load all categories.
                 time = new Date().getTime() - time;
 
-                this._core.unsetLoadtime();
-
                 // Restart the AIMLWatcher.
                 if (this._core.getSettings().useAIMLWatcher())
                 {
                     this._core.getAIMLWatcher().start();
                 }
 
-                logger.info(String.format("%,d categories loaded in %.4f seconds.", graphmaster.getCategoryCount()
+                logger.info(String.format("%,d categories loaded in %.4f seconds.", graphmapper.getCategoryCount()
                         - previousCategoryCount, time / 1000.00));
-                logger.info(graphmaster.getCategoryReport());
-                if (logger.isDebugEnabled())
-                {
-                    logger.debug(String.format("%,d Nodemappers in Graphmaster.", graphmaster.getNodemapperCount()));
-                    logger.debug(String.format("Average Nodemapper size: %,.4f.", graphmaster
-                            .getAverageNodemapperSize()));
-                }
+                logger.info(graphmapper.getCategoryReport());
 
-                int dupes = graphmaster.getDuplicateCategoryCount() - previousDuplicateCount;
+                int dupes = graphmapper.getDuplicateCategoryCount() - previousDuplicateCount;
                 if (dupes > 0)
                 {
                     logger
