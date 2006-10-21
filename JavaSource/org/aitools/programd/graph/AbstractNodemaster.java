@@ -12,54 +12,54 @@ package org.aitools.programd.graph;
 import java.util.LinkedHashMap;
 
 /**
- * This is an abstract Nodemaster containing all the things that are common to the various optimization strategies.
+ * This is an abstract memory-based <code>Nodemapper</code> containing all the things that
+ * are common to the various optimization strategies.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 abstract public class AbstractNodemaster implements Nodemapper
 {
     /**
-     * The hidden hashmap where some (or all) mappings may be stored, depending upon optimization strategies.
+     * The hidden hashmap where some (or all) mappings may be stored, depending
+     * upon optimization strategies.
      */
     protected LinkedHashMap<String, Object> hidden;
 
     /**
-     * The minimum number of words needed to reach a leaf node from here. Defaults to zero.
+     * The minimum number of words needed to reach a leaf node from here.
+     * Defaults to zero.
      */
-    protected int height = 0;
+    protected int _height = 0;
 
     /** The parent of this Nodemaster. */
-    protected Nodemapper parent;
+    protected Nodemapper _parent;
 
     /**
-     * Sets the parent of the Nodemaster.
-     * 
-     * @param parentToSet
-     *            the parent to set
+     * @see org.aitools.programd.graph.Nodemapper#setParent(org.aitools.programd.graph.Nodemapper)
      */
-    public void setParent(Nodemapper parentToSet)
+    public void setParent(Nodemapper parent)
     {
-        this.parent = parentToSet;
+        this._parent = parent;
     }
 
     /**
-     * @return the parent of the Nodemaster
+     * @see org.aitools.programd.graph.Nodemapper#getParent()
      */
     public Nodemapper getParent()
     {
-        return this.parent;
+        return this._parent;
     }
 
     /**
-     * @return the height of the Nodemaster
+     * @see org.aitools.programd.graph.Nodemapper#getHeight()
      */
     public int getHeight()
     {
-        return this.height;
+        return this._height;
     }
 
     /**
-     * Sets the Nodemaster as being at the top.
+     * @see org.aitools.programd.graph.Nodemapper#setTop()
      */
     public void setTop()
     {
@@ -67,21 +67,21 @@ abstract public class AbstractNodemaster implements Nodemapper
     }
 
     /**
-     * Sets the <code>height</code> of this <code>Nodemaster</code> to <code>height</code>, and calls
-     * <code>fillInHeight()</code> on its parent (if not null) with a height <code>height + 1</code>.
+     * Sets the <code>height</code> of this <code>AbstractNodemaster</code> to
+     * <code>height</code>, and calls <code>fillInHeight()</code> on its
+     * parent (if not null) with a height <code>height + 1</code>.
      * 
-     * @param heightToFillIn
-     *            the height for this node
+     * @param height the height for this node
      */
-    protected void fillInHeight(int heightToFillIn)
+    protected void fillInHeight(int height)
     {
-        if (this.height > heightToFillIn)
+        if (this._height > height)
         {
-            this.height = heightToFillIn;
+            this._height = height;
         }
-        if (this.parent != null)
+        if (this._parent != null)
         {
-            ((AbstractNodemaster) this.parent).fillInHeight(heightToFillIn + 1);
+            ((AbstractNodemaster) this._parent).fillInHeight(height + 1);
         }
     }
 }
