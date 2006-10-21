@@ -10,12 +10,20 @@
 package org.aitools.programd.util;
 
 /**
- * Indicates that no match was found in the {@link org.aitools.programd.graph.Graphmaster} .
+ * Indicates that no match was found in the {@link org.aitools.programd.graph.Graphmapper} .
  */
 public class NoMatchException extends Exception
 {
     /** The path for which there was no match. */
     private String _path;
+
+    /**
+     * Constructs a new NoMatchException with no path specified.
+     */
+    public NoMatchException()
+    {
+        // Nothing to do.
+    }
 
     /**
      * Constructs a new NoMatchException for the given path.
@@ -33,6 +41,10 @@ public class NoMatchException extends Exception
     @Override
     public String getMessage()
     {
-        return "No match found for path \"" + this._path + "\".";
+        if (this._path != null)
+        {
+            return "No match found for path \"" + this._path + "\".";
+        }
+        return "No match found.";
     }
 }
