@@ -59,6 +59,7 @@
     </loading>
     <connect-string>CONNECT</connect-string>
     <random-strategy>non-repeating</random-strategy>
+    <graphmapper.implementation>org.aitools.programd.graph.Graphmaster</graphmapper.implementation>
     <nodemapper.implementation>org.aitools.programd.graph.TwoOptimalNodemaster</nodemapper.implementation>
     <use-shell>true</use-shell>
 </programd>
