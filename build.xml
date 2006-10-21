@@ -14,7 +14,7 @@
         <property name="javac.jvm-target" value="1.5" />
         <property name="javac.source" value="1.5" />
 
-        <property name="src.dir" value="${basedir}/JavaSource" />
+        <property name="src.dir" value="${basedir}/src" />
         <property name="webapp.dir" value="${basedir}/WebContent" />
         <property name="webapp.lib.dir" value="${webapp.dir}/WEB-INF/lib" />
         <property name="compile.lib.dir" value="${basedir}/lib" />
@@ -328,7 +328,7 @@
                 <exclude name="ffm/**" />
                 <exclude name="lib/*-listener/*.jar" />
                 <exclude name="logs/**" />
-                <exclude name="JavaSource/**" />
+                <exclude name="src/**" />
                 <exclude name="secret.key" />
             </fileset>
             <fileset dir="${basedir}">
