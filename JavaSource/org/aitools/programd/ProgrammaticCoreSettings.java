@@ -14,7 +14,7 @@ import org.aitools.util.resource.URLTools;
 import org.aitools.util.runtime.UserError;
 
 /**
- * Automatically generated at 2006-10-11T14:09:27.257-04:00.
+ * Automatically generated at 2006-10-20T21:52:22.423-04:00.
  */
 public class ProgrammaticCoreSettings extends CoreSettings
 {
@@ -43,60 +43,25 @@ public class ProgrammaticCoreSettings extends CoreSettings
         {
             throw new UserError("Error in settings.", e);
         }
-        try
-        {
-            setBotConfigURL(URLTools.createValidURL("bots.xml", false));
-        }
-        catch (FileNotFoundException e)
-        {
-            throw new UserError("Error in settings.", e);
-        }
-        try
-        {
-            setPluginConfigURL(URLTools.createValidURL("plugins.xml", false));
-        }
-        catch (FileNotFoundException e)
-        {
-            throw new UserError("Error in settings.", e);
-        }
-        try
-        {
-            setGossipURL(URLTools.createValidURL("/var/log/programd/gossip.txt", false));
-        }
-        catch (FileNotFoundException e)
-        {
-            throw new UserError("Error in settings.", e);
-        }
-            setPredicateEmptyDefault("undefined");
-            setClientNamePredicate("name");
-            setBotNameProperty("name");
-            setPredicateFlushPeriod(Integer.parseInt("500"));
-            setMultiplexorImplementation("org.aitools.programd.multiplexor.FlatFileMultiplexor");
-        try
-        {
-            setFfmDirectory(URLTools.createValidURL("/var/programd/ffm", false));
-        }
-        catch (FileNotFoundException e)
-        {
-            throw new UserError("Error in settings.", e);
-        }
-            setDatabaseURL("jdbc:mysql:///programdbot");
-            setDatabaseDriver("com.mysql.jdbc.Driver");
-            setDatabaseMaximumConnections(Integer.parseInt("25"));
-            setDatabaseUsername("programd");
-            setDatabasePassword("yourpassword");
-            setMergePolicy(MergePolicy.COMBINE);
-            setNoteEachMerge(Boolean.parseBoolean("true"));
-            setAppendMergeSeparatorString(" ");
-            setResponseTimeout(Integer.parseInt("1000"));
-            setInfiniteLoopInput("INFINITE LOOP");
-            setPrintStackTraceOnUncaughtExceptions(Boolean.parseBoolean("false"));
-            setHeartPulseRate(Integer.parseInt("5"));
-            setHeartEnabled(Boolean.parseBoolean(""));
-            setAIMLWatcherTimer(Integer.parseInt("2000"));
-            setUseAIMLWatcher(Boolean.parseBoolean(""));
-            setJavascriptInterpreterClassname("org.aitools.programd.interpreter.RhinoInterpreter");
-            setAllowJavaScript(Boolean.parseBoolean(""));
+        setPredicateEmptyDefault("undefined");
+        setClientNamePredicate("name");
+        setBotNameProperty("name");
+        setPredicateFlushPeriod(Integer.parseInt("500"));
+        setMultiplexorImplementation("org.aitools.programd.multiplexor.InMemoryMultiplexor");
+        setDatabaseURL("jdbc:mysql:///programdbot");
+        setDatabaseDriver("com.mysql.jdbc.Driver");
+        setDatabaseMaximumConnections(Integer.parseInt("25"));
+        setDatabaseUsername("programd");
+        setDatabasePassword("yourpassword");
+        setMergePolicy(MergePolicy.COMBINE);
+        setNoteEachMerge(Boolean.parseBoolean("true"));
+        setAppendMergeSeparatorString(" ");
+        setResponseTimeout(Integer.parseInt("1000"));
+        setInfiniteLoopInput("INFINITE LOOP");
+        setPrintStackTraceOnUncaughtExceptions(Boolean.parseBoolean("true"));
+        setHeartPulseRate(Integer.parseInt("5"));
+        setAIMLWatcherTimer(Integer.parseInt("2000"));
+        setJavascriptInterpreterClassname("org.aitools.programd.interpreter.RhinoInterpreter");
         try
         {
             setSystemInterpreterDirectory(URLTools.createValidURL("..", false));
@@ -105,14 +70,13 @@ public class ProgrammaticCoreSettings extends CoreSettings
         {
             throw new UserError("Error in settings.", e);
         }
-            setSystemInterpreterPrefix("");
-            setAllowOSAccess(Boolean.parseBoolean(""));
-            setCategoryLoadNotificationInterval(Integer.parseInt("1000"));
-            setNoteEachLoadedFile(Boolean.parseBoolean("false"));
-            setExitImmediatelyOnStartup(Boolean.parseBoolean("false"));
-            setConnectString("connect");
-            setRandomStrategy(RandomStrategy.NON_REPEATING);
-            setNodemapperImplementation("org.aitools.programd.graph.TwoOptimalNodemaster");
-            setUseShell(Boolean.parseBoolean("true"));
+        setCategoryLoadNotificationInterval(Integer.parseInt("1000"));
+        setNoteEachLoadedFile(Boolean.parseBoolean("false"));
+        setExitImmediatelyOnStartup(Boolean.parseBoolean("false"));
+        setConnectString("connect");
+        setRandomStrategy(RandomStrategy.NON_REPEATING);
+        setGraphmapperImplementation("org.aitools.programd.graph.Graphmaster");
+        setNodemapperImplementation("org.aitools.programd.graph.TwoOptimalNodemaster");
+        setUseShell(Boolean.parseBoolean("true"));
     }
 }
