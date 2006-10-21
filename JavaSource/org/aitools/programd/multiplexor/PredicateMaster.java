@@ -11,9 +11,9 @@ package org.aitools.programd.multiplexor;
 
 import java.util.Map;
 
+import org.aitools.programd.Bots;
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
-import org.aitools.programd.bot.Bots;
 import org.aitools.util.xml.XML;
 import org.apache.log4j.Logger;
 
