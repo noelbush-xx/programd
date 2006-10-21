@@ -16,8 +16,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.ext.DefaultHandler2;
 
-import org.aitools.programd.bot.Bot;
-import org.aitools.programd.graph.Graphmaster;
+import org.aitools.programd.Bot;
+import org.aitools.programd.graph.Graphmapper;
 import org.aitools.util.xml.XML;
 
 /**
@@ -34,11 +34,9 @@ public class AIMLReader extends DefaultHandler2
 {
     private String _defaultNamespaceURI;
 
-    private Graphmaster _graphmaster;
+    private Graphmapper _graphmapper;
 
     private URL _path;
-
-    private String _botid;
 
     private Bot _bot;
 
@@ -94,17 +92,15 @@ public class AIMLReader extends DefaultHandler2
     /**
      * Creates a new AIMLReader.
      * 
-     * @param graphmaster the graphmaster into which new categories are to be loaded.
+     * @param graphmapper the <code>Graphmapper</code> into which new categories are to be loaded.
      * @param url the path that is being read
-     * @param botid the id of the bot into whom categories are being loaded
      * @param bot the bot itself
      * @param defaultNamespaceURI the namespace URI to use when none other is specified (?)
      */
-    public AIMLReader(Graphmaster graphmaster, URL url, String botid, Bot bot, String defaultNamespaceURI)
+    public AIMLReader(Graphmapper graphmapper, URL url, Bot bot, String defaultNamespaceURI)
     {
-        this._graphmaster = graphmaster;
+        this._graphmapper = graphmapper;
         this._path = url;
-        this._botid = botid;
         this._bot = bot;
         this._defaultNamespaceURI = defaultNamespaceURI;
         this.templateStartTag = String.format("<template xmlns=\"%s\">", defaultNamespaceURI);
@@ -224,7 +220,7 @@ public class AIMLReader extends DefaultHandler2
             // Whitespace-normalize the template contents.
             this.template = String.format("%s%s</template>", this.templateStartTag, this.templateBuffer.toString());
             // Finally, deliver the newly defined category to the Graphmaster.
-            this._graphmaster.addCategory(this.pattern, this.that, this.topic, this.template, this._botid, this._bot,
+            this._graphmapper.addCategory(this.pattern, this.that, this.topic, this.template, this._bot,
                     this._path);
             // Reset the pattern, that and template.
             this.pattern = this.that = this.template = null;
