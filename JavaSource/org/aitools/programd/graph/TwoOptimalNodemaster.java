@@ -17,7 +17,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 /**
- * This is an optimization of {@link NodemapperFactory} that avoids creating the internal
+ * This is an optimization of {@link Nodemapper} that avoids creating the internal
  * {@link java.util.LinkedHashMap LinkedMap} until the number of mappings exceeds two (2).
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -35,11 +35,7 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
     protected Object value_1;
 
     /**
-     * Puts the given object into the Nodemaster, associated with the given key.
-     * 
-     * @param key the key to use
-     * @param value the value to put
-     * @return the same object that was put into the Nodemaster
+     * @see org.aitools.programd.graph.Nodemapper#put(java.lang.String, java.lang.Object)
      */
     public Object put(String key, Object value)
     {
@@ -103,21 +99,19 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
     }
 
     /**
-     * Removes the given object from the Nodemaster.
-     * 
-     * @param valueToRemove the object to remove
+     * @see org.aitools.programd.graph.Nodemapper#remove(java.lang.Object)
      */
-    public void remove(Object valueToRemove)
+    public void remove(Object value)
     {
         if (this.size == 2 || this.size == 1)
         {
             // ugly but optimal (see above)
-            if (valueToRemove.equals(this.value_0))
+            if (value.equals(this.value_0))
             {
                 this.value_0 = null;
                 this.key_0 = null;
             }
-            else if (valueToRemove.equals(this.value_1))
+            else if (value.equals(this.value_1))
             {
                 this.value_1 = null;
                 this.key_1 = null;
@@ -126,7 +120,7 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
             {
                 // We didn't find a key.
                 Logger.getLogger("programd.graphmaster").error(
-                        String.format("Key was not found for value when trying to remove \"%s\".", valueToRemove));
+                        String.format("Key was not found for value when trying to remove \"%s\".", value));
                 return;
             }
             this.size--;
@@ -137,7 +131,7 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
             Object keyToRemove = null;
             for (Map.Entry<String, Object> item : this.hidden.entrySet())
             {
-                if (valueToRemove.equals(item.getValue()))
+                if (value.equals(item.getValue()))
                 {
                     // Found it.
                     keyToRemove = item.getKey();
@@ -148,7 +142,7 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
             {
                 // We didn't find a key.
                 Logger.getLogger("programd.graphmaster").error(
-                        String.format("Key was not found for value when trying to remove \"%s\".", valueToRemove));
+                        String.format("Key was not found for value when trying to remove \"%s\".", value));
                 return;
             }
             if (this.size > 3)
@@ -178,17 +172,14 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
         {
             // We didn't find a key.
             Logger.getLogger("programd.graphmaster").error(
-                    String.format("No keys in Nodemapper when trying to remove \"%s\".", valueToRemove));
+                    String.format("No keys in Nodemapper when trying to remove \"%s\".", value));
         }
     }
 
     /**
-     * Gets the object associated with the specified key.
-     * 
-     * @param keyToGet the key to use
-     * @return the object associated with the given key
+     * @see org.aitools.programd.graph.Nodemapper#get(java.lang.String)
      */
-    public Object get(String keyToGet)
+    public Object get(String key)
     {
         if (this.size == 0)
         {
@@ -196,11 +187,11 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
         }
         else if (this.size == 2 || this.size == 1)
         {
-            if (keyToGet.equalsIgnoreCase(this.key_0))
+            if (key.equalsIgnoreCase(this.key_0))
             {
                 return this.value_0;
             }
-            if (keyToGet.equalsIgnoreCase(this.key_1))
+            if (key.equalsIgnoreCase(this.key_1))
             {
                 return this.value_1;
             }
@@ -209,12 +200,12 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
         }
         else
         {
-            return this.hidden.get(keyToGet.toUpperCase());
+            return this.hidden.get(key.toUpperCase());
         }
     }
 
     /**
-     * @return the keyset of the Nodemaster
+     * @see org.aitools.programd.graph.Nodemapper#keySet()
      */
     public Set<String> keySet()
     {
@@ -236,10 +227,9 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
     }
 
     /**
-     * @param keyToCheck the key to check
-     * @return whether or not the Nodemaster contains the given key
+     * @see org.aitools.programd.graph.Nodemapper#containsKey(java.lang.String)
      */
-    public boolean containsKey(String keyToCheck)
+    public boolean containsKey(String key)
     {
         if (this.size == 0)
         {
@@ -247,13 +237,13 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
         }
         else if (this.size == 2 || this.size == 1)
         {
-            return (keyToCheck.equalsIgnoreCase(this.key_0) || keyToCheck.equalsIgnoreCase(this.key_1));
+            return (key.equalsIgnoreCase(this.key_0) || key.equalsIgnoreCase(this.key_1));
         }
-        return this.hidden.containsKey(keyToCheck.toUpperCase());
+        return this.hidden.containsKey(key.toUpperCase());
     }
 
     /**
-     * @return the size of the Nodemaster
+     * @see org.aitools.programd.graph.Nodemapper#size()
      */
     public int size()
     {
@@ -268,26 +258,26 @@ public class TwoOptimalNodemaster extends AbstractNodemaster
         double total = 0d;
         if (this.size < 3)
         {
-            if (this.value_0 != null && this.value_0 instanceof Nodemapper)
+            if (this.value_0 != null && this.value_0 instanceof AbstractNodemaster)
             {
-                total += ((Nodemapper) this.value_0).getAverageSize();
+                total += ((AbstractNodemaster) this.value_0).getAverageSize();
             }
-            if (this.value_1 != null && this.value_1 instanceof Nodemapper)
+            if (this.value_1 != null && this.value_1 instanceof AbstractNodemaster)
             {
-                total += ((Nodemapper) this.value_1).getAverageSize();
+                total += ((AbstractNodemaster) this.value_1).getAverageSize();
             }
         }
         else
         {
             for (Object object : this.hidden.values())
             {
-                if (object instanceof Nodemapper)
+                if (object instanceof AbstractNodemaster)
                 {
-                    total += ((Nodemapper) object).getAverageSize();
+                    total += ((AbstractNodemaster) object).getAverageSize();
                 }
             }
         }
-        if (this.parent != null)
+        if (this._parent != null)
         {
             return (this.size + (total / this.size)) / 2d;
         }

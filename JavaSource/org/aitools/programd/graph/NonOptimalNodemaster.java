@@ -16,7 +16,8 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 /**
- * This is the most trivial, and likely the most wasteful, implementation of {@link Nodemapper Nodemapper}. It does not
+ * This is the most trivial, and likely the most wasteful,
+ * implementation of {@link Nodemapper Nodemapper}. It does not
  * attempt to do any optimizations.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -24,11 +25,7 @@ import org.apache.log4j.Logger;
 public class NonOptimalNodemaster extends AbstractNodemaster
 {
     /**
-     * Puts the given object into the Nodemaster, associated with the given key.
-     * 
-     * @param key the key to use
-     * @param value the value to put
-     * @return the same object that was put into the Nodemaster
+     * @see org.aitools.programd.graph.Nodemapper#put(java.lang.String, java.lang.Object)
      */
     public Object put(String key, Object value)
     {
@@ -45,55 +42,50 @@ public class NonOptimalNodemaster extends AbstractNodemaster
     }
 
     /**
-     * Removes the given object from the Nodemaster.
-     * 
-     * @param valueToRemove the object to remove
+     * @see org.aitools.programd.graph.Nodemapper#remove(java.lang.Object)
      */
-    public void remove(Object valueToRemove)
+    public void remove(Object value)
     {
         // Find the key for this value.
-        Object keyToRemove = null;
+        Object key = null;
         if (this.hidden != null)
         {
             for (Map.Entry<String, Object> item : this.hidden.entrySet())
             {
-                if (item.getValue().equals(valueToRemove))
+                if (item.getValue().equals(value))
                 {
                     // Found it.
-                    keyToRemove = item.getKey();
+                    key = item.getKey();
                     break;
                 }
             }
         }
-        if (keyToRemove == null)
+        if (key == null)
         {
             // We didn't find a key.
             Logger.getLogger("programd.graphmaster").error(
-                    String.format("Key was not found for value when trying to remove \"%s\".", valueToRemove));
+                    String.format("Key was not found for value when trying to remove \"%s\".", value));
             return;
         }
         // Remove the value from the HashMap (ignore the primary
         // value/key pair).
-        this.hidden.remove(keyToRemove);
+        this.hidden.remove(key);
     }
 
     /**
-     * Gets the object associated with the specified key.
-     * 
-     * @param keyToGet the key to use
-     * @return the object associated with the given key
+     * @see org.aitools.programd.graph.Nodemapper#get(java.lang.String)
      */
-    public Object get(String keyToGet)
+    public Object get(String key)
     {
         if (this.hidden == null)
         {
             return null;
         }
-        return this.hidden.get(keyToGet.toUpperCase());
+        return this.hidden.get(key.toUpperCase());
     }
 
     /**
-     * @return the keyset of the Nodemaster
+     * @see org.aitools.programd.graph.Nodemapper#keySet()
      */
     public Set<String> keySet()
     {
@@ -105,20 +97,19 @@ public class NonOptimalNodemaster extends AbstractNodemaster
     }
 
     /**
-     * @param keyToCheck the key to check
-     * @return whether or not the Nodemaster contains the given key
+     * @see org.aitools.programd.graph.Nodemapper#containsKey(java.lang.String)
      */
-    public boolean containsKey(String keyToCheck)
+    public boolean containsKey(String key)
     {
         if (this.hidden == null)
         {
             return false;
         }
-        return this.hidden.containsKey(keyToCheck.toUpperCase());
+        return this.hidden.containsKey(key.toUpperCase());
     }
 
     /**
-     * @return the size of the Nodemaster
+     * @see org.aitools.programd.graph.Nodemapper#size()
      */
     public int size()
     {
@@ -127,63 +118,6 @@ public class NonOptimalNodemaster extends AbstractNodemaster
             return 0;
         }
         return this.hidden.size();
-    }
-
-    /**
-     * Sets the parent of the Nodemaster.
-     * 
-     * @param parentToSet the parent to set
-     */
-    @Override
-    public void setParent(Nodemapper parentToSet)
-    {
-        this.parent = parentToSet;
-    }
-
-    /**
-     * @return the parent of the Nodemaster
-     */
-    @Override
-    public Nodemapper getParent()
-    {
-        return this.parent;
-    }
-
-    /**
-     * @return the height of the Nodemaster
-     */
-    @Override
-    public int getHeight()
-    {
-        return this.height;
-    }
-
-    /**
-     * Sets the Nodemaster as being at the top.
-     */
-    @Override
-    public void setTop()
-    {
-        this.fillInHeight(0);
-    }
-
-    /**
-     * Sets the <code>height</code> of this <code>Nodemaster</code> to <code>height</code>, and calls
-     * <code>fillInHeight()</code> on its parent (if not null) with a height <code>height + 1</code>.
-     * 
-     * @param heightToFillIn the height for this node
-     */
-    @Override
-    protected void fillInHeight(int heightToFillIn)
-    {
-        if (this.height > heightToFillIn)
-        {
-            this.height = heightToFillIn;
-        }
-        if (this.parent != null)
-        {
-            ((NonOptimalNodemaster) this.parent).fillInHeight(heightToFillIn + 1);
-        }
     }
 
     /**
@@ -196,13 +130,13 @@ public class NonOptimalNodemaster extends AbstractNodemaster
         {
             for (Object object : this.hidden.values())
             {
-                if (object instanceof Nodemapper)
+                if (object instanceof AbstractNodemaster)
                 {
-                    total += ((Nodemapper) object).getAverageSize();
+                    total += ((AbstractNodemaster) object).getAverageSize();
                 }
             }
         }
-        if (this.parent != null)
+        if (this._parent != null)
         {
             int size = this.hidden.size();
             return (size + (total / size)) / 2d;
