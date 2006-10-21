@@ -17,13 +17,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.aitools.programd.Core;
-import org.aitools.programd.CoreSettings;
 import org.aitools.util.sql.DbAccess;
 import org.aitools.util.sql.DbAccessRefsPoolMgr;
 import org.aitools.util.resource.URLTools;
 import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.runtime.UserError;
-import org.apache.log4j.Logger;
 
 /**
  * A database-oriented {@link Multiplexor} . Uses a database for storage and retrieval of predicates.
@@ -32,13 +30,10 @@ import org.apache.log4j.Logger;
  * @author Richard Wallace, Jon Baer
  * @author Thomas Ringate/Pedro Colla
  */
-public class DBMultiplexor extends Multiplexor<Statement>
+public class DBMultiplexor extends Multiplexor<DbAccess>
 {
     /** A manager for database access. */
     private DbAccessRefsPoolMgr dbManager;
-
-    /** The logger for database activity. */
-    private Logger dbLogger;
 
     private Map<String, Map<String, String>> userCacheForBots = new HashMap<String, Map<String, String>>();
 
@@ -50,7 +45,6 @@ public class DBMultiplexor extends Multiplexor<Statement>
     public DBMultiplexor(Core core)
     {
         super(core);
-        this.dbLogger = Logger.getLogger("programd");
     }
 
     /**
@@ -59,72 +53,39 @@ public class DBMultiplexor extends Multiplexor<Statement>
     @Override
     public void initialize()
     {
-        CoreSettings coreSettings = this._core.getSettings();
-
-        this.dbLogger.debug("Opening database pool.");
-
-        this.dbManager = new DbAccessRefsPoolMgr(coreSettings.getDatabaseDriver(), coreSettings.getDatabaseURL(),
-                coreSettings.getDatabaseUsername(), coreSettings.getDatabasePassword());
-
-        this.dbLogger.debug("Populating database pool.");
-
-        this.dbManager.populate(coreSettings.getDatabaseMaximumConnections());
+        this.dbManager = this._core.getDBManager();
     }
 
     @Override
     @SuppressWarnings("unused")
-    protected Statement getStorageMechanism(String userid, String botid)
+    protected DbAccess getStorageMechanism(String userid, String botid)
     {
-        DbAccess dbaRef = null;
-        try
-        {
-            dbaRef = this.dbManager.takeDbaRef();
-        }
-        catch (Exception e)
-        {
-            throw new UserError("Could not get database reference.", e);
-        }
-        Statement statement = dbaRef.getStatement();
-        try
-        {
-            statement.addBatch(String.format("START TRANSACTION"));
-        }
-        catch (SQLException e)
-        {
-            throw new DeveloperError("Error adding to statement batch.", e);
-        }
-        this.dbManager.returnDbaRef(dbaRef);
-        return statement;
+        return this.dbManager.takeDbaRef();
     }
 
     @Override
-    protected void preparePredicateForStorage(Statement mechanism, String userid, String botid, String name, PredicateValue value)
+    protected void preparePredicateForStorage(DbAccess mechanism, String userid, String botid, String name, PredicateValue value)
     {
         name = URLTools.encodeUTF8(name);
-        if (value.size() == 1)
+        Statement statement = mechanism.getStatement();
+        try
         {
-            try
+            statement.addBatch(String.format("START TRANSACTION;%n"));
+            if (value.size() == 1)
             {
-                mechanism.addBatch(createSetQuery(userid, botid, name, URLTools.encodeUTF8(value.getFirstValue())));
+                statement.addBatch(createSetQuery(userid, botid, name, URLTools.encodeUTF8(value.getFirstValue())));
             }
-            catch (SQLException e)
+            else
             {
-                throw new DeveloperError("Error adding to statement batch.", e);
+                for (int index = 1; index <= value.size(); index++)
+                {
+                    statement.addBatch(createSetQuery(userid, botid, name + '.' + (index), URLTools.encodeUTF8(value.get(index))));
+                }
             }
         }
-        else
+        catch (SQLException e)
         {
-            for (int index = 1; index <= value.size(); index++)
-            {
-                try
-                {
-                    mechanism.addBatch(createSetQuery(userid, botid, name + '.' + (index), URLTools.encodeUTF8(value.get(index))));
-                }
-                catch (SQLException e)
-                {
-                    throw new DeveloperError("Error adding to statement batch.", e);
-                }
-            }
+            throw new DeveloperError("SQL error preparing predicate for storage.", e);
         }
     }
     
@@ -145,24 +106,19 @@ public class DBMultiplexor extends Multiplexor<Statement>
 
     @Override
     @SuppressWarnings("unused")
-    protected void savePredicates(Statement mechanism, String userid, String botid)
+    protected void savePredicates(DbAccess mechanism, String userid, String botid)
     {
+        Statement statement = mechanism.getStatement();
         try
         {
-            mechanism.addBatch(String.format("COMMIT;%n"));
+            statement.addBatch(String.format("COMMIT;%n"));
+            statement.executeBatch();
         }
         catch (SQLException e)
         {
-            throw new DeveloperError("Error adding to statement batch.", e);
+            throw new DeveloperError("SQL error committing transaction.", e);
         }
-        try
-        {
-            mechanism.executeBatch();
-        }
-        catch (SQLException e)
-        {
-            throw new DeveloperError("Error executing statement batch.", e);
-        }
+        this.dbManager.returnDbaRef(mechanism);
     }
 
     /**
@@ -178,15 +134,7 @@ public class DBMultiplexor extends Multiplexor<Statement>
     public String loadPredicate(String name, String userid, String botid) throws NoSuchPredicateException
     {
         String result = null;
-        DbAccess dbaRef = null;
-        try
-        {
-            dbaRef = this.dbManager.takeDbaRef();
-        }
-        catch (Exception e)
-        {
-            throw new UserError("Could not get database reference.", e);
-        }
+        DbAccess dbaRef = this.dbManager.takeDbaRef();
         try
         {
             ResultSet records =
@@ -199,13 +147,13 @@ public class DBMultiplexor extends Multiplexor<Statement>
                 result = records.getString(VALUE);
             }
             records.close();
-            this.dbManager.returnDbaRef(dbaRef);
         }
         catch (SQLException e)
         {
-            this.dbLogger.error("Database error.", e);
+            this.logger.error("Database error.", e);
             throw new NoSuchPredicateException(name);
         }
+        this.dbManager.returnDbaRef(dbaRef);
         if (result == null)
         {
             throw new NoSuchPredicateException(name);
@@ -227,15 +175,7 @@ public class DBMultiplexor extends Multiplexor<Statement>
     {
         userid = userid.trim().toLowerCase();
         password = password.trim().toLowerCase();
-        DbAccess dba = null;
-        try
-        {
-            dba = this.dbManager.takeDbaRef();
-        }
-        catch (Exception e)
-        {
-            throw new UserError("Could not get database reference.", e);
-        }
+        DbAccess dba = this.dbManager.takeDbaRef();
         try
         {
             ResultSet rs =
@@ -310,15 +250,7 @@ public class DBMultiplexor extends Multiplexor<Statement>
 
         userid = userid.trim().toLowerCase();
         password = password.trim().toLowerCase();
-        DbAccess dbaRef = null;
-        try
-        {
-            dbaRef = this.dbManager.takeDbaRef();
-        }
-        catch (Exception e)
-        {
-            throw new UserError("Could not get database reference.", e);
-        }
+        DbAccess dbaRef = this.dbManager.takeDbaRef();
         try
         {
             ResultSet rs =
@@ -344,12 +276,12 @@ public class DBMultiplexor extends Multiplexor<Statement>
                 }
             }
             rs.close();
-            this.dbManager.returnDbaRef(dbaRef);
         }
         catch (SQLException e)
         {
             throw new UserError("Database error.", e);
         }
+        this.dbManager.returnDbaRef(dbaRef);
         if (passwordInDatabase == null)
         {
             return false;
@@ -370,15 +302,7 @@ public class DBMultiplexor extends Multiplexor<Statement>
     {
         userid = userid.trim().toLowerCase();
         password = password.trim().toLowerCase();
-        DbAccess dbaRef = null;
-        try
-        {
-            dbaRef = this.dbManager.takeDbaRef();
-        }
-        catch (Exception e)
-        {
-            throw new UserError("Could not get database reference.", e);
-        }
+        DbAccess dbaRef = this.dbManager.takeDbaRef();
         try
         {
             ResultSet rs =
@@ -398,12 +322,12 @@ public class DBMultiplexor extends Multiplexor<Statement>
             dbaRef.executeUpdate(
                     String.format("UPDATE `users` SET `password` = '%s' WHERE `userid` = '%s' AND `botid` = '%s'", password, userid, botid));
             rs.close();
-            this.dbManager.returnDbaRef(dbaRef);
         }
         catch (SQLException e)
         {
             throw new UserError("Database error.", e);
         }
+        this.dbManager.returnDbaRef(dbaRef);
         Map<String, String> userCache = this.userCacheForBots.get(botid);
         userCache.remove(userid);
         userCache.put(userid, password);
