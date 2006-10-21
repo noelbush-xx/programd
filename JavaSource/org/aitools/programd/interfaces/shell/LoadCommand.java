@@ -10,7 +10,7 @@
 package org.aitools.programd.interfaces.shell;
 
 import org.aitools.programd.Core;
-import org.aitools.programd.graph.Graphmaster;
+import org.aitools.programd.graph.Graphmapper;
 import org.aitools.util.resource.Filesystem;
 import org.aitools.util.resource.URLTools;
 import org.apache.log4j.Logger;
@@ -64,12 +64,12 @@ public class LoadCommand extends ShellCommand
         else
         {
             Core core = shell.getCore();
-            Graphmaster graphmaster = core.getGraphmaster();
-            int categories = graphmaster.getCategoryCount();
+            Graphmapper graphmapper = core.getGraphmapper();
+            int categories = graphmapper.getCategoryCount();
             String path = commandLine.substring(space + 1);
             core.load(URLTools.contextualize(Filesystem.getWorkingDirectory(), path), shell.getCurrentBotID());
             Logger.getLogger("programd").info(
-                    graphmaster.getCategoryCount() - categories + " categories loaded from \"" + path + "\".");
+                    graphmapper.getCategoryCount() - categories + " categories loaded from \"" + path + "\".");
         }
     }
 }

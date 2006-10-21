@@ -51,6 +51,6 @@ public class CategoriesCommand extends ShellCommand
     @SuppressWarnings( { "boxing", "unused" })
     public void handle(String commandLine, Shell shell)
     {
-        shell.showMessage(shell.getCore().getGraphmaster().getCategoryReport());
+        shell.showMessage(shell.getCore().getGraphmapper().getCategoryReport());
     }
 }

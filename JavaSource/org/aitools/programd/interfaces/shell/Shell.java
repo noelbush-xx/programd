@@ -18,9 +18,10 @@ import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+
+import org.aitools.programd.Bot;
+import org.aitools.programd.Bots;
 import org.aitools.programd.Core;
-import org.aitools.programd.bot.Bot;
-import org.aitools.programd.bot.Bots;
 import org.aitools.programd.multiplexor.PredicateMaster;
 import org.aitools.programd.util.ManagedProcess;
 import org.aitools.util.runtime.DeveloperError;
