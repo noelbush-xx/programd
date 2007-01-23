@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="org/aitools/programd/graph/DBGraphmapper.java|org/aitools/programd/graph/DBNodemapper.java" kind="src" path="src"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="lib" path="lib/gnu.getopt-1.0.10.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api.jar"/>

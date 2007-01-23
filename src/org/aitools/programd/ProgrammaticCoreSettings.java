@@ -14,7 +14,7 @@ import org.aitools.util.resource.URLTools;
 import org.aitools.util.runtime.UserError;
 
 /**
- * Automatically generated at 2006-10-20T21:52:22.423-04:00.
+ * Automatically generated at 2006-10-30T00:08:59.141-05:00.
  */
 public class ProgrammaticCoreSettings extends CoreSettings
 {
@@ -47,8 +47,8 @@ public class ProgrammaticCoreSettings extends CoreSettings
         setClientNamePredicate("name");
         setBotNameProperty("name");
         setPredicateFlushPeriod(Integer.parseInt("500"));
-        setMultiplexorImplementation("org.aitools.programd.multiplexor.InMemoryMultiplexor");
-        setDatabaseURL("jdbc:mysql:///programdbot");
+        setPredicateManagerImplementation("org.aitools.programd.predicates.InMemoryPredicateManager");
+        setDatabaseURL("jdbc:mysql:///programd");
         setDatabaseDriver("com.mysql.jdbc.Driver");
         setDatabaseMaximumConnections(Integer.parseInt("25"));
         setDatabaseUsername("programd");
@@ -59,6 +59,7 @@ public class ProgrammaticCoreSettings extends CoreSettings
         setResponseTimeout(Integer.parseInt("1000"));
         setInfiniteLoopInput("INFINITE LOOP");
         setPrintStackTraceOnUncaughtExceptions(Boolean.parseBoolean("true"));
+        setPulseImplementation("org.aitools.programd.util.IAmAlivePulse");
         setHeartPulseRate(Integer.parseInt("5"));
         setAIMLWatcherTimer(Integer.parseInt("2000"));
         setJavascriptInterpreterClassname("org.aitools.programd.interpreter.RhinoInterpreter");
@@ -75,8 +76,8 @@ public class ProgrammaticCoreSettings extends CoreSettings
         setExitImmediatelyOnStartup(Boolean.parseBoolean("false"));
         setConnectString("connect");
         setRandomStrategy(RandomStrategy.NON_REPEATING);
-        setGraphmapperImplementation("org.aitools.programd.graph.Graphmaster");
-        setNodemapperImplementation("org.aitools.programd.graph.TwoOptimalNodemaster");
+        setGraphmapperImplementation("org.aitools.programd.graph.MemoryGraphmapper");
+        setNodemapperImplementation("org.aitools.programd.graph.TwoOptimalMemoryNodemapper");
         setUseShell(Boolean.parseBoolean("true"));
     }
 }

@@ -7,7 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.aitools.util.xml.XML;
+import org.jdom.Text;
 
 /**
  * A simple HTTP GET based servlet which accepts a user input and botid as
@@ -37,7 +37,7 @@ public class GetBotResponseServlet extends BotServlet
         {
             return;
         }
-        writer.write(XML.filterWhitespace(this.core.getResponse(input, this.userid, this.botid)));
+        writer.write(Text.normalizeString(this.core.getResponse(input, this.userid, this.botid)));
         writer.flush();
         writer.close();
     }

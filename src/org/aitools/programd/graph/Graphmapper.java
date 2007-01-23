@@ -18,7 +18,7 @@ import org.aitools.programd.util.NoMatchException;
  * A <code>Graphmapper</code> is responsible for managing categories.
  * It can {@link #addCategory add} categories, {@link #removeCategory remove} categories,
  * or {@link #match} categories.  The interface is implementation-
- * independent.  There is a memory-based implementation in {@link Graphmaster},
+ * independent.  There is a memory-based implementation in {@link MemoryGraphmapper},
  * which loads categories and builds a tree in memory.  There is also
  * a database-based implementation in DBGraphmapper, which should
  * scale much better.

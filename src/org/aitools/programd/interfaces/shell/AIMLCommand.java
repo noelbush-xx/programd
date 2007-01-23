@@ -10,8 +10,6 @@
 package org.aitools.programd.interfaces.shell;
 
 import org.aitools.programd.parser.TemplateParser;
-import org.aitools.programd.processor.ProcessorException;
-import org.aitools.util.resource.Filesystem;
 import org.aitools.util.runtime.UserError;
 
 /**
@@ -72,13 +70,12 @@ public class AIMLCommand extends ShellCommand
         {
             // Create a new TemplateParser.
             TemplateParser parser = new TemplateParser("", "", "", shell.getName(), shell.getCurrentBotID(), shell.getCore());
-            parser.pushContext(Filesystem.getWorkingDirectory());
             try
             {
                 shell.showMessage(parser.processResponse(TEMPLATE_START + commandLine.substring(space + 1)
                         + TEMPLATE_END));
             }
-            catch (ProcessorException e)
+            catch (Exception e)
             {
                 throw new UserError("Error occurred while processing template.", e);
             }

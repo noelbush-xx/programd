@@ -9,7 +9,7 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.w3c.dom.Element;
+import org.jdom.Element;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
@@ -39,12 +39,12 @@ public class SetProcessor extends AIMLProcessor
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        // Return the result of setting this predicate value (should check
-        // its type, but not yet implemented).
-        return parser.getCore().getPredicateMaster().set(element.getAttribute(NAME),
-                parser.evaluate(element.getChildNodes()), parser.getUserID(), parser.getBotID());
+        // Return the result of setting this predicate value (should check its type, but not yet implemented).
+        return parser.getCore().getPredicateMaster().set(element.getAttributeValue("name"),
+                parser.evaluate(element.getChildren()), parser.getUserID(), parser.getBotID());
     }
 }

@@ -13,7 +13,7 @@ import java.net.URL;
 import org.aitools.util.Settings;
 
 /**
- * Automatically generated at 2006-10-20T21:52:22.423-04:00.
+ * Automatically generated at 2006-10-30T00:08:59.141-05:00.
  */
 abstract public class CoreSettings extends Settings
 {
@@ -41,11 +41,11 @@ abstract public class CoreSettings extends Settings
     /** The number of predicate set operations before flushing predicates to storage. */
     private int predicateFlushPeriod;
         
-    /** The Multiplexor implementation to use. */
-    private String multiplexorImplementation;
+    /** The PredicateManager implementation to use. */
+    private String predicateManagerImplementation;
         
-    /** The directory in which to save flat-file predicates (if the FlatFileMultiplexor is used). */
-    private URL ffmDirectory;
+    /** The directory in which to save flat-file predicates (if the FlatFilePredicateManager is used). */
+    private URL ffpmDirectory;
         
     /** The URL of the database to use. */
     private String databaseURL;
@@ -95,6 +95,9 @@ abstract public class CoreSettings extends Settings
         
     /** Whether to print a stack trace on uncaught exceptions. */
     private boolean printStackTraceOnUncaughtExceptions;
+        
+    /** The Pulse implementation to use. */
+    private String pulseImplementation;
         
     /** The pulse rate for the heart (beats per minute). */
     private int heartPulseRate;
@@ -222,19 +225,19 @@ abstract public class CoreSettings extends Settings
     }
 
     /**
-     * @return the value of multiplexorImplementation
+     * @return the value of predicateManagerImplementation
      */
-    public String getMultiplexorImplementation()
+    public String getPredicateManagerImplementation()
     {
-        return this.multiplexorImplementation;
+        return this.predicateManagerImplementation;
     }
 
     /**
-     * @return the value of ffmDirectory
+     * @return the value of ffpmDirectory
      */
-    public URL getFfmDirectory()
+    public URL getFfpmDirectory()
     {
-        return this.ffmDirectory;
+        return this.ffpmDirectory;
     }
 
     /**
@@ -323,6 +326,14 @@ abstract public class CoreSettings extends Settings
     public boolean printStackTraceOnUncaughtExceptions()
     {
         return this.printStackTraceOnUncaughtExceptions;
+    }
+
+    /**
+     * @return the value of pulseImplementation
+     */
+    public String getPulseImplementation()
+    {
+        return this.pulseImplementation;
     }
 
     /**
@@ -526,19 +537,19 @@ abstract public class CoreSettings extends Settings
     }
 
     /**
-     * @param value the value for multiplexorImplementation
+     * @param value the value for predicateManagerImplementation
      */
-    public void setMultiplexorImplementation(String value)
+    public void setPredicateManagerImplementation(String value)
     {
-        this.multiplexorImplementation = value;
+        this.predicateManagerImplementation = value;
     }
 
     /**
-     * @param value the value for ffmDirectory
+     * @param value the value for ffpmDirectory
      */
-    public void setFfmDirectory(URL value)
+    public void setFfpmDirectory(URL value)
     {
-        this.ffmDirectory = value;
+        this.ffpmDirectory = value;
     }
 
     /**
@@ -627,6 +638,14 @@ abstract public class CoreSettings extends Settings
     public void setPrintStackTraceOnUncaughtExceptions(boolean value)
     {
         this.printStackTraceOnUncaughtExceptions = value;
+    }
+
+    /**
+     * @param value the value for pulseImplementation
+     */
+    public void setPulseImplementation(String value)
+    {
+        this.pulseImplementation = value;
     }
 
     /**

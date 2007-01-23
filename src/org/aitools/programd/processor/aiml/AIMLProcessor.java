@@ -9,14 +9,13 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.w3c.dom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.GenericParser;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.Processor;
 import org.aitools.programd.processor.ProcessorException;
 import org.apache.log4j.Logger;
+import org.jdom.Element;
 
 /**
  * An <code>AIMLProcessor</code> is responsible for processing a particular
@@ -41,7 +40,7 @@ abstract public class AIMLProcessor extends Processor
     }
 
     /**
-     * @see org.aitools.programd.processor.Processor#process(org.w3c.dom.Element,
+     * @see org.aitools.programd.processor.Processor#process(org.jdom.Element,
      *      org.aitools.programd.parser.GenericParser)
      */
     @SuppressWarnings("unchecked")

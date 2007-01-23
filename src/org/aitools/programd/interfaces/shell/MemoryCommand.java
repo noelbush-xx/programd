@@ -44,7 +44,7 @@ public class MemoryCommand extends ShellCommand
     }
 
     /**
-     * Attempts to load a specified file into the Graphmaster.
+     * Displays a report of memory usage.
      * 
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
      */

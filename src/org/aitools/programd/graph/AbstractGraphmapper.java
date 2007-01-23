@@ -12,13 +12,10 @@ package org.aitools.programd.graph;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.xml.parsers.SAXParser;
 
@@ -27,15 +24,18 @@ import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
 import org.aitools.programd.parser.AIMLReader;
 import org.aitools.programd.processor.aiml.RandomProcessor;
+import org.aitools.util.Text;
 import org.aitools.util.resource.Filesystem;
 import org.aitools.util.resource.URLTools;
-import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.xml.XML;
 import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.jdom.Content;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
@@ -47,7 +47,7 @@ abstract public class AbstractGraphmapper implements Graphmapper
 {
     // Instance variables.
 
-    /** The Core with which this Graphmaster is associated. */
+    /** The Core with which this Graphmapper is associated. */
     protected Core _core;
 
     /** The logger. */
@@ -56,64 +56,84 @@ abstract public class AbstractGraphmapper implements Graphmapper
     /** The match logger. */
     protected Logger _matchLogger = Logger.getLogger("programd.matching");
 
-    /** A map of loaded file URLs to botids. */
-    protected Map<URL, Set<String>> _urlCatalog = new HashMap<URL, Set<String>>();
-
     /** The merge policy. */
     protected CoreSettings.MergePolicy _mergePolicy;
     
     /** The SAXParser used in loading AIML. */
     private SAXParser _parser;
+    
+    /** A formatter used for outputting XML. */
+    private Format _xmlFormat = Format.getPrettyFormat();
 
     /** Whether to note each file loaded. */
-    protected boolean noteEachLoad;
+    protected boolean _noteEachLoad;
 
     /** The separator string to use with the "append" merge policy. */
-    protected String mergeAppendSeparator;
+    protected String _mergeAppendSeparator;
 
     /** Whether to note each merge. */
-    protected boolean noteEachMerge;
+    protected boolean _noteEachMerge;
     
     /** Whether to use the AIML Watcher. */
-    protected boolean useAIMLWatcher;
+    protected boolean _useAIMLWatcher;
 
     /** The AIML namespace URI in use. */
-    protected String aimlNamespaceURI;
+    protected String _aimlNamespaceURI;
 
     /** How frequently to provide a category load count. */
-    protected int categoryLoadNotifyInterval;
+    protected int _categoryLoadNotifyInterval;
 
     /** The total number of categories read. */
-    protected int totalCategories = 0;
+    protected int _totalCategories = 0;
 
     /** The total number of path-identical categories that have been encountered. */
-    protected int duplicateCategories = 0;
+    protected int _duplicateCategories = 0;
 
     /** The response timeout. */
-    protected int responseTimeout;
+    protected int _responseTimeout;
+    
+    // Constants
 
-    /** A count of Nodemappers. */
-    protected int nodemapperCount = 1;
+    /** A that marker. */
+    public static final String THAT = "<that>";
+
+    /** A topic marker. */
+    public static final String TOPIC = "<topic>";
+
+    /** A bot marker. */
+    public static final String BOT = "<bot>";
+
+    /** A template marker. */
+    public static final String TEMPLATE = "<template>";
+
+    /** A filename marker. */
+    public static final String FILENAME = "<filename>";
+
+    /** The <code>*</code> wildcard. */
+    public static final String ASTERISK = "*";
+
+    /** The <code>_</code> wildcard. */
+    public static final String UNDERSCORE = "_";
 
     /**
-     * Creates a new Graphmaster, reading settings from the given Core.
+     * Creates a new AbstractGraphmapper, reading settings from the given Core.
      * 
      * @param core the CoreSettings object from which to read settings
      */
     protected AbstractGraphmapper(Core core)
     {
         this._core = core;
-        this._parser = XML.getSAXParser(this._core.getCatalog().toExternalForm(), this._logger);
+        this._parser = XML.getSAXParser(this._core.getXMLCatalog().toExternalForm(), this._logger);
         
         CoreSettings settings = this._core.getSettings();
-        this.noteEachLoad = settings.noteEachLoadedFile();
+        this._noteEachLoad = settings.noteEachLoadedFile();
         this._mergePolicy = settings.getMergePolicy();
-        this.mergeAppendSeparator = settings.getAppendMergeSeparatorString();
-        this.noteEachMerge = settings.noteEachMerge();
-        this.useAIMLWatcher = settings.useAIMLWatcher();
-        this.responseTimeout = settings.getResponseTimeout();
-        this.categoryLoadNotifyInterval = settings.getCategoryLoadNotificationInterval();
-        this.aimlNamespaceURI = settings.getAIMLNamespaceURI().toString();
+        this._mergeAppendSeparator = settings.getAppendMergeSeparatorString();
+        this._noteEachMerge = settings.noteEachMerge();
+        this._useAIMLWatcher = settings.useAIMLWatcher();
+        this._responseTimeout = settings.getResponseTimeout();
+        this._categoryLoadNotifyInterval = settings.getCategoryLoadNotificationInterval();
+        this._aimlNamespaceURI = settings.getAIMLNamespaceURI().toString();
     }
     
     /**
@@ -156,29 +176,36 @@ abstract public class AbstractGraphmapper implements Graphmapper
             unload(path, bot);
         }
 
-        // Let the Graphmaster use a shortcut if possible.
-        if (this._urlCatalog.containsKey(path))
+        // Let the Graphmapper use a shortcut if possible.
+        if (isAlreadyLoaded(path))
         {
-            if (this._urlCatalog.get(path).contains(botid))
+            if (isAlreadyLoadedForBot(path, botid))
             {
+                if (this._logger.isDebugEnabled())
+                {
+                    this._logger.debug(String.format("Reloading \"%s\" for \"%s\" (is that what you wanted?).", path, botid));
+                }
                 unload(path, bot);
                 doLoad(path, botid);
             }
-            if (this._logger.isDebugEnabled())
+            else
             {
-                this._logger.debug(String.format("Graphmaster has already loaded \"%s\" for some other bot.", path));
+                if (this._logger.isDebugEnabled())
+                {
+                    this._logger.debug(String.format("Graphmaster has already loaded \"%s\" for some other bot.", path));
+                }
+                addForBot(path, botid);
             }
-            addForBot(path, botid);
         }
         else
         {
-            if (this.noteEachLoad)
+            if (this._noteEachLoad)
             {
                 this._logger.info("Loading " + URLTools.unescape(path) + "....");
             }
             doLoad(path, botid);
             // Add it to the AIMLWatcher, if active.
-            if (this.useAIMLWatcher)
+            if (this._useAIMLWatcher)
             {
                 this._core.getAIMLWatcher().addWatchFile(path);
             }
@@ -187,9 +214,13 @@ abstract public class AbstractGraphmapper implements Graphmapper
 
     protected void doLoad(URL path, String botid)
     {
+        if (!necessaryToLoad(path))
+        {
+            return;
+        }
         try
         {
-            AIMLReader reader = new AIMLReader(this, path, this._core.getBot(botid), this.aimlNamespaceURI);
+            AIMLReader reader = new AIMLReader(this, path, this._core.getBot(botid), this._aimlNamespaceURI);
             try
             {
                 this._parser.getXMLReader().setProperty("http://xml.org/sax/properties/lexical-handler", reader);
@@ -214,17 +245,7 @@ abstract public class AbstractGraphmapper implements Graphmapper
                                 e);
             }
             this._parser.parse(path.toString(), reader);
-            Set<String> botids;
-            if (this._urlCatalog.containsKey(path))
-            {
-                botids = this._urlCatalog.get(path);
-            }
-            else
-            {
-                botids = new HashSet<String>();
-                this._urlCatalog.put(path, botids);
-            }
-            botids.add(botid);
+            associateBotIDWithFilename(botid, path);
         }
         catch (IOException e)
         {
@@ -233,8 +254,46 @@ abstract public class AbstractGraphmapper implements Graphmapper
         catch (SAXException e)
         {
             this._logger.warn(String.format("Error parsing \"%s\": %s", URLTools.unescape(path), e.getMessage()), e);
+            e.printStackTrace();
         }
     }
+    
+    /**
+     * Indicates whether the given filename is already loaded
+     * for any bot at all.
+     * 
+     * @param filename
+     * @return whether the given filename is already loaded
+     */
+    abstract protected boolean isAlreadyLoaded(URL filename);
+    
+    /**
+     * Indicates whether the given filename is already loaded
+     * for the given bot.
+     * 
+     * @param filename
+     * @param botid
+     * @return whether the given filename is already loaded for the given botid
+     */
+    abstract protected boolean isAlreadyLoadedForBot(URL filename, String botid);
+    
+    /**
+     * Creates an association between the given botid and the given filename.
+     * 
+     * @param botid
+     * @param filename
+     */
+    abstract protected void associateBotIDWithFilename(String botid, URL filename);
+    
+    /**
+     * Allows a concrete version of this class to decide whether or not a file
+     * needs to be loaded; this is useful for {@link DBGraphmapper}, which doesn't
+     * need to load a file again if it hasn't changed since it was last loaded.
+     * 
+     * @param path the path to be checked
+     * @return whether or not it should be loaded
+     */
+    abstract protected boolean necessaryToLoad(URL path);
 
     /**
      * Adds the given botid to the &lt;botid&gt; node for all branches
@@ -246,7 +305,37 @@ abstract public class AbstractGraphmapper implements Graphmapper
      * @throws IllegalArgumentException if the given path has not already been
      *         loaded, or if it has been loaded for the same botid
      */
-    abstract public void addForBot(URL path, String botid);
+    abstract protected void addForBot(URL path, String botid);
+    
+    /**
+     * @see org.aitools.programd.graph.Graphmapper#addCategory(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.aitools.programd.Bot, java.net.URL)
+     */
+    @SuppressWarnings("boxing")
+    public void addCategory(String pattern, String that, String topic, String template, Bot bot, URL source)
+    {
+        // Make sure the path components are right.
+        if (pattern == null)
+        {
+            pattern = ASTERISK;
+        }
+        if (that == null)
+        {
+            that = ASTERISK;
+        }
+        if (topic == null)
+        {
+            topic = ASTERISK;
+        }
+    
+        // Report on loaded categories.
+        if (this._totalCategories % this._categoryLoadNotifyInterval == 0 && this._totalCategories > 0)
+        {
+            this._logger.info(String.format("%,d categories loaded so far.", this._totalCategories));
+        }
+        add(pattern, that, topic, template, bot, source);
+    }
+    
+    protected abstract void add(String pattern, String that, String topic, String template, Bot bot, URL source);
 
     /**
      * Combines two template content strings into a single template, using a
@@ -265,33 +354,33 @@ abstract public class AbstractGraphmapper implements Graphmapper
      *        existing template
      * @return the combined result
      */
+    @SuppressWarnings("unchecked")
     protected String combineTemplates(String existingTemplate, String newTemplate)
     {
         Document existingDoc;
         Element existingRoot;
-        NodeList existingContent;
+        List<Content> existingContent;
 
         Document newDoc;
-        NodeList newContent;
+        List<Content> newContent;
 
         try
         {
-            existingDoc = XML.parseAsDocumentFragment(existingTemplate);
-            existingRoot = existingDoc.getDocumentElement();
-            existingContent = existingRoot.getChildNodes();
+            existingDoc = new SAXBuilder().build(new StringReader(existingTemplate));
+            existingRoot = existingDoc.getRootElement();
+            existingContent = existingRoot.getContent();
 
-            newDoc = XML.parseAsDocumentFragment(newTemplate);
-            newContent = newDoc.getDocumentElement().getChildNodes();
+            newDoc = new SAXBuilder().build(new StringReader(newTemplate));
+            newContent = newDoc.getRootElement().getContent();
         }
-        catch (DeveloperError e)
+        catch (JDOMException e)
         {
-            synchronized (this._logger)
-            {
-                this._logger.warn("Problem with existing or new template when performing merge combine.");
-                this._logger.warn("existing template: " + existingTemplate);
-                this._logger.warn("new template: " + newTemplate);
-                this._logger.warn("Existing template will be retained as-is.");
-            }
+            this._logger.error("JDOM exception when performing merge combine.", e);
+            return existingTemplate;
+        }
+        catch (IOException e)
+        {
+            this._logger.error("IO exception when performing merge combine.", e);
             return existingTemplate;
         }
 
@@ -299,49 +388,36 @@ abstract public class AbstractGraphmapper implements Graphmapper
          * If the existing template has a random element as its root, we need to
          * check whether this was the result of a previous combine.
          */
-        Node firstNode = existingContent.item(0);
+        Content firstNode = existingContent.get(0);
         if (firstNode instanceof Element)
         {
             Element firstElement = (Element) firstNode;
-            if (firstElement.getNodeName().equals(RandomProcessor.label) && firstElement.hasAttribute("synthetic"))
+            if (firstElement.getName().equals(RandomProcessor.label) && firstElement.getAttribute("synthetic") != null)
             {
-                Element newListItem = existingDoc.createElementNS(this.aimlNamespaceURI, RandomProcessor.LI);
-                int newContentSize = newContent.getLength();
-                for (int index = 0; index < newContentSize; index++)
-                {
-                    newListItem.appendChild(existingDoc.importNode(newContent.item(index), true));
-                }
-                firstElement.appendChild(newListItem);
+                Element newListItem = new Element(RandomProcessor.LI, this._aimlNamespaceURI);
+                newListItem.addContent(newContent);
+                firstElement.addContent(newListItem);
             }
-            return XML.renderXML(existingDoc.getChildNodes(), false);
+            return new XMLOutputter(this._xmlFormat).outputString(existingDoc);
         }
-        Element listItemForExisting = existingDoc.createElementNS(this.aimlNamespaceURI, RandomProcessor.LI);
-        int existingContentSize = existingContent.getLength();
-        for (int index = 0; index < existingContentSize; index++)
+        Element listItemForExisting = new Element(RandomProcessor.LI, this._aimlNamespaceURI);
+        listItemForExisting.addContent(existingContent);
+        for (Content content : existingContent)
         {
-            Node child = existingContent.item(index);
-            if (child != null)
-            {
-                listItemForExisting.appendChild(child.cloneNode(true));
-                existingRoot.removeChild(child);
-            }
+            existingRoot.removeContent(content);
         }
 
-        Element listItemForNew = newDoc.createElementNS(this.aimlNamespaceURI, RandomProcessor.LI);
-        int newContentSize = newContent.getLength();
-        for (int index = 0; index < newContentSize; index++)
-        {
-            listItemForNew.appendChild(newContent.item(index).cloneNode(true));
-        }
+        Element listItemForNew = new Element(RandomProcessor.LI, this._aimlNamespaceURI);
+        listItemForNew.addContent(newContent);
 
-        Element newRandom = existingDoc.createElementNS(this.aimlNamespaceURI, RandomProcessor.label);
+        Element newRandom = new Element(RandomProcessor.label, this._aimlNamespaceURI);
         newRandom.setAttribute("synthetic", "yes");
-        newRandom.appendChild(listItemForExisting);
-        newRandom.appendChild(existingDoc.importNode(listItemForNew, true));
+        newRandom.addContent(listItemForExisting);
+        newRandom.addContent(listItemForNew);
 
-        existingRoot.appendChild(newRandom);
+        existingRoot.addContent(newRandom);
 
-        return XML.renderXML(existingDoc.getChildNodes(), false);
+        return new XMLOutputter(this._xmlFormat).outputString(existingDoc);
     }
 
     /**
@@ -351,48 +427,101 @@ abstract public class AbstractGraphmapper implements Graphmapper
      * @param newTemplate the template whose content should be appended
      * @return the combined result
      */
+    @SuppressWarnings("unchecked")
     protected String appendTemplate(String existingTemplate, String newTemplate)
     {
         Document existingDoc;
         Element existingRoot;
 
         Document newDoc;
-        NodeList newContent;
+        List<Content> newContent;
 
         try
         {
-            existingDoc = XML.parseAsDocumentFragment(existingTemplate);
-            existingRoot = existingDoc.getDocumentElement();
+            existingDoc = new SAXBuilder().build(new StringReader(existingTemplate));
+            existingRoot = existingDoc.getRootElement();
 
-            newDoc = XML.parseAsDocumentFragment(newTemplate);
-            newContent = newDoc.getDocumentElement().getChildNodes();
+            newDoc = new SAXBuilder().build(new StringReader(newTemplate));
+            newContent = newDoc.getRootElement().getContent();
         }
-        catch (DeveloperError e)
+        catch (JDOMException e)
         {
-            synchronized (this._logger)
-            {
-                this._logger.warn("Problem with existing or new template when performing merge append.");
-                this._logger.warn("existing template: " + existingTemplate);
-                this._logger.warn("new template: " + newTemplate);
-                this._logger.warn("Existing template will be retained as-is.");
-            }
+            this._logger.error("JDOM exception when performing merge append.", e);
+            return existingTemplate;
+        }
+        catch (IOException e)
+        {
+            this._logger.error("IO exception when performing merge append.", e);
             return existingTemplate;
         }
 
-        // Append whatever text is configured to be inserted between the
-        // templates.
-        if (this.mergeAppendSeparator != null)
+        // Append whatever text is configured to be inserted between the templates.
+        if (this._mergeAppendSeparator != null)
         {
-            existingRoot.appendChild(existingDoc.createTextNode(this.mergeAppendSeparator));
+            existingRoot.addContent(this._mergeAppendSeparator);
+        }
+        existingRoot.addContent(newContent);
+        return new XMLOutputter(this._xmlFormat).outputString(existingDoc);
+    }
+    
+    /**
+     * Composes an input path as a list of tokens, given the components.
+     * Empty components are represented with asterisks.
+     * 
+     * @param input
+     * @param that
+     * @param topic
+     * @param botid
+     * @return the new path
+     */
+    protected List<String> composeInputPath(String input, String that, String topic, String botid)
+    {
+        List<String> inputPath = new ArrayList<String>();
+
+        // Input text part.
+        if (input.length() > 0)
+        {
+            inputPath = Text.wordSplit(input);
+        }
+        else
+        {
+            inputPath = new ArrayList<String>();
+            inputPath.add(ASTERISK);
         }
 
-        int newContentLength = newContent.getLength();
-        for (int index = 0; index < newContentLength; index++)
+        // <that> marker.
+        inputPath.add(THAT);
+
+        // Input <that> part.
+        if (that.length() > 0)
         {
-            Node newNode = existingDoc.importNode(newContent.item(index), true);
-            existingRoot.appendChild(newNode);
+            inputPath.addAll(Text.wordSplit(that));
         }
-        return XML.renderXML(existingDoc.getChildNodes(), false);
+        else
+        {
+            inputPath.add(ASTERISK);
+        }
+
+        // <topic> marker.
+        inputPath.add(TOPIC);
+
+        // Input <topic> part.
+        if (topic.length() > 0)
+        {
+            inputPath.addAll(Text.wordSplit(topic));
+        }
+        else
+        {
+            inputPath.add(ASTERISK);
+        }
+
+        // <botid> marker.
+        inputPath.add(BOT);
+
+        // Input [directed to] botid.
+        inputPath.add(botid);
+        
+        return inputPath;
     }
 
     /**
@@ -400,7 +529,7 @@ abstract public class AbstractGraphmapper implements Graphmapper
      */
     public int getCategoryCount()
     {
-        return this.totalCategories;
+        return this._totalCategories;
     }
 
     /**
@@ -409,7 +538,7 @@ abstract public class AbstractGraphmapper implements Graphmapper
     @SuppressWarnings("boxing")
     public String getCategoryReport()
     {
-        return String.format("%,d total categories currently loaded.", this.totalCategories);
+        return String.format("%,d total categories currently loaded.", this._totalCategories);
     }
 
     /**
@@ -417,16 +546,6 @@ abstract public class AbstractGraphmapper implements Graphmapper
      */
     public int getDuplicateCategoryCount()
     {
-        return this.duplicateCategories;
-    }
-
-    /**
-     * Returns an unmodifiable view of the url-to-botid catalog.
-     * 
-     * @return an unmodifiable view of the url-to-botid catalog
-     */
-    public Map<URL, Set<String>> getURLCatalog()
-    {
-        return Collections.unmodifiableMap(this._urlCatalog);
+        return this._duplicateCategories;
     }
 }

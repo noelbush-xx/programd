@@ -42,7 +42,7 @@ public class FlushPredicatesCommand extends ShellCommand
     }
 
     /**
-     * Attempts to load a specified file into the Graphmaster.
+     * Saves all predicates.
      * 
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
      *      org.aitools.programd.interfaces.shell.Shell)

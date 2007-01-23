@@ -10,7 +10,6 @@
 package org.aitools.programd.interfaces.shell;
 
 import java.io.BufferedReader;
-// import java.io.IOException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,19 +21,20 @@ import java.util.List;
 import org.aitools.programd.Bot;
 import org.aitools.programd.Bots;
 import org.aitools.programd.Core;
-import org.aitools.programd.multiplexor.PredicateMaster;
+import org.aitools.programd.predicates.PredicateManager;
 import org.aitools.programd.util.ManagedProcess;
 import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.runtime.UserError;
-import org.aitools.util.xml.XML;
+import org.aitools.util.xml.XHTML;
 import org.apache.log4j.Logger;
-import org.w3c.dom.Element;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
 /**
  * Provides a simple shell for interacting with the bot at a command line.
  * 
- * @author Jon Baer
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
+ * @author Jon Baer
  * @author Eion Robb
  */
 public class Shell extends Thread
@@ -46,7 +46,7 @@ public class Shell extends Thread
     private Core _core;
 
     /** The PredicateMaster in use by the attached Core. */
-    private PredicateMaster predicateMaster;
+    private PredicateManager predicateMaster;
 
     /** The Bots object in use by the attached Core. */
     private Bots bots;
@@ -78,10 +78,10 @@ public class Shell extends Thread
     /** The host name. */
     private String hostname;
 
-    /**
-     * An indicator used to keep track of whether we're midline in a console output (i.e., showing a prompt).
-     */
+    /** An indicator used to keep track of whether we're midline in a console output (i.e., showing a prompt). */
     private boolean midLine = false;
+    
+    private static final Namespace PLUGIN_CONFIG_NS = Namespace.getNamespace(Core.PLUGIN_CONFIG_NS_URI);
 
     /**
      * A <code>Shell</code> with default input and output streams ( <code>System.in</code> and
@@ -119,6 +119,7 @@ public class Shell extends Thread
      * 
      * @param core
      */
+    @SuppressWarnings("unchecked")
     public void attachTo(Core core)
     {
         this._core = core;
@@ -131,23 +132,22 @@ public class Shell extends Thread
         this.commandRegistry = new ShellCommandRegistry();
 
         // Look for any shell command plugins and add them to the registry.
-        Element shellCommandSet = XML.getFirstElementNamed(this._core.getPluginConfig().getDocumentElement(),
-                "shell-commands");
+        Element shellCommandSet = this._core.getPluginConfig().getRootElement().getChild("shell-commands", PLUGIN_CONFIG_NS);
         if (shellCommandSet != null)
         {
-            List<Element> commands = XML.getAllElementsNamed(shellCommandSet, "command");
+            List<Element> commands = shellCommandSet.getChildren("command", PLUGIN_CONFIG_NS);
             if (commands != null)
             {
                 for (Element commandElement : commands)
                 {
-                    String classname = commandElement.getAttribute("class");
-                    List<Element> parameterElements = XML.getAllElementsNamed(commandElement, "parameter");
+                    String classname = commandElement.getAttributeValue("class");
+                    List<Element> parameterElements = commandElement.getChildren("parameter", PLUGIN_CONFIG_NS);
                     if (parameterElements != null)
                     {
                         HashMap<String, String> parameters = new HashMap<String, String>(parameterElements.size());
                         for (Element parameter : parameterElements)
                         {
-                            parameters.put(parameter.getAttribute("name"), parameter.getAttribute("value"));
+                            parameters.put(parameter.getAttributeValue("name"), parameter.getAttributeValue("value"));
                         }
                         this.commandRegistry.register(classname, parameters);
                     }
@@ -240,7 +240,7 @@ public class Shell extends Thread
             }
             else if (commandLine.length() > 0)
             {
-                showConsole(this.botName, XML.filterViaHTMLTags(this._core.getResponse(commandLine, this.hostname,
+                showConsole(this.botName, XHTML.breakLines(this._core.getResponse(commandLine, this.hostname,
                         this.botid)));
             }
             // If the command line has zero length, ignore it.
@@ -434,7 +434,7 @@ public class Shell extends Thread
         this.botName = this.bots.get(newBotID).getPropertyValue(this.botNamePredicate);
         showMessage("Switched to bot \"" + newBotID + "\" (name: \"" + this.botName + "\").");
         // Send the connect string and print the first response.
-        showConsole(this.botName, XML.filterViaHTMLTags(this._core.getResponse(this._core.getSettings()
+        showConsole(this.botName, XHTML.breakLines(this._core.getResponse(this._core.getSettings()
                 .getConnectString(), this.hostname, this.botid)));
     }
 

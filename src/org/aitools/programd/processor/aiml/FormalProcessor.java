@@ -9,7 +9,7 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.w3c.dom.Element;
+import org.jdom.Element;
 
 import java.util.StringTokenizer;
 
@@ -41,10 +41,11 @@ public class FormalProcessor extends AIMLProcessor
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        String response = parser.evaluate(element.getChildNodes());
+        String response = parser.evaluate(element.getChildren());
         if ("".equals(response))
         {
             return response;

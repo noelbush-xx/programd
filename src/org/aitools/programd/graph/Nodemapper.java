@@ -12,7 +12,7 @@ package org.aitools.programd.graph;
 import java.util.Set;
 
 /**
- * A <code>Nodemapper</code> maps the branches in a {@link Graphmaster} structure.
+ * A <code>Nodemapper</code> maps the branches in a {@link MemoryGraphmapper} structure.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @author Richard Wallace

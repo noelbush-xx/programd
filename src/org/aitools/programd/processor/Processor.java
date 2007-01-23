@@ -9,10 +9,9 @@
 
 package org.aitools.programd.processor;
 
-import org.w3c.dom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.GenericParser;
+import org.jdom.Element;
 
 /**
  * A <code>Processor</code> is responsible for processing an element. Subclasses of this base class need only
@@ -29,20 +28,6 @@ abstract public class Processor
      * Every Processor should have a String called label. But we don't specify this here, to avoid a situation in which
      * implementors are accused of "hiding" the member in the parent.
      */
-
-    // Convenience constants.
-
-    /** The string &quot;{@value}&quot;, for convenience. */
-    protected static final String NAME = "name";
-
-    /** The string &quot;{@value}&quot;, for convenience. */
-    protected static final String VALUE = "value";
-
-    /** The string &quot;{@value}&quot;, for convenience. */
-    protected static final String ID = "id";
-
-    /** The string &quot;{@value}&quot;. */
-    protected static final String ENABLED = "enabled";
 
     /**
      * Creates a new Processor using the given Core.

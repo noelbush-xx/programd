@@ -23,7 +23,7 @@ import org.aitools.util.xml.Loader;
 import org.aitools.util.xml.NamespaceContextImpl;
 
 /**
- * Automatically generated at 2006-10-20T21:52:22.423-04:00.
+ * Automatically generated at 2006-10-30T00:08:59.141-05:00.
  */
 public class XMLCoreSettings extends CoreSettings
 {
@@ -110,10 +110,10 @@ public class XMLCoreSettings extends CoreSettings
             setClientNamePredicate(xpath.evaluate("/d:programd/d:predicates/d:client-name-predicate", document));
             setBotNameProperty(xpath.evaluate("/d:programd/d:predicates/d:bot-name-property", document));
             setPredicateFlushPeriod(Integer.parseInt(xpath.evaluate("/d:programd/d:predicates/d:predicate-flush-period", document)));
-            setMultiplexorImplementation(xpath.evaluate("/d:programd/d:multiplexor/d:implementation", document));
+            setPredicateManagerImplementation(xpath.evaluate("/d:programd/d:predicate-manager/d:implementation", document));
             try
             {
-                setFfmDirectory(URLTools.createValidURL(xpath.evaluate("/d:programd/d:multiplexor/d:ffm-dir", document), this._path, false));
+                setFfpmDirectory(URLTools.createValidURL(xpath.evaluate("/d:programd/d:predicate-manager/d:ffpm-dir", document), this._path, false));
             }
             catch (FileNotFoundException e)
             {
@@ -148,7 +148,8 @@ public class XMLCoreSettings extends CoreSettings
             setResponseTimeout(Integer.parseInt(xpath.evaluate("/d:programd/d:exceptions/d:response-timeout", document)));
             setInfiniteLoopInput(xpath.evaluate("/d:programd/d:exceptions/d:infinite-loop-input", document));
             setPrintStackTraceOnUncaughtExceptions(Boolean.parseBoolean(xpath.evaluate("/d:programd/d:exceptions/d:on-uncaught-exceptions.print-stack-trace", document)));
-            setHeartPulseRate(Integer.parseInt(xpath.evaluate("/d:programd/d:heart/d:pulserate", document)));
+            setPulseImplementation(xpath.evaluate("/d:programd/d:heart/d:pulse.implementation", document));
+            setHeartPulseRate(Integer.parseInt(xpath.evaluate("/d:programd/d:heart/d:pulse.rate", document)));
             setHeartEnabled(Boolean.parseBoolean(xpath.evaluate("/d:programd/d:heart/@enabled", document)));
             setAIMLWatcherTimer(Integer.parseInt(xpath.evaluate("/d:programd/d:watchers/d:AIML/d:timer", document)));
             setUseAIMLWatcher(Boolean.parseBoolean(xpath.evaluate("/d:programd/d:watchers/d:AIML/@enabled", document)));

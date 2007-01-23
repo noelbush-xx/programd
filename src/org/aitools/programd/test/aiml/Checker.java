@@ -4,7 +4,7 @@ import java.io.UnsupportedEncodingException;
 
 import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.xml.XML;
-import org.w3c.dom.Element;
+import org.jdom.Element;
 
 /**
  * Performs a specific test on a given input.
@@ -54,18 +54,18 @@ abstract public class Checker
      */
     public static Checker create(Element element, String encoding)
     {
-        String tagName = element.getTagName();
+        String tagName = element.getName();
 
         // Create the appropriate type of Checker.
         if (tagName.equals(TAG_ALERT_KEYWORDS))
         {
             try
             {
-                return new AlertKeywordChecker(new String(XML.unescapeXMLChars(element.getTextContent()).getBytes(encoding)).intern());
+                return new AlertKeywordChecker(new String(XML.unescapeXMLChars(element.getText()).getBytes(encoding)).intern());
             }
             catch (UnsupportedEncodingException e)
             {
-                throw new DeveloperError("Platform does not support \"" + encoding + "\" encoding!", e);
+                throw new DeveloperError(String.format("Platform does not support \"%s\" encoding!", encoding), e);
             }
         }
         else if (tagName.equals(TAG_EXPECTED_ANSWER))
@@ -76,38 +76,38 @@ abstract public class Checker
         {
             try
             {
-                return new ExpectedKeywordChecker(new String(XML.unescapeXMLChars(element.getTextContent()).getBytes(encoding)).intern());
+                return new ExpectedKeywordChecker(new String(XML.unescapeXMLChars(element.getText()).getBytes(encoding)).intern());
             }
             catch (UnsupportedEncodingException e)
             {
-                throw new DeveloperError("Platform does not support \"" + encoding + "\" encoding!", e);
+                throw new DeveloperError(String.format("Platform does not support \"%s\" encoding!", encoding), e);
             }
         }
         else if (tagName.equals(TAG_EXPECTED_LENGTH))
         {
             try
             {
-                return new LengthChecker(new String(element.getTextContent().getBytes(encoding)).intern());
+                return new LengthChecker(new String(element.getText().getBytes(encoding)).intern());
             }
             catch (UnsupportedEncodingException e)
             {
-                throw new DeveloperError("Platform does not support \"" + encoding + "\" encoding!", e);
+                throw new DeveloperError(String.format("Platform does not support \"%s\" encoding!", encoding), e);
             }
         }
         else if (tagName.equals(TAG_EXPECTED_MATCH))
         {
             try
             {
-                return new MatchChecker(new String(XML.unescapeXMLChars(element.getTextContent()).getBytes(encoding)).intern());
+                return new MatchChecker(new String(XML.unescapeXMLChars(element.getText()).getBytes(encoding)).intern());
             }
             catch (UnsupportedEncodingException e)
             {
-                throw new DeveloperError("Platform does not support \"" + encoding + "\" encoding!", e);
+                throw new DeveloperError(String.format("Platform does not support \"%s\" encoding!", encoding), e);
             }
         }
         else
         {
-            throw new DeveloperError("Some invalid element (\"" + tagName + "\") slipped past the schema!",
+            throw new DeveloperError(String.format("Some invalid element (\"%s\") slipped past the schema!", tagName),
                     new IllegalArgumentException());
         }
     }

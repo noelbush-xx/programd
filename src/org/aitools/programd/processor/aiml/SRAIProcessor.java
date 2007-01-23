@@ -9,7 +9,7 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.w3c.dom.Element;
+import org.jdom.Element;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
@@ -51,16 +51,16 @@ public class SRAIProcessor extends AIMLProcessor
      * @return the result of processing the element
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        String input = parser.evaluate(element.getChildNodes());
+        String input = parser.evaluate(element.getChildren());
         matchLogger.debug("[SYMBOLIC REDUCTION]");
         String userid = parser.getUserID();
         String botid = parser.getBotID();
         TemplateParser recursiveParser =
             new TemplateParser(parser.getInputs(), parser.getThats(), parser.getTopics(), userid, botid, this._core);
-        recursiveParser.pushContext(parser.getCurrentDocURL());
-        return this._core.getMultiplexor().getInternalResponse(input, userid, botid, recursiveParser);
+        return this._core.getInternalResponse(input, userid, botid, recursiveParser);
     }
 }

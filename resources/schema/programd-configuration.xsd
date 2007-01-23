@@ -115,28 +115,28 @@
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
-                <xs:element name="multiplexor">
+                <xs:element name="predicate-manager">
                     <xs:annotation>
-                        <xs:documentation>Configuration of the Multiplexor.</xs:documentation>
+                        <xs:documentation>Configuration of the PredicateManager.</xs:documentation>
                     </xs:annotation>
                     <xs:complexType>
                         <xs:sequence>
                             <xs:element name="implementation" type="xs:string"
-                                default="org.aitools.programd.multiplexor.InMemoryMultiplexor">
+                                default="org.aitools.programd.predicates.InMemoryPredicateManager">
                                 <xs:annotation>
-                                    <xs:documentation>The Multiplexor implementation to use.</xs:documentation>
+                                    <xs:documentation>The PredicateManager implementation to use.</xs:documentation>
                                     <xs:appinfo>
-                                        <d:property-name>multiplexorImplementation</d:property-name>
+                                        <d:property-name>predicateManagerImplementation</d:property-name>
                                     </xs:appinfo>
                                 </xs:annotation>
                             </xs:element>
-                            <xs:element name="ffm-dir" type="URL">
+                            <xs:element name="ffpm-dir" type="URL">
                                 <xs:annotation>
                                     <xs:documentation>
-                                        The directory in which to save flat-file predicates (if the FlatFileMultiplexor is used).
+                                        The directory in which to save flat-file predicates (if the FlatFilePredicateManager is used).
                                     </xs:documentation>
                                     <xs:appinfo>
-                                        <d:property-name>ffmDirectory</d:property-name>
+                                        <d:property-name>ffpmDirectory</d:property-name>
                                     </xs:appinfo>
                                 </xs:annotation>
                             </xs:element>
@@ -149,7 +149,7 @@
                     </xs:annotation>
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="url" type="xs:string" default="jdbc:mysql:///programdbot">
+                            <xs:element name="url" type="xs:string" default="jdbc:mysql:///programd">
                                 <xs:annotation>
                                     <xs:documentation>The URL of the database to use.</xs:documentation>
                                     <xs:appinfo>
@@ -278,7 +278,16 @@
                     </xs:annotation>
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="pulserate" type="xs:int" default="5">
+                            <xs:element name="pulse.implementation" type="xs:string"
+                                default="org.aitools.programd.util.IAmAlivePulse">
+                                <xs:annotation>
+                                    <xs:documentation>The Pulse implementation to use.</xs:documentation>
+                                    <xs:appinfo>
+                                        <d:property-name>pulseImplementation</d:property-name>
+                                    </xs:appinfo>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="pulse.rate" type="xs:int" default="5">
                                 <xs:annotation>
                                     <xs:documentation>The pulse rate for the heart (beats per minute).</xs:documentation>
                                     <xs:appinfo>
@@ -434,7 +443,7 @@
                     </xs:annotation>
                 </xs:element>
                 <xs:element name="graphmapper.implementation" type="xs:string"
-                    default="org.aitools.programd.graph.Graphmaster">
+                    default="org.aitools.programd.graph.MemoryGraphmapper">
                     <xs:annotation>
                         <xs:documentation>The Graphmapper implementation to use.</xs:documentation>
                         <xs:appinfo>
@@ -443,7 +452,7 @@
                     </xs:annotation>
                 </xs:element>
                 <xs:element name="nodemapper.implementation" type="xs:string"
-                    default="org.aitools.programd.graph.TwoOptimalNodemaster">
+                    default="org.aitools.programd.graph.TwoOptimalMemoryNodemapper">
                     <xs:annotation>
                         <xs:documentation>The Nodemapper implementation to use.</xs:documentation>
                         <xs:appinfo>

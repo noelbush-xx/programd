@@ -9,7 +9,7 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.w3c.dom.Element;
+import org.jdom.Element;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -74,6 +74,7 @@ public class SystemProcessor extends AIMLProcessor
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
@@ -89,7 +90,7 @@ public class SystemProcessor extends AIMLProcessor
         String directoryPath = coreSettings.getSystemInterpreterDirectory().getPath();
         String prefix = coreSettings.getSystemInterpreterPrefix();
 
-        String commandLine = parser.evaluate(element.getChildNodes());
+        String commandLine = parser.evaluate(element.getChildren());
         if (prefix != null)
         {
             commandLine = prefix + commandLine;

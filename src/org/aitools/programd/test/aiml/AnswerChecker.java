@@ -2,11 +2,13 @@ package org.aitools.programd.test.aiml;
 
 import java.io.UnsupportedEncodingException;
 
-import org.w3c.dom.Element;
-
 import org.aitools.util.runtime.DeveloperError;
-import org.aitools.util.StringKit;
+import org.aitools.util.Text;
+import org.aitools.util.xml.XHTML;
 import org.aitools.util.xml.XML;
+import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 /**
  * Tests whether a given input equals an expected string.
@@ -18,6 +20,9 @@ public class AnswerChecker extends Checker
 {
     private String expectedAnswer = null;
 
+    /** A formatter used for outputting XML. */
+    private Format _xmlFormat = Format.getPrettyFormat();
+
     /**
      * Creates a new AnswerChecker with the given expected answer.
      * 
@@ -28,12 +33,13 @@ public class AnswerChecker extends Checker
     {
         try
         {
-            this.expectedAnswer = new String(StringKit.renderAsLines(
-                    XML.filterViaHTMLTags(XML.unescapeXMLChars(XML.renderXML(element.getChildNodes(), false)))).getBytes(encoding)).intern();
+            this.expectedAnswer = new String(Text.renderAsLines(
+                    XHTML.breakLines(XML.unescapeXMLChars(new XMLOutputter(this._xmlFormat).outputString(element
+                            .getChildren())))).getBytes(encoding)).intern();
         }
         catch (UnsupportedEncodingException e)
         {
-            throw new DeveloperError("Platform does not support encoding \"" + encoding + "\"!", e);
+            throw new DeveloperError(String.format("Platform does not support encoding \"%s\"!", encoding), e);
         }
     }
 

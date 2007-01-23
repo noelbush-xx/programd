@@ -10,13 +10,9 @@
 package org.aitools.programd.parser;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URL;
-import java.util.Stack;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.util.List;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.processor.Processor;
@@ -26,10 +22,16 @@ import org.aitools.util.ClassUtils;
 import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.NotARegisteredClassException;
 import org.aitools.util.resource.URLTools;
-import org.aitools.util.runtime.UserError;
-import org.aitools.util.xml.Loader;
 import org.aitools.util.xml.XML;
 import org.apache.log4j.Logger;
+import org.jdom.CDATA;
+import org.jdom.Comment;
+import org.jdom.Content;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.Text;
+import org.jdom.input.SAXBuilder;
 
 /**
  * A generic parser that allows us to register processors for any element type. This has been heavily modified
@@ -40,20 +42,17 @@ import org.apache.log4j.Logger;
  */
 abstract public class GenericParser<P extends Processor>
 {
-    /** Set by subclasses. */
-    private ProcessorRegistry<P> processorRegistry;
-
-    /** The URL of the parsed document. */
-    protected Stack<URL> docURL = new Stack<URL>();
-
-    /** The Core in use. */
-    protected Core _core;
+    private ProcessorRegistry<P> _registry;
     
-    /** The Loader for parsing and validating new instance documents. */
-    protected Loader _loader;
+    protected URL _baseURL;
+    
+    protected String _namespaceURI;
+    
+    protected URL _xmlCatalog;
 
-    /** The logger to use. */
-    protected Logger logger;
+    protected Core _core;
+
+    protected Logger _logger;
 
     // Convenience constants.
 
@@ -69,19 +68,11 @@ abstract public class GenericParser<P extends Processor>
     public GenericParser(ProcessorRegistry<P> registry,  Core core)
     {
         this._core = core;
-        this.logger = this._core.getLogger();
-        this.processorRegistry = registry;
-        this._loader = new Loader(this._core.getBaseURL(), registry.getNamespaceURI(), this._core.getCatalog(), this.logger);
-    }
-
-    /**
-     * Processes the current document URL. This is an internal method.
-     * 
-     * @return the DOM produced by parsing
-     */
-    protected Document parseCurrentURL()
-    {
-        return this._loader.parse(this.docURL.peek());
+        this._baseURL = this._core.getBaseURL();
+        this._logger = this._core.getLogger();
+        this._registry = registry;
+        this._namespaceURI = this._registry.getNamespaceURI();
+        this._xmlCatalog = this._core.getXMLCatalog();
     }
 
     /**
@@ -93,11 +84,22 @@ abstract public class GenericParser<P extends Processor>
      */
     public String processResponse(URL url) throws ProcessorException
     {
-        pushContext(url);
-        Document document = parseCurrentURL();
-        String response = evaluate(document);
-        this.docURL.pop();
-        return response;
+        return evaluate(XML.getJDOMDocument(url, this._baseURL, this._namespaceURI, this._xmlCatalog, this._logger));
+    }
+
+
+    /**
+     * Processes an XML fragment provided in a string.
+     * 
+     * @param input the string from which to create the document fragment
+     * @return the result of processing the document fragment created from the given string
+     * @throws ProcessorException if there was a problem processing the document fragment created from the given string
+     * @throws JDOMException 
+     * @throws IOException 
+     */
+    public String processResponse(String input) throws ProcessorException, JDOMException, IOException
+    {
+        return evaluate(new SAXBuilder().build(new StringReader(input)));
     }
 
     /**
@@ -108,94 +110,8 @@ abstract public class GenericParser<P extends Processor>
      */
     public void process(URL url) throws ProcessorException
     {
-        pushContext(url);
-        this.logger.info(String.format("Loading \"%s\".", URLTools.unescape(url)));
-        Document document = parseCurrentURL();
-        evaluate(document);
-        this.docURL.pop();
-    }
-
-    /**
-     * Pushes the given URL onto the docURL stack, contextualizing the given URL with respect to the current docURL (if
-     * set).
-     * 
-     * @param url
-     */
-    public void pushContext(URL url)
-    {
-        if (url != null)
-        {
-            if (this.docURL.size() > 0)
-            {
-                this.docURL.push(URLTools.contextualize(this.docURL.peek(), url));
-            }
-            else
-            {
-                this.docURL.push(url);
-            }
-        }
-        else
-        {
-            throw new DeveloperError("Passed a null URL to GenericParser.contextualize!", new NullPointerException());
-        }
-    }
-
-    /**
-     * Processes an XML fragment provided in a string.
-     * 
-     * @param input the string from which to create the document fragment
-     * @return the result of processing the document fragment created from the given string
-     * @throws ProcessorException if there was a problem processing the document fragment created from the given string
-     */
-    public String processResponse(String input) throws ProcessorException
-    {
-        Document template = XML.parseAsDocumentFragment(input);
-        return evaluate(template);
-    }
-
-    /**
-     * Processes a given XML node.
-     * 
-     * @param element the element being evaluated
-     * @return the result of processing the element
-     * @throws ProcessorException if the content cannot be processed
-     */
-    public String processElement(Element element) throws ProcessorException
-    {
-        // Is it a valid element?
-        if (element == null)
-        {
-            return "";
-        }
-
-        // Search for the tag in the processor registry.
-        Class<? extends P> processorClass = null;
-
-        String elementNamespaceURI = element.getNamespaceURI();
-        boolean emitXMLNS = element.isSameNode(element.getOwnerDocument().getDocumentElement())
-                || (elementNamespaceURI != null && !elementNamespaceURI.equals(element.getOwnerDocument()
-                        .getDocumentElement().getNamespaceURI()));
-        if (elementNamespaceURI == null || this.processorRegistry.getNamespaceURI().equals(elementNamespaceURI))
-        {
-            try
-            {
-                processorClass = this.processorRegistry.get(element.getLocalName());
-            }
-            catch (NotARegisteredClassException e)
-            {
-                return handleUnknownElement(element, e);
-            }
-
-            // Process the element with a new instance of the processor.
-            return ClassUtils.getNewInstance(processorClass, "Processor", this._core).process(element, this);
-        }
-        // otherwise (if this element is from a different namespace)
-        if (element.getChildNodes().getLength() == 0)
-        {
-            return XML.renderEmptyElement(element, emitXMLNS);
-        }
-        // otherwise...
-        return XML.renderStartTag(element, emitXMLNS) + evaluate(element.getChildNodes()) + XML.renderEndTag(element);
+        this._logger.info(String.format("Loading \"%s\".", URLTools.unescape(url)));
+        processResponse(url);
     }
 
     /**
@@ -208,7 +124,7 @@ abstract public class GenericParser<P extends Processor>
      */
     protected String handleUnknownElement(Element element, NotARegisteredClassException e)
     {
-        throw new DeveloperError("Unknown processor \"" + element.getLocalName() + "\".", e);
+        throw new DeveloperError(String.format("Unknown processor \"%s\".", element.getName()), e);
     }
 
     /**
@@ -220,7 +136,7 @@ abstract public class GenericParser<P extends Processor>
      */
     public String evaluate(Document document) throws ProcessorException
     {
-        return evaluate(document.getDocumentElement());
+        return evaluate(document.getRootElement());
     }
 
     /**
@@ -230,67 +146,93 @@ abstract public class GenericParser<P extends Processor>
      * @return the result of evaluating the given list of nodes
      * @throws ProcessorException if there is an error in processing
      */
-    public String evaluate(NodeList list) throws ProcessorException
+    public String evaluate(List<Element> list) throws ProcessorException
     {
         StringBuilder result = new StringBuilder();
-        int listSize = list.getLength();
-        for (int index = 0; index < listSize; index++)
+        for (Element element : list)
         {
-            result.append(evaluate(list.item(index)));
+            result.append(evaluate(element));
         }
         return result.toString();
     }
 
     /**
-     * <p> Recursively evaluates a tree. </p> <p> Depending on whether the engine is at load-time or run time,
-     * determines whether or not to process the tag. When the tag is processed, returns the result of processing it.
-     * </p>
+     * Recursively evaluates an element.
      * 
-     * @param node the node to parse
-     * @return the result of processing the tag
+     * @param element the element
+     * @return the result of processing the element
      * @throws ProcessorException if there is an error in processing
      */
-    public String evaluate(Node node) throws ProcessorException
+    @SuppressWarnings("unchecked")
+    public String evaluate(Element element) throws ProcessorException
     {
-        String response = "";
-
-        // Verify there is something to work with.
-        if (node == null)
+        // Is it a valid element?
+        if (element == null)
         {
-            return response;
+            return "";
         }
 
-        try
+        // Search for the tag in the processor registry.
+        Class<? extends P> processorClass = null;
+
+        String elementNamespaceURI = element.getNamespaceURI();
+        boolean emitXMLNS = element.equals(element.getDocument().getRootElement())
+                || (elementNamespaceURI != null && !elementNamespaceURI.equals(element.getDocument()
+                        .getRootElement().getNamespaceURI()));
+        if (elementNamespaceURI == null || this._registry.getNamespaceURI().equals(elementNamespaceURI))
         {
-            switch (node.getNodeType())
+            try
             {
-                // Collect and process elements.
-                case Node.ELEMENT_NODE:
-                    response += processElement((Element) node);
-                    break;
-
-                // Text chunks should just be added to the response.
-                case Node.TEXT_NODE:
-                    response += node.getNodeValue();
-                    break;
-
-                case Node.CDATA_SECTION_NODE:
-                    response += XML.CDATA_START + node.getNodeValue() + XML.CDATA_END;
-                    break;
-
-                case Node.COMMENT_NODE:
-                    response += XML.COMMENT_START + node.getTextContent() + XML.COMMENT_END;
-                    break;
-
-                default:
-                    break;
+                processorClass = this._registry.get(element.getName());
             }
+            catch (NotARegisteredClassException e)
+            {
+                return handleUnknownElement(element, e);
+            }
+
+            // Process the element with a new instance of the processor.
+            return ClassUtils.getNewInstance(processorClass, "Processor", this._core).process(element, this);
         }
-        catch (UserError e)
+        // otherwise (if this element is from a different namespace)
+        if (element.getChildren().size() == 0)
         {
-            this._core.getLogger().error("Error in processing.", e);
+            return XML.renderEmptyElement(element, emitXMLNS);
         }
-        return response;
+        // otherwise...
+        return XML.renderStartTag(element, emitXMLNS) + evaluate(element.getChildren()) + XML.renderEndTag(element);
+    }
+
+    /**
+     * Returns formatted text.
+     * 
+     * @param text
+     * @return the text
+     */
+    public String evaluate(Text text)
+    {
+        return text.getText();
+    }
+
+    /**
+     * Formats a CDATA section node.
+     * 
+     * @param node
+     * @return the formatted CDATA section node
+     */
+    public String evaluate(CDATA node)
+    {
+        return String.format("<![CDATA[%s]]>", node.getText());
+    }
+
+    /**
+     * Formats a comment.
+     * 
+     * @param comment
+     * @return the formatted comment
+     */
+    public String evaluate(Comment comment)
+    {
+        return String.format("<!--%s-->", comment.getText());
     }
 
     /**
@@ -305,7 +247,7 @@ abstract public class GenericParser<P extends Processor>
      * @return the result of processing this structure
      * @throws ProcessorException if there is an error in processing
      */
-    public String shortcutTag(Element element, String newElementName, String childContent, short childType)
+    public String shortcutTag(Element element, String newElementName, String childContent, Class<? extends Content> childType)
             throws ProcessorException
     {
         String response = "";
@@ -319,21 +261,20 @@ abstract public class GenericParser<P extends Processor>
         /*
          * Process children (if any). Clearly, the root tag cannot have an empty type, and the children must exist.
          */
-        if ((!"".equals(childContent)) && ((childType == Node.ELEMENT_NODE) || (childType == Node.TEXT_NODE)))
+        if ((!"".equals(childContent)) && ((childType == Element.class) || (childType == Text.class)))
         {
-            Document ownerDoc = element.getOwnerDocument();
-            Element newElement = ownerDoc.createElementNS(element.getNamespaceURI(), newElementName);
+            Element newElement = new Element(newElementName, element.getNamespaceURI());
             /*
              * Create an XML node for the child tag. Note that we assume that the child is an empty tag with no
              * attributes. This is reasonable for AIML 1.0.1, but might not always be.
              */
-            if (childType == Node.ELEMENT_NODE)
+            if (childType == Element.class)
             {
-                newElement.appendChild(ownerDoc.createElementNS(element.getNamespaceURI(), childContent));
+                newElement.addContent(new Element(childContent, element.getNamespaceURI()));
             }
-            else if (childType == Node.TEXT_NODE)
+            else if (childType == Text.class)
             {
-                newElement.setTextContent(childContent);
+                newElement.setText(childContent);
             }
 
             // Now evaluate the node, just as if it came from the original AIML.
@@ -341,78 +282,6 @@ abstract public class GenericParser<P extends Processor>
         }
 
         return response;
-    }
-
-    /**
-     * Verifies that the given URL points to something real/accessible, then processes it (not returning anything).
-     * 
-     * @param urlString the URL to check
-     * @throws ProcessorException if there is an error in processing
-     */
-    public void verifyAndProcess(String urlString) throws ProcessorException
-    {
-        URL url = null;
-        if (this.docURL != null)
-        {
-            url = URLTools.contextualize(this.docURL.peek(), urlString);
-        }
-        verifyAndProcess(url);
-    }
-
-    /**
-     * Verifies that the given URL points to something real/accessible, then processes it, returning a response.
-     * 
-     * @param urlString the URL to check
-     * @return the response produced by processing whatever is at the URL
-     * @throws ProcessorException if there is an error in processing
-     */
-    public String verifyAndProcessResponse(String urlString) throws ProcessorException
-    {
-        URL url = null;
-        if (this.docURL != null)
-        {
-            url = URLTools.contextualize(this.docURL.peek(), urlString);
-        }
-        return verifyAndProcessResponse(url);
-    }
-
-    /**
-     * Verifies that the given URL points to something real/accessible, then processes it (not returning anything).
-     * 
-     * @param url the URL to check
-     * @throws ProcessorException if there is an error in processing
-     */
-    public void verifyAndProcess(URL url) throws ProcessorException
-    {
-        try
-        {
-            url.openConnection();
-        }
-        catch (IOException e)
-        {
-            throw new UserError("Could not open a connection to \"" + url.toExternalForm() + "\".", e);
-        }
-        process(url);
-    }
-
-    /**
-     * Verifies that the given URL points to something real/accessible, then processes it (not returning anything).
-     * 
-     * @param url the URL to check
-     * @return the result of processing whatever is at the URL
-     * @throws ProcessorException if there is an error in processing
-     */
-    public String verifyAndProcessResponse(URL url) throws ProcessorException
-    {
-        try
-        {
-            url.openConnection();
-        }
-        catch (IOException e)
-        {
-            throw new UserError("Could not open a connection to \"" + url.toExternalForm() + "\".", e);
-        }
-        return processResponse(url);
     }
 
     /**
@@ -425,7 +294,7 @@ abstract public class GenericParser<P extends Processor>
      */
     public static int[] getValid2dIndex(Element element)
     {
-        String indexValue = element.getAttribute(INDEX);
+        String indexValue = element.getAttributeValue("index");
         int[] result = { 1, 1 };
 
         // Assign the default if the index attribute is empty.
@@ -482,7 +351,7 @@ abstract public class GenericParser<P extends Processor>
         // Get a valid 1-dimensional index.
         try
         {
-            return Integer.parseInt(element.getAttribute(INDEX));
+            return Integer.parseInt(element.getAttributeValue("index"));
         }
         catch (NumberFormatException e)
         {
@@ -497,13 +366,5 @@ abstract public class GenericParser<P extends Processor>
     {
         assert this._core != null : "Tried to get the Core from a GenericParser that does not have one!";
         return this._core;
-    }
-
-    /**
-     * @return the current docURL
-     */
-    public URL getCurrentDocURL()
-    {
-        return this.docURL.peek();
     }
 }

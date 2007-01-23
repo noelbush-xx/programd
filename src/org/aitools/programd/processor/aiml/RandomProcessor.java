@@ -14,14 +14,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.w3c.dom.Element;
+import org.jdom.Element;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.util.math.MersenneTwisterFast;
-import org.aitools.util.xml.XML;
 import org.apache.commons.collections.map.LRUMap;
 
 /**
@@ -96,7 +95,7 @@ public class RandomProcessor extends AIMLProcessor
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
-    @SuppressWarnings("boxing")
+    @SuppressWarnings({ "boxing", "unchecked" })
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
@@ -113,19 +112,19 @@ public class RandomProcessor extends AIMLProcessor
             this.generators.put(identifier, generator);
         }
 
-        List<Element> listitems = XML.getElementChildrenOf(element);
+        List<Element> listitems = element.getChildren();
         int nodeCount = listitems.size();
 
         // Only one <li></li> child means we don't have to pick anything.
         if (nodeCount == 1)
         {
-            return parser.evaluate(listitems.get(0).getChildNodes());
+            return parser.evaluate(listitems.get(0).getChildren());
         }
 
         // Otherwise, select a random element of the listitem (if strategy is pure-random).
         if (this._core.getSettings().getRandomStrategy() == CoreSettings.RandomStrategy.PURE_RANDOM)
         {
-            return parser.evaluate(listitems.get(generator.nextInt(nodeCount)).getChildNodes());
+            return parser.evaluate(listitems.get(generator.nextInt(nodeCount)).getChildren());
         }
         
         // If we get here, then the no-repeat strategy is wanted.
@@ -183,7 +182,7 @@ public class RandomProcessor extends AIMLProcessor
         }
         
         // Evaluate the node corresponding to the chosen index.
-        return parser.evaluate(listitems.get(choice).getChildNodes());
+        return parser.evaluate(listitems.get(choice).getChildren());
     }
     
     @SuppressWarnings("boxing")

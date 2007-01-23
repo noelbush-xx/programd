@@ -9,37 +9,31 @@
 
 package org.aitools.programd.parser;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.Element;
 import org.aitools.programd.Core;
 import org.aitools.programd.graph.Match;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.processor.aiml.AIMLProcessor;
-import org.apache.log4j.Logger;
+import org.jdom.Element;
+import org.jdom.JDOMException;
 
 /**
- * <code>TemplateParser</code> has been rewritten (starting in 4.5) to use DOM for parsing. It also eliminates
- * handling of "deprecated AIML" (this will be possible to handle again later with an extensible version of D).
+ * <code>TemplateParser</code> parses templates!  :-)
  */
 public class TemplateParser extends GenericParser<AIMLProcessor>
 {
-    /**
-     * The inputs that matched the <code>pattern</code> associated with this template (helps to avoid endless loops).
-     */
+    /** The inputs that matched the <code>pattern</code> associated with this template (helps to avoid endless loops). */
     private ArrayList<String> _inputs = new ArrayList<String>();
-    
-    /**
-     * The thats that matched the <code>pattern</code> associated with this template (helps to avoid endless loops).
-     */
+
+    /** The thats that matched the <code>pattern</code> associated with this template (helps to avoid endless loops). */
     private ArrayList<String> _thats = new ArrayList<String>();
-    
-    /**
-     * The topics that matched the <code>pattern</code> associated with this template (helps to avoid endless loops).
-     */
+
+    /** The topics that matched the <code>pattern</code> associated with this template (helps to avoid endless loops). */
     private ArrayList<String> _topics = new ArrayList<String>();
-    
+
     /** The match(es) responsible for this template parser. */
     private ArrayList<Match> _matches = new ArrayList<Match>();
 
@@ -49,6 +43,24 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
     /** The botid on whose behalf this parser is working. */
     private String _botid;
 
+    /**
+     * @param core
+     */
+    public TemplateParser(Core core)
+    {
+        this("", "", "", "", "", core);
+    }
+    
+    /**
+     * @param userid
+     * @param botid
+     * @param core
+     */
+    public TemplateParser(String userid, String botid, Core core)
+    {
+        this("", "", "", userid, botid, core);
+    }
+    
     /**
      * @param input 
      * @param that 
@@ -75,7 +87,8 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
      * @param botid the botid for whom the template will be parsed
      * @param core the Core in use
      */
-    public TemplateParser(List<String> inputs, List<String> thats, List<String> topics, String userid, String botid, Core core)
+    public TemplateParser(List<String> inputs, List<String> thats, List<String> topics, String userid, String botid,
+            Core core)
     {
         super(core.getAIMLProcessorRegistry(), core);
         this._inputs.addAll(inputs);
@@ -96,11 +109,11 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
     {
         try
         {
-            return super.processElement(element);
+            return super.evaluate(element);
         }
         catch (StackOverflowError e)
         {
-            Logger.getLogger("programd").error("Stack overflow error processing " + element.getLocalName() + " tag.");
+            this._logger.error(String.format("Stack overflow error processing <%s/>.", element.getName()));
             return "";
         }
     }
@@ -109,11 +122,11 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
      * @see org.aitools.programd.parser.GenericParser#processResponse(java.lang.String)
      */
     @Override
-    public String processResponse(String templateContent) throws ProcessorException
+    public String processResponse(String templateContent) throws ProcessorException, JDOMException, IOException
     {
         return super.processResponse(templateContent);
     }
-    
+
     /**
      * Adds a {@link Match} object to the list of matches.
      * 
@@ -123,7 +136,7 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
     {
         this._matches.add(match);
     }
-    
+
     /**
      * @return the most recent match
      */

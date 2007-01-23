@@ -14,12 +14,12 @@
         <bot-name-property>name</bot-name-property>
         <predicate-flush-period>500</predicate-flush-period>
     </predicates>
-    <multiplexor>
-        <implementation>org.aitools.programd.multiplexor.FlatFileMultiplexor</implementation>
-        <ffm-dir>file:/var/programd/ffm</ffm-dir>
-    </multiplexor>
+    <predicate-manager>
+        <implementation>org.aitools.programd.predicates.InMemoryPredicateManager</implementation>
+        <ffpm-dir>file:/var/programd/ffpm</ffpm-dir>
+    </predicate-manager>
     <database>
-        <url>jdbc:mysql:///programdbot</url>
+        <url>jdbc:mysql:///programd</url>
         <driver>com.mysql.jdbc.Driver</driver>
         <maximum-connections>25</maximum-connections>
         <username>programd</username>
@@ -36,7 +36,8 @@
         <on-uncaught-exceptions.print-stack-trace>true</on-uncaught-exceptions.print-stack-trace>
     </exceptions>
     <heart enabled="false">
-        <pulserate>5</pulserate>
+        <pulse.implementation>org.aitools.programd.util.IAmAlivePulse</pulse.implementation>
+        <pulse.rate>5</pulse.rate>
     </heart>
     <watchers>
         <AIML enabled="true">
@@ -59,7 +60,7 @@
     </loading>
     <connect-string>CONNECT</connect-string>
     <random-strategy>non-repeating</random-strategy>
-    <graphmapper.implementation>org.aitools.programd.graph.Graphmaster</graphmapper.implementation>
-    <nodemapper.implementation>org.aitools.programd.graph.TwoOptimalNodemaster</nodemapper.implementation>
+    <graphmapper.implementation>org.aitools.programd.graph.MemoryGraphmapper</graphmapper.implementation>
+    <nodemapper.implementation>org.aitools.programd.graph.TwoOptimalMemoryNodemapper</nodemapper.implementation>
     <use-shell>true</use-shell>
 </programd>

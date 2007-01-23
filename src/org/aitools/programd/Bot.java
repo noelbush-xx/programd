@@ -21,8 +21,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.aitools.programd.graph.Nodemapper;
-import org.aitools.programd.multiplexor.PredicateInfo;
-import org.aitools.programd.multiplexor.PredicateMap;
+import org.aitools.programd.predicates.PredicateInfo;
+import org.aitools.programd.predicates.PredicateMap;
 import org.aitools.programd.processor.Processor;
 import org.aitools.programd.util.InputNormalizer;
 import org.aitools.programd.util.Substituter;
@@ -36,8 +36,8 @@ import org.aitools.util.Lists;
  */
 public class Bot
 {
-    /** The identifier for the bot. */
-    private String id;
+    /** The label for the bot. */
+    private String _label;
 
     /** The files loaded for the bot. */
     private Map<URL, Set<Nodemapper>> loadedFiles = new HashMap<URL, Set<Nodemapper>>();
@@ -79,14 +79,14 @@ public class Bot
     protected String predicateEmptyDefault;
 
     /**
-     * Creates a new Bot with the given id. The bot's chat log is also set up. A default servlet page is set.
+     * Creates a new Bot with the given label.
      * 
-     * @param botID the id to use for the new bot
+     * @param label the id to use for the new bot
      * @param coreSettings the core settings to use
      */
-    public Bot(String botID, CoreSettings coreSettings)
+    public Bot(String label, CoreSettings coreSettings)
     {
-        this.id = botID;
+        this._label = label;
         this.predicateEmptyDefault = coreSettings.getPredicateEmptyDefault();
     }
 
@@ -97,7 +97,7 @@ public class Bot
      */
     public String getID()
     {
-        return this.id;
+        return this._label;
     }
 
     /**

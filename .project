@@ -3,6 +3,7 @@
 	<name>ProgramD</name>
 	<comment></comment>
 	<projects>
+		<project>aitools-utils</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

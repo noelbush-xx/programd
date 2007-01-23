@@ -4,12 +4,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.Element;
-
-import org.aitools.programd.multiplexor.Multiplexor;
+import org.aitools.programd.Core;
 import org.aitools.util.runtime.DeveloperError;
-import org.aitools.util.StringKit;
-import org.aitools.util.xml.XML;
+import org.aitools.util.Text;
+import org.aitools.util.xml.XHTML;
+import org.jdom.Element;
 
 /**
  * A TestCase contains an input and a set of checkers that test the response to
@@ -48,17 +47,18 @@ public class TestCase
      * @param encoding the encoding of the document from which this element comes
      * @param index a default index to use for automatically naming this case
      */
+    @SuppressWarnings("unchecked")
     public TestCase(Element element, String encoding, int index)
     {
-        if (element.hasAttribute("name"))
+        if (element.getAttribute("name") != null)
         {
             try
             {
-                this.name = new String(element.getAttribute("name").getBytes(encoding)).intern();
+                this.name = new String(element.getAttributeValue("name").getBytes(encoding)).intern();
             }
             catch (UnsupportedEncodingException e)
             {
-                throw new DeveloperError("Platform does not support encoding \"" + encoding + "\"!", e);
+                throw new DeveloperError(String.format("Platform does not support encoding \"%s\"!", encoding), e);
             }
         }
         else
@@ -66,12 +66,12 @@ public class TestCase
             this.name = "case-" + index;
         }
 
-        List<Element> children = XML.getElementChildrenOf(element);
+        List<Element> children = element.getChildren();
 
         int checkersStart = 0;
         // Might be a description here.
         Element child = children.get(0);
-        if (child.getTagName().equals(TAG_DESCRIPTION))
+        if (child.getName().equals(TAG_DESCRIPTION))
         {
             checkersStart = 2;
         }
@@ -82,11 +82,11 @@ public class TestCase
 
         try
         {
-            this.input = new String(children.get(checkersStart - 1).getTextContent().getBytes(encoding)).intern();
+            this.input = new String(children.get(checkersStart - 1).getText().getBytes(encoding)).intern();
         }
         catch (UnsupportedEncodingException e)
         {
-            throw new DeveloperError("Platform does not support encoding \"" + encoding + "\"!", e);
+            throw new DeveloperError(String.format("Platform does not support encoding \"%s\"!", encoding), e);
         }
         for (Element checker : children.subList(checkersStart, children.size()))
         {
@@ -155,15 +155,15 @@ public class TestCase
     /**
      * Runs this test case for the given botid.
      * 
-     * @param multiplexor the Multiplexor to use for testing
+     * @param core the Core to use for testing
      * @param userid the userid to use when testing
      * @param botid the bot for whom to run this test case
      * @return whether the test passed
      */
-    public boolean run(Multiplexor<?> multiplexor, String userid, String botid)
+    public boolean run(Core core, String userid, String botid)
     {
-        this.lastResponse = XML.filterWhitespace(multiplexor.getResponse(this.input, userid, botid));
-        return responseIsValid(StringKit.renderAsLines(XML.filterViaHTMLTags(this.lastResponse)));
+        this.lastResponse = org.jdom.Text.normalizeString(core.getResponse(this.input, userid, botid));
+        return responseIsValid(Text.renderAsLines(XHTML.breakLines(this.lastResponse)));
     }
 
     /**

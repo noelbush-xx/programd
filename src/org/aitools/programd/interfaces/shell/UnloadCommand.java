@@ -49,7 +49,7 @@ public class UnloadCommand extends ShellCommand
     }
 
     /**
-     * Attempts to unload the file named on the command line from the Graphmaster.
+     * Attempts to unload the file named on the command line from the Graphmapper.
      * 
      * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
      *      org.aitools.programd.interfaces.shell.Shell)

@@ -9,8 +9,7 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.jdom.Element;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
@@ -42,6 +41,6 @@ public class SRProcessor extends AIMLProcessor
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        return parser.shortcutTag(element, SRAIProcessor.label, StarProcessor.label, Node.ELEMENT_NODE);
+        return parser.shortcutTag(element, SRAIProcessor.label, StarProcessor.label, Element.class);
     }
 }

@@ -1,22 +1,19 @@
 package org.aitools.programd.test.aiml;
 
-import java.net.URISyntaxException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
-import org.aitools.programd.multiplexor.Multiplexor;
+import org.aitools.programd.Core;
 import org.aitools.util.runtime.DeveloperError;
-import org.aitools.util.runtime.UserError;
 import org.aitools.util.xml.XML;
 import org.apache.log4j.Logger;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.ls.LSException;
-import org.w3c.dom.ls.LSParser;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
 /**
  * A TestSuite comprises a set of TestCases.
@@ -28,6 +25,8 @@ public class TestSuite implements Iterable<TestCase>
     /** The test suite namespace URI. */
     public static final String TESTSUITE_NAMESPACE_URI = "http://aitools.org/xaiml/test-suite";
 
+    private static final Namespace TESTSUITE_NAMESPACE = Namespace.getNamespace("http://aitools.org/xaiml/test-suite");
+
     /** The test cases in this suite. */
     ArrayList<TestCase> testCases = new ArrayList<TestCase>();
 
@@ -37,8 +36,8 @@ public class TestSuite implements Iterable<TestCase>
     /** The clearInput to use for this test suite. */
     private String _clearInput;
 
-    /** The Multiplexor to use. */
-    private Multiplexor<?> _multiplexor;
+    /** The Core in use. */
+    private Core _core;
 
     /** The Logger. */
     private Logger _logger;
@@ -57,14 +56,14 @@ public class TestSuite implements Iterable<TestCase>
      * 
      * @param name the name to give the test suite
      * @param clearInput the clearInput for the test suite
-     * @param multiplexor the multiplexor to use
-     * @param logger 
+     * @param core the core to use
+     * @param logger
      */
-    public TestSuite(String name, String clearInput, Multiplexor<?> multiplexor, Logger logger)
+    public TestSuite(String name, String clearInput, Core core, Logger logger)
     {
         this._name = name;
         this._clearInput = clearInput;
-        this._multiplexor = multiplexor;
+        this._core = core;
         this._logger = logger;
     }
 
@@ -72,13 +71,13 @@ public class TestSuite implements Iterable<TestCase>
      * Creates a new TestSuite (with no clearInput).
      * 
      * @param name the name to give the test suite
-     * @param multiplexor the multiplexor to use
-     * @param logger 
+     * @param core the multiplexor to use
+     * @param logger
      */
-    public TestSuite(String name, Multiplexor<?> multiplexor, Logger logger)
+    public TestSuite(String name, Core core, Logger logger)
     {
         this._name = name;
-        this._multiplexor = multiplexor;
+        this._core = core;
         this._logger = logger;
     }
 
@@ -86,7 +85,7 @@ public class TestSuite implements Iterable<TestCase>
      * Creates a new TestSuite (with no clearInput or Multiplexor(!)).
      * 
      * @param name the name to give the test suite
-     * @param logger 
+     * @param logger
      */
     @SuppressWarnings("unused")
     protected TestSuite(String name, Logger logger)
@@ -140,24 +139,24 @@ public class TestSuite implements Iterable<TestCase>
     {
         if (this._clearInput != null && this._clearInput.length() > 0)
         {
-            this._multiplexor.getResponse(this._clearInput, TESTER_ID, botid);
+            this._core.getResponse(this._clearInput, TESTER_ID, botid);
         }
 
         this.failures.clear();
         boolean suiteSuccessful = true;
         for (TestCase testCase : this.testCases)
         {
-            boolean caseSuccessful = testCase.run(this._multiplexor, TESTER_ID, botid);
+            boolean caseSuccessful = testCase.run(this._core, TESTER_ID, botid);
             String testcaseName = testCase.getName();
             if (!caseSuccessful)
             {
-                this._logger.warn("Test case \"" + testcaseName + "\" failed with response \""
-                        + XML.removeMarkup(testCase.getLastResponse()) + "\".");
+                this._logger.warn(String.format("Test case \"%s\" failed with response \"%s\".", testcaseName, XML
+                        .removeMarkup(testCase.getLastResponse())));
                 registerFailure(this._name, testCase.getName(), testCase.getInput(), testCase.getLastResponse());
             }
             else
             {
-                this._logger.info("Test case " + testcaseName + " succeeded.");
+                this._logger.info(String.format("Test case \"%s\" succeeded.", testcaseName));
                 registerSuccess(this._name, testCase.getName(), testCase.getInput(), testCase.getLastResponse());
             }
             suiteSuccessful &= caseSuccessful;
@@ -195,55 +194,43 @@ public class TestSuite implements Iterable<TestCase>
      * Loads a test suite from the given path.
      * 
      * @param path the path from which to load the test suite
-     * @param logger 
-     * @param catalog
+     * @param logger
      * @return the loaded test suite
      */
-    public static TestSuite load(URL path, Logger logger, URL catalog)
+    public static TestSuite load(URL path, Logger logger)
     {
-        return load(path, null, logger, catalog);
+        return load(path, null, logger);
     }
 
     /**
      * Loads a test suite from the given path.
      * 
      * @param path the path from which to load the test suite
-     * @param multiplexor the multiplexor to use
-     * @param logger 
-     * @param catalog
+     * @param core the core to use
+     * @param logger
      * @return the loaded test suite
      */
-    public static TestSuite load(URL path, Multiplexor<?> multiplexor, Logger logger, URL catalog)
+    @SuppressWarnings("unchecked")
+    public static TestSuite load(URL path, Core core, Logger logger)
     {
-        LSParser builder = XML.getDOMParser(catalog.toExternalForm(), logger);
-        Document doc;
+        Document document = XML.getJDOMDocument(path, core.getBaseURL(), TESTSUITE_NAMESPACE_URI, core.getXMLCatalog(), logger);
+        String encoding;
         try
         {
-            doc = builder.parseURI(path.toURI().toString());
+            encoding = XML.getDeclaredXMLEncoding(path);
         }
-        catch (DOMException e)
+        catch (IOException e)
         {
-            throw new DeveloperError("DOM exception trying to parse test suite file.", e);
+            throw new DeveloperError("Could not get encoding of test suite file.", e);
         }
-        catch (LSException e)
+        Element testSuiteElement = document.getRootElement();
+        TestSuite suite = new TestSuite(testSuiteElement.getAttributeValue("name"), testSuiteElement
+                .getAttributeValue("clearInput"), core, logger);
+        int index = 0;
+        for (Element testCaseElement : (List<Element>) testSuiteElement.getChildren(TestCase.TAG_TESTCASE,
+                TESTSUITE_NAMESPACE))
         {
-            throw new DeveloperError("LS exception trying to parse test suite file.", e);
-        }
-        catch (URISyntaxException e)
-        {
-            throw new UserError(String.format("Error converting URL \"%s\" to URI.", path), e);
-        }
-        String encoding = doc.getXmlEncoding();
-        Element testSuiteElement = doc.getDocumentElement();
-        TestSuite suite = new TestSuite(testSuiteElement.getAttribute("name"), testSuiteElement
-                .getAttribute("clearInput"), multiplexor, logger);
-
-        NodeList testCases = doc.getElementsByTagNameNS(TESTSUITE_NAMESPACE_URI, TestCase.TAG_TESTCASE);
-        int testCaseCount = testCases.getLength();
-        for (int index = 0; index < testCaseCount; index++)
-        {
-            Element testCaseElement = (Element) testCases.item(index);
-            TestCase testCase = new TestCase(testCaseElement, encoding, index);
+            TestCase testCase = new TestCase(testCaseElement, encoding, index++);
             suite.addTestCase(testCase);
         }
         return suite;

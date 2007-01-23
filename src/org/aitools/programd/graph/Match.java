@@ -10,6 +10,7 @@
 package org.aitools.programd.graph;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.aitools.programd.util.InputNormalizer;
 
@@ -45,8 +46,8 @@ public class Match
     /** The <code>template</code> associated with the matched path. */
     private String _template;
 
-    /** The <code>filename</code> from which the matched path came. */
-    private String _filename;
+    /** The <code>filenames</code> from which the matched path came. */
+    private List<String> _filenames;
 
     /** Match states. */
     public static enum State
@@ -161,13 +162,14 @@ public class Match
     }
 
     /**
-     * Sets the <code>filename</code> part of the matched path.
+     * Sets the <code>filename</code> part of the matched path
+     * (this list may have 1 or more members).
      * 
-     * @param string the <code>botid</code> part of the matched path
+     * @param filenames the <code>filename</code> part of the matched path
      */
-    public void setFilename(String string)
+    public void setFilenames(List<String> filenames)
     {
-        this._filename = string;
+        this._filenames = filenames;
     }
 
     /**
@@ -222,13 +224,13 @@ public class Match
     }
 
     /**
-     * Gets the filename from which the &lt;template/&gt; originally came.
+     * Gets the filenames from which the &lt;template/&gt; originally came.
      * 
-     * @return the filename from which the &lt;template/&gt; originally came
+     * @return the filenames from which the &lt;template/&gt; originally came
      */
-    public String getFileName()
+    public List<String> getFileNames()
     {
-        return this._filename;
+        return this._filenames;
     }
 
     /**

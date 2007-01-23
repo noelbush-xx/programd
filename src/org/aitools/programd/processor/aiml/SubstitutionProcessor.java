@@ -9,8 +9,7 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.jdom.Element;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
@@ -43,16 +42,16 @@ abstract public class SubstitutionProcessor extends AIMLProcessor
      * @throws ProcessorException
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
+    @SuppressWarnings("unchecked")
     protected String process(Class<? extends Processor> processor, Element element, TemplateParser parser)
             throws ProcessorException
     {
-        if (element.getChildNodes().getLength() > 0)
+        if (element.getChildren().size() > 0)
         {
-            // Return the processed contents of the element, properly
-            // substituted.
-            return applySubstitutions(processor, parser.evaluate(element.getChildNodes()), parser.getBotID());
+            // Return the processed contents of the element, properly substituted.
+            return applySubstitutions(processor, parser.evaluate(element.getChildren()), parser.getBotID());
         }
-        return parser.shortcutTag(element, element.getTagName(), StarProcessor.label, Node.ELEMENT_NODE);
+        return parser.shortcutTag(element, element.getName(), StarProcessor.label, Element.class);
     }
 
     /**

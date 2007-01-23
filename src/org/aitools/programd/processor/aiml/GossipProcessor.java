@@ -12,7 +12,7 @@ package org.aitools.programd.processor.aiml;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.w3c.dom.Element;
+import org.jdom.Element;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
@@ -47,11 +47,12 @@ public class GossipProcessor extends AIMLProcessor
     /**
      * @see AIMLProcessor#process(Element, TemplateParser)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         // Get the gossip.
-        String response = parser.evaluate(element.getChildNodes());
+        String response = parser.evaluate(element.getChildren());
 
         // Initialize the FileWriter if necessary.
         if (gossipFile == null)

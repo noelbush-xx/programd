@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.aitools.programd.Core;
-import org.aitools.programd.multiplexor.Multiplexor;
 import org.aitools.util.resource.Filesystem;
 import org.aitools.util.resource.URLTools;
 import org.apache.log4j.Logger;
@@ -34,9 +33,6 @@ public class Tester
     /** The Core that this Tester will use. */
     private Core _core;
 
-    /** The Multiplexor that this Tester will use. */
-    private Multiplexor<?> _multiplexor;
-
     /** The logger to use. */
     private Logger logger;
 
@@ -60,7 +56,6 @@ public class Tester
     public Tester(Core core, Logger testLogger, List<URL> suitePaths, URL testReports)
     {
         this._core = core;
-        this._multiplexor = this._core.getMultiplexor();
         this.logger = testLogger;
         this.suiteURLs = suitePaths;
         try
@@ -85,7 +80,7 @@ public class Tester
     public String run(String botid, String suite, int runCount)
     {
         this.suites.clear();
-        this.suites = loadTests(this.suiteURLs, this._multiplexor, this.logger, this._core.getCatalog());
+        this.suites = loadTests(this.suiteURLs, this._core, this.logger);
         if (null == botid)
         {
             this.logger.warn("No botid defined for tests.");
@@ -150,20 +145,19 @@ public class Tester
      * Loads all test suites from a given pathspec (may use wildcards).
      * 
      * @param suiteList the list of suites
-     * @param multiplexor the Multiplexor to assign to the suites
+     * @param core the Core to assign to the suites
      * @param logger the logger to use for tracking progress
-     * @param catalog
      * 
      * @return the map of suite names to suites
      */
-    protected static HashMap<String, TestSuite> loadTests(List<URL> suiteList, Multiplexor<?> multiplexor,
-            Logger logger, URL catalog)
+    protected static HashMap<String, TestSuite> loadTests(List<URL> suiteList, Core core,
+            Logger logger)
     {
         HashMap<String, TestSuite> suites = new HashMap<String, TestSuite>();
         for (URL path : suiteList)
         {
-            logger.info("Loading tests from \"" + path + "\".");
-            TestSuite suite = TestSuite.load(path, multiplexor, logger, catalog);
+            logger.info(String.format("Loading tests from \"%s\".", path));
+            TestSuite suite = TestSuite.load(path, core, logger);
             suites.put(suite.getName(), suite);
         }
         return suites;

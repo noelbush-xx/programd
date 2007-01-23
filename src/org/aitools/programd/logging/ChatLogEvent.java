@@ -13,6 +13,7 @@ import org.aitools.util.xml.XML;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
+import org.jdom.Text;
 
 /**
  * A ChatLogEvent contains additional information about an exchange in a chat.
@@ -51,7 +52,7 @@ public class ChatLogEvent extends LoggingEvent
     public ChatLogEvent(String bot, String user, String in, String out)
     {
         super(LOGGER_FQCN, Logger.getLogger("programd." + bot), Level.INFO, String.format(
-                "%s -> %s: \"%s\"; %s -> %s: \"%s\"", user, bot, in, bot, user, XML.filterWhitespace(XML
+                "%s -> %s: \"%s\"; %s -> %s: \"%s\"", user, bot, in, bot, user, Text.normalizeString(XML
                         .removeMarkup(out))), null);
         this.botid = bot;
         this.userid = user;

@@ -21,12 +21,7 @@ import org.aitools.programd.graph.Graphmapper;
 import org.aitools.util.xml.XML;
 
 /**
- * <p>
- * This reads in standard AIML and delivers categories to the Graphmaster.
- * </p>
- * <p>
- * This has been rewritten starting with 4.2 to use SAX.
- * </p>
+ * This reads in standard AIML and delivers categories to the Graphmapper.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
@@ -39,28 +34,6 @@ public class AIMLReader extends DefaultHandler2
     private URL _path;
 
     private Bot _bot;
-
-    /*
-     * Constants used in parsing.
-     */
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String PATTERN = "pattern";
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String THAT = "that";
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String TOPIC = "topic";
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String TEMPLATE = "template";
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String BOT = "bot";
-
-    /** The string &quot;{@value}&quot;. */
-    private static final String NAME = "name";
 
     /** The most recently collected &lt;pattern&gt;&lt;/pattern&gt; contents. */
     private StringBuilder patternBuffer;
@@ -126,7 +99,7 @@ public class AIMLReader extends DefaultHandler2
     public void startCDATA()
     {
         assert this.currentBuffer != null : "Got CDATA start outside of a known element!";
-        this.currentBuffer.append(XML.CDATA_START);
+        this.currentBuffer.append("<![CDATA[");
     }
 
     /**
@@ -136,7 +109,7 @@ public class AIMLReader extends DefaultHandler2
     public void endCDATA()
     {
         assert this.currentBuffer != null : "Got CDATA end outside of a known element!";
-        this.currentBuffer.append(XML.CDATA_END);
+        this.currentBuffer.append("]]>");
     }
 
     /**
@@ -155,20 +128,20 @@ public class AIMLReader extends DefaultHandler2
         {
             elementName = localName;
         }
-        if (elementName.equals(PATTERN))
+        if (elementName.equals("pattern"))
         {
             this.currentBuffer = this.patternBuffer = new StringBuilder();
         }
-        else if (elementName.equals(BOT) && this.currentBuffer != null && this.currentBuffer == this.patternBuffer)
+        else if (elementName.equals("bot") && this.currentBuffer != null && this.currentBuffer == this.patternBuffer)
         {
             // Insert the value of the given bot predicate (no warning if doesn't exist!).
-            this.patternBuffer.append(this._bot.getPropertyValue(attributes.getValue(NAME)));
+            this.patternBuffer.append(this._bot.getPropertyValue(attributes.getValue("name")));
         }
-        else if (elementName.equals(THAT) && this.currentBuffer == null || this.currentBuffer != this.templateBuffer)
+        else if (elementName.equals("that") && this.currentBuffer == null || this.currentBuffer != this.templateBuffer)
         {
             this.currentBuffer = this.thatBuffer = new StringBuilder();
         }
-        else if (elementName.equals(TEMPLATE))
+        else if (elementName.equals("template"))
         {
             this.currentBuffer = this.templateBuffer = new StringBuilder();
         }
@@ -181,10 +154,10 @@ public class AIMLReader extends DefaultHandler2
             this.templateBuffer.append(XML.renderStartTag(elementName, attributes, !uri
                     .equals(this._defaultNamespaceURI), uri));
         }
-        else if (elementName.equals(TOPIC))
+        else if (elementName.equals("topic"))
         {
             // We don't check that it's valid, because it's supposed to have been schema-validated already!
-            this.topic = attributes.getValue(NAME);
+            this.topic = attributes.getValue("name");
         }
     }
 
@@ -215,11 +188,11 @@ public class AIMLReader extends DefaultHandler2
             this.that = this.thatBuffer.toString();
             this.currentBuffer = null;
         }
-        else if (elementName.equals(TEMPLATE))
+        else if (elementName.equals("template"))
         {
             // Whitespace-normalize the template contents.
             this.template = String.format("%s%s</template>", this.templateStartTag, this.templateBuffer.toString());
-            // Finally, deliver the newly defined category to the Graphmaster.
+            // Finally, deliver the newly defined category to the Graphmapper.
             this._graphmapper.addCategory(this.pattern, this.that, this.topic, this.template, this._bot,
                     this._path);
             // Reset the pattern, that and template.
@@ -256,7 +229,7 @@ public class AIMLReader extends DefaultHandler2
                 this.templateBuffer.append(String.format("</%s>", elementName));
             }
         }
-        else if (elementName.equals(TOPIC))
+        else if (elementName.equals("topic"))
         {
             this.topic = "*";
         }

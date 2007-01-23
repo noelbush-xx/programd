@@ -6,7 +6,7 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.aitools.programd.Core;
-import org.aitools.programd.multiplexor.PredicateMaster;
+import org.aitools.programd.predicates.PredicateManager;
 
 /**
  * Provides the version of the engine via JSP.
@@ -19,7 +19,7 @@ public class Get extends SimpleTagSupport
     protected String name;
 
     /** The PredicateMaster from which values will be gotten. */
-    protected PredicateMaster predicateMaster;
+    protected PredicateManager predicateMaster;
 
     /** The id of the bot for which to get the predicate value. */
     protected String botid;

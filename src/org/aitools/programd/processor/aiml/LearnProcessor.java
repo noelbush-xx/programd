@@ -11,12 +11,11 @@ package org.aitools.programd.processor.aiml;
 
 import java.net.URL;
 
-import org.w3c.dom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.util.resource.URLTools;
+import org.aitools.util.xml.XML;
+import org.jdom.Element;
 
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-learn">learn</a></code> element.
@@ -49,10 +48,11 @@ public class LearnProcessor extends AIMLProcessor
      * @return the result of processing the element
      * @throws ProcessorException if there is an error in processing
      */
+    @SuppressWarnings("unchecked")
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        URL path = URLTools.contextualize(parser.getCurrentDocURL(), parser.evaluate(element.getChildNodes()));
+        URL path = XML.contextualize(parser.evaluate(element.getChildren()), element);
         parser.getCore().load(path, parser.getBotID());
         return "";
     }

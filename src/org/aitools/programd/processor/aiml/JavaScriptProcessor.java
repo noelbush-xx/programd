@@ -9,7 +9,7 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.w3c.dom.Element;
+import org.jdom.Element;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
@@ -46,6 +46,7 @@ public class JavaScriptProcessor extends AIMLProcessor
      * @return the result of processing the element
      * @throws ProcessorException if there is an error in processing
      */
+    @SuppressWarnings("unchecked")
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
@@ -56,6 +57,6 @@ public class JavaScriptProcessor extends AIMLProcessor
             return "";
         }
         logger.debug("Calling JavaScript interpreter.");
-        return parser.getCore().getInterpreter().evaluate(parser.evaluate(element.getChildNodes()));
+        return parser.getCore().getInterpreter().evaluate(parser.evaluate(element.getChildren()));
     }
 }
