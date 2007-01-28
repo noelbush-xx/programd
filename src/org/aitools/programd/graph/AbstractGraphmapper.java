@@ -12,6 +12,7 @@ package org.aitools.programd.graph;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -27,6 +28,8 @@ import org.aitools.programd.processor.aiml.RandomProcessor;
 import org.aitools.util.Text;
 import org.aitools.util.resource.Filesystem;
 import org.aitools.util.resource.URLTools;
+import org.aitools.util.runtime.Errors;
+import org.aitools.util.runtime.UserError;
 import org.aitools.util.xml.XML;
 import org.apache.log4j.Logger;
 import org.jdom.Content;
@@ -249,12 +252,11 @@ abstract public class AbstractGraphmapper implements Graphmapper
         }
         catch (IOException e)
         {
-            this._logger.warn(String.format("Error reading \"%s\": %s", URLTools.unescape(path), e.getMessage()), e);
+            this._logger.warn(String.format("Error reading \"%s\": %s", URLTools.unescape(path), Errors.describe(e)), e);
         }
         catch (SAXException e)
         {
-            this._logger.warn(String.format("Error parsing \"%s\": %s", URLTools.unescape(path), e.getMessage()), e);
-            e.printStackTrace();
+            this._logger.warn(String.format("Error parsing \"%s\": %s", URLTools.unescape(path), Errors.describe(e)), e);
         }
     }
     
@@ -362,7 +364,7 @@ abstract public class AbstractGraphmapper implements Graphmapper
         List<Content> existingContent;
 
         Document newDoc;
-        List<Content> newContent;
+        List<Content> newContent = new ArrayList<Content>();
 
         try
         {
@@ -371,7 +373,10 @@ abstract public class AbstractGraphmapper implements Graphmapper
             existingContent = existingRoot.getContent();
 
             newDoc = new SAXBuilder().build(new StringReader(newTemplate));
-            newContent = newDoc.getRootElement().getContent();
+            for (Content newContentItem : (List<Content>)newDoc.getRootElement().getContent())
+            {
+                newContent.add((Content)newContentItem.clone());
+            }
         }
         catch (JDOMException e)
         {
@@ -401,11 +406,8 @@ abstract public class AbstractGraphmapper implements Graphmapper
             return new XMLOutputter(this._xmlFormat).outputString(existingDoc);
         }
         Element listItemForExisting = new Element(RandomProcessor.LI, this._aimlNamespaceURI);
+        existingRoot.removeContent();
         listItemForExisting.addContent(existingContent);
-        for (Content content : existingContent)
-        {
-            existingRoot.removeContent(content);
-        }
 
         Element listItemForNew = new Element(RandomProcessor.LI, this._aimlNamespaceURI);
         listItemForNew.addContent(newContent);
@@ -548,4 +550,22 @@ abstract public class AbstractGraphmapper implements Graphmapper
     {
         return this._duplicateCategories;
     }
+
+    /**
+     * @see org.aitools.programd.graph.Graphmapper#print(java.lang.String)
+     */
+    public void print(String path)
+    {
+        try
+        {
+            print(new PrintWriter(Filesystem.checkOrCreate(path, "Graphmapper output")));
+        }
+        catch (FileNotFoundException e)
+        {
+            throw new UserError("Cannot find file to print graph.", e);
+        }
+        
+    }
+    
+    abstract protected void print(PrintWriter out);
 }
