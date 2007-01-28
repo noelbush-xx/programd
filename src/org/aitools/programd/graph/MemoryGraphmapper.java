@@ -409,11 +409,12 @@ public class MemoryGraphmapper extends AbstractGraphmapper
         {
             /*
              * Check now whether this head is a marker for the <that>, <topic> or <botid> segments of the path. If it
-             * is, set the match state variable accordingly.
+             * is, save the contents of the thereby terminated path component, and then set the new match state variable accordingly.
              */
             boolean isMarker = false;
             if (head.startsWith("<"))
             {
+                match.setPathComponent(matchState, path.toString().toUpperCase());
                 if (head.equals(THAT))
                 {
                     isMarker = true;
@@ -434,7 +435,7 @@ public class MemoryGraphmapper extends AbstractGraphmapper
                                    isMarker ? matchState.preceding() : null,  // target match state for wildcard content
                                    nodemapper,                                // current nodemapper
                                    tail,                                      // current tail
-                                   !isMarker,                                 // append new path? (only it this is not a marker)
+                                   !isMarker,                                 // append new path? (only if this is not a marker)
                                    wildcardContent,                           // current wildcard content (empty if this is a marker)
                                    isMarker ? "" : wildcardContent,           // new wildcard content
                                    path,                                      // current path
@@ -539,7 +540,7 @@ public class MemoryGraphmapper extends AbstractGraphmapper
                                   expiration                                    // expiration timestamp
                                   );
         // capture and push the wildcard content appropriate to the current match state.
-        if (wildcardDestination != null && currentWildcard.length() > 0)
+        if (wildcardDestination != null && wildcardDestination.compareTo(Match.State.IN_BOTID) < 0 && currentWildcard.length() > 0)
         {
             match.pushWildcardContent(wildcardDestination, currentWildcard);
         }
