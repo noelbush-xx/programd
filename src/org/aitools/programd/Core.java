@@ -1129,7 +1129,7 @@ public class Core
         // Show the input path.
         if (this._matchLogger.isDebugEnabled())
         {
-            this._matchLogger.debug(String.format("[INPUT (%s)] %s : %s : %s : %s", userid, input, that, topic, botid));
+            this._matchLogger.debug(String.format("[INPUT (%s)] %s:%s:%s:%s", userid, input, that, topic, botid));
         }
 
         Match match = null;
@@ -1152,7 +1152,7 @@ public class Core
 
         if (this._matchLogger.isDebugEnabled())
         {
-            this._matchLogger.debug(String.format("[MATCHED] %s (\"%s\")", match.getPath(), match.getFileNames()));
+            this._matchLogger.debug(String.format("[MATCH (%s)] %s (\"%s\")", userid, match.getPath(), match.getFileNames()));
         }
 
         parser.addMatch(match);
