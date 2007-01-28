@@ -10,6 +10,8 @@
 package org.aitools.programd.parser;
 
 import java.io.FileNotFoundException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
@@ -159,12 +161,12 @@ public class BotsConfigurationFileParser
             long time = new Date().getTime();
 
             // Load the bot.
-            loadProperties(bot, element);
-            loadPredicates(bot, element);
-            loadSubstitutions(bot, element);
-            loadSentenceSplitters(bot, element);
-            loadListeners(bot, element);
-            setupTesting(bot, element);
+            loadConfig(bot, element, "properties");
+            loadConfig(bot, element, "predicates");
+            loadConfig(bot, element, "substitutions");
+            loadConfig(bot, element, "sentence-splitters");
+            loadConfig(bot, element, "listeners");
+            loadConfig(bot, element, "testing");
             loadAIML(bot, element);
 
             // Calculate the time used to load all categories.
@@ -192,209 +194,192 @@ public class BotsConfigurationFileParser
         }
     }
 
+    /**
+     * A generic method for loading configuration data.
+     * 
+     * @param bot the bot object into which to load data
+     * @param parent the parent "bot" element
+     * @param name the name of the child element from which to load config data; is used to determine method name to call to load config data
+     */
+    @SuppressWarnings("unchecked")
+    protected void loadConfig(Bot bot, Element parent, String name)
+    {
+        Element child = parent.getChild(name, NS);
+        if (child != null)
+        {
+            String methodName = String.format("load%s%s", name.substring(0, 1).toUpperCase(), name.substring(1).replaceAll("\\W", ""));
+            Method method;
+            try
+            {
+                method = this.getClass().getDeclaredMethod(methodName, new Class[]{Bot.class, Element.class});
+            }
+            catch (SecurityException e)
+            {
+                throw new DeveloperError(String.format("Cannot access method %s", methodName), e);
+            }
+            catch (NoSuchMethodException e)
+            {
+                throw new DeveloperError(String.format("No such method %s", methodName), e);
+            }
+            try
+            {
+                if (child.getAttribute("href") != null)
+                {
+                    method.invoke(this, bot, getDocRoot(XML.contextualize(child.getAttributeValue("href"), child)));
+                }
+                else
+                {
+                    method.invoke(this, bot, child);
+                }
+            }
+            catch (InvocationTargetException e)
+            {
+                throw new DeveloperError(String.format("Could not invoke method %s", methodName), e);
+            }
+            catch (IllegalAccessException e)
+            {
+                throw new DeveloperError(String.format("Could not invoke method %s", methodName), e);
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     protected void loadProperties(Bot bot, Element element)
     {
-        Element properties = element.getChild("properties", NS);
-        if (properties != null)
+        for (Element property : (List<Element>) element.getChildren("property", NS))
         {
-            if (properties.getAttribute("href") != null)
-            {
-                loadProperties(bot, getDocRoot(XML.contextualize(properties.getAttributeValue("href"), element)));
-            }
-            else
-            {
-                for (Element property : (List<Element>) properties.getChildren("property", NS))
-                {
-                    bot.setPropertyValue(property.getAttributeValue("name"), property.getAttributeValue("value"));
-                }
-            }
+            bot.setPropertyValue(property.getAttributeValue("name"), property.getAttributeValue("value"));
         }
     }
 
     @SuppressWarnings("unchecked")
     protected void loadPredicates(Bot bot, Element element)
     {
-        Element predicates = element.getChild("predicates", NS);
-        if (predicates != null)
+        for (Element predicate : (List<Element>) element.getChildren("predicate", NS))
         {
-            if (predicates.getAttribute("href") != null)
+            String name = predicate.getAttributeValue("name");
+            String defaultValue = predicate.getAttributeValue("default");
+            if ("".equals(defaultValue))
             {
-                loadProperties(bot, getDocRoot(XML.contextualize(predicates.getAttributeValue("href"), element)));
+                defaultValue = null;
             }
-            else
+            String setReturn = predicate.getAttributeValue("set-return");
+            boolean returnNameWhenSet = false;
+            if (setReturn.equals("name"))
             {
-                for (Element predicate : (List<Element>) predicates.getChildren("predicate", NS))
-                {
-                    String name = predicate.getAttributeValue("name");
-                    String defaultValue = predicate.getAttributeValue("default");
-                    if ("".equals(defaultValue))
-                    {
-                        defaultValue = null;
-                    }
-                    String setReturn = predicate.getAttributeValue("set-return");
-                    boolean returnNameWhenSet = false;
-                    if (setReturn.equals("name"))
-                    {
-                        returnNameWhenSet = true;
-                    }
-                    bot.addPredicateInfo(name, defaultValue, returnNameWhenSet);
-                }
+                returnNameWhenSet = true;
             }
+            bot.addPredicateInfo(name, defaultValue, returnNameWhenSet);
         }
     }
 
     @SuppressWarnings("unchecked")
     protected void loadSubstitutions(Bot bot, Element element)
     {
-        Element substitutions = element.getChild("substitutions", NS);
-        if (substitutions != null)
+        for (Element substitutionTypes : (List<Element>) element.getChildren())
         {
-            if (substitutions.getAttribute("href") != null)
+            SubstitutionType type = SubstitutionType.get(substitutionTypes.getName());
+
+            for (Element substitution : (List<Element>) substitutionTypes.getChildren())
             {
-                loadSubstitutions(bot, getDocRoot(XML.contextualize(substitutions.getAttributeValue("href"), element)));
-            }
-            else
-            {
-                for (Element substitutionTypes : (List<Element>) substitutions.getChildren())
+                String find = substitution.getAttributeValue("find");
+
+                // Compile the find pattern.
+                Pattern pattern;
+                try
                 {
-                    SubstitutionType type = SubstitutionType.get(substitutionTypes.getName());
-
-                    for (Element substitution : (List<Element>) substitutionTypes.getChildren())
-                    {
-                        String find = substitution.getAttributeValue("find");
-
-                        // Compile the find pattern.
-                        Pattern pattern;
-                        try
-                        {
-                            pattern = Pattern.compile(find, Pattern.CANON_EQ | Pattern.CASE_INSENSITIVE
-                                    | Pattern.UNICODE_CASE);
-                        }
-                        catch (PatternSyntaxException e)
-                        {
-                            throw new UserError(String.format("Invalid substitution pattern \"%s\".", find), e);
-                        }
-                        String replace = substitution.getAttributeValue("replace");
-                        switch (type)
-                        {
-                            case INPUT:
-                                bot.addInputSubstitution(pattern, replace);
-                                break;
-                            case GENDER:
-                                bot.addSubstitution(org.aitools.programd.processor.aiml.GenderProcessor.class, pattern,
-                                        replace);
-                                break;
-                            case PERSON:
-                                bot.addSubstitution(org.aitools.programd.processor.aiml.PersonProcessor.class, pattern,
-                                        replace);
-                                break;
-                            case PERSON2:
-                                bot.addSubstitution(org.aitools.programd.processor.aiml.Person2Processor.class,
-                                        pattern, replace);
-                                break;
-                        }
-                    }
+                    pattern = Pattern.compile(find, Pattern.CANON_EQ | Pattern.CASE_INSENSITIVE
+                            | Pattern.UNICODE_CASE);
+                }
+                catch (PatternSyntaxException e)
+                {
+                    throw new UserError(String.format("Invalid substitution pattern \"%s\".", find), e);
+                }
+                String replace = substitution.getAttributeValue("replace");
+                switch (type)
+                {
+                    case INPUT:
+                        bot.addInputSubstitution(pattern, replace);
+                        break;
+                    case GENDER:
+                        bot.addSubstitution(org.aitools.programd.processor.aiml.GenderProcessor.class, pattern,
+                                replace);
+                        break;
+                    case PERSON:
+                        bot.addSubstitution(org.aitools.programd.processor.aiml.PersonProcessor.class, pattern,
+                                replace);
+                        break;
+                    case PERSON2:
+                        bot.addSubstitution(org.aitools.programd.processor.aiml.Person2Processor.class,
+                                pattern, replace);
+                        break;
                 }
             }
         }
     }
 
     @SuppressWarnings("unchecked")
-    protected void loadSentenceSplitters(Bot bot, Element element)
+    protected void loadSentencesplitters(Bot bot, Element element)
     {
-        Element splitters = element.getChild("sentence-splitters", NS);
-        if (splitters != null)
+        for (Element splitter : (List<Element>) element.getChildren("splitter", NS))
         {
-            if (splitters.getAttribute("href") != null)
-            {
-                loadSentenceSplitters(bot, getDocRoot(XML.contextualize(splitters.getAttributeValue("href"), element)));
-            }
-            else
-            {
-                for (Element splitter : (List<Element>) splitters.getChildren("splitter", NS))
-                {
-                    bot.addSentenceSplitter(splitter.getAttributeValue("value"));
-                }
-            }
+            bot.addSentenceSplitter(splitter.getAttributeValue("value"));
         }
     }
 
     @SuppressWarnings("unchecked")
     protected void loadListeners(Bot bot, Element element)
     {
-        Element listeners = element.getChild("listeners", NS);
-        if (listeners != null)
+        for (Element listenerElement : (List<Element>) element.getChildren("listener", NS))
         {
-            if (listeners.getAttribute("href") != null)
+            // Get enabled attribute
+            if (!XML.getBooleanAttribute(listenerElement, "enabled"))
             {
-                loadListeners(bot, getDocRoot(XML.contextualize(listeners.getAttributeValue("href"), element)));
+                return;
             }
-            else
+
+            // Set up the parameters for the listener.
+            Map<String, String> parameters = new HashMap<String, String>();
+            for (Element parameter : (List<Element>) listenerElement.getChildren())
             {
-                for (Element listenerElement : (List<Element>) listeners.getChildren("listener", NS))
-                {
-                    // Get enabled attribute
-                    if (!XML.getBooleanAttribute(listenerElement, "enabled"))
-                    {
-                        return;
-                    }
-
-                    // Set up the parameters for the listener.
-                    Map<String, String> parameters = new HashMap<String, String>();
-                    for (Element parameter : (List<Element>) listenerElement.getChildren())
-                    {
-                        parameters.put(parameter.getAttributeValue("name"), parameter.getAttributeValue("value"));
-                    }
-
-                    // Instantiate a new listener for the bot.
-                    String classname = listenerElement.getAttributeValue("class");
-                    Listener listener = ClassUtils.getSubclassInstance(Listener.class, classname, "listener",
-                            this._core, bot, parameters);
-
-                    // Check listener parameters.
-                    try
-                    {
-                        listener.checkParameters();
-                    }
-                    catch (InvalidListenerParameterException e)
-                    {
-                        throw new UserError("Listener is not properly configured!", e);
-                    }
-
-                    // Start listener
-                    this._core.getManagedProcesses().start(listener, String.format("%s : %s", classname, bot.getID()));
-
-                    this._logger.info(String.format("Started \"%s\" listener for bot \"%s\".", classname, bot.getID()));
-                }
+                parameters.put(parameter.getAttributeValue("name"), parameter.getAttributeValue("value"));
             }
+
+            // Instantiate a new listener for the bot.
+            String classname = listenerElement.getAttributeValue("class");
+            Listener listener = ClassUtils.getSubclassInstance(Listener.class, classname, "listener",
+                    this._core, bot, parameters);
+
+            // Check listener parameters.
+            try
+            {
+                listener.checkParameters();
+            }
+            catch (InvalidListenerParameterException e)
+            {
+                throw new UserError("Listener is not properly configured!", e);
+            }
+
+            // Start listener
+            this._core.getManagedProcesses().start(listener, String.format("%s : %s", classname, bot.getID()));
+
+            this._logger.info(String.format("Started \"%s\" listener for bot \"%s\".", classname, bot.getID()));
         }
     }
 
-    protected void setupTesting(Bot bot, Element element)
+    protected void loadTesting(Bot bot, Element element)
     {
-        Element testing = element.getChild("testing", NS);
-        if (testing != null)
+        URL docURL;
+        try
         {
-            if (testing.getAttribute("href") != null)
-            {
-                setupTesting(bot, getDocRoot(XML.contextualize(testing.getAttributeValue("href"), element)));
-            }
-            else
-            {
-                URL docURL;
-                try
-                {
-                    docURL = URLTools.createValidURL(element.getDocument().getBaseURI());
-                }
-                catch (FileNotFoundException e)
-                {
-                    throw new DeveloperError("Could not get bot config document URL when setting up testing.", e);
-                }
-                bot.setTestSuitePathspec(URLTools.getURLs(testing.getChildText("test-suite-path", NS), docURL));
-                bot.setTestReportDirectory(URLTools.contextualize(docURL, testing.getChildText("report-directory", NS)));
-            }
+            docURL = URLTools.createValidURL(element.getDocument().getBaseURI());
         }
+        catch (FileNotFoundException e)
+        {
+            throw new DeveloperError("Could not get bot config document URL when setting up testing.", e);
+        }
+        bot.setTestSuitePathspec(URLTools.getURLs(element.getChildText("test-suite-path", NS), docURL));
+        bot.setTestReportDirectory(URLTools.contextualize(docURL, element.getChildText("report-directory", NS)));
     }
 
     @SuppressWarnings("unchecked")
