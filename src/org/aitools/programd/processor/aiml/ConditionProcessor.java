@@ -11,18 +11,13 @@ package org.aitools.programd.processor.aiml;
 
 import java.util.List;
 
-import org.jdom.CDATA;
-import org.jdom.Content;
 import org.jdom.Element;
-import org.jdom.Text;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.util.NotAnAIMLPatternException;
 import org.aitools.programd.util.PatternArbiter;
-import org.aitools.util.runtime.UserError;
-import org.apache.log4j.Logger;
 
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-condition">condition</a></code> element.
@@ -31,17 +26,14 @@ import org.apache.log4j.Logger;
  */
 public class ConditionProcessor extends AIMLProcessor
 {
-    /** Different types of condition. */
-    public static enum ListItemType
+    /** The wo types of <code>condition</code> that have <code>li</code> children. */
+    public static enum NonBlockConditionType
     {
-        /** A nameValueListItem in a &lt;condition/&gt;. */
-        NAME_VALUE,
+        /** A <code>singlePredicateCondition</code>. */
+        SINGLE_PREDICATE,
 
-        /** A defaultListItem in a &lt;condition/&gt;. */
-        DEFAULT,
-
-        /** A valueOnlyListItem in a &lt;condition/&gt;. */
-        VALUE_ONLY
+        /** A <code>multiPredicateCondition</code>. */
+        MULTI_PREDICATE
     }
 
     /** The label (as required by the registration scheme). */
@@ -68,55 +60,43 @@ public class ConditionProcessor extends AIMLProcessor
         String name = element.getAttributeValue("name");
         String value = element.getAttributeValue("value");
 
-        /*
-         * Process a multiPredicateCondition: <condition> <li name="xxx" value="xxx"> ... </li><li> ... </li>
-         * </condition>
-         */
-        if ("".equals(name) && "".equals(value))
+        try
         {
-            if (aimlLogger.isDebugEnabled())
-            {
-                aimlLogger.debug("Processing multiPredicateCondition.");
-            }
-            return processListItem(parser, element.getChildren(), ListItemType.NAME_VALUE, name);
-        }
-
-        /*
-         * Process a blockCondition: <condition name="xxx" value="yyy"> ... </condition>
-         */
-        if (!"".equals(name) && !"".equals(value))
-        {
-            if (aimlLogger.isDebugEnabled())
-            {
-                aimlLogger.debug("Processing blockCondition.");
-            }
-            try
+            /*
+             * Process a blockCondition: <condition name="xxx" value="yyy"> ... </condition>
+             */
+            if (name != null && value != null)
             {
                 if (PatternArbiter.matches(parser.getCore().getPredicateMaster().get(name, parser.getUserID(),
                         parser.getBotID()), value, true))
                 {
-                    return processListItem(parser, element.getChildren(), ListItemType.DEFAULT, "");
+                    return parser.evaluate(element.getContent());
                 }
-            }
-            catch (NotAnAIMLPatternException e)
-            {
-                logger.warn("ConditionProcessor got a non-AIML pattern in a value attribute.", e);
                 return "";
             }
-            return "";
-        }
-
-        /*
-         * Process a singlePredicateCondition: <condition name="xxx"> <li value="yyy"> ... </li><li> ... </li>
-         * </condition>
-         */
-        if (!"".equals(name) && "".equals(value))
-        {
-            if (aimlLogger.isDebugEnabled())
+    
+            /*
+             * Process a multiPredicateCondition: <condition> <li name="xxx" value="xxx"> ... </li><li> ... </li>
+             * </condition>
+             */
+            if (name == null && value == null)
             {
-                aimlLogger.debug("Processing singlePredicateCondition.");
+                return processMultiPredicateListItems(parser, element);
             }
-            return processListItem(parser, element.getChildren(), ListItemType.VALUE_ONLY, name);
+    
+            /*
+             * Process a singlePredicateCondition: <condition name="xxx"> <li value="yyy"> ... </li><li> ... </li>
+             * </condition>
+             */
+            if (name != null && value == null)
+            {
+                return processSinglePredicateListItems(parser, element, name);
+            }
+        }
+        catch (NotAnAIMLPatternException e)
+        {
+            logger.warn("ConditionProcessor got a non-AIML pattern in a value attribute.", e);
+            return "";
         }
 
         // In other cases, return an empty string.
@@ -124,168 +104,75 @@ public class ConditionProcessor extends AIMLProcessor
     }
 
     /**
-     * Evaluates an &lt;li/&gt; element inside a &lt;condition/&gt;.
+     * Evaluates all the &lt;li/&gt; elements inside a multi-predicate &lt;condition/&gt;.
      * 
      * @param parser the TemplateParser object responsible for this
-     * @param list the XML trie
-     * @param type one of "name"_"value", DEFAULT, "value"_ONLY
+     * @param condition the parent condition
+     * @return the result of processing this &lt;li/&gt;
+     * @throws ProcessorException 
+     * @throws NotAnAIMLPatternException
+     */
+    @SuppressWarnings("unchecked")
+    protected String processMultiPredicateListItems(TemplateParser parser, Element condition) throws ProcessorException, NotAnAIMLPatternException
+    {
+        List<Element> listItems = condition.getChildren();
+
+        int lastLI = listItems.size() - 1;
+        for (int index = 0; index <= lastLI; index++)
+        {
+            Element listItem = listItems.get(index);
+            String liValue = listItem.getAttributeValue("value");
+            String liName = listItem.getAttributeValue("name");
+            
+            if (liName != null && liValue != null)
+            {
+                if (PatternArbiter.matches(this._core.getPredicateMaster().get(liName,
+                        parser.getUserID(), parser.getBotID()), liValue, true))
+                {
+                    return parser.evaluate(listItem.getContent());
+                }
+            }
+            else if (index == lastLI && liName == null && liValue == null)
+            {
+                return parser.evaluate(listItem.getContent());
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Evaluates all the &lt;li/&gt; elements inside a single-predicate &lt;condition/&gt;.
+     * 
+     * @param parser the TemplateParser object responsible for this
+     * @param condition the parent condition
      * @param name the name attribute of the &lt;li/&gt; (if applicable)
      * @return the result of processing this &lt;li/&gt;
      * @throws ProcessorException 
+     * @throws NotAnAIMLPatternException
      */
-    public String processListItem(TemplateParser parser, List<Content> list, ListItemType type, String name) throws ProcessorException
-    {
-        StringBuilder response = new StringBuilder();
-
-        String predicateValue = null;
-
-        /*
-         * For <code> valueOnlyListItem </code> s, look at the parent &lt;condition/&gt; to get the predicate <code>
-         * name </code> .
-         */
-        if (type == ListItemType.VALUE_ONLY)
-        {
-            predicateValue = this._core.getPredicateMaster().get(name, parser.getUserID(), parser.getBotID());
-        }
-
-        // Navigate through this entire level.
-        for (Content content : list)
-        {
-            if (content instanceof Text || content instanceof CDATA)
-            {
-                response.append(content.getValue());
-            }
-            else if (content instanceof Element)
-            {
-                processElement(parser, (Element)content, type, predicateValue, response);
-            }
-        }
-        return response.toString();
-    }
-    
-    private void processElement(TemplateParser parser, Element element, ListItemType type, String predicateValue, StringBuilder response) throws ProcessorException
-    {
-        if (element.getChildren().size() == 0)
-        {
-            try
-            {
-                response.append(parser.evaluate(element));
-            }
-            catch (ProcessorException e)
-            {
-                throw new UserError(e.getExplanatoryMessage(), e);
-            }
-        }
-        else
-        {
-            /*
-             * Now decide what to do based on the listItemType, which indicates what to expect from the
-             * parent &lt;condition/&gt;.
-             */
-            switch (type)
-            {
-                // Evaluate listitems with both name and value attributes.
-                case NAME_VALUE:
-                    processNameValueLI(parser, element, response);
-                    break;
-                    
-                case DEFAULT:
-                    processDefaultLI(parser, element, response);
-                    break;
-                    
-                case VALUE_ONLY:
-                    processValueOnlyLI(parser, element, predicateValue, response);
-                    break;
-                    
-                default:
-                    break;
-            }
-        }
-    }
-    
     @SuppressWarnings("unchecked")
-    private void processNameValueLI(TemplateParser parser, Element element, StringBuilder response) throws ProcessorException
+    protected String processSinglePredicateListItems(TemplateParser parser, Element condition, String name) throws ProcessorException, NotAnAIMLPatternException
     {
-        /*
-         * Look for tokens in the XML attributes for name and value. If none are present,
-         * this is an unqualified &lt;li/&gt; (defaultListItem) and gets evaluated.
-         * (Strange.) Processing will continue even after this case, so the defaultListItem
-         * may be anywhere under &lt;condition/&gt;, not necessarily at the end. This is a
-         * violation of strict AIML 1.0.1.
-         */
-        if ((element.getAttribute("name") == null) && (element.getAttribute("value") == null))
+        List<Element> listItems = condition.getChildren();
+
+        int lastLI = listItems.size() - 1;
+        for (int index = 0; index <= lastLI; index++)
         {
-            response.append(parser.evaluate(element.getChildren()));
-            return;
-        }
-        
-        // Ignore if there is not a name and a value.
-        if ((element.getAttribute("name") == null) || (element.getAttribute("value") == null))
-        {
-            return;
-        }
-        
-        // Recover the values of the name and value
-        // attributes.
-        String liname = element.getAttributeValue("name");
-        String livalue = element.getAttributeValue("value");
-        
-        /*
-         * If the value of the predicate matches the value in the value attribute, process
-         * the response, otherwise skip.
-         */
-        try
-        {
-            if (PatternArbiter.matches(this._core.getPredicateMaster().get(liname,
-                    parser.getUserID(), parser.getBotID()), livalue, true))
+            Element listItem = listItems.get(index);
+            String liValue = listItem.getAttributeValue("value");
+            String predicateValue = this._core.getPredicateMaster().get(name, parser.getUserID(), parser.getBotID());
+            if (liValue != null)
             {
-                response.append(parser.evaluate(element.getChildren()));
-            }
-        }
-        catch (NotAnAIMLPatternException e)
-        {
-            Logger.getLogger("programd").warn(
-                    "ConditionProcessor got a non-AIML pattern in a value attribute.", e);
-        }
-    }
-    
-    private void processDefaultLI(TemplateParser parser, Element element, StringBuilder response) throws ProcessorException
-    {
-        response.append(parser.evaluate(element));
-    }
-    
-    @SuppressWarnings("unchecked")
-    private void processValueOnlyLI(TemplateParser parser, Element element, String predicateValue, StringBuilder response) throws ProcessorException
-    {
-        // If there is a value attribute, get it.
-        if (element.getAttribute("value") != null)
-        {
-            String livalue = element.getAttributeValue("value");
-            /*
-             * If the value of the predicate matches the value in the value attribute,
-             * process the response, otherwise skip.
-             */
-            try
-            {
-                if (PatternArbiter.matches(predicateValue, livalue, true))
+                if (PatternArbiter.matches(predicateValue, liValue, true))
                 {
-                    response.append(parser.evaluate(element.getChildren()));
+                    return parser.evaluate(listItem.getContent());
                 }
             }
-            catch (NotAnAIMLPatternException e)
+            else if (index == lastLI)
             {
-                Logger.getLogger("programd").warn(
-                        "ConditionProcessor got a non-AIML pattern in a value attribute.",
-                        e);
+                return parser.evaluate(listItem.getContent());
             }
         }
-        /*
-         * When there is no value attribute, we actually got the wrong li type, but process
-         * as a defaultListItem anyway (probably a bad idea).
-         */
-        else
-        {
-            response.append(parser.evaluate(element.getChildren()));
-        }
+        return "";
     }
 }
