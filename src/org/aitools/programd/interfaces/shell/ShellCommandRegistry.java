@@ -29,6 +29,7 @@ public class ShellCommandRegistry extends ObjectExemplarRegistry<ShellCommand>
             "org.aitools.programd.interfaces.shell.ListBotFilesCommand",
             "org.aitools.programd.interfaces.shell.ListCommandablesCommand",
             "org.aitools.programd.interfaces.shell.LoadCommand", "org.aitools.programd.interfaces.shell.MemoryCommand",
+            "org.aitools.programd.interfaces.shell.PrintGraphCommand",
             "org.aitools.programd.interfaces.shell.TalkToCommand", "org.aitools.programd.test.aiml.TestCommand",
             "org.aitools.programd.interfaces.shell.UnloadCommand", "org.aitools.programd.interfaces.shell.WhoCommand" };
 

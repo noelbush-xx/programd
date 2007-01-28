@@ -24,8 +24,9 @@ import org.aitools.programd.Core;
 import org.aitools.programd.predicates.PredicateManager;
 import org.aitools.programd.util.ManagedProcess;
 import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.runtime.Errors;
 import org.aitools.util.runtime.UserError;
-import org.aitools.util.xml.XHTML;
+import org.aitools.util.xml.XML;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -217,7 +218,7 @@ public class Shell extends Thread
                     }
                     catch (UserError e)
                     {
-                        showError("Error processing command: " + e.getMessage());
+                        showError(String.format("Error processing command: \"%s\"", Errors.describe(e)));
                     }
                 }
                 catch (NoSuchCommandException e)
@@ -240,7 +241,7 @@ public class Shell extends Thread
             }
             else if (commandLine.length() > 0)
             {
-                showConsole(this.botName, XHTML.breakLines(this._core.getResponse(commandLine, this.hostname,
+                showConsole(this.botName, XML.breakXHTMLLines(this._core.getResponse(commandLine, this.hostname,
                         this.botid)));
             }
             // If the command line has zero length, ignore it.
@@ -434,7 +435,7 @@ public class Shell extends Thread
         this.botName = this.bots.get(newBotID).getPropertyValue(this.botNamePredicate);
         showMessage("Switched to bot \"" + newBotID + "\" (name: \"" + this.botName + "\").");
         // Send the connect string and print the first response.
-        showConsole(this.botName, XHTML.breakLines(this._core.getResponse(this._core.getSettings()
+        showConsole(this.botName, XML.breakXHTMLLines(this._core.getResponse(this._core.getSettings()
                 .getConnectString(), this.hostname, this.botid)));
     }
 
