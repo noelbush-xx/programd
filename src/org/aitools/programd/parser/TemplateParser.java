@@ -9,7 +9,6 @@
 
 package org.aitools.programd.parser;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,6 @@ import org.aitools.programd.graph.Match;
 import org.aitools.programd.processor.ProcessorException;
 import org.aitools.programd.processor.aiml.AIMLProcessor;
 import org.jdom.Element;
-import org.jdom.JDOMException;
 
 /**
  * <code>TemplateParser</code> parses templates!  :-)
@@ -116,15 +114,6 @@ public class TemplateParser extends GenericParser<AIMLProcessor>
             this._logger.error(String.format("Stack overflow error processing <%s/>.", element.getName()));
             return "";
         }
-    }
-
-    /**
-     * @see org.aitools.programd.parser.GenericParser#processResponse(java.lang.String)
-     */
-    @Override
-    public String processResponse(String templateContent) throws ProcessorException, JDOMException, IOException
-    {
-        return super.processResponse(templateContent);
     }
 
     /**
