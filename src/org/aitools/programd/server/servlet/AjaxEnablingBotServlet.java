@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.aitools.programd.server.BotAccess;
+import org.aitools.util.runtime.Errors;
 
 /**
  * Puts a Bot object into the session context (if it isn't there already) so that the user can conduct a conversation
@@ -59,7 +60,7 @@ public class AjaxEnablingBotServlet extends JSPOrientedBotServlet
         }
         catch (ServletException e)
         {
-            req.setAttribute("error", e.getMessage());
+            req.setAttribute("error", Errors.describe(e));
             try
             {
                 forward(this.errorPage, req, resp);
