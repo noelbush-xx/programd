@@ -101,4 +101,11 @@ public interface Graphmapper
      * @return the number of path-identical categories encountered
      */
     public int getDuplicateCategoryCount();
+    
+    /**
+     * Prints the entire contents of the graph to the given filename.
+     * 
+     * @param path the filename to which to print
+     */
+    public void print(String path);
 }
