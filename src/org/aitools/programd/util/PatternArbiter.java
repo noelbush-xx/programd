@@ -17,6 +17,8 @@ import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
+import org.aitools.util.runtime.Errors;
+
 /**
  * Provides utility methods for pattern-oriented tasks.
  * 
@@ -59,10 +61,11 @@ public class PatternArbiter
      */
     public static Pattern compile(String pattern, boolean ignoreCase) throws NotAnAIMLPatternException
     {
-        /*
-         * Check the pattern for validity. If it is invalid, an exception with a helpful message will be thrown.
-         */
-        checkAIMLPattern(pattern);
+        // Check the pattern for validity. If it is invalid, throw an exception with a helpful message.
+        if (!isValidAIMLPattern(pattern))
+        {
+            throw new NotAnAIMLPatternException(String.format("\"%s\" does not match the definition of AIML pattern.", pattern), pattern);
+        }
 
         return Pattern
                 .compile(pattern.replaceAll("(\\*|_)", "[^ ]+( [^ ]+)*"), (ignoreCase ? Pattern.UNICODE_CASE : 0));
@@ -96,15 +99,11 @@ public class PatternArbiter
      * Determines whether a given string is a valid AIML pattern.
      * 
      * @param pattern the string to check
-     * @throws NotAnAIMLPatternException with a helpful message if the pattern is not valid
+     * @return whether the string is a valid AIML pattern
      */
-    public static void checkAIMLPattern(String pattern) throws NotAnAIMLPatternException
+    public static boolean isValidAIMLPattern(String pattern)
     {
-        if (!AIML_PATTERN.matcher(pattern).matches())
-        {
-            throw new NotAnAIMLPatternException("\"" + pattern + "\" does not match the definition of AIML pattern.",
-                    pattern);
-        }
+        return AIML_PATTERN.matcher(pattern).matches();
     }
 
     /**
@@ -112,6 +111,7 @@ public class PatternArbiter
      * 
      * @param args not used
      */
+    @SuppressWarnings("boxing")
     public static void main(String[] args)
     {
         BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
@@ -170,36 +170,33 @@ public class PatternArbiter
                 }
                 catch (NotAnAIMLPatternException e)
                 {
-                    System.out.println("Exception: " + e.getMessage());
+                    System.out.println(String.format("Exception: \"%s\"", Errors.describe(e)));
                     matched = false;
                 }
                 time = new Date().getTime() - time;
 
+                System.out.print("TEST ");
                 if (matched == prediction)
                 {
                     successes++;
-                    System.out.print("TEST PASSED] ");
+                    System.out.print("PASSED] ");
                 }
                 else
                 {
                     failures++;
-                    System.out.print("TEST FAILED] ");
+                    System.out.print("FAILED] ");
                 }
-                if (matched)
+                if (!matched)
                 {
-                    System.out.print("match: " + literal + " | " + pattern + (ignoreCase ? " (ignoreCase)" : ""));
+                    System.out.print("no ");
                 }
-                else
-                {
-                    System.out.print("no match: " + literal + " | " + pattern + (ignoreCase ? " (ignoreCase)" : ""));
-                }
-                System.out.println(" (" + time + " ms)");
+                System.out.print(String.format("match: %s | %s%s (%d ms)", literal, pattern, (ignoreCase ? " (ignoreCase)" : ""), time));
             }
             else
             {
                 System.out.println(theLine);
             }
         }
-        System.out.println((successes + failures) + " tests: " + successes + " successes, " + failures + " failures");
+        System.out.println(String.format("%d tests: %d successes, %d failures.", (successes + failures), successes, failures));
     }
 }
