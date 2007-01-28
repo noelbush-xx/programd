@@ -85,7 +85,7 @@ abstract public class PredicateManager
      * @param botid
      * @return the <code>name</code> or the <code>value</code>, depending on the predicate type
      */
-    public String set(String name, String value, String userid, String botid)
+    public synchronized String set(String name, String value, String userid, String botid)
     {
         // Get existing or new predicates map for userid.
         PredicateMap predicates = this._bots.get(botid).predicatesFor(userid);
