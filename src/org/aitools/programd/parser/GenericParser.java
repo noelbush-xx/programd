@@ -87,9 +87,26 @@ abstract public class GenericParser<P extends Processor>
         return evaluate(XML.getJDOMDocument(url, this._baseURL, this._namespaceURI, this._xmlCatalog, this._logger));
     }
 
-
     /**
      * Processes an XML fragment provided in a string.
+     * 
+     * @param input the string from which to create the document fragment
+     * @param baseURI the base URI to set for the document fragment
+     * @return the result of processing the document fragment created from the given string
+     * @throws ProcessorException if there was a problem processing the document fragment created from the given string
+     * @throws JDOMException 
+     * @throws IOException 
+     */
+    public String processResponse(String input, String baseURI) throws ProcessorException, JDOMException, IOException
+    {
+        Document document = new SAXBuilder().build(new StringReader(input));
+        document.setBaseURI(baseURI);
+        return evaluate(document);
+    }
+
+    /**
+     * Processes an XML fragment provided in a string.  This version of the
+     * method does <i>not</i> set a base URI for the document fragment.
      * 
      * @param input the string from which to create the document fragment
      * @return the result of processing the document fragment created from the given string
@@ -140,18 +157,38 @@ abstract public class GenericParser<P extends Processor>
     }
 
     /**
-     * Evaluates the given node list and returns the result.
+     * Evaluates the given content list and returns the result.
      * 
-     * @param list the list of nodes to evaluate
+     * @param list the list of content to evaluate
      * @return the result of evaluating the given list of nodes
      * @throws ProcessorException if there is an error in processing
      */
-    public String evaluate(List<Element> list) throws ProcessorException
+    public String evaluate(List<Content> list) throws ProcessorException
     {
         StringBuilder result = new StringBuilder();
-        for (Element element : list)
+        for (Content node : list)
         {
-            result.append(evaluate(element));
+            // Would be nice not to have to do this:
+            if (node instanceof Element)
+            {
+                result.append(evaluate((Element)node));
+            }
+            else if (node instanceof Text)
+            {
+                result.append(evaluate((Text) node));
+            }
+            else if (node instanceof CDATA)
+            {
+                result.append(evaluate((CDATA)node));
+            }
+            else if (node instanceof Comment)
+            {
+                result.append(evaluate((Comment)node));
+            }
+            else
+            {
+                assert false : "Unknown subclass of jdom.org.Content!";
+            }
         }
         return result.toString();
     }
@@ -176,9 +213,11 @@ abstract public class GenericParser<P extends Processor>
         Class<? extends P> processorClass = null;
 
         String elementNamespaceURI = element.getNamespaceURI();
-        boolean emitXMLNS = element.equals(element.getDocument().getRootElement())
-                || (elementNamespaceURI != null && !elementNamespaceURI.equals(element.getDocument()
-                        .getRootElement().getNamespaceURI()));
+        Document elementDocument = element.getDocument();
+        boolean emitXMLNS = elementDocument != null && 
+                            (element.equals(element.getDocument().getRootElement())
+                            || (elementNamespaceURI != null && !elementNamespaceURI.equals(element.getDocument()
+                            .getRootElement().getNamespaceURI())));
         if (elementNamespaceURI == null || this._registry.getNamespaceURI().equals(elementNamespaceURI))
         {
             try
@@ -194,12 +233,12 @@ abstract public class GenericParser<P extends Processor>
             return ClassUtils.getNewInstance(processorClass, "Processor", this._core).process(element, this);
         }
         // otherwise (if this element is from a different namespace)
-        if (element.getChildren().size() == 0)
+        if (element.getContent().size() == 0)
         {
             return XML.renderEmptyElement(element, emitXMLNS);
         }
         // otherwise...
-        return XML.renderStartTag(element, emitXMLNS) + evaluate(element.getChildren()) + XML.renderEndTag(element);
+        return XML.renderStartTag(element, emitXMLNS) + evaluate(element.getContent()) + XML.renderEndTag(element);
     }
 
     /**
@@ -298,7 +337,7 @@ abstract public class GenericParser<P extends Processor>
         int[] result = { 1, 1 };
 
         // Assign the default if the index attribute is empty.
-        if ("".equals(indexValue))
+        if (indexValue == null || "".equals(indexValue))
         {
             return result;
         }
