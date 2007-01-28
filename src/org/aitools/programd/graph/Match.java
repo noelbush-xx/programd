@@ -50,7 +50,7 @@ public class Match
     private List<String> _filenames;
 
     /** Match states. */
-    public static enum State
+    public static enum State implements Comparable<Match.State>
     {
         /** Trying to match the input part of the path. */
         IN_INPUT,
@@ -112,33 +112,31 @@ public class Match
     }
 
     /**
-     * Sets the <code>pattern</code> part of the matched path.
+     * Sets the indicated component of the matched path.
      * 
-     * @param string the <code>pattern</code> part of the matched path
+     * @param state the match state corresponding to the match path component
+     * @param string the value of the match path component
      */
-    public void setPattern(String string)
+    public void setPathComponent(Match.State state, String string)
     {
-        this._pattern = string;
-    }
-
-    /**
-     * Sets the <code>that</code> part of the matched path.
-     * 
-     * @param string the <code>that</code> part of the matched path
-     */
-    public void setThat(String string)
-    {
-        this._that = string;
-    }
-
-    /**
-     * Sets the <code>topic</code> part of the matched path.
-     * 
-     * @param string the <code>topic</code> part of the matched path
-     */
-    public void setTopic(String string)
-    {
-        this._topic = string;
+        switch (state)
+        {
+            case IN_INPUT:
+                this._pattern = string;
+                break;
+                
+            case IN_THAT:
+                this._that = string;
+                break;
+                
+            case IN_TOPIC:
+                this._topic = string;
+                break;
+                
+            case IN_BOTID:
+                this._botid = string;
+                break;
+        }
     }
 
     /**
