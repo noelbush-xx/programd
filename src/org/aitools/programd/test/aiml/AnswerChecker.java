@@ -4,7 +4,6 @@ import java.io.UnsupportedEncodingException;
 
 import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.Text;
-import org.aitools.util.xml.XHTML;
 import org.aitools.util.xml.XML;
 import org.jdom.Element;
 import org.jdom.output.Format;
@@ -29,13 +28,14 @@ public class AnswerChecker extends Checker
      * @param element the element containing the expected answer
      * @param encoding the encoding of the document from which the element comes
      */
+    @SuppressWarnings("unchecked")
     public AnswerChecker(Element element, String encoding)
     {
         try
         {
-            this.expectedAnswer = new String(Text.renderAsLines(
-                    XHTML.breakLines(XML.unescapeXMLChars(new XMLOutputter(this._xmlFormat).outputString(element
-                            .getChildren())))).getBytes(encoding)).intern();
+            this.expectedAnswer = (new String(Text.renderAsLines(
+                    XML.breakXHTMLLines(XML.unescapeXMLChars(new XMLOutputter(this._xmlFormat).outputString(element
+                            .getContent())))).getBytes(encoding))).intern();
         }
         catch (UnsupportedEncodingException e)
         {
