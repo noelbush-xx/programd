@@ -9,7 +9,9 @@
 
 package org.aitools.programd.graph;
 
+import java.io.PrintWriter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +25,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.util.NoMatchException;
 import org.aitools.util.ObjectFactory;
 import org.aitools.util.Text;
+import org.aitools.util.runtime.DeveloperError;
 
 /**
  * <p>
@@ -303,9 +306,13 @@ public class MemoryGraphmapper extends AbstractGraphmapper
     {
         // Get the match, starting at the root, with an empty star and path, starting in "in input" mode.
         Match match = new Match();
-        match(this.root, this.root, composeInputPath(input, that, topic, botid), "", new StringBuilder(), match, Match.State.IN_INPUT, System.currentTimeMillis()
+        Nodemapper result = match(this.root, this.root, composeInputPath(input, that, topic, botid), "", new StringBuilder(), match, Match.State.IN_INPUT, System.currentTimeMillis()
                 + this._responseTimeout);
-        return match;
+        if (result != null)
+        {
+            return match;
+        }
+        throw new NoMatchException(String.format("%s:%s:%s:%s", input, that, topic, botid));
     }
     
     /**
@@ -322,17 +329,23 @@ public class MemoryGraphmapper extends AbstractGraphmapper
      * @param matchState state variable tracking which part of the path we're in
      * @param expiration when this response process expires
      * @return the leaf nodemapper at which the match ends
-     * @throws NoMatchException
+     * @throws NoMatchException if match time expires
      */
     @SuppressWarnings("boxing")
     protected Nodemapper match(Nodemapper nodemapper, Nodemapper parent, List<String> input, String wildcardContent, StringBuilder path,
             Match match, Match.State matchState, long expiration) throws NoMatchException
     {
+        if (nodemapper == null)
+        {
+            return null;
+        }
         // Return null if expiration has been reached.
         if (System.currentTimeMillis() >= expiration)
         {
             throw new NoMatchException("Match time expired.");
         }
+        
+        Nodemapper nextNodemapper = null;
 
         // Halt matching if this nodemapper is higher than the length of the input.
         if (input.size() < nodemapper.getHeight())
@@ -343,7 +356,7 @@ public class MemoryGraphmapper extends AbstractGraphmapper
                         "Halting match because input size %d < nodemapper height %d.%ninput: %s%nnodemapper: %s", input.size(), nodemapper
                                 .getHeight(), input.toString(), nodemapper.toString()));
             }
-            throw new NoMatchException();
+            return null;
         }
 
         // If no more tokens in the input, see if this is a template.
@@ -359,7 +372,7 @@ public class MemoryGraphmapper extends AbstractGraphmapper
                 return nodemapper;
             }
             // (otherwise...)
-            throw new NoMatchException();
+            return null;
         }
 
         // Take the first word of the input as the head.
@@ -371,24 +384,21 @@ public class MemoryGraphmapper extends AbstractGraphmapper
         // Now proceed through the AIML matching sequence: _, a-z, *.
 
         // See if this nodemapper has a _ wildcard. _ comes first in the AIML "alphabet".
-        try
+        nextNodemapper = match(UNDERSCORE,        // key
+                               matchState,        // target match state for wildcard content
+                               nodemapper,        // current nodemapper
+                               tail,              // current tail
+                               true,              // append new path? yes
+                               wildcardContent,   // current wildcard content
+                               head,              // new wildcard content
+                               path,              // current path
+                               match,             // match object
+                               matchState,        // current match state
+                               expiration         // expiration timestamp
+                               );
+        if (nextNodemapper != null)
         {
-            return match(UNDERSCORE,        // key
-                         matchState,        // target match state for wildcard content
-                         nodemapper,        // current nodemapper
-                         tail,              // current tail
-                         true,              // append new path? yes
-                         wildcardContent,   // current wildcard content
-                         head,              // new wildcard content
-                         path,              // current path
-                         match,             // match object
-                         matchState,        // current match state
-                         expiration         // expiration timestamp
-                         );
-        }
-        catch (NoMatchException e)
-        {
-            // Not necessarily an error; drop through.
+            return nextNodemapper;
         }
 
         /*
@@ -420,24 +430,21 @@ public class MemoryGraphmapper extends AbstractGraphmapper
                     matchState = Match.State.IN_BOTID;
                 }
             }
-            try
+            nextNodemapper = match(head,                                      // key
+                                   isMarker ? matchState.preceding() : null,  // target match state for wildcard content
+                                   nodemapper,                                // current nodemapper
+                                   tail,                                      // current tail
+                                   !isMarker,                                 // append new path? (only it this is not a marker)
+                                   wildcardContent,                           // current wildcard content (empty if this is a marker)
+                                   isMarker ? "" : wildcardContent,           // new wildcard content
+                                   path,                                      // current path
+                                   match,                                     // match object
+                                   matchState,                                // current match state
+                                   expiration                                 // expiration timestamp
+                                   );
+            if (nextNodemapper != null)
             {
-                return match(head,                                      // key
-                             isMarker ? matchState.preceding() : null,  // target match state for wildcard content
-                             nodemapper,                                // current nodemapper
-                             tail,                                      // current tail
-                             !isMarker,                                 // append new path? (only it this is not a marker)
-                             wildcardContent,                           // current wildcard content (empty if this is a marker)
-                             isMarker ? "" : wildcardContent,           // new wildcard content
-                             path,                                      // current path
-                             match,                                     // match object
-                             matchState,                                // current match state
-                             expiration                                 // expiration timestamp
-                             );
-            }
-            catch (NoMatchException e)
-            {
-                // Not necessarily an error; drop through.
+                return nextNodemapper;
             }
         }
 
@@ -445,24 +452,21 @@ public class MemoryGraphmapper extends AbstractGraphmapper
          * The nodemapper may have contained the head, but this led to no match. Or it didn't contain the head at all.
          * In any case, check to see if it contains a * wildcard. * comes last in the AIML "alphabet".
          */
-        try
+        nextNodemapper = match(ASTERISK,          // key
+                               matchState,        // target match state for wildcard content
+                               nodemapper,        // current nodemapper
+                               tail,              // current tail
+                               true,              // append new path?
+                               wildcardContent,   // current wildcard content
+                               head,              // new wildcard content
+                               path,              // current path
+                               match,             // match object
+                               matchState,        // current match state
+                               expiration         // expiration timestamp
+                               );
+        if (nextNodemapper != null)
         {
-            return match(ASTERISK,          // key
-                         matchState,        // target match state for wildcard content
-                         nodemapper,        // current nodemapper
-                         tail,              // current tail
-                         true,              // append new path?
-                         wildcardContent,   // current wildcard content
-                         head,              // new wildcard content
-                         path,              // current path
-                         match,             // match object
-                         matchState,        // current match state
-                         expiration         // expiration timestamp
-                         );
-        }
-        catch (NoMatchException e)
-        {
-            // Not necessarily an error; drop through.
+            return nextNodemapper;
         }
 
         /*
@@ -472,26 +476,31 @@ public class MemoryGraphmapper extends AbstractGraphmapper
          */
         if (nodemapper.equals(parent.get(ASTERISK)) || nodemapper.equals(parent.get(UNDERSCORE)))
         {
-            return match(nodemapper,                                        // current nodemapper
-                         parent,                                            // current path
-                         tail,                                              // current tail
-                         String.format("%s %s", wildcardContent, head),     // head = wildcard content + head
-                         path,                                              // current path
-                         match,                                             // match object
-                         matchState,                                        // current match state
-                         expiration                                         // expiration timestamp
-                         );
+            nextNodemapper = match(nodemapper,                                        // current nodemapper
+                                   parent,                                            // current path
+                                   tail,                                              // current tail
+                                   String.format("%s %s", wildcardContent, head),     // head = wildcard content + head
+                                   path,                                              // current path
+                                   match,                                             // match object
+                                   matchState,                                        // current match state
+                                   expiration                                         // expiration timestamp
+                                   );
+            if (nextNodemapper != null)
+            {
+                return nextNodemapper;
+            }
         }
 
         /*
-         * If we get here, we've hit a dead end; this exception will be passed back up the recursive chain of matches,
-         * perhaps even hitting the high-level match method, though this is assumed to be the rarest occurence.
+         * If we get here, we've hit a dead end; this null value will be passed back up the recursive chain of matches,
+         * perhaps even hitting the high-level match method and causing a NoMatchException, though this is assumed to be the rarest occurence.
          */
-        throw new NoMatchException();
+        return null;
     }
     
     /**
      * An internal method used for matching.
+     * This method <i>assumes</i> that nodemapper.containsKey(key)!
      * 
      * @param key
      * @param wildcardDestination
@@ -510,36 +519,31 @@ public class MemoryGraphmapper extends AbstractGraphmapper
     protected Nodemapper match(String key, Match.State wildcardDestination, Nodemapper nodemapper, List<String> tail,
             boolean appendToPath, String currentWildcard, String newWildcard, StringBuilder path, Match match, Match.State matchState, long expiration) throws NoMatchException
     {
-        // Does the nodemapper contain the key?
-        if (nodemapper.containsKey(key))
+        // Construct a new path from the current path plus the key.
+        StringBuilder newPath = new StringBuilder();
+        if (path.length() > 0)
         {
-            // If so, construct a new path from the current path plus the key.
-            StringBuilder newPath = new StringBuilder();
-            if (path.length() > 0)
-            {
-                newPath.append(path);
-                newPath.append(' ');
-            }
-            newPath.append(key);
-
-            // Try to get a match with the tail and this new path (may throw exception)
-            Nodemapper result = match((Nodemapper) nodemapper.get(key),             // newly matched nodemapper
-                                      nodemapper,                                   // current nodemapper as parent
-                                      tail,                                         // current tail
-                                      newWildcard,                                  // current wildcardContent
-                                      appendToPath ? newPath : new StringBuilder(), // either the new path, or a blank one
-                                      match,                                        // match object
-                                      matchState,                                   // current match state
-                                      expiration                                    // expiration timestamp
-                                      );
-            // capture and push the wildcard content appropriate to the current match state.
-            if (wildcardDestination != null && currentWildcard.length() > 0)
-            {
-                match.pushWildcardContent(wildcardDestination, currentWildcard);
-            }
-            return result;
+            newPath.append(path);
+            newPath.append(' ');
         }
-        throw new NoMatchException();
+        newPath.append(key);
+
+        // Try to get a match with the tail and this new path (may throw exception)
+        Nodemapper result = match((Nodemapper) nodemapper.get(key),             // newly matched nodemapper
+                                  nodemapper,                                   // current nodemapper as parent
+                                  tail,                                         // current tail
+                                  newWildcard,                                  // current wildcardContent
+                                  appendToPath ? newPath : new StringBuilder(), // either the new path, or a blank one
+                                  match,                                        // match object
+                                  matchState,                                   // current match state
+                                  expiration                                    // expiration timestamp
+                                  );
+        // capture and push the wildcard content appropriate to the current match state.
+        if (wildcardDestination != null && currentWildcard.length() > 0)
+        {
+            match.pushWildcardContent(wildcardDestination, currentWildcard);
+        }
+        return result;
     }
 
     /**
@@ -547,12 +551,21 @@ public class MemoryGraphmapper extends AbstractGraphmapper
      */
     public void removeCategory(String pattern, String that, String topic, Bot bot)
     {
+        Nodemapper nodemapper = null;
         try
         {
-            remove(match(this.root, this.root, composeInputPath(pattern, that, topic, bot.getID()), "", new StringBuilder(), new Match(), Match.State.IN_INPUT, System.currentTimeMillis()
-                + this._responseTimeout));
+            nodemapper = match(this.root, this.root, composeInputPath(pattern, that, topic, bot.getID()), "", new StringBuilder(), new Match(), Match.State.IN_INPUT, System.currentTimeMillis()
+                    + this._responseTimeout);
         }
         catch (NoMatchException e)
+        {
+            throw new DeveloperError("Could not remove category.", e);
+        }
+        if (nodemapper != null)
+        {
+            remove(nodemapper);
+        }
+        else
         {
             this._logger.error(String.format("Could not find category to remove (%s:%s:%s)", pattern, that, topic, bot));
         }
@@ -601,6 +614,38 @@ public class MemoryGraphmapper extends AbstractGraphmapper
         if (botids == null || botids.size() == 0)
         {
             this._urlCatalog.remove(path);
+        }
+    }
+
+    @Override
+    protected void print(PrintWriter out)
+    {
+        print(this.root, out);
+        out.close();
+    }
+    
+    private void print(Nodemapper nodemapper, PrintWriter out)
+    {
+        ArrayList<String> keyList = new ArrayList<String>(nodemapper.keySet());
+        int keyCount = keyList.size();
+        for (int index = 0; index < keyCount; index++)
+        {
+            String key = keyList.get(index);
+            out.print(key);
+            out.print(' ');
+            Object value = nodemapper.get(key);
+            if (value instanceof Nodemapper)
+            {
+                print((Nodemapper)value, out);
+            }
+            else
+            {
+                out.print(org.jdom.Text.normalizeString((String)value));
+                if (index == keyCount - 1)
+                {
+                    out.println();
+                }
+            }
         }
     }
 }
