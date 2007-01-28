@@ -124,7 +124,7 @@ public class RandomProcessor extends AIMLProcessor
         // Otherwise, select a random element of the listitem (if strategy is pure-random).
         if (this._core.getSettings().getRandomStrategy() == CoreSettings.RandomStrategy.PURE_RANDOM)
         {
-            return parser.evaluate(listitems.get(generator.nextInt(nodeCount)).getChildren());
+            return parser.evaluate(listitems.get(generator.nextInt(nodeCount)).getContent());
         }
         
         // If we get here, then the no-repeat strategy is wanted.
@@ -182,7 +182,7 @@ public class RandomProcessor extends AIMLProcessor
         }
         
         // Evaluate the node corresponding to the chosen index.
-        return parser.evaluate(listitems.get(choice).getChildren());
+        return parser.evaluate(listitems.get(choice).getContent());
     }
     
     @SuppressWarnings("boxing")
