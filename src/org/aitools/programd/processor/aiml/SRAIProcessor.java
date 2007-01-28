@@ -55,7 +55,7 @@ public class SRAIProcessor extends AIMLProcessor
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        String input = parser.evaluate(element.getChildren());
+        String input = parser.evaluate(element.getContent());
         matchLogger.debug("[SYMBOLIC REDUCTION]");
         String userid = parser.getUserID();
         String botid = parser.getBotID();

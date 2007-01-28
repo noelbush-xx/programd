@@ -90,7 +90,7 @@ public class SystemProcessor extends AIMLProcessor
         String directoryPath = coreSettings.getSystemInterpreterDirectory().getPath();
         String prefix = coreSettings.getSystemInterpreterPrefix();
 
-        String commandLine = parser.evaluate(element.getChildren());
+        String commandLine = parser.evaluate(element.getContent());
         if (prefix != null)
         {
             commandLine = prefix + commandLine;

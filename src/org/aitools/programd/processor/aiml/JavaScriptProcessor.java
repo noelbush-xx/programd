@@ -57,6 +57,6 @@ public class JavaScriptProcessor extends AIMLProcessor
             return "";
         }
         logger.debug("Calling JavaScript interpreter.");
-        return parser.getCore().getInterpreter().evaluate(parser.evaluate(element.getChildren()));
+        return parser.getCore().getInterpreter().evaluate(parser.evaluate(element.getContent()));
     }
 }

@@ -44,7 +44,7 @@ public class ThinkProcessor extends AIMLProcessor
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        parser.evaluate(element.getChildren());
+        parser.evaluate(element.getContent());
         return "";
     }
 }

@@ -52,7 +52,7 @@ public class LearnProcessor extends AIMLProcessor
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        URL path = XML.contextualize(parser.evaluate(element.getChildren()), element);
+        URL path = XML.contextualize(parser.evaluate(element.getContent()), element);
         parser.getCore().load(path, parser.getBotID());
         return "";
     }

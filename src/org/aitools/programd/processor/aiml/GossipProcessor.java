@@ -52,7 +52,7 @@ public class GossipProcessor extends AIMLProcessor
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
         // Get the gossip.
-        String response = parser.evaluate(element.getChildren());
+        String response = parser.evaluate(element.getContent());
 
         // Initialize the FileWriter if necessary.
         if (gossipFile == null)

@@ -44,6 +44,6 @@ public class UpperCaseProcessor extends AIMLProcessor
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        return parser.evaluate(element.getChildren()).toUpperCase();
+        return parser.evaluate(element.getContent()).toUpperCase();
     }
 }

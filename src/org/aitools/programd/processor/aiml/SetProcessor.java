@@ -45,6 +45,6 @@ public class SetProcessor extends AIMLProcessor
     {
         // Return the result of setting this predicate value (should check its type, but not yet implemented).
         return parser.getCore().getPredicateMaster().set(element.getAttributeValue("name"),
-                parser.evaluate(element.getChildren()), parser.getUserID(), parser.getBotID());
+                parser.evaluate(element.getContent()), parser.getUserID(), parser.getBotID());
     }
 }

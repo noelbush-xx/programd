@@ -46,10 +46,10 @@ abstract public class SubstitutionProcessor extends AIMLProcessor
     protected String process(Class<? extends Processor> processor, Element element, TemplateParser parser)
             throws ProcessorException
     {
-        if (element.getChildren().size() > 0)
+        if (element.getContent().size() > 0)
         {
             // Return the processed contents of the element, properly substituted.
-            return applySubstitutions(processor, parser.evaluate(element.getChildren()), parser.getBotID());
+            return applySubstitutions(processor, parser.evaluate(element.getContent()), parser.getBotID());
         }
         return parser.shortcutTag(element, element.getName(), StarProcessor.label, Element.class);
     }
