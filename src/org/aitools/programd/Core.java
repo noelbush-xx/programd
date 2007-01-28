@@ -46,6 +46,7 @@ import org.aitools.util.resource.Filesystem;
 import org.aitools.util.JDKLogHandler;
 import org.aitools.util.resource.URLTools;
 import org.aitools.util.UnspecifiedParameterError;
+import org.aitools.util.runtime.Errors;
 import org.aitools.util.runtime.UserError;
 import org.aitools.util.runtime.UserSystem;
 import org.aitools.util.xml.XML;
@@ -260,7 +261,7 @@ public class Core
         }
         catch (UnknownHostException e)
         {
-            this._hostname = "unknown-host";
+            this._hostname = "unknown hostname";
         }
 
         // Load the plugin config.
@@ -625,8 +626,7 @@ public class Core
          */
         public void uncaughtException(Thread t, Throwable e)
         {
-            System.err.println("Uncaught exception " + e.getClass().getSimpleName() + " in thread \"" + t.getName()
-                    + "\".");
+            System.err.println(String.format("Uncaught exception \"%s\" in thread \"%s\".", Errors.describe(e), t.getName()));
             if (Core.this._settings.printStackTraceOnUncaughtExceptions())
             {
                 e.printStackTrace(System.err);
@@ -1150,10 +1150,9 @@ public class Core
             return "";
         }
 
-        List<String> matchFilenames = match.getFileNames();
         if (this._matchLogger.isDebugEnabled())
         {
-            this._matchLogger.debug(String.format("[MATCHED] %s (\"%s\")", match.getPath(), matchFilenames));
+            this._matchLogger.debug(String.format("[MATCHED] %s (\"%s\")", match.getPath(), match.getFileNames()));
         }
 
         parser.addMatch(match);
@@ -1163,12 +1162,12 @@ public class Core
 
         try
         {
-            reply = parser.processResponse(template);
+            reply = parser.processResponse(template, match.getFileNames().get(0));
         }
         catch (Throwable e)
         {
             // Log the error message.
-            this._logger.error(String.format("Error while processing response: \"%s\"", e.getMessage()), e);
+            this._logger.error(String.format("Error while processing response: \"%s\"", Errors.describe(e)), e);
 
             // Set response to empty string.
             return "";
