@@ -9,6 +9,7 @@
 
 package org.aitools.programd.graph;
 
+import java.io.PrintWriter;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -580,5 +581,33 @@ public class DBGraphmapper extends AbstractGraphmapper
         {
             this._logger.error("DB error when closing connection.", e);
         }
+    }
+
+    @Override
+    protected void print(PrintWriter out)
+    {
+        print(0, 0, out);
+        out.close();
+    }
+    
+    private void print(int node, int indent, PrintWriter out)
+    {
+        /*
+        for (String key : nodemapper.keySet())
+        {
+            out.print(Text.repeat(' ', indent));
+            out.print(key);
+            out.print(' ');
+            Object value = nodemapper.get(key);
+            if (value instanceof Nodemapper)
+            {
+                print((Nodemapper)value, indent + key.length(), out);
+            }
+            else
+            {
+                out.println(value);
+            }
+        }
+        */
     }
 }
