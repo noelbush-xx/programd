@@ -24,8 +24,11 @@
         <property name="build.dir" value="${basedir}/build.tmp" />
         <path id="build.classpath">
             <pathelement location="${webapp.lib.dir}/aitools-utils.jar" />
-            <pathelement location="${webapp.lib.dir}/commons-collections.jar" />
+            <pathelement location="${webapp.lib.dir}/commons-collections-3.1.jar" />
+            <pathelement location="${webapp.lib.dir}/commons-dbcp-1.2.1.jar" />
+            <pathelement location="${webapp.lib.dir}/commons-pool-1.3.jar" />
             <pathelement location="${compile.lib.dir}/gnu.getopt-1.0.10.jar" />
+            <pathelement location="${webapp.lib.dir}/jdom-1.0-nite-25-Jan-2007.jar" />
             <pathelement location="${webapp.lib.dir}/jdbcappender.jar" />
             <pathelement location="${compile.lib.dir}/jsp-api.jar" />
             <pathelement location="${webapp.lib.dir}/js.jar" />
@@ -34,7 +37,7 @@
         </path>
     	
     	<!--The classpath needed to run Program D, for the core.-->
-        <property name="essentials-mf-classpath" value="../WebContent/WEB-INF/lib/aitools-utils.jar ../WebContent/WEB-INF/lib/commons-collections.jar ../lib/gnu.getopt-1.0.10.jar ../WebContent/WEB-INF/lib/jdbcappender.jar ../WebContent/WEB-INF/lib/log4j-1.2.13.jar ../WebContent/WEB-INF/lib/xerces-j2.jar"/>
+        <property name="essentials-mf-classpath" value="../WebContent/WEB-INF/lib/aitools-utils.jar ../WebContent/WEB-INF/lib/commons-collections-3.1.jar ../WebContent/WEB-INF/lib/commons-dbcp-1.2.1.jar ../WebContent/WEB-INF/lib/commons-pool-1.3.jar ../lib/gnu.getopt-1.0.10.jar ../WebContent/WEB-INF/lib/jdbcappender.jar ../WebContent/WEB-INF/lib/jdom-1.0-nite-25-Jan-2007.jar ../WebContent/WEB-INF/lib/log4j-1.2.13.jar ../WebContent/WEB-INF/lib/xerces-j2-2.7.1.jar"/>
     	
     	<!--The path to the core jar, to be included in app-jar manifests.-->
     	<property name="core-mf-classpath" value="programd-core.jar"/>
