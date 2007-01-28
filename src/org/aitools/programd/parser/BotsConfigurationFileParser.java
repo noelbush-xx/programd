@@ -131,65 +131,72 @@ public class BotsConfigurationFileParser
     @SuppressWarnings("boxing")
     protected void loadBot(Element element)
     {
-        String botid = element.getAttributeValue("id");
-
-        if (XML.getBooleanAttribute(element, "enabled"))
+        if (element.getAttribute("href") != null)
         {
-            Bots bots = this._core.getBots();
-            if (bots.containsKey(botid))
+            parse(XML.contextualize(element.getAttributeValue("href"), element));
+        }
+        else
+        {
+            String botid = element.getAttributeValue("id");
+    
+            if (XML.getBooleanAttribute(element, "enabled"))
             {
-                this._logger.warn(String.format("Bot \"%s\" has already been configured.", botid));
-                return;
-            }
-            Bot bot = new Bot(botid, this._core.getSettings());
-
-            this._logger.info(String.format("Configuring bot \"%s\".", botid));
-            bots.put(botid, bot);
-
-            Graphmapper graphmapper = this._core.getGraphmapper();
-
-            int previousCategoryCount = graphmapper.getCategoryCount();
-            int previousDuplicateCount = graphmapper.getDuplicateCategoryCount();
-
-            // Stop the AIMLWatcher while loading.
-            if (this._core.getSettings().useAIMLWatcher())
-            {
-                this._core.getAIMLWatcher().stop();
-            }
-
-            // Index the start time before loading.
-            long time = new Date().getTime();
-
-            // Load the bot.
-            loadConfig(bot, element, "properties");
-            loadConfig(bot, element, "predicates");
-            loadConfig(bot, element, "substitutions");
-            loadConfig(bot, element, "sentence-splitters");
-            loadConfig(bot, element, "listeners");
-            loadConfig(bot, element, "testing");
-            loadAIML(bot, element);
-
-            // Calculate the time used to load all categories.
-            time = new Date().getTime() - time;
-
-            // Restart the AIMLWatcher.
-            if (this._core.getSettings().useAIMLWatcher())
-            {
-                this._core.getAIMLWatcher().start();
-            }
-
-            this._logger.info(String.format("%,d categories loaded in %.4f seconds.", graphmapper.getCategoryCount()
-                    - previousCategoryCount, time / 1000.00));
-            this._logger.info(graphmapper.getCategoryReport());
-
-            int dupes = graphmapper.getDuplicateCategoryCount() - previousDuplicateCount;
-            if (dupes > 0)
-            {
-                this._logger
-                        .warn(String
-                                .format(
-                                        "%,d path-identical categories were encountered, and handled according to the %s merge policy.",
-                                        dupes, this._core.getSettings().getMergePolicy()));
+                Bots bots = this._core.getBots();
+                if (bots.containsKey(botid))
+                {
+                    this._logger.warn(String.format("Bot \"%s\" has already been configured.", botid));
+                    return;
+                }
+                Bot bot = new Bot(botid, this._core.getSettings());
+    
+                this._logger.info(String.format("Configuring bot \"%s\".", botid));
+                bots.put(botid, bot);
+    
+                Graphmapper graphmapper = this._core.getGraphmapper();
+    
+                int previousCategoryCount = graphmapper.getCategoryCount();
+                int previousDuplicateCount = graphmapper.getDuplicateCategoryCount();
+    
+                // Stop the AIMLWatcher while loading.
+                if (this._core.getSettings().useAIMLWatcher())
+                {
+                    this._core.getAIMLWatcher().stop();
+                }
+    
+                // Index the start time before loading.
+                long time = new Date().getTime();
+    
+                // Load the bot.
+                loadConfig(bot, element, "properties");
+                loadConfig(bot, element, "predicates");
+                loadConfig(bot, element, "substitutions");
+                loadConfig(bot, element, "sentence-splitters");
+                loadConfig(bot, element, "listeners");
+                loadConfig(bot, element, "testing");
+                loadAIML(bot, element);
+    
+                // Calculate the time used to load all categories.
+                time = new Date().getTime() - time;
+    
+                // Restart the AIMLWatcher.
+                if (this._core.getSettings().useAIMLWatcher())
+                {
+                    this._core.getAIMLWatcher().start();
+                }
+    
+                this._logger.info(String.format("%,d categories loaded in %.4f seconds.", graphmapper.getCategoryCount()
+                        - previousCategoryCount, time / 1000.00));
+                this._logger.info(graphmapper.getCategoryReport());
+    
+                int dupes = graphmapper.getDuplicateCategoryCount() - previousDuplicateCount;
+                if (dupes > 0)
+                {
+                    this._logger
+                            .warn(String
+                                    .format(
+                                            "%,d path-identical categories were encountered, and handled according to the %s merge policy.",
+                                            dupes, this._core.getSettings().getMergePolicy()));
+                }
             }
         }
     }
