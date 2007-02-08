@@ -155,7 +155,7 @@ public class GUIConsole extends JPanel
         }
         else
         {
-            throw new DeveloperError("Logo is missing from \"" + LOGO_PATH + "\"!", new NullPointerException());
+            throw new NullPointerException(String.format("Logo is missing from \"%s\"!", LOGO_PATH));
         }
 
         URL iconURL;
@@ -173,7 +173,7 @@ public class GUIConsole extends JPanel
         }
         else
         {
-            throw new DeveloperError("Icon is missing from \"" + ICON_PATH + "\"!", new NullPointerException());
+            throw new NullPointerException(String.format("Icon is missing from \"%s\"!", ICON_PATH));
         }
 
         this.console = new Console(this.outStream, this.errStream);
@@ -679,7 +679,7 @@ public class GUIConsole extends JPanel
             }
             if (b == null)
             {
-                throw new NullPointerException();
+                throw new NullPointerException("Cannot read from console.");
             }
             else if ((off < 0) || (off > b.length) || (len < 0) || ((off + len) > b.length) || ((off + len) < 0))
             {

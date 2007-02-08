@@ -14,7 +14,7 @@ import java.net.URL;
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.util.xml.XML;
+import org.aitools.util.xml.JDOM;
 import org.jdom.Element;
 
 /**
@@ -52,7 +52,7 @@ public class LearnProcessor extends AIMLProcessor
     @Override
     public String process(Element element, TemplateParser parser) throws ProcessorException
     {
-        URL path = XML.contextualize(parser.evaluate(element.getContent()), element);
+        URL path = JDOM.contextualize(parser.evaluate(element.getContent()), element);
         parser.getCore().load(path, parser.getBotID());
         return "";
     }

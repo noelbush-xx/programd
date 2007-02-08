@@ -22,7 +22,7 @@ import org.aitools.util.ClassUtils;
 import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.NotARegisteredClassException;
 import org.aitools.util.resource.URLTools;
-import org.aitools.util.xml.XML;
+import org.aitools.util.xml.JDOM;
 import org.apache.log4j.Logger;
 import org.jdom.CDATA;
 import org.jdom.Comment;
@@ -84,7 +84,7 @@ abstract public class GenericParser<P extends Processor>
      */
     public String processResponse(URL url) throws ProcessorException
     {
-        return evaluate(XML.getJDOMDocument(url, this._baseURL, this._namespaceURI, this._xmlCatalog, this._logger));
+        return evaluate(JDOM.getDocument(url, this._xmlCatalog, this._logger));
     }
 
     /**
@@ -235,10 +235,10 @@ abstract public class GenericParser<P extends Processor>
         // otherwise (if this element is from a different namespace)
         if (element.getContent().size() == 0)
         {
-            return XML.renderEmptyElement(element, emitXMLNS);
+            return JDOM.renderEmptyElement(element, emitXMLNS);
         }
         // otherwise...
-        return XML.renderStartTag(element, emitXMLNS) + evaluate(element.getContent()) + XML.renderEndTag(element);
+        return JDOM.renderStartTag(element, emitXMLNS) + evaluate(element.getContent()) + JDOM.renderEndTag(element);
     }
 
     /**

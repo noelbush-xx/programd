@@ -3,8 +3,9 @@ package org.aitools.programd.test.aiml;
 import java.io.UnsupportedEncodingException;
 
 import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.xml.Characters;
+import org.aitools.util.xml.XHTML;
 import org.aitools.util.Text;
-import org.aitools.util.xml.XML;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
@@ -34,7 +35,7 @@ public class AnswerChecker extends Checker
         try
         {
             this.expectedAnswer = (new String(Text.renderAsLines(
-                    XML.breakXHTMLLines(XML.unescapeXMLChars(new XMLOutputter(this._xmlFormat).outputString(element
+                    XHTML.breakLines(Characters.unescapeXMLChars(new XMLOutputter(this._xmlFormat).outputString(element
                             .getContent())))).getBytes(encoding))).intern();
         }
         catch (UnsupportedEncodingException e)

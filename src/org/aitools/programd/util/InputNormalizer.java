@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.aitools.util.Lists;
-import org.aitools.util.xml.XML;
+import org.aitools.util.xml.Characters;
 import org.jdom.Text;
 
 /**
@@ -84,7 +84,7 @@ public class InputNormalizer
      */
     public static String patternFit(String input)
     {
-        return Text.normalizeString(ILLEGAL_CHARACTERS.matcher(XML.removeMarkup(input)).replaceAll(" ")).trim();
+        return Text.normalizeString(ILLEGAL_CHARACTERS.matcher(Characters.removeMarkup(input)).replaceAll(" ")).trim();
     }
 
     /**
@@ -105,6 +105,6 @@ public class InputNormalizer
      */
     public static String patternFitIgnoreCase(String input)
     {
-        return Text.normalizeString(ILLEGAL_CHARACTERS_IGNORE_CASE.matcher(XML.removeMarkup(input)).replaceAll(" ")).trim();
+        return Text.normalizeString(ILLEGAL_CHARACTERS_IGNORE_CASE.matcher(Characters.removeMarkup(input)).replaceAll(" ")).trim();
     }
 }

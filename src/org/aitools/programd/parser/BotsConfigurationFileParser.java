@@ -30,8 +30,9 @@ import org.aitools.util.ClassUtils;
 import org.aitools.util.resource.URLTools;
 import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.runtime.UserError;
-import org.aitools.util.xml.XML;
+import org.aitools.util.xml.JDOM;
 import org.apache.log4j.Logger;
+import org.jdom.DataConversionException;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
@@ -133,13 +134,22 @@ public class BotsConfigurationFileParser
     {
         if (element.getAttribute("href") != null)
         {
-            parse(XML.contextualize(element.getAttributeValue("href"), element));
+            parse(JDOM.contextualize(element.getAttributeValue("href"), element));
         }
         else
         {
             String botid = element.getAttributeValue("id");
+            boolean enabled = false;
+            try
+            {
+                enabled = element.getAttribute("enabled").getBooleanValue();
+            }
+            catch (DataConversionException e)
+            {
+                assert false : "Schema did not catch invalid valid for \"enabled\" attribute.";
+            } 
     
-            if (XML.getBooleanAttribute(element, "enabled"))
+            if (enabled)
             {
                 Bots bots = this._core.getBots();
                 if (bots.containsKey(botid))
@@ -232,7 +242,7 @@ public class BotsConfigurationFileParser
             {
                 if (child.getAttribute("href") != null)
                 {
-                    method.invoke(this, bot, getDocRoot(XML.contextualize(child.getAttributeValue("href"), child)));
+                    method.invoke(this, bot, getDocRoot(JDOM.contextualize(child.getAttributeValue("href"), child)));
                 }
                 else
                 {
@@ -339,8 +349,17 @@ public class BotsConfigurationFileParser
     {
         for (Element listenerElement : (List<Element>) element.getChildren("listener", NS))
         {
-            // Get enabled attribute
-            if (!XML.getBooleanAttribute(listenerElement, "enabled"))
+            // Enabled?
+            boolean enabled = false;
+            try
+            {
+                enabled = listenerElement.getAttribute("enabled").getBooleanValue();
+            }
+            catch (DataConversionException e1)
+            {
+                assert false : "Schema did not catch invalid value for \"enabled\" attribute.";
+            }
+            if (!enabled)
             {
                 return;
             }
@@ -394,7 +413,7 @@ public class BotsConfigurationFileParser
     {
         for (Element learn : (List<Element>) element.getChildren("learn", NS))
         {
-            this._core.load(XML.contextualize(learn.getText(), element), bot.getID());
+            this._core.load(JDOM.contextualize(learn.getText(), element), bot.getID());
         }
     }
 
@@ -406,6 +425,6 @@ public class BotsConfigurationFileParser
      */
     protected Element getDocRoot(URL path)
     {
-        return XML.getJDOMDocument(path, this._core.getBaseURL(), NAMESPACE_URI, this._core.getXMLCatalog(), this._core.getLogger()).getRootElement();
+        return JDOM.getDocument(path, this._core.getXMLCatalog(), this._core.getLogger()).getRootElement();
     }
 }

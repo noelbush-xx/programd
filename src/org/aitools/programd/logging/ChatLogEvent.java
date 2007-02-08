@@ -9,7 +9,7 @@
 
 package org.aitools.programd.logging;
 
-import org.aitools.util.xml.XML;
+import org.aitools.util.xml.Characters;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
@@ -52,7 +52,7 @@ public class ChatLogEvent extends LoggingEvent
     public ChatLogEvent(String bot, String user, String in, String out)
     {
         super(LOGGER_FQCN, Logger.getLogger("programd." + bot), Level.INFO, String.format(
-                "%s -> %s: \"%s\"; %s -> %s: \"%s\"", user, bot, in, bot, user, Text.normalizeString(XML
+                "%s -> %s: \"%s\"; %s -> %s: \"%s\"", user, bot, in, bot, user, Text.normalizeString(Characters
                         .removeMarkup(out))), null);
         this.botid = bot;
         this.userid = user;

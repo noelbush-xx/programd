@@ -12,7 +12,7 @@ package org.aitools.programd.logging;
 import java.util.Date;
 
 import org.aitools.programd.logging.ChatLogEvent;
-import org.aitools.util.xml.XML;
+import org.aitools.util.xml.Characters;
 import org.apache.log4j.Layout;
 import org.apache.log4j.helpers.ISO8601DateFormat;
 import org.apache.log4j.spi.LoggingEvent;
@@ -54,8 +54,8 @@ public class XMLChatLogLayout extends Layout
         result.append(String.format("  <time>%s</time>%n", this.timestampFormatter.format(new Date(event.timeStamp))));
         result.append(String.format("  <botid>%s</botid>%n", event.getBotID()));
         result.append(String.format("  <userid>%s</userid>%n", event.getUserID()));
-        result.append(String.format("  <input>%s</input>%n", XML.escapeXMLChars(event.getInput())));
-        result.append(String.format("  <reply>%s</reply>", XML.escapeXMLChars(event.getReply())));
+        result.append(String.format("  <input>%s</input>%n", Characters.escapeXMLChars(event.getInput())));
+        result.append(String.format("  <reply>%s</reply>", Characters.escapeXMLChars(event.getReply())));
         result.append(String.format("</record>%n"));
         return result.toString();
     }

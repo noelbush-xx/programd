@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.aitools.programd.Core;
 import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.xml.XHTML;
 import org.aitools.util.Text;
-import org.aitools.util.xml.XML;
 import org.jdom.Element;
 
 /**
@@ -163,7 +163,7 @@ public class TestCase
     public boolean run(Core core, String userid, String botid)
     {
         this.lastResponse = org.jdom.Text.normalizeString(core.getResponse(this.input, userid, botid));
-        return responseIsValid(Text.renderAsLines(XML.breakXHTMLLines(this.lastResponse)));
+        return responseIsValid(Text.renderAsLines(XHTML.breakLines(this.lastResponse)));
     }
 
     /**

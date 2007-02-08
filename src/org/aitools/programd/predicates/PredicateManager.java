@@ -14,7 +14,7 @@ import java.util.Map;
 import org.aitools.programd.Bots;
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
-import org.aitools.util.xml.XML;
+import org.aitools.util.xml.Characters;
 import org.apache.log4j.Logger;
 
 /**
@@ -154,7 +154,7 @@ abstract public class PredicateManager
         PredicateValue value = getLoadOrCreateMultivaluedPredicate(name, userPredicates, userid, botid);
 
         // Push the new value onto the indexed predicate list.
-        value.push(XML.removeMarkup(newValue));
+        value.push(Characters.removeMarkup(newValue));
 
         // Increment the set count.
         this._setCount++;

@@ -23,10 +23,9 @@ import org.aitools.programd.Bots;
 import org.aitools.programd.Core;
 import org.aitools.programd.predicates.PredicateManager;
 import org.aitools.programd.util.ManagedProcess;
-import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.runtime.Errors;
 import org.aitools.util.runtime.UserError;
-import org.aitools.util.xml.XML;
+import org.aitools.util.xml.XHTML;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -165,15 +164,14 @@ public class Shell extends Thread
     {
         if (this._core == null)
         {
-            throw new DeveloperError("Must attach the shell to a Core before calling run()!",
-                    new NullPointerException());
+            throw new NullPointerException("Must attach the shell to a Core before calling run()!");
         }
 
         showMessage(String.format("Interactive shell: type \"/exit\" to shut down; \"%s\" for help.", HelpCommand.COMMAND_STRING));
         Bot bot = this.bots.getABot();
         if (bot == null)
         {
-            throw new UserError("No bot to talk to!", new NullPointerException());
+            throw new NullPointerException("No bot to talk to!");
         }
         this.botid = bot.getID();
         this.botName = bot.getPropertyValue(this.botNamePredicate);
@@ -241,7 +239,7 @@ public class Shell extends Thread
             }
             else if (commandLine.length() > 0)
             {
-                showConsole(this.botName, XML.breakXHTMLLines(this._core.getResponse(commandLine, this.hostname,
+                showConsole(this.botName, XHTML.breakLines(this._core.getResponse(commandLine, this.hostname,
                         this.botid)));
             }
             // If the command line has zero length, ignore it.
@@ -435,7 +433,7 @@ public class Shell extends Thread
         this.botName = this.bots.get(newBotID).getPropertyValue(this.botNamePredicate);
         showMessage("Switched to bot \"" + newBotID + "\" (name: \"" + this.botName + "\").");
         // Send the connect string and print the first response.
-        showConsole(this.botName, XML.breakXHTMLLines(this._core.getResponse(this._core.getSettings()
+        showConsole(this.botName, XHTML.breakLines(this._core.getResponse(this._core.getSettings()
                 .getConnectString(), this.hostname, this.botid)));
     }
 

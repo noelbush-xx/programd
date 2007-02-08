@@ -49,7 +49,7 @@ import org.aitools.util.UnspecifiedParameterError;
 import org.aitools.util.runtime.Errors;
 import org.aitools.util.runtime.UserError;
 import org.aitools.util.runtime.UserSystem;
-import org.aitools.util.xml.XML;
+import org.aitools.util.xml.JDOM;
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
@@ -184,7 +184,7 @@ public class Core
     {
         setup(base);
         Filesystem.setRootPath(URLTools.getParent(this._baseURL));
-        this._settings = new XMLCoreSettings(settings, base, this._xmlCatalog, this._logger);
+        this._settings = new XMLCoreSettings(settings, this._xmlCatalog, this._logger);
         this._status = Status.INITIALIZED;
         start();
     }
@@ -273,7 +273,7 @@ public class Core
             {
                 if (pluginConfigURL.openStream() != null)
                 {
-                    this._pluginConfig = XML.getJDOMDocument(pluginConfigURL, this._baseURL, PLUGIN_CONFIG_NS_URI, this._xmlCatalog, this._logger);
+                    this._pluginConfig = JDOM.getDocument(pluginConfigURL, this._xmlCatalog, this._logger);
                 }
             }
             catch (IOException e)
@@ -1102,7 +1102,7 @@ public class Core
         String reply = getMatchResult(input, that, topic, userid, botid, parser);
         if (reply == null)
         {
-            this._logger.error("getMatchReply generated a null reply!", new NullPointerException());
+            this._logger.error("getMatchReply generated a null reply!", new NullPointerException("Null reply."));
             return "";
         }
 

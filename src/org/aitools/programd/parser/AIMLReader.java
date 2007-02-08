@@ -18,7 +18,8 @@ import org.xml.sax.ext.DefaultHandler2;
 
 import org.aitools.programd.Bot;
 import org.aitools.programd.graph.Graphmapper;
-import org.aitools.util.xml.XML;
+import org.aitools.util.xml.Characters;
+import org.aitools.util.xml.SAX;
 
 /**
  * This reads in standard AIML and delivers categories to the Graphmapper.
@@ -88,7 +89,7 @@ public class AIMLReader extends DefaultHandler2
     {
         if (this.currentBuffer != null)
         {
-            this.currentBuffer.append(XML.escapeXMLChars(ch, start, length));
+            this.currentBuffer.append(Characters.escapeXMLChars(ch, start, length));
         }
     }
 
@@ -151,7 +152,7 @@ public class AIMLReader extends DefaultHandler2
              * We don't want to parse the template into some big memory structure, since it may never be used. So we
              * just reconstitute the XML text for later processing.
              */
-            this.templateBuffer.append(XML.renderStartTag(elementName, attributes, !uri
+            this.templateBuffer.append(SAX.renderStartTag(elementName, attributes, !uri
                     .equals(this._defaultNamespaceURI), uri));
         }
         else if (elementName.equals("topic"))

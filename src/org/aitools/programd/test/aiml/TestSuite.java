@@ -9,7 +9,8 @@ import java.util.List;
 
 import org.aitools.programd.Core;
 import org.aitools.util.runtime.DeveloperError;
-import org.aitools.util.xml.XML;
+import org.aitools.util.xml.Characters;
+import org.aitools.util.xml.JDOM;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -150,7 +151,7 @@ public class TestSuite implements Iterable<TestCase>
             String testcaseName = testCase.getName();
             if (!caseSuccessful)
             {
-                this._logger.warn(String.format("Test case \"%s\" failed with response \"%s\".", testcaseName, XML
+                this._logger.warn(String.format("Test case \"%s\" failed with response \"%s\".", testcaseName, Characters
                         .removeMarkup(testCase.getLastResponse())));
                 registerFailure(this._name, testCase.getName(), testCase.getInput(), testCase.getLastResponse());
             }
@@ -213,11 +214,11 @@ public class TestSuite implements Iterable<TestCase>
     @SuppressWarnings("unchecked")
     public static TestSuite load(URL path, Core core, Logger logger)
     {
-        Document document = XML.getJDOMDocument(path, core.getBaseURL(), TESTSUITE_NAMESPACE_URI, core.getXMLCatalog(), logger);
+        Document document = JDOM.getDocument(path, core.getXMLCatalog(), logger);
         String encoding;
         try
         {
-            encoding = XML.getDeclaredXMLEncoding(path);
+            encoding = Characters.getDeclaredXMLEncoding(path);
         }
         catch (IOException e)
         {

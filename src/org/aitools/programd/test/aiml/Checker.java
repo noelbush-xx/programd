@@ -3,7 +3,7 @@ package org.aitools.programd.test.aiml;
 import java.io.UnsupportedEncodingException;
 
 import org.aitools.util.runtime.DeveloperError;
-import org.aitools.util.xml.XML;
+import org.aitools.util.xml.Characters;
 import org.jdom.Element;
 
 /**
@@ -61,7 +61,7 @@ abstract public class Checker
         {
             try
             {
-                return new AlertKeywordChecker(new String(XML.unescapeXMLChars(element.getText()).getBytes(encoding)).intern());
+                return new AlertKeywordChecker(new String(Characters.unescapeXMLChars(element.getText()).getBytes(encoding)).intern());
             }
             catch (UnsupportedEncodingException e)
             {
@@ -76,7 +76,7 @@ abstract public class Checker
         {
             try
             {
-                return new ExpectedKeywordChecker(new String(XML.unescapeXMLChars(element.getText()).getBytes(encoding)).intern());
+                return new ExpectedKeywordChecker(new String(Characters.unescapeXMLChars(element.getText()).getBytes(encoding)).intern());
             }
             catch (UnsupportedEncodingException e)
             {
@@ -98,7 +98,7 @@ abstract public class Checker
         {
             try
             {
-                return new MatchChecker(new String(XML.unescapeXMLChars(element.getText()).getBytes(encoding)).intern());
+                return new MatchChecker(new String(Characters.unescapeXMLChars(element.getText()).getBytes(encoding)).intern());
             }
             catch (UnsupportedEncodingException e)
             {

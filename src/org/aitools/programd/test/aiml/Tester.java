@@ -1,5 +1,6 @@
 package org.aitools.programd.test.aiml;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -11,6 +12,7 @@ import java.util.List;
 import org.aitools.programd.Core;
 import org.aitools.util.resource.Filesystem;
 import org.aitools.util.resource.URLTools;
+import org.aitools.util.runtime.DeveloperError;
 import org.apache.log4j.Logger;
 
 /**
@@ -105,7 +107,18 @@ public class Tester
         report.logSummary(this.logger);
         String reportPath = URLTools.contextualize(this.testReportDirectory,
                 "test-report-" + timestampFormat.format(new Date()) + ".xml").getFile();
-        report.write(reportPath);
+        try
+        {
+            report.write(reportPath);
+        }
+        catch (FileNotFoundException e)
+        {
+            throw new DeveloperError(String.format("Bad path for test report: \"%s\".", reportPath), e);
+        }
+        catch (IOException e)
+        {
+            throw new DeveloperError(String.format("Error writing test report: \"%s\".", reportPath), e);
+        }
         return reportPath;
     }
 

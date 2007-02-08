@@ -30,7 +30,7 @@ import org.aitools.util.resource.Filesystem;
 import org.aitools.util.resource.URLTools;
 import org.aitools.util.runtime.Errors;
 import org.aitools.util.runtime.UserError;
-import org.aitools.util.xml.XML;
+import org.aitools.util.xml.SAX;
 import org.apache.log4j.Logger;
 import org.jdom.Content;
 import org.jdom.Document;
@@ -126,7 +126,7 @@ abstract public class AbstractGraphmapper implements Graphmapper
     protected AbstractGraphmapper(Core core)
     {
         this._core = core;
-        this._parser = XML.getSAXParser(this._core.getXMLCatalog().toExternalForm(), this._logger);
+        this._parser = SAX.getParser(this._core.getXMLCatalog().toExternalForm(), this._logger);
         
         CoreSettings settings = this._core.getSettings();
         this._noteEachLoad = settings.noteEachLoadedFile();
