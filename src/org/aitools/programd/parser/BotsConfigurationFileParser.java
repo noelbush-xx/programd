@@ -26,7 +26,7 @@ import org.aitools.programd.Core;
 import org.aitools.programd.graph.Graphmapper;
 import org.aitools.programd.listener.InvalidListenerParameterException;
 import org.aitools.programd.listener.Listener;
-import org.aitools.util.ClassUtils;
+import org.aitools.util.Classes;
 import org.aitools.util.resource.URLTools;
 import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.runtime.UserError;
@@ -373,7 +373,7 @@ public class BotsConfigurationFileParser
 
             // Instantiate a new listener for the bot.
             String classname = listenerElement.getAttributeValue("class");
-            Listener listener = ClassUtils.getSubclassInstance(Listener.class, classname, "listener",
+            Listener listener = Classes.getSubclassInstance(Listener.class, classname, "listener",
                     this._core, bot, parameters);
 
             // Check listener parameters.
@@ -425,6 +425,6 @@ public class BotsConfigurationFileParser
      */
     protected Element getDocRoot(URL path)
     {
-        return JDOM.getDocument(path, this._core.getXMLCatalog(), this._core.getLogger()).getRootElement();
+        return JDOM.getDocument(path, this._core.getLogger()).getRootElement();
     }
 }

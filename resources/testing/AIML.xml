@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <TestSuite xmlns="http://aitools.org/xaiml/test-suite"
-    xmlns:html="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://aitools.org/xaiml/test-suite http://aitools.org/xaiml/test-suite.xsd"
-    name="AIML 1.0.1">
+    xmlns:html="http://www.w3.org/1999/xhtml" name="AIML 1.0.1">
     <TestCase name="connect">
         <Input>CONNECT</Input>
         <ExpectedAnswer>Connected to test case AIML set.</ExpectedAnswer>

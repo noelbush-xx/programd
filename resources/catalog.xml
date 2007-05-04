@@ -1,13 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
-    <uri name="http://alicebot.org/2001/AIML-1.0.1" uri="schema/AIML.xsd" />
-    <system systemId="http://aitools.org/aiml/schema/AIML.xsd" uri="schema/AIML.xsd" />
-    <system systemId="http://java.sun.com/dtd/properties.dtd" uri="DTD/java-properties.dtd" />
-    <system systemId="http://aitools.org/programd/4.7/programd-configuration.xsd"
-        uri="schema/programd-configuration.xsd" />
-    <system systemId="http://aitools.org/programd/4.7/bot-configuration.xsd"
-        uri="schema/bot-configuration.xsd" />
-    <system systemId="http://aitools.org/xaiml/test-suite.xsd" uri="schema/test-suite.xsd" />
-    <system systemId="http://aitools.org/programd/4.7/common-types.xsd" uri="schema/common-types.xsd" />
-    <system systemId="http://aitools.org/programd/4.7/plugins.xsd" uri="schema/plugins.xsd" />
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" xmlns:r="http://www.rddl.org/" prefer="system">
+  <!--Local copies of AIML and Program D schemas.-->
+  <uri name="http://alicebot.org/2001/AIML-1.0.1"                        uri="schema/AIML.xsd"                   r:nature="http://www.w3.org/2001/XMLSchema" r:purpose="http://www.rddl.org/purposes#schema-validation"/>
+  <uri name="http://aitools.org/programd/4.7/programd-configuration"     uri="schema/programd-configuration.xsd" r:nature="http://www.w3.org/2001/XMLSchema" r:purpose="http://www.rddl.org/purposes#schema-validation"/>
+  <uri name="http://aitools.org/programd/4.7/bot-configuration"          uri="schema/bot-configuration.xsd"      r:nature="http://www.w3.org/2001/XMLSchema" r:purpose="http://www.rddl.org/purposes#schema-validation"/>
+  <uri name="http://aitools.org/xaiml/test-suite"                        uri="schema/test-suite.xsd"             r:nature="http://www.w3.org/2001/XMLSchema" r:purpose="http://www.rddl.org/purposes#schema-validation"/>
+  <uri name="http://aitools.org/programd/4.7/common-types"               uri="schema/common-types.xsd"           r:nature="http://www.w3.org/2001/XMLSchema" r:purpose="http://www.rddl.org/purposes#schema-validation"/>
+  <uri name="http://aitools.org/programd/4.7/plugins"                    uri="schema/plugins.xsd"                r:nature="http://www.w3.org/2001/XMLSchema" r:purpose="http://www.rddl.org/purposes#schema-validation"/>
+  <!--Local copies of third party schemas.-->
+  <uri name="http://www.w3.org/1999/xhtml"                               uri="schema/w3c/xhtml1-strict.xsd"      r:nature="http://www.w3.org/2001/XMLSchema" r:purpose="http://www.rddl.org/purposes#schema-validation"/>
+  <system systemId="http://www.w3.org/2001/xml.xsd"                      uri="schema/w3c/xml.xsd"/>
+  <system systemId="http://logging.apache.org/log4j/log4j.dtd"           uri="DTD/apache/log4j.dtd"/>
+  <system systemId="http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent"      uri="DTD/w3c/xhtml-lat1.ent"/>
+  <system systemId="http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent"   uri="DTD/w3c/xhtml-special.ent"/>
+  <system systemId="http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent"    uri="DTD/w3c/xhtml-symbol.ent"/>
 </catalog>

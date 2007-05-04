@@ -214,7 +214,7 @@ public class TestSuite implements Iterable<TestCase>
     @SuppressWarnings("unchecked")
     public static TestSuite load(URL path, Core core, Logger logger)
     {
-        Document document = JDOM.getDocument(path, core.getXMLCatalog(), logger);
+        Document document = JDOM.getDocument(path, logger);
         String encoding;
         try
         {

@@ -1,66 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<programd xmlns="http://aitools.org/programd/4.7/programd-configuration"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://aitools.org/programd/4.7/programd-configuration http://aitools.org/programd/4.7/programd-configuration.xsd">
-    <aiml.namespace-uri>http://alicebot.org/2001/AIML-1.0.1</aiml.namespace-uri>
-    <paths>
-        <bot-config>bots.xml</bot-config>
-        <plugin-config>plugins.xml</plugin-config>
-        <gossip>file:/var/log/programd/gossip.txt</gossip>
-    </paths>
-    <predicates>
-        <empty-default>undefined</empty-default>
-        <client-name-predicate>name</client-name-predicate>
-        <bot-name-property>name</bot-name-property>
-        <predicate-flush-period>500</predicate-flush-period>
-    </predicates>
-    <predicate-manager>
-        <implementation>org.aitools.programd.predicates.InMemoryPredicateManager</implementation>
-        <ffpm-dir>file:/var/programd/ffpm</ffpm-dir>
-    </predicate-manager>
-    <database>
-        <url>jdbc:mysql:///programd</url>
-        <driver>com.mysql.jdbc.Driver</driver>
-        <maximum-connections>25</maximum-connections>
-        <username>programd</username>
-        <password>yourpassword</password>
-    </database>
-    <merge>
-        <policy>combine</policy>
-        <note-each>true</note-each>
-        <append-policy.separator-string> </append-policy.separator-string>
-    </merge>
-    <exceptions>
-        <response-timeout>1000</response-timeout>
-        <infinite-loop-input>INFINITE LOOP</infinite-loop-input>
-        <on-uncaught-exceptions.print-stack-trace>true</on-uncaught-exceptions.print-stack-trace>
-    </exceptions>
-    <heart enabled="false">
-        <pulse.implementation>org.aitools.programd.util.IAmAlivePulse</pulse.implementation>
-        <pulse.rate>5</pulse.rate>
-    </heart>
-    <watchers>
-        <AIML enabled="true">
-            <timer>2000</timer>
-        </AIML>
-    </watchers>
-    <interpreters>
-        <javascript allowed="true">
-            <interpreter-classname>org.aitools.programd.interpreter.RhinoInterpreter</interpreter-classname>
-        </javascript>
-        <system allowed="true">
-            <directory>..</directory>
-            <prefix></prefix>
-        </system>
-    </interpreters>
-    <loading>
-        <category-load-notification-interval>1000</category-load-notification-interval>
-        <note-each-loaded-file>false</note-each-loaded-file>
-        <exit-immediately-on-startup>false</exit-immediately-on-startup>
-    </loading>
-    <connect-string>CONNECT</connect-string>
-    <random-strategy>non-repeating</random-strategy>
-    <graphmapper.implementation>org.aitools.programd.graph.MemoryGraphmapper</graphmapper.implementation>
-    <nodemapper.implementation>org.aitools.programd.graph.TwoOptimalMemoryNodemapper</nodemapper.implementation>
-    <use-shell>true</use-shell>
+<programd xmlns="http://aitools.org/programd/4.7/programd-configuration">
+  <aiml.namespace-uri>http://alicebot.org/2001/AIML-1.0.1</aiml.namespace-uri>
+  <paths>
+    <bot-config>bots.xml</bot-config>
+    <plugin-config>plugins.xml</plugin-config>
+    <gossip>file:/var/log/programd/gossip.txt</gossip>
+  </paths>
+  <predicates>
+    <empty-default>undefined</empty-default>
+    <client-name-predicate>name</client-name-predicate>
+    <bot-name-property>name</bot-name-property>
+    <predicate-flush-period>500</predicate-flush-period>
+  </predicates>
+  <predicate-manager>
+    <implementation>org.aitools.programd.predicates.InMemoryPredicateManager</implementation>
+    <ffpm-dir>file:/var/programd/ffpm</ffpm-dir>
+  </predicate-manager>
+  <database>
+    <url>jdbc:mysql:///programd</url>
+    <driver>com.mysql.jdbc.Driver</driver>
+    <maximum-connections>25</maximum-connections>
+    <username>programd</username>
+    <password>yourpassword</password>
+  </database>
+  <merge>
+    <policy>combine</policy>
+    <note-each>true</note-each>
+    <append-policy.separator-string> </append-policy.separator-string>
+  </merge>
+  <exceptions>
+    <response-timeout>1000</response-timeout>
+    <infinite-loop-input>INFINITE LOOP</infinite-loop-input>
+    <on-uncaught-exceptions.print-stack-trace>true</on-uncaught-exceptions.print-stack-trace>
+  </exceptions>
+  <heart enabled="false">
+    <pulse.implementation>org.aitools.programd.util.IAmAlivePulse</pulse.implementation>
+    <pulse.rate>5</pulse.rate>
+  </heart>
+  <watchers>
+    <AIML enabled="true">
+      <timer>2000</timer>
+    </AIML>
+  </watchers>
+  <interpreters>
+    <javascript allowed="true">
+      <interpreter-classname>org.aitools.programd.interpreter.RhinoInterpreter</interpreter-classname>
+    </javascript>
+    <system allowed="true">
+      <directory>..</directory>
+      <prefix/>
+    </system>
+  </interpreters>
+  <loading>
+    <category-load-notification-interval>1000</category-load-notification-interval>
+    <note-each-loaded-file>false</note-each-loaded-file>
+    <exit-immediately-on-startup>false</exit-immediately-on-startup>
+  </loading>
+  <connect-string>CONNECT</connect-string>
+  <random-strategy>non-repeating</random-strategy>
+  <graphmapper.implementation>org.aitools.programd.graph.MemoryGraphmapper</graphmapper.implementation>
+  <nodemapper.implementation>org.aitools.programd.graph.TwoOptimalMemoryNodemapper</nodemapper.implementation>
+  <use-shell>true</use-shell>
 </programd>

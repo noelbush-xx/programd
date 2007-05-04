@@ -27,6 +27,7 @@ import org.aitools.util.runtime.Errors;
 import org.aitools.util.runtime.UserError;
 import org.aitools.util.xml.XHTML;
 import org.apache.log4j.Logger;
+import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
@@ -132,24 +133,28 @@ public class Shell extends Thread
         this.commandRegistry = new ShellCommandRegistry();
 
         // Look for any shell command plugins and add them to the registry.
-        Element shellCommandSet = this._core.getPluginConfig().getRootElement().getChild("shell-commands", PLUGIN_CONFIG_NS);
-        if (shellCommandSet != null)
+        Document plugins = this._core.getPluginConfig(); 
+        if (plugins != null)
         {
-            List<Element> commands = shellCommandSet.getChildren("command", PLUGIN_CONFIG_NS);
-            if (commands != null)
+            Element shellCommandSet = plugins.getRootElement().getChild("shell-commands", PLUGIN_CONFIG_NS);
+            if (shellCommandSet != null)
             {
-                for (Element commandElement : commands)
+                List<Element> commands = shellCommandSet.getChildren("command", PLUGIN_CONFIG_NS);
+                if (commands != null)
                 {
-                    String classname = commandElement.getAttributeValue("class");
-                    List<Element> parameterElements = commandElement.getChildren("parameter", PLUGIN_CONFIG_NS);
-                    if (parameterElements != null)
+                    for (Element commandElement : commands)
                     {
-                        HashMap<String, String> parameters = new HashMap<String, String>(parameterElements.size());
-                        for (Element parameter : parameterElements)
+                        String classname = commandElement.getAttributeValue("class");
+                        List<Element> parameterElements = commandElement.getChildren("parameter", PLUGIN_CONFIG_NS);
+                        if (parameterElements != null)
                         {
-                            parameters.put(parameter.getAttributeValue("name"), parameter.getAttributeValue("value"));
+                            HashMap<String, String> parameters = new HashMap<String, String>(parameterElements.size());
+                            for (Element parameter : parameterElements)
+                            {
+                                parameters.put(parameter.getAttributeValue("name"), parameter.getAttributeValue("value"));
+                            }
+                            this.commandRegistry.register(classname, parameters);
                         }
-                        this.commandRegistry.register(classname, parameters);
                     }
                 }
             }

@@ -40,7 +40,7 @@ import org.aitools.programd.util.InputNormalizer;
 import org.aitools.programd.util.ManagedProcesses;
 import org.aitools.programd.util.NoMatchException;
 import org.aitools.programd.util.Pulse;
-import org.aitools.util.ClassUtils;
+import org.aitools.util.Classes;
 import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.resource.Filesystem;
 import org.aitools.util.JDKLogHandler;
@@ -71,9 +71,18 @@ public class Core
 
     /** The location of the XML catalog, as a string. */
     private static String XML_CATALOG_URL = "resources/catalog.xml";
+    
+    /** The location of the XMLResolver config file, as a string. */
+    private static String XMLRESOLVER_CONFIG_URL = "conf/XMLResolver.properties";
 
-    /** The URL location of the XML catalog. */
+    /** The URL of the XML catalog. */
     private URL _xmlCatalog;
+    
+    /** The URL of the XMLResolver config file. */
+    private URL _xmlresolverConfig;
+    
+    /** XML Parser feature settings. */
+    private Map<String, Boolean> _xmlParserFeatureSettings;
 
     /** The Settings. */
     protected CoreSettings _settings;
@@ -184,7 +193,7 @@ public class Core
     {
         setup(base);
         Filesystem.setRootPath(URLTools.getParent(this._baseURL));
-        this._settings = new XMLCoreSettings(settings, this._xmlCatalog, this._logger);
+        this._settings = new XMLCoreSettings(settings, this._logger);
         this._status = Status.INITIALIZED;
         start();
     }
@@ -208,14 +217,25 @@ public class Core
     {
         this._baseURL = base;
         this._xmlCatalog = URLTools.contextualize(this._baseURL, XML_CATALOG_URL);
+        this._xmlresolverConfig = URLTools.contextualize(this._baseURL, XMLRESOLVER_CONFIG_URL);
     }
 
     /**
      * Initializes and starts up the Core.
      */
+    @SuppressWarnings("boxing")
     protected void start()
     {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
+        
+        // Set up the XML parsing feature settings.
+        this._xmlParserFeatureSettings = new HashMap<String, Boolean>(6);
+        this._xmlParserFeatureSettings.put("http://xml.org/sax/features/use-entity-resolver2", this._settings.xmlParserUseEntityResolver2());
+        this._xmlParserFeatureSettings.put("http://xml.org/sax/features/validation", this._settings.xmlParserUseValidation());
+        this._xmlParserFeatureSettings.put("http://apache.org/xml/features/validation/schema", this._settings.xmlParserUseSchemaValidation());
+        this._xmlParserFeatureSettings.put("http://apache.org/xml/features/honour-all-schemaLocations", this._settings.xmlParserHonourAllSchemaLocations());
+        this._xmlParserFeatureSettings.put("http://apache.org/xml/features/xinclude", this._settings.xmlParserUseXInclude());
+        this._xmlParserFeatureSettings.put("http://apache.org/xml/features/validate-annotations", this._settings.xmlParserValidateAnnotations());
 
         // Use the stdout and stderr appenders in a special way, if they are defined.
         ConsoleStreamAppender stdOutAppender = ((ConsoleStreamAppender) Logger.getLogger("programd").getAppender(
@@ -245,13 +265,13 @@ public class Core
 
         this._aimlProcessorRegistry = new AIMLProcessorRegistry();
 
-        this._graphmapper = ClassUtils.getSubclassInstance(Graphmapper.class, this._settings
+        this._graphmapper = Classes.getSubclassInstance(Graphmapper.class, this._settings
                 .getGraphmapperImplementation(), "Graphmapper implementation", this);
         this._bots = new Bots();
         this._processes = new ManagedProcesses(this);
 
         // Get an instance of the settings-specified PredicateManager.
-        this._predicateManager = ClassUtils.getSubclassInstance(PredicateManager.class, this._settings
+        this._predicateManager = Classes.getSubclassInstance(PredicateManager.class, this._settings
                 .getPredicateManagerImplementation(), "PredicateManager", this);
 
         // Get the hostname (used occasionally).
@@ -273,7 +293,7 @@ public class Core
             {
                 if (pluginConfigURL.openStream() != null)
                 {
-                    this._pluginConfig = JDOM.getDocument(pluginConfigURL, this._xmlCatalog, this._logger);
+                    this._pluginConfig = JDOM.getDocument(pluginConfigURL, this._logger);
                 }
             }
             catch (IOException e)
@@ -379,7 +399,7 @@ public class Core
             }
             else
             {
-                this._heart.addPulse(ClassUtils.getSubclassInstance(Pulse.class, pulseImplementation, "Pulse", this));
+                this._heart.addPulse(Classes.getSubclassInstance(Pulse.class, pulseImplementation, "Pulse", this));
                 this._heart.start();
                 this._logger.info("Heart started.");
             }
@@ -874,6 +894,22 @@ public class Core
     public URL getXMLCatalog()
     {
         return this._xmlCatalog;
+    }
+    
+    /**
+     * @return the URL of the XMLResolver configuration file
+     */
+    public URL getXMLResolverConfig()
+    {
+        return this._xmlresolverConfig;
+    }
+    
+    /**
+     * @return the XML parser feature settings
+     */
+    public Map<String, Boolean> getXMLParserFeatureSettings()
+    {
+        return this._xmlParserFeatureSettings;
     }
 
     /**

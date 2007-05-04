@@ -31,9 +31,12 @@ import org.aitools.util.resource.URLTools;
  * because <code>int</code> is a primitive type in Java (as opposed to
  * {@link Integer}.
  * 
+ * TODO: Remove SuppressWarnings
+ * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  *
  */
+@SuppressWarnings("unused")
 public class DBGraphmapper extends AbstractGraphmapper
 {
     /**

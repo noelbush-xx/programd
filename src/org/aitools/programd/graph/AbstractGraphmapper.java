@@ -18,8 +18,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.SAXParser;
-
 import org.aitools.programd.Bot;
 import org.aitools.programd.Core;
 import org.aitools.programd.CoreSettings;
@@ -40,8 +38,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.XMLReader;
 
 /**
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
@@ -61,10 +58,7 @@ abstract public class AbstractGraphmapper implements Graphmapper
 
     /** The merge policy. */
     protected CoreSettings.MergePolicy _mergePolicy;
-    
-    /** The SAXParser used in loading AIML. */
-    private SAXParser _parser;
-    
+
     /** A formatter used for outputting XML. */
     private Format _xmlFormat = Format.getPrettyFormat();
 
@@ -76,7 +70,7 @@ abstract public class AbstractGraphmapper implements Graphmapper
 
     /** Whether to note each merge. */
     protected boolean _noteEachMerge;
-    
+
     /** Whether to use the AIML Watcher. */
     protected boolean _useAIMLWatcher;
 
@@ -94,7 +88,7 @@ abstract public class AbstractGraphmapper implements Graphmapper
 
     /** The response timeout. */
     protected int _responseTimeout;
-    
+
     // Constants
 
     /** A that marker. */
@@ -117,7 +111,7 @@ abstract public class AbstractGraphmapper implements Graphmapper
 
     /** The <code>_</code> wildcard. */
     public static final String UNDERSCORE = "_";
-
+    
     /**
      * Creates a new AbstractGraphmapper, reading settings from the given Core.
      * 
@@ -126,8 +120,7 @@ abstract public class AbstractGraphmapper implements Graphmapper
     protected AbstractGraphmapper(Core core)
     {
         this._core = core;
-        this._parser = SAX.getParser(this._core.getXMLCatalog().toExternalForm(), this._logger);
-        
+
         CoreSettings settings = this._core.getSettings();
         this._noteEachLoad = settings.noteEachLoadedFile();
         this._mergePolicy = settings.getMergePolicy();
@@ -138,7 +131,7 @@ abstract public class AbstractGraphmapper implements Graphmapper
         this._categoryLoadNotifyInterval = settings.getCategoryLoadNotificationInterval();
         this._aimlNamespaceURI = settings.getAIMLNamespaceURI().toString();
     }
-    
+
     /**
      * @see org.aitools.programd.graph.Graphmapper#load(java.net.URL, java.lang.String)
      */
@@ -204,7 +197,7 @@ abstract public class AbstractGraphmapper implements Graphmapper
         {
             if (this._noteEachLoad)
             {
-                this._logger.info("Loading " + URLTools.unescape(path) + "....");
+                this._logger.info(String.format("Loading %s....", URLTools.unescape(path)));
             }
             doLoad(path, botid);
             // Add it to the AIMLWatcher, if active.
@@ -221,33 +214,14 @@ abstract public class AbstractGraphmapper implements Graphmapper
         {
             return;
         }
+        XMLReader reader = SAX.getReader(this._logger);
         try
         {
-            AIMLReader reader = new AIMLReader(this, path, this._core.getBot(botid), this._aimlNamespaceURI);
-            try
-            {
-                this._parser.getXMLReader().setProperty("http://xml.org/sax/properties/lexical-handler", reader);
-            }
-            catch (SAXNotRecognizedException e)
-            {
-                this._logger.warn(
-                        "The XML reader in use does not support lexical handlers -- CDATA will not be handled.", e);
-            }
-            catch (SAXNotSupportedException e)
-            {
-                this._logger
-                        .warn(
-                                "The XML reader in use cannot enable the lexical handler feature -- CDATA will not be handled.",
-                                e);
-            }
-            catch (SAXException e)
-            {
-                this._logger
-                        .warn(
-                                "An exception occurred when trying to enable the lexical handler feature on the XML reader -- CDATA will not be handled.",
-                                e);
-            }
-            this._parser.parse(path.toString(), reader);
+            AIMLReader handler = new AIMLReader(this, path, this._core.getBot(botid));
+            reader.setContentHandler(handler);
+            //reader.setErrorHandler(handler);
+            //reader.setEntityResolver(handler);
+            reader.parse(path.toExternalForm());
             associateBotIDWithFilename(botid, path);
         }
         catch (IOException e)
@@ -256,29 +230,27 @@ abstract public class AbstractGraphmapper implements Graphmapper
         }
         catch (SAXException e)
         {
-            this._logger.warn(String.format("Error parsing \"%s\": %s", URLTools.unescape(path), Errors.describe(e)), e);
+            this._logger.warn(String.format("Error reading \"%s\": %s", URLTools.unescape(path), Errors.describe(e)));
         }
     }
-    
+
     /**
-     * Indicates whether the given filename is already loaded
-     * for any bot at all.
+     * Indicates whether the given filename is already loaded for any bot at all.
      * 
      * @param filename
      * @return whether the given filename is already loaded
      */
     abstract protected boolean isAlreadyLoaded(URL filename);
-    
+
     /**
-     * Indicates whether the given filename is already loaded
-     * for the given bot.
+     * Indicates whether the given filename is already loaded for the given bot.
      * 
      * @param filename
      * @param botid
      * @return whether the given filename is already loaded for the given botid
      */
     abstract protected boolean isAlreadyLoadedForBot(URL filename, String botid);
-    
+
     /**
      * Creates an association between the given botid and the given filename.
      * 
@@ -286,11 +258,10 @@ abstract public class AbstractGraphmapper implements Graphmapper
      * @param filename
      */
     abstract protected void associateBotIDWithFilename(String botid, URL filename);
-    
+
     /**
-     * Allows a concrete version of this class to decide whether or not a file
-     * needs to be loaded; this is useful for {@link DBGraphmapper}, which doesn't
-     * need to load a file again if it hasn't changed since it was last loaded.
+     * Allows a concrete version of this class to decide whether or not a file needs to be loaded; this is useful for
+     * {@link DBGraphmapper}, which doesn't need to load a file again if it hasn't changed since it was last loaded.
      * 
      * @param path the path to be checked
      * @return whether or not it should be loaded
@@ -298,19 +269,19 @@ abstract public class AbstractGraphmapper implements Graphmapper
     abstract protected boolean necessaryToLoad(URL path);
 
     /**
-     * Adds the given botid to the &lt;botid&gt; node for all branches
-     * associated with the given URL. This should only be called using a URL
-     * that <i>has</i> previously been loaded for <i>another</i> bot.
+     * Adds the given botid to the &lt;botid&gt; node for all branches associated with the given URL. This should only
+     * be called using a URL that <i>has</i> previously been loaded for <i>another</i> bot.
      * 
      * @param path
      * @param botid
-     * @throws IllegalArgumentException if the given path has not already been
-     *         loaded, or if it has been loaded for the same botid
+     * @throws IllegalArgumentException if the given path has not already been loaded, or if it has been loaded for the
+     *         same botid
      */
     abstract protected void addForBot(URL path, String botid);
-    
+
     /**
-     * @see org.aitools.programd.graph.Graphmapper#addCategory(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.aitools.programd.Bot, java.net.URL)
+     * @see org.aitools.programd.graph.Graphmapper#addCategory(java.lang.String, java.lang.String, java.lang.String,
+     *      java.lang.String, org.aitools.programd.Bot, java.net.URL)
      */
     @SuppressWarnings("boxing")
     public void addCategory(String pattern, String that, String topic, String template, Bot bot, URL source)
@@ -328,7 +299,7 @@ abstract public class AbstractGraphmapper implements Graphmapper
         {
             topic = ASTERISK;
         }
-    
+
         // Report on loaded categories.
         if (this._totalCategories % this._categoryLoadNotifyInterval == 0 && this._totalCategories > 0)
         {
@@ -336,24 +307,19 @@ abstract public class AbstractGraphmapper implements Graphmapper
         }
         add(pattern, that, topic, template, bot, source);
     }
-    
+
     protected abstract void add(String pattern, String that, String topic, String template, Bot bot, URL source);
 
     /**
-     * Combines two template content strings into a single template, using a
-     * random element so that either original template content string has an
-     * equal chance of being processed. The order in which the templates are
-     * supplied is important: the first one (<code>existingTemplate</code>)
-     * is processed as though it has already been stored in the Graphmaster, and
-     * hence might itself be the result of a previous <code>combine()</code>
-     * operation. If this is the case, the in-memory representation of the
-     * template will have a special attribute indicating this fact, which will
-     * be used to &quot;balance&quot; the combine operation.
+     * Combines two template content strings into a single template, using a random element so that either original
+     * template content string has an equal chance of being processed. The order in which the templates are supplied is
+     * important: the first one (<code>existingTemplate</code>) is processed as though it has already been stored in
+     * the Graphmaster, and hence might itself be the result of a previous <code>combine()</code> operation. If this
+     * is the case, the in-memory representation of the template will have a special attribute indicating this fact,
+     * which will be used to &quot;balance&quot; the combine operation.
      * 
-     * @param existingTemplate the template with which the new template should
-     *        be combined
-     * @param newTemplate the template which should be combined with the
-     *        existing template
+     * @param existingTemplate the template with which the new template should be combined
+     * @param newTemplate the template which should be combined with the existing template
      * @return the combined result
      */
     @SuppressWarnings("unchecked")
@@ -373,9 +339,9 @@ abstract public class AbstractGraphmapper implements Graphmapper
             existingContent = existingRoot.getContent();
 
             newDoc = new SAXBuilder().build(new StringReader(newTemplate));
-            for (Content newContentItem : (List<Content>)newDoc.getRootElement().getContent())
+            for (Content newContentItem : (List<Content>) newDoc.getRootElement().getContent())
             {
-                newContent.add((Content)newContentItem.clone());
+                newContent.add((Content) newContentItem.clone());
             }
         }
         catch (JDOMException e)
@@ -390,8 +356,8 @@ abstract public class AbstractGraphmapper implements Graphmapper
         }
 
         /*
-         * If the existing template has a random element as its root, we need to
-         * check whether this was the result of a previous combine.
+         * If the existing template has a random element as its root, we need to check whether this was the result of a
+         * previous combine.
          */
         Content firstNode = existingContent.get(0);
         if (firstNode instanceof Element)
@@ -465,10 +431,10 @@ abstract public class AbstractGraphmapper implements Graphmapper
         existingRoot.addContent(newContent);
         return new XMLOutputter(this._xmlFormat).outputString(existingDoc);
     }
-    
+
     /**
-     * Composes an input path as a list of tokens, given the components.
-     * Empty components are represented with asterisks.
+     * Composes an input path as a list of tokens, given the components. Empty components are represented with
+     * asterisks.
      * 
      * @param input
      * @param that
@@ -522,7 +488,7 @@ abstract public class AbstractGraphmapper implements Graphmapper
 
         // Input [directed to] botid.
         inputPath.add(botid);
-        
+
         return inputPath;
     }
 
@@ -564,8 +530,8 @@ abstract public class AbstractGraphmapper implements Graphmapper
         {
             throw new UserError("Cannot find file to print graph.", e);
         }
-        
+
     }
-    
+
     abstract protected void print(PrintWriter out);
 }

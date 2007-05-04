@@ -18,6 +18,7 @@ import org.xml.sax.ext.DefaultHandler2;
 
 import org.aitools.programd.Bot;
 import org.aitools.programd.graph.Graphmapper;
+import org.aitools.programd.processor.aiml.AIMLProcessorRegistry;
 import org.aitools.util.xml.Characters;
 import org.aitools.util.xml.SAX;
 
@@ -67,17 +68,15 @@ public class AIMLReader extends DefaultHandler2
      * Creates a new AIMLReader.
      * 
      * @param graphmapper the <code>Graphmapper</code> into which new categories are to be loaded.
-     * @param url the path that is being read
+     * @param path the path that is being read
      * @param bot the bot itself
-     * @param defaultNamespaceURI the namespace URI to use when none other is specified (?)
      */
-    public AIMLReader(Graphmapper graphmapper, URL url, Bot bot, String defaultNamespaceURI)
+    public AIMLReader(Graphmapper graphmapper, URL path, Bot bot)
     {
         this._graphmapper = graphmapper;
-        this._path = url;
+        this._path = path;
         this._bot = bot;
-        this._defaultNamespaceURI = defaultNamespaceURI;
-        this.templateStartTag = String.format("<template xmlns=\"%s\">", defaultNamespaceURI);
+        this.templateStartTag = String.format("<template xmlns=\"%s\">", AIMLProcessorRegistry.XMLNS);
         this.topic = "*";
     }
 

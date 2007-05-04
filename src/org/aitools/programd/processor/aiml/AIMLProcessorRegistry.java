@@ -19,7 +19,7 @@ import org.aitools.programd.processor.ProcessorRegistry;
 public class AIMLProcessorRegistry extends ProcessorRegistry<AIMLProcessor>
 {
     /** The XML namespace URI for AIML. */
-    private static final String XMLNS = "http://alicebot.org/2001/AIML-1.0.1";
+    public static final String XMLNS = "http://alicebot.org/2001/AIML-1.0.1";
 
     /** The list of processors (fully-qualified class names). */
     private static final String[] PROCESSOR_LIST = { "org.aitools.programd.processor.aiml.BotProcessor",

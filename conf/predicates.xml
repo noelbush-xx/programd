@@ -2,9 +2,7 @@
 <!--This is an example predicates set definition.  Here you can
     define default values for predicates, as well as mark those
     which are return-name-when-set.-->
-<predicates xmlns="http://aitools.org/programd/4.7/bot-configuration"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://aitools.org/programd/4.7/bot-configuration http://aitools.org/programd/4.7/bot-configuration.xsd">
+<predicates xmlns="http://aitools.org/programd/4.7/bot-configuration">
     <predicate name="name" default="user" set-return="value"/>
     <predicate name="he" default="somebody" set-return="name"/>
     <predicate name="she" default="somebody" set-return="name"/>
