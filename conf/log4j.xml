@@ -34,7 +34,7 @@
 
   <!--The main activity log file-->
   <appender name="activitylog" class="org.apache.log4j.RollingFileAppender">
-    <param name="File" value="/var/log/programd/activity.log"/>
+    <param name="File" value="log/activity.log"/>
     <param name="MaxFileSize" value="10MB"/>
     <param name="MaxBackupIndex" value="10"/>
     <layout class="org.apache.log4j.PatternLayout">
@@ -53,7 +53,7 @@
         NOTE: Currently set to same path as main activity log;
         this just includes the listener classname-->
   <appender name="listener-log" class="org.apache.log4j.RollingFileAppender">
-    <param name="File" value="/var/log/programd/activity.log"/>
+    <param name="File" value="log/activity.log"/>
     <param name="MaxFileSize" value="10MB"/>
     <param name="MaxBackupIndex" value="10"/>
     <layout class="org.apache.log4j.PatternLayout">
@@ -88,7 +88,7 @@
 
   <!--XML chat log file for a bot called SampleBot (using botid filter)-->
   <appender name="XMLChatlog-SampleBot-only" class="org.apache.log4j.RollingFileAppender">
-    <param name="File" value="/var/log/programd/chat/SampleBot.xml"/>
+    <param name="File" value="log/chat/SampleBot.xml"/>
     <param name="MaxFileSize" value="10MB"/>
     <param name="MaxBackupIndex" value="10"/>
     <layout class="org.aitools.programd.logging.XMLChatLogLayout"/>
@@ -100,7 +100,7 @@
 
   <!--Plain text log file for all bots (no botid filter applied)-->
   <appender name="TxtChatlog" class="org.apache.log4j.RollingFileAppender">
-    <param name="File" value="/var/log/programd/chat.log"/>
+    <param name="File" value="log/chat.log"/>
     <param name="MaxFileSize" value="10MB"/>
     <param name="MaxBackupIndex" value="10"/>
     <layout class="org.aitools.programd.logging.SimpleChatLogLayout">

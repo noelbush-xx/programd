@@ -63,7 +63,7 @@ public class Tester
         try
         {
             this.testReportDirectory = Filesystem
-                    .checkOrCreateDirectory(testReports.getFile(), "test report directory").getCanonicalFile().toURL();
+                    .checkOrCreateDirectory(testReports.getFile(), "test report directory").getCanonicalFile().toURI().toURL();
         }
         catch (IOException e)
         {
