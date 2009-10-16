@@ -1,5 +1,7 @@
 .deployables
 build.tmp
+src-build.tmp
+test-build.tmp
 classes
 ffm
 aiml

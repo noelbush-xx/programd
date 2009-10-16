@@ -5,3 +5,4 @@ resources/manifests
 resources/manifests/*.mf
 src-build.tmp
 test-build.tmp
+log

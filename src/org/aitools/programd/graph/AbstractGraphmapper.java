@@ -219,8 +219,8 @@ abstract public class AbstractGraphmapper implements Graphmapper
         {
             AIMLReader handler = new AIMLReader(this, path, this._core.getBot(botid));
             reader.setContentHandler(handler);
-            //reader.setErrorHandler(handler);
-            //reader.setEntityResolver(handler);
+            reader.setErrorHandler(handler);
+            reader.setEntityResolver(handler);
             reader.parse(path.toExternalForm());
             associateBotIDWithFilename(botid, path);
         }

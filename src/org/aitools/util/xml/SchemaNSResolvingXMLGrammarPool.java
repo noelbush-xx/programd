@@ -138,7 +138,14 @@ public class SchemaNSResolvingXMLGrammarPool extends XMLGrammarPoolImpl
         String namespace = desc.getNamespace();
         if (namespace != null)
         {
-            return this._resolver.resolveNamespaceURI(namespace, XMLGrammarDescription.XML_SCHEMA, "http://www.rddl.org/purposes#schema-validation");
+            try
+            {
+                return this._resolver.resolveNamespaceURI(namespace, XMLGrammarDescription.XML_SCHEMA, "http://www.rddl.org/purposes#schema-validation");
+            }
+            catch (NullPointerException e)
+            {
+                return null;
+            }
         }
         return null;
     }

@@ -63,7 +63,7 @@ public class SAX
     {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
-        factory.setValidating(true);
+        //factory.setValidating(true);
         SAXParser parser = null;
         try
         {

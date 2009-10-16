@@ -63,7 +63,7 @@ public class DOM
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setXIncludeAware(true);
-        factory.setValidating(true);
+        //factory.setValidating(true);
         DocumentBuilder builder = null;
         try
         {

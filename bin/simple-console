@@ -16,7 +16,7 @@
 
 # Get "base" directory (root of Program D installation)
 BASE=`cd \`dirname $0\`/.. && echo \`pwd\``
-echo $BASE
+
 # Include utility functions.
 source $BASE/bin/common_functions.sh
 

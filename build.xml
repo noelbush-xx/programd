@@ -11,8 +11,8 @@
     <property name="javac.debug" value="on" />
     <property name="javac.optimize" value="on" />
     <property name="javac.deprecation" value="on" />
-    <property name="javac.jvm-target" value="1.5" />
-    <property name="javac.source" value="1.5" />
+    <property name="javac.jvm-target" value="1.6" />
+    <property name="javac.source" value="1.6" />
 
     <property name="src.dir" value="${basedir}/src" />
     <property name="test.dir" value="${basedir}/test" />
@@ -26,15 +26,15 @@
     <property name="test-build.dir" value="${basedir}/test-build.tmp" />
     
     <path id="src-build.classpath">
-      <pathelement location="${webapp.lib.dir}/commons-collections-3.1.jar" />
-      <pathelement location="${webapp.lib.dir}/commons-dbcp-1.2.1.jar" />
-      <pathelement location="${webapp.lib.dir}/commons-pool-1.3.jar" />
+      <pathelement location="${compile.lib.dir}/commons-collections-3.1.jar" />
+      <pathelement location="${compile.lib.dir}/commons-dbcp-1.2.1.jar" />
+      <pathelement location="${compile.lib.dir}/commons-pool-1.3.jar" />
       <pathelement location="${compile.lib.dir}/gnu.getopt-1.0.10.jar" />
-      <pathelement location="${webapp.lib.dir}/jdom-1.0-nite-25-Jan-2007.jar" />
+      <pathelement location="${compile.lib.dir}/jdom-1.0-nite-25-Jan-2007.jar" />
       <pathelement location="${webapp.lib.dir}/jdbcappender.jar" />
       <pathelement location="${compile.lib.dir}/jsp-api.jar" />
       <pathelement location="${webapp.lib.dir}/js.jar" />
-      <pathelement location="${webapp.lib.dir}/log4j-1.2.13.jar" />
+      <pathelement location="${compile.lib.dir}/log4j-1.2.13.jar" />
       <pathelement location="${compile.lib.dir}/servlet-api.jar" />
       <pathelement location="${compile.lib.dir}/xerces-j2-2.9.0.jar" />
       <pathelement location="${compile.lib.dir}/xmlresolver.jar" />
@@ -63,7 +63,24 @@
 
     <!--The classpath needed to run Program D, for the core.-->
     <property name="essentials-mf-classpath"
-      value="../WebContent/WEB-INF/lib/aitools-utils.jar ../WebContent/WEB-INF/lib/commons-collections-3.1.jar ../WebContent/WEB-INF/lib/commons-dbcp-1.2.1.jar ../WebContent/WEB-INF/lib/commons-pool-1.3.jar ../lib/gnu.getopt-1.0.10.jar ../WebContent/WEB-INF/lib/jdbcappender.jar ../WebContent/WEB-INF/lib/jdom-1.0-nite-25-Jan-2007.jar ../WebContent/WEB-INF/lib/log4j-1.2.13.jar ../WebContent/WEB-INF/lib/xerces-j2-2.7.1.jar  ../WebContent/WEB-INF/lib/xmlresolver.jar  ../WebContent/WEB-INF/lib/xmlresolver-sunjaxp.jar ../WebContent/WEB-INF/lib/jaxen-1.1.jar" />
+      value="
+    	../lib/gnu.getopt-1.0.10.jar
+      ../lib/log4j-1.2.13.jar
+      ../lib/jdom-1.0-nite-25-Jan-2007.jar
+    	../lib/jaxp-api.jar
+    	../lib/jaxp-ri.jar
+    	../lib/xerces-j2-2.9.0.jar
+      ../lib/xmlresolver-sunjaxp.jar
+      ../lib/xmlresolver.jar
+    	../lib/jdbcappender.jar
+    	../lib/xalan-j2-2.7.0.jar
+    	../lib/mysql-connector-java-3.1.12-bin.jar
+    	../lib/js.jar
+      ../lib/commons-dbcp-1.2.1.jar
+      ../lib/commons-pool-1.3.jar
+      ../lib/jaxen-1.1.jar
+      ../lib/commons-collections-3.1.jar
+    	" />
 
     <!--The path to the core jar, to be included in app-jar manifests.-->
     <property name="core-mf-classpath" value="programd-core.jar" />
@@ -196,12 +213,13 @@
       </section>
     </manifest>
     <jar jarfile="${core.jar}" compress="false" manifest="${manifests.dir}/programd-core.mf">
-      <fileset dir="${src-build.dir}/" includes="org/**">
+    	<fileset dir="${src.dir}" includes="XMLResolver.properties" />
+      <fileset dir="${src-build.dir}" includes="org/**">
         <exclude name="org/aitools/programd/configurations/**" />
         <exclude name="org/aitools/programd/interpreter/RhinoInterpreter.class" />
       </fileset>
-      <fileset dir="${src.dir}/" includes="org/aitools/programd/gui/icons/**" />
-      <fileset dir="${src-build.dir}/" includes="resources/schema/**" />
+      <fileset dir="${src.dir}" includes="org/aitools/programd/gui/icons/**" />
+      <fileset dir="${src-build.dir}" includes="resources/schema/**" />
     </jar>
   </target>
 
@@ -360,7 +378,8 @@
         <exclude name=".*" />
         <exclude name=".*/**" />
         <exclude name="aiml/**" />
-        <exclude name="build.tmp/**" />
+        <exclude name="src-build.tmp/**" />
+        <exclude name="test-build.tmp/**" />
         <exclude name="classes/**" />
         <exclude name="distrib/**" />
         <exclude name="docs/**" />
@@ -401,7 +420,8 @@
         <exclude name=".*" />
         <exclude name=".*/**" />
         <exclude name="aiml/**" />
-        <exclude name="build.tmp/**" />
+        <exclude name="src-build.tmp/**" />
+        <exclude name="test-build.tmp/**" />
         <exclude name="build.xml" />
         <exclude name="classes/**" />
         <exclude name="distrib/**" />
@@ -489,6 +509,9 @@
   <target name="binary-distclean" depends="init">
     <delete file="${core.jar}" />
     <delete file="${rhino.jar}" />
+    <delete file="${simple-console.jar}" />
+    <delete file="${simple-gui-console.jar}" />
+    <delete file="${utils.jar}" />
     <delete dir="${distrib.bin.dir}" />
     <delete file="${distrib.bin.zip}" />
     <delete file="${distrib.bin.tar.bz2}" />

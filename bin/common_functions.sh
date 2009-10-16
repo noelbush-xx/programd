@@ -118,7 +118,7 @@ function check_jvm_version()
     ;; (*)
     echo Your JVM is apparently version $JVM_VERSION.
     echo This may not be compatible with our needs.
-    echo Please install a JDK 5.0 compatible JVM.
+    echo Please install a JDK 5.0+ compatible JVM.
     echo
     exit 1
   esac

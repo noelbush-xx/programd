@@ -14,7 +14,7 @@
         <learn>../aiml/standard/*.aiml</learn>-->
         <testing>
             <test-suite-path>../resources/testing/AIML.xml</test-suite-path>
-            <report-directory>/var/log/programd/test-reports</report-directory>
+            <report-directory>../log/programd/test-reports</report-directory>
         </testing>
         <learn>../resources/testing/AIML.aiml</learn>
     </bot>
