@@ -27,6 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.aitools.util.runtime.DeveloperError;
 import org.apache.log4j.Logger;
 import org.jdom.Attribute;
 import org.jdom.Namespace;
@@ -58,7 +59,6 @@ public class SAX
      * 
      * @return the parser
      */
-    @SuppressWarnings({"boxing", "unused"})
     public static XMLReader getReader(Logger logger)
     {
         SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -78,6 +78,10 @@ public class SAX
         {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+        if (parser == null)
+        {
+            throw new DeveloperError("SAXParser is null; cannot continue.", new NullPointerException());
         }
         try
         {
@@ -110,6 +114,11 @@ public class SAX
         ResourceResolver resolver = new ResourceResolver(new Catalog());
         Resolver entityResolver = new Resolver(resolver);
         resolver.setEntityResolver(entityResolver);
+        
+        if (reader == null)
+        {
+            throw new DeveloperError("XMLReader is null; cannot continue", new NullPointerException());
+        }
 
         reader.setEntityResolver(entityResolver);
         

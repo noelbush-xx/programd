@@ -46,8 +46,7 @@ public class Classes
      * @return the desired class
      */
     @SuppressWarnings("unchecked")
-    public static <T> T getSubclassInstance(@SuppressWarnings("unused")
-    Class<T> baseType, String classname, String description, Object... constructorArgs)
+    public static <T> T getSubclassInstance(Class<T> baseType, String classname, String description, Object... constructorArgs)
     {
         // Get the subclass.
         Class<? extends T> subclass = null;
@@ -76,8 +75,7 @@ public class Classes
      * @param baseType the base class type
      * @return the desired class
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T getSubclassInstance(@SuppressWarnings("unused")Class<T> baseType, String classname)
+    public static <T> T getSubclassInstance(Class<T> baseType, String classname)
     {
         return getSubclassInstance(baseType, classname, "[no description]", new Object[]{});
     }

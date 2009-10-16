@@ -121,7 +121,6 @@ public class XMLCoreSettings extends CoreSettings
     /**
      * Initializes the Settings with values from the XML settings file.
      */
-    @SuppressWarnings("boxing")
     @Override
     protected void initialize()
     {

@@ -44,7 +44,6 @@ public class InputNormalizer
      * @param input the input to split
      * @return the input split into sentences
      */
-    @SuppressWarnings("boxing")
     public static List<String> sentenceSplit(Pattern sentenceSplitters, String input)
     {
         List<String> result = new ArrayList<String>();

@@ -287,25 +287,16 @@ abstract public class AbstractGraphmapper implements Graphmapper
     public void addCategory(String pattern, String that, String topic, String template, Bot bot, URL source)
     {
         // Make sure the path components are right.
-        if (pattern == null)
-        {
-            pattern = ASTERISK;
-        }
-        if (that == null)
-        {
-            that = ASTERISK;
-        }
-        if (topic == null)
-        {
-            topic = ASTERISK;
-        }
+        String _pattern = pattern == null ? ASTERISK : pattern;
+        String _that = that == null ? ASTERISK : that;
+        String _topic = topic == null ? ASTERISK : topic;
 
         // Report on loaded categories.
         if (this._totalCategories % this._categoryLoadNotifyInterval == 0 && this._totalCategories > 0)
         {
             this._logger.info(String.format("%,d categories loaded so far.", this._totalCategories));
         }
-        add(pattern, that, topic, template, bot, source);
+        add(_pattern, _that, _topic, template, bot, source);
     }
 
     protected abstract void add(String pattern, String that, String topic, String template, Bot bot, URL source);

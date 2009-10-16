@@ -88,7 +88,6 @@ public class TestSuite implements Iterable<TestCase>
      * @param name the name to give the test suite
      * @param logger
      */
-    @SuppressWarnings("unused")
     protected TestSuite(String name, Logger logger)
     {
         this._name = name;

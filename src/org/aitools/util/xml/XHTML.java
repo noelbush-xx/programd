@@ -57,16 +57,16 @@ public class XHTML
             return EMPTY_STRING_ARRAY;
         }
         // Trim all whitespace at beginning and end.
-        input = input.trim();
+        String _input = input.trim();
     
         // Empty trimmed inputs return an empty string array.
-        if (input.equals(""))
+        if (_input.equals(""))
         {
             return EMPTY_STRING_ARRAY;
         }
         
         // Split into lines.
-        List<String> rawLines = Arrays.asList(XHTML_BREAK_LINE_REGEX.split(input));
+        List<String> rawLines = Arrays.asList(XHTML_BREAK_LINE_REGEX.split(_input));
         
         // Preserve actual line breaks within <pre/> sections.
         List<String> preservedLines = new ArrayList<String>(rawLines.size());

@@ -29,7 +29,6 @@ public class AnswerChecker extends Checker
      * @param element the element containing the expected answer
      * @param encoding the encoding of the document from which the element comes
      */
-    @SuppressWarnings("unchecked")
     public AnswerChecker(Element element, String encoding)
     {
         try

@@ -183,19 +183,19 @@ public class Characters
         }
 
         // trim() removes all whitespace, not only spaces.
-        input = input.trim();
+        String _input = input.trim();
 
         // Empty inputs return an empty string.
-        if (input.equals(("")))
+        if (_input.equals(("")))
         {
             return "";
         }
 
         // This StringBuilder will hold the result.
-        StringBuilder result = new StringBuilder(input.length());
+        StringBuilder result = new StringBuilder(_input.length());
 
         // This StringCharacterIterator will iterate over the input.
-        StringCharacterIterator iterator = new StringCharacterIterator(input);
+        StringCharacterIterator iterator = new StringCharacterIterator(_input);
 
         // Iterate over the input.
         for (char aChar = iterator.first(); aChar != CharacterIterator.DONE; aChar = iterator.next())
@@ -207,12 +207,12 @@ public class Characters
                 result.append(aChar);
             }
         }
-        if (result.length() > input.length())
+        if (result.length() > _input.length())
         {
             return result.toString();
         }
         // (otherwise...)
-        return input;
+        return _input;
     }
 
     /**
@@ -350,19 +350,19 @@ public class Characters
             return "";
         }
         // Trim all whitespace at beginning and end.
-        input = input.trim();
+        String _input = input.trim();
 
         // Empty trimmed inputs return an empty string.
-        if (input.equals(""))
+        if (_input.equals(""))
         {
-            return input;
+            return _input;
         }
 
         // No tags means no processing necessary.
-        int tagStart = input.indexOf('<');
+        int tagStart = _input.indexOf('<');
         if (tagStart == -1)
         {
-            return input;
+            return _input;
         }
         // (otherwise...)
         // tagEnd indexes the end of a tag.
@@ -372,7 +372,7 @@ public class Characters
         int lastEnd = 0;
 
         // inputLength avoids recalculating input.length().
-        int inputLength = input.length();
+        int inputLength = _input.length();
 
         // Results will be built up in this buffer.
         StringBuilder result = new StringBuilder();
@@ -381,27 +381,27 @@ public class Characters
         while ((tagStart > -1) && (tagEnd > -1))
         {
             // Get the end of a tag.
-            tagEnd = input.indexOf('>', lastEnd);
+            tagEnd = _input.indexOf('>', lastEnd);
 
             // Add the input until the tag as a line, as long as the tag is not
             // the beginning.
             if (tagStart > 0)
             {
-                result.append(input.substring(lastEnd, tagStart));
+                result.append(_input.substring(lastEnd, tagStart));
             }
 
             // Set last end to the character following the end of the tag.
             lastEnd = tagEnd + 1;
 
             // Look for another tag.
-            tagStart = input.indexOf('<', lastEnd);
+            tagStart = _input.indexOf('<', lastEnd);
         }
         // All tags are exhausted; if there is still something left in the
         // input,
         if ((lastEnd < inputLength) && (lastEnd > 0))
         {
             // Add the remainder as the final line.
-            result.append(input.substring(lastEnd));
+            result.append(_input.substring(lastEnd));
         }
         return result.toString();
     }
@@ -412,7 +412,6 @@ public class Characters
      * @param attributes the name-value pairs
      * @return the rendered attributes
      */
-    @SuppressWarnings("unused")
     public static String renderAttributes(Map<String, String> attributes)
     {
         StringBuilder result = new StringBuilder();

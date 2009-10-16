@@ -58,7 +58,6 @@ abstract public class PredicateManager
      * 
      * @param core the Core that owns this PredicateMaster
      */
-    @SuppressWarnings("boxing")
     public PredicateManager(Core core)
     {
         this._core = core;

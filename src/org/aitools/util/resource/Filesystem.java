@@ -262,9 +262,10 @@ public class Filesystem
         {
             return file;
         }
-        if (description == null)
+        String _description = description;
+        if (_description == null)
         {
-            description = "file";
+            _description = "file";
         }
 
         try
@@ -285,25 +286,24 @@ public class Filesystem
                     }
                     catch (IOException ee)
                     {
-                        throw new UserError(String.format("Could not create %s \"%s\".", description, path),
+                        throw new UserError(String.format("Could not create %s \"%s\".", _description, path),
                                 new CouldNotCreateFileException(file.getAbsolutePath()));
                     }
                 }
                 else
                 {
-                    throw new UserError(String.format("Could not create %s directory \"%s\".", description, directory.getAbsolutePath()),
+                    throw new UserError(String.format("Could not create %s directory \"%s\".", _description, directory.getAbsolutePath()),
                             new CouldNotCreateFileException(directory.getAbsolutePath()));
                 }
             }
             else
             {
-                throw new UserError(String.format("Could not create %s directory \"%s\".", description, directory.getAbsolutePath()),
-                        new CouldNotCreateFileException(directory.getAbsolutePath()));
+                throw new UserError(String.format("Could not create %s directory for \"%s\".", _description, file.getAbsolutePath()),
+                        new CouldNotCreateFileException(file.getAbsolutePath()));
             }
         }
         assert file.exists();
-        LOGGER.info(String.format("Created %s \"%s\".",
-                description != null ? String.format("new %s", description) : "", file.getAbsolutePath()));
+        LOGGER.info(String.format("Created new %s \"%s\".", _description, file.getAbsolutePath()));
         return file;
     }
 
@@ -353,17 +353,18 @@ public class Filesystem
             // otherwise
             return file;
         }
-        if (description == null)
+        String _description = description;
+        if (_description == null)
         {
-            description = "file";
+            _description = "file";
         }
 
         if (!file.mkdirs())
         {
-            throw new UserError(String.format("Could not create %s directory at \"%s\".", description, path),
+            throw new UserError(String.format("Could not create %s directory at \"%s\".", _description, path),
                     new CouldNotCreateFileException(file.getAbsolutePath()));
         }
-        LOGGER.debug(String.format("Created new %s \"%s\".", description, path));
+        LOGGER.debug(String.format("Created new %s \"%s\".", _description, path));
         return file;
     }
 
@@ -391,6 +392,10 @@ public class Filesystem
             catch (MalformedURLException e)
             {
                 LOGGER.warn(String.format("Malformed URL: \"%s\"", path));
+            }
+            if (url == null)
+            {
+                throw new DeveloperError(String.format("Cannot create URL from path: \"%s\"", path), new NullPointerException());
             }
 
             try
@@ -433,16 +438,16 @@ public class Filesystem
             if (toRead.exists() && !toRead.isDirectory())
             {
                 // The path may have been modified.
-                path = toRead.getAbsolutePath();
+                String _path = toRead.getAbsolutePath();
                 try
                 {
-                    String encoding = Characters.getDeclaredXMLEncoding(URLTools.createValidURL(path));
-                    stream = new FileInputStream(path);
+                    String encoding = Characters.getDeclaredXMLEncoding(URLTools.createValidURL(_path));
+                    stream = new FileInputStream(_path);
                     buffReader = new BufferedReader(new InputStreamReader(stream, encoding));
                 }
                 catch (IOException e)
                 {
-                    LOGGER.warn(String.format("I/O error trying to read \"%s\"", path));
+                    LOGGER.warn(String.format("I/O error trying to read \"%s\"", _path));
                     return null;
                 }
             }
@@ -457,19 +462,22 @@ public class Filesystem
         }
         StringBuilder result = new StringBuilder();
         String line;
-        try
+        if (buffReader != null && stream != null)
         {
-            while ((line = buffReader.readLine()) != null)
-            {
-                result.append(line);
-            }
-            buffReader.close();
-            stream.close();
-        }
-        catch (IOException e)
-        {
-            LOGGER.warn(String.format("I/O error trying to read \"%s\"", path));
-            return null;
+          try
+          {
+              while ((line = buffReader.readLine()) != null)
+              {
+                  result.append(line);
+              }
+              buffReader.close();
+              stream.close();
+          }
+          catch (IOException e)
+          {
+              LOGGER.warn(String.format("I/O error trying to read \"%s\"", path));
+              return null;
+          }
         }
         return result.toString();
     }
@@ -549,9 +557,10 @@ public class Filesystem
         {
             pattern = path;
             dirName = URLTools.unescape(workingDirectoryToUse);
+            dir = new File(dirName);
             try
             {
-                dir = new File(dirName).getCanonicalFile();
+                dir = dir.getCanonicalFile();
             }
             catch (IOException e)
             {

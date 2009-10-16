@@ -107,8 +107,7 @@ abstract public class IndexedPredicateProcessor extends AIMLProcessor
      * @param dimensions the number of dimensions (<code>1</code> only)
      * @return the result of processing the element
      */
-    public String process(Element element, @SuppressWarnings("unused")
-    TemplateParser parser, ArrayList<String> predicates, int dimensions)
+    public String process(Element element, TemplateParser parser, ArrayList<String> predicates, int dimensions)
     {
         // Only 1 dimension is supported.
         if (dimensions != 1)

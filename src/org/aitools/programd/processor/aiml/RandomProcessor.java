@@ -84,7 +84,6 @@ public class RandomProcessor extends AIMLProcessor
      * 
      * @param core the Core object to use
      */
-    @SuppressWarnings("unchecked")
     public RandomProcessor(Core core)
     {
         super(core);

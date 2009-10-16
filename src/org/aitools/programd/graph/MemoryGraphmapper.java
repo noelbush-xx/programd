@@ -143,7 +143,6 @@ public class MemoryGraphmapper extends AbstractGraphmapper
     /**
      * @see org.aitools.programd.graph.Graphmapper#addCategory(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.aitools.programd.Bot, java.net.URL)
      */
-    @SuppressWarnings("boxing")
     @Override
     public void add(String pattern, String that, String topic, String template, Bot bot, URL source)
     {
@@ -382,10 +381,11 @@ public class MemoryGraphmapper extends AbstractGraphmapper
         List<String> tail = input.subList(1, input.size());
         
         // Now proceed through the AIML matching sequence: _, a-z, *.
+        Match.State _matchState = matchState;
 
         // See if this nodemapper has a _ wildcard. _ comes first in the AIML "alphabet".
         nextNodemapper = match(UNDERSCORE,        // key
-                               matchState,        // target match state for wildcard content
+                               _matchState,        // target match state for wildcard content
                                nodemapper,        // current nodemapper
                                tail,              // current tail
                                true,              // append new path? yes
@@ -393,7 +393,7 @@ public class MemoryGraphmapper extends AbstractGraphmapper
                                head,              // new wildcard content
                                path,              // current path
                                match,             // match object
-                               matchState,        // current match state
+                               _matchState,        // current match state
                                expiration         // expiration timestamp
                                );
         if (nextNodemapper != null)
@@ -414,25 +414,25 @@ public class MemoryGraphmapper extends AbstractGraphmapper
             boolean isMarker = false;
             if (head.startsWith("<"))
             {
-                match.setPathComponent(matchState, path.toString().toUpperCase());
+                match.setPathComponent(_matchState, path.toString().toUpperCase());
                 if (head.equals(THAT))
                 {
                     isMarker = true;
-                    matchState = Match.State.IN_THAT;
+                    _matchState = Match.State.IN_THAT;
                 }
                 else if (head.equals(TOPIC))
                 {
                     isMarker = true;
-                    matchState = Match.State.IN_TOPIC;
+                    _matchState = Match.State.IN_TOPIC;
                 }
                 else if (head.equals(BOT))
                 {
                     isMarker = true;
-                    matchState = Match.State.IN_BOTID;
+                    _matchState = Match.State.IN_BOTID;
                 }
             }
             nextNodemapper = match(head,                                      // key
-                                   isMarker ? matchState.preceding() : null,  // target match state for wildcard content
+                                   isMarker ? _matchState.preceding() : null,  // target match state for wildcard content
                                    nodemapper,                                // current nodemapper
                                    tail,                                      // current tail
                                    !isMarker,                                 // append new path? (only if this is not a marker)
@@ -440,7 +440,7 @@ public class MemoryGraphmapper extends AbstractGraphmapper
                                    isMarker ? "" : wildcardContent,           // new wildcard content
                                    path,                                      // current path
                                    match,                                     // match object
-                                   matchState,                                // current match state
+                                   _matchState,                                // current match state
                                    expiration                                 // expiration timestamp
                                    );
             if (nextNodemapper != null)
@@ -454,7 +454,7 @@ public class MemoryGraphmapper extends AbstractGraphmapper
          * In any case, check to see if it contains a * wildcard. * comes last in the AIML "alphabet".
          */
         nextNodemapper = match(ASTERISK,          // key
-                               matchState,        // target match state for wildcard content
+                               _matchState,        // target match state for wildcard content
                                nodemapper,        // current nodemapper
                                tail,              // current tail
                                true,              // append new path?
@@ -462,7 +462,7 @@ public class MemoryGraphmapper extends AbstractGraphmapper
                                head,              // new wildcard content
                                path,              // current path
                                match,             // match object
-                               matchState,        // current match state
+                               _matchState,        // current match state
                                expiration         // expiration timestamp
                                );
         if (nextNodemapper != null)
@@ -483,7 +483,7 @@ public class MemoryGraphmapper extends AbstractGraphmapper
                                    String.format("%s %s", wildcardContent, head),     // head = wildcard content + head
                                    path,                                              // current path
                                    match,                                             // match object
-                                   matchState,                                        // current match state
+                                   _matchState,                                        // current match state
                                    expiration                                         // expiration timestamp
                                    );
             if (nextNodemapper != null)
@@ -589,7 +589,6 @@ public class MemoryGraphmapper extends AbstractGraphmapper
                 remove(parent);
             }
         }
-        nodemapper = null;
     }
 
     /**

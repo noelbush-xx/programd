@@ -973,7 +973,8 @@ public class Core
         // Get the requested bot.
         Bot bot = this._bots.get(botid);
 
-        parser.addInput(input);
+        String _input = input;
+        parser.addInput(_input);
 
         // Ready the that and topic predicates for constructing the match path.
         List<String> thatSentences = bot.sentenceSplit(this._predicateManager.get("that", 1, userid, botid));
@@ -1011,14 +1012,14 @@ public class Core
                 String infiniteLoopInput = parser.getCore().getSettings().getInfiniteLoopInput();
                 if (that.equalsIgnoreCase(comparisonThat) && topic.equalsIgnoreCase(comparisonTopic))
                 {
-                    if (input.equalsIgnoreCase(infiniteLoopInput))
+                    if (_input.equalsIgnoreCase(infiniteLoopInput))
                     {
                         this._matchLogger.error("Unrecoverable infinite loop.");
                         return "";
                     }
-                    if (input.equalsIgnoreCase(comparisonInput))
+                    if (_input.equalsIgnoreCase(comparisonInput))
                     {
-                        input = infiniteLoopInput;
+                        _input = infiniteLoopInput;
                         inputs.set(stackSize - 1, infiniteLoopInput);
                         this._matchLogger.warn(String.format("Infinite loop detected; substituting \"%s\".",
                                 infiniteLoopInput));
@@ -1027,7 +1028,7 @@ public class Core
             }
         }
 
-        return getMatchResult(input, that, topic, userid, botid, parser);
+        return getMatchResult(_input, that, topic, userid, botid, parser);
     }
 
     /**

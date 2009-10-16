@@ -59,7 +59,6 @@ public class DBNodemapper
      * @return whether the given node points to another node via an edge labeled by the given key
      * @see org.aitools.programd.graph.Nodemapper#containsKey(java.lang.String)
      */
-    @SuppressWarnings("boxing")
     public static boolean containsKey(Connection connection, int node, String key)
     {
         int count = -1;
@@ -92,7 +91,6 @@ public class DBNodemapper
      * @return the node to which the given node points via the given key
      * @see org.aitools.programd.graph.Nodemapper#get(java.lang.String)
      */
-    @SuppressWarnings("boxing")
     public static int get(Connection connection, int node, String key)
     {
         int toNode = -1;
@@ -123,7 +121,6 @@ public class DBNodemapper
      * @param node 
      * @return the number of edges pointing from the given node
      */
-    @SuppressWarnings("boxing")
     public static int size(Connection connection, int node)
     {
         int count = -1;
@@ -154,7 +151,6 @@ public class DBNodemapper
      * @return the parent of the given node
      * @see org.aitools.programd.graph.Nodemapper#getParent()
      */
-    @SuppressWarnings("boxing")
     public static int getParent(Connection connection, int node)
     {
         int result = -1;
@@ -187,7 +183,6 @@ public class DBNodemapper
      * @return the node created by mapping the given key to the node
      * @see org.aitools.programd.graph.Nodemapper#put(java.lang.String, java.lang.Object)
      */
-    @SuppressWarnings("boxing")
     public static int put(Connection connection, int node, String key)
     {
         int to_node = -1;
@@ -240,7 +235,6 @@ public class DBNodemapper
      * @param to_node 
      * @see org.aitools.programd.graph.Nodemapper#remove(java.lang.Object)
      */
-    @SuppressWarnings("boxing")
     public static void remove(Connection connection, int from_node, int to_node)
     {
         try
@@ -265,7 +259,6 @@ public class DBNodemapper
      * @param node
      * @param filename
      */
-    @SuppressWarnings("boxing")
     public static void addFilename(Connection connection, int node, URL filename)
     {
         String path = filename.toExternalForm();
@@ -317,7 +310,6 @@ public class DBNodemapper
      * @param node
      * @param filename
      */
-    @SuppressWarnings("boxing")
     public static void setFilename(Connection connection, int node, URL filename)
     {
         try
@@ -340,7 +332,6 @@ public class DBNodemapper
      * @param node
      * @return the filenames associated with the given node
      */
-    @SuppressWarnings("boxing")
     public static List<String> getFilenames(Connection connection, int node)
     {
         List<String> result = new ArrayList<String>();
@@ -371,7 +362,6 @@ public class DBNodemapper
      * @param node
      * @return the template attached to the given node
      */
-    @SuppressWarnings("boxing")
     public static String getTemplate(Connection connection, int node)
     {
         String template = null;
@@ -404,7 +394,6 @@ public class DBNodemapper
      * @param node
      * @return the id of the template (but not its content) attached to the given node
      */
-    @SuppressWarnings("boxing")
     public static int getTemplateID(Connection connection, int node)
     {
         int id = -1;
@@ -435,7 +424,6 @@ public class DBNodemapper
      * @param node
      * @param template
      */
-    @SuppressWarnings("boxing")
     public static void setTemplate(Connection connection, int node, String template)
     {
         int templateID = -1;
@@ -467,7 +455,6 @@ public class DBNodemapper
      * @param node
      * @param template
      */
-    @SuppressWarnings("boxing")
     public static void setTemplateByID(Connection connection, int node, int template)
     {
         try
@@ -610,7 +597,6 @@ public class DBNodemapper
      * @param node
      * @param file
      */
-    @SuppressWarnings("boxing")
     public static void storeBotIDNodeFile(Connection connection, int node, URL file)
     {
         try

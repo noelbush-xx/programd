@@ -47,7 +47,6 @@ public class JDOM
      * @param logger the logger to use for XML parsing errors
      * @return the Document
      */
-    @SuppressWarnings("boxing")
     public static Document getDocument(URL path, Logger logger)
     {
         Document document = new DOMBuilder().build(DOM.getDocument(path, logger));

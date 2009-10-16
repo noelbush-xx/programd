@@ -85,7 +85,6 @@ public class XPath
      * @param context
      * @return value
      */
-    @SuppressWarnings("unchecked")
     public static Object getNode(String path, String namespaceURI, String prefix, Object context)
     {
         try

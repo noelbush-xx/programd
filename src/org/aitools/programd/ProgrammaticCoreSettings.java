@@ -31,7 +31,6 @@ public class ProgrammaticCoreSettings extends CoreSettings
     /**
      * Initializes the Settings with default values (from the schema).
      */
-    @SuppressWarnings("boxing")
     @Override
     protected void initialize()
     {

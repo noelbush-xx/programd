@@ -130,7 +130,7 @@ public class Tester
             this.logger.warn(String.format("No suite \"%s\" could be found.", suiteName));
             return;
         }
-        while (runCount-- > 0)
+        for (int _runCount = runCount; _runCount > 0; _runCount--)
         {
             runSuite(botid, suite);
         }
@@ -138,7 +138,7 @@ public class Tester
 
     protected void runAllSuites(String botid, int runCount)
     {
-        while (runCount-- > 0)
+        for (int _runCount = runCount; _runCount > 0; _runCount--)
         {
             for (TestSuite suite : this.suites.values())
             {

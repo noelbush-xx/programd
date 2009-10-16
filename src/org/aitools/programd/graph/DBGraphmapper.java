@@ -227,7 +227,6 @@ public class DBGraphmapper extends AbstractGraphmapper
      * @param source the source of the original path
      * @return node which is the result of adding the node
      */
-    @SuppressWarnings("boxing")
     protected int add(Connection connection, ListIterator<String> pathIterator, int parent, URL source)
     {
         // If there are no more words in the path, return the parent node
@@ -292,7 +291,6 @@ public class DBGraphmapper extends AbstractGraphmapper
      * @throws NoMatchException
      * @see #match(String, String, String, String)
      */
-    @SuppressWarnings("boxing")
     protected int match(Connection connection, int node, int parent, List<String> input, String wildcardContent, StringBuilder path,
             Match match, Match.State matchState, long expiration) throws NoMatchException
     {
@@ -325,13 +323,14 @@ public class DBGraphmapper extends AbstractGraphmapper
         List<String> tail = input.subList(1, input.size());
         
         // Now proceed through the AIML matching sequence: _, a-z, *.
+        Match.State _matchState = matchState;
 
         // See if this nodemapper has a _ wildcard. _ comes first in the AIML "alphabet".
         try
         {
             return match(connection,               // db access object
                          UNDERSCORE,        // key
-                         matchState,        // target match state for wildcard content
+                         _matchState,        // target match state for wildcard content
                          node,              // current node
                          tail,              // current tail
                          true,              // append new path? yes
@@ -339,7 +338,7 @@ public class DBGraphmapper extends AbstractGraphmapper
                          head,              // new wildcard content
                          path,              // current path
                          match,             // match object
-                         matchState,        // current match state
+                         _matchState,        // current match state
                          expiration         // expiration timestamp
                          );
         }
@@ -364,24 +363,24 @@ public class DBGraphmapper extends AbstractGraphmapper
                 if (head.equals(THAT))
                 {
                     isMarker = true;
-                    matchState = Match.State.IN_THAT;
+                    _matchState = Match.State.IN_THAT;
                 }
                 else if (head.equals(TOPIC))
                 {
                     isMarker = true;
-                    matchState = Match.State.IN_TOPIC;
+                    _matchState = Match.State.IN_TOPIC;
                 }
                 else if (head.equals(BOT))
                 {
                     isMarker = true;
-                    matchState = Match.State.IN_BOTID;
+                    _matchState = Match.State.IN_BOTID;
                 }
             }
             try
             {
                 return match(connection,                                       // db access object
                              head,                                      // key
-                             isMarker ? matchState.preceding() : null,  // target match state for wildcard content
+                             isMarker ? _matchState.preceding() : null,  // target match state for wildcard content
                              node,                                      // current node
                              tail,                                      // current tail
                              !isMarker,                                 // append new path? (only it this is not a marker)
@@ -389,7 +388,7 @@ public class DBGraphmapper extends AbstractGraphmapper
                              isMarker ? "" : wildcardContent,           // new wildcard content
                              path,                                      // current path
                              match,                                     // match object
-                             matchState,                                // current match state
+                             _matchState,                                // current match state
                              expiration                                 // expiration timestamp
                              );
             }
@@ -407,7 +406,7 @@ public class DBGraphmapper extends AbstractGraphmapper
         {
             return match(connection,               // db access object
                          ASTERISK,          // key
-                         matchState,        // target match state for wildcard content
+                         _matchState,        // target match state for wildcard content
                          node,              // current node
                          tail,              // current tail
                          true,              // append new path?
@@ -415,7 +414,7 @@ public class DBGraphmapper extends AbstractGraphmapper
                          head,              // new wildcard content
                          path,              // current path
                          match,             // match object
-                         matchState,        // current match state
+                         _matchState,        // current match state
                          expiration         // expiration timestamp
                          );
         }
@@ -438,7 +437,7 @@ public class DBGraphmapper extends AbstractGraphmapper
                          String.format("%s %s", wildcardContent, head),     // head = wildcard content + head
                          path,                                              // current path
                          match,                                             // match object
-                         matchState,                                        // current match state
+                         _matchState,                                        // current match state
                          expiration                                         // expiration timestamp
                          );
         }

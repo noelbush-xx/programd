@@ -180,61 +180,65 @@ public class URLTools
     public static URL contextualize(URL context, String subject)
     {
         // Avoid the most obvious problem...
-        subject = escape(subject.replace(File.separatorChar, '/'));
+        String _subject = escape(subject.replace(File.separatorChar, '/'));
+        URL _context = null;
         try
         {
-            context = new URL(escape(context.toString().replace(File.separatorChar, '/')));
+            _context = new URL(escape(context.toString().replace(File.separatorChar, '/')));
         }
         catch (MalformedURLException e)
         {
             // Do nothing, but we may fail.
-            logger.warn(String.format("Could not escape context URL \"%s\".", context));
+            logger.warn(String.format("Could not escape context URL \"%s\".", _context));
         }
-        if (context.toString().equals(subject))
+        if (_context == null) {
+            throw new DeveloperError(String.format("Escaped context became null: \"%s\".", context), new NullPointerException());
+        }
+        if (_context.toString().equals(_subject))
         {
-            return context;
+            return _context;
         }
         // See if the subject seems to specify a URL, and if so, send it to the other method.
-        if (subject.matches("^[a-z]+:/.*"))
+        if (_subject.matches("^[a-z]+:/.*"))
         {
             try
             {
-                return contextualize(context, new URL(subject));
+                return contextualize(_context, new URL(_subject));
             }
             catch (MalformedURLException e)
             {
-                throw new DeveloperError(String.format("Subject URL is malformed: \"%s\".", subject), e);
+                throw new DeveloperError(String.format("Subject URL is malformed: \"%s\".", _subject), e);
             }
         }
-        if (probablyIsNotFile(context))
+        if (probablyIsNotFile(_context))
         {
             URI resolved = null;
             try
             {
-                String contextString = context.toString();
+                String contextString = _context.toString();
                 int colon = contextString.indexOf(COLON_SLASH);
                 if (colon > -1)
                 {
                     try
                     {
-                        resolved = new URI(context.getProtocol() + ':'
-                                + new URI(contextString.substring(colon + 1) + SLASH).resolve(subject).toString());
+                        resolved = new URI(_context.getProtocol() + ':'
+                                + new URI(contextString.substring(colon + 1) + SLASH).resolve(_subject).toString());
                     }
                     catch (IllegalArgumentException e)
                     {
                         throw new UserError(
-                                String.format("Could not resolve \"%s\" against \"%s\".", subject, context), e);
+                                String.format("Could not resolve \"%s\" against \"%s\".", _subject, _context), e);
                     }
                 }
                 else
                 {
-                    resolved = context.toURI().resolve(subject);
+                    resolved = _context.toURI().resolve(_subject);
                 }
 
             }
             catch (URISyntaxException e)
             {
-                throw new DeveloperError(String.format("Context URL is malformed. (\"%s\")", context), e);
+                throw new DeveloperError(String.format("Context URL is malformed. (\"%s\")", _context), e);
             }
             if (resolved.isAbsolute())
             {
@@ -253,15 +257,15 @@ public class URLTools
                     new IllegalArgumentException());
         }
         // If the context *does* specify a file, then we need to remove the file (get the parent) first.
-        URL parent = getParent(context);
-        if (!parent.getFile().equals(context.getFile()))
+        URL parent = getParent(_context);
+        if (!parent.getFile().equals(_context.getFile()))
         {
-            return contextualize(parent, subject);
+            return contextualize(parent, _subject);
         }
         // otherwise...
         try
         {
-            return new URL(context.getProtocol(), context.getHost(), context.getPort(), subject);
+            return new URL(_context.getProtocol(), _context.getHost(), _context.getPort(), _subject);
         }
         catch (MalformedURLException e)
         {
@@ -794,27 +798,27 @@ public class URLTools
             return true;
         }
         // Now try fixing path separators and check again.
-        path1 = path1.replace(File.separatorChar, '/');
-        path2 = path2.replace(File.separatorChar, '/');
-        if (path1.equals(path2))
+        String _path1 = path1.replace(File.separatorChar, '/');
+        String _path2 = path2.replace(File.separatorChar, '/');
+        if (_path1.equals(_path2))
         {
             return true;
         }
         
         // Try removing trailing slashes.
-        path1 = path1.replaceAll("^(.+)/+$", "$1");
-        path2 = path2.replaceAll("^(.+)/+$", "$1");
-        if (path1.equals(path2))
+        _path1 = _path1.replaceAll("^(.+)/+$", "$1");
+        _path2 = _path2.replaceAll("^(.+)/+$", "$1");
+        if (_path1.equals(_path2))
         {
             return true;
         }
         
         // Now try the yucky drive letter check.
-        path1 = path1.replaceAll("^/(\\p{Upper}:)", "$1");
-        path2 = path2.replaceAll("^/(\\p{Upper}:)", "$1");
+        _path1 = _path1.replaceAll("^/(\\p{Upper}:)", "$1");
+        _path2 = _path2.replaceAll("^/(\\p{Upper}:)", "$1");
         
         // This is the last check, so return whether or not these match.
-        return path1.equals(path2);
+        return _path1.equals(_path2);
     }
     
     /**
@@ -914,7 +918,7 @@ public class URLTools
                 parent0 = getParent(parent0);
                 if (parent0.equals(parent1))
                 {
-                    if (candidate == null || (candidate != null && candidate.equals(parent0)))
+                    if (candidate == null || candidate.equals(parent0))
                     {
                         if (length == 2)
                         {

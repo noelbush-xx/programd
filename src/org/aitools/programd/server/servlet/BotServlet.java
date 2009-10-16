@@ -84,7 +84,6 @@ public class BotServlet extends HttpServlet
      * @param resp the response
      * @throws ServletException 
      */
-    @SuppressWarnings("unused")
     protected void setupBot(HttpServletRequest req, HttpServletResponse resp) throws ServletException
     {
         // Get/create the session.

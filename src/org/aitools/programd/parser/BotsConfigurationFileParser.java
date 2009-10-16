@@ -218,7 +218,6 @@ public class BotsConfigurationFileParser
      * @param parent the parent "bot" element
      * @param name the name of the child element from which to load config data; is used to determine method name to call to load config data
      */
-    @SuppressWarnings("unchecked")
     protected void loadConfig(Bot bot, Element parent, String name)
     {
         Element child = parent.getChild(name, NS);

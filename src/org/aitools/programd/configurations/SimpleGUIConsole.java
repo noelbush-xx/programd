@@ -110,7 +110,10 @@ public class SimpleGUIConsole
         }
         // Add a shutdown hook so the Core will be properly shut down if the
         // system exits.
-        Runtime.getRuntime().addShutdownHook(new CoreShutdownHook(console.core));
-        console.run();
+        if (console != null)
+        {
+            Runtime.getRuntime().addShutdownHook(new CoreShutdownHook(console.core));
+            console.run();
+        }
     }
 }

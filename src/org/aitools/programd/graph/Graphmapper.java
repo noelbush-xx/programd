@@ -46,7 +46,6 @@ public interface Graphmapper
      * @param bot the bot for whom the category is being added
      * @param source the path from which the category comes
      */
-    @SuppressWarnings("boxing")
     public void addCategory(String pattern, String that, String topic, String template, Bot bot, URL source);
     
     /**

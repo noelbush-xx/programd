@@ -106,39 +106,45 @@ public class Unicode
         {
             assert false : "Could not find Character.UnicodeBlock.map.";
         }
-        mapField.setAccessible(true);
-        Map<String, Character.UnicodeBlock> map = null;
-        try
+        if (mapField != null)
         {
-            map = (Map<String, Character.UnicodeBlock>)mapField.get(null);
-        }
-        catch (IllegalArgumentException e)
-        {
-            assert false : "Character.UnicodeBlock.map does not appear as a static variable.";
-        }
-        catch (IllegalAccessException e)
-        {
-            assert false : "Not allowed to access Character.UnicodeBlock.map.";
-        }
-        UNICODE_BLOCKS = new HashSet<Character.UnicodeBlock>(map.values());
-
-        // Get the isUpperCase, isLowerCase, and isLetter methods of Character.
-        try
-        {
-            CHAR_IS_UPPERCASE_METHOD = Character.class.getMethod("isUpperCase", char.class);
-            INT_IS_UPPERCASE_METHOD = Character.class.getMethod("isUpperCase", int.class);
-            CHAR_IS_LOWERCASE_METHOD = Character.class.getMethod("isLowerCase", char.class);
-            INT_IS_LOWERCASE_METHOD = Character.class.getMethod("isLowerCase", int.class);
-            CHAR_IS_LETTER_METHOD = Character.class.getMethod("isLetter", char.class);
-            INT_IS_LETTER_METHOD = Character.class.getMethod("isLetter", int.class);
-        }
-        catch (SecurityException e)
-        {
-            assert false : "Denied access to well-known method of Character.";
-        }
-        catch (NoSuchMethodException e)
-        {
-            assert false : "Well-known method of Character does not exist.";
+            mapField.setAccessible(true);
+            Map<String, Character.UnicodeBlock> map = null;
+            try
+            {
+                map = (Map<String, Character.UnicodeBlock>)mapField.get(null);
+            }
+            catch (IllegalArgumentException e)
+            {
+                assert false : "Character.UnicodeBlock.map does not appear as a static variable.";
+            }
+            catch (IllegalAccessException e)
+            {
+                assert false : "Not allowed to access Character.UnicodeBlock.map.";
+            }
+            if (map != null)
+            {
+                UNICODE_BLOCKS = new HashSet<Character.UnicodeBlock>(map.values());
+        
+                // Get the isUpperCase, isLowerCase, and isLetter methods of Character.
+                try
+                {
+                    CHAR_IS_UPPERCASE_METHOD = Character.class.getMethod("isUpperCase", char.class);
+                    INT_IS_UPPERCASE_METHOD = Character.class.getMethod("isUpperCase", int.class);
+                    CHAR_IS_LOWERCASE_METHOD = Character.class.getMethod("isLowerCase", char.class);
+                    INT_IS_LOWERCASE_METHOD = Character.class.getMethod("isLowerCase", int.class);
+                    CHAR_IS_LETTER_METHOD = Character.class.getMethod("isLetter", char.class);
+                    INT_IS_LETTER_METHOD = Character.class.getMethod("isLetter", int.class);
+                }
+                catch (SecurityException e)
+                {
+                    assert false : "Denied access to well-known method of Character.";
+                }
+                catch (NoSuchMethodException e)
+                {
+                    assert false : "Well-known method of Character does not exist.";
+                }
+            }
         }
     }
     

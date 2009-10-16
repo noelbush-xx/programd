@@ -123,6 +123,7 @@ public class TestCase
     /**
      * A private constructor, for use in persistence.
      */
+    @SuppressWarnings("unused")
     private TestCase()
     {
         // Do nothing.

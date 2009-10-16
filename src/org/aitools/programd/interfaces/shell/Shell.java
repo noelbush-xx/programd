@@ -196,58 +196,61 @@ public class Shell extends Thread
             this.midLine = false;
 
             // Handle commands.
-            if (commandLine.indexOf('#') == 0)
+            if (commandLine != null)
             {
-                // Ignore this -- it's a comment.
-            }
-            else if (commandLine.indexOf('/') == 0)
-            {
-                // Exit command
-                if ("/exit".toLowerCase().equals(commandLine))
+                if (commandLine.indexOf('#') == 0)
                 {
-                    printExitMessage();
-                    this._core.shutdown();
-                    return;
+                    // Ignore this -- it's a comment.
                 }
-                // otherwise...
-                // Try to find a command to handle this.
-                ShellCommand command = null;
-                try
+                else if (commandLine.indexOf('/') == 0)
                 {
-                    command = this.commandRegistry.getHandlerFor(commandLine);
+                    // Exit command
+                    if ("/exit".toLowerCase().equals(commandLine))
+                    {
+                        printExitMessage();
+                        this._core.shutdown();
+                        return;
+                    }
+                    // otherwise...
+                    // Try to find a command to handle this.
+                    ShellCommand command = null;
                     try
                     {
-                        command.handle(commandLine, this);
+                        command = this.commandRegistry.getHandlerFor(commandLine);
+                        try
+                        {
+                            command.handle(commandLine, this);
+                        }
+                        catch (UserError e)
+                        {
+                            showError(String.format("Error processing command: \"%s\"", Errors.describe(e)));
+                        }
                     }
-                    catch (UserError e)
+                    catch (NoSuchCommandException e)
                     {
-                        showError(String.format("Error processing command: \"%s\"", Errors.describe(e)));
+                        // May be a commandable.
+                        try
+                        {
+                            commandCommandable(commandLine);
+                        }
+                        catch (NoCommandException ee)
+                        {
+                            showError("Please specify a command following the commandable.  For a list of commandables, type \""
+                                    + ListCommandablesCommand.COMMAND_STRING + "\".");
+                        }
+                        catch (NoSuchCommandableException ee)
+                        {
+                            showError("No such commandable is loaded.");
+                        }
                     }
                 }
-                catch (NoSuchCommandException e)
+                else if (commandLine.length() > 0)
                 {
-                    // May be a commandable.
-                    try
-                    {
-                        commandCommandable(commandLine);
-                    }
-                    catch (NoCommandException ee)
-                    {
-                        showError("Please specify a command following the commandable.  For a list of commandables, type \""
-                                + ListCommandablesCommand.COMMAND_STRING + "\".");
-                    }
-                    catch (NoSuchCommandableException ee)
-                    {
-                        showError("No such commandable is loaded.");
-                    }
+                    showConsole(this.botName, XHTML.breakLines(this._core.getResponse(commandLine, this.hostname,
+                            this.botid)));
                 }
+                // If the command line has zero length, ignore it.
             }
-            else if (commandLine.length() > 0)
-            {
-                showConsole(this.botName, XHTML.breakLines(this._core.getResponse(commandLine, this.hostname,
-                        this.botid)));
-            }
-            // If the command line has zero length, ignore it.
         }
     }
 

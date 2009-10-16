@@ -48,7 +48,7 @@ public class FlushPredicatesCommand extends ShellCommand
      *      org.aitools.programd.interfaces.shell.Shell)
      */
     @Override
-    @SuppressWarnings( { "boxing", "unused" })
+    @SuppressWarnings( "unused" )
     public void handle(String commandLine, Shell shell)
     {
         shell.getCore().getPredicateMaster().saveAll();
