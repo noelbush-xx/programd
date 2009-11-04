@@ -23,7 +23,7 @@ BASE=`cd \`dirname $0\`/.. && echo \`pwd\``
 source $BASE/bin/common_functions.sh
 
 # Configuration
-JARFILE=$BASE/distrib/programd-simple-console.jar
+JARFILE=$BASE/distrib/programd-simple-gui-console.jar
 START_MEM=128m
 MAX_MEM=256m
 CORE_CONF=$BASE/conf/core.xml
