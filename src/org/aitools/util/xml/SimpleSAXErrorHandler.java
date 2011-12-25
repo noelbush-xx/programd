@@ -24,42 +24,41 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
 /**
- *
+ * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class SimpleSAXErrorHandler implements ErrorHandler
-{
-    private Logger _logger;
-    
-    /**
-     * @param logger
-     */
-    public SimpleSAXErrorHandler(Logger logger)
-    {
-        this._logger = logger;
-    }
-    
-    /**
-     * @see org.xml.sax.ErrorHandler#error(org.xml.sax.SAXParseException)
-     */
-    public void error(SAXParseException e)
-    {
-        this._logger.error(e.getMessage());
-    }
+public class SimpleSAXErrorHandler implements ErrorHandler {
 
-    /**
-     * @see org.xml.sax.ErrorHandler#fatalError(org.xml.sax.SAXParseException)
-     */
-    public void fatalError(SAXParseException e)
-    {
-        this._logger.fatal(e.getMessage());
-    }
+  private Logger _logger;
 
-    /**
-     * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
-     */
-    public void warning(SAXParseException e)
-    {
-        this._logger.warn(e.getMessage());
-    }
+  /**
+   * @param logger
+   */
+  public SimpleSAXErrorHandler(Logger logger) {
+    this._logger = logger;
+  }
+
+  /**
+   * @see org.xml.sax.ErrorHandler#error(org.xml.sax.SAXParseException)
+   */
+  @Override
+  public void error(SAXParseException e) {
+    this._logger.error(e.getMessage());
+  }
+
+  /**
+   * @see org.xml.sax.ErrorHandler#fatalError(org.xml.sax.SAXParseException)
+   */
+  @Override
+  public void fatalError(SAXParseException e) {
+    this._logger.fatal(e.getMessage());
+  }
+
+  /**
+   * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
+   */
+  @Override
+  public void warning(SAXParseException e) {
+    this._logger.warn(e.getMessage());
+  }
 }

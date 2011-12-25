@@ -13,45 +13,42 @@ import org.aitools.util.runtime.UserSystem;
 
 /**
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- *
+ * 
  */
-public class MemoryCommand extends ShellCommand
-{
-    /** Shell command string. */
-    public static final String COMMAND_STRING = "/memory";
+public class MemoryCommand extends ShellCommand {
 
-    /** Argument template. */
-    public static final String ARGUMENT_TEMPLATE = "";
+  /** Shell command string. */
+  public static final String COMMAND_STRING = "/memory";
 
-    /** Shell help line. */
-    private static final String HELP_LINE = "shows statistics on free/available memory";
+  /** Argument template. */
+  public static final String ARGUMENT_TEMPLATE = "";
 
-    /**
-     * Creates a new LoadCommand.
-     */
-    public MemoryCommand()
-    {
-        super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
-    }
+  /** Shell help line. */
+  private static final String HELP_LINE = "shows statistics on free/available memory";
 
-    /**
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
-     */
-    @Override
-    public boolean handles(String commandLine)
-    {
-        return commandLine.toLowerCase().equals(COMMAND_STRING);
-    }
+  /**
+   * Creates a new LoadCommand.
+   */
+  public MemoryCommand() {
+    super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
+  }
 
-    /**
-     * Displays a report of memory usage.
-     * 
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
-     */
-    @Override
-    @SuppressWarnings("unused")
-    public void handle(String commandLine, Shell shell)
-    {
-        shell.showMessage(UserSystem.memoryReport());
-    }
+  /**
+   * Displays a report of memory usage.
+   * 
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
+   *      org.aitools.programd.interfaces.shell.Shell)
+   */
+  @Override
+  public void handle(String commandLine, Shell shell) {
+    shell.showMessage(UserSystem.memoryReport());
+  }
+
+  /**
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
+   */
+  @Override
+  public boolean handles(String commandLine) {
+    return commandLine.toLowerCase().equals(COMMAND_STRING);
+  }
 }

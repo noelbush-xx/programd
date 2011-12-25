@@ -24,36 +24,33 @@ import org.jdom.Element;
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class LearnProcessor extends AIMLProcessor
-{
-    /** The label (as required by the registration scheme). */
-    public static final String label = "learn";
+public class LearnProcessor extends AIMLProcessor {
 
-    /**
-     * Creates a new LearnProcessor using the given Core.
-     * 
-     * @param core the Core object to use
-     */
-    public LearnProcessor(Core core)
-    {
-        super(core);
-    }
+  /** The label (as required by the registration scheme). */
+  public static final String label = "learn";
 
-    /**
-     * Attempts to load an AIML file whose location is described by the results of processing the content of the
-     * element.
-     * 
-     * @param element the <code>learn</code> element
-     * @param parser the parser that is at work
-     * @return the result of processing the element
-     * @throws ProcessorException if there is an error in processing
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public String process(Element element, TemplateParser parser) throws ProcessorException
-    {
-        URL path = JDOM.contextualize(parser.evaluate(element.getContent()), element);
-        parser.getCore().load(path, parser.getBotID());
-        return "";
-    }
+  /**
+   * Creates a new LearnProcessor using the given Core.
+   * 
+   * @param core the Core object to use
+   */
+  public LearnProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * Attempts to load an AIML file whose location is described by the results of processing the content of the element.
+   * 
+   * @param element the <code>learn</code> element
+   * @param parser the parser that is at work
+   * @return the result of processing the element
+   * @throws ProcessorException if there is an error in processing
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public String process(Element element, TemplateParser parser) throws ProcessorException {
+    URL path = JDOM.contextualize(parser.evaluate(element.getContent()), element);
+    parser.getCore().load(path, parser.getBotID());
+    return "";
+  }
 }

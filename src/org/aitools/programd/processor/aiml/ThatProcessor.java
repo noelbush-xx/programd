@@ -9,10 +9,9 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.jdom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
+import org.jdom.Element;
 
 /**
  * Processes a <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-template-side-that">template-side
@@ -22,31 +21,29 @@ import org.aitools.programd.parser.TemplateParser;
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class ThatProcessor extends IndexedPredicateProcessor
-{
-    /** The label (as required by the registration scheme). */
-    public static final String label = "that";
+public class ThatProcessor extends IndexedPredicateProcessor {
 
-    /**
-     * Creates a new ThatProcessor using the given Core.
-     * 
-     * @param core the Core object to use
-     */
-    public ThatProcessor(Core core)
-    {
-        super(core);
-    }
+  /** The label (as required by the registration scheme). */
+  public static final String label = "that";
 
-    /**
-     * Generalizes the processing of a <code>that</code> element to a job for {@link IndexedPredicateProcessor}.
-     * 
-     * @param element the <code>bot</code> element
-     * @param parser the parser that is at work
-     * @return the result of processing the element
-     */
-    @Override
-    public String process(Element element, TemplateParser parser)
-    {
-        return super.process(element, parser, label, 2);
-    }
+  /**
+   * Creates a new ThatProcessor using the given Core.
+   * 
+   * @param core the Core object to use
+   */
+  public ThatProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * Generalizes the processing of a <code>that</code> element to a job for {@link IndexedPredicateProcessor}.
+   * 
+   * @param element the <code>bot</code> element
+   * @param parser the parser that is at work
+   * @return the result of processing the element
+   */
+  @Override
+  public String process(Element element, TemplateParser parser) {
+    return super.process(element, parser, label, 2);
+  }
 }

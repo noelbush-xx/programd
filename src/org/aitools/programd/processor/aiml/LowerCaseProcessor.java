@@ -9,11 +9,10 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.jdom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
+import org.jdom.Element;
 
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-lowercase">lowercase</a></code> element.
@@ -21,28 +20,26 @@ import org.aitools.programd.processor.ProcessorException;
  * @author Jon Baer
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class LowerCaseProcessor extends AIMLProcessor
-{
-    /** The label (as required by the registration scheme). */
-    public static final String label = "lowercase";
+public class LowerCaseProcessor extends AIMLProcessor {
 
-    /**
-     * Creates a new LowerCaseProcessor using the given Core.
-     * 
-     * @param core the Core object to use
-     */
-    public LowerCaseProcessor(Core core)
-    {
-        super(core);
-    }
+  /** The label (as required by the registration scheme). */
+  public static final String label = "lowercase";
 
-    /**
-     * @see AIMLProcessor#process(Element, TemplateParser)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public String process(Element element, TemplateParser parser) throws ProcessorException
-    {
-        return parser.evaluate(element.getContent()).toLowerCase();
-    }
+  /**
+   * Creates a new LowerCaseProcessor using the given Core.
+   * 
+   * @param core the Core object to use
+   */
+  public LowerCaseProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * @see AIMLProcessor#process(Element, TemplateParser)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public String process(Element element, TemplateParser parser) throws ProcessorException {
+    return parser.evaluate(element.getContent()).toLowerCase();
+  }
 }

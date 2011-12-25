@@ -10,79 +10,74 @@
 package org.aitools.programd.interfaces.shell;
 
 /**
- * A <code>ShellCommand</code> is a command that can be executed from
- * the {@link Shell}.
+ * A <code>ShellCommand</code> is a command that can be executed from the {@link Shell}.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-abstract public class ShellCommand
-{
-    /** The command string for the shell command (so it can be returned via a get method). */
-    private String _commandString;
+abstract public class ShellCommand {
 
-    /** The argument template for the shell command (so it can be returned via a get method). */
-    private String _argumentTemplate;
+  /** The command string for the shell command (so it can be returned via a get method). */
+  private String _commandString;
 
-    /** The help line for the shell command (so it can be returned via a get method). */
-    private String _helpLine;
+  /** The argument template for the shell command (so it can be returned via a get method). */
+  private String _argumentTemplate;
 
-    /**
-     * Creates a <code>ShellCommand</code> that handles the given command string.
-     * @param commandString the command string to handle
-     * @param argumentTemplate the argument template to use
-     * @param helpLine the help line to provide when asked
-     */
-    public ShellCommand(String commandString, String argumentTemplate, String helpLine)
-    {
-        this._commandString = commandString;
-        this._argumentTemplate = argumentTemplate;
-        this._helpLine = helpLine;
-    }
+  /** The help line for the shell command (so it can be returned via a get method). */
+  private String _helpLine;
 
-    /**
-     * Indicates whether the ShellCommand handles
-     * a command contained in the given line.
-     * 
-     * @param commandLine the line of text received
-     * @return whether the ShellCommand handles this
-     */
-    abstract public boolean handles(String commandLine);
+  /**
+   * Creates a <code>ShellCommand</code> that handles the given command string.
+   * 
+   * @param commandString the command string to handle
+   * @param argumentTemplate the argument template to use
+   * @param helpLine the help line to provide when asked
+   */
+  public ShellCommand(String commandString, String argumentTemplate, String helpLine) {
+    this._commandString = commandString;
+    this._argumentTemplate = argumentTemplate;
+    this._helpLine = helpLine;
+  }
 
-    /**
-     * Returns the command to which this responds.
-     * 
-     * @return the command to which this responds
-     */
-    public String getCommandString()
-    {
-        return this._commandString;
-    }
+  /**
+   * Returns the argument template for this command.
+   * 
+   * @return the argument template for this command
+   */
+  public String getArgumentTemplate() {
+    return this._argumentTemplate;
+  }
 
-    /**
-     * Returns the argument template for this command.
-     * 
-     * @return the argument template for this command
-     */
-    public String getArgumentTemplate()
-    {
-        return this._argumentTemplate;
-    }
+  /**
+   * Returns the command to which this responds.
+   * 
+   * @return the command to which this responds
+   */
+  public String getCommandString() {
+    return this._commandString;
+  }
 
-    /**
-     * Returns a line of help for this command.
-     * 
-     * @return a line of help for this command
-     */
-    public String getHelpLine()
-    {
-        return this._helpLine;
-    }
+  /**
+   * Returns a line of help for this command.
+   * 
+   * @return a line of help for this command
+   */
+  public String getHelpLine() {
+    return this._helpLine;
+  }
 
-    /**
-     * Handles the given command line.
-     * 
-     * @param commandLine the command line to handle
-     * @param shell the shell that got the command
-     */
-    abstract public void handle(String commandLine, Shell shell);
+  /**
+   * Handles the given command line.
+   * 
+   * @param commandLine the command line to handle
+   * @param shell the shell that got the command
+   */
+  abstract public void handle(String commandLine, Shell shell);
+
+  /**
+   * Indicates whether the ShellCommand handles a command contained in the given line.
+   * 
+   * @param commandLine the line of text received
+   * @return whether the ShellCommand handles this
+   */
+  abstract public boolean handles(String commandLine);
 }

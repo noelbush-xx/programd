@@ -20,18 +20,16 @@
 package org.aitools.util;
 
 /**
- * A Settings object collects settings for any purpose.  It contains getter and setter
- * methods for every setting. Usually the subclasses of Settings will be generated
- * automatically from some other structure, since it's annoying to
- * create and maintain these by hand.
- *
+ * A Settings object collects settings for any purpose. It contains getter and setter methods for every setting. Usually
+ * the subclasses of Settings will be generated automatically from some other structure, since it's annoying to create
+ * and maintain these by hand.
+ * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-abstract public class Settings
-{
-    /**
-     * Initializes the Settings object with values from properties as read, or defaults (if properties are not
-     * provided).
-     */
-    abstract protected void initialize();
+abstract public class Settings {
+
+  /**
+   * Initializes the Settings object with values from properties as read, or defaults (if properties are not provided).
+   */
+  abstract protected void initialize();
 }

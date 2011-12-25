@@ -12,47 +12,48 @@ package org.aitools.programd.predicates;
 /**
  * Indicates that there is no predicate with a requested name.
  */
-public class NoSuchPredicateException extends Exception
-{
-    /** The name for which there was no predicate. */
-    private static String name;
+public class NoSuchPredicateException extends Exception {
 
-    /** The index at which there was no value. */
-    private static int index = -1;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * Constructs a new NoSuchPredicateException for the given name.
-     * 
-     * @param predicateName the name for which there was no predicate
-     */
-    public NoSuchPredicateException(String predicateName)
-    {
-        NoSuchPredicateException.name = predicateName;
+  /** The name for which there was no predicate. */
+  private static String name;
+
+  /** The index at which there was no value. */
+  private static int index = -1;
+
+  /**
+   * Constructs a new NoSuchPredicateException for the given name.
+   * 
+   * @param predicateName the name for which there was no predicate
+   */
+  public NoSuchPredicateException(String predicateName) {
+    NoSuchPredicateException.name = predicateName;
+  }
+
+  /**
+   * Constructs a new NoSuchPredicateException for the given name and index.
+   * 
+   * @param predicateName the name for which there was no predicate with a value at the given index
+   * @param predicateIndex the index at which there was no value
+   */
+  public NoSuchPredicateException(String predicateName, int predicateIndex) {
+    NoSuchPredicateException.name = predicateName;
+    NoSuchPredicateException.index = predicateIndex;
+  }
+
+  /**
+   * @see java.lang.Throwable#getMessage()
+   */
+  @Override
+  public String getMessage() {
+    if (index != -1) {
+      return "No predicate with name \"" + name + "\" with a value at index " + index + ".";
     }
-
-    /**
-     * Constructs a new NoSuchPredicateException for the given name and index.
-     * 
-     * @param predicateName the name for which there was no predicate with a value at the given index
-     * @param predicateIndex the index at which there was no value
-     */
-    public NoSuchPredicateException(String predicateName, int predicateIndex)
-    {
-        NoSuchPredicateException.name = predicateName;
-        NoSuchPredicateException.index = predicateIndex;
-    }
-
-    /**
-     * @see java.lang.Throwable#getMessage()
-     */
-    @Override
-    public String getMessage()
-    {
-        if (index != -1)
-        {
-            return "No predicate with name \"" + name + "\" with a value at index " + index + ".";
-        }
-        // (otherwise...)
-        return "No predicate with name \"" + name + "\".";
-    }
+    // (otherwise...)
+    return "No predicate with name \"" + name + "\".";
+  }
 }

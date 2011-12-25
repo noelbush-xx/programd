@@ -12,54 +12,50 @@ package org.aitools.programd.predicates;
 /**
  * A very simple data class that describes a predicate.
  */
-public class PredicateInfo
-{
-    /** The name of the predicate. */
-    private String name;
-    
-    /** The default value of the predicate. */
-    private String defaultValue;
+public class PredicateInfo {
 
-    /**
-     * Whether the predicate should return its name, or its newly-set value,
-     * when set.
-     */
-    private boolean returnNameWhenSet;
+  /** The name of the predicate. */
+  private String name;
 
-    /**
-     * Creates a new PredicateInfo.
-     * @param predicateName the predicate name
-     * @param defaultPredicateValue the default predicate value
-     * @param returnNameSetting whether to return the name when setting the predicate
-     */
-    public PredicateInfo(String predicateName, String defaultPredicateValue, boolean returnNameSetting)
-    {
-        this.name = predicateName;
-        this.defaultValue = defaultPredicateValue;
-        this.returnNameWhenSet = returnNameSetting;
-    }
-    
-    /**
-     * @return the predicate name
-     */
-    public String getName()
-    {
-        return this.name;
-    }
+  /** The default value of the predicate. */
+  private String defaultValue;
 
-    /**
-     * @return the default value
-     */
-    public String getDefaultValue()
-    {
-        return this.defaultValue;
-    }
+  /**
+   * Whether the predicate should return its name, or its newly-set value, when set.
+   */
+  private boolean returnNameWhenSet;
 
-    /**
-     * @return whether the predicate is supposed to return its name when set
-     */
-    public boolean returnNameWhenSet()
-    {
-        return this.returnNameWhenSet;
-    }
+  /**
+   * Creates a new PredicateInfo.
+   * 
+   * @param predicateName the predicate name
+   * @param defaultPredicateValue the default predicate value
+   * @param returnNameSetting whether to return the name when setting the predicate
+   */
+  public PredicateInfo(String predicateName, String defaultPredicateValue, boolean returnNameSetting) {
+    this.name = predicateName;
+    this.defaultValue = defaultPredicateValue;
+    this.returnNameWhenSet = returnNameSetting;
+  }
+
+  /**
+   * @return the default value
+   */
+  public String getDefaultValue() {
+    return this.defaultValue;
+  }
+
+  /**
+   * @return the predicate name
+   */
+  public String getName() {
+    return this.name;
+  }
+
+  /**
+   * @return whether the predicate is supposed to return its name when set
+   */
+  public boolean returnNameWhenSet() {
+    return this.returnNameWhenSet;
+  }
 }

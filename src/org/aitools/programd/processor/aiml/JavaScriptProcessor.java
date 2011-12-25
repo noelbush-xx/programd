@@ -9,54 +9,48 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.jdom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
+import org.jdom.Element;
 
 /**
- * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-javascript">javascript</a></code>
- * element.
+ * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-javascript">javascript</a></code> element.
  * 
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  */
-public class JavaScriptProcessor extends AIMLProcessor
-{
-    /** The label (as required by the registration scheme). */
-    public static final String label = "javascript";
+public class JavaScriptProcessor extends AIMLProcessor {
 
-    /**
-     * Creates a new JavaScriptProcessor using the given Core.
-     * 
-     * @param core the Core object to use
-     */
-    public JavaScriptProcessor(Core core)
-    {
-        super(core);
-    }
+  /** The label (as required by the registration scheme). */
+  public static final String label = "javascript";
 
-    /**
-     * Returns the result of processing the contents of the <code>javascript</code> element by the JavaScript
-     * interpreter.
-     * 
-     * @param element the <code>javascript</code> element
-     * @param parser the parser that is at work
-     * @return the result of processing the element
-     * @throws ProcessorException if there is an error in processing
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public String process(Element element, TemplateParser parser) throws ProcessorException
-    {
-        // Don't use the system tag if not permitted.
-        if (!parser.getCore().getSettings().allowJavaScript())
-        {
-            logger.warn("Use of <javascript> prohibited!");
-            return "";
-        }
-        logger.debug("Calling JavaScript interpreter.");
-        return parser.getCore().getInterpreter().evaluate(parser.evaluate(element.getContent()));
+  /**
+   * Creates a new JavaScriptProcessor using the given Core.
+   * 
+   * @param core the Core object to use
+   */
+  public JavaScriptProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * Returns the result of processing the contents of the <code>javascript</code> element by the JavaScript interpreter.
+   * 
+   * @param element the <code>javascript</code> element
+   * @param parser the parser that is at work
+   * @return the result of processing the element
+   * @throws ProcessorException if there is an error in processing
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public String process(Element element, TemplateParser parser) throws ProcessorException {
+    // Don't use the system tag if not permitted.
+    if (!parser.getCore().getSettings().allowJavaScript()) {
+      logger.warn("Use of <javascript> prohibited!");
+      return "";
     }
+    logger.debug("Calling JavaScript interpreter.");
+    return parser.getCore().getInterpreter().evaluate(parser.evaluate(element.getContent()));
+  }
 }

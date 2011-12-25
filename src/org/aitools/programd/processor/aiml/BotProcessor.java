@@ -9,41 +9,38 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.jdom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
+import org.jdom.Element;
 
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-bot">bot</a></code> element.
  * 
  * @see AIMLProcessor
  */
-public class BotProcessor extends AIMLProcessor
-{
-    /**
-     * Creates a new BotProcessor with the given Core.
-     * 
-     * @param core the Core to use in creating the BotProcessor
-     */
-    public BotProcessor(Core core)
-    {
-        super(core);
-    }
+public class BotProcessor extends AIMLProcessor {
 
-    /** The label (as required by the registration scheme). */
-    public static final String label = "bot";
+  /** The label (as required by the registration scheme). */
+  public static final String label = "bot";
 
-    /**
-     * Retrieves the value of the desired bot predicate.
-     * 
-     * @param element the <code>bot</code> element
-     * @param parser the parser that is at work
-     * @return the result of processing the element
-     */
-    @Override
-    public String process(Element element, TemplateParser parser)
-    {
-        return parser.getCore().getBot(parser.getBotID()).getPropertyValue(element.getAttributeValue("name"));
-    }
+  /**
+   * Creates a new BotProcessor with the given Core.
+   * 
+   * @param core the Core to use in creating the BotProcessor
+   */
+  public BotProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * Retrieves the value of the desired bot predicate.
+   * 
+   * @param element the <code>bot</code> element
+   * @param parser the parser that is at work
+   * @return the result of processing the element
+   */
+  @Override
+  public String process(Element element, TemplateParser parser) {
+    return parser.getCore().getBot(parser.getBotID()).getPropertyValue(element.getAttributeValue("name"));
+  }
 }

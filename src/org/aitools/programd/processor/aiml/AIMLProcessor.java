@@ -18,53 +18,46 @@ import org.apache.log4j.Logger;
 import org.jdom.Element;
 
 /**
- * An <code>AIMLProcessor</code> is responsible for processing a particular
- * AIML element.
+ * An <code>AIMLProcessor</code> is responsible for processing a particular AIML element.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-abstract public class AIMLProcessor extends Processor
-{
-    protected static final Logger logger = Logger.getLogger("programd");
+abstract public class AIMLProcessor extends Processor {
 
-    protected static final Logger aimlLogger = Logger.getLogger("programd.aiml-processing");
+  protected static final Logger logger = Logger.getLogger("programd");
 
-    /**
-     * Creates a new AIMLProcessor using the given Core.
-     * 
-     * @param core the Core object to use with the new AIMLProcessor
-     */
-    public AIMLProcessor(Core core)
-    {
-        super(core);
+  protected static final Logger aimlLogger = Logger.getLogger("programd.aiml-processing");
+
+  /**
+   * Creates a new AIMLProcessor using the given Core.
+   * 
+   * @param core the Core object to use with the new AIMLProcessor
+   */
+  public AIMLProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * @see org.aitools.programd.processor.Processor#process(org.jdom.Element, org.aitools.programd.parser.GenericParser)
+   */
+  @Override
+  @SuppressWarnings("rawtypes")
+  public String process(Element element, GenericParser parser) throws ProcessorException {
+    try {
+      return this.process(element, (TemplateParser) parser);
     }
-
-    /**
-     * @see org.aitools.programd.processor.Processor#process(org.jdom.Element,
-     *      org.aitools.programd.parser.GenericParser)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public String process(Element element, GenericParser parser) throws ProcessorException
-    {
-        try
-        {
-            return process(element, (TemplateParser) parser);
-        }
-        catch (ClassCastException e)
-        {
-            throw new ProcessorException("Tried to pass a non-TemplateParser to an AIMLProcessor.", e);
-        }
+    catch (ClassCastException e) {
+      throw new ProcessorException("Tried to pass a non-TemplateParser to an AIMLProcessor.", e);
     }
+  }
 
-    /**
-     * Processes the given element, using the given parser if needed.
-     * 
-     * @param element the element to process
-     * @param parser the parser that has ordered the processing
-     * @return the result of processing the element
-     * @throws ProcessorException if there is an unrecoverable problem
-     *             processing the element
-     */
-    abstract public String process(Element element, TemplateParser parser) throws ProcessorException;
+  /**
+   * Processes the given element, using the given parser if needed.
+   * 
+   * @param element the element to process
+   * @param parser the parser that has ordered the processing
+   * @return the result of processing the element
+   * @throws ProcessorException if there is an unrecoverable problem processing the element
+   */
+  abstract public String process(Element element, TemplateParser parser) throws ProcessorException;
 }

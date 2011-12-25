@@ -30,77 +30,67 @@ import org.aitools.util.runtime.DeveloperError;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import org.xmlresolver.Catalog;
-import org.xmlresolver.Resolver;
-import org.xmlresolver.ResourceResolver;
 
 /**
  * Utilities specific to the standard W3C DOM.
- *
+ * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class DOM
-{
-    static
-    {
-        System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.xmlresolver.sunjaxp.jaxp.DocumentBuilderFactoryImpl");
+public class DOM {
+
+  static {
+    System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+        "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+  }
+
+  /**
+   * Parses the document and returns a DOM Document object. XInclusions are performed first, then validation.
+   * 
+   * @param location
+   * @param catalogPath 
+   * @param logger
+   * @return a DOM Document object
+   */
+  public static Document getDocument(URL location, String catalogPath, Logger logger) {
+
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    factory.setNamespaceAware(true);
+    factory.setXIncludeAware(true);
+    // factory.setValidating(true);
+    DocumentBuilder builder = null;
+    try {
+      builder = factory.newDocumentBuilder();
+      builder.setErrorHandler(new SimpleSAXErrorHandler(logger));
+      builder.setEntityResolver(Catalogs.getResolver(catalogPath));
+    }
+    catch (ParserConfigurationException e) {
+      throw new DeveloperError("Exception while creating DOM DocumentBuilder.", e);
     }
 
-    /**
-     * Parses the document and returns a DOM Document object.
-     * XInclusions are performed first, then validation.
+    Document document = null;
+    try {
+      document = builder.parse(location.toExternalForm());
+    }
+    catch (SAXException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return document;
+
+    /*
+     * LSParser parser = ((DOMImplementationLS)
+     * builder.getDOMImplementation().getFeature("LS","3.0")).createLSParser(DOMImplementationLS.MODE_SYNCHRONOUS,
+     * XMLConstants.W3C_XML_SCHEMA_NS_URI);
      * 
-     * @param location
-     * @param logger 
-     * @return a DOM Document object
+     * DOMConfiguration config = parser.getDomConfig(); config.setParameter("validate", Boolean.TRUE);
+     * config.setParameter("schema-type", XMLConstants.W3C_XML_SCHEMA_NS_URI); config.setParameter("error-handler", new
+     * SimpleDOMErrorHandler(logger)); config.setParameter("resource-resolver", entityResolver);
+     * 
+     * return parser.parseURI(location.toExternalForm());
      */
-    public static Document getDocument(URL location, Logger logger)
-    {
-        ResourceResolver resolver = new ResourceResolver(new Catalog());
-        Resolver entityResolver = new Resolver(resolver);
-        resolver.setEntityResolver(entityResolver);
-
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setXIncludeAware(true);
-        //factory.setValidating(true);
-        DocumentBuilder builder = null;
-        try
-        {
-            builder = factory.newDocumentBuilder();
-            builder.setErrorHandler(new SimpleSAXErrorHandler(logger));
-            builder.setEntityResolver(entityResolver);
-        }
-        catch (ParserConfigurationException e)
-        {
-            throw new DeveloperError("Exception while creating DOM DocumentBuilder.", e);
-        }
-        
-        Document document = null;
-        try
-        {
-            document = builder.parse(location.toExternalForm());
-        }
-        catch (SAXException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch (IOException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return document;
-        
-        /*LSParser parser = ((DOMImplementationLS) builder.getDOMImplementation().getFeature("LS","3.0")).createLSParser(DOMImplementationLS.MODE_SYNCHRONOUS, XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        
-        DOMConfiguration config = parser.getDomConfig();
-        config.setParameter("validate", Boolean.TRUE);
-        config.setParameter("schema-type", XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        config.setParameter("error-handler", new SimpleDOMErrorHandler(logger));
-        config.setParameter("resource-resolver", entityResolver);
-        
-        return parser.parseURI(location.toExternalForm());*/
-    }
+  }
 }

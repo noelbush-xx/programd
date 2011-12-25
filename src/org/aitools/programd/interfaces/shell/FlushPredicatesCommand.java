@@ -13,44 +13,40 @@ package org.aitools.programd.interfaces.shell;
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * 
  */
-public class FlushPredicatesCommand extends ShellCommand
-{
-    /** Shell command string. */
-    public static final String COMMAND_STRING = "/flush predicates";
+public class FlushPredicatesCommand extends ShellCommand {
 
-    /** Argument template. */
-    public static final String ARGUMENT_TEMPLATE = "";
+  /** Shell command string. */
+  public static final String COMMAND_STRING = "/flush predicates";
 
-    /** Shell help line. */
-    private static final String HELP_LINE = "flushes the predicates from memory to predicate storage";
+  /** Argument template. */
+  public static final String ARGUMENT_TEMPLATE = "";
 
-    /**
-     * Creates a new LoadCommand.
-     */
-    public FlushPredicatesCommand()
-    {
-        super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
-    }
+  /** Shell help line. */
+  private static final String HELP_LINE = "flushes the predicates from memory to predicate storage";
 
-    /**
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
-     */
-    @Override
-    public boolean handles(String commandLine)
-    {
-        return commandLine.toLowerCase().equals(COMMAND_STRING);
-    }
+  /**
+   * Creates a new LoadCommand.
+   */
+  public FlushPredicatesCommand() {
+    super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
+  }
 
-    /**
-     * Saves all predicates.
-     * 
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
-     *      org.aitools.programd.interfaces.shell.Shell)
-     */
-    @Override
-    @SuppressWarnings( "unused" )
-    public void handle(String commandLine, Shell shell)
-    {
-        shell.getCore().getPredicateMaster().saveAll();
-    }
+  /**
+   * Saves all predicates.
+   * 
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
+   *      org.aitools.programd.interfaces.shell.Shell)
+   */
+  @Override
+  public void handle(String commandLine, Shell shell) {
+    shell.getCore().getPredicateMaster().saveAll();
+  }
+
+  /**
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
+   */
+  @Override
+  public boolean handles(String commandLine) {
+    return commandLine.toLowerCase().equals(COMMAND_STRING);
+  }
 }

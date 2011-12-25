@@ -28,15 +28,19 @@ import java.io.File;
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.5
  */
-public class FileAlreadyExistsAsFileException extends Exception
-{
-    /**
-     * Creates a new FileAlreadyExistsAsFileException.
-     * 
-     * @param file the file that already exists
-     */
-    public FileAlreadyExistsAsFileException(File file)
-    {
-        super(String.format("\"%s\" already exists as a file.", file.getAbsolutePath()));
-    }
+public class FileAlreadyExistsAsFileException extends Exception {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+
+  /**
+   * Creates a new FileAlreadyExistsAsFileException.
+   * 
+   * @param file the file that already exists
+   */
+  public FileAlreadyExistsAsFileException(File file) {
+    super(String.format("\"%s\" already exists as a file.", file.getAbsolutePath()));
+  }
 }

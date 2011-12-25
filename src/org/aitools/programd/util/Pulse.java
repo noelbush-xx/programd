@@ -14,10 +14,10 @@ package org.aitools.programd.util;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public interface Pulse
-{
-    /**
-     * Emit can do anything you want it to. It will be called at a regular interval.
-     */
-    public void emit();
+public interface Pulse {
+
+  /**
+   * Emit can do anything you want it to. It will be called at a regular interval.
+   */
+  public void emit();
 }

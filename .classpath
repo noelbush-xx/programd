@@ -8,12 +8,9 @@
 	<classpathentry kind="lib" path="lib/jdom-1.0-nite-25-Jan-2007.jar"/>
 	<classpathentry kind="lib" path="lib/castor-1.1-codegen.jar"/>
 	<classpathentry kind="lib" path="lib/castor-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/jaxp-api.jar"/>
+	<classpathentry kind="lib" path="lib/jaxp-api.jar" sourcepath="/usr/lib/jvm/java-6-sun/jre/lib/rt.jar"/>
 	<classpathentry kind="lib" path="lib/jaxp-ri.jar"/>
-	<classpathentry kind="lib" path="lib/junit-4.1.jar"/>
 	<classpathentry kind="lib" path="lib/xerces-j2-2.9.0.jar"/>
-	<classpathentry kind="lib" path="lib/xmlresolver-sunjaxp.jar" sourcepath="/xmlresolver/java/src"/>
-	<classpathentry kind="lib" path="lib/xmlresolver.jar" sourcepath="/xmlresolver/java/src"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jdbcappender.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xalan-j2-2.7.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mysql-connector-java-3.1.12-bin.jar"/>
@@ -23,6 +20,8 @@
 	<classpathentry kind="lib" path="lib/jaxen-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="lib/resolver.jar" sourcepath="/home/noel/src/xml-commons-resolver-1.2/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/junit-4.10.jar"/>
 	<classpathentry kind="output" path="build.tmp"/>
 </classpath>

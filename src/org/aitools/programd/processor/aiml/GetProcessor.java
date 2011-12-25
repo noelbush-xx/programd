@@ -9,10 +9,9 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.jdom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
+import org.jdom.Element;
 
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-get">get</a></code> element.
@@ -21,28 +20,26 @@ import org.aitools.programd.parser.TemplateParser;
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class GetProcessor extends AIMLProcessor
-{
-    /** The label (as required by the registration scheme). */
-    public static final String label = "get";
+public class GetProcessor extends AIMLProcessor {
 
-    /**
-     * Creates a new GetProcessor using the given Core.
-     * 
-     * @param core the Core object to use
-     */
-    public GetProcessor(Core core)
-    {
-        super(core);
-    }
+  /** The label (as required by the registration scheme). */
+  public static final String label = "get";
 
-    /**
-     * @see AIMLProcessor#process(Element, TemplateParser)
-     */
-    @Override
-    public String process(Element element, TemplateParser parser)
-    {
-        return parser.getCore().getPredicateMaster().get(element.getAttributeValue("name"), parser.getUserID(),
-                parser.getBotID());
-    }
+  /**
+   * Creates a new GetProcessor using the given Core.
+   * 
+   * @param core the Core object to use
+   */
+  public GetProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * @see AIMLProcessor#process(Element, TemplateParser)
+   */
+  @Override
+  public String process(Element element, TemplateParser parser) {
+    return parser.getCore().getPredicateMaster()
+        .get(element.getAttributeValue("name"), parser.getUserID(), parser.getBotID());
+  }
 }

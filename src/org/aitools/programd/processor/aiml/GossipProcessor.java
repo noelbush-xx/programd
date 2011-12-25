@@ -12,14 +12,13 @@ package org.aitools.programd.processor.aiml;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.jdom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
-import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.resource.Filesystem;
+import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.runtime.UserError;
+import org.jdom.Element;
 
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-gossip">gossip</a></code> element.
@@ -27,57 +26,50 @@ import org.aitools.util.runtime.UserError;
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  */
-public class GossipProcessor extends AIMLProcessor
-{
-    /** The label (as required by the registration scheme). */
-    public static final String label = "gossip";
+public class GossipProcessor extends AIMLProcessor {
 
-    private static FileWriter gossipFile;
+  /** The label (as required by the registration scheme). */
+  public static final String label = "gossip";
 
-    /**
-     * Creates a new GossipProcessor using the given Core.
-     * 
-     * @param core the Core object to use
-     */
-    public GossipProcessor(Core core)
-    {
-        super(core);
+  private static FileWriter gossipFile;
+
+  /**
+   * Creates a new GossipProcessor using the given Core.
+   * 
+   * @param core the Core object to use
+   */
+  public GossipProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * @see AIMLProcessor#process(Element, TemplateParser)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public String process(Element element, TemplateParser parser) throws ProcessorException {
+    // Get the gossip.
+    String response = parser.evaluate(element.getContent());
+
+    // Initialize the FileWriter if necessary.
+    if (gossipFile == null) {
+      try {
+        gossipFile = new FileWriter(Filesystem.checkOrCreate(parser.getCore().getSettings().getGossipURL().getPath(),
+            "gossip file"));
+      }
+      catch (IOException e) {
+        throw new UserError(e);
+      }
     }
 
-    /**
-     * @see AIMLProcessor#process(Element, TemplateParser)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public String process(Element element, TemplateParser parser) throws ProcessorException
-    {
-        // Get the gossip.
-        String response = parser.evaluate(element.getContent());
-
-        // Initialize the FileWriter if necessary.
-        if (gossipFile == null)
-        {
-            try
-            {
-                gossipFile = new FileWriter(Filesystem.checkOrCreate(parser.getCore().getSettings().getGossipURL()
-                        .getPath(), "gossip file"));
-            }
-            catch (IOException e)
-            {
-                throw new UserError(e);
-            }
-        }
-
-        // Put the gossip in the log.
-        try
-        {
-            gossipFile.append(String.format("<li>%s</li>%n", response));
-            gossipFile.flush();
-        }
-        catch (IOException e)
-        {
-            throw new DeveloperError("Error trying to write gossip.", e);
-        }
-        return "";
+    // Put the gossip in the log.
+    try {
+      gossipFile.append(String.format("<li>%s</li>%n", response));
+      gossipFile.flush();
     }
+    catch (IOException e) {
+      throw new DeveloperError("Error trying to write gossip.", e);
+    }
+    return "";
+  }
 }

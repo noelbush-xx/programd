@@ -9,11 +9,10 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.jdom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
+import org.jdom.Element;
 
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-think">think</a></code> element.
@@ -22,29 +21,27 @@ import org.aitools.programd.processor.ProcessorException;
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class ThinkProcessor extends AIMLProcessor
-{
-    /** The label (as required by the registration scheme). */
-    public static final String label = "think";
+public class ThinkProcessor extends AIMLProcessor {
 
-    /**
-     * Creates a new ThinkProcessor using the given Core.
-     * 
-     * @param core the Core object to use
-     */
-    public ThinkProcessor(Core core)
-    {
-        super(core);
-    }
+  /** The label (as required by the registration scheme). */
+  public static final String label = "think";
 
-    /**
-     * @see AIMLProcessor#process(Element, TemplateParser)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public String process(Element element, TemplateParser parser) throws ProcessorException
-    {
-        parser.evaluate(element.getContent());
-        return "";
-    }
+  /**
+   * Creates a new ThinkProcessor using the given Core.
+   * 
+   * @param core the Core object to use
+   */
+  public ThinkProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * @see AIMLProcessor#process(Element, TemplateParser)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public String process(Element element, TemplateParser parser) throws ProcessorException {
+    parser.evaluate(element.getContent());
+    return "";
+  }
 }

@@ -14,44 +14,41 @@ package org.aitools.programd.interfaces.shell;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class WhoCommand extends ShellCommand
-{
-    /** Shell command. */
-    private static final String SHELL_COMMAND = "/who";
+public class WhoCommand extends ShellCommand {
 
-    /** Argument template. */
-    public static final String ARGUMENT_TEMPLATE = "";
+  /** Shell command. */
+  private static final String SHELL_COMMAND = "/who";
 
-    /** Shell help line. */
-    private static final String HELP_LINE = "prints the id of the current bot";
+  /** Argument template. */
+  public static final String ARGUMENT_TEMPLATE = "";
 
-    /**
-     * Creates a new WhoCommand.
-     */
-    public WhoCommand()
-    {
-        super(SHELL_COMMAND, ARGUMENT_TEMPLATE, HELP_LINE);
-    }
+  /** Shell help line. */
+  private static final String HELP_LINE = "prints the id of the current bot";
 
-    /**
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
-     */
-    @Override
-    public boolean handles(String commandLine)
-    {
-        return commandLine.toLowerCase().equals(WhoCommand.SHELL_COMMAND);
-    }
+  /**
+   * Creates a new WhoCommand.
+   */
+  public WhoCommand() {
+    super(SHELL_COMMAND, ARGUMENT_TEMPLATE, HELP_LINE);
+  }
 
-    /**
-     * Prints the ID of the current bot to the shell console.
-     * 
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
-     */
-    @Override
-    @SuppressWarnings("unused")
-    public void handle(String commandLine, Shell shell)
-    {
-        shell.showMessage("You are talking to \"" + shell.getCurrentBotID() + "\".");
-    }
+  /**
+   * Prints the ID of the current bot to the shell console.
+   * 
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
+   *      org.aitools.programd.interfaces.shell.Shell)
+   */
+  @Override
+  public void handle(String commandLine, Shell shell) {
+    shell.showMessage("You are talking to \"" + shell.getCurrentBotID() + "\".");
+  }
+
+  /**
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
+   */
+  @Override
+  public boolean handles(String commandLine) {
+    return commandLine.toLowerCase().equals(WhoCommand.SHELL_COMMAND);
+  }
 
 }

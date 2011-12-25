@@ -145,7 +145,7 @@
      * @param context
      * @return value
      */
-    protected String getXPathStringValue(String path, Object context)
+    protected static String getXPathStringValue(String path, Object context)
     {
         XPath xpath = getXPath(path);
         try
@@ -165,7 +165,7 @@
      * @param context
      * @return value
      */
-    protected Number getXPathNumberValue(String path, Object context)
+    protected static Number getXPathNumberValue(String path, Object context)
     {
         XPath xpath = getXPath(path);
         try
@@ -323,11 +323,10 @@
     <xsl:text>/**
      * Initializes the Settings with values from the XML settings file.
      */
-    @SuppressWarnings("boxing")
     @Override
     protected void initialize()
     {
-        Document document = JDOM.getDocument(this._path, this._logger);
+        Document document = JDOM.getDocument(this._path, "resources/catalog.xml", this._logger);
 </xsl:text>
     <xsl:apply-templates select="//d:property-name" mode="xml-initialize">
       <xsl:with-param name="package" select="$package"/>
@@ -478,7 +477,6 @@
     <xsl:text>/**
      * Initializes the Settings with default values (from the schema).
      */
-    @SuppressWarnings("boxing")
     @Override
     protected void initialize()
     {

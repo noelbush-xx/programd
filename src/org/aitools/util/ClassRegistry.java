@@ -30,114 +30,96 @@ import org.aitools.util.runtime.UserError;
  * 
  * @param <B> the base class for classes that will be registered
  */
-abstract public class ClassRegistry<B>
-{
-    /** The Hashtable that stores the classes. */
-    protected Hashtable<String, Class<? extends B>> registry;
+abstract public class ClassRegistry<B> {
 
-    /** The string &quot;{@value}&quot;--the required name for a label field. */
-    private static final String LABEL = "label";
+  /** The Hashtable that stores the classes. */
+  protected Hashtable<String, Class<? extends B>> registry;
 
-    /**
-     * Loads the registry with a set of classes.
-     * 
-     * @param classnames the names of the classes to register
-     */
-    public ClassRegistry(String[] classnames)
-    {
-        // Initialize the backing Hashtable.
-        this.registry = new Hashtable<String, Class<? extends B>>(classnames.length);
+  /** The string &quot;{@value} &quot;--the required name for a label field. */
+  private static final String LABEL = "label";
 
-        // Load in the classesToRegister.
-        for (int index = classnames.length; --index >= 0;)
-        {
-            register(classnames[index]);
-        }
+  /**
+   * Loads the registry with a set of classes.
+   * 
+   * @param classnames the names of the classes to register
+   */
+  public ClassRegistry(String[] classnames) {
+    // Initialize the backing Hashtable.
+    this.registry = new Hashtable<String, Class<? extends B>>(classnames.length);
+
+    // Load in the classesToRegister.
+    for (int index = classnames.length; --index >= 0;) {
+      this.register(classnames[index]);
+    }
+  }
+
+  /**
+   * A wrapper for the internal Hashtable's get method.
+   * 
+   * @param label the label of the Class desired.
+   * @return the Class corresponding to the given label.
+   */
+  public synchronized Class<? extends B> get(String label) {
+    if (label != null) {
+      if (this.registry.containsKey(label)) {
+        return this.registry.get(label);
+      }
+      throw new NullPointerException(String.format("Class registry does not contain label \"%s\".", label));
+    }
+    throw new NullPointerException("Passed a null label to ClassRegistry!");
+  }
+
+  /**
+   * Registers an individual class.
+   * 
+   * @param classname the name of the class to register
+   */
+  @SuppressWarnings("unchecked")
+  public void register(String classname) {
+    Class<? extends B> classToRegister;
+
+    // Get the class.
+    try {
+      classToRegister = (Class<? extends B>) Class.forName(classname);
+    }
+    catch (ClassNotFoundException e) {
+      throw new UserError(String.format("\"%s\" is unavailable (not found in classpath).  Cannot initialize registry.",
+          classname), e);
+    }
+    catch (ClassCastException e) {
+      throw new DeveloperError(String.format("Developer has incorrectly specified \"%s\" as a registrable class.",
+          classname), e);
     }
 
-    /**
-     * Registers an individual class.
-     * 
-     * @param classname the name of the class to register
-     */
-    @SuppressWarnings("unchecked")
-    public void register(String classname)
-    {
-        Class<? extends B> classToRegister;
-
-        // Get the class.
-        try
-        {
-            classToRegister = (Class<? extends B>) Class.forName(classname);
-        }
-        catch (ClassNotFoundException e)
-        {
-            throw new UserError(String.format(
-                    "\"%s\" is unavailable (not found in classpath).  Cannot initialize registry.", classname), e);
-        }
-        catch (ClassCastException e)
-        {
-            throw new DeveloperError(String.format(
-                    "Developer has incorrectly specified \"%s\" as a registrable class.", classname), e);
-        }
-
-        // Get the label field.
-        Field labelField = null;
-        if (classToRegister != null)
-        {
-            try
-            {
-                labelField = classToRegister.getDeclaredField(LABEL);
-            }
-            catch (NoSuchFieldException e)
-            {
-                throw new DeveloperError(String.format("Unlikely error: \"%s\" is missing label field!", classname), e);
-            }
-        }
-        else
-        {
-            throw new DeveloperError(String.format("Failed to get processor \"%s\"", classname),
-                    new NullPointerException());
-        }
-
-        // Get the value in the label field.
-        String label = null;
-        try
-        {
-            label = (String) labelField.get(null);
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new DeveloperError(String.format("Label field for \"%s\" is not accessible!", classname), e);
-        }
-
-        // (Finally!) register this class.
-        if (label != null)
-        {
-            this.registry.put(label, classToRegister);
-        }
-        else
-        {
-            throw new DeveloperError("Tried to register class with null label!", new NullPointerException());
-        }
+    // Get the label field.
+    Field labelField = null;
+    if (classToRegister != null) {
+      try {
+        labelField = classToRegister.getDeclaredField(LABEL);
+      }
+      catch (NoSuchFieldException e) {
+        throw new DeveloperError(String.format("Unlikely error: \"%s\" is missing label field!", classname), e);
+      }
+    }
+    else {
+      throw new DeveloperError(String.format("Failed to get processor \"%s\"", classname), new NullPointerException());
     }
 
-    /**
-     * A wrapper for the internal Hashtable's get method.
-     * 
-     * @param label the label of the Class desired.
-     * @return the Class corresponding to the given label.
-     */
-    public synchronized Class<? extends B> get(String label)
-    {
-        if (label != null)
-        {
-            if (this.registry.containsKey(label))
-            {
-                return this.registry.get(label);
-            }
-            throw new NullPointerException(String.format("Class registry does not contain label \"%s\".", label));
-        }
-        throw new NullPointerException("Passed a null label to ClassRegistry!");
+    // Get the value in the label field.
+    String label = null;
+    try {
+      label = (String) labelField.get(null);
     }
+    catch (IllegalAccessException e) {
+      throw new DeveloperError(String.format("Label field for \"%s\" is not accessible!", classname), e);
+    }
+
+    // (Finally!) register this class.
+    if (label != null) {
+      this.registry.put(label, classToRegister);
+    }
+    else {
+      throw new DeveloperError("Tried to register class with null label!", new NullPointerException());
+    }
+  }
 }

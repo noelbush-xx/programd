@@ -24,29 +24,25 @@ package org.aitools.util.runtime;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class Errors
-{
-    /**
-     * Produces some kind of useful description of the given throwable.
-     * 
-     * @param e the throwable to describe
-     * @return a description
-     */
-    public static String describe(Throwable e)
-    {
-        String description = e.getLocalizedMessage();
-        if (description == null)
-        {
-            description = e.getMessage();
-        }
-        if (description == null)
-        {
-            description = e.toString();
-        }
-        if (description == null)
-        {
-            description = e.getClass().getName();
-        }
-        return description;
+public class Errors {
+
+  /**
+   * Produces some kind of useful description of the given throwable.
+   * 
+   * @param e the throwable to describe
+   * @return a description
+   */
+  public static String describe(Throwable e) {
+    String description = e.getLocalizedMessage();
+    if (description == null) {
+      description = e.getMessage();
     }
+    if (description == null) {
+      description = e.toString();
+    }
+    if (description == null) {
+      description = e.getClass().getName();
+    }
+    return description;
+  }
 }

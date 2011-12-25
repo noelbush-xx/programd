@@ -16,15 +16,15 @@ import org.apache.log4j.Logger;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class IAmAlivePulse implements Pulse
-{
-    private Logger logger = Logger.getLogger("programd");
+public class IAmAlivePulse implements Pulse {
 
-    /**
-     * Prints the message &quot;I am alive!&quot; to the console.
-     */
-    public void emit()
-    {
-        this.logger.info("I am alive!");
-    }
+  private Logger logger = Logger.getLogger("programd");
+
+  /**
+   * Prints the message &quot;I am alive!&quot; to the console.
+   */
+  @Override
+  public void emit() {
+    this.logger.info("I am alive!");
+  }
 }

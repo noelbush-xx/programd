@@ -14,12 +14,12 @@ import org.aitools.programd.util.ManagedProcess;
 /**
  * An abstract listener.
  */
-public interface Listener extends ManagedProcess
-{
-    /**
-     * Validates parameters.
-     * 
-     * @throws InvalidListenerParameterException if a parameter is not valid
-     */
-    public void checkParameters() throws InvalidListenerParameterException;
+public interface Listener extends ManagedProcess {
+
+  /**
+   * Validates parameters.
+   * 
+   * @throws InvalidListenerParameterException if a parameter is not valid
+   */
+  public void checkParameters() throws InvalidListenerParameterException;
 }

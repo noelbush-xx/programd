@@ -12,13 +12,13 @@ package org.aitools.programd.interpreter;
 /**
  * An <code>Interpreter</code> handles some server-side script.
  */
-abstract public interface Interpreter
-{
-    /**
-     * Evaluates a given JavaScript expression for a given userid.
-     * 
-     * @param expression the expression to evaluate
-     * @return the result of evaluating the expression
-     */
-    public String evaluate(String expression);
+abstract public interface Interpreter {
+
+  /**
+   * Evaluates a given JavaScript expression for a given userid.
+   * 
+   * @param expression the expression to evaluate
+   * @return the result of evaluating the expression
+   */
+  public String evaluate(String expression);
 }

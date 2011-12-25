@@ -18,52 +18,45 @@ import org.aitools.util.ObjectExemplarRegistry;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class ShellCommandRegistry extends ObjectExemplarRegistry<ShellCommand>
-{
-    /** The list of built-in shell commands (fully-qualified class names). */
-    private static final String[] COMMAND_LIST = { "org.aitools.programd.interfaces.shell.AIMLCommand",
-            "org.aitools.programd.interfaces.shell.BotListCommand",
-            "org.aitools.programd.interfaces.shell.CategoriesCommand",
-            "org.aitools.programd.interfaces.shell.FlushPredicatesCommand",
-            "org.aitools.programd.interfaces.shell.HelpCommand",
-            "org.aitools.programd.interfaces.shell.ListBotFilesCommand",
-            "org.aitools.programd.interfaces.shell.ListCommandablesCommand",
-            "org.aitools.programd.interfaces.shell.LoadCommand", "org.aitools.programd.interfaces.shell.MemoryCommand",
-            "org.aitools.programd.interfaces.shell.PrintGraphCommand",
-            "org.aitools.programd.interfaces.shell.TalkToCommand", "org.aitools.programd.test.aiml.TestCommand",
-            "org.aitools.programd.interfaces.shell.UnloadCommand", "org.aitools.programd.interfaces.shell.WhoCommand" };
+public class ShellCommandRegistry extends ObjectExemplarRegistry<ShellCommand> {
 
-    /**
-     * Creates a new <code>AIMLProcessorRegistry</code>, with
-     * no additional commands.
-     */
-    public ShellCommandRegistry()
-    {
-        super(COMMAND_LIST, ShellCommand.class);
-    }
+  /** The list of built-in shell commands (fully-qualified class names). */
+  private static final String[] COMMAND_LIST = { "org.aitools.programd.interfaces.shell.AIMLCommand",
+      "org.aitools.programd.interfaces.shell.BotListCommand",
+      "org.aitools.programd.interfaces.shell.CategoriesCommand",
+      "org.aitools.programd.interfaces.shell.FlushPredicatesCommand",
+      "org.aitools.programd.interfaces.shell.HelpCommand", "org.aitools.programd.interfaces.shell.ListBotFilesCommand",
+      "org.aitools.programd.interfaces.shell.ListCommandablesCommand",
+      "org.aitools.programd.interfaces.shell.LoadCommand", "org.aitools.programd.interfaces.shell.MemoryCommand",
+      "org.aitools.programd.interfaces.shell.PrintGraphCommand", "org.aitools.programd.interfaces.shell.TalkToCommand",
+      "org.aitools.programd.test.aiml.TestCommand", "org.aitools.programd.interfaces.shell.UnloadCommand",
+      "org.aitools.programd.interfaces.shell.WhoCommand" };
 
-    /**
-     * @param commandLine the command line to be processed
-     * @return the <code>ShellCommand</code> associated with the given command string
-     * @throws NoSuchCommandException if no matching <code>ShellCommand</code> is available
-     */
-    public ShellCommand getHandlerFor(String commandLine) throws NoSuchCommandException
-    {
-        for (ShellCommand command : this.registry.values())
-        {
-            if (command.handles(commandLine))
-            {
-                return command;
-            }
-        }
-        throw new NoSuchCommandException(commandLine);
-    }
+  /**
+   * Creates a new <code>AIMLProcessorRegistry</code>, with no additional commands.
+   */
+  public ShellCommandRegistry() {
+    super(COMMAND_LIST, ShellCommand.class);
+  }
 
-    /**
-     * @return the values stored in this map
-     */
-    public Collection<ShellCommand> getValues()
-    {
-        return this.registry.values();
+  /**
+   * @param commandLine the command line to be processed
+   * @return the <code>ShellCommand</code> associated with the given command string
+   * @throws NoSuchCommandException if no matching <code>ShellCommand</code> is available
+   */
+  public ShellCommand getHandlerFor(String commandLine) throws NoSuchCommandException {
+    for (ShellCommand command : this.registry.values()) {
+      if (command.handles(commandLine)) {
+        return command;
+      }
     }
+    throw new NoSuchCommandException(commandLine);
+  }
+
+  /**
+   * @return the values stored in this map
+   */
+  public Collection<ShellCommand> getValues() {
+    return this.registry.values();
+  }
 }

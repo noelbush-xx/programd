@@ -14,35 +14,35 @@ package org.aitools.programd.interfaces.shell;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public interface ShellCommandable
-{
-    /**
-     * Returns a string that can be used to send commands to the listener from the interactive shell.
-     * 
-     * @return a string that can be used to send commands to the listener from the interactive shell
-     */
-    public String getShellID();
+public interface ShellCommandable {
 
-    /**
-     * Returns a string that describes the listener when getting a listener list in the interactive shell.
-     * 
-     * @return a string that describes the listener
-     */
+  /**
+   * Returns a list of shell commands that are available.
+   * 
+   * @return a list of shell commands that are available
+   */
+  public String getShellCommands();
 
-    public String getShellDescription();
+  /**
+   * Returns a string that describes the listener when getting a listener list in the interactive shell.
+   * 
+   * @return a string that describes the listener
+   */
 
-    /**
-     * Returns a list of shell commands that are available.
-     * 
-     * @return a list of shell commands that are available
-     */
-    public String getShellCommands();
+  public String getShellDescription();
 
-    /**
-     * Sends a command to the shell. The <code>ShellCommandable</code> itself is responsible for putting back any
-     * output to the shell.
-     * 
-     * @param command the command to send to the shell
-     */
-    public void processShellCommand(String command);
+  /**
+   * Returns a string that can be used to send commands to the listener from the interactive shell.
+   * 
+   * @return a string that can be used to send commands to the listener from the interactive shell
+   */
+  public String getShellID();
+
+  /**
+   * Sends a command to the shell. The <code>ShellCommandable</code> itself is responsible for putting back any output
+   * to the shell.
+   * 
+   * @param command the command to send to the shell
+   */
+  public void processShellCommand(String command);
 }

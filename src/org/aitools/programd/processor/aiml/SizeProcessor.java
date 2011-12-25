@@ -9,38 +9,34 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.jdom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
+import org.jdom.Element;
 
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-size">size</a></code> element.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class SizeProcessor extends AIMLProcessor
-{
-    /** The label (as required by the registration scheme). */
-    public static final String label = "size";
+public class SizeProcessor extends AIMLProcessor {
 
-    /**
-     * Creates a new SizeProcessor using the given Core.
-     * 
-     * @param core the Core object to use
-     */
-    public SizeProcessor(Core core)
-    {
-        super(core);
-    }
+  /** The label (as required by the registration scheme). */
+  public static final String label = "size";
 
-    /**
-     * @see AIMLProcessor#process(Element, TemplateParser)
-     */
-    @Override
-    @SuppressWarnings("unused")
-    public String process(Element element, TemplateParser parser)
-    {
-        return String.valueOf(parser.getCore().getGraphmapper().getCategoryCount());
-    }
+  /**
+   * Creates a new SizeProcessor using the given Core.
+   * 
+   * @param core the Core object to use
+   */
+  public SizeProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * @see AIMLProcessor#process(Element, TemplateParser)
+   */
+  @Override
+  public String process(Element element, TemplateParser parser) {
+    return String.valueOf(parser.getCore().getGraphmapper().getCategoryCount());
+  }
 }

@@ -24,50 +24,46 @@ package org.aitools.util.runtime;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class UserSystem
-{
-    private static double BYTES_PER_MB = 1024.0 * 1024.0;
+public class UserSystem {
 
-    /**
-     * Returns a description of the JVM.
-     * 
-     * @return a description of the JVM
-     */
-    public static String jvmDescription()
-    {
-        return String.format("Using Java VM %s from %s.", System.getProperty("java.vm.version"), System
-                .getProperty("java.vendor"));
-    }
+  private static double BYTES_PER_MB = 1024.0 * 1024.0;
 
-    /**
-     * Returns a description of the operating system and processor configuration.
-     * 
-     * @return a description of the operating system and processor configuration
-     */
-    @SuppressWarnings("boxing")
-    public static String osDescription()
-    {
-        int processorCount = Runtime.getRuntime().availableProcessors();
-        return String.format("Running on %s version %s (%s) with %d processor%s available.", System
-                .getProperty("os.name"), System.getProperty("os.version"), System.getProperty("os.arch"),
-                processorCount, processorCount == 1 ? "" : "s");
-    }
+  /**
+   * Returns a description of the JVM.
+   * 
+   * @return a description of the JVM
+   */
+  public static String jvmDescription() {
+    return String.format("Using Java VM %s from %s.", System.getProperty("java.vm.version"),
+        System.getProperty("java.vendor"));
+  }
 
-    /**
-     * Returns a report of used and available memory.
-     * 
-     * @return a report of used and available memory
-     */
-    @SuppressWarnings("boxing")
-    public static String memoryReport()
-    {
-        Runtime runtime = Runtime.getRuntime();
-        long freemem = runtime.freeMemory();
-        long totalmem = runtime.totalMemory();
-        return String.format(
-                "%.1f MB of memory free out of %.1f MB total in JVM (%.1f MB used).  Configured maximum: %.1f MB.",
-                freemem / BYTES_PER_MB, totalmem / BYTES_PER_MB, (totalmem - freemem) / BYTES_PER_MB, runtime
-                        .maxMemory()
-                        / BYTES_PER_MB);
-    }
+  /**
+   * Returns a report of used and available memory.
+   * 
+   * @return a report of used and available memory
+   */
+  @SuppressWarnings("boxing")
+  public static String memoryReport() {
+    Runtime runtime = Runtime.getRuntime();
+    long freemem = runtime.freeMemory();
+    long totalmem = runtime.totalMemory();
+    return String.format(
+        "%.1f MB of memory free out of %.1f MB total in JVM (%.1f MB used).  Configured maximum: %.1f MB.", freemem
+            / BYTES_PER_MB, totalmem / BYTES_PER_MB, (totalmem - freemem) / BYTES_PER_MB, runtime.maxMemory()
+            / BYTES_PER_MB);
+  }
+
+  /**
+   * Returns a description of the operating system and processor configuration.
+   * 
+   * @return a description of the operating system and processor configuration
+   */
+  @SuppressWarnings("boxing")
+  public static String osDescription() {
+    int processorCount = Runtime.getRuntime().availableProcessors();
+    return String
+        .format("Running on %s version %s (%s) with %d processor%s available.", System.getProperty("os.name"), System
+            .getProperty("os.version"), System.getProperty("os.arch"), processorCount, processorCount == 1 ? "" : "s");
+  }
 }

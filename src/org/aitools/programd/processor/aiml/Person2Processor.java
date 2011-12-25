@@ -9,11 +9,10 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.jdom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
+import org.jdom.Element;
 
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-person2">person2</a></code> element.
@@ -22,27 +21,25 @@ import org.aitools.programd.processor.ProcessorException;
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class Person2Processor extends SubstitutionProcessor
-{
-    /** The label (as required by the registration scheme). */
-    public static final String label = "person2";
+public class Person2Processor extends SubstitutionProcessor {
 
-    /**
-     * Creates a new Person2Processor using the given Core.
-     * 
-     * @param core the Core object to use
-     */
-    public Person2Processor(Core core)
-    {
-        super(core);
-    }
+  /** The label (as required by the registration scheme). */
+  public static final String label = "person2";
 
-    /**
-     * @see AIMLProcessor#process(Element, TemplateParser)
-     */
-    @Override
-    public String process(Element element, TemplateParser parser) throws ProcessorException
-    {
-        return process(Person2Processor.class, element, parser);
-    }
+  /**
+   * Creates a new Person2Processor using the given Core.
+   * 
+   * @param core the Core object to use
+   */
+  public Person2Processor(Core core) {
+    super(core);
+  }
+
+  /**
+   * @see AIMLProcessor#process(Element, TemplateParser)
+   */
+  @Override
+  public String process(Element element, TemplateParser parser) throws ProcessorException {
+    return this.process(Person2Processor.class, element, parser);
+  }
 }

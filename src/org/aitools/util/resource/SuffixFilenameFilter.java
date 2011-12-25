@@ -27,42 +27,36 @@ import java.io.FilenameFilter;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class SuffixFilenameFilter implements FilenameFilter
-{
-    /** The suffixes that will be used to determine acceptable files. */
-    private static String[] SUFFIXES;
+public class SuffixFilenameFilter implements FilenameFilter {
 
-    /**
-     * Constructs a new filename filter given an array of acceptable suffixes.
-     * 
-     * @param suffixes the acceptable suffixes
-     */
-    public SuffixFilenameFilter(String[] suffixes)
-    {
-        SUFFIXES = suffixes;
-    }
+  /** The suffixes that will be used to determine acceptable files. */
+  private static String[] SUFFIXES;
 
-    /**
-     * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
-     */
-    public boolean accept(@SuppressWarnings("unused")
-    File dir, String name)
-    {
-        if (name == null)
-        {
-            return false;
-        }
-        if (name.length() == 0)
-        {
-            return false;
-        }
-        for (int index = SUFFIXES.length; --index >= 0;)
-        {
-            if (name.endsWith(SUFFIXES[index]))
-            {
-                return true;
-            }
-        }
-        return false;
+  /**
+   * Constructs a new filename filter given an array of acceptable suffixes.
+   * 
+   * @param suffixes the acceptable suffixes
+   */
+  public SuffixFilenameFilter(String[] suffixes) {
+    SUFFIXES = suffixes;
+  }
+
+  /**
+   * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
+   */
+  @Override
+  public boolean accept(File dir, String name) {
+    if (name == null) {
+      return false;
     }
+    if (name.length() == 0) {
+      return false;
+    }
+    for (int index = SUFFIXES.length; --index >= 0;) {
+      if (name.endsWith(SUFFIXES[index])) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

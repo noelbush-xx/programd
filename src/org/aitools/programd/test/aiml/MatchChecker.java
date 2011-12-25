@@ -8,54 +8,57 @@ import java.util.regex.Pattern;
  * 
  * @author <a href="noel@aitools.org">Noel Bush</a>
  */
-public class MatchChecker extends Checker
-{
-    private Matcher matcher = null;
+public class MatchChecker extends Checker {
 
-    /**
-     * Creates a new MatchChecker with the given regular expression.
-     * 
-     * @param pattern the regular expression
-     */
-    public MatchChecker(String pattern)
-    {
-        this.matcher = Pattern.compile(pattern, Pattern.CANON_EQ).matcher("");
-    }
+  private Matcher matcher = null;
 
-    /**
-     * Tests whether the given input matches the expected answer.
-     * 
-     * @param input the input to test
-     * @return whether the given input matches the expected answer
-     * @see org.aitools.programd.test.aiml.Checker#test(java.lang.String)
-     */
-    @Override
-    public boolean test(String input)
-    {
-        if (null != this.matcher)
-        {
-            this.matcher.reset(input);
-            return this.matcher.matches();
-        }
-        // otherwise...
-        return false;
-    }
+  /**
+   * Creates a new MatchChecker with the given regular expression.
+   * 
+   * @param pattern the regular expression
+   */
+  public MatchChecker(String pattern) {
+    this.matcher = Pattern.compile(pattern, Pattern.CANON_EQ).matcher("");
+  }
 
-    /**
-     * @see org.aitools.programd.test.aiml.Checker#getContent()
-     */
-    @Override
-    public String getContent()
-    {
-        return this.matcher.pattern().toString();
-    }
+  /**
+   * @see org.aitools.programd.test.aiml.Checker#getContent()
+   */
+  @Override
+  public String getContent() {
+    return this.matcher.pattern().toString();
+  }
 
-    /**
-     * @see org.aitools.programd.test.aiml.Checker#getTagName()
-     */
-    @Override
-    public String getTagName()
-    {
-        return Checker.TAG_EXPECTED_MATCH;
+  /**
+   * @see org.aitools.programd.test.aiml.Checker#getExpected()
+   */
+  @Override
+  public String getExpected() {
+    return String.format("Match of pattern \"%s\"", this.matcher.pattern().pattern());
+  }
+
+  /**
+   * @see org.aitools.programd.test.aiml.Checker#getTagName()
+   */
+  @Override
+  public String getTagName() {
+    return Checker.TAG_EXPECTED_MATCH;
+  }
+
+  /**
+   * Tests whether the given input matches the expected answer.
+   * 
+   * @param input the input to test
+   * @return whether the given input matches the expected answer
+   * @see org.aitools.programd.test.aiml.Checker#test(java.lang.String)
+   */
+  @Override
+  public boolean test(String input) {
+    if (null != this.matcher) {
+      this.matcher.reset(input);
+      return this.matcher.matches();
     }
+    // otherwise...
+    return false;
+  }
 }

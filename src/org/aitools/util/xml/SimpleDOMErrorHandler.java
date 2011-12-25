@@ -26,63 +26,56 @@ import org.w3c.dom.DOMError;
 import org.w3c.dom.DOMErrorHandler;
 
 /**
- *
+ * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class SimpleDOMErrorHandler implements DOMErrorHandler
-{
-    private Logger _logger;
-    
-    /**
-     * @see org.w3c.dom.DOMErrorHandler#handleError(org.w3c.dom.DOMError)
-     */
-    public boolean handleError(DOMError e)
-    {
-        Exception exception = null;
-        String message = e.getMessage();
-        if (message == null)
-        {
-            Object relatedException = e.getRelatedException();
-            if (relatedException instanceof Exception)
-            {
-                exception = (Exception)relatedException;
-                message = exception.getMessage();
-                if (message == null)
-                {
-                    message = exception.getClass().getName();
-                }
-            }
-        }
-        Level level;
-        switch (e.getSeverity())
-        {
-            case DOMError.SEVERITY_WARNING:
-                level = Level.WARN;
-                break;
-            case DOMError.SEVERITY_ERROR:
-                level = Level.ERROR;
-                break;
-            case DOMError.SEVERITY_FATAL_ERROR:
-            default:
-                level = Level.FATAL;
-                break;
-        }
-        if (exception != null)
-        {
-            this._logger.log(level, message, exception);
-        }
-        else
-        {
-            this._logger.log(level, message);
-        }
-        return (level.toInt() < Priority.FATAL_INT);
-    }
+public class SimpleDOMErrorHandler implements DOMErrorHandler {
 
-    /**
-     * @param logger
-     */
-    public SimpleDOMErrorHandler(Logger logger)
-    {
-        this._logger = logger;
+  private Logger _logger;
+
+  /**
+   * @param logger
+   */
+  public SimpleDOMErrorHandler(Logger logger) {
+    this._logger = logger;
+  }
+
+  /**
+   * @see org.w3c.dom.DOMErrorHandler#handleError(org.w3c.dom.DOMError)
+   */
+  @Override
+  public boolean handleError(DOMError e) {
+    Exception exception = null;
+    String message = e.getMessage();
+    if (message == null) {
+      Object relatedException = e.getRelatedException();
+      if (relatedException instanceof Exception) {
+        exception = (Exception) relatedException;
+        message = exception.getMessage();
+        if (message == null) {
+          message = exception.getClass().getName();
+        }
+      }
     }
+    Level level;
+    switch (e.getSeverity()) {
+      case DOMError.SEVERITY_WARNING:
+        level = Level.WARN;
+        break;
+      case DOMError.SEVERITY_ERROR:
+        level = Level.ERROR;
+        break;
+      case DOMError.SEVERITY_FATAL_ERROR:
+      default:
+        level = Level.FATAL;
+        break;
+    }
+    if (exception != null) {
+      this._logger.log(level, message, exception);
+    }
+    else {
+      this._logger.log(level, message);
+    }
+    return level.toInt() < Priority.FATAL_INT;
+  }
 }

@@ -24,17 +24,21 @@ package org.aitools.util.runtime;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class DeveloperError extends Error
-{
-    /**
-     * Creates a new DeveloperError associated with the given Throwable.
-     * 
-     * @param message the message describing the error
-     * @param e the Throwable that is responsible for this DeveloperError
-     */
-    public DeveloperError(String message, Throwable e)
-    {
-        super(message);
-        initCause(e);
-    }
+public class DeveloperError extends Error {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+
+  /**
+   * Creates a new DeveloperError associated with the given Throwable.
+   * 
+   * @param message the message describing the error
+   * @param e the Throwable that is responsible for this DeveloperError
+   */
+  public DeveloperError(String message, Throwable e) {
+    super(message);
+    this.initCause(e);
+  }
 }

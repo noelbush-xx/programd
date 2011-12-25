@@ -13,7 +13,7 @@ import java.net.URL;
 import org.aitools.util.Settings;
 
 /**
- * Automatically generated at 2007-03-10T23:39:17.013-05:00.
+ * Automatically generated at 2011-11-20T00:54:50.297+01:00.
  */
 abstract public class CoreSettings extends Settings
 {
@@ -160,22 +160,25 @@ abstract public class CoreSettings extends Settings
     /** Use interactive command-line shell? */
     private boolean useShell;
         
-    /** http://xml.org/sax/features/use-entity-resolver2 */
+    /** Location of the XML catalog (relative to program directory) */
+    private String xmlCatalogPath;
+        
+    /** Value for http://xml.org/sax/features/use-entity-resolver2 */
     private boolean xmlParserUseEntityResolver2;
         
-    /** http://xml.org/sax/features/validation */
+    /** Value for http://xml.org/sax/features/validation */
     private boolean xmlParserUseValidation;
         
-    /** http://apache.org/xml/features/validation/schema */
+    /** Value for http://apache.org/xml/features/validation/schema */
     private boolean xmlParserUseSchemaValidation;
         
-    /** http://apache.org/xml/features/honour-all-schemaLocations */
+    /** Value for http://apache.org/xml/features/honour-all-schemaLocations */
     private boolean xmlParserHonourAllSchemaLocations;
         
-    /** http://apache.org/xml/features/xinclude */
+    /** Value for http://apache.org/xml/features/xinclude */
     private boolean xmlParserUseXInclude;
         
-    /** http://apache.org/xml/features/validate-annotations */
+    /** Value for http://apache.org/xml/features/validate-annotations */
     private boolean xmlParserValidateAnnotations;
         
     /**
@@ -488,6 +491,14 @@ abstract public class CoreSettings extends Settings
     public boolean useShell()
     {
         return this.useShell;
+    }
+
+    /**
+     * @return the value of xmlCatalogPath
+     */
+    public String getXmlCatalogPath()
+    {
+        return this.xmlCatalogPath;
     }
 
     /**
@@ -848,6 +859,14 @@ abstract public class CoreSettings extends Settings
     public void setUseShell(boolean value)
     {
         this.useShell = value;
+    }
+
+    /**
+     * @param value the value for xmlCatalogPath
+     */
+    public void setXmlCatalogPath(String value)
+    {
+        this.xmlCatalogPath = value;
     }
 
     /**

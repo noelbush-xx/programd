@@ -77,6 +77,7 @@ public class DBNodemapperTest
      * 
      */
     @Test
+    @SuppressWarnings("static-method")
     public void testSomething()
     {
         fail("Not yet implemented");

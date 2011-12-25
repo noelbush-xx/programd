@@ -12,10 +12,10 @@ package org.aitools.programd.util;
 /**
  * Specifies the interface for any process that should be managed in a separate thread.
  */
-public interface ManagedProcess extends Runnable
-{
-    /**
-     * Shuts down the process.
-     */
-    public void shutdown();
+public interface ManagedProcess extends Runnable {
+
+  /**
+   * Shuts down the process.
+   */
+  public void shutdown();
 }

@@ -9,39 +9,36 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.jdom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
+import org.jdom.Element;
 
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-version">version</a></code> element.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class VersionProcessor extends AIMLProcessor
-{
-    /** The label (as required by the registration scheme). */
-    public static final String label = "version";
+public class VersionProcessor extends AIMLProcessor {
 
-    /**
-     * Creates a new VersionProcessor using the given Core.
-     * 
-     * @param core the Core object to use
-     */
-    public VersionProcessor(Core core)
-    {
-        super(core);
-    }
+  /** The label (as required by the registration scheme). */
+  public static final String label = "version";
 
-    /**
-     * @see AIMLProcessor#process(Element, TemplateParser)
-     */
-    @Override
-    @SuppressWarnings("unused")
-    public String process(Element element, TemplateParser parser)
-    {
-        Package pkg = Package.getPackage("org.aitools.programd");
-        return String.format("%s version %s [%s].", pkg.getSpecificationTitle(), pkg.getSpecificationVersion(), pkg.getImplementationVersion());
-    }
+  /**
+   * Creates a new VersionProcessor using the given Core.
+   * 
+   * @param core the Core object to use
+   */
+  public VersionProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * @see AIMLProcessor#process(Element, TemplateParser)
+   */
+  @Override
+  public String process(Element element, TemplateParser parser) {
+    Package pkg = Package.getPackage("org.aitools.programd");
+    return String.format("%s version %s [%s].", pkg.getSpecificationTitle(), pkg.getSpecificationVersion(),
+        pkg.getImplementationVersion());
+  }
 }

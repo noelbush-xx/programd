@@ -9,12 +9,11 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.jdom.Element;
-
 import java.util.Date;
 
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
+import org.jdom.Element;
 
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-date">date</a></code> element.
@@ -22,28 +21,25 @@ import org.aitools.programd.parser.TemplateParser;
  * @author Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class DateProcessor extends AIMLProcessor
-{
-    /** The label (as required by the registration scheme). */
-    public static final String label = "date";
+public class DateProcessor extends AIMLProcessor {
 
-    /**
-     * Creates a new DateProcessor using the given Core.
-     * 
-     * @param core the Core object to use
-     */
-    public DateProcessor(Core core)
-    {
-        super(core);
-    }
+  /** The label (as required by the registration scheme). */
+  public static final String label = "date";
 
-    /**
-     * @see AIMLProcessor#process(Element, TemplateParser)
-     */
-    @Override
-    @SuppressWarnings("unused")
-    public String process(Element element, TemplateParser parser)
-    {
-        return new Date().toString();
-    }
+  /**
+   * Creates a new DateProcessor using the given Core.
+   * 
+   * @param core the Core object to use
+   */
+  public DateProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * @see AIMLProcessor#process(Element, TemplateParser)
+   */
+  @Override
+  public String process(Element element, TemplateParser parser) {
+    return new Date().toString();
+  }
 }

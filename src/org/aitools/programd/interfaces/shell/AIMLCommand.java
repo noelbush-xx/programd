@@ -17,68 +17,60 @@ import org.aitools.util.runtime.UserError;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class AIMLCommand extends ShellCommand
-{
-    /** Shell command. */
-    public static final String COMMAND_STRING = "/aiml";
+public class AIMLCommand extends ShellCommand {
 
-    /** Argument template. */
-    public static final String ARGUMENT_TEMPLATE = "aiml-fragment";
+  /** Shell command. */
+  public static final String COMMAND_STRING = "/aiml";
 
-    /** Shell help line. */
-    private static final String HELP_LINE = "tries to process a fragment of template-side AIML";
+  /** Argument template. */
+  public static final String ARGUMENT_TEMPLATE = "aiml-fragment";
 
-    /** Template start tag. */
-    private static final String TEMPLATE_START = "<template>";
+  /** Shell help line. */
+  private static final String HELP_LINE = "tries to process a fragment of template-side AIML";
 
-    /** Template end tag. */
-    private static final String TEMPLATE_END = "</template>";
+  /** Template start tag. */
+  private static final String TEMPLATE_START = "<template>";
 
-    /**
-     * Creates a new AIMLCommand.
-     */
-    public AIMLCommand()
-    {
-        super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
+  /** Template end tag. */
+  private static final String TEMPLATE_END = "</template>";
+
+  /**
+   * Creates a new AIMLCommand.
+   */
+  public AIMLCommand() {
+    super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
+  }
+
+  /**
+   * Tries to process a given fragment of template-side AIML.
+   * 
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
+   *      org.aitools.programd.interfaces.shell.Shell)
+   */
+  @Override
+  public void handle(String commandLine, Shell shell) {
+    // See if there is some content.
+    int space = commandLine.indexOf(' ');
+    if (space == -1) {
+      shell.showError("You must specify some template content.");
     }
-
-    /**
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
-     */
-    @Override
-    public boolean handles(String commandLine)
-    {
-        return commandLine.toLowerCase().startsWith(COMMAND_STRING);
+    else {
+      // Create a new TemplateParser.
+      TemplateParser parser = new TemplateParser("", "", "", shell.getName(), shell.getCurrentBotID(), shell.getCore());
+      try {
+        shell.showMessage(parser.processResponse(TEMPLATE_START + commandLine.substring(space + 1) + TEMPLATE_END));
+      }
+      catch (Exception e) {
+        throw new UserError("Error occurred while processing template.", e);
+      }
     }
+  }
 
-    /**
-     * Tries to process a given fragment of template-side AIML.
-     * 
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
-     *      org.aitools.programd.interfaces.shell.Shell)
-     */
-    @Override
-    public void handle(String commandLine, Shell shell)
-    {
-        // See if there is some content.
-        int space = commandLine.indexOf(' ');
-        if (space == -1)
-        {
-            shell.showError("You must specify some template content.");
-        }
-        else
-        {
-            // Create a new TemplateParser.
-            TemplateParser parser = new TemplateParser("", "", "", shell.getName(), shell.getCurrentBotID(), shell.getCore());
-            try
-            {
-                shell.showMessage(parser.processResponse(TEMPLATE_START + commandLine.substring(space + 1)
-                        + TEMPLATE_END));
-            }
-            catch (Exception e)
-            {
-                throw new UserError("Error occurred while processing template.", e);
-            }
-        }
-    }
+  /**
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
+   */
+  @Override
+  public boolean handles(String commandLine) {
+    return commandLine.toLowerCase().startsWith(COMMAND_STRING);
+  }
 }

@@ -11,59 +11,49 @@ package org.aitools.programd.logging;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import org.aitools.programd.logging.ChatLogEvent;
+
 import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class DBChatLogLayout extends SimpleLayout
-{
-    /**
-     * Creates a new SimpleFormatter with the given Core settings.
-     */
-    public DBChatLogLayout()
-    {
-        super();
-    }
+public class DBChatLogLayout extends SimpleLayout {
 
-    /**
-     * We insist that the event be a ChatLogEvent.
-     * 
-     * @param event
-     *            the ChatLogEvent to format
-     * @return the result of formatting the given ChatLogEvent
-     * @throws IllegalArgumentException
-     *             if the record is not a ChatLogEvent
-     */
-    @Override
-    public String format(LoggingEvent event)
-    {
-        if (!(event instanceof ChatLogEvent))
-        {
-            throw new IllegalArgumentException("DBChatLogLayout is intended to handle ChatLogEvents only.");
-        }
-        return format((ChatLogEvent) event);
+  /**
+   * @param event the ChatLogEvent to format
+   * @return the result of formatting the given ChatLogEvent
+   */
+  public static String format(ChatLogEvent event) {
+    try {
+      return String.format("insert into chatlog (userid, botid, input, response) values ('%s', '%s', '%s', '%s')",
+          URLEncoder.encode(event.getUserID(), "utf-8"), URLEncoder.encode(event.getBotID(), "utf-8"),
+          URLEncoder.encode(event.getInput(), "utf-8"), URLEncoder.encode(event.getReply(), "utf-8"));
     }
+    catch (UnsupportedEncodingException e) {
+      throw new RuntimeException("UTF encoding is not supported on this platform!", e);
+    }
+  }
 
-    /**
-     * @param event
-     *            the ChatLogEvent to format
-     * @return the result of formatting the given ChatLogEvent
-     */
-    public static String format(ChatLogEvent event)
-    {
-        try
-        {
-            return String.format(
-                    "insert into chatlog (userid, botid, input, response) values ('%s', '%s', '%s', '%s')", URLEncoder
-                            .encode(event.getUserID(), "utf-8"), URLEncoder.encode(event.getBotID(), "utf-8"),
-                    URLEncoder.encode(event.getInput(), "utf-8"), URLEncoder.encode(event.getReply(), "utf-8"));
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            throw new RuntimeException("UTF encoding is not supported on this platform!", e);
-        }
+  /**
+   * Creates a new SimpleFormatter with the given Core settings.
+   */
+  public DBChatLogLayout() {
+    super();
+  }
+
+  /**
+   * We insist that the event be a ChatLogEvent.
+   * 
+   * @param event the ChatLogEvent to format
+   * @return the result of formatting the given ChatLogEvent
+   * @throws IllegalArgumentException if the record is not a ChatLogEvent
+   */
+  @Override
+  public String format(LoggingEvent event) {
+    if (!(event instanceof ChatLogEvent)) {
+      throw new IllegalArgumentException("DBChatLogLayout is intended to handle ChatLogEvents only.");
     }
+    return format((ChatLogEvent) event);
+  }
 }

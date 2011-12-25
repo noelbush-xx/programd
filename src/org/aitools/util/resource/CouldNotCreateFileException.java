@@ -25,15 +25,19 @@ package org.aitools.util.resource;
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.2
  */
-public class CouldNotCreateFileException extends Exception
-{
-    /**
-     * Creates a new CouldNotCreateFileException.
-     * 
-     * @param filename the filename for which a file could not be created.
-     */
-    public CouldNotCreateFileException(String filename)
-    {
-        super(String.format("Could not create \"%s\".", filename));
-    }
+public class CouldNotCreateFileException extends Exception {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+
+  /**
+   * Creates a new CouldNotCreateFileException.
+   * 
+   * @param filename the filename for which a file could not be created.
+   */
+  public CouldNotCreateFileException(String filename) {
+    super(String.format("Could not create \"%s\".", filename));
+  }
 }

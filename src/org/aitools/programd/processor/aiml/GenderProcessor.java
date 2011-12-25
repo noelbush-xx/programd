@@ -21,27 +21,25 @@ import org.jdom.Element;
  * @author Jon Baer
  * @author Thomas Ringate, Pedro Colla
  */
-public class GenderProcessor extends SubstitutionProcessor
-{
-    /** The label (as required by the registration scheme). */
-    public static final String label = "gender";
+public class GenderProcessor extends SubstitutionProcessor {
 
-    /**
-     * Creates a new GenderProcessor using the given Core.
-     * 
-     * @param core the Core object to use
-     */
-    public GenderProcessor(Core core)
-    {
-        super(core);
-    }
+  /** The label (as required by the registration scheme). */
+  public static final String label = "gender";
 
-    /**
-     * @see AIMLProcessor#process(Element, TemplateParser)
-     */
-    @Override
-    public String process(Element element, TemplateParser parser) throws ProcessorException
-    {
-        return process(GenderProcessor.class, element, parser);
-    }
+  /**
+   * Creates a new GenderProcessor using the given Core.
+   * 
+   * @param core the Core object to use
+   */
+  public GenderProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * @see AIMLProcessor#process(Element, TemplateParser)
+   */
+  @Override
+  public String process(Element element, TemplateParser parser) throws ProcessorException {
+    return this.process(GenderProcessor.class, element, parser);
+  }
 }

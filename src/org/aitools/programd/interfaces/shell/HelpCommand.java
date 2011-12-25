@@ -14,60 +14,54 @@ package org.aitools.programd.interfaces.shell;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class HelpCommand extends ShellCommand
-{
-    /** Shell command. */
-    public static final String COMMAND_STRING = "/help";
+public class HelpCommand extends ShellCommand {
 
-    /** Argument template. */
-    public static final String ARGUMENT_TEMPLATE = "";
+  /** Shell command. */
+  public static final String COMMAND_STRING = "/help";
 
-    /** Shell help line. */
-    private static final String HELP_LINE = "prints this help";
+  /** Argument template. */
+  public static final String ARGUMENT_TEMPLATE = "";
 
-    /** Shell help text. */
-    private static final String HELP_PREFACE = "Shell commands are preceded by a \"/\".  Available commands:";
+  /** Shell help line. */
+  private static final String HELP_LINE = "prints this help";
 
-    /*
-     "/exit             - shuts down the bot server",
-     "/load filename    - loads/reloads given filename for active bot",
-     "/unload filename  - unloads given filename for active bot",
-     "/bots             - lists loaded bots",
-     "/talkto botid     - switches conversation to given bot",
-     "/who              - prints the id of the current bot",
-     "/files            - lists the files loaded by the current bot",
-     "/commandables     - lists available \"shell commandables\" (such as some listeners)" };
-     */
-    /**
-     * Creates a new HelpCommand.
-     */
-    public HelpCommand()
-    {
-        super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
+  /** Shell help text. */
+  private static final String HELP_PREFACE = "Shell commands are preceded by a \"/\".  Available commands:";
+
+  /*
+   * "/exit             - shuts down the bot server", "/load filename    - loads/reloads given filename for active bot",
+   * "/unload filename  - unloads given filename for active bot", "/bots             - lists loaded bots",
+   * "/talkto botid     - switches conversation to given bot", "/who              - prints the id of the current bot",
+   * "/files            - lists the files loaded by the current bot",
+   * "/commandables     - lists available \"shell commandables\" (such as some listeners)" };
+   */
+  /**
+   * Creates a new HelpCommand.
+   */
+  public HelpCommand() {
+    super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
+  }
+
+  /**
+   * Prints a help summary of all available commands to the shell console.
+   * 
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
+   *      org.aitools.programd.interfaces.shell.Shell)
+   */
+  @Override
+  public void handle(String commandLine, Shell shell) {
+    shell.showMessage(HELP_PREFACE);
+    for (ShellCommand command : shell.getCommands()) {
+      shell.showMessage(String.format("%-30s", command.getCommandString() + ' ' + command.getArgumentTemplate())
+          + command.getHelpLine());
     }
+  }
 
-    /**
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
-     */
-    @Override
-    public boolean handles(String commandLine)
-    {
-        return commandLine.toLowerCase().equals(COMMAND_STRING);
-    }
-
-    /**
-     * Prints a help summary of all available commands to the shell console.
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
-     */
-    @Override
-    @SuppressWarnings("unused")
-    public void handle(String commandLine, Shell shell)
-    {
-        shell.showMessage(HELP_PREFACE);
-        for (ShellCommand command : shell.getCommands())
-        {
-            shell.showMessage(String.format("%-30s", command.getCommandString() + ' ' + command.getArgumentTemplate())
-                    + command.getHelpLine());
-        }
-    }
+  /**
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
+   */
+  @Override
+  public boolean handles(String commandLine) {
+    return commandLine.toLowerCase().equals(COMMAND_STRING);
+  }
 }

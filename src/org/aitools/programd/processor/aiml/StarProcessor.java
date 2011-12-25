@@ -9,10 +9,9 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.jdom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
+import org.jdom.Element;
 
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-star">star</a></code> element.
@@ -21,27 +20,25 @@ import org.aitools.programd.parser.TemplateParser;
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class StarProcessor extends IndexedPredicateProcessor
-{
-    /** The label (as required by the registration scheme). */
-    public static final String label = "star";
+public class StarProcessor extends IndexedPredicateProcessor {
 
-    /**
-     * Creates a new StarProcessor using the given Core.
-     * 
-     * @param core the Core object to use
-     */
-    public StarProcessor(Core core)
-    {
-        super(core);
-    }
+  /** The label (as required by the registration scheme). */
+  public static final String label = "star";
 
-    /**
-     * @see AIMLProcessor#process(Element, TemplateParser)
-     */
-    @Override
-    public String process(Element element, TemplateParser parser)
-    {
-        return super.process(element, parser, parser.getMostRecentMatch().getInputStars(), 1);
-    }
+  /**
+   * Creates a new StarProcessor using the given Core.
+   * 
+   * @param core the Core object to use
+   */
+  public StarProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * @see AIMLProcessor#process(Element, TemplateParser)
+   */
+  @Override
+  public String process(Element element, TemplateParser parser) {
+    return super.process(element, parser, parser.getMostRecentMatch().getInputStars(), 1);
+  }
 }

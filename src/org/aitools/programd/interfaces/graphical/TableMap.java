@@ -14,97 +14,96 @@ import javax.swing.table.TableModel;
  * @author Philip Milne
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class TableMap extends AbstractTableModel implements TableModelListener
-{
-    protected TableModel model;
+public class TableMap extends AbstractTableModel implements TableModelListener {
 
-    /**
-     * @return the table model
-     */
-    public TableModel getModel()
-    {
-        return this.model;
-    }
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * Sets the TableMap's model to the given model.
-     * 
-     * @param modelToSet the model to set
-     */
-    public synchronized void setModel(TableModel modelToSet)
-    {
-        this.model = modelToSet;
-        this.model.addTableModelListener(this);
-    }
+  protected TableModel model;
 
-    // By default, implement TableModel by forwarding all messages
-    // to the model.
+  /**
+   * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+   */
+  @Override
+  public Class<?> getColumnClass(int aColumn) {
+    return this.model.getColumnClass(aColumn);
+  }
 
-    /**
-     * @see javax.swing.table.TableModel#getValueAt(int, int)
-     */
-    public Object getValueAt(int aRow, int aColumn)
-    {
-        return this.model.getValueAt(aRow, aColumn);
-    }
+  /**
+   * @see javax.swing.table.TableModel#getColumnCount()
+   */
+  @Override
+  public int getColumnCount() {
+    return this.model == null ? 0 : this.model.getColumnCount();
+  }
 
-    /**
-     * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
-     */
-    @Override
-    public void setValueAt(Object aValue, int aRow, int aColumn)
-    {
-        this.model.setValueAt(aValue, aRow, aColumn);
-    }
+  // By default, implement TableModel by forwarding all messages
+  // to the model.
 
-    /**
-     * @see javax.swing.table.TableModel#getRowCount()
-     */
-    public synchronized int getRowCount()
-    {
-        return (this.model == null) ? 0 : this.model.getRowCount();
-    }
+  /**
+   * @see javax.swing.table.AbstractTableModel#getColumnName(int)
+   */
+  @Override
+  public String getColumnName(int aColumn) {
+    return this.model.getColumnName(aColumn);
+  }
 
-    /**
-     * @see javax.swing.table.TableModel#getColumnCount()
-     */
-    public int getColumnCount()
-    {
-        return (this.model == null) ? 0 : this.model.getColumnCount();
-    }
+  /**
+   * @return the table model
+   */
+  public TableModel getModel() {
+    return this.model;
+  }
 
-    /**
-     * @see javax.swing.table.AbstractTableModel#getColumnName(int)
-     */
-    @Override
-    public String getColumnName(int aColumn)
-    {
-        return this.model.getColumnName(aColumn);
-    }
+  /**
+   * @see javax.swing.table.TableModel#getRowCount()
+   */
+  @Override
+  public synchronized int getRowCount() {
+    return this.model == null ? 0 : this.model.getRowCount();
+  }
 
-    /**
-     * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
-     */
-    @Override
-    public Class<?> getColumnClass(int aColumn)
-    {
-        return this.model.getColumnClass(aColumn);
-    }
+  /**
+   * @see javax.swing.table.TableModel#getValueAt(int, int)
+   */
+  @Override
+  public Object getValueAt(int aRow, int aColumn) {
+    return this.model.getValueAt(aRow, aColumn);
+  }
 
-    /**
-     * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
-     */
-    @Override
-    public boolean isCellEditable(int row, int column)
-    {
-        return this.model.isCellEditable(row, column);
-    }
+  /**
+   * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
+   */
+  @Override
+  public boolean isCellEditable(int row, int column) {
+    return this.model.isCellEditable(row, column);
+  }
 
-    /**
-     * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)
-     */
-    public void tableChanged(TableModelEvent e)
-    {
-        fireTableChanged(e);
-    }
+  /**
+   * Sets the TableMap's model to the given model.
+   * 
+   * @param modelToSet the model to set
+   */
+  public synchronized void setModel(TableModel modelToSet) {
+    this.model = modelToSet;
+    this.model.addTableModelListener(this);
+  }
+
+  /**
+   * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
+   */
+  @Override
+  public void setValueAt(Object aValue, int aRow, int aColumn) {
+    this.model.setValueAt(aValue, aRow, aColumn);
+  }
+
+  /**
+   * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)
+   */
+  @Override
+  public void tableChanged(TableModelEvent e) {
+    this.fireTableChanged(e);
+  }
 }

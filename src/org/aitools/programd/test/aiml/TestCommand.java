@@ -22,82 +22,71 @@ import org.apache.log4j.LogManager;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class TestCommand extends ShellCommand
-{
-    /** Shell command. */
-    public static final String COMMAND_STRING = "/test";
+public class TestCommand extends ShellCommand {
 
-    /** Argument template. */
-    public static final String ARGUMENT_TEMPLATE = "suite [run-count]";
+  /** Shell command. */
+  public static final String COMMAND_STRING = "/test";
 
-    /** Shell help line. */
-    private static final String HELP_LINE = "runs specified test suite on current bot";
+  /** Argument template. */
+  public static final String ARGUMENT_TEMPLATE = "suite [run-count]";
 
-    /**
-     * Creates a new TestCommand.
-     */
-    public TestCommand()
-    {
-        super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
-    }
+  /** Shell help line. */
+  private static final String HELP_LINE = "runs specified test suite on current bot";
 
-    /**
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
-     */
-    @Override
-    public boolean handles(String commandLine)
-    {
-        return commandLine.toLowerCase().startsWith(COMMAND_STRING);
-    }
+  /**
+   * Creates a new TestCommand.
+   */
+  public TestCommand() {
+    super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
+  }
 
-    /**
-     * Runs the specified test suite on the current bot. Optionally, a number of
-     * test runs can be specified.
-     * 
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
-     *      org.aitools.programd.interfaces.shell.Shell)
-     */
-    @Override
-    public void handle(String commandLine, Shell shell)
-    {
-        int runCount = 1;
-        int space1 = commandLine.indexOf(' ');
-        String suite = null;
-        if (space1 != -1)
-        {
-            int space2 = commandLine.indexOf(' ', space1 + 1);
-            if (space2 != -1)
-            {
-                suite = commandLine.substring(space1 + 1, space2);
-                runCount = Integer.parseInt(commandLine.substring(space2 + 1));
-            }
-            else
-            {
-                try
-                {
-                    runCount = Integer.parseInt(commandLine.substring(space1 + 1));
-                }
-                catch (NumberFormatException e)
-                {
-                    shell.showError("Invalid test run count. Will run 1 time.");
-                    runCount = 1;
-                    suite = commandLine.substring(space1 + 1);
-                }
-            }
+  /**
+   * Runs the specified test suite on the current bot. Optionally, a number of test runs can be specified.
+   * 
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
+   *      org.aitools.programd.interfaces.shell.Shell)
+   */
+  @Override
+  public void handle(String commandLine, Shell shell) {
+    int runCount = 1;
+    int space1 = commandLine.indexOf(' ');
+    String suite = null;
+    if (space1 != -1) {
+      int space2 = commandLine.indexOf(' ', space1 + 1);
+      if (space2 != -1) {
+        suite = commandLine.substring(space1 + 1, space2);
+        runCount = Integer.parseInt(commandLine.substring(space2 + 1));
+      }
+      else {
+        try {
+          runCount = Integer.parseInt(commandLine.substring(space1 + 1));
         }
-        String botid = shell.getCurrentBotID();
-        Bot bot = shell.getBots().get(botid);
-        List<URL> testSuites = bot.getTestSuites();
-        URL testReportDirectory = bot.getTestReportDirectory();
-        if (testSuites != null && testReportDirectory != null)
-        {
-            new Tester(shell.getCore(), LogManager.getLogger("programd.testing"), testSuites, testReportDirectory).run(
-                    shell.getCurrentBotID(), suite, runCount);
+        catch (NumberFormatException e) {
+          shell.showError("Invalid test run count. Will run 1 time.");
+          runCount = 1;
+          suite = commandLine.substring(space1 + 1);
         }
-        else
-        {
-            shell.showError(String.format("Bot %s is not configured for testing.", botid));
-        }
+      }
     }
+    String botid = shell.getCurrentBotID();
+    Bot bot = shell.getBots().get(botid);
+    List<URL> testSuites = bot.getTestSuites();
+    URL testReportDirectory = bot.getTestReportDirectory();
+    if (testSuites != null && testReportDirectory != null) {
+      new Tester(shell.getCore(), LogManager.getLogger("programd.testing"), testSuites, testReportDirectory).run(
+          shell.getCurrentBotID(), suite, runCount);
+    }
+    else {
+      shell.showError(String.format("Bot %s is not configured for testing.", botid));
+    }
+  }
+
+  /**
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
+   */
+  @Override
+  public boolean handles(String commandLine) {
+    return commandLine.toLowerCase().startsWith(COMMAND_STRING);
+  }
 
 }

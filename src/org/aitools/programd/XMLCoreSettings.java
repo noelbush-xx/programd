@@ -22,7 +22,7 @@ import org.aitools.util.runtime.UserError;
 import org.aitools.util.xml.JDOM;
 
 /**
- * Automatically generated at 2007-03-10T23:39:17.013-05:00.
+ * Automatically generated at 2011-11-20T00:54:50.297+01:00.
  */
 public class XMLCoreSettings extends CoreSettings
 {
@@ -85,7 +85,7 @@ public class XMLCoreSettings extends CoreSettings
      * @param context
      * @return value
      */
-    protected String getXPathStringValue(String path, Object context)
+    protected static String getXPathStringValue(String path, Object context)
     {
         XPath xpath = getXPath(path);
         try
@@ -105,7 +105,7 @@ public class XMLCoreSettings extends CoreSettings
      * @param context
      * @return value
      */
-    protected Number getXPathNumberValue(String path, Object context)
+    protected static Number getXPathNumberValue(String path, Object context)
     {
         XPath xpath = getXPath(path);
         try
@@ -124,7 +124,7 @@ public class XMLCoreSettings extends CoreSettings
     @Override
     protected void initialize()
     {
-        Document document = JDOM.getDocument(this._path, this._logger);
+        Document document = JDOM.getDocument(this._path, "resources/catalog.xml", this._logger);
 
         // Initialize AIMLNamespaceURI.
         try
@@ -311,22 +311,25 @@ public class XMLCoreSettings extends CoreSettings
         // Initialize useShell.
         setUseShell(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:use-shell", document)));
 
+        // Initialize xmlCatalogPath.
+        setXmlCatalogPath(getXPathStringValue("/d:programd/d:xml-parser/d:catalog-path", document));
+
         // Initialize xmlParserUseEntityResolver2.
-        setXmlParserUseEntityResolver2(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parsing/d:use-entity-resolver2", document)));
+        setXmlParserUseEntityResolver2(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parser/d:use-entity-resolver-2", document)));
 
         // Initialize xmlParserUseValidation.
-        setXmlParserUseValidation(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parsing/d:use-validation", document)));
+        setXmlParserUseValidation(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parser/d:use-validation", document)));
 
         // Initialize xmlParserUseSchemaValidation.
-        setXmlParserUseSchemaValidation(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parsing/d:use-schema-validation", document)));
+        setXmlParserUseSchemaValidation(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parser/d:use-schema-validation", document)));
 
         // Initialize xmlParserHonourAllSchemaLocations.
-        setXmlParserHonourAllSchemaLocations(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parsing/d:honour-all-schema-locations", document)));
+        setXmlParserHonourAllSchemaLocations(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parser/d:honour-all-schema-locations", document)));
 
         // Initialize xmlParserUseXInclude.
-        setXmlParserUseXInclude(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parsing/d:use-xinclude", document)));
+        setXmlParserUseXInclude(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parser/d:use-xinclude", document)));
 
         // Initialize xmlParserValidateAnnotations.
-        setXmlParserValidateAnnotations(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parsing/d:validate-annotations", document)));
+        setXmlParserValidateAnnotations(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parser/d:validate-annotations", document)));
     }
 }

@@ -9,11 +9,10 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.jdom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
+import org.jdom.Element;
 
 /**
  * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-sentence">sentence</a></code> element.
@@ -22,38 +21,34 @@ import org.aitools.programd.processor.ProcessorException;
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class SentenceProcessor extends AIMLProcessor
-{
-    /** The label (as required by the registration scheme). */
-    public static final String label = "sentence";
+public class SentenceProcessor extends AIMLProcessor {
 
-    /**
-     * Creates a new SentenceProcessor using the given Core.
-     * 
-     * @param core the Core object to use
-     */
-    public SentenceProcessor(Core core)
-    {
-        super(core);
-    }
+  /** The label (as required by the registration scheme). */
+  public static final String label = "sentence";
 
-    /**
-     * @see AIMLProcessor#process(Element, TemplateParser)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public String process(Element element, TemplateParser parser) throws ProcessorException
-    {
-        String response = parser.evaluate(element.getContent());
-        if ("".equals(response))
-        {
-            return response;
-        }
-        if (response.trim().length() > 1)
-        {
-            return response.substring(0, 1).toUpperCase() + response.substring(1);
-        }
-        // (otherwise...)
-        return response;
+  /**
+   * Creates a new SentenceProcessor using the given Core.
+   * 
+   * @param core the Core object to use
+   */
+  public SentenceProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * @see AIMLProcessor#process(Element, TemplateParser)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public String process(Element element, TemplateParser parser) throws ProcessorException {
+    String response = parser.evaluate(element.getContent());
+    if ("".equals(response)) {
+      return response;
     }
+    if (response.trim().length() > 1) {
+      return response.substring(0, 1).toUpperCase() + response.substring(1);
+    }
+    // (otherwise...)
+    return response;
+  }
 }

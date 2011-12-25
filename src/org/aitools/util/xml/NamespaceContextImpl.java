@@ -34,129 +34,110 @@ import javax.xml.namespace.NamespaceContext;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class NamespaceContextImpl implements NamespaceContext
-{
-    private Map<String, List<String>> uriToPrefix = new HashMap<String, List<String>>();
-    
-    private Map<String, String> prefixToURI = new HashMap<String, String>();
-    
-    /**
-     * @see javax.xml.namespace.NamespaceContext#getNamespaceURI(java.lang.String)
-     */
-    public String getNamespaceURI(String prefix)
-    {
-        if (prefix == null)
-        {
-            throw new IllegalArgumentException("Prefix cannot be null.");
-        }
-        if (prefix.equals(XMLConstants.DEFAULT_NS_PREFIX))
-        {
-            return XMLConstants.NULL_NS_URI;
-        }
-        if (!this.prefixToURI.containsKey(prefix))
-        {
-            return XMLConstants.NULL_NS_URI;
-        }
-        if (prefix.equals(XMLConstants.XML_NS_PREFIX))
-        {
-            return XMLConstants.XML_NS_URI;
-        }
-        if (prefix.equals(XMLConstants.XMLNS_ATTRIBUTE))
-        {
-            return XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
-        }
-        return this.prefixToURI.get(prefix);
-    }
+public class NamespaceContextImpl implements NamespaceContext {
 
-    /**
-     * @see javax.xml.namespace.NamespaceContext#getPrefix(java.lang.String)
-     */
-    public String getPrefix(String namespaceURI)
-    {
-        if (namespaceURI == null)
-        {
-            throw new IllegalArgumentException("Namespace URI cannot be null.");
-        }
-        if (namespaceURI.equals(XMLConstants.NULL_NS_URI))
-        {
-            return XMLConstants.DEFAULT_NS_PREFIX;
-        }
-        if (namespaceURI.equals(XMLConstants.XML_NS_URI))
-        {
-            return XMLConstants.XML_NS_PREFIX;
-        }
-        if (namespaceURI.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI))
-        {
-            return XMLConstants.XMLNS_ATTRIBUTE;
-        }
-        if (!this.uriToPrefix.containsKey(namespaceURI))
-        {
-            return null;
-        }
-        return this.uriToPrefix.get(namespaceURI).get(0);
-    }
+  private Map<String, List<String>> uriToPrefix = new HashMap<String, List<String>>();
 
-    /**
-     * @see javax.xml.namespace.NamespaceContext#getPrefixes(java.lang.String)
-     */
-    public Iterator<String> getPrefixes(String namespaceURI)
-    {
-        if (namespaceURI == null)
-        {
-            throw new IllegalArgumentException("Namespace URI cannot be null.");
-        }
-        if (namespaceURI.equals(XMLConstants.NULL_NS_URI))
-        {
-            List<String> result = new ArrayList<String>(1);
-            result.add(XMLConstants.DEFAULT_NS_PREFIX);
-            return Collections.unmodifiableList(result).iterator();
-        }
-        if (namespaceURI.equals(XMLConstants.XML_NS_URI))
-        {
-            List<String> result = new ArrayList<String>(1);
-            result.add(XMLConstants.XML_NS_PREFIX);
-            return Collections.unmodifiableList(result).iterator();
-        }
-        if (namespaceURI.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI))
-        {
-            List<String> result = new ArrayList<String>(1);
-            result.add(XMLConstants.XMLNS_ATTRIBUTE);
-            return Collections.unmodifiableList(result).iterator();
-        }
-        if (!this.uriToPrefix.containsKey(namespaceURI))
-        {
-            List<String> result = new ArrayList<String>(0);
-            return Collections.unmodifiableList(result).iterator();
-        }
-        return Collections.unmodifiableList(this.uriToPrefix.get(namespaceURI)).iterator();
-    }
+  private Map<String, String> prefixToURI = new HashMap<String, String>();
 
-    /**
-     * Associates the given namespace URI with the given prefix.
-     * If the prefix is already associated with another namespace
-     * URI, an exception is thrown.
-     * 
-     * @param namespaceURI
-     * @param prefix
-     * @throws IllegalArgumentException if the prefix is already associated with another namespace URI
-     */
-    public void add(String namespaceURI, String prefix)
-    {
-        if (this.prefixToURI.containsKey(prefix))
-        {
-            throw new IllegalArgumentException(String.format("Prefix \"%s\" is already associated with namespace URI \"%s\".", prefix, this.prefixToURI.get(prefix)));
-        }
-        List<String> prefixes;
-        if (this.uriToPrefix.containsKey(namespaceURI))
-        {
-            prefixes = this.uriToPrefix.get(namespaceURI);
-        }
-        else
-        {
-            prefixes = new ArrayList<String>();
-            this.uriToPrefix.put(namespaceURI, prefixes);
-        }
-        prefixes.add(prefix);
-        this.prefixToURI.put(prefix, namespaceURI);
+  /**
+   * Associates the given namespace URI with the given prefix. If the prefix is already associated with another
+   * namespace URI, an exception is thrown.
+   * 
+   * @param namespaceURI
+   * @param prefix
+   * @throws IllegalArgumentException if the prefix is already associated with another namespace URI
+   */
+  public void add(String namespaceURI, String prefix) {
+    if (this.prefixToURI.containsKey(prefix)) {
+      throw new IllegalArgumentException(String.format(
+          "Prefix \"%s\" is already associated with namespace URI \"%s\".", prefix, this.prefixToURI.get(prefix)));
     }
+    List<String> prefixes;
+    if (this.uriToPrefix.containsKey(namespaceURI)) {
+      prefixes = this.uriToPrefix.get(namespaceURI);
+    }
+    else {
+      prefixes = new ArrayList<String>();
+      this.uriToPrefix.put(namespaceURI, prefixes);
+    }
+    prefixes.add(prefix);
+    this.prefixToURI.put(prefix, namespaceURI);
+  }
+
+  /**
+   * @see javax.xml.namespace.NamespaceContext#getNamespaceURI(java.lang.String)
+   */
+  @Override
+  public String getNamespaceURI(String prefix) {
+    if (prefix == null) {
+      throw new IllegalArgumentException("Prefix cannot be null.");
+    }
+    if (prefix.equals(XMLConstants.DEFAULT_NS_PREFIX)) {
+      return XMLConstants.NULL_NS_URI;
+    }
+    if (!this.prefixToURI.containsKey(prefix)) {
+      return XMLConstants.NULL_NS_URI;
+    }
+    if (prefix.equals(XMLConstants.XML_NS_PREFIX)) {
+      return XMLConstants.XML_NS_URI;
+    }
+    if (prefix.equals(XMLConstants.XMLNS_ATTRIBUTE)) {
+      return XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
+    }
+    return this.prefixToURI.get(prefix);
+  }
+
+  /**
+   * @see javax.xml.namespace.NamespaceContext#getPrefix(java.lang.String)
+   */
+  @Override
+  public String getPrefix(String namespaceURI) {
+    if (namespaceURI == null) {
+      throw new IllegalArgumentException("Namespace URI cannot be null.");
+    }
+    if (namespaceURI.equals(XMLConstants.NULL_NS_URI)) {
+      return XMLConstants.DEFAULT_NS_PREFIX;
+    }
+    if (namespaceURI.equals(XMLConstants.XML_NS_URI)) {
+      return XMLConstants.XML_NS_PREFIX;
+    }
+    if (namespaceURI.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)) {
+      return XMLConstants.XMLNS_ATTRIBUTE;
+    }
+    if (!this.uriToPrefix.containsKey(namespaceURI)) {
+      return null;
+    }
+    return this.uriToPrefix.get(namespaceURI).get(0);
+  }
+
+  /**
+   * @see javax.xml.namespace.NamespaceContext#getPrefixes(java.lang.String)
+   */
+  @Override
+  public Iterator<String> getPrefixes(String namespaceURI) {
+    if (namespaceURI == null) {
+      throw new IllegalArgumentException("Namespace URI cannot be null.");
+    }
+    if (namespaceURI.equals(XMLConstants.NULL_NS_URI)) {
+      List<String> result = new ArrayList<String>(1);
+      result.add(XMLConstants.DEFAULT_NS_PREFIX);
+      return Collections.unmodifiableList(result).iterator();
+    }
+    if (namespaceURI.equals(XMLConstants.XML_NS_URI)) {
+      List<String> result = new ArrayList<String>(1);
+      result.add(XMLConstants.XML_NS_PREFIX);
+      return Collections.unmodifiableList(result).iterator();
+    }
+    if (namespaceURI.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)) {
+      List<String> result = new ArrayList<String>(1);
+      result.add(XMLConstants.XMLNS_ATTRIBUTE);
+      return Collections.unmodifiableList(result).iterator();
+    }
+    if (!this.uriToPrefix.containsKey(namespaceURI)) {
+      List<String> result = new ArrayList<String>(0);
+      return Collections.unmodifiableList(result).iterator();
+    }
+    return Collections.unmodifiableList(this.uriToPrefix.get(namespaceURI)).iterator();
+  }
 }

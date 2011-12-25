@@ -26,124 +26,108 @@ import org.apache.log4j.Logger;
  * @author Jon Baer
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class AIMLWatcher
-{
-    /** The Timer that handles watching AIML files. */
-    private Timer timer;
+public class AIMLWatcher {
 
-    private Core _core;
-
-    /** Used for storing information about file changes. */
-    protected Map<URL, Long> watchMap = new HashMap<URL, Long>();
-
-    protected Logger logger = Logger.getLogger("programd");
+  /**
+   * A {@link java.util.TimerTask TimerTask} for checking changed AIML files.
+   */
+  private class CheckAIMLTask extends TimerTask {
 
     /**
-     * Creates a new AIMLWatcher using the given Graphmaster
-     * 
-     * @param core the Core to use
+     * Creates a new CheckAIMLTask.
      */
-    public AIMLWatcher(Core core)
-    {
-        this._core = core;
-        this.logger = this._core.getLogger();
+    public CheckAIMLTask() {
+      super();
     }
 
     /**
-     * Starts the AIMLWatcher.
-     */
-    public void start()
-    {
-        this.timer = new Timer(true);
-        this.timer.schedule(new CheckAIMLTask(), 0, this._core.getSettings().getAIMLWatcherTimer());
-    }
-
-    /**
-     * Stops the AIMLWatcher.
-     */
-    public void stop()
-    {
-        if (this.timer != null)
-        {
-            this.timer.cancel();
-        }
-    }
-
-    /**
-     * Reloads AIML from a given path.
-     * 
-     * @param path the path to reload
-     */
-    protected void reload(URL path)
-    {
-        this.logger.info(String.format("AIMLWatcher reloading \"%s\".", URLTools.unescape(path)));
-        this._core.reload(path);
-    }
-
-    /**
-     * Adds a file to the watchlist.
-     * 
-     * @param path the path to the file
+     * @see java.util.TimerTask#run()
      */
     @SuppressWarnings("boxing")
-    public void addWatchFile(URL path)
-    {
-        /*
-         * if (this.logger.isDebugEnabled()) { this.logger.debug(String.format("Adding watch file \"%s\".", path)); }
-         */
-        synchronized (this)
-        {
-            if (URLTools.seemsToExist(path))
-            {
-                if (this.watchMap.containsKey(path))
-                {
-                    this.watchMap.put(path, URLTools.getLastModified(path));
-                }
+    @Override
+    public void run() {
+      synchronized (AIMLWatcher.this) {
+        for (URL path : AIMLWatcher.this.watchMap.keySet()) {
+          long previousTime = AIMLWatcher.this.watchMap.get(path);
+          if (previousTime != 0) {
+            long lastModified = URLTools.getLastModified(path);
+            if (lastModified > previousTime) {
+              AIMLWatcher.this.watchMap.put(path, lastModified);
+              AIMLWatcher.this.reload(path);
             }
-            else
-            {
-                this.logger.warn(String.format("AIMLWatcher cannot read path \"%s\"", URLTools.unescape(path)),
-                        new IOException());
-            }
+          }
         }
+      }
     }
+  }
 
-    /**
-     * A {@link java.util.TimerTask TimerTask} for checking changed AIML files.
+  /** The Timer that handles watching AIML files. */
+  private Timer timer;
+
+  private Core _core;
+
+  /** Used for storing information about file changes. */
+  protected Map<URL, Long> watchMap = new HashMap<URL, Long>();
+
+  protected Logger logger = Logger.getLogger("programd");
+
+  /**
+   * Creates a new AIMLWatcher using the given Graphmaster
+   * 
+   * @param core the Core to use
+   */
+  public AIMLWatcher(Core core) {
+    this._core = core;
+    this.logger = this._core.getLogger();
+  }
+
+  /**
+   * Adds a file to the watchlist.
+   * 
+   * @param path the path to the file
+   */
+  @SuppressWarnings("boxing")
+  public void addWatchFile(URL path) {
+    /*
+     * if (this.logger.isDebugEnabled()) { this.logger.debug(String.format("Adding watch file \"%s\".", path)); }
      */
-    private class CheckAIMLTask extends TimerTask
-    {
-        /**
-         * Creates a new CheckAIMLTask.
-         */
-        public CheckAIMLTask()
-        {
-            super();
+    synchronized (this) {
+      if (URLTools.seemsToExist(path)) {
+        if (this.watchMap.containsKey(path)) {
+          this.watchMap.put(path, URLTools.getLastModified(path));
         }
-
-        /**
-         * @see java.util.TimerTask#run()
-         */
-        @SuppressWarnings("boxing")
-        @Override
-        public void run()
-        {
-            synchronized (AIMLWatcher.this)
-            {
-                for (URL path : AIMLWatcher.this.watchMap.keySet())
-                {
-                    long previousTime = AIMLWatcher.this.watchMap.get(path);
-                    if (previousTime != 0)
-                    {
-                        long lastModified = URLTools.getLastModified(path);
-                        if (lastModified > previousTime)
-                        {
-                            AIMLWatcher.this.watchMap.put(path, lastModified);
-                            reload(path);
-                        }
-                    }
-                }
-            }
-        }
+      }
+      else {
+        this.logger.warn(String.format("AIMLWatcher cannot read path \"%s\"", URLTools.unescape(path)),
+            new IOException());
+      }
     }
+  }
+
+  /**
+   * Reloads AIML from a given path.
+   * 
+   * @param path the path to reload
+   */
+  protected void reload(URL path) {
+    this.logger.info(String.format("AIMLWatcher reloading \"%s\".", URLTools.unescape(path)));
+    this._core.reload(path);
+  }
+
+  /**
+   * Starts the AIMLWatcher.
+   */
+  public void start() {
+    this.timer = new Timer(true);
+    this.timer.schedule(new CheckAIMLTask(), 0, this._core.getSettings().getAIMLWatcherTimer());
+  }
+
+  /**
+   * Stops the AIMLWatcher.
+   */
+  public void stop() {
+    if (this.timer != null) {
+      this.timer.cancel();
+    }
+  }
 }

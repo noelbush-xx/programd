@@ -14,15 +14,19 @@ package org.aitools.programd.parser;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class TemplateParserException extends Exception
-{
-    /**
-     * Creates a new TemplateParserException with the given message.
-     * 
-     * @param message the message describing the exception
-     */
-    public TemplateParserException(String message)
-    {
-        super(message);
-    }
+public class TemplateParserException extends Exception {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+
+  /**
+   * Creates a new TemplateParserException with the given message.
+   * 
+   * @param message the message describing the exception
+   */
+  public TemplateParserException(String message) {
+    super(message);
+  }
 }

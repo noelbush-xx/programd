@@ -17,59 +17,55 @@ import org.apache.log4j.Logger;
 
 /**
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- *
+ * 
  */
-public class LoadCommand extends ShellCommand
-{
-    /** Shell command string. */
-    public static final String COMMAND_STRING = "/load";
+public class LoadCommand extends ShellCommand {
 
-    /** Argument template. */
-    public static final String ARGUMENT_TEMPLATE = "filename";
+  /** Shell command string. */
+  public static final String COMMAND_STRING = "/load";
 
-    /** Shell help line. */
-    private static final String HELP_LINE = "loads/reloads given filename for active bot";
+  /** Argument template. */
+  public static final String ARGUMENT_TEMPLATE = "filename";
 
-    /**
-     * Creates a new LoadCommand.
-     */
-    public LoadCommand()
-    {
-        super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
+  /** Shell help line. */
+  private static final String HELP_LINE = "loads/reloads given filename for active bot";
+
+  /**
+   * Creates a new LoadCommand.
+   */
+  public LoadCommand() {
+    super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
+  }
+
+  /**
+   * Attempts to load a specified file into the Graphmaster.
+   * 
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
+   *      org.aitools.programd.interfaces.shell.Shell)
+   */
+  @Override
+  public void handle(String commandLine, Shell shell) {
+    // See if there is a filename.
+    int space = commandLine.indexOf(' ');
+    if (space == -1) {
+      shell.showError("You must specify a filename.");
     }
-
-    /**
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
-     */
-    @Override
-    public boolean handles(String commandLine)
-    {
-        return commandLine.toLowerCase().startsWith(COMMAND_STRING);
+    else {
+      Core core = shell.getCore();
+      Graphmapper graphmapper = core.getGraphmapper();
+      int categories = graphmapper.getCategoryCount();
+      String path = commandLine.substring(space + 1);
+      core.load(URLTools.contextualize(Filesystem.getWorkingDirectory(), path), shell.getCurrentBotID());
+      Logger.getLogger("programd").info(
+          graphmapper.getCategoryCount() - categories + " categories loaded from \"" + path + "\".");
     }
+  }
 
-    /**
-     * Attempts to load a specified file into the Graphmaster.
-     * 
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
-     */
-    @Override
-    public void handle(String commandLine, Shell shell)
-    {
-        // See if there is a filename.
-        int space = commandLine.indexOf(' ');
-        if (space == -1)
-        {
-            shell.showError("You must specify a filename.");
-        }
-        else
-        {
-            Core core = shell.getCore();
-            Graphmapper graphmapper = core.getGraphmapper();
-            int categories = graphmapper.getCategoryCount();
-            String path = commandLine.substring(space + 1);
-            core.load(URLTools.contextualize(Filesystem.getWorkingDirectory(), path), shell.getCurrentBotID());
-            Logger.getLogger("programd").info(
-                    graphmapper.getCategoryCount() - categories + " categories loaded from \"" + path + "\".");
-        }
-    }
+  /**
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
+   */
+  @Override
+  public boolean handles(String commandLine) {
+    return commandLine.toLowerCase().startsWith(COMMAND_STRING);
+  }
 }

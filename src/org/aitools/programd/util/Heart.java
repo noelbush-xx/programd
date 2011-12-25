@@ -19,88 +19,78 @@ import java.util.TimerTask;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class Heart
-{
-    /** The Timer object used to beat the heart. */
-    private Timer timer;
+public class Heart {
 
-    /** The pulse rate. */
-    private int _pulserate;
-
-    /** Will hold a set of Pulses. */
-    private ArrayList<Pulse> pulses = new ArrayList<Pulse>();
+  class HeartBeat extends TimerTask {
 
     /**
-     * Creates a new Heart with the given pulse rate.
-     * 
-     * @param pulserate the pulse rate to use
+     * @see java.util.TimerTask#run()
      */
-    public Heart(int pulserate)
-    {
-        this._pulserate = pulserate;
+    @Override
+    public void run() {
+      Heart.this.pulse();
     }
+  }
 
-    /**
-     * Starts the heart (if the pulse is greater than zero).
-     */
-    public void start()
-    {
-        int pulse = 0;
-        try
-        {
-            pulse = 60000 / this._pulserate;
-        }
-        catch (NumberFormatException e)
-        {
-            // Do nothing.
-        }
-        if (pulse > 0)
-        {
-            startBeating(pulse);
-        }
-    }
+  /** The Timer object used to beat the heart. */
+  private Timer timer;
 
-    /**
-     * Starts the heart beating with a specified pulse.
-     * 
-     * @param pulse the period in milliseconds
-     */
-    protected void startBeating(int pulse)
-    {
-        this.timer = new Timer();
-        this.timer.schedule(new HeartBeat(), 0, pulse);
-    }
+  /** The pulse rate. */
+  private int _pulserate;
 
-    /**
-     * Adds a Pulse to the registered list.
-     * 
-     * @param pulse the Pulse to be added
-     */
-    public void addPulse(Pulse pulse)
-    {
-        this.pulses.add(pulse);
-    }
+  /** Will hold a set of Pulses. */
+  private ArrayList<Pulse> pulses = new ArrayList<Pulse>();
 
-    /**
-     * Emits any registered pulses.
-     */
-    public synchronized void pulse()
-    {
-        for (Pulse pulse : this.pulses)
-        {
-            pulse.emit();
-        }
-    }
+  /**
+   * Creates a new Heart with the given pulse rate.
+   * 
+   * @param pulserate the pulse rate to use
+   */
+  public Heart(int pulserate) {
+    this._pulserate = pulserate;
+  }
 
-    class HeartBeat extends TimerTask
-    {
-        /**
-         * @see java.util.TimerTask#run()
-         */
-        @Override
-        public void run()
-        {
-            pulse();
-        }
+  /**
+   * Adds a Pulse to the registered list.
+   * 
+   * @param pulse the Pulse to be added
+   */
+  public void addPulse(Pulse pulse) {
+    this.pulses.add(pulse);
+  }
+
+  /**
+   * Emits any registered pulses.
+   */
+  public synchronized void pulse() {
+    for (Pulse pulse : this.pulses) {
+      pulse.emit();
     }
+  }
+
+  /**
+   * Starts the heart (if the pulse is greater than zero).
+   */
+  public void start() {
+    int pulse = 0;
+    try {
+      pulse = 60000 / this._pulserate;
+    }
+    catch (NumberFormatException e) {
+      // Do nothing.
+    }
+    if (pulse > 0) {
+      this.startBeating(pulse);
+    }
+  }
+
+  /**
+   * Starts the heart beating with a specified pulse.
+   * 
+   * @param pulse the period in milliseconds
+   */
+  protected void startBeating(int pulse) {
+    this.timer = new Timer();
+    this.timer.schedule(new HeartBeat(), 0, pulse);
+  }
 }

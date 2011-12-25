@@ -14,7 +14,11 @@ package org.aitools.programd;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class CoreNotReadyException extends Exception
-{
-    // Nothing special.
+public class CoreNotReadyException extends Exception {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+  // Nothing special.
 }

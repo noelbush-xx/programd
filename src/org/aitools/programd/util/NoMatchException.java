@@ -12,39 +12,40 @@ package org.aitools.programd.util;
 /**
  * Indicates that no match was found in the {@link org.aitools.programd.graph.Graphmapper} .
  */
-public class NoMatchException extends Exception
-{
-    /** The path for which there was no match. */
-    private String _path;
+public class NoMatchException extends Exception {
 
-    /**
-     * Constructs a new NoMatchException with no path specified.
-     */
-    public NoMatchException()
-    {
-        // Nothing to do.
-    }
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * Constructs a new NoMatchException for the given path.
-     * 
-     * @param path the path for which there was no match
-     */
-    public NoMatchException(String path)
-    {
-        this._path = path;
-    }
+  /** The path for which there was no match. */
+  private String _path;
 
-    /**
-     * @see java.lang.Throwable#getMessage()
-     */
-    @Override
-    public String getMessage()
-    {
-        if (this._path != null)
-        {
-            return "No match found for path \"" + this._path + "\".";
-        }
-        return "No match found.";
+  /**
+   * Constructs a new NoMatchException with no path specified.
+   */
+  public NoMatchException() {
+    // Nothing to do.
+  }
+
+  /**
+   * Constructs a new NoMatchException for the given path.
+   * 
+   * @param path the path for which there was no match
+   */
+  public NoMatchException(String path) {
+    this._path = path;
+  }
+
+  /**
+   * @see java.lang.Throwable#getMessage()
+   */
+  @Override
+  public String getMessage() {
+    if (this._path != null) {
+      return "No match found for path \"" + this._path + "\".";
     }
+    return "No match found.";
+  }
 }

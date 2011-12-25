@@ -17,27 +17,25 @@ import java.awt.event.ActionListener;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-abstract public class ActionEventIgnoringActionListener implements ActionListener
-{
-    /**
-     * Creates a new ActionEventIgnoringActionListener
-     */
-    public ActionEventIgnoringActionListener()
-    {
-        super();
-    }
+abstract public class ActionEventIgnoringActionListener implements ActionListener {
 
-    /**
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @SuppressWarnings("unused")
-    public void actionPerformed(ActionEvent ae)
-    {
-        actionPerformed();
-    }
+  /**
+   * Creates a new ActionEventIgnoringActionListener
+   */
+  public ActionEventIgnoringActionListener() {
+    super();
+  }
 
-    /**
-     * Should be overridden by the subclass.
-     */
-    abstract public void actionPerformed();
+  /**
+   * Should be overridden by the subclass.
+   */
+  abstract public void actionPerformed();
+
+  /**
+   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+   */
+  @Override
+  public void actionPerformed(ActionEvent ae) {
+    this.actionPerformed();
+  }
 }

@@ -14,63 +14,56 @@ import java.util.Set;
 
 /**
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- *
+ * 
  */
-public class ListBotFilesCommand extends ShellCommand
-{
-    /** Shell command. */
-    public static final String COMMAND_STRING = "/files";
+public class ListBotFilesCommand extends ShellCommand {
 
-    /** Argument template. */
-    public static final String ARGUMENT_TEMPLATE = "";
+  /** Shell command. */
+  public static final String COMMAND_STRING = "/files";
 
-    /** Shell help line. */
-    private static final String HELP_LINE = "lists the files loaded by the current bot";
+  /** Argument template. */
+  public static final String ARGUMENT_TEMPLATE = "";
 
-    /**
-     * Creates a new ListBotFilesCommand.
-     */
-    public ListBotFilesCommand()
-    {
-        super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
+  /** Shell help line. */
+  private static final String HELP_LINE = "lists the files loaded by the current bot";
+
+  /**
+   * Creates a new ListBotFilesCommand.
+   */
+  public ListBotFilesCommand() {
+    super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
+  }
+
+  /**
+   * Prints a list of the files loaded by the current bot to the shell console.
+   * 
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
+   *      org.aitools.programd.interfaces.shell.Shell)
+   */
+  @Override
+  public void handle(String commandLine, Shell shell) {
+    String botID = shell.getCurrentBotID();
+    Set<URL> keys = shell.getBots().get(botID).getLoadedFilesMap().keySet();
+    int fileCount = keys.size();
+    if (fileCount == 0) {
+      shell.showMessage("No files loaded by \"" + botID + "\".");
     }
-
-    /**
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
-     */
-    @Override
-    public boolean handles(String commandLine)
-    {
-        return commandLine.toLowerCase().equals(COMMAND_STRING);
+    else if (fileCount > 1) {
+      shell.showMessage(fileCount + " files loaded by \"" + botID + "\":");
     }
-
-    /**
-     * Prints a list of the files loaded by the current bot to the shell console.
-     * 
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
-     */
-    @Override
-    @SuppressWarnings("unused")
-    public void handle(String commandLine, Shell shell)
-    {
-        String botID = shell.getCurrentBotID();
-        Set<URL> keys = shell.getBots().get(botID).getLoadedFilesMap().keySet();
-        int fileCount = keys.size();
-        if (fileCount == 0)
-        {
-            shell.showMessage("No files loaded by \"" + botID + "\".");
-        }
-        else if (fileCount > 1)
-        {
-            shell.showMessage(fileCount + " files loaded by \"" + botID + "\":");
-        }
-        else
-        {
-            shell.showMessage("1 file loaded by \"" + botID + "\":");
-        }
-        for (URL url : keys)
-        {
-            shell.showMessage(url.toExternalForm());
-        }
+    else {
+      shell.showMessage("1 file loaded by \"" + botID + "\":");
     }
+    for (URL url : keys) {
+      shell.showMessage(url.toExternalForm());
+    }
+  }
+
+  /**
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
+   */
+  @Override
+  public boolean handles(String commandLine) {
+    return commandLine.toLowerCase().equals(COMMAND_STRING);
+  }
 }

@@ -1,21 +1,21 @@
 Manifest-Version: 1.0
-Ant-Version: Apache Ant 1.7.1
-Created-By: 14.2-b01 (Sun Microsystems Inc.)
+Ant-Version: Apache Ant 1.8.2
+Created-By: 1.6.0_26-b03 (Sun Microsystems Inc.)
 Class-Path:       ../lib/gnu.getopt-1.0.10.jar       ../lib/log4j-1.2.
  13.jar       ../lib/jdom-1.0-nite-25-Jan-2007.jar      ../lib/jaxp-ap
  i.jar      ../lib/jaxp-ri.jar      ../lib/xerces-j2-2.9.0.jar       .
- ./lib/xmlresolver-sunjaxp.jar       ../lib/xmlresolver.jar      ../li
- b/jdbcappender.jar      ../lib/xalan-j2-2.7.0.jar      ../lib/mysql-c
- onnector-java-3.1.12-bin.jar      ../lib/js.jar       ../lib/commons-
- dbcp-1.2.1.jar       ../lib/commons-pool-1.3.jar       ../lib/jaxen-1
- .1.jar       ../lib/commons-collections-3.1.jar       ../lib/mysql-co
- nnector-java-3.1.12-bin.jar ../lib/js.jar programd-rhino.jar
+ ./lib/resolver.jar      ../lib/jdbcappender.jar      ../lib/xalan-j2-
+ 2.7.0.jar      ../lib/mysql-connector-java-3.1.12-bin.jar      ../lib
+ /js.jar       ../lib/commons-dbcp-1.2.1.jar       ../lib/commons-pool
+ -1.3.jar       ../lib/jaxen-1.1.jar       ../lib/commons-collections-
+ 3.1.jar       ../lib/mysql-connector-java-3.1.12-bin.jar ../lib/js.ja
+ r programd-rhino.jar
 
 Name: org/aitools/programd/
 Specification-Title: Program D
 Specification-Version: 4.7
 Specification-Vendor: aitools.org
 Implementation-Title: org.aitools.programd
-Implementation-Version: 3,208
+Implementation-Version: 3,219
 Implementation-Vendor: aitools.org
 

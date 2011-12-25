@@ -14,7 +14,7 @@ import org.aitools.util.resource.URLTools;
 import org.aitools.util.runtime.UserError;
 
 /**
- * Automatically generated at 2007-03-10T23:39:17.013-05:00.
+ * Automatically generated at 2011-11-20T00:54:50.297+01:00.
  */
 public class ProgrammaticCoreSettings extends CoreSettings
 {
@@ -78,6 +78,7 @@ public class ProgrammaticCoreSettings extends CoreSettings
         setGraphmapperImplementation("org.aitools.programd.graph.MemoryGraphmapper");
         setNodemapperImplementation("org.aitools.programd.graph.TwoOptimalMemoryNodemapper");
         setUseShell(Boolean.parseBoolean("true"));
+        setXmlCatalogPath("resources/catalog.xml");
         setXmlParserUseEntityResolver2(Boolean.parseBoolean("true"));
         setXmlParserUseValidation(Boolean.parseBoolean("true"));
         setXmlParserUseSchemaValidation(Boolean.parseBoolean("true"));

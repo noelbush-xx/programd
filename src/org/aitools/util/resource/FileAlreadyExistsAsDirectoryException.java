@@ -28,15 +28,19 @@ import java.io.File;
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * @since 4.5
  */
-public class FileAlreadyExistsAsDirectoryException extends Exception
-{
-    /**
-     * Creates a new FileAlreadyExistsAsDirectoryException.
-     * 
-     * @param directory the directory that already exists
-     */
-    public FileAlreadyExistsAsDirectoryException(File directory)
-    {
-        super(String.format("\"%s\" already exists as a directory.", directory.getAbsolutePath()));
-    }
+public class FileAlreadyExistsAsDirectoryException extends Exception {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+
+  /**
+   * Creates a new FileAlreadyExistsAsDirectoryException.
+   * 
+   * @param directory the directory that already exists
+   */
+  public FileAlreadyExistsAsDirectoryException(File directory) {
+    super(String.format("\"%s\" already exists as a directory.", directory.getAbsolutePath()));
+  }
 }

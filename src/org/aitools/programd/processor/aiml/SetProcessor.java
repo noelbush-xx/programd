@@ -9,42 +9,46 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.jdom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
 import org.aitools.programd.processor.ProcessorException;
+import org.jdom.Element;
 
 /**
- * <p>Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-set">set</a></code> element.</p>
- * <p>This is currently <i>not</i> AIML 1.0.1-compliant, because it fails to account for &quot;
- * <a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-aiml-predicate-behaviors">return-name-when-set</a>&quot;
- * predicates.</p>
+ * <p>
+ * Handles a <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-set">set</a></code> element.
+ * </p>
+ * <p>
+ * This is currently <i>not</i> AIML 1.0.1-compliant, because it fails to account for &quot; <a
+ * href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-aiml-predicate-behaviors">return-name-when-set</a>&quot;
+ * predicates.
+ * </p>
  */
-public class SetProcessor extends AIMLProcessor
-{
-    /** The label (as required by the registration scheme). */
-    public static final String label = "set";
+public class SetProcessor extends AIMLProcessor {
 
-    /**
-     * Creates a new SetProcessor using the given Core.
-     * 
-     * @param core the Core object to use
-     */
-    public SetProcessor(Core core)
-    {
-        super(core);
-    }
+  /** The label (as required by the registration scheme). */
+  public static final String label = "set";
 
-    /**
-     * @see AIMLProcessor#process(Element, TemplateParser)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public String process(Element element, TemplateParser parser) throws ProcessorException
-    {
-        // Return the result of setting this predicate value (should check its type, but not yet implemented).
-        return parser.getCore().getPredicateMaster().set(element.getAttributeValue("name"),
-                parser.evaluate(element.getContent()), parser.getUserID(), parser.getBotID());
-    }
+  /**
+   * Creates a new SetProcessor using the given Core.
+   * 
+   * @param core the Core object to use
+   */
+  public SetProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * @see AIMLProcessor#process(Element, TemplateParser)
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public String process(Element element, TemplateParser parser) throws ProcessorException {
+    // Return the result of setting this predicate value (should check its type, but not yet implemented).
+    return parser
+        .getCore()
+        .getPredicateMaster()
+        .set(element.getAttributeValue("name"), parser.evaluate(element.getContent()), parser.getUserID(),
+            parser.getBotID());
+  }
 }

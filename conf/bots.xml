@@ -12,6 +12,7 @@
         <learn>../aiml/GermanAlice/*.aiml</learn>
         <learn>../aiml/maria/*.aiml</learn>
         <learn>../aiml/standard/*.aiml</learn>-->
+        <learn>../resources/testing/AIML.aiml</learn>-->
         <testing>
             <test-suite-path>../resources/testing/AIML.xml</test-suite-path>
             <report-directory>../log/programd/test-reports</report-directory>

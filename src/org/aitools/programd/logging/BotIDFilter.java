@@ -13,33 +13,29 @@ import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
- * Accepts a ChatLogEvent if it comes from a specific bot id;
- * denies it otherwise.
+ * Accepts a ChatLogEvent if it comes from a specific bot id; denies it otherwise.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class BotIDFilter extends Filter
-{
-    private String botid;
+public class BotIDFilter extends Filter {
 
-    /**
-     * @see org.apache.log4j.spi.Filter#decide(org.apache.log4j.spi.LoggingEvent)
-     */
-    @Override
-    public int decide(LoggingEvent event)
-    {
-        if (!(event instanceof ChatLogEvent))
-        {
-            return Filter.DENY;
-        }
-        return ((ChatLogEvent) event).getBotID().equals(this.botid) ? Filter.ACCEPT : Filter.DENY;
-    }
+  private String botid;
 
-    /**
-     * @param id
-     */
-    public void setBotID(String id)
-    {
-        this.botid = id;
+  /**
+   * @see org.apache.log4j.spi.Filter#decide(org.apache.log4j.spi.LoggingEvent)
+   */
+  @Override
+  public int decide(LoggingEvent event) {
+    if (!(event instanceof ChatLogEvent)) {
+      return Filter.DENY;
     }
+    return ((ChatLogEvent) event).getBotID().equals(this.botid) ? Filter.ACCEPT : Filter.DENY;
+  }
+
+  /**
+   * @param id
+   */
+  public void setBotID(String id) {
+    this.botid = id;
+  }
 }

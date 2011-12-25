@@ -107,6 +107,11 @@ import java.io.Serializable;
 
 public class MersenneTwisterFast implements Serializable
 {
+    /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+
     // Period parameters
     private static final int N = 624;
 
@@ -150,7 +155,7 @@ public class MersenneTwisterFast implements Serializable
      */
     public MersenneTwisterFast()
     {
-        setSeed(GOOD_SEED);
+        this.setSeed(GOOD_SEED);
     }
 
     /**
@@ -161,44 +166,729 @@ public class MersenneTwisterFast implements Serializable
      */
     public MersenneTwisterFast(final long seed)
     {
-        setSeed(seed);
+        this.setSeed(seed);
     }
 
     /**
-     * Initalize the pseudo random number generator. This is the old
-     * seed-setting mechanism for the original Mersenne Twister algorithm. You
-     * must not use 0 as your seed, and don't pass in a long that's bigger than
-     * an int (Mersenne Twister only uses the first 32 bits for its seed). Also
-     * it's suggested that for you avoid even-numbered seeds in this older
-     * seed-generation procedure.
+     * @return the next boolean
+     */
+    public final boolean nextBoolean()
+    {
+        int y;
+
+        if (this.mti >= N) // generate N words at one time
+        {
+            int kk;
+
+            for (kk = 0; kk < N - M; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            for (; kk < N - 1; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M - N] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            y = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+            this.mt[N - 1] = this.mt[M - 1] ^ y >>> 1 ^ this.mag01[y & 0x1];
+
+            this.mti = 0;
+        }
+
+        y = this.mt[this.mti++];
+        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
+        y ^= y << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
+        y ^= y << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
+        y ^= y >>> 18; // TEMPERING_SHIFT_L(y)
+
+        return y >>> 31 != 0;
+    }
+
+    /**
+     * This generates a coin flip with a probability <tt>probability</tt> of
+     * returning true, else returning false. <tt>probability</tt> must be
+     * between 0.0 and 1.0, inclusive.
      * 
-     * @param seed the seed to use
+     * @param probability between 0.0 and 1.0
+     * @return the result of the coin flip
      */
 
-    public final void setSeedOld(final long seed)
+    public final boolean nextBoolean(final double probability)
     {
-        this.haveNextNextGaussian = false;
+        int y;
+        int z;
 
-        this.mt = new int[N];
+        if (probability < 0.0 || probability > 1.0)
+         {
+          throw new IllegalArgumentException("probability must be between 0.0 and 1.0 inclusive."); //$NON-NLS-1$
+        }
+        if (this.mti >= N) // generate N words at one time
+        {
+            int kk;
 
-        // setting initial seeds to mt[N] using
-        // the generator Line 25 of Table 1 in
-        // [KNUTH 1981, The Art of Computer Programming
-        // Vol. 2 (2nd Ed.), pp102]
+            for (kk = 0; kk < N - M; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            for (; kk < N - 1; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M - N] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            y = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+            this.mt[N - 1] = this.mt[M - 1] ^ y >>> 1 ^ this.mag01[y & 0x1];
 
-        // the 0xffffffff is commented out because in Java
-        // ints are always 32 bits; hence i & 0xffffffff == i
+            this.mti = 0;
+        }
 
-        this.mt[0] = ((int) seed); // & 0xffffffff;
+        y = this.mt[this.mti++];
+        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
+        y ^= y << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
+        y ^= y << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
+        y ^= y >>> 18; // TEMPERING_SHIFT_L(y)
 
-        for (this.mti = 1; this.mti < N; this.mti++)
-            this.mt[this.mti] = (69069 * this.mt[this.mti - 1]); // &
-        // 0xffffffff;
+        if (this.mti >= N) // generate N words at one time
+        {
+            int kk;
 
-        // mag01[x] = x * MATRIX_A for x=0,1
-        this.mag01 = new int[2];
-        this.mag01[0] = 0x0;
-        this.mag01[1] = MATRIX_A;
+            for (kk = 0; kk < N - M; kk++)
+            {
+                z = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M] ^ z >>> 1 ^ this.mag01[z & 0x1];
+            }
+            for (; kk < N - 1; kk++)
+            {
+                z = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M - N] ^ z >>> 1 ^ this.mag01[z & 0x1];
+            }
+            z = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+            this.mt[N - 1] = this.mt[M - 1] ^ z >>> 1 ^ this.mag01[z & 0x1];
+
+            this.mti = 0;
+        }
+
+        z = this.mt[this.mti++];
+        z ^= z >>> 11; // TEMPERING_SHIFT_U(z)
+        z ^= z << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(z)
+        z ^= z << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(z)
+        z ^= z >>> 18; // TEMPERING_SHIFT_L(z)
+
+        /* derived from nextDouble documentation in jdk 1.2 docs, see top */
+        return (((long) (y >>> 6) << 27) + (z >>> 5)) / (double) (1L << 53) < probability;
+    }
+
+    /**
+     * This generates a coin flip with a probability <tt>probability</tt> of
+     * returning true, else returning false. <tt>probability</tt> must be
+     * between 0.0 and 1.0, inclusive. Not as precise a random real event as
+     * nextBoolean(double), but twice as fast. To explicitly use this, remember
+     * you may need to cast to float first.
+     * 
+     * @param probability between 0.0 and 1.0
+     * @return the result of the coin flip
+     */
+
+    public final boolean nextBoolean(final float probability)
+    {
+        int y;
+
+        if (probability < 0.0f || probability > 1.0f)
+         {
+          throw new IllegalArgumentException("probability must be between 0.0 and 1.0 inclusive."); //$NON-NLS-1$
+        }
+        if (this.mti >= N) // generate N words at one time
+        {
+            int kk;
+
+            for (kk = 0; kk < N - M; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            for (; kk < N - 1; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M - N] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            y = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+            this.mt[N - 1] = this.mt[M - 1] ^ y >>> 1 ^ this.mag01[y & 0x1];
+
+            this.mti = 0;
+        }
+
+        y = this.mt[this.mti++];
+        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
+        y ^= y << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
+        y ^= y << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
+        y ^= y >>> 18; // TEMPERING_SHIFT_L(y)
+
+        return (y >>> 8) / (float) (1 << 24) < probability;
+    }
+
+    /**
+     * @return the next byte
+     */
+    public final byte nextByte()
+    {
+        int y;
+
+        if (this.mti >= N) // generate N words at one time
+        {
+            int kk;
+
+            for (kk = 0; kk < N - M; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            for (; kk < N - 1; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M - N] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            y = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+            this.mt[N - 1] = this.mt[M - 1] ^ y >>> 1 ^ this.mag01[y & 0x1];
+
+            this.mti = 0;
+        }
+
+        y = this.mt[this.mti++];
+        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
+        y ^= y << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
+        y ^= y << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
+        y ^= y >>> 18; // TEMPERING_SHIFT_L(y)
+
+        return (byte) (y >>> 24);
+    }
+
+    /**
+     * @param bytes the next bytes
+     */
+    public final void nextBytes(byte[] bytes)
+    {
+        int y;
+
+        for (int x = 0; x < bytes.length; x++)
+        {
+            if (this.mti >= N) // generate N words at one time
+            {
+                int kk;
+
+                for (kk = 0; kk < N - M; kk++)
+                {
+                    y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                    this.mt[kk] = this.mt[kk + M] ^ y >>> 1 ^ this.mag01[y & 0x1];
+                }
+                for (; kk < N - 1; kk++)
+                {
+                    y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                    this.mt[kk] = this.mt[kk + M - N] ^ y >>> 1 ^ this.mag01[y & 0x1];
+                }
+                y = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+                this.mt[N - 1] = this.mt[M - 1] ^ y >>> 1 ^ this.mag01[y & 0x1];
+
+                this.mti = 0;
+            }
+
+            y = this.mt[this.mti++];
+            y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
+            y ^= y << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
+            y ^= y << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
+            y ^= y >>> 18; // TEMPERING_SHIFT_L(y)
+
+            bytes[x] = (byte) (y >>> 24);
+        }
+    }
+
+    /**
+     * @return the next char
+     */
+    public final char nextChar()
+    {
+        int y;
+
+        if (this.mti >= N) // generate N words at one time
+        {
+            int kk;
+
+            for (kk = 0; kk < N - M; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            for (; kk < N - 1; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M - N] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            y = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+            this.mt[N - 1] = this.mt[M - 1] ^ y >>> 1 ^ this.mag01[y & 0x1];
+
+            this.mti = 0;
+        }
+
+        y = this.mt[this.mti++];
+        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
+        y ^= y << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
+        y ^= y << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
+        y ^= y >>> 18; // TEMPERING_SHIFT_L(y)
+
+        return (char) (y >>> 16);
+    }
+
+    /**
+     * @return the next double
+     */
+    public final double nextDouble()
+    {
+        int y;
+        int z;
+
+        if (this.mti >= N) // generate N words at one time
+        {
+            int kk;
+
+            for (kk = 0; kk < N - M; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            for (; kk < N - 1; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M - N] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            y = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+            this.mt[N - 1] = this.mt[M - 1] ^ y >>> 1 ^ this.mag01[y & 0x1];
+
+            this.mti = 0;
+        }
+
+        y = this.mt[this.mti++];
+        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
+        y ^= y << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
+        y ^= y << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
+        y ^= y >>> 18; // TEMPERING_SHIFT_L(y)
+
+        if (this.mti >= N) // generate N words at one time
+        {
+            int kk;
+
+            for (kk = 0; kk < N - M; kk++)
+            {
+                z = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M] ^ z >>> 1 ^ this.mag01[z & 0x1];
+            }
+            for (; kk < N - 1; kk++)
+            {
+                z = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M - N] ^ z >>> 1 ^ this.mag01[z & 0x1];
+            }
+            z = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+            this.mt[N - 1] = this.mt[M - 1] ^ z >>> 1 ^ this.mag01[z & 0x1];
+
+            this.mti = 0;
+        }
+
+        z = this.mt[this.mti++];
+        z ^= z >>> 11; // TEMPERING_SHIFT_U(z)
+        z ^= z << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(z)
+        z ^= z << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(z)
+        z ^= z >>> 18; // TEMPERING_SHIFT_L(z)
+
+        /* derived from nextDouble documentation in jdk 1.2 docs, see top */
+        return (((long) (y >>> 6) << 27) + (z >>> 5)) / (double) (1L << 53);
+    }
+
+    /**
+     * @return the next gloat
+     */
+    public final float nextFloat()
+    {
+        int y;
+
+        if (this.mti >= N) // generate N words at one time
+        {
+            int kk;
+
+            for (kk = 0; kk < N - M; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            for (; kk < N - 1; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M - N] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            y = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+            this.mt[N - 1] = this.mt[M - 1] ^ y >>> 1 ^ this.mag01[y & 0x1];
+
+            this.mti = 0;
+        }
+
+        y = this.mt[this.mti++];
+        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
+        y ^= y << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
+        y ^= y << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
+        y ^= y >>> 18; // TEMPERING_SHIFT_L(y)
+
+        return (y >>> 8) / (float) (1 << 24);
+    }
+
+    /**
+     * @return the next Gaussian
+     */
+    public final double nextGaussian()
+    {
+        if (this.haveNextNextGaussian)
+        {
+            this.haveNextNextGaussian = false;
+            return this.nextNextGaussian;
+        }
+        // (otherwise...)
+        double v1, v2, s;
+        do
+        {
+            int y;
+            int z;
+            int a;
+            int b;
+
+            if (this.mti >= N) // generate N words at one time
+            {
+                int kk;
+
+                for (kk = 0; kk < N - M; kk++)
+                {
+                    y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                    this.mt[kk] = this.mt[kk + M] ^ y >>> 1 ^ this.mag01[y & 0x1];
+                }
+                for (; kk < N - 1; kk++)
+                {
+                    y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                    this.mt[kk] = this.mt[kk + M - N] ^ y >>> 1 ^ this.mag01[y & 0x1];
+                }
+                y = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+                this.mt[N - 1] = this.mt[M - 1] ^ y >>> 1 ^ this.mag01[y & 0x1];
+
+                this.mti = 0;
+            }
+
+            y = this.mt[this.mti++];
+            y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
+            y ^= y << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
+            y ^= y << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
+            y ^= y >>> 18; // TEMPERING_SHIFT_L(y)
+
+            if (this.mti >= N) // generate N words at one time
+            {
+                int kk;
+
+                for (kk = 0; kk < N - M; kk++)
+                {
+                    z = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                    this.mt[kk] = this.mt[kk + M] ^ z >>> 1 ^ this.mag01[z & 0x1];
+                }
+                for (; kk < N - 1; kk++)
+                {
+                    z = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                    this.mt[kk] = this.mt[kk + M - N] ^ z >>> 1 ^ this.mag01[z & 0x1];
+                }
+                z = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+                this.mt[N - 1] = this.mt[M - 1] ^ z >>> 1 ^ this.mag01[z & 0x1];
+
+                this.mti = 0;
+            }
+
+            z = this.mt[this.mti++];
+            z ^= z >>> 11; // TEMPERING_SHIFT_U(z)
+            z ^= z << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(z)
+            z ^= z << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(z)
+            z ^= z >>> 18; // TEMPERING_SHIFT_L(z)
+
+            if (this.mti >= N) // generate N words at one time
+            {
+                int kk;
+
+                for (kk = 0; kk < N - M; kk++)
+                {
+                    a = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                    this.mt[kk] = this.mt[kk + M] ^ a >>> 1 ^ this.mag01[a & 0x1];
+                }
+                for (; kk < N - 1; kk++)
+                {
+                    a = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                    this.mt[kk] = this.mt[kk + M - N] ^ a >>> 1 ^ this.mag01[a & 0x1];
+                }
+                a = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+                this.mt[N - 1] = this.mt[M - 1] ^ a >>> 1 ^ this.mag01[a & 0x1];
+
+                this.mti = 0;
+            }
+
+            a = this.mt[this.mti++];
+            a ^= a >>> 11; // TEMPERING_SHIFT_U(a)
+            a ^= a << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(a)
+            a ^= a << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(a)
+            a ^= a >>> 18; // TEMPERING_SHIFT_L(a)
+
+            if (this.mti >= N) // generate N words at one time
+            {
+                int kk;
+
+                for (kk = 0; kk < N - M; kk++)
+                {
+                    b = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                    this.mt[kk] = this.mt[kk + M] ^ b >>> 1 ^ this.mag01[b & 0x1];
+                }
+                for (; kk < N - 1; kk++)
+                {
+                    b = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                    this.mt[kk] = this.mt[kk + M - N] ^ b >>> 1 ^ this.mag01[b & 0x1];
+                }
+                b = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+                this.mt[N - 1] = this.mt[M - 1] ^ b >>> 1 ^ this.mag01[b & 0x1];
+
+                this.mti = 0;
+            }
+
+            b = this.mt[this.mti++];
+            b ^= b >>> 11; // TEMPERING_SHIFT_U(b)
+            b ^= b << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(b)
+            b ^= b << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(b)
+            b ^= b >>> 18; // TEMPERING_SHIFT_L(b)
+
+            /* derived from nextDouble documentation in jdk 1.2 docs, see top */
+            v1 = 2 * ((((long) (y >>> 6) << 27) + (z >>> 5)) / (double) (1L << 53)) - 1;
+            v2 = 2 * ((((long) (a >>> 6) << 27) + (b >>> 5)) / (double) (1L << 53)) - 1;
+            s = v1 * v1 + v2 * v2;
+        }while (s >= 1 || s == 0);
+        double multiplier = Math.sqrt(-2 * Math.log(s) / s);
+        this.nextNextGaussian = v2 * multiplier;
+        this.haveNextNextGaussian = true;
+        return v1 * multiplier;
+    }
+
+    /**
+     * @return the next int
+     */
+    public final int nextInt()
+    {
+        int y;
+
+        if (this.mti >= N) // generate N words at one time
+        {
+            int kk;
+
+            for (kk = 0; kk < N - M; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            for (; kk < N - 1; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M - N] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            y = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+            this.mt[N - 1] = this.mt[M - 1] ^ y >>> 1 ^ this.mag01[y & 0x1];
+
+            this.mti = 0;
+        }
+
+        y = this.mt[this.mti++];
+        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
+        y ^= y << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
+        y ^= y << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
+        y ^= y >>> 18; // TEMPERING_SHIFT_L(y)
+
+        return y;
+    }
+
+    /**
+     * Returns an integer drawn uniformly from 0 to n-1. Suffice it to say, n
+     * must be > 0, or an IllegalArgumentException is raised.
+     * 
+     * @param n the upper bound
+     * @return the next int
+     */
+    public final int nextInt(final int n)
+    {
+        if (n <= 0)
+         {
+          throw new IllegalArgumentException("n must be positive"); //$NON-NLS-1$
+        }
+
+        if ((n & -n) == n) // i.e., n is a power of 2
+        {
+            int y;
+
+            if (this.mti >= N) // generate N words at one time
+            {
+                int kk;
+
+                for (kk = 0; kk < N - M; kk++)
+                {
+                    y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                    this.mt[kk] = this.mt[kk + M] ^ y >>> 1 ^ this.mag01[y & 0x1];
+                }
+                for (; kk < N - 1; kk++)
+                {
+                    y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                    this.mt[kk] = this.mt[kk + M - N] ^ y >>> 1 ^ this.mag01[y & 0x1];
+                }
+                y = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+                this.mt[N - 1] = this.mt[M - 1] ^ y >>> 1 ^ this.mag01[y & 0x1];
+
+                this.mti = 0;
+            }
+
+            y = this.mt[this.mti++];
+            y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
+            y ^= y << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
+            y ^= y << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
+            y ^= y >>> 18; // TEMPERING_SHIFT_L(y)
+
+            return (int) (n * (long) (y >>> 1) >> 31);
+        }
+
+        int bits, val;
+        do
+        {
+            int y;
+
+            if (this.mti >= N) // generate N words at one time
+            {
+                int kk;
+
+                for (kk = 0; kk < N - M; kk++)
+                {
+                    y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                    this.mt[kk] = this.mt[kk + M] ^ y >>> 1 ^ this.mag01[y & 0x1];
+                }
+                for (; kk < N - 1; kk++)
+                {
+                    y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                    this.mt[kk] = this.mt[kk + M - N] ^ y >>> 1 ^ this.mag01[y & 0x1];
+                }
+                y = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+                this.mt[N - 1] = this.mt[M - 1] ^ y >>> 1 ^ this.mag01[y & 0x1];
+
+                this.mti = 0;
+            }
+
+            y = this.mt[this.mti++];
+            y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
+            y ^= y << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
+            y ^= y << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
+            y ^= y >>> 18; // TEMPERING_SHIFT_L(y)
+
+            bits = y >>> 1;
+            val = bits % n;
+        }while (bits - val + n - 1 < 0);
+        return val;
+    }
+
+    /**
+     * @return the next long
+     */
+    public final long nextLong()
+    {
+        int y;
+        int z;
+
+        if (this.mti >= N) // generate N words at one time
+        {
+            int kk;
+
+            for (kk = 0; kk < N - M; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            for (; kk < N - 1; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M - N] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            y = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+            this.mt[N - 1] = this.mt[M - 1] ^ y >>> 1 ^ this.mag01[y & 0x1];
+
+            this.mti = 0;
+        }
+
+        y = this.mt[this.mti++];
+        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
+        y ^= y << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
+        y ^= y << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
+        y ^= y >>> 18; // TEMPERING_SHIFT_L(y)
+
+        if (this.mti >= N) // generate N words at one time
+        {
+            int kk;
+
+            for (kk = 0; kk < N - M; kk++)
+            {
+                z = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M] ^ z >>> 1 ^ this.mag01[z & 0x1];
+            }
+            for (; kk < N - 1; kk++)
+            {
+                z = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M - N] ^ z >>> 1 ^ this.mag01[z & 0x1];
+            }
+            z = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+            this.mt[N - 1] = this.mt[M - 1] ^ z >>> 1 ^ this.mag01[z & 0x1];
+
+            this.mti = 0;
+        }
+
+        z = this.mt[this.mti++];
+        z ^= z >>> 11; // TEMPERING_SHIFT_U(z)
+        z ^= z << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(z)
+        z ^= z << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(z)
+        z ^= z >>> 18; // TEMPERING_SHIFT_L(z)
+
+        return ((long) y << 32) + z;
+    }
+
+    /**
+     * @return the next short
+     */
+    public final short nextShort()
+    {
+        int y;
+
+        if (this.mti >= N) // generate N words at one time
+        {
+            int kk;
+
+            for (kk = 0; kk < N - M; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            for (; kk < N - 1; kk++)
+            {
+                y = this.mt[kk] & UPPER_MASK | this.mt[kk + 1] & LOWER_MASK;
+                this.mt[kk] = this.mt[kk + M - N] ^ y >>> 1 ^ this.mag01[y & 0x1];
+            }
+            y = this.mt[N - 1] & UPPER_MASK | this.mt[0] & LOWER_MASK;
+            this.mt[N - 1] = this.mt[M - 1] ^ y >>> 1 ^ this.mag01[y & 0x1];
+
+            this.mti = 0;
+        }
+
+        y = this.mt[this.mti++];
+        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
+        y ^= y << 7 & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
+        y ^= y << 15 & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
+        y ^= y >>> 18; // TEMPERING_SHIFT_L(y)
+
+        return (short) (y >>> 16);
     }
 
     /**
@@ -253,718 +943,41 @@ public class MersenneTwisterFast implements Serializable
     }
 
     /**
-     * @return the next int
-     */
-    public final int nextInt()
-    {
-        int y;
-
-        if (this.mti >= N) // generate N words at one time
-        {
-            int kk;
-
-            for (kk = 0; kk < N - M; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            for (; kk < N - 1; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-
-            this.mti = 0;
-        }
-
-        y = this.mt[this.mti++];
-        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
-        y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
-        y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
-        y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
-
-        return y;
-    }
-
-    /**
-     * @return the next short
-     */
-    public final short nextShort()
-    {
-        int y;
-
-        if (this.mti >= N) // generate N words at one time
-        {
-            int kk;
-
-            for (kk = 0; kk < N - M; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            for (; kk < N - 1; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-
-            this.mti = 0;
-        }
-
-        y = this.mt[this.mti++];
-        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
-        y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
-        y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
-        y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
-
-        return (short) (y >>> 16);
-    }
-
-    /**
-     * @return the next char
-     */
-    public final char nextChar()
-    {
-        int y;
-
-        if (this.mti >= N) // generate N words at one time
-        {
-            int kk;
-
-            for (kk = 0; kk < N - M; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            for (; kk < N - 1; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-
-            this.mti = 0;
-        }
-
-        y = this.mt[this.mti++];
-        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
-        y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
-        y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
-        y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
-
-        return (char) (y >>> 16);
-    }
-
-    /**
-     * @return the next boolean
-     */
-    public final boolean nextBoolean()
-    {
-        int y;
-
-        if (this.mti >= N) // generate N words at one time
-        {
-            int kk;
-
-            for (kk = 0; kk < N - M; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            for (; kk < N - 1; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-
-            this.mti = 0;
-        }
-
-        y = this.mt[this.mti++];
-        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
-        y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
-        y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
-        y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
-
-        return ((y >>> 31) != 0);
-    }
-
-    /**
-     * This generates a coin flip with a probability <tt>probability</tt> of
-     * returning true, else returning false. <tt>probability</tt> must be
-     * between 0.0 and 1.0, inclusive. Not as precise a random real event as
-     * nextBoolean(double), but twice as fast. To explicitly use this, remember
-     * you may need to cast to float first.
+     * Initalize the pseudo random number generator. This is the old
+     * seed-setting mechanism for the original Mersenne Twister algorithm. You
+     * must not use 0 as your seed, and don't pass in a long that's bigger than
+     * an int (Mersenne Twister only uses the first 32 bits for its seed). Also
+     * it's suggested that for you avoid even-numbered seeds in this older
+     * seed-generation procedure.
      * 
-     * @param probability between 0.0 and 1.0
-     * @return the result of the coin flip
+     * @param seed the seed to use
      */
 
-    public final boolean nextBoolean(final float probability)
+    public final void setSeedOld(final long seed)
     {
-        int y;
+        this.haveNextNextGaussian = false;
 
-        if (probability < 0.0f || probability > 1.0f)
-            throw new IllegalArgumentException("probability must be between 0.0 and 1.0 inclusive."); //$NON-NLS-1$
-        if (this.mti >= N) // generate N words at one time
-        {
-            int kk;
+        this.mt = new int[N];
 
-            for (kk = 0; kk < N - M; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            for (; kk < N - 1; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
+        // setting initial seeds to mt[N] using
+        // the generator Line 25 of Table 1 in
+        // [KNUTH 1981, The Art of Computer Programming
+        // Vol. 2 (2nd Ed.), pp102]
 
-            this.mti = 0;
+        // the 0xffffffff is commented out because in Java
+        // ints are always 32 bits; hence i & 0xffffffff == i
+
+        this.mt[0] = (int) seed; // & 0xffffffff;
+
+        for (this.mti = 1; this.mti < N; this.mti++)
+         {
+          this.mt[this.mti] = 69069 * this.mt[this.mti - 1]; // &
+    // 0xffffffff;
         }
 
-        y = this.mt[this.mti++];
-        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
-        y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
-        y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
-        y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
-
-        return (y >>> 8) / ((float) (1 << 24)) < probability;
-    }
-
-    /**
-     * This generates a coin flip with a probability <tt>probability</tt> of
-     * returning true, else returning false. <tt>probability</tt> must be
-     * between 0.0 and 1.0, inclusive.
-     * 
-     * @param probability between 0.0 and 1.0
-     * @return the result of the coin flip
-     */
-
-    public final boolean nextBoolean(final double probability)
-    {
-        int y;
-        int z;
-
-        if (probability < 0.0 || probability > 1.0)
-            throw new IllegalArgumentException("probability must be between 0.0 and 1.0 inclusive."); //$NON-NLS-1$
-        if (this.mti >= N) // generate N words at one time
-        {
-            int kk;
-
-            for (kk = 0; kk < N - M; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            for (; kk < N - 1; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-
-            this.mti = 0;
-        }
-
-        y = this.mt[this.mti++];
-        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
-        y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
-        y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
-        y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
-
-        if (this.mti >= N) // generate N words at one time
-        {
-            int kk;
-
-            for (kk = 0; kk < N - M; kk++)
-            {
-                z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + M] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-            }
-            for (; kk < N - 1; kk++)
-            {
-                z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + (M - N)] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-            }
-            z = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-            this.mt[N - 1] = this.mt[M - 1] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-
-            this.mti = 0;
-        }
-
-        z = this.mt[this.mti++];
-        z ^= z >>> 11; // TEMPERING_SHIFT_U(z)
-        z ^= (z << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(z)
-        z ^= (z << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(z)
-        z ^= (z >>> 18); // TEMPERING_SHIFT_L(z)
-
-        /* derived from nextDouble documentation in jdk 1.2 docs, see top */
-        return ((((long) (y >>> 6)) << 27) + (z >>> 5)) / (double) (1L << 53) < probability;
-    }
-
-    /**
-     * @return the next byte
-     */
-    public final byte nextByte()
-    {
-        int y;
-
-        if (this.mti >= N) // generate N words at one time
-        {
-            int kk;
-
-            for (kk = 0; kk < N - M; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            for (; kk < N - 1; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-
-            this.mti = 0;
-        }
-
-        y = this.mt[this.mti++];
-        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
-        y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
-        y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
-        y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
-
-        return (byte) (y >>> 24);
-    }
-
-    /**
-     * @param bytes the next bytes
-     */
-    public final void nextBytes(byte[] bytes)
-    {
-        int y;
-
-        for (int x = 0; x < bytes.length; x++)
-        {
-            if (this.mti >= N) // generate N words at one time
-            {
-                int kk;
-
-                for (kk = 0; kk < N - M; kk++)
-                {
-                    y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                    this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-                }
-                for (; kk < N - 1; kk++)
-                {
-                    y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                    this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-                }
-                y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-                this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-
-                this.mti = 0;
-            }
-
-            y = this.mt[this.mti++];
-            y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
-            y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
-            y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
-            y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
-
-            bytes[x] = (byte) (y >>> 24);
-        }
-    }
-
-    /**
-     * @return the next long
-     */
-    public final long nextLong()
-    {
-        int y;
-        int z;
-
-        if (this.mti >= N) // generate N words at one time
-        {
-            int kk;
-
-            for (kk = 0; kk < N - M; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            for (; kk < N - 1; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-
-            this.mti = 0;
-        }
-
-        y = this.mt[this.mti++];
-        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
-        y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
-        y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
-        y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
-
-        if (this.mti >= N) // generate N words at one time
-        {
-            int kk;
-
-            for (kk = 0; kk < N - M; kk++)
-            {
-                z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + M] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-            }
-            for (; kk < N - 1; kk++)
-            {
-                z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + (M - N)] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-            }
-            z = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-            this.mt[N - 1] = this.mt[M - 1] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-
-            this.mti = 0;
-        }
-
-        z = this.mt[this.mti++];
-        z ^= z >>> 11; // TEMPERING_SHIFT_U(z)
-        z ^= (z << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(z)
-        z ^= (z << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(z)
-        z ^= (z >>> 18); // TEMPERING_SHIFT_L(z)
-
-        return (((long) y) << 32) + z;
-    }
-
-    /**
-     * @return the next double
-     */
-    public final double nextDouble()
-    {
-        int y;
-        int z;
-
-        if (this.mti >= N) // generate N words at one time
-        {
-            int kk;
-
-            for (kk = 0; kk < N - M; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            for (; kk < N - 1; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-
-            this.mti = 0;
-        }
-
-        y = this.mt[this.mti++];
-        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
-        y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
-        y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
-        y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
-
-        if (this.mti >= N) // generate N words at one time
-        {
-            int kk;
-
-            for (kk = 0; kk < N - M; kk++)
-            {
-                z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + M] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-            }
-            for (; kk < N - 1; kk++)
-            {
-                z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + (M - N)] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-            }
-            z = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-            this.mt[N - 1] = this.mt[M - 1] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-
-            this.mti = 0;
-        }
-
-        z = this.mt[this.mti++];
-        z ^= z >>> 11; // TEMPERING_SHIFT_U(z)
-        z ^= (z << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(z)
-        z ^= (z << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(z)
-        z ^= (z >>> 18); // TEMPERING_SHIFT_L(z)
-
-        /* derived from nextDouble documentation in jdk 1.2 docs, see top */
-        return ((((long) (y >>> 6)) << 27) + (z >>> 5)) / (double) (1L << 53);
-    }
-
-    /**
-     * @return the next Gaussian
-     */
-    public final double nextGaussian()
-    {
-        if (this.haveNextNextGaussian)
-        {
-            this.haveNextNextGaussian = false;
-            return this.nextNextGaussian;
-        }
-        // (otherwise...)
-        double v1, v2, s;
-        do
-        {
-            int y;
-            int z;
-            int a;
-            int b;
-
-            if (this.mti >= N) // generate N words at one time
-            {
-                int kk;
-
-                for (kk = 0; kk < N - M; kk++)
-                {
-                    y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                    this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-                }
-                for (; kk < N - 1; kk++)
-                {
-                    y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                    this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-                }
-                y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-                this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-
-                this.mti = 0;
-            }
-
-            y = this.mt[this.mti++];
-            y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
-            y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
-            y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
-            y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
-
-            if (this.mti >= N) // generate N words at one time
-            {
-                int kk;
-
-                for (kk = 0; kk < N - M; kk++)
-                {
-                    z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                    this.mt[kk] = this.mt[kk + M] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-                }
-                for (; kk < N - 1; kk++)
-                {
-                    z = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                    this.mt[kk] = this.mt[kk + (M - N)] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-                }
-                z = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-                this.mt[N - 1] = this.mt[M - 1] ^ (z >>> 1) ^ this.mag01[z & 0x1];
-
-                this.mti = 0;
-            }
-
-            z = this.mt[this.mti++];
-            z ^= z >>> 11; // TEMPERING_SHIFT_U(z)
-            z ^= (z << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(z)
-            z ^= (z << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(z)
-            z ^= (z >>> 18); // TEMPERING_SHIFT_L(z)
-
-            if (this.mti >= N) // generate N words at one time
-            {
-                int kk;
-
-                for (kk = 0; kk < N - M; kk++)
-                {
-                    a = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                    this.mt[kk] = this.mt[kk + M] ^ (a >>> 1) ^ this.mag01[a & 0x1];
-                }
-                for (; kk < N - 1; kk++)
-                {
-                    a = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                    this.mt[kk] = this.mt[kk + (M - N)] ^ (a >>> 1) ^ this.mag01[a & 0x1];
-                }
-                a = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-                this.mt[N - 1] = this.mt[M - 1] ^ (a >>> 1) ^ this.mag01[a & 0x1];
-
-                this.mti = 0;
-            }
-
-            a = this.mt[this.mti++];
-            a ^= a >>> 11; // TEMPERING_SHIFT_U(a)
-            a ^= (a << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(a)
-            a ^= (a << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(a)
-            a ^= (a >>> 18); // TEMPERING_SHIFT_L(a)
-
-            if (this.mti >= N) // generate N words at one time
-            {
-                int kk;
-
-                for (kk = 0; kk < N - M; kk++)
-                {
-                    b = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                    this.mt[kk] = this.mt[kk + M] ^ (b >>> 1) ^ this.mag01[b & 0x1];
-                }
-                for (; kk < N - 1; kk++)
-                {
-                    b = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                    this.mt[kk] = this.mt[kk + (M - N)] ^ (b >>> 1) ^ this.mag01[b & 0x1];
-                }
-                b = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-                this.mt[N - 1] = this.mt[M - 1] ^ (b >>> 1) ^ this.mag01[b & 0x1];
-
-                this.mti = 0;
-            }
-
-            b = this.mt[this.mti++];
-            b ^= b >>> 11; // TEMPERING_SHIFT_U(b)
-            b ^= (b << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(b)
-            b ^= (b << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(b)
-            b ^= (b >>> 18); // TEMPERING_SHIFT_L(b)
-
-            /* derived from nextDouble documentation in jdk 1.2 docs, see top */
-            v1 = 2 * (((((long) (y >>> 6)) << 27) + (z >>> 5)) / (double) (1L << 53)) - 1;
-            v2 = 2 * (((((long) (a >>> 6)) << 27) + (b >>> 5)) / (double) (1L << 53)) - 1;
-            s = v1 * v1 + v2 * v2;
-        }while (s >= 1 || s == 0);
-        double multiplier = Math.sqrt(-2 * Math.log(s) / s);
-        this.nextNextGaussian = v2 * multiplier;
-        this.haveNextNextGaussian = true;
-        return v1 * multiplier;
-    }
-
-    /**
-     * @return the next gloat
-     */
-    public final float nextFloat()
-    {
-        int y;
-
-        if (this.mti >= N) // generate N words at one time
-        {
-            int kk;
-
-            for (kk = 0; kk < N - M; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            for (; kk < N - 1; kk++)
-            {
-                y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-            }
-            y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-            this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-
-            this.mti = 0;
-        }
-
-        y = this.mt[this.mti++];
-        y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
-        y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
-        y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
-        y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
-
-        return (y >>> 8) / ((float) (1 << 24));
-    }
-
-    /**
-     * Returns an integer drawn uniformly from 0 to n-1. Suffice it to say, n
-     * must be > 0, or an IllegalArgumentException is raised.
-     * 
-     * @param n the upper bound
-     * @return the next int
-     */
-    public final int nextInt(final int n)
-    {
-        if (n <= 0)
-            throw new IllegalArgumentException("n must be positive"); //$NON-NLS-1$
-
-        if ((n & -n) == n) // i.e., n is a power of 2
-        {
-            int y;
-
-            if (this.mti >= N) // generate N words at one time
-            {
-                int kk;
-
-                for (kk = 0; kk < N - M; kk++)
-                {
-                    y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                    this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-                }
-                for (; kk < N - 1; kk++)
-                {
-                    y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                    this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-                }
-                y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-                this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-
-                this.mti = 0;
-            }
-
-            y = this.mt[this.mti++];
-            y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
-            y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
-            y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
-            y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
-
-            return (int) ((n * (long) (y >>> 1)) >> 31);
-        }
-
-        int bits, val;
-        do
-        {
-            int y;
-
-            if (this.mti >= N) // generate N words at one time
-            {
-                int kk;
-
-                for (kk = 0; kk < N - M; kk++)
-                {
-                    y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                    this.mt[kk] = this.mt[kk + M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-                }
-                for (; kk < N - 1; kk++)
-                {
-                    y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk + 1] & LOWER_MASK);
-                    this.mt[kk] = this.mt[kk + (M - N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-                }
-                y = (this.mt[N - 1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
-                this.mt[N - 1] = this.mt[M - 1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
-
-                this.mti = 0;
-            }
-
-            y = this.mt[this.mti++];
-            y ^= y >>> 11; // TEMPERING_SHIFT_U(y)
-            y ^= (y << 7) & TEMPERING_MASK_B; // TEMPERING_SHIFT_S(y)
-            y ^= (y << 15) & TEMPERING_MASK_C; // TEMPERING_SHIFT_T(y)
-            y ^= (y >>> 18); // TEMPERING_SHIFT_L(y)
-
-            bits = (y >>> 1);
-            val = bits % n;
-        }while (bits - val + (n - 1) < 0);
-        return val;
+        // mag01[x] = x * MATRIX_A for x=0,1
+        this.mag01 = new int[2];
+        this.mag01[0] = 0x0;
+        this.mag01[1] = MATRIX_A;
     }
 }

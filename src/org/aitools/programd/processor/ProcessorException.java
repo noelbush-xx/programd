@@ -14,59 +14,58 @@ package org.aitools.programd.processor;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class ProcessorException extends Exception
-{
-    private String offendingInput;
+public class ProcessorException extends Exception {
 
-    /**
-     * @param message the message describing the error
-     * @param exception the exception that generated the error
-     */
-    public ProcessorException(String message, Throwable exception)
-    {
-        super(message, exception);
-    }
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * @param message the message describing the error
-     * @param exception the exception that generated the error
-     * @param input the offending input
-     */
-    public ProcessorException(String message, Throwable exception, String input)
-    {
-        super(message, exception);
-        this.offendingInput = input;
-    }
+  private String offendingInput;
 
-    /**
-     * @return the offending input, if available, that generated this exception
-     */
-    public String getOffendingInput()
-    {
-        return this.offendingInput;
-    }
+  /**
+   * @param message the message describing the error
+   * @param exception the exception that generated the error
+   */
+  public ProcessorException(String message, Throwable exception) {
+    super(message, exception);
+  }
 
-    /**
-     * @return whether this exception contains an offending input
-     */
-    public boolean hasOffendingInput()
-    {
-        return (this.offendingInput != null);
-    }
+  /**
+   * @param message the message describing the error
+   * @param exception the exception that generated the error
+   * @param input the offending input
+   */
+  public ProcessorException(String message, Throwable exception, String input) {
+    super(message, exception);
+    this.offendingInput = input;
+  }
 
-    /**
-     * If an {@link #offendingInput} has been specified, this message will be the <code>ProcessorException</code>'s
-     * regular message, plus the string &quot; due to: &quot; followed by the offending input.
-     * 
-     * @return a message including the offending input, if available
-     */
-    public String getExplanatoryMessage()
-    {
-        if (this.offendingInput == null)
-        {
-            return this.getMessage();
-        }
-        return String.format("\"%s\" due to \"%s\"", this.getMessage(), this.offendingInput);
+  /**
+   * If an {@link #offendingInput} has been specified, this message will be the <code>ProcessorException</code>'s
+   * regular message, plus the string &quot; due to: &quot; followed by the offending input.
+   * 
+   * @return a message including the offending input, if available
+   */
+  public String getExplanatoryMessage() {
+    if (this.offendingInput == null) {
+      return this.getMessage();
     }
+    return String.format("\"%s\" due to \"%s\"", this.getMessage(), this.offendingInput);
+  }
+
+  /**
+   * @return the offending input, if available, that generated this exception
+   */
+  public String getOffendingInput() {
+    return this.offendingInput;
+  }
+
+  /**
+   * @return whether this exception contains an offending input
+   */
+  public boolean hasOffendingInput() {
+    return this.offendingInput != null;
+  }
 
 }

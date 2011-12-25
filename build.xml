@@ -5,7 +5,7 @@
     <tstamp />
     <property name="Name" value="Program D" />
     <property name="version" value="4.7" />
-    <property name="year" value="2006, 2009" />
+    <property name="year" value="2006, 2009, 2011" />
 
     <property name="javac.compiler" value="modern" />
     <property name="javac.debug" value="on" />
@@ -33,12 +33,11 @@
       <pathelement location="${compile.lib.dir}/jdom-1.0-nite-25-Jan-2007.jar" />
       <pathelement location="${webapp.lib.dir}/jdbcappender.jar" />
       <pathelement location="${compile.lib.dir}/jsp-api.jar" />
-      <pathelement location="${webapp.lib.dir}/js.jar" />
+      <pathelement location="${compile.lib.dir}/js.jar" />
       <pathelement location="${compile.lib.dir}/log4j-1.2.13.jar" />
       <pathelement location="${compile.lib.dir}/servlet-api.jar" />
       <pathelement location="${compile.lib.dir}/xerces-j2-2.9.0.jar" />
-      <pathelement location="${compile.lib.dir}/xmlresolver.jar" />
-      <pathelement location="${compile.lib.dir}/xmlresolver-sunjaxp.jar" />
+      <pathelement location="${compile.lib.dir}/resolver.jar" />
       <pathelement location="${compile.lib.dir}/castor-1.1.jar" />
       <pathelement location="${compile.lib.dir}/castor-1.1-codegen.jar" />
     </path>
@@ -51,12 +50,11 @@
       <pathelement location="${webapp.lib.dir}/jdom-1.0-nite-25-Jan-2007.jar" />
       <pathelement location="${webapp.lib.dir}/jdbcappender.jar" />
       <pathelement location="${compile.lib.dir}/jsp-api.jar" />
-      <pathelement location="${webapp.lib.dir}/js.jar" />
-      <pathelement location="${webapp.lib.dir}/log4j-1.2.13.jar" />
+      <pathelement location="${compile.lib.dir}/js.jar" />
+      <pathelement location="${compile.lib.dir}/log4j-1.2.13.jar" />
       <pathelement location="${compile.lib.dir}/servlet-api.jar" />
       <pathelement location="${compile.lib.dir}/xerces-j2-2.9.0.jar" />
-      <pathelement location="${compile.lib.dir}/xmlresolver.jar" />
-      <pathelement location="${compile.lib.dir}/xmlresolver-sunjaxp.jar" />
+      <pathelement location="${compile.lib.dir}/resolver.jar" />
       <pathelement location="${compile.lib.dir}/castor-1.1.jar" />
       <pathelement location="${compile.lib.dir}/castor-1.1-codegen.jar" />
     </path>
@@ -70,8 +68,7 @@
     	../lib/jaxp-api.jar
     	../lib/jaxp-ri.jar
     	../lib/xerces-j2-2.9.0.jar
-      ../lib/xmlresolver-sunjaxp.jar
-      ../lib/xmlresolver.jar
+      ../lib/resolver.jar
     	../lib/jdbcappender.jar
     	../lib/xalan-j2-2.7.0.jar
     	../lib/mysql-connector-java-3.1.12-bin.jar
@@ -148,8 +145,9 @@
 
   <!--Compile the source directory.-->
   <target name="compile-src" depends="init, prepare-src">
-    <javac srcdir="${src.dir}" destdir="${src-build.dir}" classpathref="src-build.classpath" debug="${javac.debug}"
-      deprecation="${javac.deprecation}" optimize="${javac.optimize}" target="${javac.jvm-target}" source="${javac.source}">
+    <javac srcdir="${src.dir}" destdir="${src-build.dir}" classpathref="src-build.classpath"
+    	debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}"
+    	target="${javac.jvm-target}" source="${javac.source}" includeantruntime="false">
       <compilerarg value="-Xlint" />
       <compilerarg value="-Xlint:-path" />
       <compilerarg value="-Xlint:-serial" />
@@ -170,8 +168,9 @@
   <!--Compile the tests.-->
   <target name="compile-tests" depends="init, build-tests">
     <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter" />
-    <javac srcdir="${test.dir}" destdir="${test-build.dir}" classpathref="test-build.classpath" debug="${javac.debug}"
-      deprecation="${javac.deprecation}" target="${javac.jvm-target}" source="${javac.source}">
+    <javac srcdir="${test.dir}" destdir="${test-build.dir}" classpathref="test-build.classpath"
+    	debug="${javac.debug}" deprecation="${javac.deprecation}" target="${javac.jvm-target}"
+    	source="${javac.source}" includeantruntime="false">
       <compilerarg value="-Xlint" />
       <compilerarg value="-Xlint:-path" />
       <compilerarg value="-Xlint:-serial" />

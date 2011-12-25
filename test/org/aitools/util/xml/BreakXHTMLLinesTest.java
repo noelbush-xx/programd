@@ -40,247 +40,287 @@ public class BreakXHTMLLinesTest
      * 
      * @param input the raw input to test the break lines function against
      */
-    private void testBreakLines(String input)
+    private static void testBreakLines(String input)
     {
         String[] lines = XHTML.breakLines(input);
-        assertEquals(Arrays.toString(lines), THREE_LINE_TEST_ARRAY, lines);
+        assertArrayEquals(Arrays.toString(lines), THREE_LINE_TEST_ARRAY, lines);
     }
     
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtUnqualifiedBR_000()
     {
         testBreakLines("line 1<br/>line 2<br/>line 3");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtUnqualifiedBR_001()
     {
         testBreakLines("line 1<br/>line 2<br/>line 3<br/>");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtUnqualifiedBR_002()
     {
         testBreakLines("<br/>line 1<br/>line 2<br/>line 3");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtUnqualifiedBR_003()
     {
         testBreakLines("<br />line 1<br />line 2<br />line 3<br />");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtUnqualifiedBR_004()
     {
         testBreakLines("line 1<br />line 2<br />line 3");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtUnqualifiedBR_005()
     {
         testBreakLines("line 1<br />line 2<br />line 3<br />");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtUnqualifiedBR_006()
     {
         testBreakLines("<br />line 1<br />line 2<br />line 3");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtUnqualifiedBR_007()
     {
         testBreakLines("<br />line 1<br />line 2<br />line 3<br />");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtUnqualifiedP()
     {
         testBreakLines("<p>line 1</p><p>line 2</p><p>line 3</p>");
     }
     
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesInUnqualifiedPre()
     {
         testBreakLines("<pre>line 1\nline 2\nline 3\n</pre>");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtNamespacedBR_000()
     {
         testBreakLines("line 1<br xmlns=\"http://www.w3.org/1999/xhtml\"/>line 2<br xmlns=\"http://www.w3.org/1999/xhtml\"/>line 3");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtNamespacedBR_001()
     {
         testBreakLines("line 1<br xmlns=\"http://www.w3.org/1999/xhtml\"/>line 2<br xmlns=\"http://www.w3.org/1999/xhtml\"/>line 3<br xmlns=\"http://www.w3.org/1999/xhtml\"/>");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtNamespacedBR_002()
     {
         testBreakLines("<br xmlns=\"http://www.w3.org/1999/xhtml\"/>line 1<br xmlns=\"http://www.w3.org/1999/xhtml\"/>line 2<br xmlns=\"http://www.w3.org/1999/xhtml\"/>line 3");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtNamespacedBR_003()
     {
         testBreakLines("<br xmlns=\"http://www.w3.org/1999/xhtml\" />line 1<br xmlns=\"http://www.w3.org/1999/xhtml\" />line 2<br xmlns=\"http://www.w3.org/1999/xhtml\" />line 3<br xmlns=\"http://www.w3.org/1999/xhtml\" />");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtNamespacedBR_004()
     {
         testBreakLines("line 1<br xmlns=\"http://www.w3.org/1999/xhtml\" />line 2<br xmlns=\"http://www.w3.org/1999/xhtml\" />line 3");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtNamespacedBR_005()
     {
         testBreakLines("line 1<br xmlns=\"http://www.w3.org/1999/xhtml\" />line 2<br xmlns=\"http://www.w3.org/1999/xhtml\" />line 3<br xmlns=\"http://www.w3.org/1999/xhtml\" />");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtNamespacedBR_006()
     {
         testBreakLines("<br xmlns=\"http://www.w3.org/1999/xhtml\" />line 1<br xmlns=\"http://www.w3.org/1999/xhtml\" />line 2<br xmlns=\"http://www.w3.org/1999/xhtml\" />line 3");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtNamespacedBR_007()
     {
         testBreakLines("<br xmlns=\"http://www.w3.org/1999/xhtml\" />line 1<br xmlns=\"http://www.w3.org/1999/xhtml\" />line 2<br xmlns=\"http://www.w3.org/1999/xhtml\" />line 3<br xmlns=\"http://www.w3.org/1999/xhtml\" />");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtNamespacedP()
     {
         testBreakLines("<p xmlns=\"http://www.w3.org/1999/xhtml\">line 1</p><p xmlns=\"http://www.w3.org/1999/xhtml\">line 2</p><p xmlns=\"http://www.w3.org/1999/xhtml\">line 3</p>");
     }
     
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesInNamespacedPre()
     {
         testBreakLines("<pre xmlns=\"http://www.w3.org/1999/xhtml\">line 1\nline 2\nline 3\n</pre>");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedBR_000()
     {
         testBreakLines("line 1<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\"/>line 2<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\"/>line 3");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedBR_001()
     {
         testBreakLines("line 1<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\"/>line 2<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\"/>line 3<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\"/>");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedBR_002()
     {
         testBreakLines("<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\"/>line 1<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\"/>line 2<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\"/>line 3");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedBR_003()
     {
         testBreakLines("<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line 1<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line 2<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line 3<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedBR_004()
     {
         testBreakLines("line 1<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line 2<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line 3");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedBR_005()
     {
         testBreakLines("line 1<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line 2<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line 3<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedBR_006()
     {
         testBreakLines("<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line 1<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line 2<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line 3");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedBR_007()
     {
         testBreakLines("<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line 1<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line 2<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line 3<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedP()
     {
         testBreakLines("<html:p xmlns:html=\"http://www.w3.org/1999/xhtml\">line 1</html:p><html:p xmlns:html=\"http://www.w3.org/1999/xhtml\">line 2</html:p><html:p xmlns:html=\"http://www.w3.org/1999/xhtml\">line 3</html:p>");
     }
     
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesInQualifiedPre()
     {
         testBreakLines("<html:pre xmlns:html=\"http://www.w3.org/1999/xhtml\">line 1\nline 2\nline 3\n</html:pre>");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedBRWithLinefeeds_000()
     {
         testBreakLines("line\n1\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\"/>line\n2\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\"/>line\n3");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedBRWithLinefeeds_001()
     {
         testBreakLines("line\n1\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\"/>line\n2\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\"/>line\n3\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\"/>");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedBRWithLinefeeds_002()
     {
         testBreakLines("<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\"/>line\n1\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\"/>line\n2\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\"/>line\n3");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedBRWithLinefeeds_003()
     {
         testBreakLines("<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line\n1\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line\n2\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line\n3\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedBRWithLinefeeds_004()
     {
         testBreakLines("line\n1\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line\n2\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line\n3");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedBRWithLinefeeds_005()
     {
         testBreakLines("line\n1\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line\n2\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line\n3\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedBRWithLinefeeds_006()
     {
         testBreakLines("<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line\n1\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line\n2\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line\n3");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedBRWithLinefeeds_007()
     {
         testBreakLines("<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line\n1\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line\n2\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />line\n3\r\n<html:br xmlns:html=\"http://www.w3.org/1999/xhtml\" />");
     }
 
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesAtQualifiedPWithLinefeeds()
     {
         testBreakLines("<html:p xmlns:html=\"http://www.w3.org/1999/xhtml\">\r\nline\n1\r\n</html:p><html:p xmlns:html=\"http://www.w3.org/1999/xhtml\">\r\nline\n2\r\n</html:p><html:p xmlns:html=\"http://www.w3.org/1999/xhtml\">\r\nline\n3\r\n</html:p>");
     }
     
     /** */ @Test
+    @SuppressWarnings("static-method")
     public void testBreakLinesInQualifiedPreWithLinefeeds()
     {
         testBreakLines("<html:pre xmlns:html=\"http://www.w3.org/1999/xhtml\">\r\nline 1\nline 2\nline 3\n\r\n</html:pre>");

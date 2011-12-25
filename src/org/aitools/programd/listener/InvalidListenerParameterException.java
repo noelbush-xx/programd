@@ -14,15 +14,19 @@ package org.aitools.programd.listener;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class InvalidListenerParameterException extends Exception
-{
-    /**
-     * Creates a new InvalidListenerParameterException with the given message.
-     * 
-     * @param message the message describing the exception
-     */
-    public InvalidListenerParameterException(String message)
-    {
-        super(message);
-    }
+public class InvalidListenerParameterException extends Exception {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+
+  /**
+   * Creates a new InvalidListenerParameterException with the given message.
+   * 
+   * @param message the message describing the exception
+   */
+  public InvalidListenerParameterException(String message) {
+    super(message);
+  }
 }

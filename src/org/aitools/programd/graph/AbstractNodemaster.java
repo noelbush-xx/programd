@@ -12,76 +12,70 @@ package org.aitools.programd.graph;
 import java.util.LinkedHashMap;
 
 /**
- * This is an abstract memory-based <code>Nodemapper</code> containing all the things that
- * are common to the various optimization strategies.
+ * This is an abstract memory-based <code>Nodemapper</code> containing all the things that are common to the various
+ * optimization strategies.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-abstract public class AbstractNodemaster implements Nodemapper
-{
-    /**
-     * The hidden hashmap where some (or all) mappings may be stored, depending
-     * upon optimization strategies.
-     */
-    protected LinkedHashMap<String, Object> hidden;
+abstract public class AbstractNodemaster implements Nodemapper {
 
-    /**
-     * The minimum number of words needed to reach a leaf node from here.
-     * Defaults to zero.
-     */
-    protected int _height = 0;
+  /**
+   * The hidden hashmap where some (or all) mappings may be stored, depending upon optimization strategies.
+   */
+  protected LinkedHashMap<String, Object> hidden;
 
-    /** The parent of this Nodemaster. */
-    protected Nodemapper _parent;
+  /**
+   * The minimum number of words needed to reach a leaf node from here. Defaults to zero.
+   */
+  protected int _height = 0;
 
-    /**
-     * @see org.aitools.programd.graph.Nodemapper#setParent(org.aitools.programd.graph.Nodemapper)
-     */
-    public void setParent(Nodemapper parent)
-    {
-        this._parent = parent;
+  /** The parent of this Nodemaster. */
+  protected Nodemapper _parent;
+
+  /**
+   * Sets the <code>height</code> of this <code>AbstractNodemaster</code> to <code>height</code>, and calls
+   * <code>fillInHeight()</code> on its parent (if not null) with a height <code>height + 1</code>.
+   * 
+   * @param height the height for this node
+   */
+  protected void fillInHeight(int height) {
+    if (this._height > height) {
+      this._height = height;
     }
-
-    /**
-     * @see org.aitools.programd.graph.Nodemapper#getParent()
-     */
-    public Nodemapper getParent()
-    {
-        return this._parent;
+    if (this._parent != null) {
+      ((AbstractNodemaster) this._parent).fillInHeight(height + 1);
     }
+  }
 
-    /**
-     * @see org.aitools.programd.graph.Nodemapper#getHeight()
-     */
-    public int getHeight()
-    {
-        return this._height;
-    }
+  /**
+   * @see org.aitools.programd.graph.Nodemapper#getHeight()
+   */
+  @Override
+  public int getHeight() {
+    return this._height;
+  }
 
-    /**
-     * @see org.aitools.programd.graph.Nodemapper#setTop()
-     */
-    public void setTop()
-    {
-        this.fillInHeight(0);
-    }
+  /**
+   * @see org.aitools.programd.graph.Nodemapper#getParent()
+   */
+  @Override
+  public Nodemapper getParent() {
+    return this._parent;
+  }
 
-    /**
-     * Sets the <code>height</code> of this <code>AbstractNodemaster</code> to
-     * <code>height</code>, and calls <code>fillInHeight()</code> on its
-     * parent (if not null) with a height <code>height + 1</code>.
-     * 
-     * @param height the height for this node
-     */
-    protected void fillInHeight(int height)
-    {
-        if (this._height > height)
-        {
-            this._height = height;
-        }
-        if (this._parent != null)
-        {
-            ((AbstractNodemaster) this._parent).fillInHeight(height + 1);
-        }
-    }
+  /**
+   * @see org.aitools.programd.graph.Nodemapper#setParent(org.aitools.programd.graph.Nodemapper)
+   */
+  @Override
+  public void setParent(Nodemapper parent) {
+    this._parent = parent;
+  }
+
+  /**
+   * @see org.aitools.programd.graph.Nodemapper#setTop()
+   */
+  @Override
+  public void setTop() {
+    this.fillInHeight(0);
+  }
 }

@@ -9,7 +9,6 @@
 
 package org.aitools.util;
 
-import org.aitools.util.Classes;
 import org.aitools.util.runtime.UserError;
 
 /**
@@ -18,60 +17,53 @@ import org.aitools.util.runtime.UserError;
  * @param <T> the (super-)type of object that will be created
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class ObjectFactory<T>
-{
-    /** The classname of the objects that will be produced. */
-    private String _classname;
+public class ObjectFactory<T> {
 
-    /** The actual implementation to create. */
-    private Class<? extends T> _clazz;
+  /** The classname of the objects that will be produced. */
+  private String _classname;
 
-    /** An empty argument set to be passed when constructing an object. */
-    private static final Object[] EMPTY_ARGS = new Object[] {};
+  /** The actual implementation to create. */
+  private Class<? extends T> _clazz;
 
-    /**
-     * Creates a new <code>ObjectFactory</code>
-     * that is configured to create instances of the 
-     * subclass <code>classname</code>.
-     * 
-     * @param classname
-     */
-    @SuppressWarnings("unchecked")
-    public ObjectFactory(String classname)
-    {
-        this._classname = classname;
-        try
-        {
-            this._clazz = (Class<? extends T>) Class.forName(classname);
-        }
-        catch (ClassNotFoundException e)
-        {
-            throw new UserError(String.format("Could not find implementation \"%s\".", classname), e);
-        }
-        catch (ClassCastException e)
-        {
-            throw new UserError(String.format("\"%s\" is not an implementation of the base class.", classname), e);
-        }
+  /** An empty argument set to be passed when constructing an object. */
+  private static final Object[] EMPTY_ARGS = new Object[] {};
+
+  /**
+   * Creates a new <code>ObjectFactory</code> that is configured to create instances of the subclass
+   * <code>classname</code>.
+   * 
+   * @param classname
+   */
+  @SuppressWarnings("unchecked")
+  public ObjectFactory(String classname) {
+    this._classname = classname;
+    try {
+      this._clazz = (Class<? extends T>) Class.forName(classname);
     }
-
-    /**
-     * Returns a new Nodemapper that requires no arguments.
-     * 
-     * @return a new Nodemapper
-     */
-    public T getNewInstance()
-    {
-        return Classes.getNewInstance(this._clazz, this._classname, EMPTY_ARGS);
+    catch (ClassNotFoundException e) {
+      throw new UserError(String.format("Could not find implementation \"%s\".", classname), e);
     }
-
-    /**
-     * Returns a new Nodemapper using given arguments.
-     * 
-     * @param args arguments to pass to the Nodemapper constructor
-     * @return a new Nodemapper
-     */
-    public T getNewInstance(Object[] args)
-    {
-        return Classes.getNewInstance(this._clazz, this._classname, args);
+    catch (ClassCastException e) {
+      throw new UserError(String.format("\"%s\" is not an implementation of the base class.", classname), e);
     }
+  }
+
+  /**
+   * Returns a new Nodemapper that requires no arguments.
+   * 
+   * @return a new Nodemapper
+   */
+  public T getNewInstance() {
+    return Classes.getNewInstance(this._clazz, this._classname, EMPTY_ARGS);
+  }
+
+  /**
+   * Returns a new Nodemapper using given arguments.
+   * 
+   * @param args arguments to pass to the Nodemapper constructor
+   * @return a new Nodemapper
+   */
+  public T getNewInstance(Object[] args) {
+    return Classes.getNewInstance(this._clazz, this._classname, args);
+  }
 }

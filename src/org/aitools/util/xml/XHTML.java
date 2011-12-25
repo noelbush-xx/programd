@@ -29,74 +29,67 @@ import org.jdom.Text;
 
 /**
  * Utilities specific to (X)HTML handling.
- *
+ * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class XHTML
-{
-    private static final Pattern XHTML_BREAK_LINE_REGEX = Pattern.compile("[\r\n]*(<(.+?:)?br( .*?)?/>|<(.+?:)?p( .+?)?>|</(.+?:)?p>)[\r\n]*");
-    
-    private static final Pattern PRE_REGEX = Pattern.compile("<(?:.+?:)?pre(?: .+?)?>(.+?)</(?:.+?:)?pre>", Pattern.DOTALL);
-    
-    private static final Pattern LINEFEED_REGEX = Pattern.compile("[\r\n]+");
-    
-    private static final String[] EMPTY_STRING_ARRAY = {("")};
+public class XHTML {
 
-    /**
-     * Breaks a message into multiple lines at an (X)HTML &lt;br/&gt;, except if it
-     * comes at the beginning of the message, or ending (X)HTML &lt;/p&gt;.
-     * 
-     * @param input the string to break
-     * @return one line per array item
-     */
-    public static String[] breakLines(String input)
-    {
-        // Null inputs return an empty string array.
-        if (input == null)
-        {
-            return EMPTY_STRING_ARRAY;
-        }
-        // Trim all whitespace at beginning and end.
-        String _input = input.trim();
-    
-        // Empty trimmed inputs return an empty string array.
-        if (_input.equals(""))
-        {
-            return EMPTY_STRING_ARRAY;
-        }
-        
-        // Split into lines.
-        List<String> rawLines = Arrays.asList(XHTML_BREAK_LINE_REGEX.split(_input));
-        
-        // Preserve actual line breaks within <pre/> sections.
-        List<String> preservedLines = new ArrayList<String>(rawLines.size());
-        Matcher matcher;
-        String normalizedLine;
-        for (String line : rawLines)
-        {
-            matcher = PRE_REGEX.matcher(line);
-            if (matcher.matches())
-            {
-                for (String preLine : LINEFEED_REGEX.split(matcher.group(1)))
-                {
-                    if (preLine.length() > 0)
-                    {
-                        preservedLines.add(preLine);
-                    }
-                }
-            }
-            else
-            {
-                // Remove blank lines.
-                normalizedLine = Text.normalizeString(line);
-                if (normalizedLine.length() > 0)
-                {
-                    preservedLines.add(normalizedLine);
-                }
-            }
-        }
-        
-        return preservedLines.toArray(EMPTY_STRING_ARRAY);
+  private static final Pattern XHTML_BREAK_LINE_REGEX = Pattern
+      .compile("[\r\n]*(<(.+?:)?br( .*?)?/>|<(.+?:)?p( .+?)?>|</(.+?:)?p>)[\r\n]*");
+
+  private static final Pattern PRE_REGEX = Pattern.compile("<(?:.+?:)?pre(?: .+?)?>(.+?)</(?:.+?:)?pre>",
+      Pattern.DOTALL);
+
+  private static final Pattern LINEFEED_REGEX = Pattern.compile("[\r\n]+");
+
+  private static final String[] EMPTY_STRING_ARRAY = { "" };
+
+  /**
+   * Breaks a message into multiple lines at an (X)HTML &lt;br/&gt;, except if it comes at the beginning of the message,
+   * or ending (X)HTML &lt;/p&gt;.
+   * 
+   * @param input the string to break
+   * @return one line per array item
+   */
+  public static String[] breakLines(String input) {
+    // Null inputs return an empty string array.
+    if (input == null) {
+      return EMPTY_STRING_ARRAY;
     }
+    // Trim all whitespace at beginning and end.
+    String _input = input.trim();
+
+    // Empty trimmed inputs return an empty string array.
+    if (_input.equals("")) {
+      return EMPTY_STRING_ARRAY;
+    }
+
+    // Split into lines.
+    List<String> rawLines = Arrays.asList(XHTML_BREAK_LINE_REGEX.split(_input));
+
+    // Preserve actual line breaks within <pre/> sections.
+    List<String> preservedLines = new ArrayList<String>(rawLines.size());
+    Matcher matcher;
+    String normalizedLine;
+    for (String line : rawLines) {
+      matcher = PRE_REGEX.matcher(line);
+      if (matcher.matches()) {
+        for (String preLine : LINEFEED_REGEX.split(matcher.group(1))) {
+          if (preLine.length() > 0) {
+            preservedLines.add(preLine);
+          }
+        }
+      }
+      else {
+        // Remove blank lines.
+        normalizedLine = Text.normalizeString(line);
+        if (normalizedLine.length() > 0) {
+          preservedLines.add(normalizedLine);
+        }
+      }
+    }
+
+    return preservedLines.toArray(EMPTY_STRING_ARRAY);
+  }
 
 }

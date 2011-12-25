@@ -11,36 +11,37 @@ import javax.servlet.http.HttpServletResponse;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-abstract public class JSPOrientedBotServlet extends BotServlet
-{
-    /** A default bot page if none other is provided. */
-    protected String defaultBotServletPage = "/pages/TalkToBot.jspx";
+abstract public class JSPOrientedBotServlet extends BotServlet {
 
-    /** A page to use for displaying errors. */
-    protected String errorPage = "/pages/Error.jspx";
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * @see org.aitools.programd.server.servlet.BotServlet#init()
-     */
-    @Override
-    public void init()
-    {
-        super.init();
-        String botPage = getInitParameter("default-bot-page");
-        if (botPage != null)
-        {
-            this.defaultBotServletPage = botPage;
-        }
-        String otherErrorPage = getInitParameter("default-error-page");
-        if (otherErrorPage != null)
-        {
-            this.errorPage = otherErrorPage;
-        }
+  /** A default bot page if none other is provided. */
+  protected String defaultBotServletPage = "/pages/TalkToBot.jspx";
+
+  /** A page to use for displaying errors. */
+  protected String errorPage = "/pages/Error.jspx";
+
+  protected static void forward(String page, HttpServletRequest req, HttpServletResponse resp) throws ServletException,
+      IOException {
+    req.getRequestDispatcher(page).forward(req, resp);
+  }
+
+  /**
+   * @see org.aitools.programd.server.servlet.BotServlet#init()
+   */
+  @Override
+  public void init() {
+    super.init();
+    String botPage = this.getInitParameter("default-bot-page");
+    if (botPage != null) {
+      this.defaultBotServletPage = botPage;
     }
-
-    protected void forward(String page, HttpServletRequest req, HttpServletResponse resp) throws ServletException,
-            IOException
-    {
-        req.getRequestDispatcher(page).forward(req, resp);
+    String otherErrorPage = this.getInitParameter("default-error-page");
+    if (otherErrorPage != null) {
+      this.errorPage = otherErrorPage;
     }
+  }
 }

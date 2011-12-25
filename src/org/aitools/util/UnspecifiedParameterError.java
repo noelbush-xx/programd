@@ -24,15 +24,19 @@ package org.aitools.util;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class UnspecifiedParameterError extends Error
-{
-    /**
-     * Creates a new UnspecifiedParameterError about the given parameter name
-     * 
-     * @param paramName the name of the parameter that was not specified
-     */
-    public UnspecifiedParameterError(String paramName)
-    {
-        super(String.format("Parameter \"%s\" was not specified.", paramName));
-    }
+public class UnspecifiedParameterError extends Error {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+
+  /**
+   * Creates a new UnspecifiedParameterError about the given parameter name
+   * 
+   * @param paramName the name of the parameter that was not specified
+   */
+  public UnspecifiedParameterError(String paramName) {
+    super(String.format("Parameter \"%s\" was not specified.", paramName));
+  }
 }

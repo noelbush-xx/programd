@@ -15,16 +15,16 @@ package org.aitools.programd.parser;
  * @author Kris Drent
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public interface AIMLReaderListener
-{
-    /**
-     * Adds a new category to the {@link org.aitools.programd.graph.Graphmapper} . Usually called by an AIML parser such
-     * as {@link org.aitools.programd.parser.TemplateParser TemplateParser} .
-     * 
-     * @param pattern the <code>pattern</code> portion of a Graphmaster path
-     * @param that the <code>that</code> portion of a Graphmaster path
-     * @param topic the <code>topic</code> portion of a Graphmaster path
-     * @param template the <code>template</code> portion of a Graphmaster path
-     */
-    public void newCategory(String pattern, String that, String topic, String template);
+public interface AIMLReaderListener {
+
+  /**
+   * Adds a new category to the {@link org.aitools.programd.graph.Graphmapper} . Usually called by an AIML parser such
+   * as {@link org.aitools.programd.parser.TemplateParser TemplateParser} .
+   * 
+   * @param pattern the <code>pattern</code> portion of a Graphmaster path
+   * @param that the <code>that</code> portion of a Graphmaster path
+   * @param topic the <code>topic</code> portion of a Graphmaster path
+   * @param template the <code>template</code> portion of a Graphmaster path
+   */
+  public void newCategory(String pattern, String that, String topic, String template);
 }

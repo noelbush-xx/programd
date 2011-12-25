@@ -9,10 +9,9 @@
 
 package org.aitools.programd.processor.aiml;
 
-import org.jdom.Element;
-
 import org.aitools.programd.Core;
 import org.aitools.programd.parser.TemplateParser;
+import org.jdom.Element;
 
 /**
  * Processes an <code><a href="http://aitools.org/aiml/TR/2001/WD-aiml/#section-input">input</a></code> element.
@@ -21,31 +20,29 @@ import org.aitools.programd.parser.TemplateParser;
  * @author Thomas Ringate, Pedro Colla
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class InputProcessor extends IndexedPredicateProcessor
-{
-    /** The label (as required by the registration scheme). */
-    public static final String label = "input";
+public class InputProcessor extends IndexedPredicateProcessor {
 
-    /**
-     * Creates a new InputProcessor using the given Core.
-     * 
-     * @param core the Core object to use
-     */
-    public InputProcessor(Core core)
-    {
-        super(core);
-    }
+  /** The label (as required by the registration scheme). */
+  public static final String label = "input";
 
-    /**
-     * Generalizes the processing of an <code>input</code> element to a job for {@link IndexedPredicateProcessor}.
-     * 
-     * @param element the <code>input</code> element
-     * @param parser the parser that is at work
-     * @return the result of processing the element
-     */
-    @Override
-    public String process(Element element, TemplateParser parser)
-    {
-        return super.process(element, parser, label, 2);
-    }
+  /**
+   * Creates a new InputProcessor using the given Core.
+   * 
+   * @param core the Core object to use
+   */
+  public InputProcessor(Core core) {
+    super(core);
+  }
+
+  /**
+   * Generalizes the processing of an <code>input</code> element to a job for {@link IndexedPredicateProcessor}.
+   * 
+   * @param element the <code>input</code> element
+   * @param parser the parser that is at work
+   * @return the result of processing the element
+   */
+  @Override
+  public String process(Element element, TemplateParser parser) {
+    return super.process(element, parser, label, 2);
+  }
 }

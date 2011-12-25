@@ -15,29 +15,32 @@ package org.aitools.programd.util;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class NotAnAIMLPatternException extends Exception
-{
-    /** The pattern which this exception concerns. */
-    private String _pattern;
+public class NotAnAIMLPatternException extends Exception {
 
-    /**
-     * Records the pattern and error message for this exception.
-     * 
-     * @param message the explanation why this pattern is invalid
-     * @param pattern the pattern itself
-     */
-    public NotAnAIMLPatternException(String message, String pattern)
-    {
-        super(message);
-        this._pattern = pattern;
-    }
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * @see java.lang.Throwable#getMessage()
-     */
-    @Override
-    public String getMessage()
-    {
-        return String.format("Not an AIML pattern: \"%s\" - %s", this._pattern, super.getMessage());
-    }
+  /** The pattern which this exception concerns. */
+  private String _pattern;
+
+  /**
+   * Records the pattern and error message for this exception.
+   * 
+   * @param message the explanation why this pattern is invalid
+   * @param pattern the pattern itself
+   */
+  public NotAnAIMLPatternException(String message, String pattern) {
+    super(message);
+    this._pattern = pattern;
+  }
+
+  /**
+   * @see java.lang.Throwable#getMessage()
+   */
+  @Override
+  public String getMessage() {
+    return String.format("Not an AIML pattern: \"%s\" - %s", this._pattern, super.getMessage());
+  }
 }

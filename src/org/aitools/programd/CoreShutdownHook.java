@@ -18,33 +18,30 @@ package org.aitools.programd;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class CoreShutdownHook extends Thread
-{
-    private Core _core;
+public class CoreShutdownHook extends Thread {
 
-    /**
-     * Creates a new <code>CoreShutdownHook</code> to manage the shutdown of the given Core
-     * 
-     * @param core the Core whose shutdown method should be run when this thread is run
-     */
-    public CoreShutdownHook(Core core)
-    {
-        super("Core Shutdown Thread");
-        this._core = core;
-    }
+  private Core _core;
 
-    /**
-     * Shuts down the Core assigned to this thread.
-     * 
-     * @see Thread#run
-     */
-    @Override
-    public void run()
-    {
-        // The Core may already have been shut down -- don't do it again.
-        if (this._core.getStatus() != Core.Status.SHUT_DOWN)
-        {
-            this._core.shutdown();
-        }
+  /**
+   * Creates a new <code>CoreShutdownHook</code> to manage the shutdown of the given Core
+   * 
+   * @param core the Core whose shutdown method should be run when this thread is run
+   */
+  public CoreShutdownHook(Core core) {
+    super("Core Shutdown Thread");
+    this._core = core;
+  }
+
+  /**
+   * Shuts down the Core assigned to this thread.
+   * 
+   * @see Thread#run
+   */
+  @Override
+  public void run() {
+    // The Core may already have been shut down -- don't do it again.
+    if (this._core.getStatus() != Core.Status.SHUT_DOWN) {
+      this._core.shutdown();
     }
+  }
 }

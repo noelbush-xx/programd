@@ -16,62 +16,55 @@ import org.aitools.programd.util.ManagedProcess;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class ListCommandablesCommand extends ShellCommand
-{
-    /** Shell command. */
-    public static final String COMMAND_STRING = "/commandables";
+public class ListCommandablesCommand extends ShellCommand {
 
-    /** Argument template. */
-    public static final String ARGUMENT_TEMPLATE = "";
+  /** Shell command. */
+  public static final String COMMAND_STRING = "/commandables";
 
-    /** Shell help line. */
-    private static final String HELP_LINE = "lists available \"shell commandables\" (such as some listeners)";
+  /** Argument template. */
+  public static final String ARGUMENT_TEMPLATE = "";
 
-    /**
-     * Creates a new ListCommandablesCommand.
-     */
-    public ListCommandablesCommand()
-    {
-        super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
+  /** Shell help line. */
+  private static final String HELP_LINE = "lists available \"shell commandables\" (such as some listeners)";
+
+  /**
+   * Creates a new ListCommandablesCommand.
+   */
+  public ListCommandablesCommand() {
+    super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
+  }
+
+  /**
+   * Prints a list of the available ShellCommandables to the shell console.
+   * 
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
+   *      org.aitools.programd.interfaces.shell.Shell)
+   */
+  @Override
+  public void handle(String commandLine, Shell shell) {
+    int commandableCount = 0;
+    shell.showMessage("Available shell commandables:");
+    for (ManagedProcess process : shell.getCore().getManagedProcesses().values()) {
+      if (process instanceof ShellCommandable) {
+        ShellCommandable commandable = (ShellCommandable) process;
+        shell.showMessage("/" + commandable.getShellID() + " - " + commandable.getShellDescription());
+        commandableCount++;
+      }
     }
-
-    /**
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
-     */
-    @Override
-    public boolean handles(String commandLine)
-    {
-        return commandLine.toLowerCase().equals(COMMAND_STRING);
+    if (commandableCount == 0) {
+      shell.showError("No shell commandables are loaded.");
     }
-
-    /**
-     * Prints a list of the available ShellCommandables to the shell console.
-     * 
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
-     */
-    @Override
-    @SuppressWarnings("unused")
-    public void handle(String commandLine, Shell shell)
-    {
-        int commandableCount = 0;
-        shell.showMessage("Available shell commandables:");
-        for (ManagedProcess process : shell.getCore().getManagedProcesses().values())
-        {
-            if (process instanceof ShellCommandable)
-            {
-                ShellCommandable commandable = (ShellCommandable) process;
-                shell.showMessage("/" + commandable.getShellID() + " - " + commandable.getShellDescription());
-                commandableCount++;
-            }
-        }
-        if (commandableCount == 0)
-        {
-            shell.showError("No shell commandables are loaded.");
-        }
-        else
-        {
-            shell.showMessage("Commands after the shell commandable will be sent to the commandable.");
-            shell.showMessage("Example: \"/irc /JOIN #foo\" tells thIRCListenerRC listener to join channel \"#foo\".");
-        }
+    else {
+      shell.showMessage("Commands after the shell commandable will be sent to the commandable.");
+      shell.showMessage("Example: \"/irc /JOIN #foo\" tells thIRCListenerRC listener to join channel \"#foo\".");
     }
+  }
+
+  /**
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
+   */
+  @Override
+  public boolean handles(String commandLine) {
+    return commandLine.toLowerCase().equals(COMMAND_STRING);
+  }
 }

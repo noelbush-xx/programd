@@ -19,59 +19,55 @@ import org.aitools.util.resource.URLTools;
 /**
  * @author <a href="mailto:noel@x-31.com">Noel Bush</a>
  */
-public class ProgramDContextListener implements ServletContextListener
-{
-    /** The key for saving the Core object in the servlet context. */
-    public static final String KEY_CORE = "core";
+public class ProgramDContextListener implements ServletContextListener {
 
-    /** The name of the servlet parameter that indicates the location of the core config file. */
-    public static final String PARAM_CORE_CONFIG = "programd-core-config";
+  /** The key for saving the Core object in the servlet context. */
+  public static final String KEY_CORE = "core";
 
-    private ServletContext context = null;
+  /** The name of the servlet parameter that indicates the location of the core config file. */
+  public static final String PARAM_CORE_CONFIG = "programd-core-config";
 
-    /**
-     * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
-     */
-    public void contextInitialized(ServletContextEvent sce)
-    {
-        this.context = sce.getServletContext();
+  private ServletContext context = null;
 
-        this.context.log("Configuring Program D Core from servlet context listener.");
+  /**
+   * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
+   */
+  @Override
+  public void contextDestroyed(ServletContextEvent sce) {
+    this.context = sce.getServletContext();
+    if (this.context != null) {
+      this.context.removeAttribute(KEY_CORE);
+    }
+  }
 
-        // Check for the config parameter.
-        String config = this.context.getInitParameter(PARAM_CORE_CONFIG);
-        if (config == null || config.length() == 0)
-        {
-            this.context.log("No \"" + PARAM_CORE_CONFIG + "\" init-param specified for Program D.  Cannot continue.");
-            return;
-        }
+  /**
+   * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
+   */
+  @Override
+  public void contextInitialized(ServletContextEvent sce) {
+    this.context = sce.getServletContext();
 
-        // Create the base URL.
-        URL baseURL;
-        try
-        {
-            baseURL = this.context.getResource("/");
-        }
-        catch (MalformedURLException e)
-        {
-            this.context.log("Error when getting base URL!", e);
-            return;
-        }
+    this.context.log("Configuring Program D Core from servlet context listener.");
 
-        // Set up the Program D Core.
-        Core core = new Core(baseURL, URLTools.contextualize(baseURL, config));
-        this.context.setAttribute(KEY_CORE, core);
+    // Check for the config parameter.
+    String config = this.context.getInitParameter(PARAM_CORE_CONFIG);
+    if (config == null || config.length() == 0) {
+      this.context.log("No \"" + PARAM_CORE_CONFIG + "\" init-param specified for Program D.  Cannot continue.");
+      return;
     }
 
-    /**
-     * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
-     */
-    public void contextDestroyed(ServletContextEvent sce)
-    {
-        this.context = sce.getServletContext();
-        if (this.context != null)
-        {
-            this.context.removeAttribute(KEY_CORE);
-        }
+    // Create the base URL.
+    URL baseURL;
+    try {
+      baseURL = this.context.getResource("/");
     }
+    catch (MalformedURLException e) {
+      this.context.log("Error when getting base URL!", e);
+      return;
+    }
+
+    // Set up the Program D Core.
+    Core core = new Core(baseURL, URLTools.contextualize(baseURL, config));
+    this.context.setAttribute(KEY_CORE, core);
+  }
 }

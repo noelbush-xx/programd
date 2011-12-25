@@ -20,83 +20,75 @@ import org.apache.log4j.Logger;
 /**
  * Controls processes that run in separate threads and need to be shut down before the bot exits.
  */
-public class ManagedProcesses
-{
-    /** The Core to which this is attached. */
-    private Core _core;
+public class ManagedProcesses {
 
-    /** The registry of all processes. */
-    private Map<String, ManagedProcess> registry = Collections.checkedMap(new HashMap<String, ManagedProcess>(),
-            String.class, ManagedProcess.class);
+  /** The Core to which this is attached. */
+  private Core _core;
 
-    /**
-     * Adds a process to the registry and starts it.
-     * 
-     * @param process the process to add
-     * @param name a name by which its thread will be identified
-     */
-    public void start(ManagedProcess process, String name)
-    {
-        this.registry.put(name, process);
-        Thread botProcess = new Thread(process, name);
+  /** The registry of all processes. */
+  private Map<String, ManagedProcess> registry = Collections.checkedMap(new HashMap<String, ManagedProcess>(),
+      String.class, ManagedProcess.class);
 
-        // Set the thread as a daemon, in case the server terminates abnormally.
-        botProcess.setDaemon(true);
+  /**
+   * Creates a ManagedProcesses object.
+   * 
+   * @param core the Core to which to attach this
+   */
+  public ManagedProcesses(Core core) {
+    this._core = core;
+  }
 
-        try
-        {
-            // Start the thread.
-            botProcess.start();
-        }
-        catch (Throwable e)
-        {
-            this._core.getLogger().error("Error starting \"" + name + "\".", e);
-        }
+  /**
+   * Returns a given process.
+   * 
+   * @param name the name of the process
+   * @return the process assigned to the name
+   */
+  public ManagedProcess get(String name) {
+    return this.registry.get(name);
+  }
+
+  /**
+   * Shuts down all registered processes.
+   */
+  public void shutdownAll() {
+    Logger logger = Logger.getLogger("programd");
+    logger.info("Shutting down all ManagedProcesses.");
+    for (ManagedProcess process : this.registry.values()) {
+      logger.debug("Shutting down " + process);
+      process.shutdown();
     }
+    logger.info("Finished shutting down ManagedProcesses.");
+  }
 
-    /**
-     * Returns an iterator on the registry.
-     * 
-     * @return an iterator on the registry
-     */
-    public Collection<ManagedProcess> values()
-    {
-        return this.registry.values();
-    }
+  /**
+   * Adds a process to the registry and starts it.
+   * 
+   * @param process the process to add
+   * @param name a name by which its thread will be identified
+   */
+  public void start(ManagedProcess process, String name) {
+    this.registry.put(name, process);
+    Thread botProcess = new Thread(process, name);
 
-    /**
-     * Returns a given process.
-     * 
-     * @param name the name of the process
-     * @return the process assigned to the name
-     */
-    public ManagedProcess get(String name)
-    {
-        return this.registry.get(name);
-    }
+    // Set the thread as a daemon, in case the server terminates abnormally.
+    botProcess.setDaemon(true);
 
-    /**
-     * Shuts down all registered processes.
-     */
-    public void shutdownAll()
-    {
-        Logger logger = Logger.getLogger("programd");
-        logger.info("Shutting down all ManagedProcesses.");
-        for (ManagedProcess process : this.registry.values())
-        {
-            logger.debug("Shutting down " + process);
-            process.shutdown();
-        }
-        logger.info("Finished shutting down ManagedProcesses.");
+    try {
+      // Start the thread.
+      botProcess.start();
     }
+    catch (Throwable e) {
+      this._core.getLogger().error("Error starting \"" + name + "\".", e);
+    }
+  }
 
-    /**
-     * Creates a ManagedProcesses object.
-     * 
-     * @param core the Core to which to attach this
-     */
-    public ManagedProcesses(Core core)
-    {
-        this._core = core;
-    }
+  /**
+   * Returns an iterator on the registry.
+   * 
+   * @return an iterator on the registry
+   */
+  public Collection<ManagedProcess> values() {
+    return this.registry.values();
+  }
 }

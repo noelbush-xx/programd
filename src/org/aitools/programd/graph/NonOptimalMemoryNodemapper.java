@@ -16,132 +16,117 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 /**
- * This is the most trivial, and likely the most wasteful,
- * implementation of {@link Nodemapper Nodemapper}. It does not
+ * This is the most trivial, and likely the most wasteful, implementation of {@link Nodemapper Nodemapper}. It does not
  * attempt to do any optimizations.
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class NonOptimalMemoryNodemapper extends AbstractNodemaster
-{
-    /**
-     * @see org.aitools.programd.graph.Nodemapper#put(java.lang.String, java.lang.Object)
-     */
-    public Object put(String key, Object value)
-    {
-        if (value instanceof String)
-        {
-            if (this.hidden == null)
-            {
-                this.hidden = new LinkedHashMap<String, Object>();
-            }
-            return this.hidden.put(key.toUpperCase().intern(), ((String) value).intern());
-        }
-        // otherwise...
-        return this.hidden.put(key.toUpperCase().intern(), value);
-    }
+public class NonOptimalMemoryNodemapper extends AbstractNodemaster {
 
-    /**
-     * @see org.aitools.programd.graph.Nodemapper#remove(java.lang.Object)
-     */
-    public void remove(Object value)
-    {
-        // Find the key for this value.
-        Object key = null;
-        if (this.hidden != null)
-        {
-            for (Map.Entry<String, Object> item : this.hidden.entrySet())
-            {
-                if (item.getValue().equals(value))
-                {
-                    // Found it.
-                    key = item.getKey();
-                    break;
-                }
-            }
-        }
-        if (key == null)
-        {
-            // We didn't find a key.
-            Logger.getLogger("programd.graphmaster").error(
-                    String.format("Key was not found for value when trying to remove \"%s\".", value));
-            return;
-        }
-        // Remove the value from the HashMap (ignore the primary
-        // value/key pair).
-        this.hidden.remove(key);
+  /**
+   * @see org.aitools.programd.graph.Nodemapper#containsKey(java.lang.String)
+   */
+  @Override
+  public boolean containsKey(String key) {
+    if (this.hidden == null) {
+      return false;
     }
+    return this.hidden.containsKey(key.toUpperCase());
+  }
 
-    /**
-     * @see org.aitools.programd.graph.Nodemapper#get(java.lang.String)
-     */
-    public Object get(String key)
-    {
-        if (this.hidden == null)
-        {
-            return null;
-        }
-        return this.hidden.get(key.toUpperCase());
+  /**
+   * @see org.aitools.programd.graph.Nodemapper#get(java.lang.String)
+   */
+  @Override
+  public Object get(String key) {
+    if (this.hidden == null) {
+      return null;
     }
+    return this.hidden.get(key.toUpperCase());
+  }
 
-    /**
-     * @see org.aitools.programd.graph.Nodemapper#keySet()
-     */
-    public Set<String> keySet()
-    {
-        if (this.hidden == null)
-        {
-            return null;
+  /**
+   * @see org.aitools.programd.graph.Nodemapper#getAverageSize()
+   */
+  @Override
+  public double getAverageSize() {
+    double total = 0d;
+    if (this.hidden != null) {
+      for (Object object : this.hidden.values()) {
+        if (object instanceof AbstractNodemaster) {
+          total += ((AbstractNodemaster) object).getAverageSize();
         }
-        return this.hidden.keySet();
+      }
     }
+    if (this._parent != null) {
+      int size = this.hidden.size();
+      return (size + total / size) / 2d;
+    }
+    // otherwise...
+    return total / this.hidden.size();
+  }
 
-    /**
-     * @see org.aitools.programd.graph.Nodemapper#containsKey(java.lang.String)
-     */
-    public boolean containsKey(String key)
-    {
-        if (this.hidden == null)
-        {
-            return false;
-        }
-        return this.hidden.containsKey(key.toUpperCase());
+  /**
+   * @see org.aitools.programd.graph.Nodemapper#keySet()
+   */
+  @Override
+  public Set<String> keySet() {
+    if (this.hidden == null) {
+      return null;
     }
+    return this.hidden.keySet();
+  }
 
-    /**
-     * @see org.aitools.programd.graph.Nodemapper#size()
-     */
-    public int size()
-    {
-        if (this.hidden == null)
-        {
-            return 0;
-        }
-        return this.hidden.size();
+  /**
+   * @see org.aitools.programd.graph.Nodemapper#put(java.lang.String, java.lang.Object)
+   */
+  @Override
+  public Object put(String key, Object value) {
+    if (value instanceof String) {
+      if (this.hidden == null) {
+        this.hidden = new LinkedHashMap<String, Object>();
+      }
+      return this.hidden.put(key.toUpperCase().intern(), ((String) value).intern());
     }
+    // otherwise...
+    return this.hidden.put(key.toUpperCase().intern(), value);
+  }
 
-    /**
-     * @see org.aitools.programd.graph.Nodemapper#getAverageSize()
-     */
-    public double getAverageSize()
-    {
-        double total = 0d;
-        if (this.hidden != null)
-        {
-            for (Object object : this.hidden.values())
-            {
-                if (object instanceof AbstractNodemaster)
-                {
-                    total += ((AbstractNodemaster) object).getAverageSize();
-                }
-            }
+  /**
+   * @see org.aitools.programd.graph.Nodemapper#remove(java.lang.Object)
+   */
+  @Override
+  public void remove(Object value) {
+    // Find the key for this value.
+    Object key = null;
+    if (this.hidden != null) {
+      for (Map.Entry<String, Object> item : this.hidden.entrySet()) {
+        if (item.getValue().equals(value)) {
+          // Found it.
+          key = item.getKey();
+          break;
         }
-        if (this._parent != null)
-        {
-            int size = this.hidden.size();
-            return (size + (total / size)) / 2d;
-        }
-        // otherwise...
-        return total / this.hidden.size();
+      }
     }
+    if (key == null) {
+      // We didn't find a key.
+      Logger.getLogger("programd.graphmaster").error(
+          String.format("Key was not found for value when trying to remove \"%s\".", value));
+      return;
+    }
+    // Remove the value from the HashMap (ignore the primary
+    // value/key pair).
+    this.hidden.remove(key);
+  }
+
+  /**
+   * @see org.aitools.programd.graph.Nodemapper#size()
+   */
+  @Override
+  public int size() {
+    if (this.hidden == null) {
+      return 0;
+    }
+    return this.hidden.size();
+  }
 }

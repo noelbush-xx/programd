@@ -13,44 +13,40 @@ package org.aitools.programd.interfaces.shell;
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * 
  */
-public class CategoriesCommand extends ShellCommand
-{
-    /** Shell command string. */
-    public static final String COMMAND_STRING = "/categories";
+public class CategoriesCommand extends ShellCommand {
 
-    /** Argument template. */
-    public static final String ARGUMENT_TEMPLATE = "";
+  /** Shell command string. */
+  public static final String COMMAND_STRING = "/categories";
 
-    /** Shell help line. */
-    private static final String HELP_LINE = "lists the number of categories currently loaded";
+  /** Argument template. */
+  public static final String ARGUMENT_TEMPLATE = "";
 
-    /**
-     * Creates a new LoadCommand.
-     */
-    public CategoriesCommand()
-    {
-        super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
-    }
+  /** Shell help line. */
+  private static final String HELP_LINE = "lists the number of categories currently loaded";
 
-    /**
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
-     */
-    @Override
-    public boolean handles(String commandLine)
-    {
-        return commandLine.toLowerCase().equals(COMMAND_STRING);
-    }
+  /**
+   * Creates a new LoadCommand.
+   */
+  public CategoriesCommand() {
+    super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
+  }
 
-    /**
-     * Attempts to load a specified file into the Graphmaster.
-     * 
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
-     *      org.aitools.programd.interfaces.shell.Shell)
-     */
-    @Override
-    @SuppressWarnings("unused")
-    public void handle(String commandLine, Shell shell)
-    {
-        shell.showMessage(shell.getCore().getGraphmapper().getCategoryReport());
-    }
+  /**
+   * Attempts to load a specified file into the Graphmaster.
+   * 
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
+   *      org.aitools.programd.interfaces.shell.Shell)
+   */
+  @Override
+  public void handle(String commandLine, Shell shell) {
+    shell.showMessage(shell.getCore().getGraphmapper().getCategoryReport());
+  }
+
+  /**
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
+   */
+  @Override
+  public boolean handles(String commandLine) {
+    return commandLine.toLowerCase().equals(COMMAND_STRING);
+  }
 }

@@ -57,33 +57,25 @@ function set_java_vars()
   if [ -z "$JAVA_HOME" ]
   then
     echo
-    echo JAVA_HOME is not set in your environment.
+    echo "JAVA_HOME is not set in your environment."
   
-    # Try the standard JDK 5.0 install location.
-    if [ -x /usr/java/jdk1.5.0_06/bin/java ]
+    # See if any java command exists.
+    JVM_COMMAND=`which java 2>&1 | sed -e 's/.*which: no java in.*//'`
+    if [ -z "$JVM_COMMAND" ]
     then
-      export JAVA_HOME=/usr/java/jdk1.5.0_06
-      JVM_COMMAND=$JAVA_HOME/bin/java
-      echo I have set JAVA_HOME to \"/usr/java/jdk1.5.0_06\".
-    else 
-      # See if any java command exists.
-      JVM_COMMAND=`which java 2>&1 | sed -e 's/.*which: no java in.*//'`
-      if [ -z "$JVM_COMMAND" ]
-      then
-        echo I cannot find a java executable in your path.
-        echo Please check that you have a JDK 5.0 compatible SDK installed.
-        echo
-        exit 1
-      else
-        # This may be usable but we don't know yet.
-        JAVA_BIN=`dirname $JVM_COMMAND`
-        echo I found a java executable in \"$JAVA_BIN\".
-        
-        export JAVA_HOME=`echo $JAVA_BIN | sed -e 's/\/bin$//'`
-        echo I have set JAVA_HOME to \"$JAVA_HOME\".
-      fi
+      echo "I cannot find a java executable in your path."
+      echo "Please check that you have a JDK 5.0 compatible SDK installed."
+      echo
+      exit 1
+    else
+      # This may be usable but we don't know yet.
+      JAVA_BIN=`dirname $JVM_COMMAND`
+      echo "I found a java executable in \"$JAVA_BIN\"."
+
+      export JAVA_HOME=`echo $JAVA_BIN | sed -e 's/\/bin$//'`
+      echo "I have set JAVA_HOME to \"$JAVA_HOME\"."
     fi
-    echo Please consider setting your JAVA_HOME environment variable.
+    echo "Please consider setting your \$JAVA_HOME environment variable."
   fi
   echo
 }
@@ -93,11 +85,11 @@ function check_java_home()
 {
   if [ ! -d $JAVA_HOME ]
   then
-    echo I can\'t find your JAVA_HOME directory.
-    echo \(\"$JAVA_HOME\" doesn\'t seem to exist.\)
-    echo Please be sure that a JDK 5.0 compatible JRE is installed
-    echo and \(even better\) set the \$JAVA_HOME environment variable to point to
-    echo the directory where it is installed.
+    echo "I can't find your JAVA_HOME directory."
+    echo "(\"$JAVA_HOME\" doesn't seem to exist.)"
+    echo "Please be sure that a JDK 5.0 compatible JRE is installed"
+    echo "and (even better) set the \$JAVA_HOME environment variable to point to"
+    echo "the directory where it is installed."
     echo
     exit 1
   fi
@@ -116,9 +108,9 @@ function check_jvm_version()
   case "$JVM_VERSION" in 1.5.*|1.6.*)
     # Version is okay; no need to say anything.
     ;; (*)
-    echo Your JVM is apparently version $JVM_VERSION.
-    echo This may not be compatible with our needs.
-    echo Please install a JDK 5.0+ compatible JVM.
+    echo "Your JVM is apparently version $JVM_VERSION."
+    echo "This may not be compatible with our needs."
+    echo "Please install a JDK 5.0+ compatible JVM."
     echo
     exit 1
   esac

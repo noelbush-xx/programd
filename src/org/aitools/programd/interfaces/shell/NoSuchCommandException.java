@@ -14,15 +14,19 @@ package org.aitools.programd.interfaces.shell;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class NoSuchCommandException extends Exception
-{
-    /**
-     * Constructs a new exception.
-     * 
-     * @param commandLine the command line that generated the exception
-     */
-    public NoSuchCommandException(String commandLine)
-    {
-        super("No shell command could be found to parse the command line \"" + commandLine + "\".");
-    }
+public class NoSuchCommandException extends Exception {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+
+  /**
+   * Constructs a new exception.
+   * 
+   * @param commandLine the command line that generated the exception
+   */
+  public NoSuchCommandException(String commandLine) {
+    super("No shell command could be found to parse the command line \"" + commandLine + "\".");
+  }
 }

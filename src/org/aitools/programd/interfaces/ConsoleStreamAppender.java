@@ -23,124 +23,107 @@ import org.apache.log4j.spi.ThrowableInformation;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class ConsoleStreamAppender extends WriterAppender
-{
-    /** A Shell to watch. */
-    private Shell shell;
+public class ConsoleStreamAppender extends WriterAppender {
 
-    /** Whether to print stack traces for exceptions. */
-    private boolean printStackTraces = false;
+  /** A Shell to watch. */
+  private Shell shell;
 
-    /**
-     * Creates a new ConsoleStreamAppender.
-     */
-    public ConsoleStreamAppender()
-    {
-        super();
-        setImmediateFlush(true);
-        setThreshold(Level.ALL);
+  /** Whether to print stack traces for exceptions. */
+  private boolean printStackTraces = false;
+
+  /**
+   * Creates a new ConsoleStreamAppender.
+   */
+  public ConsoleStreamAppender() {
+    super();
+    this.setImmediateFlush(true);
+    this.setThreshold(Level.ALL);
+  }
+
+  /**
+   * Publishes the given record, also to the shell if one is attached.
+   * 
+   * @param event
+   */
+  @Override
+  public synchronized void doAppend(LoggingEvent event) {
+    super.doAppend(event);
+    if (this.shell != null) {
+      this.shell.gotLine();
     }
+  }
 
-    /**
-     * Assigns the given Shell to this handler, to watch it.
-     * 
-     * @param shellToWatch
-     */
-    public void watch(Shell shellToWatch)
-    {
-        this.shell = shellToWatch;
-    }
+  /**
+   * @return whether the writer has been set
+   */
+  public boolean isWriterSet() {
+    return this.qw != null;
+  }
 
-    /**
-     * Publishes the given record, also to the shell if one is attached.
-     * 
-     * @param event 
-     */
-    @Override
-    public void doAppend(LoggingEvent event)
-    {
-        super.doAppend(event);
-        if (this.shell != null)
-        {
-            this.shell.gotLine();
+  /**
+   * Specifies whether or not to print stack traces for &quot;caught&quot; exceptions (for uncaught exceptions, see
+   * {@link org.aitools.programd.CoreSettings}).
+   * 
+   * @param value whether or not to print stack traces for &quot;caught&quot; exceptions
+   */
+  public void setPrintStackTraces(boolean value) {
+    this.printStackTraces = value;
+  }
+
+  /**
+   * @param stream
+   */
+  public synchronized void setWriter(OutputStream stream) {
+    super.setWriter(this.createWriter(stream));
+  }
+
+  /**
+   * Overrides this method of the parent class so that it will not print stack traces if it isn't supposed to.
+   * 
+   * @see org.apache.log4j.WriterAppender#subAppend(org.apache.log4j.spi.LoggingEvent)
+   */
+  @Override
+  protected void subAppend(LoggingEvent event) {
+    this.qw.write(this.layout.format(event));
+
+    // This if statement is the only addition.
+    if (this.printStackTraces) {
+      if (this.layout.ignoresThrowable()) {
+        String[] s = event.getThrowableStrRep();
+        if (s != null) {
+          int len = s.length;
+          for (int i = 0; i < len; i++) {
+            this.qw.write(s[i]);
+            this.qw.write(Layout.LINE_SEP);
+          }
         }
+      }
     }
-
-    /**
-     * Specifies whether or not to print stack traces for &quot;caught&quot; exceptions (for uncaught exceptions, see
-     * {@link org.aitools.programd.CoreSettings}).
-     * 
-     * @param value whether or not to print stack traces for &quot;caught&quot; exceptions
-     */
-    public void setPrintStackTraces(boolean value)
-    {
-        this.printStackTraces = value;
-    }
-
-    /**
-     * Overrides this method of the parent class so that it will not print stack traces if it isn't supposed to.
-     * 
-     * @see org.apache.log4j.WriterAppender#subAppend(org.apache.log4j.spi.LoggingEvent)
-     */
-    @Override
-    protected void subAppend(LoggingEvent event)
-    {
-        this.qw.write(this.layout.format(event));
-
-        // This if statement is the only addition.
-        if (this.printStackTraces)
-        {
-            if (this.layout.ignoresThrowable())
-            {
-                String[] s = event.getThrowableStrRep();
-                if (s != null)
-                {
-                    int len = s.length;
-                    for (int i = 0; i < len; i++)
-                    {
-                        this.qw.write(s[i]);
-                        this.qw.write(Layout.LINE_SEP);
-                    }
-                }
-            }
+    else {
+      ThrowableInformation ti = event.getThrowableInformation();
+      if (ti != null) {
+        Throwable t = ti.getThrowable();
+        if (t != null) {
+          String message = t.getMessage();
+          if (message != null) {
+            this.qw.write(event.getThrowableInformation().getThrowable().getMessage());
+            this.qw.write(Layout.LINE_SEP);
+          }
         }
-        else
-        {
-            ThrowableInformation ti = event.getThrowableInformation();
-            if (ti != null)
-            {
-                Throwable t = ti.getThrowable();
-                if (t != null)
-                {
-                    String message = t.getMessage();
-                    if (message != null)
-                    {
-                        this.qw.write(event.getThrowableInformation().getThrowable().getMessage());
-                        this.qw.write(Layout.LINE_SEP);
-                    }
-                }
-            }
-        }
-
-        if (this.immediateFlush)
-        {
-            this.qw.flush();
-        }
+      }
     }
 
-    /**
-     * @param stream
-     */
-    public synchronized void setWriter(OutputStream stream)
-    {
-        super.setWriter(createWriter(stream));
+    if (this.immediateFlush) {
+      this.qw.flush();
     }
+  }
 
-    /**
-     * @return whether the writer has been set
-     */
-    public boolean isWriterSet()
-    {
-        return this.qw != null;
-    }
+  /**
+   * Assigns the given Shell to this handler, to watch it.
+   * 
+   * @param shellToWatch
+   */
+  public void watch(Shell shellToWatch) {
+    this.shell = shellToWatch;
+  }
 }

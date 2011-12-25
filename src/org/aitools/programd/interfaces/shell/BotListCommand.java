@@ -14,42 +14,40 @@ package org.aitools.programd.interfaces.shell;
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
-public class BotListCommand extends ShellCommand
-{
-    /** Shell command. */
-    public static final String COMMAND_STRING = "/bots";
+public class BotListCommand extends ShellCommand {
 
-    /** Argument template. */
-    public static final String ARGUMENT_TEMPLATE = "";
+  /** Shell command. */
+  public static final String COMMAND_STRING = "/bots";
 
-    /** Shell help line. */
-    private static final String HELP_LINE = "lists loaded bots";
+  /** Argument template. */
+  public static final String ARGUMENT_TEMPLATE = "";
 
-    /**
-     * Creates a new BotListCommand.
-     */
-    public BotListCommand()
-    {
-        super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
-    }
+  /** Shell help line. */
+  private static final String HELP_LINE = "lists loaded bots";
 
-    /**
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
-     */
-    @Override
-    public boolean handles(String commandLine)
-    {
-        return commandLine.toLowerCase().equals(COMMAND_STRING);
-    }
+  /**
+   * Creates a new BotListCommand.
+   */
+  public BotListCommand() {
+    super(COMMAND_STRING, ARGUMENT_TEMPLATE, HELP_LINE);
+  }
 
-    /**
-     * Prints a list of active bots to the shell console.
-     * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String, org.aitools.programd.interfaces.shell.Shell)
-     */
-    @Override
-    @SuppressWarnings("unused")
-    public void handle(String commandLine, Shell shell)
-    {
-        shell.showMessage("Active bots: " + shell.getBots().toString());
-    }
+  /**
+   * Prints a list of active bots to the shell console.
+   * 
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handle(java.lang.String,
+   *      org.aitools.programd.interfaces.shell.Shell)
+   */
+  @Override
+  public void handle(String commandLine, Shell shell) {
+    shell.showMessage("Active bots: " + shell.getBots().toString());
+  }
+
+  /**
+   * @see org.aitools.programd.interfaces.shell.ShellCommand#handles(java.lang.String)
+   */
+  @Override
+  public boolean handles(String commandLine) {
+    return commandLine.toLowerCase().equals(COMMAND_STRING);
+  }
 }
