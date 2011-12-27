@@ -43,7 +43,7 @@ public class SimpleSAXErrorHandler implements ErrorHandler {
    */
   @Override
   public void error(SAXParseException e) {
-    this._logger.error(e.getMessage());
+    this._logger.error(giveLocation(e) + e.getMessage());
   }
 
   /**
@@ -51,7 +51,7 @@ public class SimpleSAXErrorHandler implements ErrorHandler {
    */
   @Override
   public void fatalError(SAXParseException e) {
-    this._logger.fatal(e.getMessage());
+    this._logger.fatal(giveLocation(e) + e.getMessage());
   }
 
   /**
@@ -59,6 +59,20 @@ public class SimpleSAXErrorHandler implements ErrorHandler {
    */
   @Override
   public void warning(SAXParseException e) {
-    this._logger.warn(e.getMessage());
+    this._logger.warn(giveLocation(e) + e.getMessage());
+  }
+  
+  /**
+   * Produce a nice string describing the location of the error in the exception.
+   * @param e 
+   * @return a nice string describing the location of the error in the exception
+   */
+  @SuppressWarnings("boxing")
+  private static String giveLocation(SAXParseException e) {
+    String id = e.getPublicId();
+    if (id == null) {
+      id = e.getSystemId();
+    }
+    return String.format("Line %d, column %d in \"%s\": ", e.getLineNumber(), e.getColumnNumber(), id);
   }
 }

@@ -555,7 +555,7 @@ public class MemoryGraphmapper extends AbstractGraphmapper {
   @Override
   public void unload(URL path, Bot bot) {
     Set<Nodemapper> nodemappers = bot.getLoadedFilesMap().get(path);
-
+    
     for (Nodemapper nodemapper : nodemappers) {
       this.remove(nodemapper);
       this._totalCategories--;

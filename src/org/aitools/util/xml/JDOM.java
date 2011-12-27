@@ -19,16 +19,21 @@
 
 package org.aitools.util.xml;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
 import org.aitools.util.resource.URLTools;
+import org.aitools.util.runtime.DeveloperError;
+import org.aitools.util.runtime.UserError;
 import org.apache.log4j.Logger;
+import org.apache.xerces.util.XMLCatalogResolver;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.Namespace;
-import org.jdom.input.DOMBuilder;
+import org.jdom.input.SAXBuilder;
 import org.xml.sax.Attributes;
 
 /**
@@ -37,6 +42,9 @@ import org.xml.sax.Attributes;
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class JDOM {
+  
+  /** JDOM relies on an underlying SAX parser; this is the implementation we want to use. */
+  static String SAX_PARSER_IMPLEMENTATION = "org.apache.xerces.parsers.SAXParser";
 
   /**
    * Contextualizes the given path within the context of the given element's document.
@@ -85,21 +93,6 @@ public class JDOM {
       type = Attribute.NOTATION_TYPE;
     }
     return type;
-  }
-
-  /**
-   * Loads the given path and creates a JDOM Document. Also explicitly sets the base URI for the Document object to the
-   * <code>path</code>, since JDOM doesn't seem to do this for us.
-   * 
-   * @param path the path to the document to load
-   * @param catalogPath 
-   * @param logger the logger to use for XML parsing errors
-   * @return the Document
-   */
-  public static Document getDocument(URL path, String catalogPath, Logger logger) {
-    Document document = new DOMBuilder().build(DOM.getDocument(path, catalogPath, logger));
-    document.setBaseURI(path.toExternalForm());
-    return document;
   }
 
   /**
@@ -203,5 +196,43 @@ public class JDOM {
     }
     result.append(String.format("%s>", renderAttributes(attributes)));
     return result.toString();
+  }
+
+  /**
+   * Loads the given path and creates a JDOM Document. Also explicitly sets the base URI for the
+   * Document object to the <code>path</code>, since JDOM doesn't seem to do this for us.
+   * 
+   * @param location
+   * @param catalogPath 
+   * @param logger
+   * @return a DOM Document object
+   */
+  public static Document getDocument(URL location, String catalogPath, Logger logger) {
+
+    // Get a SAXBuilder, so we can configure the underlying parser.
+    SAXBuilder builder = new SAXBuilder(SAX_PARSER_IMPLEMENTATION, true);
+    builder.setFeature("http://apache.org/xml/features/validation/schema", true);
+    
+    // Get a resolver, and attach it to the builder.
+    XMLCatalogResolver resolver = Resolvers.newXMLCatalogResolver(catalogPath);
+    builder.setProperty("http://apache.org/xml/properties/internal/entity-resolver", resolver);
+
+    // Finally, attach an error handler to the builder.
+    builder.setErrorHandler(new SimpleSAXErrorHandler(logger));
+
+    // Parse the document using the document builder.
+    Document document = null;
+    try {
+      document = builder.build(location.toExternalForm());
+    }
+    catch (JDOMException e) {
+      throw new DeveloperError(String.format("Error while parsing XML at %s", location), e);
+    }
+    catch (IOException e) {
+      throw new UserError(String.format("I/O error when parsing XML at %s", location), e);
+    }
+
+    document.setBaseURI(location.toExternalForm());
+    return document;
   }
 }

@@ -13,7 +13,7 @@ import java.net.URL;
 import org.aitools.util.Settings;
 
 /**
- * Automatically generated at 2011-11-20T00:54:50.297+01:00.
+ * Automatically generated at 2011-12-27T14:55:05.338+01:00.
  */
 abstract public class CoreSettings extends Settings
 {
@@ -162,24 +162,6 @@ abstract public class CoreSettings extends Settings
         
     /** Location of the XML catalog (relative to program directory) */
     private String xmlCatalogPath;
-        
-    /** Value for http://xml.org/sax/features/use-entity-resolver2 */
-    private boolean xmlParserUseEntityResolver2;
-        
-    /** Value for http://xml.org/sax/features/validation */
-    private boolean xmlParserUseValidation;
-        
-    /** Value for http://apache.org/xml/features/validation/schema */
-    private boolean xmlParserUseSchemaValidation;
-        
-    /** Value for http://apache.org/xml/features/honour-all-schemaLocations */
-    private boolean xmlParserHonourAllSchemaLocations;
-        
-    /** Value for http://apache.org/xml/features/xinclude */
-    private boolean xmlParserUseXInclude;
-        
-    /** Value for http://apache.org/xml/features/validate-annotations */
-    private boolean xmlParserValidateAnnotations;
         
     /**
      * @return the value of AIMLNamespaceURI
@@ -502,54 +484,6 @@ abstract public class CoreSettings extends Settings
     }
 
     /**
-     * @return the value of xmlParserUseEntityResolver2
-     */
-    public boolean xmlParserUseEntityResolver2()
-    {
-        return this.xmlParserUseEntityResolver2;
-    }
-
-    /**
-     * @return the value of xmlParserUseValidation
-     */
-    public boolean xmlParserUseValidation()
-    {
-        return this.xmlParserUseValidation;
-    }
-
-    /**
-     * @return the value of xmlParserUseSchemaValidation
-     */
-    public boolean xmlParserUseSchemaValidation()
-    {
-        return this.xmlParserUseSchemaValidation;
-    }
-
-    /**
-     * @return the value of xmlParserHonourAllSchemaLocations
-     */
-    public boolean xmlParserHonourAllSchemaLocations()
-    {
-        return this.xmlParserHonourAllSchemaLocations;
-    }
-
-    /**
-     * @return the value of xmlParserUseXInclude
-     */
-    public boolean xmlParserUseXInclude()
-    {
-        return this.xmlParserUseXInclude;
-    }
-
-    /**
-     * @return the value of xmlParserValidateAnnotations
-     */
-    public boolean xmlParserValidateAnnotations()
-    {
-        return this.xmlParserValidateAnnotations;
-    }
-
-    /**
      * @param value the value for AIMLNamespaceURI
      */
     public void setAIMLNamespaceURI(URI value)
@@ -867,54 +801,6 @@ abstract public class CoreSettings extends Settings
     public void setXmlCatalogPath(String value)
     {
         this.xmlCatalogPath = value;
-    }
-
-    /**
-     * @param value the value for xmlParserUseEntityResolver2
-     */
-    public void setXmlParserUseEntityResolver2(boolean value)
-    {
-        this.xmlParserUseEntityResolver2 = value;
-    }
-
-    /**
-     * @param value the value for xmlParserUseValidation
-     */
-    public void setXmlParserUseValidation(boolean value)
-    {
-        this.xmlParserUseValidation = value;
-    }
-
-    /**
-     * @param value the value for xmlParserUseSchemaValidation
-     */
-    public void setXmlParserUseSchemaValidation(boolean value)
-    {
-        this.xmlParserUseSchemaValidation = value;
-    }
-
-    /**
-     * @param value the value for xmlParserHonourAllSchemaLocations
-     */
-    public void setXmlParserHonourAllSchemaLocations(boolean value)
-    {
-        this.xmlParserHonourAllSchemaLocations = value;
-    }
-
-    /**
-     * @param value the value for xmlParserUseXInclude
-     */
-    public void setXmlParserUseXInclude(boolean value)
-    {
-        this.xmlParserUseXInclude = value;
-    }
-
-    /**
-     * @param value the value for xmlParserValidateAnnotations
-     */
-    public void setXmlParserValidateAnnotations(boolean value)
-    {
-        this.xmlParserValidateAnnotations = value;
     }
 
 }

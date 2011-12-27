@@ -29,9 +29,11 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.aitools.util.runtime.DeveloperError;
 import org.apache.log4j.Logger;
+import org.apache.xerces.util.XMLCatalogResolver;
 import org.jdom.Attribute;
 import org.jdom.Namespace;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
@@ -47,6 +49,10 @@ public class SAX {
   static {
     System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl");
   }
+  
+  static String XML_SCHEMA_LANGUAGE_PROPERTY = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
+  
+  static String XML_SCHEMA_LANGUAGE = "http://www.w3.org/2001/XMLSchema";
 
   /**
    * Converts a SAX Attributes object to a List of Attribute objects.
@@ -76,28 +82,31 @@ public class SAX {
   /**
    * Sets up a SAX XML reader that is namespace aware and uses the given feature settings.
    * 
+   * @param contentHandler the content handler to attach to the reader.
    * @param logger
    * @param catalogPath 
-   * @param settings 
    * 
    * @return the parser
    */
-  public static XMLReader getReader(Logger logger, String catalogPath, FeatureSettings settings) {
+  public static XMLReader getReader(ContentHandler contentHandler, Logger logger, String catalogPath) {
+    
+    // Set up a factory and get a parser.
     SAXParserFactory factory = SAXParserFactory.newInstance();
     factory.setNamespaceAware(true);
-    // factory.setValidating(true);
+    factory.setValidating(true);
+    factory.setXIncludeAware(true);
+
     SAXParser parser = null;
     try {
       parser = factory.newSAXParser();
     }
     catch (ParserConfigurationException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      throw new DeveloperError("Error configuring SAXParser created from factory; cannot continue.", e);
     }
     catch (SAXException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      throw new DeveloperError("Error creating SAXParser from factory; cannot continue.", e);
     }
+    
     if (parser == null) {
       throw new DeveloperError("SAXParser is null; cannot continue.", new NullPointerException());
     }
@@ -105,45 +114,40 @@ public class SAX {
       parser.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage", "http://www.w3.org/2001/XMLSchema");
     }
     catch (SAXNotRecognizedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      assert false: e;
     }
     catch (SAXNotSupportedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      assert false: e;
     }
+    
+    // Now get a reader from the parser.
     XMLReader reader = null;
     try {
       reader = parser.getXMLReader();
     }
     catch (SAXException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      throw new DeveloperError("Error creating XMLReader from parser; cannot continue.", e);
     }
 
     if (reader == null) {
       throw new DeveloperError("XMLReader is null; cannot continue", new NullPointerException());
     }
 
-    reader.setEntityResolver(Catalogs.getResolver(catalogPath));
+    // Next, get an entity resolver that uses the given catalog path, and attach it to the reader.
+    XMLCatalogResolver resolver = Resolvers.newXMLCatalogResolver(catalogPath);
 
     try {
-      reader.setFeature("http://xml.org/sax/features/use-entity-resolver2", settings.useEntityResolver2());
-      reader.setFeature("http://xml.org/sax/features/validation", settings.useValidation());
-      reader.setFeature("http://apache.org/xml/features/validation/dynamic", settings.useValidation());
-      reader.setFeature("http://apache.org/xml/features/validation/schema", settings.schemaValidation());
-      if (settings.schemaValidation()) {
-        reader.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage", "http://www.w3.org/2001/XMLSchema");
-      }
+      reader.setProperty("http://apache.org/xml/properties/internal/entity-resolver", resolver);
     }
     catch (SAXNotRecognizedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      throw new DeveloperError("Property cannot be assigned or retrieved on XMLReader.", e);
     }
     catch (SAXNotSupportedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      throw new DeveloperError("Requested value cannot be set to given property on XMLReader.", e);
     }
+    
+    // Finally, attach the given content handler and a basic error handler, and return.
+    reader.setContentHandler(contentHandler);
     reader.setErrorHandler(new SimpleSAXErrorHandler(logger));
     return reader;
   }

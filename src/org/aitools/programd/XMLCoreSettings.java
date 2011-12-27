@@ -22,7 +22,7 @@ import org.aitools.util.runtime.UserError;
 import org.aitools.util.xml.JDOM;
 
 /**
- * Automatically generated at 2011-11-20T00:54:50.297+01:00.
+ * Automatically generated at 2011-12-27T14:55:05.338+01:00.
  */
 public class XMLCoreSettings extends CoreSettings
 {
@@ -313,23 +313,5 @@ public class XMLCoreSettings extends CoreSettings
 
         // Initialize xmlCatalogPath.
         setXmlCatalogPath(getXPathStringValue("/d:programd/d:xml-parser/d:catalog-path", document));
-
-        // Initialize xmlParserUseEntityResolver2.
-        setXmlParserUseEntityResolver2(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parser/d:use-entity-resolver-2", document)));
-
-        // Initialize xmlParserUseValidation.
-        setXmlParserUseValidation(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parser/d:use-validation", document)));
-
-        // Initialize xmlParserUseSchemaValidation.
-        setXmlParserUseSchemaValidation(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parser/d:use-schema-validation", document)));
-
-        // Initialize xmlParserHonourAllSchemaLocations.
-        setXmlParserHonourAllSchemaLocations(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parser/d:honour-all-schema-locations", document)));
-
-        // Initialize xmlParserUseXInclude.
-        setXmlParserUseXInclude(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parser/d:use-xinclude", document)));
-
-        // Initialize xmlParserValidateAnnotations.
-        setXmlParserValidateAnnotations(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:xml-parser/d:validate-annotations", document)));
     }
 }

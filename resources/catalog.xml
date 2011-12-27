@@ -1,6 +1,6 @@
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" xmlns:r="http://www.rddl.org/" prefer="system">
   <!--Local copies of AIML and Program D schemas.-->
-  <uri name="http://alicebot.org/2001/AIML-1.0.1"                        uri="file:/home/noel/workspace/programd/resources/schema/AIML.xsd"                   r:nature="http://www.w3.org/2001/XMLSchema" r:purpose="http://www.rddl.org/purposes#schema-validation"/>
+  <uri name="http://alicebot.org/2001/AIML-1.0.1"                        uri="schema/AIML.xsd"                   r:nature="http://www.w3.org/2001/XMLSchema" r:purpose="http://www.rddl.org/purposes#schema-validation"/>
   <uri name="http://aitools.org/programd/4.7/programd-configuration"     uri="schema/programd-configuration.xsd" r:nature="http://www.w3.org/2001/XMLSchema" r:purpose="http://www.rddl.org/purposes#schema-validation"/>
   <uri name="http://aitools.org/programd/4.7/bot-configuration"          uri="schema/bot-configuration.xsd"      r:nature="http://www.w3.org/2001/XMLSchema" r:purpose="http://www.rddl.org/purposes#schema-validation"/>
   <uri name="http://aitools.org/xaiml/test-suite"                        uri="schema/test-suite.xsd"             r:nature="http://www.w3.org/2001/XMLSchema" r:purpose="http://www.rddl.org/purposes#schema-validation"/>

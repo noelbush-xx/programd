@@ -122,7 +122,7 @@
                   </xs:appinfo>
                 </xs:annotation>
               </xs:element>
-              <xs:element name="ffpm-dir" type="URL">
+              <xs:element name="ffpm-dir" type="URL" minOccurs="0">
                 <xs:annotation>
                   <xs:documentation> The directory in which to save flat-file predicates (if the FlatFilePredicateManager is used). </xs:documentation>
                   <xs:appinfo>
@@ -456,54 +456,6 @@
                   </xs:appinfo>
                 </xs:annotation>
               </xs:element>
-              <xs:element name="use-entity-resolver-2" type="xs:boolean" default="true">
-                <xs:annotation>
-                  <xs:documentation>Value for http://xml.org/sax/features/use-entity-resolver2</xs:documentation>
-                  <xs:appinfo>
-                    <d:property-name>xmlParserUseEntityResolver2</d:property-name>
-                  </xs:appinfo>
-                </xs:annotation>
-              </xs:element>
-			        <xs:element name="use-validation" type="xs:boolean" default="true">
-			          <xs:annotation>
-			            <xs:documentation>Value for http://xml.org/sax/features/validation</xs:documentation>
-			            <xs:appinfo>
-			              <d:property-name>xmlParserUseValidation</d:property-name>
-			            </xs:appinfo>
-			          </xs:annotation>
-			        </xs:element>
-			        <xs:element name="use-schema-validation" type="xs:boolean" default="true">
-			          <xs:annotation>
-			            <xs:documentation>Value for http://apache.org/xml/features/validation/schema</xs:documentation>
-			            <xs:appinfo>
-			              <d:property-name>xmlParserUseSchemaValidation</d:property-name>
-			            </xs:appinfo>
-			          </xs:annotation>
-			        </xs:element>
-			        <xs:element name="honour-all-schema-locations" type="xs:boolean" default="true">
-			          <xs:annotation>
-			            <xs:documentation>Value for http://apache.org/xml/features/honour-all-schemaLocations</xs:documentation>
-			            <xs:appinfo>
-			              <d:property-name>xmlParserHonourAllSchemaLocations</d:property-name>
-			            </xs:appinfo>
-			          </xs:annotation>
-			        </xs:element>
-			        <xs:element name="use-xinclude" type="xs:boolean" default="true">
-			          <xs:annotation>
-			            <xs:documentation>Value for http://apache.org/xml/features/xinclude</xs:documentation>
-			            <xs:appinfo>
-			              <d:property-name>xmlParserUseXInclude</d:property-name>
-			            </xs:appinfo>
-			          </xs:annotation>
-			        </xs:element>
-			        <xs:element name="validate-annotations" type="xs:boolean" default="true">
-			          <xs:annotation>
-			            <xs:documentation>Value for http://apache.org/xml/features/validate-annotations</xs:documentation>
-			            <xs:appinfo>
-			              <d:property-name>xmlParserValidateAnnotations</d:property-name>
-			            </xs:appinfo>
-			          </xs:annotation>
-			        </xs:element>
 			      </xs:sequence>
 			    </xs:complexType>
 			  </xs:element>

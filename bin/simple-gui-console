@@ -25,7 +25,7 @@ source $BASE/bin/common_functions.sh
 JARFILE=$BASE/distrib/programd-simple-gui-console.jar
 START_MEM=128m
 MAX_MEM=256m
-CORE_CONF=$BASE/conf/core.xml
+CORE_CONF=$BASE/conf/core-standard.xml
 
 # Start Program D using the Simple GUI Console.
 start_programd $JARFILE $START_MEM $MAX_MEM $CORE_CONF

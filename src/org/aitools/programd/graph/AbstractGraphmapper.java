@@ -28,7 +28,6 @@ import org.aitools.util.resource.Filesystem;
 import org.aitools.util.resource.URLTools;
 import org.aitools.util.runtime.Errors;
 import org.aitools.util.runtime.UserError;
-import org.aitools.util.xml.FeatureSettings;
 import org.aitools.util.xml.SAX;
 import org.apache.log4j.Logger;
 import org.jdom.Content;
@@ -59,9 +58,6 @@ abstract public class AbstractGraphmapper implements Graphmapper {
 
   /** The merge policy. */
   protected CoreSettings.MergePolicy _mergePolicy;
-  
-  /** The XML parser settings. */
-  protected FeatureSettings _parserSettings;
 
   /** A formatter used for outputting XML. */
   private Format _xmlFormat = Format.getPrettyFormat();
@@ -133,14 +129,6 @@ abstract public class AbstractGraphmapper implements Graphmapper {
     this._responseTimeout = settings.getResponseTimeout();
     this._categoryLoadNotifyInterval = settings.getCategoryLoadNotificationInterval();
     this._aimlNamespaceURI = settings.getAIMLNamespaceURI().toString();
-    
-    this._parserSettings = new FeatureSettings();
-    this._parserSettings.setHonourAllSchemaLocations(settings.xmlParserHonourAllSchemaLocations());
-    this._parserSettings.setUseEntityResolver2(settings.xmlParserUseEntityResolver2());
-    this._parserSettings.setUseSchemaValidation(settings.xmlParserUseSchemaValidation());
-    this._parserSettings.setUseValidation(settings.xmlParserUseValidation());
-    this._parserSettings.setUseXInclude(settings.xmlParserUseXInclude());
-    this._parserSettings.setValidateAnnotations(settings.xmlParserValidateAnnotations());
   }
 
   protected abstract void add(String pattern, String that, String topic, String template, Bot bot, URL source);
@@ -349,12 +337,9 @@ abstract public class AbstractGraphmapper implements Graphmapper {
     if (!this.necessaryToLoad(path)) {
       return;
     }
-    XMLReader reader = SAX.getReader(this._logger, this._core.getSettings().getXmlCatalogPath(), this._parserSettings);
+    AIMLReader handler = new AIMLReader(this, path, this._core.getBot(botid));
+    XMLReader reader = SAX.getReader(handler, this._logger, this._core.getSettings().getXmlCatalogPath());
     try {
-      AIMLReader handler = new AIMLReader(this, path, this._core.getBot(botid));
-      reader.setContentHandler(handler);
-      reader.setErrorHandler(handler);
-      reader.setEntityResolver(handler);
       reader.parse(path.toExternalForm());
       this.associateBotIDWithFilename(botid, path);
     }
@@ -452,7 +437,7 @@ abstract public class AbstractGraphmapper implements Graphmapper {
       }
       else {
         if (this._logger.isDebugEnabled()) {
-          this._logger.debug(String.format("Graphmaster has already loaded \"%s\" for some other bot.", path));
+          this._logger.debug(String.format("Graphmapper has already loaded \"%s\" for some other bot.", path));
         }
         this.addForBot(path, botid);
       }

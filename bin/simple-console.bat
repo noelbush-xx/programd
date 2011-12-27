@@ -30,7 +30,7 @@ if "%quit%"=="" call common_functions.bat set_base
 set JARFILE=%BASE%\distrib\programd-simple-console.jar
 set START_MEM=128m
 set MAX_MEM=256m
-set CORE_CONF=%BASE%\conf\core.xml
+set CORE_CONF=%BASE%\conf\core-standard.xml
 
 @rem Start Program D using the Simple Console.
 if "%quit%"=="" call common_functions.bat start_programd "%JARFILE%" %START_MEM% %MAX_MEM% "%CORE_CONF%"

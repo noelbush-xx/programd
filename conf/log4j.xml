@@ -138,7 +138,7 @@
     <appender-ref ref="TxtChatlog"/>
   </logger>
 
-  <!--Logging for Norm Walsh's XML Resolver.-->
+  <!--Logging for the XML Resolver.-->
   <logger name="org.xmlresolver" additivity="true">
     <level value="info"/>
     <appender-ref ref="stdout"/>

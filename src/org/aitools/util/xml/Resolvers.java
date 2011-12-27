@@ -9,23 +9,27 @@
 
 package org.aitools.util.xml;
 
-import org.apache.xml.resolver.CatalogManager;
-import org.apache.xml.resolver.tools.CatalogResolver;
+import org.apache.xerces.util.XMLCatalogResolver;
 
 
 /**
+ * Code to handle creating and otherwise dealing with XML entity resolvers.
+ * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
- *
  */
-public class Catalogs {
-  
+public class Resolvers {
+
   /**
+   * Produce a new XML catalog resolver that reads a catalog from the given path.
+   * 
    * @param catalogPath
-   * @return a resolver that uses the catalog at the given path
+   * @return the new resolver
    */
-  public static CatalogResolver getResolver(String catalogPath) {
-    CatalogManager catalogManager = new CatalogManager("XMLResolver.properties");
-    catalogManager.setCatalogFiles(catalogPath);
-    return new CatalogResolver(catalogManager);
+  public static XMLCatalogResolver newXMLCatalogResolver(String catalogPath) {
+    XMLCatalogResolver resolver = new XMLCatalogResolver();
+    resolver.setPreferPublic(false);
+    resolver.setCatalogList(new String[]{catalogPath});
+    return resolver;
   }
+  
 }

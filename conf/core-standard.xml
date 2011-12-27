@@ -63,11 +63,5 @@
   <use-shell>true</use-shell>
   <xml-parser>
     <catalog-path>resources/catalog.xml</catalog-path>
-    <use-entity-resolver-2>false</use-entity-resolver-2>
-    <use-validation>false</use-validation>
-    <use-schema-validation>false</use-schema-validation>
-    <honour-all-schema-locations>false</honour-all-schema-locations>
-    <use-xinclude>false</use-xinclude>
-    <validate-annotations>false</validate-annotations>
   </xml-parser>
 </programd>

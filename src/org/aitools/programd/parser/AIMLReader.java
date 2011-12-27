@@ -16,6 +16,7 @@ import org.aitools.programd.graph.Graphmapper;
 import org.aitools.programd.processor.aiml.AIMLProcessorRegistry;
 import org.aitools.util.xml.Characters;
 import org.aitools.util.xml.SAX;
+import org.jdom.IllegalNameException;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -206,8 +207,13 @@ public class AIMLReader extends DefaultHandler2 {
        * We don't want to parse the template into some big memory structure, since it may never be used. So we just
        * reconstitute the XML text for later processing.
        */
-      this.templateBuffer.append(SAX.renderStartTag(elementName, attributes, !uri.equals(this._defaultNamespaceURI),
-          uri));
+      try {
+        this.templateBuffer.append(SAX.renderStartTag(elementName, attributes, !uri.equals(this._defaultNamespaceURI),
+            uri));
+      }
+      catch (IllegalNameException e) {
+        assert false: "The SAX parser is not performing namespace processing correctly.";
+      }
     }
     else if (elementName.equals("topic")) {
       // We don't check that it's valid, because it's supposed to have been schema-validated already!
