@@ -22,7 +22,7 @@ import org.aitools.util.runtime.UserError;
 import org.aitools.util.xml.JDOM;
 
 /**
- * Automatically generated at 2011-12-27T14:55:05.338+01:00.
+ * Automatically generated at 2011-12-28T18:56:13.22+01:00.
  */
 public class XMLCoreSettings extends CoreSettings
 {
@@ -191,20 +191,23 @@ public class XMLCoreSettings extends CoreSettings
             throw new UserError("Error in settings.", e);
         }
 
-        // Initialize databaseURL.
-        setDatabaseURL(getXPathStringValue("/d:programd/d:database/d:url", document));
-
         // Initialize databaseDriver.
         setDatabaseDriver(getXPathStringValue("/d:programd/d:database/d:driver", document));
 
-        // Initialize databaseMaximumConnections.
-        setDatabaseMaximumConnections(getXPathNumberValue("/d:programd/d:database/d:maximum-connections", document).intValue());
+        // Initialize databaseURI.
+        setDatabaseURI(getXPathStringValue("/d:programd/d:database/d:uri", document));
 
         // Initialize databaseUsername.
         setDatabaseUsername(getXPathStringValue("/d:programd/d:database/d:username", document));
 
         // Initialize databasePassword.
         setDatabasePassword(getXPathStringValue("/d:programd/d:database/d:password", document));
+
+        // Initialize databaseMinIdle.
+        setDatabaseMinIdle(getXPathNumberValue("/d:programd/d:database/d:min-idle", document).intValue());
+
+        // Initialize databaseMaxActive.
+        setDatabaseMaxActive(getXPathNumberValue("/d:programd/d:database/d:max-active", document).intValue());
 
         // Initialize mergePolicy.
 

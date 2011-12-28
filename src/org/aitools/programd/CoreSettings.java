@@ -13,7 +13,7 @@ import java.net.URL;
 import org.aitools.util.Settings;
 
 /**
- * Automatically generated at 2011-12-27T14:55:05.338+01:00.
+ * Automatically generated at 2011-12-28T18:56:13.22+01:00.
  */
 abstract public class CoreSettings extends Settings
 {
@@ -47,20 +47,23 @@ abstract public class CoreSettings extends Settings
     /** The directory in which to save flat-file predicates (if the FlatFilePredicateManager is used). */
     private URL ffpmDirectory;
         
-    /** The URL of the database to use. */
-    private String databaseURL;
-        
     /** The database driver to use. */
     private String databaseDriver;
         
-    /** The maximum number of simultaneous connections to the database. */
-    private int databaseMaximumConnections;
+    /** The JDBC connection URI to use (driver-specific). */
+    private String databaseURI;
         
-    /** The username which with to access the database. */
+    /** The username for accessing the database. */
     private String databaseUsername;
         
-    /** The password for the database. */
+    /** The password for accessing the database. */
     private String databasePassword;
+        
+    /** The minimum number of number of database connections allowed in the pool before new objects are created. */
+    private int databaseMinIdle;
+        
+    /** The maximum number of database connections that can be allocated at a time. */
+    private int databaseMaxActive;
         
     /** What to do when a category is loaded whose pattern:that:topic path is identical to one already loaded (for the same bot). */
     private MergePolicy mergePolicy;
@@ -244,14 +247,6 @@ abstract public class CoreSettings extends Settings
     }
 
     /**
-     * @return the value of databaseURL
-     */
-    public String getDatabaseURL()
-    {
-        return this.databaseURL;
-    }
-
-    /**
      * @return the value of databaseDriver
      */
     public String getDatabaseDriver()
@@ -260,11 +255,11 @@ abstract public class CoreSettings extends Settings
     }
 
     /**
-     * @return the value of databaseMaximumConnections
+     * @return the value of databaseURI
      */
-    public int getDatabaseMaximumConnections()
+    public String getDatabaseURI()
     {
-        return this.databaseMaximumConnections;
+        return this.databaseURI;
     }
 
     /**
@@ -281,6 +276,22 @@ abstract public class CoreSettings extends Settings
     public String getDatabasePassword()
     {
         return this.databasePassword;
+    }
+
+    /**
+     * @return the value of databaseMinIdle
+     */
+    public int getDatabaseMinIdle()
+    {
+        return this.databaseMinIdle;
+    }
+
+    /**
+     * @return the value of databaseMaxActive
+     */
+    public int getDatabaseMaxActive()
+    {
+        return this.databaseMaxActive;
     }
 
     /**
@@ -564,14 +575,6 @@ abstract public class CoreSettings extends Settings
     }
 
     /**
-     * @param value the value for databaseURL
-     */
-    public void setDatabaseURL(String value)
-    {
-        this.databaseURL = value;
-    }
-
-    /**
      * @param value the value for databaseDriver
      */
     public void setDatabaseDriver(String value)
@@ -580,11 +583,11 @@ abstract public class CoreSettings extends Settings
     }
 
     /**
-     * @param value the value for databaseMaximumConnections
+     * @param value the value for databaseURI
      */
-    public void setDatabaseMaximumConnections(int value)
+    public void setDatabaseURI(String value)
     {
-        this.databaseMaximumConnections = value;
+        this.databaseURI = value;
     }
 
     /**
@@ -601,6 +604,22 @@ abstract public class CoreSettings extends Settings
     public void setDatabasePassword(String value)
     {
         this.databasePassword = value;
+    }
+
+    /**
+     * @param value the value for databaseMinIdle
+     */
+    public void setDatabaseMinIdle(int value)
+    {
+        this.databaseMinIdle = value;
+    }
+
+    /**
+     * @param value the value for databaseMaxActive
+     */
+    public void setDatabaseMaxActive(int value)
+    {
+        this.databaseMaxActive = value;
     }
 
     /**

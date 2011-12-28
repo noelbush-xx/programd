@@ -15,8 +15,6 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,6 +41,7 @@ import org.aitools.programd.util.Pulse;
 import org.aitools.util.Classes;
 import org.aitools.util.JDKLogHandler;
 import org.aitools.util.UnspecifiedParameterError;
+import org.aitools.util.db.DBConnectionManager;
 import org.aitools.util.resource.Filesystem;
 import org.aitools.util.resource.URLTools;
 import org.aitools.util.runtime.DeveloperError;
@@ -50,8 +49,6 @@ import org.aitools.util.runtime.Errors;
 import org.aitools.util.runtime.UserError;
 import org.aitools.util.runtime.UserSystem;
 import org.aitools.util.xml.JDOM;
-import org.apache.commons.dbcp.PoolingDriver;
-import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
@@ -127,8 +124,8 @@ public class Core {
   /** An interpreter. */
   private Interpreter _interpreter;
 
-  /** The database connection pool. */
-  private GenericObjectPool _connectionPool;
+  /** The database connection manager (only initialized if database is used). */
+  private DBConnectionManager _dbConnectionManager;
 
   /** The logger for the Core. */
   private Logger _logger = LogManager.getLogger("programd");
@@ -324,30 +321,24 @@ public class Core {
   }
 
   /**
-   * Returns a database connection backed by a pooling driver. This is initialized lazily, since some people may not be
-   * using any database-based features.
+   * Returns a database connection from a pooling data source.
    * 
-   * @return a dbmanager
+   * @return the database connection
    */
   public Connection getDBConnection() {
-    if (this._connectionPool == null) {
-      try {
-        Class.forName(this._settings.getDatabaseDriver());
-      }
-      catch (ClassNotFoundException e) {
-        throw new UserError("Could not find your database driver.", e);
-      }
-      this._connectionPool = new GenericObjectPool();
-      PoolingDriver driver = new PoolingDriver();
-      driver.registerPool("programd", this._connectionPool);
+    
+    if (this._dbConnectionManager == null) {
+      this._dbConnectionManager =
+          new DBConnectionManager(this._logger,
+                                  this._settings.getDatabaseDriver(),
+                                  this._settings.getDatabaseURI(),
+                                  this._settings.getDatabaseUsername(),
+                                  this._settings.getDatabasePassword(),
+                                  this._settings.getDatabaseMinIdle(),
+                                  this._settings.getDatabaseMaxActive());
     }
-    try {
-      return DriverManager.getConnection("jdbc:apache:commons:dbcp:programd");
-    }
-    catch (SQLException e) {
-      this._logger.error("SQL exception when getting a db connection.", e);
-      return null;
-    }
+    
+    return this._dbConnectionManager.getDBConnection();
   }
 
   /**

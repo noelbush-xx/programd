@@ -139,14 +139,6 @@
           </xs:annotation>
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="url" type="xs:string" default="jdbc:mysql:///programd">
-                <xs:annotation>
-                  <xs:documentation>The URL of the database to use.</xs:documentation>
-                  <xs:appinfo>
-                    <d:property-name>databaseURL</d:property-name>
-                  </xs:appinfo>
-                </xs:annotation>
-              </xs:element>
               <xs:element name="driver" type="xs:string" default="com.mysql.jdbc.Driver">
                 <xs:annotation>
                   <xs:documentation>The database driver to use.</xs:documentation>
@@ -155,17 +147,17 @@
                   </xs:appinfo>
                 </xs:annotation>
               </xs:element>
-              <xs:element name="maximum-connections" type="xs:int" default="25">
+              <xs:element name="uri" type="xs:string" default="programd">
                 <xs:annotation>
-                  <xs:documentation> The maximum number of simultaneous connections to the database. </xs:documentation>
+                  <xs:documentation>The JDBC connection URI to use (driver-specific).</xs:documentation>
                   <xs:appinfo>
-                    <d:property-name>databaseMaximumConnections</d:property-name>
+                    <d:property-name>databaseURI</d:property-name>
                   </xs:appinfo>
                 </xs:annotation>
               </xs:element>
-              <xs:element name="username" type="xs:string" default="programd">
+              <xs:element name="username" type="xs:string" default="yourusername">
                 <xs:annotation>
-                  <xs:documentation>The username which with to access the database.</xs:documentation>
+                  <xs:documentation>The username for accessing the database.</xs:documentation>
                   <xs:appinfo>
                     <d:property-name>databaseUsername</d:property-name>
                   </xs:appinfo>
@@ -173,9 +165,25 @@
               </xs:element>
               <xs:element name="password" type="xs:string" default="yourpassword">
                 <xs:annotation>
-                  <xs:documentation>The password for the database.</xs:documentation>
+                  <xs:documentation>The password for accessing the database.</xs:documentation>
                   <xs:appinfo>
                     <d:property-name>databasePassword</d:property-name>
+                  </xs:appinfo>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="min-idle" type="xs:int" default="30">
+                <xs:annotation>
+                  <xs:documentation>The minimum number of number of database connections allowed in the pool before new objects are created.</xs:documentation>
+                  <xs:appinfo>
+                    <d:property-name>databaseMinIdle</d:property-name>
+                  </xs:appinfo>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="max-active" type="xs:int" default="70">
+                <xs:annotation>
+                  <xs:documentation>The maximum number of database connections that can be allocated at a time.</xs:documentation>
+                  <xs:appinfo>
+                    <d:property-name>databaseMaxActive</d:property-name>
                   </xs:appinfo>
                 </xs:annotation>
               </xs:element>

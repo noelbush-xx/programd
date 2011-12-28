@@ -17,11 +17,12 @@
     <ffpm-dir>file:/var/programd/ffpm</ffpm-dir>
   </predicate-manager>
   <database>
-    <url>jdbc:mysql:///programd</url>
     <driver>com.mysql.jdbc.Driver</driver>
-    <maximum-connections>25</maximum-connections>
-    <username>programd</username>
+    <uri><![CDATA[jdbc:mysql://localhost:3306/programd?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true]]></uri>
+    <username>yourusername</username>
     <password>yourpassword</password>
+    <min-idle>30</min-idle>
+    <max-active>70</max-active>
   </database>
   <merge>
     <policy>combine</policy>

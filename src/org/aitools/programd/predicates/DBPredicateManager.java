@@ -25,13 +25,18 @@ import org.aitools.util.runtime.DeveloperError;
  */
 public class DBPredicateManager extends PredicateManager {
 
-  private static final String LOAD_PREDICATE_SELECT = "SELECT `predicates`.`value` FROM `predicates` INNER JOIN `bots` ON `predicates`.`bot_id` = `bots`.`id` INNER JOIN `users` ON `predicates`.`user_id` = `users`.`id` WHERE `bots`.`name` = ? AND `users`.`name` = ? AND `predicates`.`name` = ?";
+  private static final String LOAD_PREDICATE_SELECT =
+      "SELECT predicate.value FROM predicate " +
+          "INNER JOIN bot ON predicate.bot_id = bot.id " +
+          "INNER JOIN user ON predicate.user_id = user.id " + 
+      "WHERE bot.id = ? AND user.name = ? AND predicate.name = ?";
 
-  private static final String SET_PREDICATE_INSERT = "INSERT INTO `predicates` (`name`, `value`, `user_id`, `bot_id`) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)";
+  private static final String SET_PREDICATE_INSERT =
+      "INSERT INTO predicate (name, value, user_id, bot_id) " +
+          "VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)";
 
-  private static final String CHECK_USER_SELECT = "SELECT FROM `users` INNER JOIN `bot_user` ON `users`.`id` = `bot_user`.`user_id` INNER JOIN `bots` ON `bots`.`id` = `bot_user`.`bot_id` WHERE `users`.`name` = ? AND `bots`.`name` = ?";
-
-  private static final String CREATE_USER_INSERT = "INSERT INTO `users` (`user`, `bot`) VALUES (?, ?)";
+  private static final String CREATE_USER_INSERT =
+      "INSERT INTO user (user, bot) VALUES (?, ?)";
 
   /**
    * Creates a new DBMultiplexor with the given Core as owner.
@@ -101,7 +106,6 @@ public class DBPredicateManager extends PredicateManager {
     try {
       connection.prepareStatement(LOAD_PREDICATE_SELECT);
       connection.prepareStatement(SET_PREDICATE_INSERT);
-      connection.prepareStatement(CHECK_USER_SELECT);
       connection.prepareStatement(CREATE_USER_INSERT);
       connection.close();
     }

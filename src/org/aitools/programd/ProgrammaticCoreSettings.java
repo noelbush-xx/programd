@@ -14,7 +14,7 @@ import org.aitools.util.resource.URLTools;
 import org.aitools.util.runtime.UserError;
 
 /**
- * Automatically generated at 2011-12-27T14:55:05.338+01:00.
+ * Automatically generated at 2011-12-28T18:56:13.22+01:00.
  */
 public class ProgrammaticCoreSettings extends CoreSettings
 {
@@ -47,11 +47,12 @@ public class ProgrammaticCoreSettings extends CoreSettings
         setBotNameProperty("name");
         setPredicateFlushPeriod(Integer.parseInt("500"));
         setPredicateManagerImplementation("org.aitools.programd.predicates.InMemoryPredicateManager");
-        setDatabaseURL("jdbc:mysql:///programd");
         setDatabaseDriver("com.mysql.jdbc.Driver");
-        setDatabaseMaximumConnections(Integer.parseInt("25"));
-        setDatabaseUsername("programd");
+        setDatabaseURI("programd");
+        setDatabaseUsername("yourusername");
         setDatabasePassword("yourpassword");
+        setDatabaseMinIdle(Integer.parseInt("30"));
+        setDatabaseMaxActive(Integer.parseInt("70"));
         setMergePolicy(MergePolicy.COMBINE);
         setNoteEachMerge(Boolean.parseBoolean("true"));
         setAppendMergeSeparatorString(" ");

@@ -131,4 +131,20 @@ public class Classes {
 
     return getNewInstance(subclass, description, constructorArgs);
   }
+  
+  /**
+   * Verify that a given classname is available.  Use the provided
+   * description to explain what went wrong if the class is not found.
+   * 
+   * @param classname
+   * @param description
+   */
+  public static void verifyAvailable(String classname, String description) {
+    try {
+      Class.forName(classname);
+    }
+    catch (ClassNotFoundException e) {
+      throw new UserError(String.format("Could not find %s class.", description), e);
+    }
+  }
 }

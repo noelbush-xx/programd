@@ -1,70 +1,90 @@
 <project default="jars" basedir=".">
 
-  <!--Initialization Target-->
-  <target name="init">
-    <tstamp />
-    <property name="Name" value="Program D" />
-    <property name="version" value="4.7" />
-    <property name="year" value="2006, 2009, 2011" />
+	<target name="init"
+  	description="Initialize paths and properties.">
+		<tstamp />
+		<property name="Name" value="Program D" />
+		<property name="version" value="4.7" />
+		<property name="year" value="2006, 2009, 2011" />
 
-    <property name="javac.compiler" value="modern" />
-    <property name="javac.debug" value="on" />
-    <property name="javac.optimize" value="on" />
-    <property name="javac.deprecation" value="on" />
-    <property name="javac.jvm-target" value="1.6" />
-    <property name="javac.source" value="1.6" />
+		<property name="javac.compiler" value="modern" />
+		<property name="javac.debug" value="on" />
+		<property name="javac.optimize" value="on" />
+		<property name="javac.deprecation" value="on" />
+		<property name="javac.jvm-target" value="1.6" />
+		<property name="javac.source" value="1.6" />
 
-    <property name="src.dir" value="${basedir}/src" />
-    <property name="test.dir" value="${basedir}/test" />
-    <property name="webapp.dir" value="${basedir}/WebContent" />
-    <property name="webapp.lib.dir" value="${webapp.dir}/WEB-INF/lib" />
-    <property name="compile.lib.dir" value="${basedir}/lib" />
-    <property name="distrib.dir" value="${basedir}/distrib" />
-    <property name="manifests.dir" value="${basedir}/resources/manifests" />
+    <property name="db.name" value="programd" />
+    <property name="db.server-uri" value="jdbc:mysql://localhost:3306/" />
+    <property name="db.full-uri" value="${db.server-uri}${db.name}" />
+		<property name="db.driver" value="com.mysql.jdbc.Driver" />
+		<property name="db.username" value="programd" />
+		<property name="db.password" value="yourpassword" />
+		<property name="db.schema-file" value="${basedir}/resources/database/programd-schema.xml" />
+		
+		<property name="src.dir" value="${basedir}/src" />
+		<property name="test.dir" value="${basedir}/test" />
+		<property name="webapp.dir" value="${basedir}/WebContent" />
+		<property name="webapp.lib.dir" value="${webapp.dir}/WEB-INF/lib" />
+		<property name="compile.lib.dir" value="${basedir}/lib" />
+		<property name="distrib.dir" value="${basedir}/distrib" />
+		<property name="manifests.dir" value="${basedir}/resources/manifests" />
 
-    <property name="src-build.dir" value="${basedir}/src-build.tmp" />
-    <property name="test-build.dir" value="${basedir}/test-build.tmp" />
-    
-    <path id="src-build.classpath">
-      <pathelement location="${compile.lib.dir}/commons-collections-3.1.jar" />
-      <pathelement location="${compile.lib.dir}/commons-dbcp-1.2.1.jar" />
-      <pathelement location="${compile.lib.dir}/commons-pool-1.3.jar" />
-      <pathelement location="${compile.lib.dir}/gnu.getopt-1.0.10.jar" />
-      <pathelement location="${compile.lib.dir}/jdom-1.1.2.jar" />
-      <pathelement location="${webapp.lib.dir}/jdbcappender.jar" />
-      <pathelement location="${compile.lib.dir}/jsp-api.jar" />
-      <pathelement location="${compile.lib.dir}/js.jar" />
-      <pathelement location="${compile.lib.dir}/log4j-1.2.13.jar" />
-      <pathelement location="${compile.lib.dir}/servlet-api.jar" />
-      <pathelement location="${compile.lib.dir}/xercesImpl.jar" />
-      <pathelement location="${compile.lib.dir}/xml-apis.jar" />
-      <pathelement location="${compile.lib.dir}/org.eclipse.wst.xml.xpath2.processor_2.0.0.v201105120439.jar" />
-      <pathelement location="${compile.lib.dir}/resolver.jar" />
-      <pathelement location="${compile.lib.dir}/castor-1.1.jar" />
-      <pathelement location="${compile.lib.dir}/castor-1.1-codegen.jar" />
-    </path>
-    
-    <path id="test-build.classpath">
-      <pathelement location="${webapp.lib.dir}/commons-collections-3.1.jar" />
-      <pathelement location="${webapp.lib.dir}/commons-dbcp-1.2.1.jar" />
-      <pathelement location="${webapp.lib.dir}/commons-pool-1.3.jar" />
-      <pathelement location="${compile.lib.dir}/gnu.getopt-1.0.10.jar" />
-      <pathelement location="${webapp.lib.dir}/jdom-1.1.2.jar" />
-      <pathelement location="${webapp.lib.dir}/jdbcappender.jar" />
-      <pathelement location="${compile.lib.dir}/jsp-api.jar" />
-      <pathelement location="${compile.lib.dir}/js.jar" />
-      <pathelement location="${compile.lib.dir}/log4j-1.2.13.jar" />
-      <pathelement location="${compile.lib.dir}/servlet-api.jar" />
-      <pathelement location="${compile.lib.dir}/xercesImpl.jar" />
-      <pathelement location="${compile.lib.dir}/xml-apis.jar" />
-      <pathelement location="${compile.lib.dir}/org.eclipse.wst.xml.xpath2.processor_2.0.0.v201105120439.jar" />
-      <pathelement location="${compile.lib.dir}/resolver.jar" />
-      <pathelement location="${compile.lib.dir}/castor-1.1.jar" />
-      <pathelement location="${compile.lib.dir}/castor-1.1-codegen.jar" />
-    </path>
+		<property name="src-build.dir" value="${basedir}/src-build.tmp" />
+		<property name="test-build.dir" value="${basedir}/test-build.tmp" />
 
-    <!--The classpath needed to run Program D, for the core.-->
-    <property name="essentials-mf-classpath"
+		<path id="src-build.classpath">
+			<pathelement location="${compile.lib.dir}/commons-collections-3.1.jar" />
+			<pathelement location="${compile.lib.dir}/commons-dbcp-1.4.jar" />
+			<pathelement location="${compile.lib.dir}/commons-pool-1.5.7.jar" />
+			<pathelement location="${compile.lib.dir}/commons-lang-2.4.jar" />
+			<pathelement location="${compile.lib.dir}/commons-logging-1.1.1.jar" />
+			<pathelement location="${compile.lib.dir}/commons-beanutils-1.8.3.jar" />
+			<pathelement location="${compile.lib.dir}/commons-betwixt-0.8.jar" />
+			<pathelement location="${compile.lib.dir}/commons-digester-1.8.1.jar" />
+			<pathelement location="${compile.lib.dir}/DdlUtils-1.0.jar" />
+			<pathelement location="${compile.lib.dir}/gnu.getopt-1.0.10.jar" />
+			<pathelement location="${compile.lib.dir}/jdom-1.1.2.jar" />
+			<pathelement location="${webapp.lib.dir}/jdbcappender.jar" />
+			<pathelement location="${compile.lib.dir}/jsp-api.jar" />
+			<pathelement location="${compile.lib.dir}/js.jar" />
+			<pathelement location="${compile.lib.dir}/log4j-1.2.13.jar" />
+			<pathelement location="${compile.lib.dir}/servlet-api.jar" />
+			<pathelement location="${compile.lib.dir}/xercesImpl.jar" />
+			<pathelement location="${compile.lib.dir}/xml-apis.jar" />
+			<pathelement location="${compile.lib.dir}/org.eclipse.wst.xml.xpath2.processor_2.0.0.v201105120439.jar" />
+			<pathelement location="${compile.lib.dir}/resolver.jar" />
+			<pathelement location="${compile.lib.dir}/castor-1.1.jar" />
+			<pathelement location="${compile.lib.dir}/castor-1.1-codegen.jar" />
+		</path>
+
+		<path id="test-build.classpath">
+			<pathelement location="${compile.lib.dir}/commons-collections-3.1.jar" />
+			<pathelement location="${compile.lib.dir}/commons-dbcp-1.4.jar" />
+			<pathelement location="${compile.lib.dir}/commons-pool-1.5.7.jar" />
+			<pathelement location="${compile.lib.dir}/commons-lang-2.4.jar" />
+			<pathelement location="${compile.lib.dir}/commons-logging-1.1.1.jar" />
+			<pathelement location="${compile.lib.dir}/commons-beanutils-1.8.3.jar" />
+			<pathelement location="${compile.lib.dir}/commons-betwixt-0.8.jar" />
+			<pathelement location="${compile.lib.dir}/commons-digester-1.8.1.jar" />
+			<pathelement location="${compile.lib.dir}/DdlUtils-1.0.jar" />
+			<pathelement location="${compile.lib.dir}/gnu.getopt-1.0.10.jar" />
+			<pathelement location="${webapp.lib.dir}/jdom-1.1.2.jar" />
+			<pathelement location="${webapp.lib.dir}/jdbcappender.jar" />
+			<pathelement location="${compile.lib.dir}/jsp-api.jar" />
+			<pathelement location="${compile.lib.dir}/js.jar" />
+			<pathelement location="${compile.lib.dir}/log4j-1.2.13.jar" />
+			<pathelement location="${compile.lib.dir}/servlet-api.jar" />
+			<pathelement location="${compile.lib.dir}/xercesImpl.jar" />
+			<pathelement location="${compile.lib.dir}/xml-apis.jar" />
+			<pathelement location="${compile.lib.dir}/org.eclipse.wst.xml.xpath2.processor_2.0.0.v201105120439.jar" />
+			<pathelement location="${compile.lib.dir}/resolver.jar" />
+			<pathelement location="${compile.lib.dir}/castor-1.1.jar" />
+			<pathelement location="${compile.lib.dir}/castor-1.1-codegen.jar" />
+		</path>
+
+		<!--The classpath needed to run Program D, for the core.-->
+		<property name="essentials-mf-classpath"
       value="
     	../lib/gnu.getopt-1.0.10.jar
       ../lib/log4j-1.2.13.jar
@@ -79,461 +99,503 @@
     	../lib/xalan-j2-2.7.0.jar
     	../lib/mysql-connector-java-3.1.12-bin.jar
     	../lib/js.jar
-      ../lib/commons-dbcp-1.2.1.jar
-      ../lib/commons-pool-1.3.jar
+      ../lib/commons-dbcp-1.4.jar
+      ../lib/commons-pool-1.5.7.jar
+    	../lib/DdlUtils-1.0.jar
       ../lib/jaxen-1.1.jar
       ../lib/commons-collections-3.1.jar
+    	../lib/commons-lang-2.4.jar
+    	../lib/commons-logging-1.1.1.jar
+    	../lib/commons-beanutils-1.8.3.jar
+    	../lib/commons-betwixt-0.8.jar
+    	../lib/commons-digester-1.8.1.jar
     	" />
 
-    <!--The path to the core jar, to be included in app-jar manifests.-->
-    <property name="core-mf-classpath" value="programd-core.jar" />
+		<!--The path to the core jar, to be included in app-jar manifests.-->
+		<property name="core-mf-classpath" value="programd-core.jar" />
 
-    <!--Optional, path to mysql jar (for manifest).-->
-    <property name="mysql-mf-path" value="../lib/mysql-connector-java-3.1.12-bin.jar" />
+		<!--Optional, path to mysql jar (for manifest).-->
+		<property name="mysql-mf-path" value="../lib/mysql-connector-java-3.1.12-bin.jar" />
 
-    <!--
+		<!--
       Optional, path to rhino jar and Program D interface to it (for
       manifest).
     -->
-    <property name="js-mf-path" value="../lib/js.jar programd-rhino.jar" />
+		<property name="js-mf-path" value="../lib/js.jar programd-rhino.jar" />
 
-    <property name="javadoc.dir" value="${basedir}/docs/api" />
+		<property name="javadoc.dir" value="${basedir}/docs/api" />
 
-    <property name="core.jar" value="${distrib.dir}/programd-core.jar" />
-    <property name="simple-console.jar" value="${distrib.dir}/programd-simple-console.jar" />
-    <property name="simple-gui-console.jar" value="${distrib.dir}/programd-simple-gui-console.jar" />
-    <property name="rhino.jar" value="${distrib.dir}/programd-rhino.jar" />
-    <property name="utils.jar" value="${distrib.dir}/aitools-utils.jar" />
+		<property name="core.jar" value="${distrib.dir}/programd-core.jar" />
+		<property name="simple-console.jar" value="${distrib.dir}/programd-simple-console.jar" />
+		<property name="simple-gui-console.jar" value="${distrib.dir}/programd-simple-gui-console.jar" />
+		<property name="rhino.jar" value="${distrib.dir}/programd-rhino.jar" />
+		<property name="utils.jar" value="${distrib.dir}/aitools-utils.jar" />
 
-    <property name="war" value="${distrib.dir}/programd.war" />
+		<property name="war" value="${distrib.dir}/programd.war" />
 
-    <property name="distrib.src.dir" value="${distrib.dir}/distrib.src.tmp" />
-    <property name="distrib.bin.dir" value="${distrib.dir}/distrib.bin.tmp" />
-    <property name="distrib.war.dir" value="${distrib.dir}/distrib.war.tmp" />
-    <property name="distrib.src.zip" value="${distrib.dir}/programd-${version}-src.zip" />
-    <property name="distrib.bin.zip" value="${distrib.dir}/programd-${version}-bin.zip" />
-    <property name="distrib.war.zip" value="${distrib.dir}/programd-${version}-war.zip" />
-    <property name="distrib.src.tar.bz2" value="${distrib.dir}/programd-${version}-src.tar.bz2" />
-    <property name="distrib.bin.tar.bz2" value="${distrib.dir}/programd-${version}-bin.tar.bz2" />
-    <property name="distrib.war.tar.bz2" value="${distrib.dir}/programd-${version}-war.tar.bz2" />
+		<property name="distrib.src.dir" value="${distrib.dir}/distrib.src.tmp" />
+		<property name="distrib.bin.dir" value="${distrib.dir}/distrib.bin.tmp" />
+		<property name="distrib.war.dir" value="${distrib.dir}/distrib.war.tmp" />
+		<property name="distrib.src.zip" value="${distrib.dir}/programd-${version}-src.zip" />
+		<property name="distrib.bin.zip" value="${distrib.dir}/programd-${version}-bin.zip" />
+		<property name="distrib.war.zip" value="${distrib.dir}/programd-${version}-war.zip" />
+		<property name="distrib.src.tar.bz2" value="${distrib.dir}/programd-${version}-src.tar.bz2" />
+		<property name="distrib.bin.tar.bz2" value="${distrib.dir}/programd-${version}-bin.tar.bz2" />
+		<property name="distrib.war.tar.bz2" value="${distrib.dir}/programd-${version}-war.tar.bz2" />
 
-    <filter token="year" value="${year}" />
-    <filter token="version" value="${version}" />
-    <filter token="date" value="${TODAY}" />
-    <filter token="log" value="true" />
-    <filter token="verbose" value="true" />
+		<filter token="year" value="${year}" />
+		<filter token="version" value="${version}" />
+		<filter token="date" value="${TODAY}" />
+		<filter token="log" value="true" />
+		<filter token="verbose" value="true" />
 
-  </target>
+	</target>
 
-  <!--Generate CoreSettings from configuration schema.-->
-  <target name="core-settings" depends="init">
-    <xslt in="resources/schema/programd-configuration.xsd" out="resources/schema/dummy" style="resources/xslt/generate-settings-class.xslt">
-      <factory name="net.sf.saxon.TransformerFactoryImpl" />
-    </xslt>
-    <delete file="resources/schema/dummy" />
-  </target>
+	<target name="core-settings" depends="init"
+  	description="Generate CoreSettings from configuration schema.">
+		<xslt in="resources/schema/programd-configuration.xsd" out="resources/schema/dummy" style="resources/xslt/generate-settings-class.xslt">
+			<factory name="net.sf.saxon.TransformerFactoryImpl" />
+		</xslt>
+		<delete file="resources/schema/dummy" />
+	</target>
 
-  <!--Prepare directories.-->
-  <target name="prepare" depends="init">
-    <mkdir dir="${src-build.dir}" />
-    <mkdir dir="${test-build.dir}" />
-    <mkdir dir="${distrib.dir}" />
-    <mkdir dir="${manifests.dir}" />
-  </target>
+	<target name="prepare" depends="init"
+  	description="Prepare directories.">
+		<mkdir dir="${src-build.dir}" />
+		<mkdir dir="${test-build.dir}" />
+		<mkdir dir="${distrib.dir}" />
+		<mkdir dir="${manifests.dir}" />
+	</target>
 
-  <!--Prepare the source code.-->
-  <target name="prepare-src" depends="init, prepare">
-    <!--Copy resources.-->
-    <copy todir="${src-build.dir}">
-      <fileset dir="${webapp.dir}" includes="resources/schema/**" />
-    </copy>
-  </target>
+	<target name="prepare-src" depends="init, prepare"
+  	description="Prepare the source code.-">
+		<!--Copy resources.-->
+		<copy todir="${src-build.dir}">
+			<fileset dir="${webapp.dir}" includes="resources/schema/**" />
+		</copy>
+	</target>
 
-  <!--Compile the source directory.-->
-  <target name="compile-src" depends="init, prepare-src">
-    <javac srcdir="${src.dir}" destdir="${src-build.dir}" classpathref="src-build.classpath"
+	<target name="compile-src" depends="init, prepare-src"
+  	description="Compile the source directory.">
+		<javac srcdir="${src.dir}" destdir="${src-build.dir}" classpathref="src-build.classpath"
     	debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}"
     	target="${javac.jvm-target}" source="${javac.source}" includeantruntime="false">
-      <compilerarg value="-Xlint" />
-      <compilerarg value="-Xlint:-path" />
-      <compilerarg value="-Xlint:-serial" />
-    </javac>
-  </target>
+			<compilerarg value="-Xlint" />
+			<compilerarg value="-Xlint:-path" />
+			<compilerarg value="-Xlint:-serial" />
+		</javac>
+	</target>
 
-  <!--Build tests.-->
-  <target name="build-tests" depends="compile-src">
-    <java classname="org.aitools.util.Unicode">
-      <classpath>
-        <path refid="test-build.classpath" />
-        <pathelement path="${src-build.dir}" />
-      </classpath>
-      <arg value="${test.dir}/org/aitools/util/" />
-    </java>
-  </target>
+	<target name="build-tests" depends="compile-src"
+  	description="Build unit tests.">
+		<java classname="org.aitools.util.Unicode">
+			<classpath>
+				<path refid="test-build.classpath" />
+				<pathelement path="${src-build.dir}" />
+			</classpath>
+			<arg value="${test.dir}/org/aitools/util/" />
+		</java>
+	</target>
 
-  <!--Compile the tests.-->
-  <target name="compile-tests" depends="init, build-tests">
-    <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter" />
-    <javac srcdir="${test.dir}" destdir="${test-build.dir}" classpathref="test-build.classpath"
+	<target name="compile-tests" depends="init, build-tests"
+  	description="Compile the unit tests.">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter" />
+		<javac srcdir="${test.dir}" destdir="${test-build.dir}" classpathref="test-build.classpath"
     	debug="${javac.debug}" deprecation="${javac.deprecation}" target="${javac.jvm-target}"
     	source="${javac.source}" includeantruntime="false">
-      <compilerarg value="-Xlint" />
-      <compilerarg value="-Xlint:-path" />
-      <compilerarg value="-Xlint:-serial" />
-    </javac>
-  </target>
+			<compilerarg value="-Xlint" />
+			<compilerarg value="-Xlint:-path" />
+			<compilerarg value="-Xlint:-serial" />
+		</javac>
+	</target>
 
-  <!--Create the jars.-->
-  <target name="jars" depends="init, compile-src, core-jar, simple-console-jar, simple-gui-console-jar, rhino-jar, utils-jar" />
-  <target name="jars-setup">
-    <propertyfile file="version.properties">
-      <entry key="build.number" default="0" type="int" operation="+" value="1" />
-    </propertyfile>
-    <property file="version.properties" />
-    <!--Write the manifest file for the web app now.-->
-    <manifest file="${webapp.dir}/META-INF/MANIFEST.MF">
-      <attribute name="Class-Path" value="${essentials-mf-classpath} ${mysql-mf-path} ${js-mf-path}" />
-      <section name="org/aitools/programd/">
-        <attribute name="Specification-Title" value="Program D" />
-        <attribute name="Specification-Version" value="${version}" />
-        <attribute name="Specification-Vendor" value="aitools.org" />
-        <attribute name="Implementation-Title" value="org.aitools.programd" />
-        <attribute name="Implementation-Version" value="${build.number}" />
-        <attribute name="Implementation-Vendor" value="aitools.org" />
-      </section>
-    </manifest>
-  </target>
+	<target name="jars" depends="init, compile-src, core-jar, simple-console-jar, simple-gui-console-jar, rhino-jar, utils-jar" />
+	<target name="jars-setup"
+  	description="Create the jars.">
+		<propertyfile file="version.properties">
+			<entry key="build.number" default="0" type="int" operation="+" value="1" />
+		</propertyfile>
+		<property file="version.properties" />
+		<!--Write the manifest file for the web app now.-->
+		<manifest file="${webapp.dir}/META-INF/MANIFEST.MF">
+			<attribute name="Class-Path" value="${essentials-mf-classpath} ${mysql-mf-path} ${js-mf-path}" />
+			<section name="org/aitools/programd/">
+				<attribute name="Specification-Title" value="Program D" />
+				<attribute name="Specification-Version" value="${version}" />
+				<attribute name="Specification-Vendor" value="aitools.org" />
+				<attribute name="Implementation-Title" value="org.aitools.programd" />
+				<attribute name="Implementation-Version" value="${build.number}" />
+				<attribute name="Implementation-Vendor" value="aitools.org" />
+			</section>
+		</manifest>
+	</target>
 
-  <!--Core jar file (no main class)-->
-  <target name="core-jar" depends="init, compile-src, jars-setup">
-    <manifest file="${manifests.dir}/programd-core.mf">
-      <attribute name="Class-Path" value="${essentials-mf-classpath} ${mysql-mf-path} ${js-mf-path}" />
-      <section name="org/aitools/programd/">
-        <attribute name="Specification-Title" value="Program D" />
-        <attribute name="Specification-Version" value="${version}" />
-        <attribute name="Specification-Vendor" value="aitools.org" />
-        <attribute name="Implementation-Title" value="org.aitools.programd" />
-        <attribute name="Implementation-Version" value="${build.number}" />
-        <attribute name="Implementation-Vendor" value="aitools.org" />
-      </section>
-    </manifest>
-    <jar jarfile="${core.jar}" compress="false" manifest="${manifests.dir}/programd-core.mf">
-      <fileset dir="${src-build.dir}" includes="org/**">
-        <exclude name="org/aitools/programd/configurations/**" />
-        <exclude name="org/aitools/programd/interpreter/RhinoInterpreter.class" />
-      </fileset>
-      <fileset dir="${src.dir}" includes="org/aitools/programd/gui/icons/**" />
-      <fileset dir="${src-build.dir}" includes="resources/schema/**" />
-    </jar>
-  </target>
+	<target name="core-jar" depends="init, compile-src, jars-setup"
+  	description="Create the core jar file (no main class).">
+		<manifest file="${manifests.dir}/programd-core.mf">
+			<attribute name="Class-Path" value="${essentials-mf-classpath} ${mysql-mf-path} ${js-mf-path}" />
+			<section name="org/aitools/programd/">
+				<attribute name="Specification-Title" value="Program D" />
+				<attribute name="Specification-Version" value="${version}" />
+				<attribute name="Specification-Vendor" value="aitools.org" />
+				<attribute name="Implementation-Title" value="org.aitools.programd" />
+				<attribute name="Implementation-Version" value="${build.number}" />
+				<attribute name="Implementation-Vendor" value="aitools.org" />
+			</section>
+		</manifest>
+		<jar jarfile="${core.jar}" compress="false" manifest="${manifests.dir}/programd-core.mf">
+			<fileset dir="${src-build.dir}" includes="org/**">
+				<exclude name="org/aitools/programd/configurations/**" />
+				<exclude name="org/aitools/programd/interpreter/RhinoInterpreter.class" />
+			</fileset>
+			<fileset dir="${src.dir}" includes="org/aitools/programd/gui/icons/**" />
+			<fileset dir="${src-build.dir}" includes="resources/schema/**" />
+		</jar>
+	</target>
 
-  <!--Simple Console jar file-->
-  <target name="simple-console-jar" depends="init, compile-src, jars-setup">
-    <manifest file="${manifests.dir}/programd-simple-console.mf">
-      <attribute name="Main-Class" value="org.aitools.programd.configurations.SimpleConsole" />
-      <attribute name="Class-Path" value="${core-mf-classpath}" />
-      <attribute name="Specification-Title" value="Program D Simple Console" />
-      <attribute name="Specification-Version" value="${version}" />
-      <attribute name="Specification-Vendor" value="aitools.org" />
-      <attribute name="Implementation-Version" value="${build.number}" />
-      <attribute name="Implementation-Vendor" value="aitools.org" />
-    </manifest>
-    <jar jarfile="${simple-console.jar}" compress="false" manifest="${manifests.dir}/programd-simple-console.mf">
-      <fileset dir="${src-build.dir}/">
-        <include name="org/aitools/programd/configurations/SimpleConsole.class" />
-      </fileset>
-      <fileset dir="${src.dir}/" includes="org/aitools/programd/gui/icons/**" />
-      <fileset dir="${src-build.dir}/" includes="resources/schema/**" />
-    </jar>
-  </target>
+	<target name="simple-console-jar" depends="init, compile-src, jars-setup"
+  	description="Create the Simple Console jar file.">
+		<manifest file="${manifests.dir}/programd-simple-console.mf">
+			<attribute name="Main-Class" value="org.aitools.programd.configurations.SimpleConsole" />
+			<attribute name="Class-Path" value="${core-mf-classpath}" />
+			<attribute name="Specification-Title" value="Program D Simple Console" />
+			<attribute name="Specification-Version" value="${version}" />
+			<attribute name="Specification-Vendor" value="aitools.org" />
+			<attribute name="Implementation-Version" value="${build.number}" />
+			<attribute name="Implementation-Vendor" value="aitools.org" />
+		</manifest>
+		<jar jarfile="${simple-console.jar}" compress="false" manifest="${manifests.dir}/programd-simple-console.mf">
+			<fileset dir="${src-build.dir}/">
+				<include name="org/aitools/programd/configurations/SimpleConsole.class" />
+			</fileset>
+			<fileset dir="${src.dir}/" includes="org/aitools/programd/gui/icons/**" />
+			<fileset dir="${src-build.dir}/" includes="resources/schema/**" />
+		</jar>
+	</target>
 
-  <!--Simple GUI Console jar file-->
-  <target name="simple-gui-console-jar" depends="init, compile-src, jars-setup">
-    <manifest file="${manifests.dir}/programd-simple-gui-console.mf">
-      <attribute name="Main-Class" value="org.aitools.programd.configurations.SimpleGUIConsole" />
-      <attribute name="Class-Path" value="${core-mf-classpath}" />
-      <attribute name="Specification-Title" value="Program D Simple GUI Console" />
-      <attribute name="Specification-Version" value="${version}" />
-      <attribute name="Specification-Vendor" value="aitools.org" />
-      <attribute name="Implementation-Version" value="${build.number}" />
-      <attribute name="Implementation-Vendor" value="aitools.org" />
-    </manifest>
-    <jar jarfile="${simple-gui-console.jar}" compress="false" manifest="${manifests.dir}/programd-simple-gui-console.mf">
-      <fileset dir="${src-build.dir}/">
-        <include name="org/aitools/programd/configurations/SimpleGUIConsole.class" />
-      </fileset>
-      <fileset dir="${src.dir}/" includes="org/aitools/programd/gui/icons/**" />
-      <fileset dir="${src-build.dir}/" includes="resources/schema/**" />
-    </jar>
-  </target>
+	<target name="simple-gui-console-jar" depends="init, compile-src, jars-setup"
+  	description="Create the Simple GUI Console jar file.">
+		<manifest file="${manifests.dir}/programd-simple-gui-console.mf">
+			<attribute name="Main-Class" value="org.aitools.programd.configurations.SimpleGUIConsole" />
+			<attribute name="Class-Path" value="${core-mf-classpath}" />
+			<attribute name="Specification-Title" value="Program D Simple GUI Console" />
+			<attribute name="Specification-Version" value="${version}" />
+			<attribute name="Specification-Vendor" value="aitools.org" />
+			<attribute name="Implementation-Version" value="${build.number}" />
+			<attribute name="Implementation-Vendor" value="aitools.org" />
+		</manifest>
+		<jar jarfile="${simple-gui-console.jar}" compress="false" manifest="${manifests.dir}/programd-simple-gui-console.mf">
+			<fileset dir="${src-build.dir}/">
+				<include name="org/aitools/programd/configurations/SimpleGUIConsole.class" />
+			</fileset>
+			<fileset dir="${src.dir}/" includes="org/aitools/programd/gui/icons/**" />
+			<fileset dir="${src-build.dir}/" includes="resources/schema/**" />
+		</jar>
+	</target>
 
-  <!--Rhino interface jar file.-->
-  <target name="rhino-jar" depends="init, compile-src, jars-setup">
-    <manifest file="${manifests.dir}/programd-rhino.mf">
-      <attribute name="Specification-Title" value="Program D Rhino interface" />
-      <attribute name="Specification-Version" value="${version}" />
-      <attribute name="Specification-Vendor" value="aitools.org" />
-      <attribute name="Implementation-Version" value="${build.number}" />
-      <attribute name="Implementation-Vendor" value="aitools.org" />
-    </manifest>
-    <jar jarfile="${rhino.jar}" compress="false" manifest="${manifests.dir}/programd-rhino.mf">
-      <fileset dir="${src-build.dir}/" includes="org/aitools/programd/interpreter/RhinoInterpreter.class" />
-    </jar>
-  </target>
+	<target name="rhino-jar" depends="init, compile-src, jars-setup"
+  	description="Create the Rhino (javascript) interface jar file.">
+		<manifest file="${manifests.dir}/programd-rhino.mf">
+			<attribute name="Specification-Title" value="Program D Rhino interface" />
+			<attribute name="Specification-Version" value="${version}" />
+			<attribute name="Specification-Vendor" value="aitools.org" />
+			<attribute name="Implementation-Version" value="${build.number}" />
+			<attribute name="Implementation-Vendor" value="aitools.org" />
+		</manifest>
+		<jar jarfile="${rhino.jar}" compress="false" manifest="${manifests.dir}/programd-rhino.mf">
+			<fileset dir="${src-build.dir}/" includes="org/aitools/programd/interpreter/RhinoInterpreter.class" />
+		</jar>
+	</target>
 
-  <!--Utils jar file.-->
-  <target name="utils-jar" depends="init, compile-src, jars-setup">
-    <mkdir dir="${distrib.dir}" />
-    <manifest file="${manifests.dir}/aitools-utils.mf">
-      <section name="org/aitools/util/">
-        <attribute name="Specification-Title" value="aitools.org utilities" />
-        <attribute name="Specification-Version" value="${version}" />
-        <attribute name="Specification-Vendor" value="aitools.org" />
-        <attribute name="Implementation-Title" value="org.aitools.util" />
-        <attribute name="Implementation-Version" value="${build.number}" />
-        <attribute name="Implementation-Vendor" value="aitools.org" />
-      </section>
-    </manifest>
-    <jar jarfile="${utils.jar}" compress="false" manifest="${manifests.dir}/aitools-utils.mf">
-      <fileset dir="${src-build.dir}/" includes="**" excludes="aitools-utils.mf" />
-      <fileset dir="${test-build.dir}/" includes="**" />
-    </jar>
-  </target>
+	<target name="utils-jar" depends="init, compile-src, jars-setup"
+  	description="Create the utils jar file.">
+		<mkdir dir="${distrib.dir}" />
+		<manifest file="${manifests.dir}/aitools-utils.mf">
+			<section name="org/aitools/util/">
+				<attribute name="Specification-Title" value="aitools.org utilities" />
+				<attribute name="Specification-Version" value="${version}" />
+				<attribute name="Specification-Vendor" value="aitools.org" />
+				<attribute name="Implementation-Title" value="org.aitools.util" />
+				<attribute name="Implementation-Version" value="${build.number}" />
+				<attribute name="Implementation-Vendor" value="aitools.org" />
+			</section>
+		</manifest>
+		<jar jarfile="${utils.jar}" compress="false" manifest="${manifests.dir}/aitools-utils.mf">
+			<fileset dir="${src-build.dir}/" includes="**" excludes="aitools-utils.mf" />
+			<fileset dir="${test-build.dir}/" includes="**" />
+		</jar>
+	</target>
 
-  <!--Create a WAR file.-->
-  <target name="war" depends="init, compile-src">
-    <delete file="${war}" />
-    <war destfile="${war}" webxml="${webapp.dir}/WEB-INF/web.xml" manifest="${webapp.dir}/META-INF/MANIFEST.MF">
-      <fileset dir="${webapp.dir}">
-        <include name="pages/**" />
-      </fileset>
-      <fileset dir="${basedir}">
-        <include name="resources/**" />
-        <exclude name="resources/database/**" />
-        <exclude name="resources/icons/**" />
-        <exclude name="resources/testing/**" />
-        <exclude name="resources/xslt/**" />
-      </fileset>
-      <lib dir="${compile.lib.dir}">
-        <exclude name="jsp-api.jar" />
-        <exclude name="servlet-api.jar" />
-      </lib>
-      <lib dir="${webapp.lib.dir}" />
-      <classes dir="${src-build.dir}" />
-      <classes dir="${basedir}/conf">
-        <include name="log4j.xml" />
-      </classes>
-      <webinf dir="${webapp.dir}/WEB-INF">
-        <include name="aiml.tld" />
-        <include name="c.tld" />
-        <include name="c-rt.tld" />
-        <include name="dwr.xml" />
-      </webinf>
-    </war>
-  </target>
+	<target name="war" depends="init, compile-src"
+  	description="Create a WAR file.">
+		<delete file="${war}" />
+		<war destfile="${war}" webxml="${webapp.dir}/WEB-INF/web.xml" manifest="${webapp.dir}/META-INF/MANIFEST.MF">
+			<fileset dir="${webapp.dir}">
+				<include name="pages/**" />
+			</fileset>
+			<fileset dir="${basedir}">
+				<include name="resources/**" />
+				<exclude name="resources/database/**" />
+				<exclude name="resources/icons/**" />
+				<exclude name="resources/testing/**" />
+				<exclude name="resources/xslt/**" />
+			</fileset>
+			<lib dir="${compile.lib.dir}">
+				<exclude name="jsp-api.jar" />
+				<exclude name="servlet-api.jar" />
+			</lib>
+			<lib dir="${webapp.lib.dir}" />
+			<classes dir="${src-build.dir}" />
+			<classes dir="${basedir}/conf">
+				<include name="log4j.xml" />
+			</classes>
+			<webinf dir="${webapp.dir}/WEB-INF">
+				<include name="aiml.tld" />
+				<include name="c.tld" />
+				<include name="c-rt.tld" />
+				<include name="dwr.xml" />
+			</webinf>
+		</war>
+	</target>
 
-  <!--Create the API documentation.-->
-  <target name="javadoc" depends="init, prepare-src">
-    <mkdir dir="${javadoc.dir}" />
-    <javadoc packagenames="*" sourcepath="${src.dir}" destdir="${javadoc.dir}" classpathref="build.classpath"
+	<target name="db-create" depends="init"
+		description="Create the database (dropping an existing one if it exists).">
+		<sql driver="${db.driver}"
+	       url="${db.server-uri}"
+		     userid="${db.username}"
+		     password="${db.password}">
+			DROP DATABASE IF EXISTS ${db.name};
+			CREATE DATABASE ${db.name};
+		</sql>
+		<taskdef name="ddlToDatabase" classname="org.apache.ddlutils.task.DdlToDatabaseTask">
+      <classpath path="${essentials-mf-classpath}" />
+		</taskdef>
+		<ddlToDatabase usedelimitedsqlidentifiers="true">
+      <database url="${db.full-uri}"
+                driverClassName="${db.driver}"
+                username="${db.username}"
+                password="${db.password}" />
+			<fileset file="${db.schema-file}" />
+			<writeschematodatabase alterdatabase="true" failonerror="false" />
+		</ddlToDatabase>
+	</target>
+
+	<target name="db-schema-dump" depends="init"
+		description="Dump the database structure to DDL.">
+		<taskdef name="databaseToDdl" classname="org.apache.ddlutils.task.DatabaseToDdlTask">
+			<classpath path="${essentials-mf-classpath}" />
+		</taskdef>
+		<databaseToDdl modelName="ProgramD">
+			<database url="${db.url}"
+                driverClassName="${db.driver}"
+                username="${db.username}"
+                password="${db.password}" />
+			<writeSchemaToFile outputFile="${db.schema-file}" />
+		</databaseToDdl>
+	</target>
+
+	<target name="javadoc" depends="init, prepare-src"
+  	description="Create the API documentation.">
+		<mkdir dir="${javadoc.dir}" />
+		<javadoc packagenames="*" sourcepath="${src.dir}" destdir="${javadoc.dir}" classpathref="build.classpath"
       author="true" version="true" use="true" splitindex="true" noindex="false" windowtitle="${Name} API" doctitle="${Name} API">
-      <link href="http://docs.oracle.com/javase/6/docs/api/" />
-      <link href="http://www.urbanophile.com/arenn/hacking/getopt/" />
-    </javadoc>
-  </target>
+			<link href="http://docs.oracle.com/javase/6/docs/api/" />
+			<link href="http://www.urbanophile.com/arenn/hacking/getopt/" />
+		</javadoc>
+	</target>
 
-  <!--Create the schema documentation.-->
-  <!--
-    Note: You'll need the xs3p stylesheet (from http://titanium.dstc.edu.au/xml/xs3p/) to generate this. Change the xs3p
-    property below to match wherever you install it.
-  -->
-  <target name="schema-doc" depends="init">
-    <property name="xs3p" value="/usr/local/xs3p/xs3p.xsl" />
-    <property name="schema" value="../resources/schema" />
-    <property name="schema-doc" value="../docs/schema" />
-    <delete dir="${schema-doc}" />
-    <xslt in="${schema}/AIML.xsd" out="${schema-doc}/AIML.html" style="${xs3p}">
-      <param name="title" expression="A Schema for AIML 1.0.1" />
-      <param name="sortByComponent" expression="false" />
-    </xslt>
-    <xslt in="${schema}/bot-configuration.xsd" out="${schema-doc}/bot-configuration.html" style="${xs3p}">
-      <param name="title" expression="Program D Bot Configuration Schema" />
-      <param name="sortByComponent" expression="false" />
-    </xslt>
-    <xslt in="${schema}/ChatLog.xsd" out="${schema-doc}/ChatLog.html" style="${xs3p}">
-      <param name="title" expression="Program D Chat Log Schema" />
-      <param name="sortByComponent" expression="false" />
-    </xslt>
-    <xslt in="${schema}/test-cases.xsd" out="${schema-doc}/test-cases.html" style="${xs3p}">
-      <param name="title" expression="Program D Test Suite Schema" />
-      <param name="sortByComponent" expression="false" />
-    </xslt>
-  </target>
+	<target name="schema-doc" depends="init"
+  	description="Create the schema documentation.">
+		<!--
+      Note: You'll need the xs3p stylesheet (from http://titanium.dstc.edu.au/xml/xs3p/) to generate this. Change the xs3p
+      property below to match wherever you install it.
+    -->
+		<property name="xs3p" value="/usr/local/xs3p/xs3p.xsl" />
+		<property name="schema" value="../resources/schema" />
+		<property name="schema-doc" value="../docs/schema" />
+		<delete dir="${schema-doc}" />
+		<xslt in="${schema}/AIML.xsd" out="${schema-doc}/AIML.html" style="${xs3p}">
+			<param name="title" expression="A Schema for AIML 1.0.1" />
+			<param name="sortByComponent" expression="false" />
+		</xslt>
+		<xslt in="${schema}/bot-configuration.xsd" out="${schema-doc}/bot-configuration.html" style="${xs3p}">
+			<param name="title" expression="Program D Bot Configuration Schema" />
+			<param name="sortByComponent" expression="false" />
+		</xslt>
+		<xslt in="${schema}/ChatLog.xsd" out="${schema-doc}/ChatLog.html" style="${xs3p}">
+			<param name="title" expression="Program D Chat Log Schema" />
+			<param name="sortByComponent" expression="false" />
+		</xslt>
+		<xslt in="${schema}/test-cases.xsd" out="${schema-doc}/test-cases.html" style="${xs3p}">
+			<param name="title" expression="Program D Test Suite Schema" />
+			<param name="sortByComponent" expression="false" />
+		</xslt>
+	</target>
 
-  <!--Make the distribs.-->
-  <target name="distribs" depends="init, source-distribs, binary-distribs, war-distribs" />
+	<target name="distribs" depends="init, source-distribs, binary-distribs, war-distribs"
+  	description="Make the distribs."/>
 
-  <!--The source distribs.-->
-  <target name="source-distribs" depends="init">
-    <delete dir="${distrib.src.dir}" />
-    <copy todir="${distrib.src.dir}">
-      <fileset dir="${basedir}">
-        <exclude name=".*" />
-        <exclude name=".*/**" />
-        <exclude name="aiml/**" />
-        <exclude name="src-build.tmp/**" />
-        <exclude name="test-build.tmp/**" />
-        <exclude name="classes/**" />
-        <exclude name="distrib/**" />
-        <exclude name="docs/**" />
-        <exclude name="ffm/**" />
-        <exclude name="lib/*-listener/*.jar" />
-        <exclude name="logs/**" />
-      </fileset>
-    </copy>
-    <zip destfile="${distrib.src.zip}">
-      <zipfileset dir="${distrib.src.dir}" prefix="ProgramD/">
-        <exclude name="bin/simple-console" />
-        <exclude name="bin/simple-gui-console" />
-      </zipfileset>
-      <zipfileset dir="${distrib.src.dir}" prefix="ProgramD/" filemode="744">
-        <include name="bin/simple-console" />
-        <include name="bin/simple-gui-console" />
-      </zipfileset>
-    </zip>
-    <tar destfile="${distrib.src.tar.bz2}" compression="bzip2">
-      <tarfileset dir="${distrib.src.dir}" prefix="ProgramD/">
-        <exclude name="bin/simple-console" />
-        <exclude name="bin/simple-gui-console" />
-      </tarfileset>
-      <tarfileset dir="${distrib.src.dir}" prefix="ProgramD/" mode="744">
-        <include name="bin/simple-console" />
-        <include name="bin/simple-gui-console" />
-      </tarfileset>
-    </tar>
-    <delete dir="${distrib.src.dir}" />
-  </target>
+	<target name="source-distribs" depends="init"
+  	description="Make the source distribs.">
+		<delete dir="${distrib.src.dir}" />
+		<copy todir="${distrib.src.dir}">
+			<fileset dir="${basedir}">
+				<exclude name=".*" />
+				<exclude name=".*/**" />
+				<exclude name="aiml/**" />
+				<exclude name="src-build.tmp/**" />
+				<exclude name="test-build.tmp/**" />
+				<exclude name="classes/**" />
+				<exclude name="distrib/**" />
+				<exclude name="docs/**" />
+				<exclude name="ffm/**" />
+				<exclude name="lib/*-listener/*.jar" />
+				<exclude name="logs/**" />
+			</fileset>
+		</copy>
+		<zip destfile="${distrib.src.zip}">
+			<zipfileset dir="${distrib.src.dir}" prefix="ProgramD/">
+				<exclude name="bin/simple-console" />
+				<exclude name="bin/simple-gui-console" />
+			</zipfileset>
+			<zipfileset dir="${distrib.src.dir}" prefix="ProgramD/" filemode="744">
+				<include name="bin/simple-console" />
+				<include name="bin/simple-gui-console" />
+			</zipfileset>
+		</zip>
+		<tar destfile="${distrib.src.tar.bz2}" compression="bzip2">
+			<tarfileset dir="${distrib.src.dir}" prefix="ProgramD/">
+				<exclude name="bin/simple-console" />
+				<exclude name="bin/simple-gui-console" />
+			</tarfileset>
+			<tarfileset dir="${distrib.src.dir}" prefix="ProgramD/" mode="744">
+				<include name="bin/simple-console" />
+				<include name="bin/simple-gui-console" />
+			</tarfileset>
+		</tar>
+		<delete dir="${distrib.src.dir}" />
+	</target>
 
-  <!--The binary distribs.-->
-  <target name="binary-distribs" depends="init, jars">
-    <delete dir="${distrib.bin.dir}" />
-    <copy todir="${distrib.bin.dir}">
-      <fileset dir="${basedir}">
-        <include name="**" />
-        <exclude name=".*" />
-        <exclude name=".*/**" />
-        <exclude name="aiml/**" />
-        <exclude name="src-build.tmp/**" />
-        <exclude name="test-build.tmp/**" />
-        <exclude name="build.xml" />
-        <exclude name="classes/**" />
-        <exclude name="distrib/**" />
-        <exclude name="docs/**" />
-        <exclude name="ffm/**" />
-        <exclude name="lib/*-listener/*.jar" />
-        <exclude name="logs/**" />
-        <exclude name="src/**" />
-        <exclude name="secret.key" />
-      </fileset>
-      <fileset dir="${basedir}">
-        <include name="${core.jar}" />
-        <include name="${simple-console.jar}" />
-        <include name="${simple-gui-console.jar}" />
-        <include name="${rhino.jar}" />
-      </fileset>
-    </copy>
-    <zip destfile="${distrib.bin.zip}">
-      <zipfileset dir="${distrib.bin.dir}" prefix="ProgramD/">
-        <exclude name="bin/simple-console" />
-        <exclude name="bin/simple-gui-console" />
-      </zipfileset>
-      <zipfileset dir="${distrib.bin.dir}" prefix="ProgramD/" filemode="744">
-        <include name="bin/simple-console" />
-        <include name="bin/simple-gui-console" />
-      </zipfileset>
-    </zip>
-    <tar destfile="${distrib.bin.tar.bz2}" compression="bzip2">
-      <tarfileset dir="${distrib.bin.dir}" prefix="ProgramD/">
-        <exclude name="bin/simple-console" />
-        <exclude name="bin/simple-gui-console" />
-      </tarfileset>
-      <tarfileset dir="${distrib.bin.dir}" prefix="ProgramD/" mode="744">
-        <include name="bin/simple-console" />
-        <include name="bin/simple-gui-console" />
-      </tarfileset>
-    </tar>
-    <delete dir="${distrib.bin.dir}" />
-  </target>
+	<target name="binary-distribs" depends="init, jars"
+  	description="Make the binary distribs.">
+		<delete dir="${distrib.bin.dir}" />
+		<copy todir="${distrib.bin.dir}">
+			<fileset dir="${basedir}">
+				<include name="**" />
+				<exclude name=".*" />
+				<exclude name=".*/**" />
+				<exclude name="aiml/**" />
+				<exclude name="src-build.tmp/**" />
+				<exclude name="test-build.tmp/**" />
+				<exclude name="build.xml" />
+				<exclude name="classes/**" />
+				<exclude name="distrib/**" />
+				<exclude name="docs/**" />
+				<exclude name="ffm/**" />
+				<exclude name="lib/*-listener/*.jar" />
+				<exclude name="logs/**" />
+				<exclude name="src/**" />
+				<exclude name="secret.key" />
+			</fileset>
+			<fileset dir="${basedir}">
+				<include name="${core.jar}" />
+				<include name="${simple-console.jar}" />
+				<include name="${simple-gui-console.jar}" />
+				<include name="${rhino.jar}" />
+			</fileset>
+		</copy>
+		<zip destfile="${distrib.bin.zip}">
+			<zipfileset dir="${distrib.bin.dir}" prefix="ProgramD/">
+				<exclude name="bin/simple-console" />
+				<exclude name="bin/simple-gui-console" />
+			</zipfileset>
+			<zipfileset dir="${distrib.bin.dir}" prefix="ProgramD/" filemode="744">
+				<include name="bin/simple-console" />
+				<include name="bin/simple-gui-console" />
+			</zipfileset>
+		</zip>
+		<tar destfile="${distrib.bin.tar.bz2}" compression="bzip2">
+			<tarfileset dir="${distrib.bin.dir}" prefix="ProgramD/">
+				<exclude name="bin/simple-console" />
+				<exclude name="bin/simple-gui-console" />
+			</tarfileset>
+			<tarfileset dir="${distrib.bin.dir}" prefix="ProgramD/" mode="744">
+				<include name="bin/simple-console" />
+				<include name="bin/simple-gui-console" />
+			</tarfileset>
+		</tar>
+		<delete dir="${distrib.bin.dir}" />
+	</target>
 
-  <!--The war distribs.-->
-  <target name="war-distribs" depends="init, war">
-    <delete dir="${distrib.war.dir}" />
-    <copy todir="${distrib.war.dir}">
-      <fileset dir="${basedir}">
-        <include name="conf/**" />
-        <include name="resources/testing/AIML.aiml" />
-        <include name="resources/testing/AIML.xml" />
-      </fileset>
-      <fileset dir="${distrib.dir}">
-        <include name="programd.war" />
-      </fileset>
-    </copy>
-    <zip destfile="${distrib.war.zip}">
-      <zipfileset dir="${distrib.war.dir}" prefix="ProgramD/" />
-    </zip>
-    <tar destfile="${distrib.war.tar.bz2}" compression="bzip2">
-      <tarfileset dir="${distrib.war.dir}" prefix="ProgramD/" />
-    </tar>
-    <delete dir="${distrib.war.dir}" />
-  </target>
+	<target name="war-distribs" depends="init, war"
+  	description="Make the war distribs.">
+		<delete dir="${distrib.war.dir}" />
+		<copy todir="${distrib.war.dir}">
+			<fileset dir="${basedir}">
+				<include name="conf/**" />
+				<include name="resources/testing/AIML.aiml" />
+				<include name="resources/testing/AIML.xml" />
+			</fileset>
+			<fileset dir="${distrib.dir}">
+				<include name="programd.war" />
+			</fileset>
+		</copy>
+		<zip destfile="${distrib.war.zip}">
+			<zipfileset dir="${distrib.war.dir}" prefix="ProgramD/" />
+		</zip>
+		<tar destfile="${distrib.war.tar.bz2}" compression="bzip2">
+			<tarfileset dir="${distrib.war.dir}" prefix="ProgramD/" />
+		</tar>
+		<delete dir="${distrib.war.dir}" />
+	</target>
 
-  <!--Clean up everything.-->
-  <target name="clean" depends="init, buildclean, distclean" />
+	<target name="clean" depends="init, buildclean, distclean"
+  	description="Clean up everything."/>
 
-  <!--Clean the build stuff.-->
-  <target name="buildclean" depends="init">
-    <delete dir="${src-build.dir}" />
-    <delete dir="${test-build.dir}" />
-    <delete file="${core.jar}" />
-    <delete file="${rhino.jar}" />
-  </target>
+	<target name="buildclean" depends="init"
+  	description="Clean the build stuff.">
+		<delete dir="${src-build.dir}" />
+		<delete dir="${test-build.dir}" />
+		<delete file="${core.jar}" />
+		<delete file="${rhino.jar}" />
+	</target>
 
-  <!--Clean up all the distrib stuff.-->
-  <target name="distclean" depends="init, source-distclean, binary-distclean, war-distclean" />
+	<target name="distclean" depends="init, source-distclean, binary-distclean, war-distclean"
+  	description="Clean up all the distrib stuff."/>
 
-  <!--Clean up the source distribs.-->
-  <target name="source-distclean" depends="init">
-    <delete dir="${distrib.src.dir}" />
-    <delete file="${distrib.src.zip}" />
-    <delete file="${distrib.src.tar.bz2}" />
-  </target>
+	<target name="source-distclean" depends="init"
+	description="Clean up the source distribs.">
+		<delete dir="${distrib.src.dir}" />
+		<delete file="${distrib.src.zip}" />
+		<delete file="${distrib.src.tar.bz2}" />
+	</target>
 
-  <!--Clean up the binary distribs.-->
-  <target name="binary-distclean" depends="init">
-    <delete file="${core.jar}" />
-    <delete file="${rhino.jar}" />
-    <delete file="${simple-console.jar}" />
-    <delete file="${simple-gui-console.jar}" />
-    <delete file="${utils.jar}" />
-    <delete dir="${distrib.bin.dir}" />
-    <delete file="${distrib.bin.zip}" />
-    <delete file="${distrib.bin.tar.bz2}" />
-  </target>
+	<target name="binary-distclean" depends="init"
+	description="Clean up the binary distribs.">
+		<delete file="${core.jar}" />
+		<delete file="${rhino.jar}" />
+		<delete file="${simple-console.jar}" />
+		<delete file="${simple-gui-console.jar}" />
+		<delete file="${utils.jar}" />
+		<delete dir="${distrib.bin.dir}" />
+		<delete file="${distrib.bin.zip}" />
+		<delete file="${distrib.bin.tar.bz2}" />
+	</target>
 
-  <!--Clean up the war distribs.-->
-  <target name="war-distclean" depends="init">
-    <delete file="${war}" />
-    <delete dir="${distrib.war.dir}" />
-    <delete file="${distrib.war.zip}" />
-    <delete file="${distrib.war.tar.bz2}" />
-  </target>
+	<target name="war-distclean" depends="init"
+  	description="Clean up the war distribs.">
+		<delete file="${war}" />
+		<delete dir="${distrib.war.dir}" />
+		<delete file="${distrib.war.zip}" />
+		<delete file="${distrib.war.tar.bz2}" />
+	</target>
 
-  <!--Generate the multibot test files.-->
-  <target name="multibot" depends="init">
-    <delete file="resources/testing/multibot/bots.xml" />
-    <xslt in="resources/xslt/generate-multibot.xslt" out="resources/testing/multibot/bots.xml" style="resources/xslt/generate-multibot.xslt">
-      <factory name="net.sf.saxon.TransformerFactoryImpl" />
-    </xslt>
-  </target>
+	<target name="multibot" depends="init"
+  	description="Generate the multibot test files.">
+		<delete file="resources/testing/multibot/bots.xml" />
+		<xslt in="resources/xslt/generate-multibot.xslt" out="resources/testing/multibot/bots.xml" style="resources/xslt/generate-multibot.xslt">
+			<factory name="net.sf.saxon.TransformerFactoryImpl" />
+		</xslt>
+	</target>
 
 </project>

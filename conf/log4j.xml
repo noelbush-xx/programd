@@ -146,6 +146,14 @@
     <appender-ref ref="activitylog"/>
   </logger>
 
+  <!--Logging for various Apache-provided libs.-->
+  <logger name="org.apache" additivity="true">
+    <level value="info"/>
+    <appender-ref ref="stdout"/>
+    <appender-ref ref="stderr"/>
+    <appender-ref ref="activitylog"/>
+  </logger>
+
   <!--Logging for listeners.-->
   <logger name="programd.listener" additivity="false">
     <level value="info"/>

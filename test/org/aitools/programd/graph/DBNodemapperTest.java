@@ -48,19 +48,19 @@ public class DBNodemapperTest
     {
         this.connection = CORE.getDBConnection();
         Statement statement = this.connection.createStatement();
-        statement.execute("TRUNCATE `bots`");
-        statement.execute("TRUNCATE `files`");
-        statement.execute("TRUNCATE `nodes`");
-        statement.execute("TRUNCATE `templates`");
-        statement.execute("TRUNCATE `users`");
+        statement.execute("TRUNCATE `bot`");
+        statement.execute("TRUNCATE `file`");
+        statement.execute("TRUNCATE `node`");
+        statement.execute("TRUNCATE `template`");
+        statement.execute("TRUNCATE `user`");
         statement.execute("TRUNCATE `bot_file`");
         statement.execute("TRUNCATE `bot_user`");
         statement.execute("TRUNCATE `botidnode_file`");
-        statement.execute("TRUNCATE `edges`");
-        statement.execute("TRUNCATE `exchanges`");
+        statement.execute("TRUNCATE `edge`");
+        statement.execute("TRUNCATE `exchange`");
         statement.execute("TRUNCATE `file_node`");
         statement.execute("TRUNCATE `node_template`");
-        statement.execute("TRUNCATE `predicates`");
+        statement.execute("TRUNCATE `predicate`");
         statement.close();
     }
 
