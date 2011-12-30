@@ -108,7 +108,7 @@ public class SAX {
     }
     
     if (parser == null) {
-      throw new DeveloperError("SAXParser is null; cannot continue.", new NullPointerException());
+      throw new DeveloperError("SAXParser is null; cannot continue.");
     }
     try {
       parser.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage", "http://www.w3.org/2001/XMLSchema");
@@ -130,7 +130,7 @@ public class SAX {
     }
 
     if (reader == null) {
-      throw new DeveloperError("XMLReader is null; cannot continue", new NullPointerException());
+      throw new DeveloperError("XMLReader is null; cannot continue");
     }
 
     // Next, get an entity resolver that uses the given catalog path, and attach it to the reader.

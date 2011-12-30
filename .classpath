@@ -13,19 +13,13 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xalan-j2-2.7.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mysql-connector-java-3.1.12-bin.jar"/>
 	<classpathentry kind="lib" path="lib/jaxen-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/jsp-api.jar"/>
 	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.wst.xml.xpath2.processor_2.0.0.v201105120439.jar"/>
 	<classpathentry kind="lib" path="lib/jdom-1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-pool-1.5.7.jar" sourcepath="/home/noel/src/commons-pool-1.5.7-src/src/java"/>
 	<classpathentry kind="lib" path="lib/commons-dbcp-1.4.jar" sourcepath="/home/noel/src/commons-dbcp-1.4-src/src/java"/>
-	<classpathentry kind="lib" path="lib/DdlUtils-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-beanutils-1.8.3.jar"/>
-	<classpathentry kind="lib" path="lib/commons-betwixt-0.8.jar"/>
-	<classpathentry kind="lib" path="lib/commons-digester-1.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/junit-4.10.jar"/>
 	<classpathentry kind="lib" path="lib/js.jar"/>

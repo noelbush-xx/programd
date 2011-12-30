@@ -475,16 +475,6 @@ public class MemoryGraphmapper extends AbstractGraphmapper {
     throw new NoMatchException(String.format("%s:%s:%s:%s", input, that, topic, botid));
   }
 
-  /**
-   * Always returns true, since the Graphmaster only works in memory.
-   * 
-   * @see org.aitools.programd.graph.AbstractGraphmapper#necessaryToLoad(java.net.URL)
-   */
-  @Override
-  protected boolean necessaryToLoad(URL path) {
-    return true;
-  }
-
   private void print(Nodemapper nodemapper, PrintWriter out) {
     ArrayList<String> keyList = new ArrayList<String>(nodemapper.keySet());
     int keyCount = keyList.size();

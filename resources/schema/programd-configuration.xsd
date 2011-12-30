@@ -442,6 +442,14 @@
             </xs:appinfo>
           </xs:annotation>
         </xs:element>
+        <xs:element name="reset-graph" type="xs:boolean" default="true" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>Reset the graph on startup?  (Only applies to Graphmappers with persistent storage.)</xs:documentation>
+            <xs:appinfo>
+              <d:property-name>resetGraph</d:property-name>
+            </xs:appinfo>
+          </xs:annotation>
+        </xs:element>
         <xs:element name="use-shell" type="xs:boolean" default="true">
           <xs:annotation>
             <xs:documentation>Use interactive command-line shell?</xs:documentation>

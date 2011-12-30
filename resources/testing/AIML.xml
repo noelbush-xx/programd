@@ -728,12 +728,12 @@
         <ExpectedAnswer>Test case #48.<html:br/>
         Test passed.</ExpectedAnswer>
     </TestCase>
-    <TestCase name="load already-loaded AIML file (49)">
-        <Description>Verifies that loading, via a runtime learn element, an AIML file that has
+    <TestCase name="reload already-loaded AIML file (49)">
+        <Description>Verifies that reloading, via a runtime learn element, an AIML file that has
             already been loaded, does not produce an error.</Description>
         <Input>testloadalreadyloaded</Input>
         <ExpectedAnswer>Test case #49.<html:br/>
-            Test passed if no error message.</ExpectedAnswer>
+            Test passed.</ExpectedAnswer>
     </TestCase>
     <TestCase name="multiple consecutive srais (50)">
         <Description>Verifies that multiple consecutive srais are processed.</Description>

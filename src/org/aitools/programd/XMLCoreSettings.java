@@ -22,7 +22,7 @@ import org.aitools.util.runtime.UserError;
 import org.aitools.util.xml.JDOM;
 
 /**
- * Automatically generated at 2011-12-28T18:56:13.22+01:00.
+ * Automatically generated at 2011-12-30T11:01:04.665+01:00.
  */
 public class XMLCoreSettings extends CoreSettings
 {
@@ -310,6 +310,9 @@ public class XMLCoreSettings extends CoreSettings
 
         // Initialize nodemapperImplementation.
         setNodemapperImplementation(getXPathStringValue("/d:programd/d:nodemapper.implementation", document));
+
+        // Initialize resetGraph.
+        setResetGraph(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:reset-graph", document)));
 
         // Initialize useShell.
         setUseShell(Boolean.parseBoolean(getXPathStringValue("/d:programd/d:use-shell", document)));

@@ -13,7 +13,7 @@ import java.net.URL;
 import org.aitools.util.Settings;
 
 /**
- * Automatically generated at 2011-12-28T18:56:13.22+01:00.
+ * Automatically generated at 2011-12-30T11:01:04.665+01:00.
  */
 abstract public class CoreSettings extends Settings
 {
@@ -159,6 +159,9 @@ abstract public class CoreSettings extends Settings
         
     /** The Nodemapper implementation to use. */
     private String nodemapperImplementation;
+        
+    /** Reset the graph on startup? (Only applies to Graphmappers with persistent storage.) */
+    private boolean resetGraph;
         
     /** Use interactive command-line shell? */
     private boolean useShell;
@@ -476,6 +479,14 @@ abstract public class CoreSettings extends Settings
     public String getNodemapperImplementation()
     {
         return this.nodemapperImplementation;
+    }
+
+    /**
+     * @return the value of resetGraph
+     */
+    public boolean resetGraph()
+    {
+        return this.resetGraph;
     }
 
     /**
@@ -804,6 +815,14 @@ abstract public class CoreSettings extends Settings
     public void setNodemapperImplementation(String value)
     {
         this.nodemapperImplementation = value;
+    }
+
+    /**
+     * @param value the value for resetGraph
+     */
+    public void setResetGraph(boolean value)
+    {
+        this.resetGraph = value;
     }
 
     /**

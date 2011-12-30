@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import org.aitools.programd.Core;
+import org.aitools.util.db.Entity;
 import org.aitools.util.runtime.DeveloperError;
 
 /**
@@ -34,9 +35,6 @@ public class DBPredicateManager extends PredicateManager {
   private static final String SET_PREDICATE_INSERT =
       "INSERT INTO predicate (name, value, user_id, bot_id) " +
           "VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)";
-
-  private static final String CREATE_USER_INSERT =
-      "INSERT INTO user (user, bot) VALUES (?, ?)";
 
   /**
    * Creates a new DBMultiplexor with the given Core as owner.
@@ -62,24 +60,24 @@ public class DBPredicateManager extends PredicateManager {
       insert.clearBatch();
       for (String bot : this._bots.keySet()) {
         Map<String, PredicateMap> predicateCache = this._bots.get(bot).getPredicateCache();
+        int bot_id = Entity.getOrCreate(connection, "bot", "label", bot);
         for (String user : predicateCache.keySet()) {
           PredicateMap predicateMap = predicateCache.get(user);
+          int user_id = Entity.getOrCreate(connection, "user", "name", user);
           for (String name : predicateMap.keySet()) {
             PredicateValue value = predicateMap.get(name);
             insert.clearParameters();
+            insert.setInt(3, user_id);
+            insert.setInt(4, bot_id);
             if (value.size() == 1) {
-              insert.setString(1, user);
-              insert.setString(2, bot);
-              insert.setString(3, name);
-              insert.setString(4, value.getFirstValue());
+              insert.setString(1, name);
+              insert.setString(2, value.getFirstValue());
               insert.addBatch();
             }
             else {
               for (int index = 1; index <= value.size(); index++) {
-                insert.setString(1, user);
-                insert.setString(2, bot);
-                insert.setString(3, String.format("%s.%d", name, index));
-                insert.setString(4, value.get(index));
+                insert.setString(1, String.format("%s.%d", name, index));
+                insert.setString(2, value.get(index));
                 insert.addBatch();
               }
             }
@@ -106,7 +104,6 @@ public class DBPredicateManager extends PredicateManager {
     try {
       connection.prepareStatement(LOAD_PREDICATE_SELECT);
       connection.prepareStatement(SET_PREDICATE_INSERT);
-      connection.prepareStatement(CREATE_USER_INSERT);
       connection.close();
     }
     catch (SQLException e) {

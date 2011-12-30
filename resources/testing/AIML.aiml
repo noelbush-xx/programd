@@ -1059,8 +1059,12 @@ DDDDDDDDDD</html:pre>
         <template>
             Test case #49.<html:br/>
             <learn>./AIML.aiml</learn>
-            Test passed if no error message.
+            <srai>testloadalreadyloadedsuccessful</srai>
         </template>
+    </category>
+    <category>
+      <pattern>TESTLOADALREADYLOADEDSUCCESSFUL</pattern>
+      <template>Test passed.</template>
     </category>
     <category>
         <pattern>TESTMULTIPLECONSECUTIVESRAIS</pattern>

@@ -18,9 +18,9 @@
     <property name="db.server-uri" value="jdbc:mysql://localhost:3306/" />
     <property name="db.full-uri" value="${db.server-uri}${db.name}" />
 		<property name="db.driver" value="com.mysql.jdbc.Driver" />
-		<property name="db.username" value="programd" />
+		<property name="db.username" value="yourusername" />
 		<property name="db.password" value="yourpassword" />
-		<property name="db.schema-file" value="${basedir}/resources/database/programd-schema.xml" />
+		<property name="db.schema-file" value="${basedir}/resources/database/programd-schema.sql" />
 		
 		<property name="src.dir" value="${basedir}/src" />
 		<property name="test.dir" value="${basedir}/test" />
@@ -34,15 +34,9 @@
 		<property name="test-build.dir" value="${basedir}/test-build.tmp" />
 
 		<path id="src-build.classpath">
-			<pathelement location="${compile.lib.dir}/commons-collections-3.1.jar" />
+      <pathelement location="${compile.lib.dir}/commons-collections-3.1.jar" />
 			<pathelement location="${compile.lib.dir}/commons-dbcp-1.4.jar" />
 			<pathelement location="${compile.lib.dir}/commons-pool-1.5.7.jar" />
-			<pathelement location="${compile.lib.dir}/commons-lang-2.4.jar" />
-			<pathelement location="${compile.lib.dir}/commons-logging-1.1.1.jar" />
-			<pathelement location="${compile.lib.dir}/commons-beanutils-1.8.3.jar" />
-			<pathelement location="${compile.lib.dir}/commons-betwixt-0.8.jar" />
-			<pathelement location="${compile.lib.dir}/commons-digester-1.8.1.jar" />
-			<pathelement location="${compile.lib.dir}/DdlUtils-1.0.jar" />
 			<pathelement location="${compile.lib.dir}/gnu.getopt-1.0.10.jar" />
 			<pathelement location="${compile.lib.dir}/jdom-1.1.2.jar" />
 			<pathelement location="${webapp.lib.dir}/jdbcappender.jar" />
@@ -59,15 +53,9 @@
 		</path>
 
 		<path id="test-build.classpath">
-			<pathelement location="${compile.lib.dir}/commons-collections-3.1.jar" />
-			<pathelement location="${compile.lib.dir}/commons-dbcp-1.4.jar" />
+      <pathelement location="${compile.lib.dir}/commons-collections-3.1.jar" />
+      <pathelement location="${compile.lib.dir}/commons-dbcp-1.4.jar" />
 			<pathelement location="${compile.lib.dir}/commons-pool-1.5.7.jar" />
-			<pathelement location="${compile.lib.dir}/commons-lang-2.4.jar" />
-			<pathelement location="${compile.lib.dir}/commons-logging-1.1.1.jar" />
-			<pathelement location="${compile.lib.dir}/commons-beanutils-1.8.3.jar" />
-			<pathelement location="${compile.lib.dir}/commons-betwixt-0.8.jar" />
-			<pathelement location="${compile.lib.dir}/commons-digester-1.8.1.jar" />
-			<pathelement location="${compile.lib.dir}/DdlUtils-1.0.jar" />
 			<pathelement location="${compile.lib.dir}/gnu.getopt-1.0.10.jar" />
 			<pathelement location="${webapp.lib.dir}/jdom-1.1.2.jar" />
 			<pathelement location="${webapp.lib.dir}/jdbcappender.jar" />
@@ -99,16 +87,10 @@
     	../lib/xalan-j2-2.7.0.jar
     	../lib/mysql-connector-java-3.1.12-bin.jar
     	../lib/js.jar
+			../lib/commons-collections-3.1.jar
       ../lib/commons-dbcp-1.4.jar
       ../lib/commons-pool-1.5.7.jar
-    	../lib/DdlUtils-1.0.jar
       ../lib/jaxen-1.1.jar
-      ../lib/commons-collections-3.1.jar
-    	../lib/commons-lang-2.4.jar
-    	../lib/commons-logging-1.1.1.jar
-    	../lib/commons-beanutils-1.8.3.jar
-    	../lib/commons-betwixt-0.8.jar
-    	../lib/commons-digester-1.8.1.jar
     	" />
 
 		<!--The path to the core jar, to be included in app-jar manifests.-->
@@ -358,40 +340,31 @@
 		</war>
 	</target>
 
-	<target name="db-create" depends="init"
-		description="Create the database (dropping an existing one if it exists).">
-		<sql driver="${db.driver}"
-	       url="${db.server-uri}"
-		     userid="${db.username}"
-		     password="${db.password}">
-			DROP DATABASE IF EXISTS ${db.name};
-			CREATE DATABASE ${db.name};
-		</sql>
-		<taskdef name="ddlToDatabase" classname="org.apache.ddlutils.task.DdlToDatabaseTask">
-      <classpath path="${essentials-mf-classpath}" />
-		</taskdef>
-		<ddlToDatabase usedelimitedsqlidentifiers="true">
-      <database url="${db.full-uri}"
-                driverClassName="${db.driver}"
-                username="${db.username}"
-                password="${db.password}" />
-			<fileset file="${db.schema-file}" />
-			<writeschematodatabase alterdatabase="true" failonerror="false" />
-		</ddlToDatabase>
+	<target name="db-recreate" depends="init"
+		description="(Re)create the database (dropping an existing one if it exists).">
+    <sql driver="${db.driver}"
+         url="${db.server-uri}"
+         userid="${db.username}"
+         password="${db.password}">
+      DROP DATABASE IF EXISTS ${db.name};
+      CREATE DATABASE ${db.name};
+    </sql>
+    <sql driver="${db.driver}"
+         url="${db.full-uri}"
+         userid="${db.username}"
+         password="${db.password}"
+         src="${db.schema-file}" />
 	</target>
 
+	<!--This is currently, shamelessly, only good for MySQL.-->
 	<target name="db-schema-dump" depends="init"
-		description="Dump the database structure to DDL.">
-		<taskdef name="databaseToDdl" classname="org.apache.ddlutils.task.DatabaseToDdlTask">
-			<classpath path="${essentials-mf-classpath}" />
-		</taskdef>
-		<databaseToDdl modelName="ProgramD">
-			<database url="${db.url}"
-                driverClassName="${db.driver}"
-                username="${db.username}"
-                password="${db.password}" />
-			<writeSchemaToFile outputFile="${db.schema-file}" />
-		</databaseToDdl>
+		description="Dump the database structure.">
+		<exec executable="mysqldump" output="${db.schema-file}">
+			<arg value="--user=${db.username}" />
+			<arg value="--password=${db.password}" />
+			<arg value="--skip-opt" />
+			<arg value="${db.name}" />
+		</exec>
 	</target>
 
 	<target name="javadoc" depends="init, prepare-src"

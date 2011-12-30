@@ -102,7 +102,7 @@ abstract public class ClassRegistry<B> {
       }
     }
     else {
-      throw new DeveloperError(String.format("Failed to get processor \"%s\"", classname), new NullPointerException());
+      throw new DeveloperError(String.format("Failed to get processor \"%s\".", classname));
     }
 
     // Get the value in the label field.
@@ -119,7 +119,7 @@ abstract public class ClassRegistry<B> {
       this.registry.put(label, classToRegister);
     }
     else {
-      throw new DeveloperError("Tried to register class with null label!", new NullPointerException());
+      throw new DeveloperError("Tried to register class with null label!");
     }
   }
 }

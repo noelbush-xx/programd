@@ -11,28 +11,16 @@ package org.aitools.util.db;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.aitools.util.Classes;
-import org.aitools.util.resource.Filesystem;
-import org.aitools.util.runtime.DeveloperError;
 import org.aitools.util.runtime.UserError;
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDataSource;
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.apache.ddlutils.DdlUtilsException;
-import org.apache.ddlutils.Platform;
-import org.apache.ddlutils.PlatformFactory;
-import org.apache.ddlutils.PlatformInfo;
-import org.apache.ddlutils.alteration.ModelChange;
-import org.apache.ddlutils.alteration.ModelComparator;
-import org.apache.ddlutils.io.DatabaseIO;
-import org.apache.ddlutils.model.Database;
-import org.apache.log4j.Logger;
 
 
 /**
@@ -43,8 +31,6 @@ import org.apache.log4j.Logger;
 public class DBConnectionManager {
   
   private DataSource _dataSource;
-  
-  private Logger _logger;
   
   /**
    * Create a new database connection manager using the given driver (classname)
@@ -58,9 +44,8 @@ public class DBConnectionManager {
    * @param minIdle
    * @param maxActive
    */
-  public DBConnectionManager(Logger logger, String driver, String uri, String username, String password, int minIdle, int maxActive) {
+  public DBConnectionManager(String driver, String uri, String username, String password, int minIdle, int maxActive) {
     
-    this._logger = logger;
     Classes.verifyAvailable(driver, "database driver");
     
     GenericObjectPool connectionPool = new GenericObjectPool(null);
@@ -76,39 +61,8 @@ public class DBConnectionManager {
     
     this._dataSource = new PoolingDataSource(connectionPool);
     
-    this.checkDBSchema();
-  }
-  
-  @SuppressWarnings("boxing")
-  private void checkDBSchema() {
-    
-    Platform platform;
-    try {
-      platform = PlatformFactory.createNewPlatformInstance(this._dataSource);
-    }
-    catch (DdlUtilsException e) {
-     
-      throw new DeveloperError("Error creating platform factory for comparing database schemas.", e);
-    }
-    Database liveDB;
-    try {
-      liveDB = platform.readModelFromDatabase("programd");
-    }
-    catch (Exception e) {
-      throw new DeveloperError("Error reading schema from live database.", e);
-    }
-    Database schema;
-    try {
-      schema = new DatabaseIO().read(Filesystem.getExistingFile("resources/database/programd-schema.xml"));
-    }
-    catch (Exception e) {
-      throw new DeveloperError("Error reading database schema from file.", e);
-    }
-    ModelComparator comparator = new ModelComparator(new PlatformInfo(), true);
-    
-    @SuppressWarnings("unchecked")
-    List<ModelChange> changes = comparator.compare(liveDB, schema);
-    this._logger.debug(String.format("%d changes between schema specification and live database.", changes.size()));
+    // Was using DdlUtils here, but it did not correctly work for all column properties.
+    //this.checkDBSchema();
   }
 
   /**

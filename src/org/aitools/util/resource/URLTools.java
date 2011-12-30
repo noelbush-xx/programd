@@ -136,8 +136,7 @@ public class URLTools {
       logger.warn(String.format("Could not escape context URL \"%s\".", _context));
     }
     if (_context == null) {
-      throw new DeveloperError(String.format("Escaped context became null: \"%s\".", context),
-          new NullPointerException());
+      throw new DeveloperError(String.format("Escaped context became null: \"%s\".", context));
     }
     if (_context.toString().equals(_subject)) {
       return _context;

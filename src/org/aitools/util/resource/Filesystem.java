@@ -340,7 +340,7 @@ public class Filesystem {
         LOGGER.warn(String.format("Malformed URL: \"%s\"", path));
       }
       if (url == null) {
-        throw new DeveloperError(String.format("Cannot create URL from path: \"%s\"", path), new NullPointerException());
+        throw new DeveloperError(String.format("Cannot create URL from path: \"%s\"", path));
       }
 
       try {

@@ -58,8 +58,9 @@
   </loading>
   <connect-string>CONNECT</connect-string>
   <random-strategy>non-repeating</random-strategy>
-  <graphmapper.implementation>org.aitools.programd.graph.MemoryGraphmapper</graphmapper.implementation>
-  <nodemapper.implementation>org.aitools.programd.graph.TwoOptimalMemoryNodemapper</nodemapper.implementation>
+  <graphmapper.implementation>org.aitools.programd.graph.SlowDBGraphmapper</graphmapper.implementation>
+  <nodemapper.implementation>org.aitools.programd.graph.SlowDBNodemapper</nodemapper.implementation>
+  <reset-graph>true</reset-graph>
   <use-shell>true</use-shell>
   <xml-parser>
     <catalog-path>resources/catalog.xml</catalog-path>

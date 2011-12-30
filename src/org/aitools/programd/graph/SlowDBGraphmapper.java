@@ -24,27 +24,39 @@ import org.aitools.util.Text;
 import org.aitools.util.resource.URLTools;
 
 /**
- * This is an implementation of the {@link Graphmapper} interface that uses a database. There is a certain amount of
+ * <p>This is an implementation of the {@link Graphmapper} interface that uses a database. There is a certain amount of
  * duplication of code from {@link MemoryGraphmapper} that cannot be avoided, without accepting an additional
  * performance penalty of lots of boxing and unboxing, because <code>int</code> is a primitive type in Java (as opposed
- * to {@link Integer}.
+ * to {@link Integer}.</p>
+ * <p>This implementation is slow, especially in loading, because it performs numerous separate queries.
+ * It is not suitable for real-world use, but is serving as the basis for more database-optimized versions.</p>
  * 
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  * 
  */
-public class DBGraphmapper extends AbstractGraphmapper {
+public class SlowDBGraphmapper extends AbstractGraphmapper {
+  
+  /** The id of the root node. */
+  private int _root;
+  
+  private static int NO_NODE = -1;
 
   /**
-   * Creates a new DBGraphmapper, reading settings from the given Core.
+   * Creates a new SlowDBGraphmapper, reading settings from the given Core.
    * 
    * @param core the CoreSettings object from which to read settings
    */
-  public DBGraphmapper(Core core) {
+  public SlowDBGraphmapper(Core core) {
     super(core);
+    Connection connection = this._core.getDBConnection();
+    if (this._core.getSettings().resetGraph()) {
+      SlowDBNodemapper.eraseAll(connection);
+    }
+    this._root = SlowDBNodemapper.getRoot(connection);
   }
 
   /**
-   * Adds a new path to the <code>DBGraphmapper</code> at a given node.
+   * Adds a new path to the <code>SlowDBGraphmapper</code> at a given node.
    * 
    * @param connection database access object
    * @param pathIterator an iterator over the List containing the elements of the path
@@ -53,6 +65,9 @@ public class DBGraphmapper extends AbstractGraphmapper {
    * @return node which is the result of adding the node
    */
   protected int add(Connection connection, ListIterator<String> pathIterator, int parent, URL source) {
+    
+    assert parent != NO_NODE: "Cannot add path to no-node.";
+    
     // If there are no more words in the path, return the parent node
     if (!pathIterator.hasNext()) {
       // setTop(parent);
@@ -64,24 +79,24 @@ public class DBGraphmapper extends AbstractGraphmapper {
     int node;
 
     // If the parent contains this word, get the nodemapper with the word.
-    if (DBNodemapper.containsKey(connection, parent, word)) {
-      node = DBNodemapper.get(connection, parent, word);
+    if (SlowDBNodemapper.containsKey(connection, parent, word)) {
+      node = SlowDBNodemapper.get(connection, parent, word);
       assert node >= 0;
     }
     else {
       // Otherwise create a new node with this word.
-      node = DBNodemapper.put(connection, parent, word);
+      node = SlowDBNodemapper.put(connection, parent, word);
     }
     // Associate botid nodes with their sources.
     if (word.equals(BOT)) {
-      DBNodemapper.storeBotIDNodeFile(connection, node, source);
+      SlowDBNodemapper.storeBotIDNodeFile(connection, node, source);
     }
     // Return the result of adding the new nodemapper to the parent.
     return this.add(connection, pathIterator, node, source);
   }
 
   /**
-   * Adds a new pattern-that-topic path to the <code>DBGraphmapper</code> root.
+   * Adds a new pattern-that-topic path to the <code>SlowDBGraphmapper</code> root.
    * 
    * @param connection database access object
    * @param pattern &lt;pattern/&gt; path component
@@ -99,7 +114,7 @@ public class DBGraphmapper extends AbstractGraphmapper {
     path.addAll(Text.wordSplit(topic));
     path.add(BOT);
     path.add(botid);
-    return this.add(connection, path.listIterator(), 0, source);
+    return this.add(connection, path.listIterator(), this._root, source);
   }
 
   /**
@@ -110,10 +125,10 @@ public class DBGraphmapper extends AbstractGraphmapper {
   public void add(String pattern, String that, String topic, String template, Bot bot, URL source) {
     Connection connection = this._core.getDBConnection();
     int node = this.add(connection, pattern, that, topic, bot.getID(), source);
-    String storedTemplate = DBNodemapper.getTemplate(connection, node);
+    String storedTemplate = SlowDBNodemapper.getTemplate(connection, node);
     if (storedTemplate == null) {
-      DBNodemapper.setFilename(connection, node, source);
-      DBNodemapper.setTemplate(connection, node, template);
+      SlowDBNodemapper.setFilename(connection, node, source);
+      SlowDBNodemapper.setTemplate(connection, node, template);
       this._totalCategories++;
     }
     else {
@@ -123,7 +138,7 @@ public class DBGraphmapper extends AbstractGraphmapper {
           if (this._noteEachMerge) {
             this._logger.warn(String.format(
                 "Skipping path-identical category from \"%s\" which duplicates path of category from \"%s\": %s:%s:%s",
-                source, DBNodemapper.getFilenames(connection, node).get(0), pattern, that, topic));
+                source, SlowDBNodemapper.getFilenames(connection, node).get(0), pattern, that, topic));
           }
           break;
 
@@ -131,10 +146,10 @@ public class DBGraphmapper extends AbstractGraphmapper {
           if (this._noteEachMerge) {
             this._logger.warn(String.format(
                 "Overwriting path-identical category from \"%s\" with new category from \"%s\".  Path: %s:%s:%s",
-                DBNodemapper.getFilenames(connection, node).get(0), source, pattern, that, topic));
+                SlowDBNodemapper.getFilenames(connection, node).get(0), source, pattern, that, topic));
           }
-          DBNodemapper.setFilename(connection, node, source);
-          DBNodemapper.setTemplate(connection, node, template);
+          SlowDBNodemapper.setFilename(connection, node, source);
+          SlowDBNodemapper.setTemplate(connection, node, template);
           break;
 
         case APPEND:
@@ -143,10 +158,10 @@ public class DBGraphmapper extends AbstractGraphmapper {
                 .warn(String
                     .format(
                         "Appending template of category from \"%s\" to template of path-identical category from \"%s\": %s:%s:%s",
-                        source, DBNodemapper.getFilenames(connection, node), pattern, that, topic));
+                        source, SlowDBNodemapper.getFilenames(connection, node), pattern, that, topic));
           }
-          DBNodemapper.addFilename(connection, node, source);
-          DBNodemapper.setTemplate(connection, node, this.appendTemplate(storedTemplate, template));
+          SlowDBNodemapper.addFilename(connection, node, source);
+          SlowDBNodemapper.setTemplate(connection, node, this.appendTemplate(storedTemplate, template));
           break;
 
         case COMBINE:
@@ -155,10 +170,10 @@ public class DBGraphmapper extends AbstractGraphmapper {
                 .warn(String
                     .format(
                         "Combining template of category from \"%s\" with template of path-identical category from \"%s\": %s:%s:%s",
-                        source, DBNodemapper.getFilenames(connection, node), pattern, that, topic));
+                        source, SlowDBNodemapper.getFilenames(connection, node), pattern, that, topic));
           }
-          DBNodemapper.addFilename(connection, node, source);
-          DBNodemapper.setTemplate(connection, node, this.combineTemplates(storedTemplate, template));
+          SlowDBNodemapper.addFilename(connection, node, source);
+          SlowDBNodemapper.setTemplate(connection, node, this.combineTemplates(storedTemplate, template));
           break;
       }
     }
@@ -171,10 +186,11 @@ public class DBGraphmapper extends AbstractGraphmapper {
   @Override
   public void addForBot(URL path, String botid) {
     Connection connection = this._core.getDBConnection();
-    List<URL> filenames = DBNodemapper.getFilenamesForBot(connection, botid);
-    if (filenames.size() < 1) {
-      throw new IllegalArgumentException("Must not call addForBot() using a URL that has not already been loaded.");
-    }
+    List<URL> filenames = SlowDBNodemapper.getFilenamesForBot(connection, botid);
+    /*if (filenames.size() < 1) {
+      throw new DeveloperError(
+          String.format("Must not call addForBot() using a URL that has not already been loaded. (URL \"%s\", botid \"%s\")", path, botid));
+    }*/
     if (filenames.contains(path)) {
       throw new IllegalArgumentException(
           "Must not call addForBot() using a URL and botid that have already been associated.");
@@ -182,19 +198,19 @@ public class DBGraphmapper extends AbstractGraphmapper {
     if (this._logger.isDebugEnabled()) {
       this._logger.debug(String.format("Adding botid \"%s\" to all paths associated with \"%s\".", botid, path));
     }
-    for (int node : DBNodemapper.getBotIDNodesForFile(connection, path)) {
-      int botidnode = DBNodemapper.put(connection, DBNodemapper.getParent(connection, node), botid);
-      DBNodemapper.setTemplateByID(connection, botidnode, DBNodemapper.getTemplateID(connection, node));
+    for (int node : SlowDBNodemapper.getBotIDNodesForFile(connection, path)) {
+      int botidnode = SlowDBNodemapper.put(connection, SlowDBNodemapper.getParent(connection, node), botid);
+      SlowDBNodemapper.setTemplateByID(connection, botidnode, SlowDBNodemapper.getTemplateID(connection, node));
       this._totalCategories++;
     }
-    DBNodemapper.associateBotWithFile(connection, botid, path);
+    SlowDBNodemapper.associateBotWithFile(connection, botid, path);
     this.close(connection);
   }
 
   @Override
   protected void associateBotIDWithFilename(String botid, URL path) {
     Connection connection = this._core.getDBConnection();
-    DBNodemapper.associateBotWithFile(connection, botid, path);
+    SlowDBNodemapper.associateBotWithFile(connection, botid, path);
     this.close(connection);
   }
 
@@ -210,7 +226,7 @@ public class DBGraphmapper extends AbstractGraphmapper {
   @Override
   protected boolean isAlreadyLoaded(URL filename) {
     Connection connection = this._core.getDBConnection();
-    boolean result = DBNodemapper.fileIsAlreadyPresent(connection, filename);
+    boolean result = SlowDBNodemapper.fileIsAlreadyPresent(connection, filename);
     this.close(connection);
     return result;
   }
@@ -218,13 +234,13 @@ public class DBGraphmapper extends AbstractGraphmapper {
   @Override
   protected boolean isAlreadyLoadedForBot(URL filename, String botid) {
     Connection connection = this._core.getDBConnection();
-    boolean result = DBNodemapper.fileIsAlreadyPresentForBot(connection, filename, botid);
+    boolean result = SlowDBNodemapper.fileIsAlreadyPresentForBot(connection, filename, botid);
     this.close(connection);
     return result;
   }
 
   /**
-   * Searches for a match in the <code>DBGraphmapper</code> to a given path. This is a low-level prototype, used for
+   * Searches for a match in the <code>SlowDBGraphmapper</code> to a given path. This is a low-level prototype, used for
    * internal recursion.
    * 
    * @param connection
@@ -250,11 +266,11 @@ public class DBGraphmapper extends AbstractGraphmapper {
     // If no more tokens in the input, see if this is a template.
     if (input.size() == 0) {
       // If so, the path component is the botid.
-      String template = DBNodemapper.getTemplate(connection, node);
+      String template = SlowDBNodemapper.getTemplate(connection, node);
       if (template != null) {
         match.setBotID(path.toString());
         match.setTemplate(template);
-        match.setFilenames(DBNodemapper.getFilenames(connection, node));
+        match.setFilenames(SlowDBNodemapper.getFilenames(connection, node));
         return node;
       }
       // (otherwise...)
@@ -294,7 +310,7 @@ public class DBGraphmapper extends AbstractGraphmapper {
      * The node may have contained a _, but this led to no match. Or it didn't contain a _ at all. So let's see if it
      * contains the head.
      */
-    if (DBNodemapper.containsKey(connection, node, head)) {
+    if (SlowDBNodemapper.containsKey(connection, node, head)) {
       /*
        * Check now whether this head is a marker for the <that>, <topic> or <botid> segments of the path. If it is, set
        * the match state variable accordingly.
@@ -362,8 +378,9 @@ public class DBGraphmapper extends AbstractGraphmapper {
      * a wildcard, then the match continues to be valid and can proceed with the tail, the current path, and the star
      * content plus the head as the new star.
      */
-    if (node == DBNodemapper.get(connection, parent, ASTERISK)
-        || node == DBNodemapper.get(connection, parent, UNDERSCORE)) {
+    if (parent != NO_NODE &&
+        (node == SlowDBNodemapper.get(connection, parent, ASTERISK)
+        || node == SlowDBNodemapper.get(connection, parent, UNDERSCORE))) {
       return this.match(connection, // db access object
           node, // current node
           parent, // current path
@@ -405,7 +422,7 @@ public class DBGraphmapper extends AbstractGraphmapper {
       boolean appendToPath, String currentWildcard, String newWildcard, StringBuilder path, Match match,
       Match.State matchState, long expiration) throws NoMatchException {
     // Does the nodemapper contain the key?
-    if (DBNodemapper.containsKey(connection, node, key)) {
+    if (SlowDBNodemapper.containsKey(connection, node, key)) {
       // If so, construct a new path from the current path plus the key.
       StringBuilder newPath = new StringBuilder();
       if (path.length() > 0) {
@@ -416,7 +433,7 @@ public class DBGraphmapper extends AbstractGraphmapper {
 
       // Try to get a match with the tail and this new path (may throw exception)
       int result = this.match(connection, // db access object
-          DBNodemapper.get(connection, node, key), // newly matched nodemapper
+          SlowDBNodemapper.get(connection, node, key), // newly matched nodemapper
           node, // current nodemapper as parent
           tail, // current tail
           newWildcard, // current wildcardContent
@@ -443,24 +460,10 @@ public class DBGraphmapper extends AbstractGraphmapper {
     Connection connection = this._core.getDBConnection();
     // Get the match, starting at the root, with an empty star and path, starting in "in input" mode.
     Match match = new Match();
-    this.match(connection, 0, 0, AbstractGraphmapper.composeInputPath(input, that, topic, botid), "", new StringBuilder(), match,
+    this.match(connection, this._root, NO_NODE, AbstractGraphmapper.composeInputPath(input, that, topic, botid), "", new StringBuilder(), match,
         Match.State.IN_INPUT, System.currentTimeMillis() + this._responseTimeout);
     this.close(connection);
     return match;
-  }
-
-  @Override
-  protected boolean necessaryToLoad(URL path) {
-    boolean result = false;
-    Connection connection = this._core.getDBConnection();
-    long lastModified = URLTools.getLastModified(path);
-    long lastLoaded = DBNodemapper.getLastLoaded(connection, path);
-    if (lastModified > lastLoaded) {
-      this.unload(connection, path);
-      result = true;
-    }
-    this.close(connection);
-    return result;
   }
 
   private void print(int node, int indent, PrintWriter out) {
@@ -473,7 +476,7 @@ public class DBGraphmapper extends AbstractGraphmapper {
 
   @Override
   protected void print(PrintWriter out) {
-    this.print(0, 0, out);
+    this.print(this._root, NO_NODE, out);
     out.close();
   }
 
@@ -485,10 +488,10 @@ public class DBGraphmapper extends AbstractGraphmapper {
    * @param node the mapper for the nodemapper to remove
    */
   protected void remove(Connection connection, int node) {
-    int parent = DBNodemapper.getParent(connection, node);
+    int parent = SlowDBNodemapper.getParent(connection, node);
     if (parent >= 0) {
-      DBNodemapper.remove(connection, parent, node);
-      if (DBNodemapper.size(connection, parent) == 0 && parent != 0) {
+      SlowDBNodemapper.remove(connection, parent, node);
+      if (SlowDBNodemapper.size(connection, parent) == 0 && parent != 0) {
         this.remove(connection, parent);
       }
     }
@@ -502,7 +505,7 @@ public class DBGraphmapper extends AbstractGraphmapper {
   public void removeCategory(String pattern, String that, String topic, Bot bot) {
     Connection connection = this._core.getDBConnection();
     try {
-      this.remove(connection, this.match(connection, 0, 0, AbstractGraphmapper.composeInputPath(pattern, that, topic, bot.getID()),
+      this.remove(connection, this.match(connection, this._root, 0, AbstractGraphmapper.composeInputPath(pattern, that, topic, bot.getID()),
           "", new StringBuilder(), new Match(), Match.State.IN_INPUT, System.currentTimeMillis()
               + this._responseTimeout));
     }
@@ -523,13 +526,13 @@ public class DBGraphmapper extends AbstractGraphmapper {
   }
 
   protected void unload(Connection connection, URL path, Bot bot) {
-    Set<Integer> nodes = DBNodemapper.getBotIDNodesForFile(connection, path);
+    Set<Integer> nodes = SlowDBNodemapper.getBotIDNodesForFile(connection, path);
 
     for (int node : nodes) {
       this.remove(connection, node);
       this._totalCategories--;
     }
-    DBNodemapper.removeBotIDFromFilename(connection, bot.getID(), path);
+    SlowDBNodemapper.removeBotIDFromFilename(connection, bot.getID(), path);
   }
 
   /**

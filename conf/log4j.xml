@@ -3,12 +3,12 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
   <!--Program D will use the stdout and stderr appenders configured here
-        in a special way, routing error messages (WARN, SEVERE) to stderr
-        and everything else to stdout, so leave this as-is if you want that behavior.
-        
-        You can change "PrintStackTraces" to "true" if you want to see stack
-        traces for regular "caught" exceptions.  (For uncaught exceptions, see
-        core.xml.)-->
+      in a special way, routing error messages (WARN, SEVERE) to stderr
+      and everything else to stdout, so leave this as-is if you want that behavior.
+      
+      You can change "PrintStackTraces" to "true" if you want to see stack
+      traces for regular "caught" exceptions.  (For uncaught exceptions, see
+      core.xml.)-->
 
   <!--The console output: stdout-->
   <appender name="stdout" class="org.aitools.programd.interfaces.ConsoleStreamAppender">
@@ -23,7 +23,7 @@
 
   <!--The console output: stderr-->
   <appender name="stderr" class="org.aitools.programd.interfaces.ConsoleStreamAppender">
-    <param name="PrintStackTraces" value="false"/>
+    <param name="PrintStackTraces" value="true"/>
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="[%d{ISO8601}] %p: %m%n"/>
     </layout>

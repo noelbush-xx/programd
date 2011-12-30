@@ -329,8 +329,7 @@ public class Core {
     
     if (this._dbConnectionManager == null) {
       this._dbConnectionManager =
-          new DBConnectionManager(this._logger,
-                                  this._settings.getDatabaseDriver(),
+          new DBConnectionManager(this._settings.getDatabaseDriver(),
                                   this._settings.getDatabaseURI(),
                                   this._settings.getDatabaseUsername(),
                                   this._settings.getDatabasePassword(),

@@ -32,6 +32,15 @@ public class DeveloperError extends Error {
   private static final long serialVersionUID = 1L;
 
   /**
+   * Creates a new DeveloperError not associated with a(nother) Throwable.
+   * 
+   * @param message the message describing the error
+   */
+  public DeveloperError(String message) {
+    super(message);
+  }
+
+  /**
    * Creates a new DeveloperError associated with the given Throwable.
    * 
    * @param message the message describing the error

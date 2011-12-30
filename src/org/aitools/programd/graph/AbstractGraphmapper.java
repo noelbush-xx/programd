@@ -334,9 +334,7 @@ abstract public class AbstractGraphmapper implements Graphmapper {
   }
 
   protected void doLoad(URL path, String botid) {
-    if (!this.necessaryToLoad(path)) {
-      return;
-    }
+
     AIMLReader handler = new AIMLReader(this, path, this._core.getBot(botid));
     XMLReader reader = SAX.getReader(handler, this._logger, this._core.getSettings().getXmlCatalogPath());
     try {
@@ -421,11 +419,6 @@ abstract public class AbstractGraphmapper implements Graphmapper {
 
     Bot bot = this._core.getBot(botid);
 
-    // Unload first if already loaded.
-    if (bot.getLoadedFilesMap().containsKey(path)) {
-      this.unload(path, bot);
-    }
-
     // Let the Graphmapper use a shortcut if possible.
     if (this.isAlreadyLoaded(path)) {
       if (this.isAlreadyLoadedForBot(path, botid)) {
@@ -453,15 +446,6 @@ abstract public class AbstractGraphmapper implements Graphmapper {
       }
     }
   }
-
-  /**
-   * Allows a concrete version of this class to decide whether or not a file needs to be loaded; this is useful for
-   * {@link DBGraphmapper}, which doesn't need to load a file again if it hasn't changed since it was last loaded.
-   * 
-   * @param path the path to be checked
-   * @return whether or not it should be loaded
-   */
-  abstract protected boolean necessaryToLoad(URL path);
 
   abstract protected void print(PrintWriter out);
 
