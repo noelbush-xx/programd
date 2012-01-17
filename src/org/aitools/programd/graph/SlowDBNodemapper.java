@@ -42,6 +42,66 @@ import org.aitools.util.runtime.UserError;
  * @author <a href="mailto:noel@aitools.org">Noel Bush</a>
  */
 public class SlowDBNodemapper {
+  
+  private static PreparedStatement ADD_FILENAME;
+  private static PreparedStatement ASSOCIATE_BOT_WITH_FILE;
+  private static PreparedStatement CONTAINS_KEY;
+  private static PreparedStatement FILE_PRESENT;
+  private static PreparedStatement FILE_PRESENT_FOR_BOT;
+  private static PreparedStatement GET_NODE;
+  private static PreparedStatement GET_BOTID_NODES_FOR_FILE;
+  private static PreparedStatement GET_BOTS_FOR_FILE;
+  private static PreparedStatement GET_FILENAMES;
+  private static PreparedStatement GET_FILENAMES_FOR_BOT;
+  private static PreparedStatement GET_LAST_LOADED;
+  private static PreparedStatement GET_PARENT;
+  private static PreparedStatement GET_TEMPLATE;
+  private static PreparedStatement GET_TEMPLATE_ID;
+  private static PreparedStatement PUT;
+  private static PreparedStatement CREATE_NODE;
+  private static PreparedStatement REMOVE;
+  private static PreparedStatement REMOVE_BOTID_FROM_FILENAME;
+  private static PreparedStatement REMOVE_FILENAME;
+  private static PreparedStatement SET_TEMPLATE;
+  private static PreparedStatement ASSOCIATE_TEMPLATE_WITH_NODE;
+  private static PreparedStatement SIZE;
+  private static PreparedStatement STORE_BOTID_NODE_FILE;
+  
+  /**
+   * Initialize prepared statements.
+   * 
+   * @param connection
+   */
+  public static void initializePreparedStatements(Connection connection) {
+    try {
+      ADD_FILENAME = connection.prepareStatement("INSERT INTO file_node (file_id, node_id) VALUES (?, ?)");
+      ASSOCIATE_BOT_WITH_FILE = connection.prepareStatement("INSERT INTO bot_file (bot_id, file_id) VALUES (?, ?)");
+      CONTAINS_KEY = connection.prepareStatement("SELECT 1 FROM edge WHERE from_node_id = ? AND label = ?");
+      FILE_PRESENT = connection.prepareStatement("SELECT 1 FROM file WHERE path = ?");
+      FILE_PRESENT_FOR_BOT = connection.prepareStatement("SELECT 1 FROM file INNER JOIN bot_file ON file.id = bot_file.file_id INNER JOIN bot ON bot.id = bot_file.bot_id WHERE file.path = ? AND bot.label = ?");
+      GET_NODE = connection.prepareStatement("SELECT to_node_id FROM edge WHERE from_node_id = ? AND label = ?");
+      GET_BOTID_NODES_FOR_FILE = connection.prepareStatement("SELECT botidnode_id from botidnode_file INNER JOIN file ON botidnode_file.file_id = file.id WHERE file.path = ?");
+      GET_BOTS_FOR_FILE = connection.prepareStatement("SELECT bot.label FROM bot_file INNER JOIN file ON bot_file.file_id = file.id INNER JOIN bot ON bot.id = bot_file.bot_id WHERE file.path = ?");
+      GET_FILENAMES = connection.prepareStatement("SELECT file.path from file_node INNER JOIN file ON file_node.file_id = file.id WHERE file_node.node_id = ?");
+      GET_FILENAMES_FOR_BOT = connection.prepareStatement("SELECT file.path FROM bot_file INNER JOIN file ON bot_file.file_id = file.id INNER JOIN bot ON bot_file.bot_id = bot.id WHERE bot.id = (SELECT id FROM bot WHERE label = ?)");
+      GET_LAST_LOADED = connection.prepareStatement("SELECT last_loaded FROM file WHERE path = ?");
+      GET_PARENT = connection.prepareStatement("SELECT from_node_id FROM edge WHERE to_node_id = ?");
+      GET_TEMPLATE = connection.prepareStatement("SELECT text from template INNER JOIN node_template ON node_template.template_id = template.id WHERE node_template.node_id = ?");
+      GET_TEMPLATE_ID = connection.prepareStatement("SELECT template_id FROM node_template WHERE node_id = ?");
+      PUT = connection.prepareStatement("INSERT INTO edge (from_node_id, label, to_node_id) VALUES (?, ?, ?)");
+      CREATE_NODE = connection.prepareStatement("INSERT INTO node () VALUES ()", Statement.RETURN_GENERATED_KEYS);
+      REMOVE = connection.prepareStatement("DELETE FROM edge WHERE from_node_id = ? AND to_node_id = ?");
+      REMOVE_BOTID_FROM_FILENAME = connection.prepareStatement("DELETE FROM botidnode_file WHERE botidnode_id = ? AND file_id = ?");
+      REMOVE_FILENAME = connection.prepareStatement("DELETE FROM file_node WHERE node_id = ?");
+      SET_TEMPLATE = connection.prepareStatement("INSERT INTO template (text) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+      ASSOCIATE_TEMPLATE_WITH_NODE = connection.prepareStatement("INSERT INTO node_template (node_id, template_id) VALUES (?, ?)");
+      SIZE = connection.prepareStatement("SELECT COUNT(from_node_id) FROM edge WHERE from_node_id = ?");
+      STORE_BOTID_NODE_FILE = connection.prepareStatement("INSERT INTO botidnode_file (botidnode_id, file_id) VALUES (?, ?)");
+    }
+    catch (SQLException e) {
+      throw new DeveloperError("SQL error when initializing prepared statements.", e);
+    }
+  }
 
   /**
    * Adds the given filename to the list of filenames associated with the given node.
@@ -56,12 +116,9 @@ public class SlowDBNodemapper {
     int file_id = Entity.getOrCreate(connection, "file", "path", filename.toExternalForm());
 
     try {
-      PreparedStatement insert = connection
-          .prepareStatement("INSERT INTO file_node (file_id, node_id) VALUES (?, ?)");
-      insert.setInt(1, file_id);
-      insert.setInt(2, node);
-      insert.execute();
-      insert.close();
+      ADD_FILENAME.setInt(1, file_id);
+      ADD_FILENAME.setInt(2, node);
+      ADD_FILENAME.execute();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to associate filename \"%s\" with node %d.", filename.toExternalForm(), node), e);
@@ -77,16 +134,13 @@ public class SlowDBNodemapper {
    */
   protected static void associateBotWithFile(Connection connection, String bot, URL filename) {
 
-    int bot_id = Entity.getOrCreate(connection, "bot", "label", bot);
-    int file_id = Entity.getOrCreate(connection, "file", "path", filename.toExternalForm());
+    int botID = Entity.getOrCreate(connection, "bot", "label", bot);
+    int fileID = Entity.getOrCreate(connection, "file", "path", filename.toExternalForm());
     
     try {
-      PreparedStatement insert = connection
-          .prepareStatement("INSERT INTO bot_file (bot_id, file_id) VALUES (?, ?)");
-      insert.setInt(1, bot_id);
-      insert.setInt(2, file_id);
-      insert.execute();
-      insert.close();
+      ASSOCIATE_BOT_WITH_FILE.setInt(1, botID);
+      ASSOCIATE_BOT_WITH_FILE.setInt(2, fileID);
+      ASSOCIATE_BOT_WITH_FILE.execute();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to associate bot \"%s\" with file \"%s\".", bot, filename.toExternalForm()), e);
@@ -106,14 +160,11 @@ public class SlowDBNodemapper {
   public static boolean containsKey(Connection connection, int node, String key) {
     boolean result;
     try {
-      PreparedStatement select = connection
-          .prepareStatement("SELECT 1 FROM edge WHERE from_node_id = ? AND label = ?");
-      select.setInt(1, node);
-      select.setString(2, key);
-      ResultSet results = select.executeQuery();
+      CONTAINS_KEY.setInt(1, node);
+      CONTAINS_KEY.setString(2, key);
+      ResultSet results = CONTAINS_KEY.executeQuery();
       result = results.next();
       results.close();
-      select.close();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to check whether node %d maps to key \"%s\".", node, key), e);
@@ -131,12 +182,10 @@ public class SlowDBNodemapper {
   public static boolean fileIsAlreadyPresent(Connection connection, URL file) {
     boolean result;
     try {
-      PreparedStatement select = connection.prepareStatement("SELECT 1 FROM file WHERE path = ?");
-      select.setString(1, file.toExternalForm());
-      ResultSet results = select.executeQuery();
+      FILE_PRESENT.setString(1, file.toExternalForm());
+      ResultSet results = FILE_PRESENT.executeQuery();
       result = results.next();
       results.close();
-      select.close();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to check whether file \"%s\" is already present.", file.toExternalForm()), e);
@@ -155,14 +204,11 @@ public class SlowDBNodemapper {
   public static boolean fileIsAlreadyPresentForBot(Connection connection, URL file, String bot) {
     boolean result;
     try {
-      PreparedStatement select = connection
-          .prepareStatement("SELECT 1 FROM file INNER JOIN bot_file ON file.id = bot_file.file_id INNER JOIN bot ON bot.id = bot_file.bot_id WHERE file.path = ? AND bot.label = ?");
-      select.setString(1, file.toExternalForm());
-      select.setString(2, bot);
-      ResultSet results = select.executeQuery();
+      FILE_PRESENT_FOR_BOT.setString(1, file.toExternalForm());
+      FILE_PRESENT_FOR_BOT.setString(2, bot);
+      ResultSet results = FILE_PRESENT_FOR_BOT.executeQuery();
       result = results.next();
       results.close();
-      select.close();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to check whether file \"%s\" is already present for bot \"%s\".", file.toExternalForm(), bot), e);
@@ -183,16 +229,13 @@ public class SlowDBNodemapper {
   public static int get(Connection connection, int node, String key) {
     int toNode = -1;
     try {
-      PreparedStatement select = connection
-          .prepareStatement("SELECT to_node_id FROM edge WHERE from_node_id = ? AND label = ?");
-      select.setInt(1, node);
-      select.setString(2, key);
-      ResultSet results = select.executeQuery();
+      GET_NODE.setInt(1, node);
+      GET_NODE.setString(2, key);
+      ResultSet results = GET_NODE.executeQuery();
       if (results.next()) {
         toNode = results.getInt(1);
       }
       results.close();
-      select.close();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to get node %d mapped via key \"%s\".", node, key), e);
@@ -211,15 +254,12 @@ public class SlowDBNodemapper {
   public static Set<Integer> getBotIDNodesForFile(Connection connection, URL file) {
     Set<Integer> result = new HashSet<Integer>();
     try {
-      PreparedStatement select = connection
-          .prepareStatement("SELECT botidnode_id from botidnode_file INNER JOIN file ON botidnode_file.file_id = file.id WHERE file.path = ?");
-      select.setString(1, file.toExternalForm());
-      ResultSet results = select.executeQuery();
+      GET_BOTID_NODES_FOR_FILE.setString(1, file.toExternalForm());
+      ResultSet results = GET_BOTID_NODES_FOR_FILE.executeQuery();
       while (results.next()) {
         result.add(results.getInt(1));
       }
       results.close();
-      select.close();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to get botid nodes for file \"%s\".", file.toExternalForm()), e);
@@ -237,15 +277,12 @@ public class SlowDBNodemapper {
   public static List<String> getBotsForFilename(Connection connection, URL filename) {
     List<String> result = new ArrayList<String>();
     try {
-      PreparedStatement select = connection
-          .prepareStatement("SELECT bot.label FROM bot_file INNER JOIN file ON bot_file.file_id = file.id INNER JOIN bot ON bot.id = bot_file.id WHERE file.path = ?");
-      select.setString(1, filename.toExternalForm());
-      ResultSet results = select.executeQuery();
+      GET_BOTS_FOR_FILE.setString(1, filename.toExternalForm());
+      ResultSet results = GET_BOTS_FOR_FILE.executeQuery();
       while (results.next()) {
         result.add(results.getString(1));
       }
       results.close();
-      select.close();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to get bots for filename \"%s\".", filename.toExternalForm()), e);
@@ -264,15 +301,12 @@ public class SlowDBNodemapper {
   public static List<String> getFilenames(Connection connection, int node) {
     List<String> result = new ArrayList<String>();
     try {
-      PreparedStatement select = connection
-          .prepareStatement("SELECT file.path from file_node INNER JOIN file ON file_node.file_id = file.id WHERE file_node.node_id = ?");
-      select.setInt(1, node);
-      ResultSet results = select.executeQuery();
+      GET_FILENAMES.setInt(1, node);
+      ResultSet results = GET_FILENAMES.executeQuery();
       while (results.next()) {
         result.add(results.getString(1));
       }
       results.close();
-      select.close();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to get filenames associated with node %d.", node), e);
@@ -290,10 +324,8 @@ public class SlowDBNodemapper {
   public static List<URL> getFilenamesForBot(Connection connection, String bot) {
     List<URL> result = new ArrayList<URL>();
     try {
-      PreparedStatement select = connection
-          .prepareStatement("SELECT file.path FROM bot_file INNER JOIN file ON bot_file.file_id = file.id INNER JOIN bot ON bot_file.bot_id = bot.id WHERE bot.id = (SELECT id FROM bot WHERE label = ?)");
-      select.setString(1, bot);
-      ResultSet results = select.executeQuery();
+      GET_FILENAMES_FOR_BOT.setString(1, bot);
+      ResultSet results = GET_FILENAMES_FOR_BOT.executeQuery();
       while (results.next()) {
         String filename = results.getString(1);
         try {
@@ -304,7 +336,6 @@ public class SlowDBNodemapper {
         }
       }
       results.close();
-      select.close();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to get filenames associated with bot \"%s\".", bot), e);
@@ -322,14 +353,12 @@ public class SlowDBNodemapper {
   public static long getLastLoaded(Connection connection, URL file) {
     long result = -1;
     try {
-      PreparedStatement select = connection.prepareStatement("SELECT last_loaded FROM file WHERE path = ?");
-      select.setString(1, file.toExternalForm());
-      ResultSet results = select.executeQuery();
+      GET_LAST_LOADED.setString(1, file.toExternalForm());
+      ResultSet results = GET_LAST_LOADED.executeQuery();
       if (results.next()) {
         result = results.getTimestamp(1).getTime();
       }
       results.close();
-      select.close();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to get last-loaded time for file \"%s\".", file.toExternalForm()), e);
@@ -349,15 +378,12 @@ public class SlowDBNodemapper {
   public static int getParent(Connection connection, int node) {
     int result = -1;
     try {
-      PreparedStatement select = connection
-          .prepareStatement("SELECT from_node_id FROM edge WHERE to_node_id = ?");
-      select.setInt(1, node);
-      ResultSet results = select.executeQuery();
+      GET_PARENT.setInt(1, node);
+      ResultSet results = GET_PARENT.executeQuery();
       if (results.next()) {
         result = results.getInt(1);
       }
       results.close();
-      select.close();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to get parent of node %d.", node), e);
@@ -376,15 +402,12 @@ public class SlowDBNodemapper {
   public static String getTemplate(Connection connection, int node) {
     String template = null;
     try {
-      PreparedStatement select = connection
-          .prepareStatement("SELECT text from template INNER JOIN node_template ON node_template.template_id = template.id WHERE node_template.node_id = ?");
-      select.setInt(1, node);
-      ResultSet results = select.executeQuery();
+      GET_TEMPLATE.setInt(1, node);
+      ResultSet results = GET_TEMPLATE.executeQuery();
       if (results.next()) {
         template = results.getString(1);
       }
       results.close();
-      select.close();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to get template attached to node %d.", node), e);
@@ -403,15 +426,12 @@ public class SlowDBNodemapper {
   public static int getTemplateID(Connection connection, int node) {
     int id = -1;
     try {
-      PreparedStatement select = connection
-          .prepareStatement("SELECT template_id FROM node_template WHERE node_id = ?");
-      select.setInt(1, node);
-      ResultSet results = select.executeQuery();
+      GET_TEMPLATE_ID.setInt(1, node);
+      ResultSet results = GET_TEMPLATE_ID.executeQuery();
       if (results.next()) {
         id = results.getInt(1);
       }
       results.close();
-      select.close();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to get id of template attached to node %d.", node), e);
@@ -433,18 +453,14 @@ public class SlowDBNodemapper {
     int to_node = -1;
     try {
       // See if this edge exists already.
-      PreparedStatement select = connection
-          .prepareStatement("SELECT to_node_id FROM edge WHERE from_node_id = ? AND label = ?");
-      select.setInt(1, from_node);
-      select.setString(2, key);
-      ResultSet edgeCheck = select.executeQuery();
+      GET_NODE.setInt(1, from_node);
+      GET_NODE.setString(2, key);
+      ResultSet edgeCheck = GET_NODE.executeQuery();
       boolean exists = edgeCheck.next();
       edgeCheck.close();
-      select.close();
       if (!exists) {
-        PreparedStatement insert = connection.prepareStatement("INSERT INTO node () VALUES ()", Statement.RETURN_GENERATED_KEYS);
-        insert.execute();
-        ResultSet results = insert.getGeneratedKeys();
+        CREATE_NODE.execute();
+        ResultSet results = CREATE_NODE.getGeneratedKeys();
         if (results.next()) {
           to_node = results.getInt(1);
         }
@@ -452,15 +468,11 @@ public class SlowDBNodemapper {
           throw new DeveloperError(String.format("No node id generated!"), new NullPointerException());
         }
         results.close();
-        insert.close();
 
-        insert = connection
-            .prepareStatement("INSERT INTO edge (from_node_id, label, to_node_id) VALUES (?, ?, ?)");
-        insert.setInt(1, from_node);
-        insert.setString(2, key);
-        insert.setInt(3, to_node);
-        insert.execute();
-        insert.close();
+        PUT.setInt(1, from_node);
+        PUT.setString(2, key);
+        PUT.setInt(3, to_node);
+        PUT.execute();
       }
       else {
         throw new IllegalArgumentException("Trying to recreate edge that already exists.");
@@ -486,12 +498,9 @@ public class SlowDBNodemapper {
   @SuppressWarnings("boxing")
   public static void remove(Connection connection, int from_node, int to_node) {
     try {
-      PreparedStatement delete = connection
-          .prepareStatement("DELETE FROM edge WHERE from_node_id = ? AND to_node_id = ?");
-      delete.setInt(1, from_node);
-      delete.setInt(2, to_node);
-      delete.execute();
-      delete.close();
+      REMOVE.setInt(1, from_node);
+      REMOVE.setInt(2, to_node);
+      REMOVE.execute();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to remove edge from node %d to node %d.", from_node, to_node), e);
@@ -507,15 +516,12 @@ public class SlowDBNodemapper {
    */
   public static void removeBotIDFromFilename(Connection connection, String bot, URL filename) {
 
-    int bot_id = Entity.getOrCreate(connection, "bot", "label", bot);
-    int file_id = Entity.getOrCreate(connection, "file", "path", filename.toExternalForm());
+    int botID = Entity.getOrCreate(connection, "bot", "label", bot);
+    int fileID = Entity.getOrCreate(connection, "file", "path", filename.toExternalForm());
     
     try {
-      PreparedStatement delete = connection
-          .prepareStatement("DELETE FROM botidnode_file WHERE botidnode_id = ? AND file_id = ?");
-      delete.setInt(1, bot_id);
-      delete.setInt(2, file_id);
-      delete.execute();
+      REMOVE_BOTID_FROM_FILENAME.setInt(1, botID);
+      REMOVE_BOTID_FROM_FILENAME.setInt(2, fileID);
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to remove association between botid for \"%s\" and filename \"%s\".", bot, filename.toExternalForm()), e);
@@ -532,9 +538,8 @@ public class SlowDBNodemapper {
   @SuppressWarnings("boxing")
   public static void setFilename(Connection connection, int node, URL filename) {
     try {
-      PreparedStatement delete = connection.prepareStatement("DELETE FROM file_node WHERE node_id = ?");
-      delete.setInt(1, node);
-      delete.close();
+      REMOVE_FILENAME.setInt(1, node);
+      REMOVE_FILENAME.close();
       addFilename(connection, node, filename);
     }
     catch (SQLException e) {
@@ -553,10 +558,9 @@ public class SlowDBNodemapper {
   public static void setTemplate(Connection connection, int node, String template) {
     int templateID = -1;
     try {
-      PreparedStatement insert = connection.prepareStatement("INSERT INTO template (text) VALUES (?)");
-      insert.setString(1, template);
-      insert.execute();
-      ResultSet results = insert.getGeneratedKeys();
+      SET_TEMPLATE.setString(1, template);
+      SET_TEMPLATE.execute();
+      ResultSet results = SET_TEMPLATE.getGeneratedKeys();
       if (results.next()) {
         templateID = results.getInt(1);
       }
@@ -564,34 +568,30 @@ public class SlowDBNodemapper {
         throw new DeveloperError(String.format("No template id generated!"), new NullPointerException());
       }
       results.close();
-      insert.close();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to attach template to node %d.", node), e);
     }
-    setTemplateByID(connection, node, templateID);
+    associateTemplateWithNode(connection, node, templateID);
   }
-
+  
   /**
-   * Sets the id of the template associated with the given node. The template id must correspond to an existing
-   * template.
+   * Attach the given template id to the given node.
    * 
    * @param connection
    * @param node
-   * @param template
+   * @param templateID
    */
   @SuppressWarnings("boxing")
-  public static void setTemplateByID(Connection connection, int node, int template) {
+  public static void associateTemplateWithNode(Connection connection, int node, int templateID) {
+    
     try {
-      PreparedStatement insert = connection
-          .prepareStatement("INSERT INTO node_template (node_id, template_id) VALUES (?, ?)");
-      insert.setInt(1, node);
-      insert.setInt(2, template);
-      insert.execute();
-      insert.close();
+      ASSOCIATE_TEMPLATE_WITH_NODE.setInt(1, node);
+      ASSOCIATE_TEMPLATE_WITH_NODE.setInt(2, templateID);
+      ASSOCIATE_TEMPLATE_WITH_NODE.execute();
     }
     catch (SQLException e) {
-      throw new DeveloperError(String.format("SQL error trying to attach template id %d to node %d.", template, node), e);
+      throw new DeveloperError(String.format("SQL error trying to attach template id %d to node %d.", templateID, node), e);
     }
   }
 
@@ -606,15 +606,12 @@ public class SlowDBNodemapper {
   public static int size(Connection connection, int node) {
     int count = -1;
     try {
-      PreparedStatement select = connection
-          .prepareStatement("SELECT COUNT(from_node_id) FROM edge WHERE from_node_id = ?");
-      select.setInt(1, node);
-      ResultSet results = select.executeQuery();
+      SIZE.setInt(1, node);
+      ResultSet results = SIZE.executeQuery();
       if (results.next()) {
         count = results.getInt(1);
       }
       results.close();
-      select.close();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to get edge count from node %d.", node), e);
@@ -631,14 +628,11 @@ public class SlowDBNodemapper {
    */
   @SuppressWarnings("boxing")
   public static void storeBotIDNodeFile(Connection connection, int node, URL file) {
-    int file_id = Entity.getOrCreate(connection, "file", "path", file.toExternalForm());
+    int fileId = Entity.getOrCreate(connection, "file", "path", file.toExternalForm());
     try {
-      PreparedStatement insert = connection
-          .prepareStatement("INSERT INTO botidnode_file (botidnode_id, file_id) VALUES (?, ?)");
-      insert.setInt(1, node);
-      insert.setInt(2, file_id);
-      insert.execute();
-      insert.close();
+      STORE_BOTID_NODE_FILE.setInt(1, node);
+      STORE_BOTID_NODE_FILE.setInt(2, fileId);
+      STORE_BOTID_NODE_FILE.execute();
     }
     catch (SQLException e) {
       throw new DeveloperError(String.format("SQL error trying to associate file \"%s\" with node %d.", file.toExternalForm(), node), e);
@@ -656,8 +650,8 @@ public class SlowDBNodemapper {
     try {
       // The root node (will? should?) be the lowest-numbered node.
       int id = -1;
-      PreparedStatement select = connection.prepareStatement("SELECT MIN(id) from node");
-      ResultSet results = select.executeQuery();
+      Statement select = connection.createStatement();
+      ResultSet results = select.executeQuery("SELECT MIN(id) from node");
       if (results.next()) {
         id = results.getInt(1);
         
@@ -670,10 +664,8 @@ public class SlowDBNodemapper {
       
       // If no node was found, create the root.
       if (id == -1) {
-        PreparedStatement insert =
-            connection.prepareStatement("INSERT INTO node () VALUES ()", Statement.RETURN_GENERATED_KEYS);
-        insert.execute();
-        results = insert.getGeneratedKeys();
+        CREATE_NODE.execute();
+        results = CREATE_NODE.getGeneratedKeys();
         if (results.next()) {
           id = results.getInt(1);
         }
@@ -681,7 +673,6 @@ public class SlowDBNodemapper {
           throw new DeveloperError("No node id generated when trying to create root node!");
         }
         results.close();
-        insert.close();
       }
       return id;
     }

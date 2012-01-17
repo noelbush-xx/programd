@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 
 import org.aitools.util.runtime.DeveloperError;
 
@@ -25,6 +26,9 @@ import org.aitools.util.runtime.DeveloperError;
  */
 public class Entity {
   
+  private static HashMap<String, PreparedStatement> PREPARED_SELECTS = new HashMap<String, PreparedStatement>();
+  private static HashMap<String, PreparedStatement> PREPARED_INSERTS = new HashMap<String, PreparedStatement>();
+
   /**
    * Try to find an entity in the given table that is identified by the given value
    * for the given field.  If the entity is not found, create it.  Then, in either case,
@@ -38,14 +42,27 @@ public class Entity {
    */
   public static int getOrCreate(Connection connection, String table, String field, String value) {
     
+    String key = table + field;
+    PreparedStatement statement;
+    if (PREPARED_SELECTS.containsKey(key)) {
+      statement = PREPARED_SELECTS.get(key);
+    }
+    else {
+      try {
+        statement = connection.prepareStatement(
+            String.format("SELECT id from %s WHERE %s = ?", table, field));
+      }
+      catch (SQLException e) {
+        throw new DeveloperError("SQL error trying to initialize prepare statement.", e);
+      }
+      PREPARED_SELECTS.put(key, statement);
+    }
+    
     try {
       // Try to find an existing entity in the given table with the given value for the given field.
       int id = -1;
-      PreparedStatement select =
-          connection.prepareStatement(
-              String.format("SELECT id from %s WHERE %s = ?", table, field));
-      select.setString(1, value);
-      ResultSet results = select.executeQuery();
+      statement.setString(1, value);
+      ResultSet results = statement.executeQuery();
       if (results.next()) {
         id = results.getInt(1);
       }
@@ -53,12 +70,17 @@ public class Entity {
       
       // If the entity was not found, create it.
       if (id == -1) {
-        PreparedStatement insert =
-            connection.prepareStatement(
-                String.format("INSERT INTO %s (%s) VALUES (?)", table, field), Statement.RETURN_GENERATED_KEYS);
-        insert.setString(1, value);
-        insert.execute();
-        results = insert.getGeneratedKeys();
+        if (PREPARED_INSERTS.containsKey(key)) {
+          statement = PREPARED_INSERTS.get(key);
+        }
+        else {
+          statement = connection.prepareStatement(
+              String.format("INSERT INTO %s (%s) VALUES (?)", table, field), Statement.RETURN_GENERATED_KEYS);
+          PREPARED_INSERTS.put(key, statement);
+        }
+        statement.setString(1, value);
+        statement.execute();
+        results = statement.getGeneratedKeys();
         if (results.next()) {
           id = results.getInt(1);
         }
@@ -66,13 +88,12 @@ public class Entity {
           throw new DeveloperError(String.format("No %s id generated!", table));
         }
         results.close();
-        insert.close();
       }
       return id;
     }
     catch (SQLException e) {
       throw new DeveloperError(
-          String.format("SQL error when trying to retrieve/create %s with %s \"%s\".", table, field, value));
+          String.format("SQL error when trying to retrieve/create %s with %s \"%s\".", table, field, value), e);
     }
   }
 }

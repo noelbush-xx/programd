@@ -335,6 +335,7 @@ abstract public class AbstractGraphmapper implements Graphmapper {
 
   protected void doLoad(URL path, String botid) {
 
+    this.beforeLoad(path, botid);
     AIMLReader handler = new AIMLReader(this, path, this._core.getBot(botid));
     XMLReader reader = SAX.getReader(handler, this._logger, this._core.getSettings().getXmlCatalogPath());
     try {
@@ -347,6 +348,24 @@ abstract public class AbstractGraphmapper implements Graphmapper {
     catch (SAXException e) {
       this._logger.warn(String.format("Error reading \"%s\": %s", URLTools.unescape(path), Errors.describe(e)));
     }
+    this.afterLoad(path, botid);
+  }
+  
+
+  /**
+   * @see org.aitools.programd.graph.Graphmapper#beforeLoad(java.net.URL, java.lang.String)
+   */
+  @Override
+  public void beforeLoad(URL path, String botid) {
+    // Nothing done at this level, but some Graphmappers will want to do something.
+  }
+
+  /**
+   * @see org.aitools.programd.graph.Graphmapper#afterLoad(java.net.URL, java.lang.String)
+   */
+  @Override
+  public void afterLoad(URL path, String botid) {
+    // Nothing done at this level, but some Graphmappers will want to do something.
   }
 
   /**

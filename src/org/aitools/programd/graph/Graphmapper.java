@@ -64,6 +64,22 @@ public interface Graphmapper {
    * @param botid
    */
   public void load(URL path, String botid);
+  
+  /**
+   * A "hook" to do any necessary work before a file is loaded.
+   * 
+   * @param path path to the file(s) to be loaded
+   * @param botid
+   */
+  public void beforeLoad(URL path, String botid);
+  
+  /**
+   * A "hook" to do any necessary work after a file is loaded.
+   * 
+   * @param path path to the file(s) that has/have been loaded
+   * @param botid
+   */
+  public void afterLoad(URL path, String botid);
 
   /**
    * Searches for a match in the <code>Graphmapper</code> to a given path.

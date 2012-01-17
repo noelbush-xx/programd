@@ -21,7 +21,7 @@ import org.aitools.programd.Bot;
 import org.aitools.programd.Core;
 import org.aitools.programd.util.NoMatchException;
 import org.aitools.util.Text;
-import org.aitools.util.resource.URLTools;
+import org.aitools.util.runtime.DeveloperError;
 
 /**
  * <p>This is an implementation of the {@link Graphmapper} interface that uses a database. There is a certain amount of
@@ -52,6 +52,7 @@ public class SlowDBGraphmapper extends AbstractGraphmapper {
     if (this._core.getSettings().resetGraph()) {
       SlowDBNodemapper.eraseAll(connection);
     }
+    SlowDBNodemapper.initializePreparedStatements(connection);
     this._root = SlowDBNodemapper.getRoot(connection);
   }
 
@@ -200,7 +201,7 @@ public class SlowDBGraphmapper extends AbstractGraphmapper {
     }
     for (int node : SlowDBNodemapper.getBotIDNodesForFile(connection, path)) {
       int botidnode = SlowDBNodemapper.put(connection, SlowDBNodemapper.getParent(connection, node), botid);
-      SlowDBNodemapper.setTemplateByID(connection, botidnode, SlowDBNodemapper.getTemplateID(connection, node));
+      SlowDBNodemapper.associateTemplateWithNode(connection, botidnode, SlowDBNodemapper.getTemplateID(connection, node));
       this._totalCategories++;
     }
     SlowDBNodemapper.associateBotWithFile(connection, botid, path);
@@ -513,6 +514,41 @@ public class SlowDBGraphmapper extends AbstractGraphmapper {
       this._logger.error(String.format("Could not find category to remove (%s:%s:%s)", pattern, that, topic, bot));
     }
     this.close(connection);
+  }
+  
+
+  /**
+   * Start a transaction, and turn off foreign key checking.
+   * 
+   * @see org.aitools.programd.graph.AbstractGraphmapper#beforeLoad(java.net.URL, java.lang.String)
+   */
+  @Override
+  public void beforeLoad(URL path, String botid) {
+//    Connection connection = this._core.getDBConnection();
+//    try {
+//      connection.createStatement().execute("SET FOREIGN_KEY_CHECKS=0");
+//      connection.createStatement().execute("START TRANSACTION");
+//    }
+//    catch (SQLException e) {
+//      throw new DeveloperError("SQL error trying to prepare for loading transaction.", e);
+//    }
+  }
+
+  /**
+   * Commit the transaction, and turn foreign key checking back on.
+   * 
+   * @see org.aitools.programd.graph.AbstractGraphmapper#afterLoad(java.net.URL, java.lang.String)
+   */
+  @Override
+  public void afterLoad(URL path, String botid) {
+//    Connection connection = this._core.getDBConnection();
+//    try {
+//      connection.createStatement().execute("COMMIT");
+//      connection.createStatement().execute("SET FOREIGN_KEY_CHECKS=1");
+//    }
+//    catch (SQLException e) {
+//      throw new DeveloperError("SQL error trying to prepare for loading transaction.", e);
+//    }
   }
 
   /**
